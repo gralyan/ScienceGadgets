@@ -30,6 +30,8 @@ public class ScienceGadgets implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
+	
+	//test
 	EquationDatabase data = new EquationDatabase();
 	private Grid eqGrid;
 	private Grid varGrid;
