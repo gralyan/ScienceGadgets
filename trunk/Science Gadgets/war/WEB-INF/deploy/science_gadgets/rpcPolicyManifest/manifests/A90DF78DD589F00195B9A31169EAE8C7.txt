@@ -1,2 +1,0 @@
-serviceClass: com.sciencegadgets.client.DatabaseHelper
-path: 769FF4FB245C7151098D6927FAC6A5E5.gwt.rpc
