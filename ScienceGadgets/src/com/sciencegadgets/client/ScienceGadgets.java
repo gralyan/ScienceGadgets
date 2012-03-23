@@ -109,7 +109,6 @@ public class ScienceGadgets implements EntryPoint {
 
 		multiSwitch.addClickHandler(new ClickHandler() {
 
-			@Override
 			public void onClick(ClickEvent event) {
 				CellFormatter elm = varGrid.getCellFormatter();
 				for (int i = 0; i < varGrid.getRowCount(); i++) {
@@ -267,7 +266,6 @@ public class ScienceGadgets implements EntryPoint {
 			this.table = table;
 		}
 
-		@Override
 		public void onClick(ClickEvent event) {
 			Cell clickedCell = table.getCellForEvent(event);
 
