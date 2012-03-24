@@ -1,19 +1,19 @@
 body {
-  padding: 10px;
+	padding: 10px;
 }
 
 .gridBox {
-  border: 1px solid silver;
-  padding: 2px;
-  margin:6px;
-height: 18em;
-width: 12em;
-}
-.sp{
-height: 15em;
-width: 12em;
+	border: 1px solid silver;
+	padding: 2px;
+	margin:6px;
+	height: 18em;
+	width: 12em;
 }
 
+.sp{
+	height: 15em;
+	width: 12em;
+}
 
 .rowHeader{
 	border-bottom-color:silver;
