@@ -17,13 +17,14 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
 
-		openDatabase();
+		String s=openDatabase();
 
-		return "Hia, " + input + "!I am running " + serverInfo
+		return s+"\nHia, " + input + "!I am running " + serverInfo
 				+ " It looks like you are using: " + userAgent;
 	}
 
-	void openDatabase() {
+	String openDatabase() {
+		String returnStatement = "";
 		Connection conn = null;
 		String ip = "";
 		try {
@@ -33,27 +34,28 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 			System.out.println("IP Address = " + ip);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+			returnStatement = returnStatement + "\n"+ "couldn't get address";
 		}
 
 		try {
 
 			String user = "test2";
 			String pass = "test2";
-
-			String url = "jdbc:mysql://localhost/jooggr_test2";
+			String url = "jdbc:mysql://"+ip+":3306/jooggr_test2";
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(url, user, pass);
-			System.out.println("Database connection established");
+			returnStatement = returnStatement + "\n"+"Database connection established";
 		} catch (Exception e) {
-			System.err.println("Cannot connect to database server");
+			returnStatement = returnStatement + "\n"+ "Cannot connect to database server";
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
-					System.out.println("Database connection terminated");
+					returnStatement = returnStatement + "\n"+ "Database connection terminated";
 				} catch (Exception e) { /* ignore close errors */
 				}
 			}
 		}
+		return returnStatement;
 	}
 }

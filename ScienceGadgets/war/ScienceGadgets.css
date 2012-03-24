@@ -24,10 +24,14 @@ width: 12em;
 	text-align: center;
 }
 
-.selected{
+.selectedVar{
 	background-color: #9999ff;
 }
-#selected{
+#selectedVar{
+	background-color: #9999ff;
+}
+
+#selectedEq{
 	background-color: #9999ff;
 }
 
