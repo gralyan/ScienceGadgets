@@ -30,13 +30,11 @@ public class ScienceGadgets implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-	
-	//test123
+	// test123
 	EquationDatabase data = new EquationDatabase();
 	private Grid eqGrid;
 	private Grid varGrid;
 	private Grid sumGrid;
-	public com.google.gwt.dom.client.Element selectedEqElement;
 	String varGridWidth = "5em";
 	String columnWidth = "150em";
 	private Label labelVar = new Label("Variables");
@@ -45,11 +43,9 @@ public class ScienceGadgets implements EntryPoint {
 	private Label labelSumEq = new Label("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private List<?> listAllUnits;
-	private AsyncCallback<String> a;
-	private String b;
-	
+	private Set<String> selectedVars = new HashSet<String>();
+
 	public void onModuleLoad() {
-		
 
 		// First box, Variable list
 		varGrid = new Grid(1, 1);
@@ -107,48 +103,34 @@ public class ScienceGadgets implements EntryPoint {
 		parseJQMath(varGrid.getElement());
 		parseJQMath(eqGrid.getElement());
 
-		multiSwitch.addClickHandler(new ClickHandler() {
+		multiSwitch.addClickHandler(new MultiSwitchClickHandler());
 
-			public void onClick(ClickEvent event) {
-				CellFormatter elm = varGrid.getCellFormatter();
-				for (int i = 0; i < varGrid.getRowCount(); i++) {
-					elm.getElement(i, 0).setClassName("");
-				}
-			}
-		});
-		
-		
-		
 		final Button sendButton = new Button("Send");
 
 		RootPanel.get().add(sendButton);
-		
-		ClickHandler handler = new ClickHandler() 
-		{
-			public void onClick(ClickEvent event) 
-			{
+
+		ClickHandler handler = new ClickHandler() {
+			public void onClick(ClickEvent event) {
 				sendNameToServer();
 			}
 		};
-		
+
 		sendButton.addClickHandler(handler);
 	}
-	
+
 	private void sendNameToServer() {
 		String textToServer = "JOHN";
 
-		greetingService.greetServer(textToServer,
-				new AsyncCallback<String>() {
-					public void onFailure(Throwable caught) {
-						Window.alert("FAIL");
-					}
+		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				Window.alert("FAIL");
+			}
 
-					public void onSuccess(String result) {
-						Window.alert(result);
-					}
-				});
+			public void onSuccess(String result) {
+				Window.alert(result);
+			}
+		});
 	}
-
 
 	/**
 	 * Gets all the available variables and fills the list
@@ -163,8 +145,8 @@ public class ScienceGadgets implements EntryPoint {
 		varGrid.resizeRows(vars.length);
 
 		for (int i = 0; i < vars.length; i++) {
-			varHTML = "<span style=\"cursor:pointer;\">$" + vars[i]
-					+ "$ "+ desc[i]+"</span>";
+			varHTML = "<span style=\"cursor:pointer;\">$" + vars[i] + "$ "
+					+ desc[i] + "</span>";
 			varGrid.setHTML(i, 0, varHTML);
 		}
 	}
@@ -181,8 +163,8 @@ public class ScienceGadgets implements EntryPoint {
 		String[] eqList = data.getEquationsByVariables(varSet);
 		sumGrid.clear();
 
-		selectedEqElement.setClassName("");
-		selectedEqElement = null;
+		//selectedEqElement.setClassName("");
+		//selectedEqElement = null;
 
 		eqGrid.resizeRows(eqList.length);
 
@@ -236,8 +218,7 @@ public class ScienceGadgets implements EntryPoint {
 			row++;
 		}
 		parseJQMath(sumGrid.getElement());
-		
-	
+
 	}
 
 	/**
@@ -252,9 +233,9 @@ public class ScienceGadgets implements EntryPoint {
 	 *            - the web element to parse as math
 	 */
 	static native void parseJQMath(Element element) /*-{
-													//		$wnd.M.parseMath($doc.body);
-													$wnd.M.parseMath(element);
-													}-*/;
+		//		$wnd.M.parseMath($doc.body);
+		$wnd.M.parseMath(element);
+	}-*/;
 
 	/**
 	 * Single selection handler for equation list
@@ -272,10 +253,10 @@ public class ScienceGadgets implements EntryPoint {
 			if (clickedCell != null) {
 				Element el = clickedCell.getElement();
 
-				if (!el.getClassName().equals("selected")) {
-					el.setClassName("selected");
-					selectedEqElement.setClassName("");
-					selectedEqElement = el;
+				if (!el.getId().equals("selectedEq")) {
+					el.setId("selectedEq");
+					com.google.gwt.dom.client.Element prevSel = Document.get().getElementById("selectedVar");
+					prevSel.setId("");
 				}
 				// parse HTML to get appropriate equation
 				String html = clickedCell.getElement().getInnerHTML();
@@ -291,14 +272,13 @@ public class ScienceGadgets implements EntryPoint {
 	/**
 	 * The multi-selection handler for variable list
 	 */
-	class VarClickHandler extends EqClickHandler implements ClickHandler {
-		private Set<String> selectedVars = new HashSet<String>();
-
+	class VarClickHandler implements ClickHandler {
+		HTMLTable table;
+		
 		public VarClickHandler(HTMLTable table) {
-			super(table);
+			this.table = table;
 		}
 
-		@Override
 		public void onClick(ClickEvent event) {
 			Cell clickedCell = table.getCellForEvent(event);
 
@@ -306,25 +286,27 @@ public class ScienceGadgets implements EntryPoint {
 				Element clicked = clickedCell.getElement();
 				String varName = clicked.getInnerText().split(" ")[0];
 
+				// Multi select
 				if (multiSwitch.getValue()) {
-					Document.get().getElementById("selected")
-							.setClassName("selected");
-					Document.get().getElementById("selected").setId("");
-					if (clicked.getClassName().equals("selected")) {
+
+					if (clicked.getClassName().equals("selectedVar")) {
 						clicked.setClassName("");
 						selectedVars.remove(varName);
 					} else {
-						clicked.setClassName("selected");
+						clicked.setClassName("selectedVar");
 						selectedVars.add(varName);
 					}
+					// Single select
 				} else {
-					if (clicked.getClassName().equals("selected")) {
-						clicked.setClassName("");
-						selectedVars.remove(varName);
+					if (clicked.getId().equals("selectedVar")) {
 					} else {
-						Document.get().getElementById("selected").setId("");
+						com.google.gwt.dom.client.Element prevSelect = Document
+								.get().getElementById("selectedVar");
+						if (prevSelect != null) {
+							prevSelect.setId("");
+						}
 						selectedVars.clear();
-						clicked.setId("selected");
+						clicked.setId("selectedVar");
 						selectedVars.add(varName);
 					}
 				}
@@ -334,7 +316,26 @@ public class ScienceGadgets implements EntryPoint {
 			}
 		}
 	}
+
+	class MultiSwitchClickHandler implements ClickHandler {
+
+		public void onClick(ClickEvent event) {
+			if (multiSwitch.getValue()) {
+				// turning multi on
+				com.google.gwt.dom.client.Element el = Document.get()
+						.getElementById("selectedVar");
+				if (el != null) {
+					el.setClassName("selectedVar");
+					el.setId("");
+				}
+			} else {
+				// turning multi off
+				eqGrid.clear(true);
+				CellFormatter elm = varGrid.getCellFormatter();
+				for (int i = 0; i < varGrid.getRowCount(); i++) {
+					elm.getElement(i, 0).setClassName("");
+				}
+			}
+		}
+	}
 }
-
-
-
