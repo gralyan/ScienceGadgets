@@ -47,6 +47,8 @@ public class ScienceGadgets implements EntryPoint {
 
 	public void onModuleLoad() {
 
+		
+		
 		// First box, Variable list
 		varGrid = new Grid(1, 1);
 		fillVarList();
@@ -108,6 +110,7 @@ public class ScienceGadgets implements EntryPoint {
 		final Button sendButton = new Button("Send");
 
 		RootPanel.get().add(sendButton);
+		RootPanel.get().add(new EquationWriter());
 
 		ClickHandler handler = new ClickHandler() {
 			public void onClick(ClickEvent event) {
