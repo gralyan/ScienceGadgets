@@ -2,8 +2,7 @@ package com.sciencegadgets.server;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import com.mysql.jdbc.Driver;
 
 import com.sciencegadgets.client.GreetingService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -26,27 +25,18 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	String openDatabase() {
 		String returnStatement = "";
 		Connection conn = null;
-		String ip = "";
-		try {
-			InetAddress address = InetAddress.getLocalHost();
-			ip = address.getHostAddress();
-
-			System.out.println("IP Address = " + ip);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			returnStatement = returnStatement + "\n"+ "couldn't get address";
-		}
 
 		try {
 
-			String user = "test2";
-			String pass = "test2";
-			String url = "jdbc:mysql://"+ip+":3306/jooggr_test2";
+			String user = "jooggr_test123";
+			String pass = "test123";
+			String url = "jdbc:mysql://204.93.169.176:3306/jooggr_test123";
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(url, user, pass);
 			returnStatement = returnStatement + "\n"+"Database connection established";
 		} catch (Exception e) {
 			returnStatement = returnStatement + "\n"+ "Cannot connect to database server";
+			e.printStackTrace(System.out);
 		} finally {
 			if (conn != null) {
 				try {
