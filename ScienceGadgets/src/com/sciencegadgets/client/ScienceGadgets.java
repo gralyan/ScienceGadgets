@@ -22,90 +22,109 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ScienceGadgets implements EntryPoint {
 
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-	// test123
 	EquationDatabase data = new EquationDatabase();
-	private Grid eqGrid;
-	private Grid varGrid;
-	private Grid sumGrid;
+	private Grid eqGrid = new Grid(1, 1);
+	private Grid varGrid = new Grid(1, 1);
+	private Grid sumGrid = new Grid(1, 2);
+	private Grid algOut = new Grid(1, 1);
 	String varGridWidth = "5em";
 	String columnWidth = "150em";
-	private Label labelVar = new Label("Variables");
-	private Label labelEq = new Label("Equations");
-	private Label labelSum = new Label("Summary");
 	private Label labelSumEq = new Label("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
-	private List<?> listAllUnits;
 	private Set<String> selectedVars = new HashSet<String>();
+
+	private VerticalPanel algebraPanel;
 
 	public void onModuleLoad() {
 
-		
-		
 		// First box, Variable list
-		varGrid = new Grid(1, 1);
-		fillVarList();
-		varGrid.addClickHandler(new VarClickHandler(varGrid));
-
-		// Second box, Equation list
-		eqGrid = new Grid(1, 1);
-		eqGrid.setWidth("10em");
-		eqGrid.addClickHandler(new EqClickHandler(eqGrid));
-
-		// Third box, Variable Descriptions
-		sumGrid = new Grid(1, 2);
-
-		// Assemble browserPanel
-		HorizontalPanel browserPanel = new HorizontalPanel();
-
 		VerticalPanel vpVar = new VerticalPanel();
+		Label labelVar = new Label("Variables");
 		ScrollPanel spVar = new ScrollPanel(varGrid);
+		varGrid.addClickHandler(new VarClickHandler(varGrid));
 		vpVar.add(labelVar);
 		vpVar.add(spVar);
 		vpVar.add(multiSwitch);
+		multiSwitch.addClickHandler(new MultiSwitchClickHandler());
+		fillVarList();
 
+		// Second box, Equation list
 		VerticalPanel vpEq = new VerticalPanel();
+		Label labelEq = new Label("Equations");
 		ScrollPanel spEq = new ScrollPanel(eqGrid);
+		eqGrid.addClickHandler(new EqClickHandler(eqGrid));
 		vpEq.add(labelEq);
 		vpEq.add(spEq);
 
+		// Third box, equation summary
 		VerticalPanel vpSum = new VerticalPanel();
+		Label labelSum = new Label("Summary");
 		ScrollPanel spSum = new ScrollPanel(sumGrid);
+		labelSumEq.setHeight("2em");
 		vpSum.add(labelSum);
 		vpSum.add(labelSumEq);
 		vpSum.add(spSum);
+
+
+		// Assemble browserPanel
+		HorizontalPanel browserPanel = new HorizontalPanel();
+		browserPanel.add(vpVar);
+		browserPanel.add(vpEq);
+		browserPanel.add(vpSum);
+
+		//Assemble algebra menu panel
+		HorizontalPanel algMenuPanel = new HorizontalPanel();
+		algMenuPanel.setHeight("2em");
+		algMenuPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		ListBox funBox = new ListBox();
+		for(String fun : data.functions){
+			funBox.addItem(fun);
+		}
+		algMenuPanel.add(funBox);
+		TextBox coefBox = new TextBox();
+		algMenuPanel.add(coefBox);
+		
+		// Assemble Algebra panel
+		algebraPanel = new VerticalPanel();
+		algebraPanel.setStylePrimaryName("albebraPanel");
+		algOut.setWidth("20em");
+		algebraPanel.add(algOut);
+		algebraPanel.add(algMenuPanel);
+
+		RootPanel.get().add(browserPanel);
+		RootPanel.get().add(algebraPanel);
 
 		// Widget styles
 		vpVar.setStylePrimaryName("gridBox");
 		vpEq.setStylePrimaryName("gridBox");
 		vpSum.setStylePrimaryName("gridBox");
-
+		
 		spVar.setStylePrimaryName("sp");
 		spEq.setStylePrimaryName("sp");
 		spSum.setStylePrimaryName("sp");
-
+		
 		labelVar.setStylePrimaryName("rowHeader");
 		labelEq.setStylePrimaryName("rowHeader");
 		labelSum.setStylePrimaryName("rowHeader");
-
-		// Add the widgets to the root panel.
-		browserPanel.add(vpVar);
-		browserPanel.add(vpEq);
-		browserPanel.add(vpSum);
-
-		RootPanel.get().add(browserPanel);
-
+		
+		//make it pretty
 		parseJQMath(varGrid.getElement());
 		parseJQMath(eqGrid.getElement());
-
-		multiSwitch.addClickHandler(new MultiSwitchClickHandler());
+		
+		///////////////////////////////////////////
+		//experimental
+		//////////////////////////////////
 
 		final Button sendButton = new Button("Send");
 
@@ -166,8 +185,8 @@ public class ScienceGadgets implements EntryPoint {
 		String[] eqList = data.getEquationsByVariables(varSet);
 		sumGrid.clear();
 
-		//selectedEqElement.setClassName("");
-		//selectedEqElement = null;
+		// selectedEqElement.setClassName("");
+		// selectedEqElement = null;
 
 		eqGrid.resizeRows(eqList.length);
 
@@ -188,7 +207,7 @@ public class ScienceGadgets implements EntryPoint {
 	 * 
 	 * @param equation
 	 */
-	private void fillVarDesc(String equation) {
+	private void fillSum(String equation) {
 		String[] variables;
 		try {
 			variables = data.getVariablesByEquation(equation);
@@ -203,6 +222,9 @@ public class ScienceGadgets implements EntryPoint {
 		sumGrid.resizeRows(variables.length);
 
 		labelSumEq.setText("$" + equation + "$");
+		algOut.clear(true);
+		algOut.resizeRows(1);
+		algOut.setWidget(0, 0, labelSumEq);
 		parseJQMath(labelSumEq.getElement());
 
 		for (String var : variables) {
@@ -257,9 +279,12 @@ public class ScienceGadgets implements EntryPoint {
 				Element el = clickedCell.getElement();
 
 				if (!el.getId().equals("selectedEq")) {
+					com.google.gwt.dom.client.Element prevSel = Document.get()
+							.getElementById("selectedEq");
+					if (prevSel != null) {
+						prevSel.setId("");
+					}
 					el.setId("selectedEq");
-					com.google.gwt.dom.client.Element prevSel = Document.get().getElementById("selectedVar");
-					prevSel.setId("");
 				}
 				// parse HTML to get appropriate equation
 				String html = clickedCell.getElement().getInnerHTML();
@@ -267,7 +292,7 @@ public class ScienceGadgets implements EntryPoint {
 				int endIndex = html.indexOf("\">", beginIndex);
 				String equation = html.substring(beginIndex, endIndex);
 
-				fillVarDesc(equation);
+				fillSum(equation);
 			}
 		}
 	}
@@ -277,7 +302,7 @@ public class ScienceGadgets implements EntryPoint {
 	 */
 	class VarClickHandler implements ClickHandler {
 		HTMLTable table;
-		
+
 		public VarClickHandler(HTMLTable table) {
 			this.table = table;
 		}
@@ -316,6 +341,11 @@ public class ScienceGadgets implements EntryPoint {
 				sumGrid.clear(true);
 				labelSumEq.setText("");
 				fillEqGrid(selectedVars);
+				com.google.gwt.dom.client.Element prevSel = Document.get()
+						.getElementById("selectedEq");
+				if (prevSel != null) {
+					prevSel.setId("");
+				}
 			}
 		}
 	}
@@ -341,4 +371,5 @@ public class ScienceGadgets implements EntryPoint {
 			}
 		}
 	}
+
 }

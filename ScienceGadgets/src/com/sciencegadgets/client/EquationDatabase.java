@@ -148,6 +148,8 @@ public final class EquationDatabase {
     /*1*/{ "1", "?" },
     /*2*/{ "2", "?" }
     /**/};
+    
+    public final String[] functions = {"+","-","x","÷"};
 
     // TODO mabe by enum just to see the variables, make into numbers for deployment
     // association between {(0)equations, (1)variables}
