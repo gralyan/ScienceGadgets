@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Element;
@@ -26,7 +25,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -46,11 +44,13 @@ public class ScienceGadgets implements EntryPoint {
 
 	private VerticalPanel algebraPanel;
 
+	private ListBox varBox;
+
 	public void onModuleLoad() {
 
 		// First box, Variable list
 		VerticalPanel vpVar = new VerticalPanel();
-		Label labelVar = new Label("Variables");
+		Label labelVar = new Label("Mane's box");
 		ScrollPanel spVar = new ScrollPanel(varGrid);
 		varGrid.addClickHandler(new VarClickHandler(varGrid));
 		vpVar.add(labelVar);
@@ -87,18 +87,30 @@ public class ScienceGadgets implements EntryPoint {
 		HorizontalPanel algMenuPanel = new HorizontalPanel();
 		algMenuPanel.setHeight("2em");
 		algMenuPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		//function
 		ListBox funBox = new ListBox();
 		for(String fun : data.functions){
 			funBox.addItem(fun);
 		}
 		algMenuPanel.add(funBox);
+		//coefficient
 		TextBox coefBox = new TextBox();
+		coefBox.setWidth("2em");
 		algMenuPanel.add(coefBox);
+		//variable
+		varBox = new ListBox();
+		algMenuPanel.add(varBox);
+		//to both sides button
+		Button toBothSides = new Button("To Both Sides", new ToBothSidesHandler());
+		toBothSides.setWidth("5em");
+		algMenuPanel.add(toBothSides); 
+		
 		
 		// Assemble Algebra panel
 		algebraPanel = new VerticalPanel();
 		algebraPanel.setStylePrimaryName("albebraPanel");
-		algOut.setWidth("20em");
+		algOut.setWidth("40em");
+		algOut.setHeight("10em");
 		algebraPanel.add(algOut);
 		algebraPanel.add(algMenuPanel);
 
@@ -220,7 +232,7 @@ public class ScienceGadgets implements EntryPoint {
 
 		sumGrid.clear(true);
 		sumGrid.resizeRows(variables.length);
-
+		
 		labelSumEq.setText("$" + equation + "$");
 		algOut.clear(true);
 		algOut.resizeRows(1);
@@ -242,8 +254,15 @@ public class ScienceGadgets implements EntryPoint {
 			sumGrid.setHTML(row, 1, descHTML);
 			row++;
 		}
+		
 		parseJQMath(sumGrid.getElement());
+		varBox.clear();
+		varBox.addItem("none");
+		for(int i=0 ; i<sumGrid.getRowCount(); i++){
+			varBox.addItem(variables[i]);
+		}
 
+		parseJQMath(varBox.getElement());
 	}
 
 	/**
@@ -370,6 +389,17 @@ public class ScienceGadgets implements EntryPoint {
 				}
 			}
 		}
+	}
+	class ToBothSidesHandler implements ClickHandler{
+
+		@Override
+		public void onClick(ClickEvent event) {
+			int newRowCount = algOut.getRowCount() + 2;
+			algOut.resizeRows(newRowCount);
+			algOut.setWidget(newRowCount, 0, new Label("+1"));
+			algOut.setWidget(newRowCount+1, 0, new Label("equation"));
+		}
+		
 	}
 
 }
