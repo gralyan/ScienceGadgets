@@ -46,6 +46,12 @@ public class ScienceGadgets implements EntryPoint {
 
 	private ListBox varBox;
 
+	private ScrollPanel spAlg;
+
+	private ListBox funBox;
+
+	private TextBox coefBox;
+
 	public void onModuleLoad() {
 
 		// First box, Variable list
@@ -88,13 +94,14 @@ public class ScienceGadgets implements EntryPoint {
 		algMenuPanel.setHeight("2em");
 		algMenuPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 		//function
-		ListBox funBox = new ListBox();
+		funBox = new ListBox();
 		for(String fun : data.functions){
 			funBox.addItem(fun);
 		}
 		algMenuPanel.add(funBox);
 		//coefficient
-		TextBox coefBox = new TextBox();
+		coefBox = new TextBox();
+		coefBox.setValue("1");
 		coefBox.setWidth("2em");
 		algMenuPanel.add(coefBox);
 		//variable
@@ -110,8 +117,9 @@ public class ScienceGadgets implements EntryPoint {
 		algebraPanel = new VerticalPanel();
 		algebraPanel.setStylePrimaryName("albebraPanel");
 		algOut.setWidth("40em");
-		algOut.setHeight("10em");
-		algebraPanel.add(algOut);
+		spAlg = new ScrollPanel(algOut);
+		spAlg.setHeight("15em");
+		algebraPanel.add(spAlg);
 		algebraPanel.add(algMenuPanel);
 
 		RootPanel.get().add(browserPanel);
@@ -257,7 +265,7 @@ public class ScienceGadgets implements EntryPoint {
 		
 		parseJQMath(sumGrid.getElement());
 		varBox.clear();
-		varBox.addItem("none");
+		varBox.addItem("");
 		for(int i=0 ; i<sumGrid.getRowCount(); i++){
 			varBox.addItem(variables[i]);
 		}
@@ -359,6 +367,7 @@ public class ScienceGadgets implements EntryPoint {
 				}
 				sumGrid.clear(true);
 				labelSumEq.setText("");
+				algOut.clear(true);
 				fillEqGrid(selectedVars);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
@@ -396,8 +405,21 @@ public class ScienceGadgets implements EntryPoint {
 		public void onClick(ClickEvent event) {
 			int newRowCount = algOut.getRowCount() + 2;
 			algOut.resizeRows(newRowCount);
-			algOut.setWidget(newRowCount, 0, new Label("+1"));
-			algOut.setWidget(newRowCount+1, 0, new Label("equation"));
+			
+			String inpFun = funBox.getItemText(funBox.getSelectedIndex());
+			String inpCoef = coefBox.getText();
+			String inpVar = varBox.getItemText(varBox.getSelectedIndex());
+			
+			try{
+				Integer.parseInt(inpCoef);
+			}catch(NumberFormatException e){
+				Window.alert("The coefficient must be a number");
+				return;
+			}
+			
+			algOut.setWidget(newRowCount-2, 0, new Label(inpFun+inpCoef+inpVar+"    "+inpFun+inpCoef+inpVar));
+			algOut.setWidget(newRowCount-1, 0, new Label("equation"));
+			spAlg.scrollToBottom();
 		}
 		
 	}
