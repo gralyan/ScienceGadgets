@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import java.util.HashSet;
 import java.util.Set;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
@@ -252,7 +254,7 @@ public class ScienceGadgets implements EntryPoint {
 		algOut.setWidget(0, 0, labelSumEq);
 		parseJQMath(labelSumEq.getElement());
 		
-		//createAlg(equation);
+		createAlg(equation);
 
 
 		for (String var : variables) {
@@ -288,21 +290,38 @@ public class ScienceGadgets implements EntryPoint {
 				HTMLb4JavaScript.setHTML("$" + equation + "$");
 				parseJQMath(HTMLb4JavaScript.getElement());
 				
-				//onclick="toggleMathML(input' + i + ', this)" oncontextmenu="copy(this)" onmouseover="this.className=\'outputLite\'" onmouseout="this.className=\'output\'" id="output' + i + '" height="50%" title="MathML #' + i + '"></div>\n'
-					//	+ '</div>\n'
+				//onclick="toggleMathML(input' + i + ', this)" oncontextmenu="copy(this)" onmouseover="this.className=\'selectedVar\'" onmouseout="this.className=\'\'">
 				String a = HTMLb4JavaScript.toString()
 						/**/.replaceAll("mrow", "mrow onmouseover=\"this.className=\\'selectedVar\\'\"")
 						/**/.replaceAll("mi", "mi")//"mi class=\"selectedVar\""
 						/**/.replaceAll("mo", "mo")
 						/**/.replaceAll("mn", "mn");
 				String b = "mrow onmouseover=\"this.className=\\'selectedVar\\'\"";
-				
 				algDragHTML.setHTML(a);
-	
-
 				algDragPanel.clear();
 				algDragPanel.add(new Label(HTMLb4JavaScript.toString()));
-				algDragPanel.add(algDragHTML);
+				//algDragPanel.add(algDragHTML);
+				
+				//check the HTML nodes
+				NodeList<Node> thirdNodeList = HTMLb4JavaScript.getElement().getFirstChild().getFirstChild().getChildNodes();
+				String s3 = "";
+				for(int i=0 ; i<thirdNodeList.getLength() ; i++){
+					Node node = thirdNodeList.getItem(i);
+					s3 = s3+ ": "+node.getNodeName()+" "+node.getNodeValue();
+				}
+				Label l3 = new Label(s3);
+				algDragPanel.add(l3);
+				
+				//wrap element in a widget?
+				final Label wraperEl = Label.wrap(HTMLb4JavaScript.getElement());
+				wraperEl.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						wraperEl.setStyleName("selectedVar");
+						
+					}
+				});
 	}
 
 	/**
