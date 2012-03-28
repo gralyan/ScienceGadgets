@@ -2,6 +2,8 @@
 <module rename-to='sciencegadgets'>
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.gwt.user.theme.clean.Clean'/>
+  
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
 
   <entry-point class='com.sciencegadgets.client.ScienceGadgets'/>
 
