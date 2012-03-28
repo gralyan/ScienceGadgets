@@ -4,6 +4,10 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -17,12 +21,14 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -30,6 +36,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.AlgebraManipulation.ElementWrapper;
+import com.smartgwt.client.util.EventHandler;
 import com.sun.java.swing.plaf.windows.resources.windows;
 
 public class ScienceGadgets implements EntryPoint {
@@ -253,9 +261,8 @@ public class ScienceGadgets implements EntryPoint {
 		algOut.resizeRows(1);
 		algOut.setWidget(0, 0, labelSumEq);
 		parseJQMath(labelSumEq.getElement());
-		
-		createAlg(equation);
 
+		createAlg(equation);
 
 		for (String var : variables) {
 			varHTML = "<span class=\"var\">$" + var + "$ </span>";
@@ -282,46 +289,50 @@ public class ScienceGadgets implements EntryPoint {
 
 		parseJQMath(varBox.getElement());
 	}
+
 	/**
 	 * Takes the equation, parses into MathML, adds JavaScript handlers
 	 */
-	void createAlg(String equation){
-				HTML HTMLb4JavaScript = new HTML();
-				HTMLb4JavaScript.setHTML("$" + equation + "$");
-				parseJQMath(HTMLb4JavaScript.getElement());
+	void createAlg(String equation) {
+		HTML HTMLb4JavaScript = new HTML();
+		HTMLb4JavaScript.setHTML("$" + equation + "$");
+		parseJQMath(HTMLb4JavaScript.getElement());
+
+		algDragPanel.clear();
+		algDragPanel.add(new Label(HTMLb4JavaScript.toString()));
+		// algDragPanel.add(algDragHTML);
+
+		// check the HTML nodes
+		NodeList<Node> thirdNodeList = HTMLb4JavaScript.getElement()
+				.getFirstChild().getFirstChild().getChildNodes();
+		String s3 = "";
+		for (int i = 0; i < thirdNodeList.getLength(); i++) {
+			Node node = thirdNodeList.getItem(i);
+			s3 = s3 + ": " + node.getNodeName() + " " + node.getNodeValue();
+		}
+		Label l3 = new Label(s3);
+		algDragPanel.add(l3);
+
+		
+		algDragPanel.add(HTMLb4JavaScript);
+//		
+//		Element asd = HTMLb4JavaScript.getElement();
+//		DOM.setEventListener(asd, new AlgDragEventListener());
+//		DOM.sinkEvents(asd, Event.ONMOUSEOVER | Event.ONMOUSEOUT);
+		
+		final com.google.gwt.dom.client.Element elmnt = HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
+		 ElementWrapper wrapper = new ElementWrapper(elmnt);
+		 wrapper.onAttach();
+	     HandlerRegistration handlerRegistration = wrapper.addClickHandler(new ClickHandler(){
+
+			public void onClick(ClickEvent event) {
+				Window.alert("click"+elmnt.getInnerText());
 				
-				//onclick="toggleMathML(input' + i + ', this)" oncontextmenu="copy(this)" onmouseover="this.className=\'selectedVar\'" onmouseout="this.className=\'\'">
-				String a = HTMLb4JavaScript.toString()
-						/**/.replaceAll("mrow", "mrow onmouseover=\"this.className=\\'selectedVar\\'\"")
-						/**/.replaceAll("mi", "mi")//"mi class=\"selectedVar\""
-						/**/.replaceAll("mo", "mo")
-						/**/.replaceAll("mn", "mn");
-				String b = "mrow onmouseover=\"this.className=\\'selectedVar\\'\"";
-				algDragHTML.setHTML(a);
-				algDragPanel.clear();
-				algDragPanel.add(new Label(HTMLb4JavaScript.toString()));
-				//algDragPanel.add(algDragHTML);
-				
-				//check the HTML nodes
-				NodeList<Node> thirdNodeList = HTMLb4JavaScript.getElement().getFirstChild().getFirstChild().getChildNodes();
-				String s3 = "";
-				for(int i=0 ; i<thirdNodeList.getLength() ; i++){
-					Node node = thirdNodeList.getItem(i);
-					s3 = s3+ ": "+node.getNodeName()+" "+node.getNodeValue();
-				}
-				Label l3 = new Label(s3);
-				algDragPanel.add(l3);
-				
-				//wrap element in a widget?
-				final Label wraperEl = Label.wrap(HTMLb4JavaScript.getElement());
-				wraperEl.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						wraperEl.setStyleName("selectedVar");
-						
-					}
-				});
+			}
+	    	 
+	     });
+	    
+
 	}
 
 	/**
@@ -329,7 +340,7 @@ public class ScienceGadgets implements EntryPoint {
 	 * display all equations in standard mathematical symbols. This will parse
 	 * every string surrounded by $'s
 	 * <p>
-	 * ex. $ K=1/2mν^2 $
+	 * ex. $ K=1/2mÎ½^2 $
 	 * </p>
 	 * 
 	 * @param element
@@ -339,6 +350,23 @@ public class ScienceGadgets implements EntryPoint {
 		//		$wnd.M.parseMath($doc.body);
 		$wnd.M.parseMath(element);
 	}-*/;
+	
+	class AlgDragEventListener implements EventListener {
+		
+		public void onBrowserEvent(Event event) {
+			Element target = DOM.eventGetCurrentTarget(event);
+			
+			switch (DOM.eventGetType(event)) {
+			case Event.ONMOUSEOVER:
+				target.setClassName("selectedVar");
+				break;
+			case Event.ONMOUSEOUT:
+				target.setClassName("");
+				break;
+				
+			}
+		}
+	}
 
 	/**
 	 * Single selection handler for equation list
