@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -43,7 +44,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.AlgebraManipulation.ElementWrapper;
+import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.AlgebraManipulation.MathMLDropController;
 
 public class ScienceGadgets implements EntryPoint {
@@ -329,10 +330,8 @@ public class ScienceGadgets implements EntryPoint {
 //		DOM.sinkEvents(asd, Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		
 		//wrap mathML element in widget to add handlers
-		final com.google.gwt.dom.client.Element elmnt = HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement();
-		 ElementWrapper wrapper = new ElementWrapper(elmnt);
-		 wrapper.onAttach();
-		 //TODO why doesn't this widget act normal???
+		final com.google.gwt.dom.client.Element elmnt = HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
+		 MLElementWrapper wrapper = new MLElementWrapper(elmnt, true);
 		 wrapper.setStyleName("selectedVar");
 		 
 		 //register handlers for wrapper
