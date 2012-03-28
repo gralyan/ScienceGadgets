@@ -3,6 +3,12 @@ package com.sciencegadgets.client;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.allen_sauer.gwt.dnd.client.DragContext;
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.VetoDragException;
+import com.allen_sauer.gwt.dnd.client.drop.AbsolutePositionDropController;
+import com.allen_sauer.gwt.dnd.client.drop.DropController;
+import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -10,6 +16,8 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -17,6 +25,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
@@ -33,7 +42,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.AlgebraManipulation.ElementWrapper;
+import com.sciencegadgets.client.AlgebraManipulation.MathMLDropController;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -155,7 +166,7 @@ public class ScienceGadgets implements EntryPoint {
 		// /////////////////////////////////////////
 		// experimental
 		// ////////////////////////////////
-
+/*
 		final Button sendButton = new Button("Send");
 
 		RootPanel.get().add(sendButton);
@@ -182,7 +193,7 @@ public class ScienceGadgets implements EntryPoint {
 				Window.alert(result);
 			}
 		});
-	}
+*/	}
 
 	/**
 	 * Gets all the available variables and fills the list
@@ -309,27 +320,44 @@ public class ScienceGadgets implements EntryPoint {
 		algDragPanel.add(l3);
 
 		
-		algDragPanel.add(HTMLb4JavaScript);
-//		
+		AbsolutePanel dragPanel = new AbsolutePanel();
+		dragPanel.add(HTMLb4JavaScript);
+		
+//		the Listener version
 //		Element asd = HTMLb4JavaScript.getElement();
 //		DOM.setEventListener(asd, new AlgDragEventListener());
 //		DOM.sinkEvents(asd, Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		
-		final com.google.gwt.dom.client.Element elmnt = HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
+		//wrap mathML element in widget to add handlers
+		final com.google.gwt.dom.client.Element elmnt = HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement();
 		 ElementWrapper wrapper = new ElementWrapper(elmnt);
 		 wrapper.onAttach();
-	     HandlerRegistration handlerRegistration = wrapper.addClickHandler(new ClickHandler(){
+		 //TODO why doesn't this widget act normal???
+		 wrapper.setStyleName("selectedVar");
+		 
+		 //register handlers for wrapper
+//		 HandlerRegistration handlerRegistration = wrapper.addMouseOverHandler(new MouseOverHandler() {
+//			 @Override
+//			 public void onMouseOver(MouseOverEvent event) {
+//				 Element target = DOM.eventGetCurrentTarget(event.);
+//				 Window.alert("click"+elmnt.getInnerText());				
+//			 }
+//		 });
+		 
+		 dragPanel.setStyleName("gridBox");
+		 RootPanel.get().add(dragPanel);
+	        Label la = new Label("dragme");
+	        Label lb = new Label("000000000000");
+	        dragPanel.add(la, 4, 60);
+	        dragPanel.add(lb, 1, 40);
+	        PickupDragController dragController = new PickupDragController(dragPanel, false);
+	        DropController dropController = new MathMLDropController(lb);
+			dragController.registerDropController(dropController);
 
-			public void onClick(ClickEvent event) {
-				Window.alert("click"+elmnt.getInnerText());
-				
-			}
-	    	 
-	     });
-	    
+//	        dragController.makeDraggable(wrapper);
+	        dragController.makeDraggable(la);
 
 	}
-
 	/**
 	 * JavaScript method in jqMath that would parse the given element and
 	 * display all equations in standard mathematical symbols. This will parse
