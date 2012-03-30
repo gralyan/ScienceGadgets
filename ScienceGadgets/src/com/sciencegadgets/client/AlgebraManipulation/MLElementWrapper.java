@@ -1,28 +1,21 @@
 package com.sciencegadgets.client.AlgebraManipulation;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
-import com.allen_sauer.gwt.dnd.client.HasDragHandle;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasAllMouseHandlers;
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.dom.client.MouseWheelHandler;
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -54,6 +47,28 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 			addMouseOverHandlerDefault();
 			addMouseOutHandlerDefault();
 		}
+	}
+	
+	/**
+	 * Wraps the equation in widgets with handlers. Argument HTML widget must be
+	 * added to the document before making this call
+	 * 
+	 * @param mathML
+	 *            - the equation to be wrapped as mathML in an {@link HTML}
+	 *            widget
+	 */
+	public static List<MLElementWrapper> wrapEquation(HTML mathML) {
+		List<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
+		
+		NodeList<com.google.gwt.dom.client.Element> elementList = mathML
+				.getElement().getElementsByTagName("mi");
+		
+		for (int i = 0; i < elementList.getLength(); i++) {
+			MLElementWrapper wrap = new MLElementWrapper(
+					elementList.getItem(i), true);
+			wrappers.add(wrap);
+		}
+		return wrappers;
 	}
 
 	/**
@@ -136,7 +151,7 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 	// Inner Class Handlers
 	// //////////////////////
 	class ElementOverHandler implements MouseOverHandler {
-		String colorOnOver = "#9999ff";
+		String colorOnOver = "blue";
 
 		/**
 		 * MouseOverHandler for elements with default highlight background color
@@ -158,7 +173,7 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 	}
 
 	class ElementOutHandler implements MouseOutHandler {
-		String colorOnOver = "#ffffff";
+		String colorOnOver = "white";
 
 		/**
 		 * MouseOutHandler for elements with default return background color

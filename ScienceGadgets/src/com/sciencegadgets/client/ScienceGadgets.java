@@ -2,8 +2,12 @@ package com.sciencegadgets.client;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
+import com.allen_sauer.gwt.dnd.client.DragContext;
+import com.allen_sauer.gwt.dnd.client.DragController;
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -35,6 +39,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.AlgebraManipulation.EquationTree;
+import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -51,7 +56,7 @@ public class ScienceGadgets implements EntryPoint {
 	private Label labelSumEq = new Label("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
-	private HorizontalPanel algebraPanel =new HorizontalPanel();
+	private HorizontalPanel algebraPanel = new HorizontalPanel();
 	private ListBox varBox;
 	private ListBox funBox;
 	private TextBox coefBox;
@@ -153,7 +158,7 @@ public class ScienceGadgets implements EntryPoint {
 		algOut.setStyleName("algOutPanel");
 		spAlg.setStyleName("algOutPanel");
 		algDragPanel.setStyleName("algDragPanel");
-		//eqTreePanel.setStyleName("treePanel");
+		// eqTreePanel.setStyleName("treePanel");
 		spTree.setStyleName("treePanel");
 
 		// make it pretty
@@ -211,13 +216,13 @@ public class ScienceGadgets implements EntryPoint {
 	private void onVarSelect(Set<String> varSet) {
 		String eqHTML;
 		String[] eqList = data.getEquationsByVariables(varSet);
-		sumGrid.clear();
 
 		// selectedEqElement.setClassName("");
 		// selectedEqElement = null;
 
 		eqGrid.resizeRows(eqList.length);
 
+		sumGrid.clear();
 		for (int i = 0; i < eqList.length; i++) {
 			eqHTML = "<span style=\"cursor:pointer;width:10em;\">$" + eqList[i]
 					+ "$</span>";
@@ -236,7 +241,6 @@ public class ScienceGadgets implements EntryPoint {
 	 * @param equation
 	 */
 	private void onEqSelect(String equation) {
-
 		// Initial AlgOut line
 		labelSumEq.setText("$" + equation + "$");
 		algOut.clear(true);
@@ -248,12 +252,22 @@ public class ScienceGadgets implements EntryPoint {
 		HTML draggableEquation = new HTML();
 		draggableEquation.setHTML("$" + equation + "$");
 		parseJQMath(draggableEquation.getElement());
-		DOM.setElementAttribute((Element) draggableEquation.getElement().getFirstChildElement(),
-				"mathsize", "300%");
+		// The main mathML element is fmath in chrome, math in firefox
+		Element draggableEquationElement = (Element) draggableEquation
+				.getElement().getElementsByTagName("math").getItem(0);
+		if (draggableEquationElement == null) {
+			draggableEquationElement = (Element) draggableEquation.getElement()
+					.getElementsByTagName("fmath").getItem(0);
+		}
+		DOM.setElementAttribute(draggableEquationElement, "mathsize", "300%");
 		algDragPanel.clear();
 		algDragPanel.add(draggableEquation);
-		EquationTree.wrapEquation(draggableEquation);
-
+		PickupDragController dragC = new PickupDragController(algDragPanel, true);
+		List<MLElementWrapper> wrappers = MLElementWrapper.wrapEquation(draggableEquation);
+		//for(MLElementWrapper wrap : wrappers){
+			dragC.makeDraggable(draggableEquation);
+		//}
+		
 		// make EquationTree
 		EquationTree eqTree = new EquationTree(draggableEquation);
 		eqTreePanel.clear();
@@ -280,7 +294,7 @@ public class ScienceGadgets implements EntryPoint {
 		for (String var : variables) {
 			varHTML = "<span class=\"var\">$" + var + "$ </span>";
 			try {
-				descHTML = "<span class=\"varName\">$"
+				descHTML = "<span>$"
 						+ data.getAttribute(data.FLAG_VARIABLE_DESCRIPTION, var)
 						+ "$</span>";
 			} catch (ElementNotFoundExeption e) {
@@ -347,26 +361,8 @@ public class ScienceGadgets implements EntryPoint {
 	 *            - the web element to parse as math
 	 */
 	static native void parseJQMath(Element element) /*-{
-		//		$wnd.M.parseMath($doc.body);
 		$wnd.M.parseMath(element);
 	}-*/;
-
-	class AlgDragEventListener implements EventListener {
-
-		public void onBrowserEvent(Event event) {
-			Element target = DOM.eventGetCurrentTarget(event);
-
-			switch (DOM.eventGetType(event)) {
-			case Event.ONMOUSEOVER:
-				target.setClassName("selectedVar");
-				break;
-			case Event.ONMOUSEOUT:
-				target.setClassName("");
-				break;
-
-			}
-		}
-	}
 
 	/**
 	 * Single selection handler for equation list
@@ -392,12 +388,15 @@ public class ScienceGadgets implements EntryPoint {
 					}
 					el.setId("selectedEq");
 				}
-				// parse HTML to get appropriate equation
-				String html = clickedCell.getElement().getInnerHTML();
-				int beginIndex = html.indexOf("<math alttext=\"") + 15;
-				int endIndex = html.indexOf("\">", beginIndex);
-				String equation = html.substring(beginIndex, endIndex);
+				Element element = (Element) clickedCell.getElement()
+							.getElementsByTagName("math").getItem(0);
+				if (element == null) {
+					Window.alert("Your browser may not show everything correctly. Try another browser");
+				element = (Element) clickedCell.getElement()
+						.getElementsByTagName("fmath").getItem(0);
+				}
 
+				String equation = DOM.getElementAttribute(element, "alttext");
 				onEqSelect(equation);
 			}
 		}
@@ -461,7 +460,7 @@ public class ScienceGadgets implements EntryPoint {
 
 		public void onClick(ClickEvent event) {
 			if (multiSwitch.getValue()) {
-				// turning multi on
+				// turning Multi-Select on
 				com.google.gwt.dom.client.Element el = Document.get()
 						.getElementById("selectedVar");
 				if (el != null) {
