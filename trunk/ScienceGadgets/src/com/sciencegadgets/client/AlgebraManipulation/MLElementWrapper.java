@@ -61,7 +61,8 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 	 */
 	public void onAttach() {
 		super.onAttach();
-		RootPanel.detachOnWindowClose(this);
+		//not for children of other widgets
+		//RootPanel.detachOnWindowClose(this);
 	}
 
 	// /////////////////////

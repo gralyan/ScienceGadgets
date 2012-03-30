@@ -1,8 +1,10 @@
 package com.sciencegadgets.client.AlgebraManipulation;
 
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TreeItem;
 
-public class EquationTreeNode {
+public class EquationTreeNode extends TreeItem {
 	Label value;
 	EquationTreeNode nextSibling = null;
 	EquationTreeNode firstChild = null;
@@ -10,29 +12,12 @@ public class EquationTreeNode {
 	EquationTreeNode(String value){
 		this.value = new Label(value);
 	}
+	EquationTreeNode(Node node){
+		this(node.getNodeName()+"-"+node.getNodeValue());
+	}
 
 	EquationTreeNode(Label value){
 		this.value = value;
 	}
-	
-	EquationTreeNode getNextSibling(){
-		return nextSibling;
-	}
-	
-	EquationTreeNode getFirstChild(){
-		return firstChild;
-	}
-	void setNextSibling(String nextSiblingValue){
-		this.nextSibling = new EquationTreeNode(nextSiblingValue);
-	}
-	void setNextSibling(Label nextSiblingValue){
-		this.nextSibling = new EquationTreeNode(nextSiblingValue);
-	}
-	
-	void setFirstChild(String firstChildValue){
-		this.firstChild = new EquationTreeNode(firstChildValue);
-	}
-	void setFirstChild(Label firstChildValue){
-		this.firstChild = new EquationTreeNode(firstChildValue);
-	}
+
 }

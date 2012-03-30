@@ -1,36 +1,25 @@
 package com.sciencegadgets.client;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import com.allen_sauer.gwt.dnd.client.DragContext;
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
-import com.allen_sauer.gwt.dnd.client.VetoDragException;
-import com.allen_sauer.gwt.dnd.client.drop.AbsolutePositionDropController;
-import com.allen_sauer.gwt.dnd.client.drop.DropController;
-import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -42,10 +31,10 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
-import com.sciencegadgets.client.AlgebraManipulation.MathMLDropController;
+import com.sciencegadgets.client.AlgebraManipulation.EquationTree;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -62,13 +51,14 @@ public class ScienceGadgets implements EntryPoint {
 	private Label labelSumEq = new Label("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
-	private VerticalPanel algebraPanel;
+	private HorizontalPanel algebraPanel =new HorizontalPanel();
 	private ListBox varBox;
-	private ScrollPanel spAlg;
 	private ListBox funBox;
 	private TextBox coefBox;
-	private VerticalPanel algDragPanel = new VerticalPanel();
+	private AbsolutePanel algDragPanel = new AbsolutePanel();
 	private HTML algDragHTML = new HTML();
+	private AbsolutePanel eqTreePanel = new AbsolutePanel();
+	private ScrollPanel spAlg = new ScrollPanel(algOut);
 
 	public void onModuleLoad() {
 
@@ -102,6 +92,8 @@ public class ScienceGadgets implements EntryPoint {
 
 		// Assemble browserPanel
 		HorizontalPanel browserPanel = new HorizontalPanel();
+		browserPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		browserPanel.add(vpVar);
 		browserPanel.add(vpEq);
 		browserPanel.add(vpSum);
@@ -132,17 +124,15 @@ public class ScienceGadgets implements EntryPoint {
 		algMenuPanel.add(toBothSides);
 
 		// Assemble Algebra panel
-		algebraPanel = new VerticalPanel();
-		algebraPanel.setStylePrimaryName("albebraPanel");
-		algOut.setWidth("40em");
-		spAlg = new ScrollPanel(algOut);
-		spAlg.setHeight("5em");
-		algebraPanel.add(spAlg);
-		// algebraPanel.add(algMenuPanel);
-		// ///////////////////////////////
-		// experimental
-		algebraPanel.add(algDragPanel);
-		// ////////////////////////////////
+		algebraPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		algebraPanel.setStyleName("albebraPanel");
+		VerticalPanel AlgebraVerticalPanel = new VerticalPanel();
+		AlgebraVerticalPanel.add(spAlg);
+		AlgebraVerticalPanel.add(algDragPanel);
+		algebraPanel.add(AlgebraVerticalPanel);
+		ScrollPanel spTree = new ScrollPanel(eqTreePanel);
+		algebraPanel.add(spTree);
 
 		RootPanel.get().add(browserPanel);
 		RootPanel.get().add(algebraPanel);
@@ -160,6 +150,12 @@ public class ScienceGadgets implements EntryPoint {
 		labelEq.setStylePrimaryName("rowHeader");
 		labelSum.setStylePrimaryName("rowHeader");
 
+		algOut.setStyleName("algOutPanel");
+		spAlg.setStyleName("algOutPanel");
+		algDragPanel.setStyleName("algDragPanel");
+		//eqTreePanel.setStyleName("treePanel");
+		spTree.setStyleName("treePanel");
+
 		// make it pretty
 		parseJQMath(varGrid.getElement());
 		parseJQMath(eqGrid.getElement());
@@ -167,34 +163,24 @@ public class ScienceGadgets implements EntryPoint {
 		// /////////////////////////////////////////
 		// experimental
 		// ////////////////////////////////
-/*
-		final Button sendButton = new Button("Send");
-
-		RootPanel.get().add(sendButton);
-		RootPanel.get().add(new EquationWriter());
-
-		ClickHandler handler = new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				sendNameToServer();
-			}
-		};
-
-		sendButton.addClickHandler(handler);
-	}
-
-	private void sendNameToServer() {
-		String textToServer = "JOHN";
-
-		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
-			public void onFailure(Throwable caught) {
-				Window.alert("FAIL");
-			}
-
-			public void onSuccess(String result) {
-				Window.alert(result);
-			}
-		});
-*/	}
+		/*
+		 * final Button sendButton = new Button("Send");
+		 * 
+		 * RootPanel.get().add(sendButton); RootPanel.get().add(new
+		 * EquationWriter());
+		 * 
+		 * ClickHandler handler = new ClickHandler() { public void
+		 * onClick(ClickEvent event) { sendNameToServer(); } };
+		 * 
+		 * sendButton.addClickHandler(handler); }
+		 * 
+		 * private void sendNameToServer() { String textToServer = "JOHN";
+		 * 
+		 * greetingService.greetServer(textToServer, new AsyncCallback<String>()
+		 * { public void onFailure(Throwable caught) { Window.alert("FAIL"); }
+		 * 
+		 * public void onSuccess(String result) { Window.alert(result); } });
+		 */}
 
 	/**
 	 * Gets all the available variables and fills the list
@@ -222,7 +208,7 @@ public class ScienceGadgets implements EntryPoint {
 	 * @param varSet
 	 *            - set of variables
 	 */
-	private void fillEqGrid(Set<String> varSet) {
+	private void onVarSelect(Set<String> varSet) {
 		String eqHTML;
 		String[] eqList = data.getEquationsByVariables(varSet);
 		sumGrid.clear();
@@ -249,7 +235,35 @@ public class ScienceGadgets implements EntryPoint {
 	 * 
 	 * @param equation
 	 */
-	private void fillSum(String equation) {
+	private void onEqSelect(String equation) {
+
+		// Initial AlgOut line
+		labelSumEq.setText("$" + equation + "$");
+		algOut.clear(true);
+		algOut.resizeRows(1);
+		algOut.setWidget(0, 0, labelSumEq);
+		parseJQMath(labelSumEq.getElement());
+
+		// make algebra manipulator
+		HTML draggableEquation = new HTML();
+		draggableEquation.setHTML("$" + equation + "$");
+		parseJQMath(draggableEquation.getElement());
+		DOM.setElementAttribute((Element) draggableEquation.getElement().getFirstChildElement(),
+				"mathsize", "300%");
+		algDragPanel.clear();
+		algDragPanel.add(draggableEquation);
+		EquationTree.wrapEquation(draggableEquation);
+
+		// make EquationTree
+		EquationTree eqTree = new EquationTree(draggableEquation);
+		eqTreePanel.clear();
+		eqTreePanel.add(eqTree);
+		Iterator<TreeItem> it = eqTree.treeItemIterator();
+		while (it.hasNext()) {
+			it.next().setState(true, false);
+		}
+
+		// fill variable summary
 		String[] variables;
 		try {
 			variables = data.getVariablesByEquation(equation);
@@ -262,14 +276,6 @@ public class ScienceGadgets implements EntryPoint {
 
 		sumGrid.clear(true);
 		sumGrid.resizeRows(variables.length);
-
-		labelSumEq.setText("$" + equation + "$");
-		algOut.clear(true);
-		algOut.resizeRows(1);
-		algOut.setWidget(0, 0, labelSumEq);
-		parseJQMath(labelSumEq.getElement());
-
-		createAlg(equation);
 
 		for (String var : variables) {
 			varHTML = "<span class=\"var\">$" + var + "$ </span>";
@@ -286,77 +292,49 @@ public class ScienceGadgets implements EntryPoint {
 			sumGrid.setHTML(row, 1, descHTML);
 			row++;
 		}
-
 		parseJQMath(sumGrid.getElement());
+
+		// Fill varBox (algebra menu)
 		varBox.clear();
 		varBox.addItem("");
 		for (int i = 0; i < sumGrid.getRowCount(); i++) {
 			varBox.addItem(variables[i]);
 		}
-
 		parseJQMath(varBox.getElement());
 	}
 
 	/**
 	 * Takes the equation, parses into MathML, adds JavaScript handlers
 	 */
-	void createAlg(String equation) {
-		HTML HTMLb4JavaScript = new HTML();
-		HTMLb4JavaScript.setHTML("$" + equation + "$");
-		parseJQMath(HTMLb4JavaScript.getElement());
+	void createAlgBox(String equation) {
+		// the Listener version
+		// Element asd = HTMLb4JavaScript.getElement();
+		// DOM.setEventListener(asd, new AlgDragEventListener());
+		// DOM.sinkEvents(asd, Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 
-		algDragPanel.clear();
-		algDragPanel.add(new Label(HTMLb4JavaScript.toString()));
-		// algDragPanel.add(algDragHTML);
+		// wrap mathML element in widget to add handlers
+		// final com.google.gwt.dom.client.Element elmnt =
+		// HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
 
-		// check the HTML nodes
-		NodeList<Node> thirdNodeList = HTMLb4JavaScript.getElement()
-				.getFirstChild().getFirstChild().getChildNodes();
-		String s3 = "";
-		for (int i = 0; i < thirdNodeList.getLength(); i++) {
-			Node node = thirdNodeList.getItem(i);
-			s3 = s3 + ": " + node.getNodeName() + " " + node.getNodeValue();
-		}
-		Label l3 = new Label(s3);
-		algDragPanel.add(l3);
+		// register handlers for wrapper
+		// HandlerRegistration handlerRegistration =
+		// wrapper.addMouseOverHandler(new MouseOverHandler() {
+		// @Override
+		// public void onMouseOver(MouseOverEvent event) {
+		// Element target = DOM.eventGetCurrentTarget(event.);
+		// Window.alert("click"+elmnt.getInnerText());
+		// }
+		// });
 
-		
-		AbsolutePanel dragPanel = new AbsolutePanel();
-		dragPanel.add(HTMLb4JavaScript);
-		
-//		the Listener version
-//		Element asd = HTMLb4JavaScript.getElement();
-//		DOM.setEventListener(asd, new AlgDragEventListener());
-//		DOM.sinkEvents(asd, Event.ONMOUSEOVER | Event.ONMOUSEOUT);
-		
-		//wrap mathML element in widget to add handlers
-		final com.google.gwt.dom.client.Element elmnt = HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
-		 MLElementWrapper wrapper = new MLElementWrapper(elmnt, true);
-		 wrapper.setStyleName("selectedVar");
-		 
-		 //register handlers for wrapper
-//		 HandlerRegistration handlerRegistration = wrapper.addMouseOverHandler(new MouseOverHandler() {
-//			 @Override
-//			 public void onMouseOver(MouseOverEvent event) {
-//				 Element target = DOM.eventGetCurrentTarget(event.);
-//				 Window.alert("click"+elmnt.getInnerText());				
-//			 }
-//		 });
-		 
-		 dragPanel.setStyleName("gridBox");
-		 RootPanel.get().add(dragPanel);
-	        Label la = new Label("dragme");
-	        Label lb = new Label("000000000000");
-	        dragPanel.add(la, 4, 60);
-	        dragPanel.add(lb, 1, 40);
-	        PickupDragController dragController = new PickupDragController(dragPanel, false);
-	        DropController dropController = new MathMLDropController(lb);
-			dragController.registerDropController(dropController);
+		// PickupDragController dragController = new PickupDragController(
+		// dragPanel, false);
+		// DropController dropController = new MathMLDropController(lb);
+		// dragController.registerDropController(dropController);
 
-//	        dragController.makeDraggable(wrapper);
-	        dragController.makeDraggable(la);
+		// dragController.makeDraggable(la);
 
 	}
+
 	/**
 	 * JavaScript method in jqMath that would parse the given element and
 	 * display all equations in standard mathematical symbols. This will parse
@@ -372,12 +350,12 @@ public class ScienceGadgets implements EntryPoint {
 		//		$wnd.M.parseMath($doc.body);
 		$wnd.M.parseMath(element);
 	}-*/;
-	
+
 	class AlgDragEventListener implements EventListener {
-		
+
 		public void onBrowserEvent(Event event) {
 			Element target = DOM.eventGetCurrentTarget(event);
-			
+
 			switch (DOM.eventGetType(event)) {
 			case Event.ONMOUSEOVER:
 				target.setClassName("selectedVar");
@@ -385,7 +363,7 @@ public class ScienceGadgets implements EntryPoint {
 			case Event.ONMOUSEOUT:
 				target.setClassName("");
 				break;
-				
+
 			}
 		}
 	}
@@ -420,7 +398,7 @@ public class ScienceGadgets implements EntryPoint {
 				int endIndex = html.indexOf("\">", beginIndex);
 				String equation = html.substring(beginIndex, endIndex);
 
-				fillSum(equation);
+				onEqSelect(equation);
 			}
 		}
 	}
@@ -469,7 +447,7 @@ public class ScienceGadgets implements EntryPoint {
 				sumGrid.clear(true);
 				labelSumEq.setText("");
 				algOut.clear(true);
-				fillEqGrid(selectedVars);
+				onVarSelect(selectedVars);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
 				if (prevSel != null) {
