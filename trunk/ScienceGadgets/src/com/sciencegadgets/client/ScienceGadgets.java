@@ -167,11 +167,11 @@ public class ScienceGadgets implements EntryPoint {
 		final Button sendButton = new Button("Send");
 
 		RootPanel.get().add(sendButton);
-		RootPanel.get().add(new EquationWriter());
+		//RootPanel.get().add(new EquationWriter());
 
 		ClickHandler handler = new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				sendNameToServer();
+			//	sendNameToServer();
 			}
 		};
 
@@ -269,16 +269,17 @@ public class ScienceGadgets implements EntryPoint {
 		algDragPanel.add(draggableEquation);
 		PickupDragController dragC = new PickupDragController(algDragPanel,
 				true);
-		List<MLElementWrapper> wrappers = MLElementWrapper
-				.wrapEquation(draggableEquation);
+		//List<MLElementWrapper> wrappers = MLElementWrapper
+		//		.wrapEquation(draggableEquation);
 		//dragC.makeDraggable(draggableEquation);
-		for(MLElementWrapper wrap : wrappers){
-		Window.alert(wrap.toString());
+		//for(MLElementWrapper wrap : wrappers){
+		//Window.alert(wrap.toString());
 			//dragC.makeDraggable(wrap);
-		 }
+		// }
 
 		// make EquationTree
 		EquationTree eqTree = new EquationTree(draggableEquation);
+		parseJQMath(eqTreePanel.getElement());
 		eqTreePanel.clear();
 		eqTreePanel.add(eqTree);
 		Iterator<TreeItem> it = eqTree.treeItemIterator();

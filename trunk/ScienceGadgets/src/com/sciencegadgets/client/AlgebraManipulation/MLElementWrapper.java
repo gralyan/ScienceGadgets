@@ -51,18 +51,18 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 	}
 	
 	/**
-	 * Wraps the equation in widgets with handlers. Argument HTML widget must be
+	 * Wraps all elements of a given tag name within an HTML widget in their own widgets in order to add handlers. Argument HTML widget must be
 	 * added to the document before making this call
 	 * 
 	 * @param mathML
 	 *            - the equation to be wrapped as mathML in an {@link HTML}
 	 *            widget
 	 */
-	public static List<MLElementWrapper> wrapEquation(HTML mathML) {
+	public static List<MLElementWrapper> wrapAll(HTML html, String Tag) {
 		List<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
 		
-		NodeList<com.google.gwt.dom.client.Element> elementList = mathML
-				.getElement().getElementsByTagName("mi");
+		NodeList<com.google.gwt.dom.client.Element> elementList = html
+				.getElement().getElementsByTagName(Tag);
 		
 		for (int i = 0; i < elementList.getLength(); i++) {
 			MLElementWrapper wrap = new MLElementWrapper(
