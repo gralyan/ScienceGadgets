@@ -41,7 +41,9 @@ public class EquationTree extends Tree {
 		NodeList<Node> fromMLchildren = fromMLN.getChildNodes();
 		LinkedList<Element> fromMLchildrenEl = new LinkedList<Element>();
 		List<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
-		TreeItem toETNchild;
+				// If this child doesn't get added to the tree, add the new
+				// children to the last TreeItem
+		TreeItem toETNchild = toETN;
 		MLElementWrapper wrap;
 
 		// First get all the child nodes and cast them as Elements
@@ -51,16 +53,13 @@ public class EquationTree extends Tree {
 		// Then add each child to the tree and wrap them in a MLElementWrapper
 		// widget
 		for (int i = 0; i < fromMLchildrenEl.size(); i++) {
-			if (fromMLchildrenEl.get(i).getTagName().equals("row")) {
+			
+			//if (fromMLchildrenEl.get(i).getTagName().equals("mrow")) {
 				wrap = new MLElementWrapper(fromMLchildrenEl.get(i), true);
 				wrappers.add(wrap);
 				toETNchild = toETN.addItem(wrap);// "$" + wrap.toString() +
 													// "$");
-			} else {
-				// If this child doesn't get added to the tree, add the new
-				// children to the last TreeItem
-				toETNchild = toETN;
-			}
+			//}
 			// Recursively call this method for each child
 			addChildren(fromMLchildrenEl.get(i), toETNchild);
 		}
