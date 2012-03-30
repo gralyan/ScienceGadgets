@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.allen_sauer.gwt.dnd.client.DragContext;
-import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -15,13 +13,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -37,7 +33,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.AlgebraManipulation.EquationTree;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 
@@ -168,24 +163,34 @@ public class ScienceGadgets implements EntryPoint {
 		// /////////////////////////////////////////
 		// experimental
 		// ////////////////////////////////
-		/*
-		 * final Button sendButton = new Button("Send");
-		 * 
-		 * RootPanel.get().add(sendButton); RootPanel.get().add(new
-		 * EquationWriter());
-		 * 
-		 * ClickHandler handler = new ClickHandler() { public void
-		 * onClick(ClickEvent event) { sendNameToServer(); } };
-		 * 
-		 * sendButton.addClickHandler(handler); }
-		 * 
-		 * private void sendNameToServer() { String textToServer = "JOHN";
-		 * 
-		 * greetingService.greetServer(textToServer, new AsyncCallback<String>()
-		 * { public void onFailure(Throwable caught) { Window.alert("FAIL"); }
-		 * 
-		 * public void onSuccess(String result) { Window.alert(result); } });
-		 */}
+
+		final Button sendButton = new Button("Send");
+
+		RootPanel.get().add(sendButton);
+		RootPanel.get().add(new EquationWriter());
+
+		ClickHandler handler = new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				sendNameToServer();
+			}
+		};
+
+		sendButton.addClickHandler(handler);
+	}
+
+	private void sendNameToServer() {
+		String textToServer = "JOHN";
+
+		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				Window.alert("FAIL");
+			}
+
+			public void onSuccess(String result) {
+				Window.alert(result);
+			}
+		});
+	}
 
 	/**
 	 * Gets all the available variables and fills the list
@@ -262,12 +267,16 @@ public class ScienceGadgets implements EntryPoint {
 		DOM.setElementAttribute(draggableEquationElement, "mathsize", "300%");
 		algDragPanel.clear();
 		algDragPanel.add(draggableEquation);
-		PickupDragController dragC = new PickupDragController(algDragPanel, true);
-		List<MLElementWrapper> wrappers = MLElementWrapper.wrapEquation(draggableEquation);
-		//for(MLElementWrapper wrap : wrappers){
-			dragC.makeDraggable(draggableEquation);
-		//}
-		
+		PickupDragController dragC = new PickupDragController(algDragPanel,
+				true);
+		List<MLElementWrapper> wrappers = MLElementWrapper
+				.wrapEquation(draggableEquation);
+		//dragC.makeDraggable(draggableEquation);
+		for(MLElementWrapper wrap : wrappers){
+		Window.alert(wrap.toString());
+			//dragC.makeDraggable(wrap);
+		 }
+
 		// make EquationTree
 		EquationTree eqTree = new EquationTree(draggableEquation);
 		eqTreePanel.clear();
@@ -389,11 +398,11 @@ public class ScienceGadgets implements EntryPoint {
 					el.setId("selectedEq");
 				}
 				Element element = (Element) clickedCell.getElement()
-							.getElementsByTagName("math").getItem(0);
+						.getElementsByTagName("math").getItem(0);
 				if (element == null) {
 					Window.alert("Your browser may not show everything correctly. Try another browser");
-				element = (Element) clickedCell.getElement()
-						.getElementsByTagName("fmath").getItem(0);
+					element = (Element) clickedCell.getElement()
+							.getElementsByTagName("fmath").getItem(0);
 				}
 
 				String equation = DOM.getElementAttribute(element, "alttext");
