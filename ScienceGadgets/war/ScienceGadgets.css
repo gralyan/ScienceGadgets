@@ -11,10 +11,27 @@ body {
 }
 .albebraPanel {
 	border: 1px solid silver;
-	padding: 2px;
-	margin:6px;
+	padding: 0px;
+	margin:0px;
+	height: 30em;
+	width: 40em;
+}
+.algOutPanel{
 	height: 20em;
-	width: 20em;
+	width: 30em;
+		text-align: center;
+		
+}
+.algDragPanel{
+	height: 10em;
+	width: 30em;
+	border: 1px solid silver;
+	text-align: center;
+}
+.treePanel{
+	height: 30em;
+	width: 20em;	
+		border: 1px solid silver;
 }
 .sp{
 	height: 15em;
