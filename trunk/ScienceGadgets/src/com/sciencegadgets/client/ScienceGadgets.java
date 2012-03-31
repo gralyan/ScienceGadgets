@@ -9,6 +9,7 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
@@ -270,30 +271,35 @@ public class ScienceGadgets implements EntryPoint {
 		algDragPanel.add(draggableEquation);
 		PickupDragController dragC = new PickupDragController(algDragPanel,
 				true);
-		
+
 		// Make EquationTree
 		EquationTree eqTree = new EquationTree(draggableEquation);
-		
-		//////////////////////////////
-		///////TODO experimental draggable overlays
-		int left = eqTree.wrappers.get(0).getAbsoluteLeft() - algDragPanel.getAbsoluteLeft();
-		int top = eqTree.wrappers.get(0).getAbsoluteTop() -  algDragPanel.getAbsoluteTop();
-		AbsolutePanel a = new AbsolutePanel();
-		a.setStyleName("selectedVar");
-		a.setWidth("2em");
-		a.setHeight("2em");
-		algDragPanel.add(a, left, top);
-		
-		
 		eqTreePanel.clear();
 		eqTreePanel.add(eqTree);
-		
+
 		Iterator<TreeItem> it = eqTree.treeItemIterator();
 		while (it.hasNext()) {
 			TreeItem nextTreeItem = it.next();
 			nextTreeItem.setState(true, false);
 			parseJQMath(nextTreeItem.getElement());
 		}
+		//Make draggable overlays on the equation
+		//for (MLElementWrapper wrap : eqTree.wrappers) {
+		NodeList<com.google.gwt.dom.client.Element> els = draggableEquation.getElement().getElementsByTagName("mi");
+		for (int i=0 ; i<els.getLength() ; i++) {
+			com.google.gwt.dom.client.Element wrap = els.getItem(i);
+			int left = wrap.getAbsoluteLeft() - algDragPanel.getAbsoluteLeft();
+			int top = wrap.getAbsoluteTop() - algDragPanel.getAbsoluteTop();
+			AbsolutePanel overLay = new AbsolutePanel();
+			overLay.setStyleName("selectedVar");
+			//TODO get the right dimensions
+			overLay.setWidth(wrap.getOffsetWidth() + "px");
+			overLay.setHeight(wrap.getOffsetHeight() + "px");
+			Window.alert("height: "+wrap.getOffsetHeight() + "px" +"\nwidth: "+ wrap.getOffsetWidth() + "px");
+			algDragPanel.add(overLay, left, top);
+		}
+
+
 
 		// fill variable summary
 		String[] variables;
