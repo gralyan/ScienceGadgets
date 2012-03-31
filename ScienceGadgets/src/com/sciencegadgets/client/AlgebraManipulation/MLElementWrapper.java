@@ -7,6 +7,9 @@ import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.dom.client.DragStartEvent;
+import com.google.gwt.event.dom.client.DragStartHandler;
+import com.google.gwt.event.dom.client.HasDragStartHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -15,6 +18,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,9 +30,10 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
-		HasMouseOverHandlers {
+		HasMouseOverHandlers, HasDragStartHandlers {
 
 	PickupDragController dragController = null;
+	private Element element = null;
 
 	/**
 	 * Construct that takes care of all the nuisances of wrapping an element in
@@ -40,13 +45,20 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 	 *            - if true, add the default {@link MouseOverHandler} and
 	 *            {@link MouseOutHandler}
 	 */
-	public MLElementWrapper(Element theElement, Boolean addDefaultMouseOverOut) {
+	public MLElementWrapper(Element theElement, Boolean addDefaultMouseOverOutHandler, Boolean addDefaultDragHandlers) {
 		setElement(theElement);
 		onAttach();
-		if (addDefaultMouseOverOut) {
+		element = theElement;
+		if (addDefaultMouseOverOutHandler) {
 			addMouseOverHandlerDefault();
 			addMouseOutHandlerDefault();
 		}
+		if(addDefaultDragHandlers){
+			addDragStartHandlerDefault();
+	}}
+	
+	public Element getElementWrapped(){
+		return element;
 	}
 	
 	/**
@@ -65,7 +77,7 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 		
 		for (int i = 0; i < elementList.getLength(); i++) {
 			MLElementWrapper wrap = new MLElementWrapper(
-					elementList.getItem(i), true);
+					elementList.getItem(i), true, true);
 			wrappers.add(wrap);
 		}
 		return wrappers;
@@ -100,6 +112,16 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
+	}
+	
+	// TODO experimental 
+	
+	public HandlerRegistration addDragStartHandlerDefault(){
+		return addDragStartHandler(new ElementDragStartHandler());
+	}
+	@Override
+	public HandlerRegistration addDragStartHandler(DragStartHandler handler){
+		return addDomHandler(handler, DragStartEvent.getType());
 	}
 
 	/**
@@ -147,9 +169,9 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 //		return dropCtrl;
 //	}
 
-	// //////////////////////////
+	// ////////////////////////////////////////////////////////////////////////////////////
 	// Inner Class Handlers
-	// //////////////////////
+	// /////////////////////////////////////////////////////////////////////////////////////
 	class ElementOverHandler implements MouseOverHandler {
 		String colorOnOver = "blue";
 
@@ -194,6 +216,17 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 					"mathbackground", colorOnOver);
 		}
 	}
+	
+	class ElementDragStartHandler implements DragStartHandler{
+
+		@Override
+		public void onDragStart(DragStartEvent event) {
+			//TODO just checking
+			Window.alert("drag started");
+			
+		}
+		
+	}
 	/**
 	 * 
 	 * Exception to be thrown when there is no drag controller on widget
@@ -210,4 +243,5 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 		super(s);
 	    }
 	}
+
 }
