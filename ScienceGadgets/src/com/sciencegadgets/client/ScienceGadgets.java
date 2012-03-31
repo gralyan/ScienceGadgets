@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
+import com.google.gwt.user.client.ui.ListenerWrapper.WrappedChangeListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -167,11 +168,11 @@ public class ScienceGadgets implements EntryPoint {
 		final Button sendButton = new Button("Send");
 
 		RootPanel.get().add(sendButton);
-		//RootPanel.get().add(new EquationWriter());
+		// RootPanel.get().add(new EquationWriter());
 
 		ClickHandler handler = new ClickHandler() {
 			public void onClick(ClickEvent event) {
-			//	sendNameToServer();
+				// sendNameToServer();
 			}
 		};
 
@@ -269,22 +270,29 @@ public class ScienceGadgets implements EntryPoint {
 		algDragPanel.add(draggableEquation);
 		PickupDragController dragC = new PickupDragController(algDragPanel,
 				true);
-		//List<MLElementWrapper> wrappers = MLElementWrapper
-		//		.wrapEquation(draggableEquation);
-		//dragC.makeDraggable(draggableEquation);
-		//for(MLElementWrapper wrap : wrappers){
-		//Window.alert(wrap.toString());
-			//dragC.makeDraggable(wrap);
-		// }
-
-		// make EquationTree
+		
+		// Make EquationTree
 		EquationTree eqTree = new EquationTree(draggableEquation);
-		parseJQMath(eqTreePanel.getElement());
+		
+		//////////////////////////////
+		///////TODO experimental draggable overlays
+		int left = eqTree.wrappers.get(0).getAbsoluteLeft() - algDragPanel.getAbsoluteLeft();
+		int top = eqTree.wrappers.get(0).getAbsoluteTop() -  algDragPanel.getAbsoluteTop();
+		AbsolutePanel a = new AbsolutePanel();
+		a.setStyleName("selectedVar");
+		a.setWidth("2em");
+		a.setHeight("2em");
+		algDragPanel.add(a, left, top);
+		
+		
 		eqTreePanel.clear();
 		eqTreePanel.add(eqTree);
+		
 		Iterator<TreeItem> it = eqTree.treeItemIterator();
 		while (it.hasNext()) {
-			it.next().setState(true, false);
+			TreeItem nextTreeItem = it.next();
+			nextTreeItem.setState(true, false);
+			parseJQMath(nextTreeItem.getElement());
 		}
 
 		// fill variable summary
