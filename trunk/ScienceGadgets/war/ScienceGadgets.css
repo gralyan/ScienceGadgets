@@ -42,13 +42,16 @@ body {
 	border-bottom-color:silver;
 	border-bottom-style:solid;
 	border-bottom-width:thin;
-	cursor: default;
 	background-color: #eeeeee;
 	text-align: center;
 }
 .selectedVar{
 	background-color: #9999ff;
+}
+.draggableOverlay{
+	background-color: #9999ff;
 	cursor: move;
+	opacity:0.6;
 }
 #selectedVar{
 	background-color: #9999ff;

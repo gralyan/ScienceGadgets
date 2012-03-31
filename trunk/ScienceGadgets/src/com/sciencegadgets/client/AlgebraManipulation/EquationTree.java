@@ -27,7 +27,7 @@ public class EquationTree extends Tree {
 
 		
 		Element firstMLN = mathML.getElement().getFirstChildElement();
-		MLElementWrapper wrap = new MLElementWrapper(firstMLN, true, true);
+		MLElementWrapper wrap = new MLElementWrapper(firstMLN, true);
 		TreeItem firstENT = this.addItem( "$" + wrap.getElementWrapped().getInnerText() + "$");//firstMLN.toString());
 
 		wrappers.add(wrap);
@@ -58,7 +58,7 @@ public class EquationTree extends Tree {
 		for (int i = 0; i < fromMLchildrenEl.size(); i++) {
 		//	TODO condition for fromMLchildrenEl.get(i) to restrict what is wrapped 
 
-				wrap = new MLElementWrapper(fromMLchildrenEl.get(i), true, true);
+				wrap = new MLElementWrapper(fromMLchildrenEl.get(i), true);
 				wrappers.add(wrap);
 				toETNchild = toETN.addItem( "$" + wrap.getElementWrapped().getInnerText() + "$");
 			
