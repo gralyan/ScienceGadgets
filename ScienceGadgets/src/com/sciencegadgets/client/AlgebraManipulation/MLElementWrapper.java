@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
+import com.allen_sauer.gwt.dnd.client.HasDragHandle;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
@@ -30,8 +31,8 @@ import com.google.gwt.user.client.ui.Widget;
  * @author John Gralyan
  * 
  */
-public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers,
-		HasMouseOverHandlers, HasDragStartHandlers {
+public class MLElementWrapper extends SimplePanel implements
+		HasMouseOutHandlers, HasMouseOverHandlers, HasDragStartHandlers {
 
 	PickupDragController dragController = null;
 	private Element element = null;
@@ -46,25 +47,25 @@ public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers
 	 *            - if true, add the default {@link MouseOverHandler} and
 	 *            {@link MouseOutHandler}
 	 */
-	public MLElementWrapper(Element theElement, Boolean addDefaultMouseOverOutHandler, Boolean addDefaultDragHandlers) {
-		//setElement(theElement);
-		//onAttach();
+	public MLElementWrapper(Element theElement,
+			Boolean addDefaultMouseOverOutHandler) {
+		// setElement(theElement);
+		// onAttach();
 		element = theElement;
 		if (addDefaultMouseOverOutHandler) {
 			addMouseOverHandlerDefault();
 			addMouseOutHandlerDefault();
 		}
-		if(addDefaultDragHandlers){
-			addDragStartHandlerDefault();
-	}}
-	
-	public Element getElementWrapped(){
+	}
+
+	public Element getElementWrapped() {
 		return element;
 	}
-	
+
 	/**
-	 * Wraps all elements of a given tag name within an HTML widget in their own widgets in order to add handlers. Argument HTML widget must be
-	 * added to the document before making this call
+	 * Wraps all elements of a given tag name within an HTML widget in their own
+	 * widgets in order to add handlers. Argument HTML widget must be added to
+	 * the document before making this call
 	 * 
 	 * @param mathML
 	 *            - the equation to be wrapped as mathML in an {@link HTML}
@@ -72,13 +73,13 @@ public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers
 	 */
 	public static List<MLElementWrapper> wrapAll(HTML html, String Tag) {
 		List<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
-		
+
 		NodeList<com.google.gwt.dom.client.Element> elementList = html
 				.getElement().getElementsByTagName(Tag);
-		
+
 		for (int i = 0; i < elementList.getLength(); i++) {
 			MLElementWrapper wrap = new MLElementWrapper(
-					elementList.getItem(i), true, true);
+					elementList.getItem(i), true);
 			wrappers.add(wrap);
 		}
 		return wrappers;
@@ -89,8 +90,8 @@ public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers
 	 */
 	public void onAttach() {
 		super.onAttach();
-		//not for children of other widgets
-		//RootPanel.detachOnWindowClose(this);
+		// not for children of other widgets
+		// RootPanel.detachOnWindowClose(this);
 	}
 
 	// /////////////////////
@@ -114,31 +115,34 @@ public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
 	}
-	
-	// TODO experimental 
-	
-	public HandlerRegistration addDragStartHandlerDefault(){
+
+	// TODO experimental
+
+	public HandlerRegistration addDragStartHandlerDefault() {
 		return addDragStartHandler(new ElementDragStartHandler());
 	}
+
 	@Override
-	public HandlerRegistration addDragStartHandler(DragStartHandler handler){
+	public HandlerRegistration addDragStartHandler(DragStartHandler handler) {
 		return addDomHandler(handler, DragStartEvent.getType());
 	}
 
 	/**
 	 * Add a drag controller to this widget, can be a subclass of
 	 * {@link AbstractDragController} such as {@link PickupDragController}
-	 * <p>If a drag controller already exists, it is overridden</p>
+	 * <p>
+	 * If a drag controller already exists, it is overridden
+	 * </p>
 	 * 
 	 * @param dragCtrl
 	 * @return
-	 * @throws DragControllerException 
+	 * @throws DragControllerException
 	 */
-	public PickupDragController addDragController(
-			PickupDragController dragCtrl) throws DragControllerException {
-		if(dragController !=null){
-			throw new DragControllerException("There is already a drag controller, the old one is overridden");
-		}
+	public PickupDragController addDragController(PickupDragController dragCtrl) {
+		//if (dragController != null) {
+		//	throw new DragControllerException(
+		//			"There is already a drag controller, the old one is overridden");
+		//}
 		dragController = dragCtrl;
 		dragController.makeDraggable(this);
 		return dragController;
@@ -148,27 +152,32 @@ public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers
 	 * removes a drag controller from this widget
 	 * 
 	 * @param dragCtrl
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public void removeDragController(PickupDragController dragCtrl) throws Exception {
+	public void removeDragController(PickupDragController dragCtrl)
+			throws Exception {
 		if (dragController != null) {
 			dragController.makeNotDraggable(this);
 			dragController = null;
-		}else{
-			throw new DragControllerException("There is no drag controller to remove");
-			}
+		} else {
+			throw new DragControllerException(
+					"There is no drag controller to remove");
+		}
 	}
-	//TODO addDropContoller
 
-//	public MathMLDropController addDropTarget(Widget target) throws DragControllerException {
-//		MathMLDropController dropCtrl = new MathMLDropController(target);
-//		if(dragController != null){
-//		dragController.registerDropController(dropCtrl);
-//		}else{
-//			throw new DragControllerException("Must add a drag controller before a drop controller/target");
-//		}
-//		return dropCtrl;
-//	}
+	// TODO addDropContoller
+
+	// public MathMLDropController addDropTarget(Widget target) throws
+	// DragControllerException {
+	// MathMLDropController dropCtrl = new MathMLDropController(target);
+	// if(dragController != null){
+	// dragController.registerDropController(dropCtrl);
+	// }else{
+	// throw new
+	// DragControllerException("Must add a drag controller before a drop controller/target");
+	// }
+	// return dropCtrl;
+	// }
 
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Inner Class Handlers
@@ -217,17 +226,18 @@ public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers
 					"mathbackground", colorOnOver);
 		}
 	}
-	
-	class ElementDragStartHandler implements DragStartHandler{
+
+	class ElementDragStartHandler implements DragStartHandler {
 
 		@Override
 		public void onDragStart(DragStartEvent event) {
-			//TODO just checking
+			// TODO just checking
 			Window.alert("drag started");
-			
+
 		}
-		
+
 	}
+
 	/**
 	 * 
 	 * Exception to be thrown when there is no drag controller on widget
@@ -237,12 +247,12 @@ public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers
 		private static final long serialVersionUID = 3936417184515771756L;
 
 		DragControllerException() {
-		super();
-	    }
+			super();
+		}
 
 		DragControllerException(String s) {
-		super(s);
-	    }
+			super(s);
+		}
 	}
 
 }

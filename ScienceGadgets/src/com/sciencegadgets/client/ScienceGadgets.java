@@ -8,6 +8,7 @@ import java.util.Set;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -273,8 +275,6 @@ public class ScienceGadgets implements EntryPoint {
 		DOM.setElementAttribute(draggableEquationElement, "mathsize", "300%");
 		algDragPanel.clear();
 		algDragPanel.add(draggableEquation);
-		PickupDragController dragC = new PickupDragController(algDragPanel,
-				true);
 
 		// Make EquationTree
 		EquationTree eqTree = new EquationTree(draggableEquation);
@@ -291,26 +291,33 @@ public class ScienceGadgets implements EntryPoint {
 		// Make draggable overlays on the equation
 		int algLeft = algDragPanel.getAbsoluteLeft();
 		int algTop = algDragPanel.getAbsoluteTop();
+		PickupDragController dragCtrl = new PickupDragController(algDragPanel,
+				true);
+		// TODO why can't panels be draggable????
+		Label a = new Label("ooooo");
+		a.setSize("10px", "10px");
+		a.setStyleName("selectedVar");
+		algDragPanel.add(a);
 		
+dragCtrl.makeDraggable(a);
 		for (MLElementWrapper wrap : eqTree.wrappers) {
+			try {
+				int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
+				int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
 
-			int positionLeft = wrap.getElementWrapped().getAbsoluteLeft()
-					- algLeft;
-			int positionTop = wrap.getElementWrapped().getAbsoluteTop()
-					- algTop;
-			// Window.alert(wrap.getElementWrapped().getAbsoluteLeft() + "   "+
-			// algDragPanel.getAbsoluteLeft()+"\n"+
-			// wrap.getElementWrapped().getAbsoluteTop() +"   "+
-			// algDragPanel.getAbsoluteTop());
+				int positionLeft = wrapLeft - algLeft;
+				int positionTop = wrapTop - algTop;
 
-			wrap.setStyleName("selectedVar");
-			// TODO get the right dimensions
-			wrap.setWidth("20px");
-			wrap.setHeight("20px");
-			
-			 try {
+				wrap.setStyleName("draggableOverlay");
+				// TODO get the right dimensions
+				wrap.setWidth("20px");
+				wrap.setHeight("20px");
+
 				algDragPanel.add(wrap, positionLeft, positionTop);
-			} catch (Exception e) {
+
+				//wrap.addDragController(dragCtrl);
+				dragCtrl.makeDraggable(wrap);
+			} catch (JavaScriptException e) {
 			}
 		}
 
