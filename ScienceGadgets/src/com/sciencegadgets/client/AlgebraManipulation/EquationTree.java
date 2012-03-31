@@ -28,7 +28,7 @@ public class EquationTree extends Tree {
 		
 		Element firstMLN = mathML.getElement().getFirstChildElement();
 		MLElementWrapper wrap = new MLElementWrapper(firstMLN, true, true);
-		TreeItem firstENT = this.addItem( "$" + wrap.getElement().getInnerText() + "$");//firstMLN.toString());
+		TreeItem firstENT = this.addItem( "$" + wrap.getElementWrapped().getInnerText() + "$");//firstMLN.toString());
 
 		wrappers.add(wrap);
 		addChildren(firstMLN, firstENT);
@@ -42,8 +42,8 @@ public class EquationTree extends Tree {
 	 */
 	private void addChildren(Element fromMLN, TreeItem toETN) {
 		NodeList<Node> fromMLchildren = fromMLN.getChildNodes();
-		//LinkedList<MLElementWrapper> wrapps = new LinkedList<MLElementWrapper>();
-		if (fromMLchildren.getLength() == 0) {
+
+		if (fromMLchildren == null) {
 			return;
 		}
 		LinkedList<Element> fromMLchildrenEl = new LinkedList<Element>();
@@ -56,14 +56,12 @@ public class EquationTree extends Tree {
 		}
 		// Add each child to the tree and wrap them in a MLElementWrapper widget
 		for (int i = 0; i < fromMLchildrenEl.size(); i++) {
-			if (fromMLchildrenEl.get(i).getTagName() != null
-					&& fromMLchildrenEl.get(i).getTagName().equals("mi")) {
+		//	TODO condition for fromMLchildrenEl.get(i) to restrict what is wrapped 
 
 				wrap = new MLElementWrapper(fromMLchildrenEl.get(i), true, true);
 				wrappers.add(wrap);
-				toETNchild = toETN.addItem( "$" + wrap.getElement().getInnerText() + "$");
-				//MLElementWrapper wrap2 = new MLElementWrapper(toETNchild.getElement(), true);
-			}
+				toETNchild = toETN.addItem( "$" + wrap.getElementWrapped().getInnerText() + "$");
+			
 			// Recursively call this method for each child
 			addChildren(fromMLchildrenEl.get(i), toETNchild);
 		}
