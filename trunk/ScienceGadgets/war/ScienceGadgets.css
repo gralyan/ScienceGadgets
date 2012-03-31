@@ -48,6 +48,7 @@ body {
 }
 .selectedVar{
 	background-color: #9999ff;
+	cursor: move;
 }
 #selectedVar{
 	background-color: #9999ff;

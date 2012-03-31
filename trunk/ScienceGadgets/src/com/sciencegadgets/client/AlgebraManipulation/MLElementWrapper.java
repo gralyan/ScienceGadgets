@@ -20,6 +20,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -29,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author John Gralyan
  * 
  */
-public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
+public class MLElementWrapper extends SimplePanel implements HasMouseOutHandlers,
 		HasMouseOverHandlers, HasDragStartHandlers {
 
 	PickupDragController dragController = null;
@@ -46,8 +47,8 @@ public class MLElementWrapper extends Widget implements HasMouseOutHandlers,
 	 *            {@link MouseOutHandler}
 	 */
 	public MLElementWrapper(Element theElement, Boolean addDefaultMouseOverOutHandler, Boolean addDefaultDragHandlers) {
-		setElement(theElement);
-		onAttach();
+		//setElement(theElement);
+		//onAttach();
 		element = theElement;
 		if (addDefaultMouseOverOutHandler) {
 			addMouseOverHandlerDefault();

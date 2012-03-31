@@ -287,25 +287,32 @@ public class ScienceGadgets implements EntryPoint {
 			nextTreeItem.setState(true, false);
 			parseJQMath(nextTreeItem.getElement());
 		}
+
+		// Make draggable overlays on the equation
+		int algLeft = algDragPanel.getAbsoluteLeft();
+		int algTop = algDragPanel.getAbsoluteTop();
 		
-		
-		//Make draggable overlays on the equation
 		for (MLElementWrapper wrap : eqTree.wrappers) {
-		//NodeList<com.google.gwt.dom.client.Element> els = draggableEquation.getElement().getElementsByTagName("mi");
-		//for (int i=0 ; i<els.getLength() ; i++) {
-			// com.google.gwt.dom.client.Element wrap = els.getItem(i);
-			//int positionLeft = wrap.getAbsoluteLeft();// - algDragPanel.getAbsoluteLeft();
-			//int positionTop = wrap.getAbsoluteTop();// - algDragPanel.getAbsoluteTop();
-			//Window.alert(""+positionLeft+" "+positionTop);
-			//AbsolutePanel overLay = new AbsolutePanel();
-			//overLay.setStyleName("selectedVar");
-			//TODO get the right dimensions
-			//overLay.setWidth("20px");
-		//	overLay.setHeight("20px");
-		//	algDragPanel.add(overLay, 10, 10);
+
+			int positionLeft = wrap.getElementWrapped().getAbsoluteLeft()
+					- algLeft;
+			int positionTop = wrap.getElementWrapped().getAbsoluteTop()
+					- algTop;
+			// Window.alert(wrap.getElementWrapped().getAbsoluteLeft() + "   "+
+			// algDragPanel.getAbsoluteLeft()+"\n"+
+			// wrap.getElementWrapped().getAbsoluteTop() +"   "+
+			// algDragPanel.getAbsoluteTop());
+
+			wrap.setStyleName("selectedVar");
+			// TODO get the right dimensions
+			wrap.setWidth("20px");
+			wrap.setHeight("20px");
+			
+			 try {
+				algDragPanel.add(wrap, positionLeft, positionTop);
+			} catch (Exception e) {
+			}
 		}
-
-
 
 		// fill variable summary
 		String[] variables;
@@ -346,7 +353,6 @@ public class ScienceGadgets implements EntryPoint {
 		}
 		parseJQMath(varBox.getElement());
 	}
-	
 
 	/**
 	 * Takes the equation, parses into MathML, adds JavaScript handlers
