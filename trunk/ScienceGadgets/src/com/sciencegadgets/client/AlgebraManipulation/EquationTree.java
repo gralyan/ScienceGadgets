@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class EquationTree extends Tree {
-	
+
 	public LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
 
 	public EquationTree() {
@@ -25,10 +25,10 @@ public class EquationTree extends Tree {
 	public EquationTree(HTML mathML) {
 		super();
 
-		
 		Element firstMLN = mathML.getElement().getFirstChildElement();
-		MLElementWrapper wrap = new MLElementWrapper(firstMLN, true);
-		TreeItem firstENT = this.addItem( "$" + wrap.getElementWrapped().getInnerText() + "$");//firstMLN.toString());
+		MLElementWrapper wrap = new MLElementWrapper(firstMLN, true, false);
+		TreeItem firstENT = this.addItem("$"
+				+ wrap.getElementWrapped().getInnerText() + "$");
 
 		wrappers.add(wrap);
 		addChildren(firstMLN, firstENT);
@@ -56,14 +56,18 @@ public class EquationTree extends Tree {
 		}
 		// Add each child to the tree and wrap them in a MLElementWrapper widget
 		for (int i = 0; i < fromMLchildrenEl.size(); i++) {
-		//	TODO condition for fromMLchildrenEl.get(i) to restrict what is wrapped 
 
-				wrap = new MLElementWrapper(fromMLchildrenEl.get(i), true);
-				wrappers.add(wrap);
-				toETNchild = toETN.addItem( "$" + wrap.getElementWrapped().getInnerText() + "$");
+			wrap = MLElementWrapper.getWrapByElementsType(fromMLchildrenEl.get(i));
 			
+			if (wrap != null) {
+				wrappers.add(wrap);
+				toETNchild = toETN.addItem("$"
+						+ wrap.getElementWrapped().getInnerText() + "$"
+						+ " \t- " + wrap.getElementWrapped().getNodeName());
+			}
 			// Recursively call this method for each child
 			addChildren(fromMLchildrenEl.get(i), toETNchild);
 		}
 	}
+
 }

@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -294,7 +295,7 @@ public class ScienceGadgets implements EntryPoint {
 		PickupDragController dragCtrl = new PickupDragController(algDragPanel,
 				true);
 		// TODO why can't panels be draggable????
-		Label a = new Label("ooooo");
+		HTML a = new HTML("ooooo");
 		a.setSize("10px", "10px");
 		a.setStyleName("selectedVar");
 		algDragPanel.add(a);
@@ -308,7 +309,7 @@ dragCtrl.makeDraggable(a);
 				int positionLeft = wrapLeft - algLeft;
 				int positionTop = wrapTop - algTop;
 
-				wrap.setStyleName("draggableOverlay");
+				//wrap.setStyleName("draggableOverlay");
 				// TODO get the right dimensions
 				wrap.setWidth("20px");
 				wrap.setHeight("20px");
@@ -316,7 +317,7 @@ dragCtrl.makeDraggable(a);
 				algDragPanel.add(wrap, positionLeft, positionTop);
 
 				//wrap.addDragController(dragCtrl);
-				dragCtrl.makeDraggable(wrap);
+				//dragCtrl.makeDraggable(wrap);
 			} catch (JavaScriptException e) {
 			}
 		}
