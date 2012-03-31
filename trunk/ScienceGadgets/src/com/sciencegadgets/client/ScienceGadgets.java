@@ -12,6 +12,9 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.DragStartEvent;
+import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
@@ -37,6 +40,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.AlgebraManipulation.EquationTree;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sun.java.swing.plaf.windows.resources.windows;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -66,7 +70,7 @@ public class ScienceGadgets implements EntryPoint {
 
 		// First box, Variable list
 		VerticalPanel vpVar = new VerticalPanel();
-		Label labelVar = new Label("Mane's box");
+		Label labelVar = new Label("Variables");
 		ScrollPanel spVar = new ScrollPanel(varGrid);
 		varGrid.addClickHandler(new VarClickHandler(varGrid));
 		vpVar.add(labelVar);
@@ -283,20 +287,22 @@ public class ScienceGadgets implements EntryPoint {
 			nextTreeItem.setState(true, false);
 			parseJQMath(nextTreeItem.getElement());
 		}
+		
+		
 		//Make draggable overlays on the equation
-		//for (MLElementWrapper wrap : eqTree.wrappers) {
-		NodeList<com.google.gwt.dom.client.Element> els = draggableEquation.getElement().getElementsByTagName("mi");
-		for (int i=0 ; i<els.getLength() ; i++) {
-			com.google.gwt.dom.client.Element wrap = els.getItem(i);
-			int left = wrap.getAbsoluteLeft() - algDragPanel.getAbsoluteLeft();
-			int top = wrap.getAbsoluteTop() - algDragPanel.getAbsoluteTop();
-			AbsolutePanel overLay = new AbsolutePanel();
-			overLay.setStyleName("selectedVar");
+		for (MLElementWrapper wrap : eqTree.wrappers) {
+		//NodeList<com.google.gwt.dom.client.Element> els = draggableEquation.getElement().getElementsByTagName("mi");
+		//for (int i=0 ; i<els.getLength() ; i++) {
+			// com.google.gwt.dom.client.Element wrap = els.getItem(i);
+			//int positionLeft = wrap.getAbsoluteLeft();// - algDragPanel.getAbsoluteLeft();
+			//int positionTop = wrap.getAbsoluteTop();// - algDragPanel.getAbsoluteTop();
+			//Window.alert(""+positionLeft+" "+positionTop);
+			//AbsolutePanel overLay = new AbsolutePanel();
+			//overLay.setStyleName("selectedVar");
 			//TODO get the right dimensions
-			overLay.setWidth(wrap.getOffsetWidth() + "px");
-			overLay.setHeight(wrap.getOffsetHeight() + "px");
-			Window.alert("height: "+wrap.getOffsetHeight() + "px" +"\nwidth: "+ wrap.getOffsetWidth() + "px");
-			algDragPanel.add(overLay, left, top);
+			//overLay.setWidth("20px");
+		//	overLay.setHeight("20px");
+		//	algDragPanel.add(overLay, 10, 10);
 		}
 
 
@@ -340,6 +346,7 @@ public class ScienceGadgets implements EntryPoint {
 		}
 		parseJQMath(varBox.getElement());
 	}
+	
 
 	/**
 	 * Takes the equation, parses into MathML, adds JavaScript handlers
