@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,31 +32,52 @@ import com.google.gwt.user.client.ui.Widget;
  * @author John Gralyan
  * 
  */
-public class MLElementWrapper extends SimplePanel implements
-		HasMouseOutHandlers, HasMouseOverHandlers, HasDragStartHandlers {
+public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
+		HasMouseOverHandlers, HasDragStartHandlers {
 
 	PickupDragController dragController = null;
 	private Element element = null;
+	private Boolean isDraggable;
 
 	/**
-	 * Construct that takes care of all the nuisances of wrapping an element in
-	 * a widget
+	 * Construct that can explicitly state weather default handlers will be
+	 * available
+	 * <p>
+	 * <b>Note - this widget can only be draggable if it's attached to an
+	 * {@link AbsolutePanel}</b>
+	 * </p>
 	 * 
 	 * @param theElement
 	 *            - the element to wrap in widget
 	 * @param addDefaultMouseOverOut
 	 *            - if true, add the default {@link MouseOverHandler} and
 	 *            {@link MouseOutHandler}
+	 * @param isDraggable
+	 *            - if true, adds a default drag handler
 	 */
 	public MLElementWrapper(Element theElement,
-			Boolean addDefaultMouseOverOutHandler) {
+			Boolean addDefaultMouseOverOutHandler, Boolean isDraggable) {
 		// setElement(theElement);
 		// onAttach();
+		this.setHTML(theElement.getInnerText());
 		element = theElement;
+		this.isDraggable = isDraggable;
 		if (addDefaultMouseOverOutHandler) {
 			addMouseOverHandlerDefault();
 			addMouseOutHandlerDefault();
 		}
+
+	}
+
+	public static MLElementWrapper getWrapByElementsType(Element element) {
+		String tag = element.getNodeName();
+
+		if (tag.equalsIgnoreCase("mi")) {
+			return new MLElementWrapper(element, true, true);
+		} else if (tag.equalsIgnoreCase("mo")) {
+			return new MLElementWrapper(element, false, false);
+		}
+		return null;
 	}
 
 	public Element getElementWrapped() {
@@ -79,19 +101,28 @@ public class MLElementWrapper extends SimplePanel implements
 
 		for (int i = 0; i < elementList.getLength(); i++) {
 			MLElementWrapper wrap = new MLElementWrapper(
-					elementList.getItem(i), true);
+					elementList.getItem(i), true, true);
 			wrappers.add(wrap);
 		}
 		return wrappers;
 	}
 
 	/**
-	 * Must be called to attach widget. Already taken care of in constructors
+	 * Called when attaching Widget. If it is draggable, it can only be attached
+	 * to an {@link AbsolutePanel}
 	 */
 	public void onAttach() {
 		super.onAttach();
-		// not for children of other widgets
-		// RootPanel.detachOnWindowClose(this);
+
+		if (isDraggable) {
+			try {
+				PickupDragController dragC = new PickupDragController(
+						(AbsolutePanel) this.getParent(), true);
+				addDragController(dragC);
+			} catch (Exception e) {
+			}
+		}
+
 	}
 
 	// /////////////////////
@@ -139,10 +170,10 @@ public class MLElementWrapper extends SimplePanel implements
 	 * @throws DragControllerException
 	 */
 	public PickupDragController addDragController(PickupDragController dragCtrl) {
-		//if (dragController != null) {
-		//	throw new DragControllerException(
-		//			"There is already a drag controller, the old one is overridden");
-		//}
+		// if (dragController != null) {
+		// throw new DragControllerException(
+		// "There is already a drag controller, the old one is overridden");
+		// }
 		dragController = dragCtrl;
 		dragController.makeDraggable(this);
 		return dragController;
@@ -199,8 +230,9 @@ public class MLElementWrapper extends SimplePanel implements
 		}
 
 		public void onMouseOver(MouseOverEvent event) {
-			DOM.setElementAttribute(((Widget) event.getSource()).getElement(),
-					"mathbackground", colorOnOver);
+			((Widget) event.getSource()).setStyleName("draggableOverlay", true);
+			//DOM.setElementAttribute(((Widget) event.getSource()).getElement(),
+			//		"mathbackground", colorOnOver);
 		}
 	}
 
@@ -222,8 +254,9 @@ public class MLElementWrapper extends SimplePanel implements
 		}
 
 		public void onMouseOut(MouseOutEvent event) {
-			DOM.setElementAttribute(((Widget) event.getSource()).getElement(),
-					"mathbackground", colorOnOver);
+			((Widget) event.getSource()).setStyleName("draggableOverlay", false);
+			//DOM.setElementAttribute(((Widget) event.getSource()).getElement(),
+			//		"mathbackground", colorOnOver);
 		}
 	}
 
