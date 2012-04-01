@@ -1,5 +1,6 @@
 package com.sciencegadgets.server;
 
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import com.mysql.jdbc.Driver;
@@ -7,19 +8,35 @@ import com.mysql.jdbc.Driver;
 import com.sciencegadgets.client.GreetingService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import org.matheclipse.core.eval.MathMLUtilities;
+import org.matheclipse.core.eval.EvalEngine;
+
 @SuppressWarnings("serial")
 public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
-
+	
 	public String greetServer(String input) throws IllegalArgumentException {
 
 		String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
+		
+		String mathMLString = stringToMathML(input);
 
-		String s=openDatabase();
+		//String s=openDatabase();
 
-		return s+"\nHia, " + input + "!I am running " + serverInfo
-				+ " It looks like you are using: " + userAgent;
+		return mathMLString;
+				//*s+*/"\nHia, " + input + "!I am running " + serverInfo
+				//+ " It looks like you are using: " + userAgent;
+	}
+	
+	String stringToMathML(String strEval) {
+			StringWriter stw = new StringWriter();
+			MathMLUtilities mathUtil = new MathMLUtilities(EvalEngine.get(), false);
+			mathUtil.toMathML(strEval, stw);
+			//assertEquals(stw.toString(), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			//		+ "<math:math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n" + strResult + "\n</math:math>");
+		
+		return stw.toString();
 	}
 
 	String openDatabase() {
