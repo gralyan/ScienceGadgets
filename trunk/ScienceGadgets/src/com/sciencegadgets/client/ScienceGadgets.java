@@ -57,7 +57,8 @@ public class ScienceGadgets implements EntryPoint {
 	private Grid algOut = new Grid(1, 1);
 	String varGridWidth = "5em";
 	String columnWidth = "150em";
-	private HTML labelSumEq = new HTML("");
+	//TODO
+	private Label labelSumEq = new Label("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
 	private HorizontalPanel algebraPanel = new HorizontalPanel();
@@ -235,7 +236,10 @@ public class ScienceGadgets implements EntryPoint {
 		parseJQMath(eqGrid.getElement());
 	}
 
-	
+	/**
+	 * Async call to server to parse the equation using Symja
+	 * @param textToServer
+	 */
 	private void string2MathML_BySymja_OnServer(String textToServer) {
 		
 		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
@@ -244,7 +248,8 @@ public class ScienceGadgets implements EntryPoint {
 			}
 			
 			public void onSuccess(String result) {
-				onEqSelect(result);
+				Window.alert("went");
+				// TODO onEqSelect(result);
 			}
 		});
 	}
@@ -255,21 +260,23 @@ public class ScienceGadgets implements EntryPoint {
 	 * @param equation
 	 */
 	private void onEqSelect(String equation) {
+		//TODO delete
+		string2MathML_BySymja_OnServer("a+b");
 
 		// Initial AlgOut line
-		//labelSumEq.setText("$" + equation + "$");
-		labelSumEq.setHTML(equation);
-		HTML algOutFirstHTML = new HTML(equation);
+		labelSumEq.setText("$" + equation + "$");
+		//TODO labelSumEq.setHTML(equation);
+		//TODO HTML algOutFirstHTML = new HTML(equation);
 		algOut.clear(true);
 		algOut.resizeRows(1);
-		algOut.setWidget(0, 0, algOutFirstHTML);
+		algOut.setWidget(0, 0, labelSumEq);
 		//parseJQMath(labelSumEq.getElement());
 
 		// make algebra manipulator
 		HTML draggableEquation = new HTML();
-		//draggableEquation.setHTML("$" + equation + "$");
-		draggableEquation.setHTML(equation);
-		//parseJQMath(draggableEquation.getElement());
+		draggableEquation.setHTML("$" + equation + "$");
+		// TODO draggableEquation.setHTML(equation);
+		parseJQMath(draggableEquation.getElement());
 		// The main mathML element is fmath in chrome, math in firefox
 		Element draggableEquationElement = (Element) draggableEquation
 				.getElement().getElementsByTagName("math").getItem(0);
@@ -323,7 +330,8 @@ public class ScienceGadgets implements EntryPoint {
 		// fill variable summary
 		String[] variables;
 		try {
-			variables = data.getVariablesByEquation(selectedEquation);
+			//TODO variables = data.getVariablesByEquation(selectedEquation);
+			variables = data.getVariablesByEquation(equation);
 		} catch (ElementNotFoundExeption e) {
 			e.printStackTrace();
 			return;
@@ -441,7 +449,8 @@ public class ScienceGadgets implements EntryPoint {
 
 				String equation = DOM.getElementAttribute(element, "alttext");
 				selectedEquation = equation;
-				string2MathML_BySymja_OnServer(equation);
+				//TODO string2MathML_BySymja_OnServer(equation);
+				onEqSelect(equation);
 			}
 		}
 	}
