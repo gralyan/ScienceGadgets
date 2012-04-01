@@ -57,8 +57,7 @@ public class ScienceGadgets implements EntryPoint {
 	private Grid algOut = new Grid(1, 1);
 	String varGridWidth = "5em";
 	String columnWidth = "150em";
-	//TODO
-	private Label labelSumEq = new Label("");
+	private HTML labelSumEq = new HTML("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
 	private HorizontalPanel algebraPanel = new HorizontalPanel();
@@ -70,6 +69,9 @@ public class ScienceGadgets implements EntryPoint {
 	private AbsolutePanel eqTreePanel = new AbsolutePanel();
 	private ScrollPanel spAlg = new ScrollPanel(algOut);
 	private String selectedEquation;
+
+	int num = 1;
+	String s = "";
 
 	public void onModuleLoad() {
 
@@ -182,7 +184,55 @@ public class ScienceGadgets implements EntryPoint {
 
 		ClickHandler handler = new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				string2MathML_BySymja_OnServer("a+b");
+				switch (num) {
+				case 1:
+					s = "5+6=5^2";
+					num++;
+					break;
+				case 2:
+					s = "i+j=5^2";
+					num++;
+					break;
+				case 3:
+					s = "l^j+6=5^2";
+					num++;
+					break;
+				case 4:
+					s = "a_h=5^2";
+					num++;
+					break;
+				case 5:
+					s = "1+2/3";
+					num++;
+					break;
+				case 6:
+					s = "(1+2)/3";
+					num++;
+					break;
+				case 7:
+					s = "θ";
+					num++;
+					break;
+				case 8:
+					s = "π";
+					num++;
+					break;
+				case 9:
+					s = "log(5)";
+					num++;
+					break;
+				case 10:
+					s = "√5";
+					num++;
+					break;
+				case 11:
+					s = "5";
+					num=1;
+					break;
+
+				}
+
+				string2MathML_BySymja_OnServer(s);
 			}
 		};
 
@@ -238,21 +288,24 @@ public class ScienceGadgets implements EntryPoint {
 
 	/**
 	 * Async call to server to parse the equation using Symja
+	 * 
 	 * @param textToServer
 	 */
 	private void string2MathML_BySymja_OnServer(String textToServer) {
-		
+
 		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
 			public void onFailure(Throwable caught) {
 				Window.alert("Math parseing FAIL :(");
 			}
-			
+
 			public void onSuccess(String result) {
-				Window.alert(result);
-				// TODO onEqSelect(result);
+				Window.alert((num-1)+" result: " + result);
+				labelSumEq.setHTML(result);
+				// onEqSelect(result);
 			}
 		});
 	}
+
 	/**
 	 * Finds the variables with descriptions of the given equation to fill the
 	 * variable description (varDesc) box
@@ -260,23 +313,21 @@ public class ScienceGadgets implements EntryPoint {
 	 * @param equation
 	 */
 	private void onEqSelect(String equation) {
-		//TODO delete
-		string2MathML_BySymja_OnServer("a+b");
 
 		// Initial AlgOut line
-		labelSumEq.setText("$" + equation + "$");
-		//TODO labelSumEq.setHTML(equation);
-		//TODO HTML algOutFirstHTML = new HTML(equation);
+		// labelSumEq.setText("$" + equation + "$");
+		labelSumEq.setHTML(equation);
+		HTML algOutFirstHTML = new HTML(equation);
 		algOut.clear(true);
 		algOut.resizeRows(1);
-		algOut.setWidget(0, 0, labelSumEq);
-		//parseJQMath(labelSumEq.getElement());
+		// algOut.setWidget(0, 0, algOutFirstHTML);
+		// parseJQMath(labelSumEq.getElement());
 
 		// make algebra manipulator
 		HTML draggableEquation = new HTML();
-		draggableEquation.setHTML("$" + equation + "$");
-		// TODO draggableEquation.setHTML(equation);
-		parseJQMath(draggableEquation.getElement());
+		// draggableEquation.setHTML("$" + equation + "$");
+		draggableEquation.setHTML(equation);
+		// parseJQMath(draggableEquation.getElement());
 		// The main mathML element is fmath in chrome, math in firefox
 		Element draggableEquationElement = (Element) draggableEquation
 				.getElement().getElementsByTagName("math").getItem(0);
@@ -314,15 +365,15 @@ public class ScienceGadgets implements EntryPoint {
 				int positionLeft = wrapLeft - algLeft;
 				int positionTop = wrapTop - algTop;
 
-				//wrap.setStyleName("draggableOverlay");
+				// wrap.setStyleName("draggableOverlay");
 				// TODO get the right dimensions
 				wrap.setWidth("20px");
 				wrap.setHeight("20px");
 
 				algDragPanel.add(wrap, positionLeft, positionTop);
 
-				//wrap.addDragController(dragCtrl);
-				//dragCtrl.makeDraggable(wrap);
+				// wrap.addDragController(dragCtrl);
+				// dragCtrl.makeDraggable(wrap);
 			} catch (JavaScriptException e) {
 			}
 		}
@@ -330,8 +381,8 @@ public class ScienceGadgets implements EntryPoint {
 		// fill variable summary
 		String[] variables;
 		try {
-			//TODO variables = data.getVariablesByEquation(selectedEquation);
-			variables = data.getVariablesByEquation(equation);
+			variables = data.getVariablesByEquation(selectedEquation);
+			// variables = data.getVariablesByEquation(equation);
 		} catch (ElementNotFoundExeption e) {
 			e.printStackTrace();
 			return;
@@ -449,8 +500,8 @@ public class ScienceGadgets implements EntryPoint {
 
 				String equation = DOM.getElementAttribute(element, "alttext");
 				selectedEquation = equation;
-				//TODO string2MathML_BySymja_OnServer(equation);
-				onEqSelect(equation);
+				string2MathML_BySymja_OnServer(equation);
+				// onEqSelect(equation);
 			}
 		}
 	}
