@@ -57,7 +57,7 @@ public class ScienceGadgets implements EntryPoint {
 	private Grid algOut = new Grid(1, 1);
 	String varGridWidth = "5em";
 	String columnWidth = "150em";
-	private Label labelSumEq = new Label("");
+	private HTML labelSumEq = new HTML("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
 	private HorizontalPanel algebraPanel = new HorizontalPanel();
@@ -68,6 +68,7 @@ public class ScienceGadgets implements EntryPoint {
 	private HTML algDragHTML = new HTML();
 	private AbsolutePanel eqTreePanel = new AbsolutePanel();
 	private ScrollPanel spAlg = new ScrollPanel(algOut);
+	private String selectedEquation;
 
 	public void onModuleLoad() {
 
@@ -180,25 +181,11 @@ public class ScienceGadgets implements EntryPoint {
 
 		ClickHandler handler = new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				// sendNameToServer();
+				string2MathML_BySymja_OnServer("a+b");
 			}
 		};
 
 		sendButton.addClickHandler(handler);
-	}
-
-	private void sendNameToServer() {
-		String textToServer = "JOHN";
-
-		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
-			public void onFailure(Throwable caught) {
-				Window.alert("FAIL");
-			}
-
-			public void onSuccess(String result) {
-				Window.alert(result);
-			}
-		});
 	}
 
 	/**
@@ -248,6 +235,19 @@ public class ScienceGadgets implements EntryPoint {
 		parseJQMath(eqGrid.getElement());
 	}
 
+	
+	private void string2MathML_BySymja_OnServer(String textToServer) {
+		
+		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				Window.alert("Math parseing FAIL :(");
+			}
+			
+			public void onSuccess(String result) {
+				onEqSelect(result);
+			}
+		});
+	}
 	/**
 	 * Finds the variables with descriptions of the given equation to fill the
 	 * variable description (varDesc) box
@@ -255,17 +255,21 @@ public class ScienceGadgets implements EntryPoint {
 	 * @param equation
 	 */
 	private void onEqSelect(String equation) {
+
 		// Initial AlgOut line
-		labelSumEq.setText("$" + equation + "$");
+		//labelSumEq.setText("$" + equation + "$");
+		labelSumEq.setHTML(equation);
+		HTML algOutFirstHTML = new HTML(equation);
 		algOut.clear(true);
 		algOut.resizeRows(1);
-		algOut.setWidget(0, 0, labelSumEq);
-		parseJQMath(labelSumEq.getElement());
+		algOut.setWidget(0, 0, algOutFirstHTML);
+		//parseJQMath(labelSumEq.getElement());
 
 		// make algebra manipulator
 		HTML draggableEquation = new HTML();
-		draggableEquation.setHTML("$" + equation + "$");
-		parseJQMath(draggableEquation.getElement());
+		//draggableEquation.setHTML("$" + equation + "$");
+		draggableEquation.setHTML(equation);
+		//parseJQMath(draggableEquation.getElement());
 		// The main mathML element is fmath in chrome, math in firefox
 		Element draggableEquationElement = (Element) draggableEquation
 				.getElement().getElementsByTagName("math").getItem(0);
@@ -294,13 +298,7 @@ public class ScienceGadgets implements EntryPoint {
 		int algTop = algDragPanel.getAbsoluteTop();
 		PickupDragController dragCtrl = new PickupDragController(algDragPanel,
 				true);
-		// TODO why can't panels be draggable????
-		HTML a = new HTML("ooooo");
-		a.setSize("10px", "10px");
-		a.setStyleName("selectedVar");
-		algDragPanel.add(a);
-		
-dragCtrl.makeDraggable(a);
+
 		for (MLElementWrapper wrap : eqTree.wrappers) {
 			try {
 				int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
@@ -325,7 +323,7 @@ dragCtrl.makeDraggable(a);
 		// fill variable summary
 		String[] variables;
 		try {
-			variables = data.getVariablesByEquation(equation);
+			variables = data.getVariablesByEquation(selectedEquation);
 		} catch (ElementNotFoundExeption e) {
 			e.printStackTrace();
 			return;
@@ -442,7 +440,8 @@ dragCtrl.makeDraggable(a);
 				}
 
 				String equation = DOM.getElementAttribute(element, "alttext");
-				onEqSelect(equation);
+				selectedEquation = equation;
+				string2MathML_BySymja_OnServer(equation);
 			}
 		}
 	}
