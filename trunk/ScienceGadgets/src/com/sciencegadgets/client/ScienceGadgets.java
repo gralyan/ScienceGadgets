@@ -248,7 +248,7 @@ public class ScienceGadgets implements EntryPoint {
 			}
 			
 			public void onSuccess(String result) {
-				Window.alert("went");
+				Window.alert(result);
 				// TODO onEqSelect(result);
 			}
 		});

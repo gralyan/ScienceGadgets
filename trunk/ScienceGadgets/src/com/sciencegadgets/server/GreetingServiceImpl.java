@@ -8,8 +8,8 @@ import com.mysql.jdbc.Driver;
 import com.sciencegadgets.client.GreetingService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-//TODOimport org.matheclipse.core.eval.MathMLUtilities;
-//import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.MathMLUtilities;
+import org.matheclipse.core.eval.EvalEngine;
 
 @SuppressWarnings("serial")
 public class GreetingServiceImpl extends RemoteServiceServlet implements
@@ -20,7 +20,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
 		
-		String mathMLString ="s";//TODO stringToMathML(input);
+		String mathMLString = stringToMathML("2+4");
 
 		//String s=openDatabase();
 
@@ -29,7 +29,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 				//+ " It looks like you are using: " + userAgent;
 	}
 	
-/*	String stringToMathML(String strEval) {
+	String stringToMathML(String strEval) {
 			StringWriter stw = new StringWriter();
 			MathMLUtilities mathUtil = new MathMLUtilities(EvalEngine.get(), false);
 			mathUtil.toMathML(strEval, stw);
@@ -38,7 +38,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		
 		return stw.toString();
 	}
-*/
+
 	String openDatabase() {
 		String returnStatement = "";
 		Connection conn = null;
