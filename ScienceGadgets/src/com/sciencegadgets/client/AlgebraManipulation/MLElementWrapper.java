@@ -38,10 +38,11 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	PickupDragController dragController = null;
 	private Element element = null;
 	private Boolean isDraggable;
+	Boolean isLeft;
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
-	 * available
+	 * available. A style for mouse over events must be specified.
 	 * <p>
 	 * <b>Note - this widget can only be draggable if it's attached to an
 	 * {@link AbsolutePanel}</b>
@@ -49,33 +50,68 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * 
 	 * @param theElement
 	 *            - the element to wrap in widget
-	 * @param addDefaultMouseOverOut
-	 *            - if true, add the default {@link MouseOverHandler} and
-	 *            {@link MouseOutHandler}
+	 * @param mouseOverStyle
+	 *            - the slyle that will be added to element for
+	 *            {@link MouseOverHandler} and {@link MouseOutHandler}
 	 * @param isDraggable
-	 *            - if true, adds a default drag handler
+	 *            - if true, adds a default drag {@link PickupDragController}
+	 *            for the parent {@link AbsolutePanel} it is currently in
+	 * @param isLeft
+	 *            - Arbitrarily chosen distinction between sides. True if the
+	 *            wrapper is on the left side of the equation, false if on the
+	 *            right
 	 */
 	public MLElementWrapper(Element theElement, String mouseOverStyle,
-			Boolean isDraggable) {
-		// setElement(theElement);
-		// onAttach();
-		//this.setHTML(theElement.getInnerText());
+			Boolean isDraggable, Boolean isLeft) {
 		element = theElement;
 		this.isDraggable = isDraggable;
+		this.isLeft = isLeft;
 		addMouseOverHandlerDefault(mouseOverStyle);
 		addMouseOutHandlerDefault(mouseOverStyle);
 
 	}
 
-	public static MLElementWrapper getWrapByElementsType(Element element) {
-		String tag = element.getNodeName();
+	/**
+	 * Construct that can explicitly state weather default handlers will be
+	 * available.
+	 * <p>
+	 * <b>Note - this widget can only be draggable if it's attached to an
+	 * {@link AbsolutePanel}</b>
+	 * </p>
+	 * 
+	 * @param theElement
+	 *            - the element to wrap in widget
+	 * @param isDraggable
+	 *            - if true, adds a default drag {@link PickupDragController}
+	 *            for the parent {@link AbsolutePanel} it is currently in
+	 * @param isLeft
+	 *            - Arbitrarily chosen distinction between sides. True if the
+	 *            wrapper is on the left side of the equation, false if on the
+	 *            right
+	 */
+	public MLElementWrapper(Element theElement, Boolean isDraggable,
+			Boolean isLeft) {
+		// setElement(theElement);
+		// onAttach();
+		// this.setHTML(theElement.getInnerText());
+		element = theElement;
+		this.isDraggable = isDraggable;
+		this.isLeft = isLeft;
+	}
 
-		if (tag.equalsIgnoreCase("mn")) {
-			return new MLElementWrapper(element, "mouseOverlayNumber", true);
-		} else if (tag.equalsIgnoreCase("mo")) {
-			return new MLElementWrapper(element, "mouseOverlayDefault", false);
-		}
-		return null;
+	public static MLElementWrapper getWrapByElementType(Element element, Boolean isLeft) {
+		String tag = element.getNodeName();
+		// TODO parse the mathML to apply the wrappers appropriately
+
+		 if (tag.equalsIgnoreCase("mn")) {
+		 return new MLElementWrapper(element, "mouseOverlayNumber", true, isLeft);
+		 } else if (tag.equalsIgnoreCase("mo") &
+		 !element.getInnerText().equals("=")) {
+		 return new MLElementWrapper(element, "mouseOverlayDefault", false, isLeft);
+		 }
+
+		 return null;
+		
 	}
 
 	public Element getElementWrapped() {
