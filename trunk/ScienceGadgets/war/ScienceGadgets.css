@@ -53,21 +53,6 @@ body {
 .selectedVar{
 	background-color: #9999ff;
 }
-.mouseOverlayDefault{
-	background-color: #9999ff;
-	cursor: move;
-	opacity:0.6;
-}
-.mouseOverlayNumber{
-	background-color: #00ff7f;
-	cursor: move;
-	opacity:0.6;
-}
-.mouseOverlayOperator{
-	background-color: #00ced1;
-	cursor: move;
-	opacity:0.6;
-}
 #selectedVar{
 	background-color: #9999ff;
 }
@@ -81,6 +66,26 @@ body {
 }
 .varName{
 	background-color: #99CCFF;
+}
+.mouseOverlayDefault{
+	background-color: #111111;
+	cursor: move;
+	opacity:0.6;
+}
+.mouseOverlayNumber{
+	background-color: #333333;
+	cursor: move;
+	opacity:0.6;
+}
+.mouseOverlayOperator{
+	background-color: #777777;
+	cursor: move;
+	opacity:0.6;
+}
+.mouseOverlayTerm{
+	background-color: #aaaaaa;
+	cursor: move;
+	opacity:0.6;
 }
 
 

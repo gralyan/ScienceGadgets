@@ -2,6 +2,7 @@ package com.sciencegadgets.client;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
@@ -301,20 +302,28 @@ public class ScienceGadgets implements EntryPoint {
 	 */
 	private void onEqSelect(String equation) {
 
+		// TODO just to help make the MathML parser
+		//AbsolutePanel a = new AbsolutePanel();
+		//RootPanel.get().add(a);
+		//Label b = new Label("$"+equation+"$");
+		//a.add(b);
+		//parseJQMath(b.getElement());
+
 		// Initial AlgOut line
-		// labelSumEq.setText("$" + equation + "$");
-		labelSumEq.setHTML(equation);
+		labelSumEq.setText("$" + equation + "$");
+		// TODO labelSumEq.setHTML(equation);
 		HTML algOutFirstHTML = new HTML(equation);
 		algOut.clear(true);
 		algOut.resizeRows(1);
 		algOut.setWidget(0, 0, algOutFirstHTML);
-		// parseJQMath(labelSumEq.getElement());
+		// TODO
+		parseJQMath(labelSumEq.getElement());
 
 		// make algebra manipulator
 		HTML draggableEquation = new HTML();
-		// draggableEquation.setHTML("$" + equation + "$");
-		draggableEquation.setHTML(equation);
-		// parseJQMath(draggableEquation.getElement());
+		draggableEquation.setHTML("$" + equation + "$");
+		// TODO draggableEquation.setHTML(equation);
+		parseJQMath(draggableEquation.getElement());
 		// The main mathML element is fmath in chrome, math in firefox
 		Element draggableEquationElement = (Element) draggableEquation
 				.getElement().getElementsByTagName("math").getItem(0);
@@ -338,31 +347,36 @@ public class ScienceGadgets implements EntryPoint {
 			parseJQMath(nextTreeItem.getElement());
 		}
 
+		placeWrappers(draggableEquation, eqTree.wrappersLeft);
+		placeWrappers(draggableEquation, eqTree.wrappersRight);
+
+		if (modeSelectSci.getValue()) {
+			fillSummary();
+		}
+	}
+
+	private void placeWrappers(HTML draggableEquation, LinkedList<MLElementWrapper> wrappers) {
 		// Make draggable overlays on the equation
 		int algLeft = algDragPanel.getAbsoluteLeft();
 		int algTop = algDragPanel.getAbsoluteTop();
 
-		for (MLElementWrapper wrap : eqTree.wrappers) {
+		for (MLElementWrapper wrap : wrappers) {
 			try {
 				int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
 				int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
 
 				int positionLeft = wrapLeft - algLeft;
 				int positionTop = wrapTop - algTop;
-				
+
 				int width = (int) ((0.75) * draggableEquation.getOffsetHeight());
 				int height = draggableEquation.getOffsetHeight();
-				
+
 				wrap.setWidth(width + "px");
 				wrap.setHeight(height + "px");
 
 				algDragPanel.add(wrap, positionLeft, positionTop);
 			} catch (JavaScriptException e) {
 			}
-		}
-		
-		if (modeSelectSci.getValue()) {
-			fillSummary();
 		}
 	}
 
@@ -455,14 +469,15 @@ public class ScienceGadgets implements EntryPoint {
 
 				// For Algebra practice mode
 				if (table.equals(algGrid)) {
-					try {
-						equation = data.getAlgAttribute(
-								data.FLAG_ALGEBRA_EQUATION,
-								clickedEl.getInnerText());
-						sendEq = equation;
-					} catch (ElementNotFoundExeption e) {
-						e.printStackTrace();
-					}
+					/*
+					 * TODO s try { equation = data.getAlgAttribute(
+					 * data.FLAG_ALGEBRA_EQUATION, clickedEl.getInnerText());
+					 * sendEq = equation; } catch (ElementNotFoundExeption e) {
+					 * e.printStackTrace();
+					 * 
+					 * }
+					 */
+					equation = clickedEl.getInnerText();
 
 					// For Science Mode
 				} else if (table.equals(eqGrid)) {
@@ -475,16 +490,17 @@ public class ScienceGadgets implements EntryPoint {
 								"fmath").getItem(0);
 					}
 					equation = DOM.getElementAttribute(element, "alttext");
-					try {
-						sendEq = data.getAttribute(data.FLAG_EQUATION_SYMJA,
-								equation);
-					} catch (ElementNotFoundExeption e) {
-						e.printStackTrace();
-					}
+					/*
+					 * TODO symja impl try { sendEq =
+					 * data.getAttribute(data.FLAG_EQUATION_SYMJA, equation); }
+					 * catch (ElementNotFoundExeption e) { e.printStackTrace();
+					 * }
+					 */
 				}
 				selectedEquation = equation;
-				string2MathML_BySymja_OnServer(sendEq);
-				// onEqSelect(equation);
+				// TODO symja impl
+				// string2MathML_BySymja_OnServer(sendEq);
+				onEqSelect(equation);
 			}
 		}
 	}
