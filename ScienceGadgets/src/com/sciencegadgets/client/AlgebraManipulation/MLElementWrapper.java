@@ -63,7 +63,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 */
 	public MLElementWrapper(Element theElement, String mouseOverStyle,
 			Boolean isDraggable, Boolean isLeft) {
-		element = theElement;
+		this.element = theElement;
 		this.isDraggable = isDraggable;
 		this.isLeft = isLeft;
 		addMouseOverHandlerDefault(mouseOverStyle);
@@ -94,24 +94,35 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		// setElement(theElement);
 		// onAttach();
 		// this.setHTML(theElement.getInnerText());
-		element = theElement;
+		this.element = theElement;
 		this.isDraggable = isDraggable;
 		this.isLeft = isLeft;
 	}
 
-	public static MLElementWrapper getWrapByElementType(Element element, Boolean isLeft) {
+	public static MLElementWrapper getWrapByElementType(Element element,
+			Boolean isLeft) {
 		String tag = element.getNodeName();
 		// TODO parse the mathML to apply the wrappers appropriately
 
-		 if (tag.equalsIgnoreCase("mn")) {
-		 return new MLElementWrapper(element, "mouseOverlayNumber", true, isLeft);
-		 } else if (tag.equalsIgnoreCase("mo") &
-		 !element.getInnerText().equals("=")) {
-		 return new MLElementWrapper(element, "mouseOverlayDefault", false, isLeft);
-		 }
+		if (isLeft) {
+			return new MLElementWrapper(element, "mouseOverlayNumber", true,
+					isLeft);
+		} else {
+			return new MLElementWrapper(element, "mouseOverlayDefault", true,
+					isLeft);
 
-		 return null;
-		
+		}
+		// if (tag.equalsIgnoreCase("mn")) {
+		// return new MLElementWrapper(element, "mouseOverlayNumber", true,
+		// isLeft);
+		// } else if (tag.equalsIgnoreCase("mo") &
+		// !element.getInnerText().equals("=")) {
+		// return new MLElementWrapper(element, "mouseOverlayDefault", false,
+		// isLeft);
+		// }
+
+		// return null;
+
 	}
 
 	public Element getElementWrapped() {

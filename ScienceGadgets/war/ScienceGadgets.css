@@ -73,17 +73,17 @@ body {
 	opacity:0.6;
 }
 .mouseOverlayNumber{
-	background-color: #333333;
+	background-color: #3333ee;
 	cursor: move;
 	opacity:0.6;
 }
 .mouseOverlayOperator{
-	background-color: #777777;
+	background-color: #77ee77;
 	cursor: move;
 	opacity:0.6;
 }
 .mouseOverlayTerm{
-	background-color: #aaaaaa;
+	background-color: #eeaaaa;
 	cursor: move;
 	opacity:0.6;
 }

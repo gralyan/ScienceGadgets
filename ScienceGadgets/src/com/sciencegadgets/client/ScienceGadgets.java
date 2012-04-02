@@ -302,13 +302,6 @@ public class ScienceGadgets implements EntryPoint {
 	 */
 	private void onEqSelect(String equation) {
 
-		// TODO just to help make the MathML parser
-		//AbsolutePanel a = new AbsolutePanel();
-		//RootPanel.get().add(a);
-		//Label b = new Label("$"+equation+"$");
-		//a.add(b);
-		//parseJQMath(b.getElement());
-
 		// Initial AlgOut line
 		labelSumEq.setText("$" + equation + "$");
 		// TODO labelSumEq.setHTML(equation);
@@ -355,26 +348,40 @@ public class ScienceGadgets implements EntryPoint {
 		}
 	}
 
-	private void placeWrappers(HTML draggableEquation, LinkedList<MLElementWrapper> wrappers) {
+	private void placeWrappers(HTML draggableEquation,
+			LinkedList<MLElementWrapper> wrappers) {
 		// Make draggable overlays on the equation
 		int algLeft = algDragPanel.getAbsoluteLeft();
 		int algTop = algDragPanel.getAbsoluteTop();
 
 		for (MLElementWrapper wrap : wrappers) {
 			try {
+
+				// Window.alert(wrap.getElementWrapped().toString());
+
 				int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
 				int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
 
 				int positionLeft = wrapLeft - algLeft;
 				int positionTop = wrapTop - algTop;
+				
+				//int width = wrap.getElementWrapped().getOffsetWidth();
+				//int height = wrap.getElementWrapped().getOffsetHeight();
 
 				int width = (int) ((0.75) * draggableEquation.getOffsetHeight());
 				int height = draggableEquation.getOffsetHeight();
 
+				//Window.alert("wrapLeft: " + wrapLeft + "algLeft: " + algLeft
+				//		+ "wrapTop: " + wrapTop + "algTop: " + algTop);
+				// Window.alert("positionTop: "+positionTop+"positionLeft: "+positionLeft+"width: "+width
+				// +"height: "+height);
+				
 				wrap.setWidth(width + "px");
 				wrap.setHeight(height + "px");
+				//wrap.setWidth( "40px");
+				//wrap.setHeight( "40px");
 
-				algDragPanel.add(wrap, positionLeft, positionTop);
+				algDragPanel.add(wrap,positionLeft, positionTop);
 			} catch (JavaScriptException e) {
 			}
 		}
@@ -435,7 +442,7 @@ public class ScienceGadgets implements EntryPoint {
 	 * @param element
 	 *            - the web element to parse as math
 	 */
-	static native void parseJQMath(Element element) /*-{
+	public static native void parseJQMath(Element element) /*-{
 		$wnd.M.parseMath(element);
 	}-*/;
 
@@ -608,7 +615,6 @@ public class ScienceGadgets implements EntryPoint {
 
 	class ModeSelectHandler implements ClickHandler {
 
-		@Override
 		public void onClick(ClickEvent event) {
 			RadioButton clicked = ((RadioButton) event.getSource());
 
