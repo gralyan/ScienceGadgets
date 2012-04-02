@@ -2,7 +2,6 @@ package com.sciencegadgets.client;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
@@ -10,12 +9,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
@@ -25,25 +20,22 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
-import com.google.gwt.user.client.ui.ListenerWrapper.WrappedChangeListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.AlgebraManipulation.EquationTree;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
-import com.sun.java.swing.plaf.windows.resources.windows;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -51,9 +43,11 @@ public class ScienceGadgets implements EntryPoint {
 			.create(GreetingService.class);
 
 	EquationDatabase data = new EquationDatabase();
+	HorizontalPanel browserPanel = new HorizontalPanel();
 	private Grid eqGrid = new Grid(1, 1);
 	private Grid varGrid = new Grid(1, 1);
 	private Grid sumGrid = new Grid(1, 2);
+	private Grid algGrid = new Grid(1, 1);
 	private Grid algOut = new Grid(1, 1);
 	String varGridWidth = "5em";
 	String columnWidth = "150em";
@@ -69,12 +63,46 @@ public class ScienceGadgets implements EntryPoint {
 	private AbsolutePanel eqTreePanel = new AbsolutePanel();
 	private ScrollPanel spAlg = new ScrollPanel(algOut);
 	private String selectedEquation;
+	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
+	private RadioButton modeSelectSci = new RadioButton("mode", "Science Mode");
 
-	int num = 1;
-	String s = "";
+	private ScrollPanel spTree;
 
 	public void onModuleLoad() {
+		modeSelectAlg.setSize("50em", "10em");
+		modeSelectSci.setSize("50em", "10em");
 
+		createAlgebraPanel();
+		browserPanel.setStylePrimaryName("browserPanel");
+
+		RootPanel.get().add(modeSelectAlg);
+		RootPanel.get().add(modeSelectSci);
+		RootPanel.get().add(browserPanel);
+		RootPanel.get().add(algebraPanel);
+
+		ModeSelectHandler modeSelectHandle = new ModeSelectHandler();
+		modeSelectAlg.addClickHandler(modeSelectHandle);
+		modeSelectSci.addClickHandler(modeSelectHandle);
+
+		// /////////////////////////////////////////
+		// experimental
+		// ////////////////////////////////
+
+		final Button sendButton = new Button("Send");
+
+		RootPanel.get().add(sendButton);
+		// RootPanel.get().add(new EquationWriter());
+
+		ClickHandler handler = new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				string2MathML_BySymja_OnServer("a+b");
+			}
+		};
+
+		sendButton.addClickHandler(handler);
+	}
+
+	private void createSciBrowser() {
 		// First box, Variable list
 		VerticalPanel vpVar = new VerticalPanel();
 		Label labelVar = new Label("Variables");
@@ -104,12 +132,51 @@ public class ScienceGadgets implements EntryPoint {
 		vpSum.add(spSum);
 
 		// Assemble browserPanel
-		HorizontalPanel browserPanel = new HorizontalPanel();
-		browserPanel
-				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		browserPanel.add(vpVar);
 		browserPanel.add(vpEq);
 		browserPanel.add(vpSum);
+
+		// Add styles
+		vpVar.setStylePrimaryName("gridBox");
+		vpEq.setStylePrimaryName("gridBox");
+		vpSum.setStylePrimaryName("gridBox");
+
+		spVar.setStylePrimaryName("sp");
+		spEq.setStylePrimaryName("sp");
+		spSum.setStylePrimaryName("sp");
+
+		labelVar.setStylePrimaryName("rowHeader");
+		labelEq.setStylePrimaryName("rowHeader");
+		labelSum.setStylePrimaryName("rowHeader");
+
+		parseJQMath(varGrid.getElement());
+
+	}
+
+	private void createAlgBrowser() {
+		VerticalPanel vpAlg = new VerticalPanel();
+		Label labelAlg = new Label("Algebra Practice");
+		ScrollPanel spAlg = new ScrollPanel(algGrid);
+		algGrid.addClickHandler(new EqClickHandler(algGrid));
+		vpAlg.add(labelAlg);
+		vpAlg.add(spAlg);
+
+		vpAlg.setStylePrimaryName("gridBox");
+		spAlg.setStylePrimaryName("sp");
+		labelAlg.setStylePrimaryName("rowHeader");
+
+		// Fill panel
+		String[] algNameList = data.getAll(data.FLAG_ALGEBRA_NAME);
+		algGrid.resizeRows(algNameList.length);
+		for (int i = 0; i < algNameList.length; i++) {
+			algGrid.setText(i, 0, algNameList[i]);
+		}
+
+		browserPanel.add(vpAlg);
+
+	}
+
+	private void createAlgebraPanel() {
 
 		// Assemble algebra menu panel
 		HorizontalPanel algMenuPanel = new HorizontalPanel();
@@ -144,25 +211,10 @@ public class ScienceGadgets implements EntryPoint {
 		AlgebraVerticalPanel.add(spAlg);
 		AlgebraVerticalPanel.add(algDragPanel);
 		algebraPanel.add(AlgebraVerticalPanel);
-		ScrollPanel spTree = new ScrollPanel(eqTreePanel);
+		spTree = new ScrollPanel(eqTreePanel);
 		algebraPanel.add(spTree);
 
-		RootPanel.get().add(browserPanel);
-		RootPanel.get().add(algebraPanel);
-
-		// Widget styles
-		vpVar.setStylePrimaryName("gridBox");
-		vpEq.setStylePrimaryName("gridBox");
-		vpSum.setStylePrimaryName("gridBox");
-
-		spVar.setStylePrimaryName("sp");
-		spEq.setStylePrimaryName("sp");
-		spSum.setStylePrimaryName("sp");
-
-		labelVar.setStylePrimaryName("rowHeader");
-		labelEq.setStylePrimaryName("rowHeader");
-		labelSum.setStylePrimaryName("rowHeader");
-
+		// Add styles
 		algOut.setStyleName("algOutPanel");
 		spAlg.setStyleName("algOutPanel");
 		algDragPanel.setStyleName("algDragPanel");
@@ -173,70 +225,6 @@ public class ScienceGadgets implements EntryPoint {
 		parseJQMath(varGrid.getElement());
 		parseJQMath(eqGrid.getElement());
 
-		// /////////////////////////////////////////
-		// experimental
-		// ////////////////////////////////
-
-		final Button sendButton = new Button("Send");
-
-		RootPanel.get().add(sendButton);
-		// RootPanel.get().add(new EquationWriter());
-
-		ClickHandler handler = new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				switch (num) {
-				case 1:
-					s = "5+6=5^2";
-					num++;
-					break;
-				case 2:
-					s = "i+j=5^2";
-					num++;
-					break;
-				case 3:
-					s = "l^j+6=5^2";
-					num++;
-					break;
-				case 4:
-					s = "a_h=5^2";
-					num++;
-					break;
-				case 5:
-					s = "1+2/3";
-					num++;
-					break;
-				case 6:
-					s = "(1+2)/3";
-					num++;
-					break;
-				case 7:
-					s = "θ";
-					num++;
-					break;
-				case 8:
-					s = "π";
-					num++;
-					break;
-				case 9:
-					s = "log(5)";
-					num++;
-					break;
-				case 10:
-					s = "√5";
-					num++;
-					break;
-				case 11:
-					s = "5";
-					num=1;
-					break;
-
-				}
-
-				string2MathML_BySymja_OnServer(s);
-			}
-		};
-
-		sendButton.addClickHandler(handler);
 	}
 
 	/**
@@ -299,9 +287,8 @@ public class ScienceGadgets implements EntryPoint {
 			}
 
 			public void onSuccess(String result) {
-				Window.alert((num-1)+" result: " + result);
 				labelSumEq.setHTML(result);
-				// onEqSelect(result);
+				onEqSelect(result);
 			}
 		});
 	}
@@ -320,7 +307,7 @@ public class ScienceGadgets implements EntryPoint {
 		HTML algOutFirstHTML = new HTML(equation);
 		algOut.clear(true);
 		algOut.resizeRows(1);
-		// algOut.setWidget(0, 0, algOutFirstHTML);
+		algOut.setWidget(0, 0, algOutFirstHTML);
 		// parseJQMath(labelSumEq.getElement());
 
 		// make algebra manipulator
@@ -354,8 +341,6 @@ public class ScienceGadgets implements EntryPoint {
 		// Make draggable overlays on the equation
 		int algLeft = algDragPanel.getAbsoluteLeft();
 		int algTop = algDragPanel.getAbsoluteTop();
-		PickupDragController dragCtrl = new PickupDragController(algDragPanel,
-				true);
 
 		for (MLElementWrapper wrap : eqTree.wrappers) {
 			try {
@@ -364,25 +349,31 @@ public class ScienceGadgets implements EntryPoint {
 
 				int positionLeft = wrapLeft - algLeft;
 				int positionTop = wrapTop - algTop;
-
-				// wrap.setStyleName("draggableOverlay");
-				// TODO get the right dimensions
-				wrap.setWidth("20px");
-				wrap.setHeight("20px");
+				
+				int width = (int) ((0.75) * draggableEquation.getOffsetHeight());
+				int height = draggableEquation.getOffsetHeight();
+				
+				wrap.setWidth(width + "px");
+				wrap.setHeight(height + "px");
 
 				algDragPanel.add(wrap, positionLeft, positionTop);
-
-				// wrap.addDragController(dragCtrl);
-				// dragCtrl.makeDraggable(wrap);
 			} catch (JavaScriptException e) {
 			}
 		}
+		
+		if (modeSelectSci.getValue()) {
+			fillSummary();
+		}
+	}
 
+	/**
+	 * fills the summary box
+	 */
+	void fillSummary() {
 		// fill variable summary
 		String[] variables;
 		try {
 			variables = data.getVariablesByEquation(selectedEquation);
-			// variables = data.getVariablesByEquation(equation);
 		} catch (ElementNotFoundExeption e) {
 			e.printStackTrace();
 			return;
@@ -420,38 +411,6 @@ public class ScienceGadgets implements EntryPoint {
 	}
 
 	/**
-	 * Takes the equation, parses into MathML, adds JavaScript handlers
-	 */
-	void createAlgBox(String equation) {
-		// the Listener version
-		// Element asd = HTMLb4JavaScript.getElement();
-		// DOM.setEventListener(asd, new AlgDragEventListener());
-		// DOM.sinkEvents(asd, Event.ONMOUSEOVER | Event.ONMOUSEOUT);
-
-		// wrap mathML element in widget to add handlers
-		// final com.google.gwt.dom.client.Element elmnt =
-		// HTMLb4JavaScript.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
-
-		// register handlers for wrapper
-		// HandlerRegistration handlerRegistration =
-		// wrapper.addMouseOverHandler(new MouseOverHandler() {
-		// @Override
-		// public void onMouseOver(MouseOverEvent event) {
-		// Element target = DOM.eventGetCurrentTarget(event.);
-		// Window.alert("click"+elmnt.getInnerText());
-		// }
-		// });
-
-		// PickupDragController dragController = new PickupDragController(
-		// dragPanel, false);
-		// DropController dropController = new MathMLDropController(lb);
-		// dragController.registerDropController(dropController);
-
-		// dragController.makeDraggable(la);
-
-	}
-
-	/**
 	 * JavaScript method in jqMath that would parse the given element and
 	 * display all equations in standard mathematical symbols. This will parse
 	 * every string surrounded by $'s
@@ -480,27 +439,51 @@ public class ScienceGadgets implements EntryPoint {
 			Cell clickedCell = table.getCellForEvent(event);
 
 			if (clickedCell != null) {
-				Element el = clickedCell.getElement();
+				Element clickedEl = clickedCell.getElement();
 
-				if (!el.getId().equals("selectedEq")) {
+				if (!clickedEl.getId().equals("selectedEq")) {
 					com.google.gwt.dom.client.Element prevSel = Document.get()
 							.getElementById("selectedEq");
 					if (prevSel != null) {
 						prevSel.setId("");
 					}
-					el.setId("selectedEq");
-				}
-				Element element = (Element) clickedCell.getElement()
-						.getElementsByTagName("math").getItem(0);
-				if (element == null) {
-					Window.alert("Your browser may not show everything correctly. Try another browser");
-					element = (Element) clickedCell.getElement()
-							.getElementsByTagName("fmath").getItem(0);
+					clickedEl.setId("selectedEq");
 				}
 
-				String equation = DOM.getElementAttribute(element, "alttext");
+				String equation = null;
+				String sendEq = null;
+
+				// For Algebra practice mode
+				if (table.equals(algGrid)) {
+					try {
+						equation = data.getAlgAttribute(
+								data.FLAG_ALGEBRA_EQUATION,
+								clickedEl.getInnerText());
+						sendEq = equation;
+					} catch (ElementNotFoundExeption e) {
+						e.printStackTrace();
+					}
+
+					// For Science Mode
+				} else if (table.equals(eqGrid)) {
+
+					Element element = (Element) clickedEl.getElementsByTagName(
+							"math").getItem(0);
+					if (element == null) {
+						Window.alert("Your browser may not show everything correctly. Try another browser");
+						element = (Element) clickedEl.getElementsByTagName(
+								"fmath").getItem(0);
+					}
+					equation = DOM.getElementAttribute(element, "alttext");
+					try {
+						sendEq = data.getAttribute(data.FLAG_EQUATION_SYMJA,
+								equation);
+					} catch (ElementNotFoundExeption e) {
+						e.printStackTrace();
+					}
+				}
 				selectedEquation = equation;
-				string2MathML_BySymja_OnServer(equation);
+				string2MathML_BySymja_OnServer(sendEq);
 				// onEqSelect(equation);
 			}
 		}
@@ -607,4 +590,25 @@ public class ScienceGadgets implements EntryPoint {
 
 	}
 
+	class ModeSelectHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+			RadioButton clicked = ((RadioButton) event.getSource());
+
+			if (clicked.equals(modeSelectAlg)) {
+				browserPanel.clear();
+				algDragPanel.clear();
+				algOut.clear(true);
+				eqTreePanel.clear();
+				createAlgBrowser();
+			} else if (clicked.equals(modeSelectSci)) {
+				browserPanel.clear();
+				algDragPanel.clear();
+				algOut.clear(true);
+				eqTreePanel.clear();
+				createSciBrowser();
+			}
+		}
+	}
 }

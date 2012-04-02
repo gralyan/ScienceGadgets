@@ -8,6 +8,11 @@ body {
 	margin:6px;
 	height: 18em;
 	width: 12em;
+	cursor: default;
+}
+.browserPanel{
+	height: 18em;
+	width: 40em;
 }
 .albebraPanel {
 	border: 1px solid silver;
@@ -48,8 +53,18 @@ body {
 .selectedVar{
 	background-color: #9999ff;
 }
-.draggableOverlay{
+.mouseOverlayDefault{
 	background-color: #9999ff;
+	cursor: move;
+	opacity:0.6;
+}
+.mouseOverlayNumber{
+	background-color: #00ff7f;
+	cursor: move;
+	opacity:0.6;
+}
+.mouseOverlayOperator{
+	background-color: #00ced1;
 	cursor: move;
 	opacity:0.6;
 }

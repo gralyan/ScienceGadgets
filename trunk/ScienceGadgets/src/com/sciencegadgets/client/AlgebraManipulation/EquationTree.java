@@ -26,7 +26,7 @@ public class EquationTree extends Tree {
 		super();
 
 		Element firstMLN = mathML.getElement().getFirstChildElement();
-		MLElementWrapper wrap = new MLElementWrapper(firstMLN, true, false);
+		MLElementWrapper wrap = new MLElementWrapper(firstMLN, "", false);
 		TreeItem firstENT = this.addItem("$"
 				+ wrap.getElementWrapped().getInnerText() + "$");
 
