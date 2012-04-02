@@ -5,15 +5,12 @@ import java.util.LinkedList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.sciencegadgets.client.ScienceGadgets;
+import com.sun.java.swing.plaf.windows.resources.windows;
 
 public class EquationTree extends Tree {
 
@@ -35,37 +32,30 @@ public class EquationTree extends Tree {
 	 */
 	public EquationTree(HTML mathML) {
 		super();
-		splitSides(mathML);
 
-		// Element firstMLN = mathML.getElement().getFirstChildElement();
-		MLElementWrapper wrapLeft = new MLElementWrapper(htmlLeft.getElement(),
-				false, true);
-		MLElementWrapper wrapRight = new MLElementWrapper(
-				htmlRight.getElement(), false, false);
-		TreeItem rootLeftSide = this.addItem("$"
-				+ wrapLeft.getElementWrapped().getInnerText() + "$");
-		TreeItem rootRightSide = this.addItem("$"
-				+ wrapRight.getElementWrapped().getInnerText() + "$");
+		NodeList<Node> side_Eq_Side = mathML.getElement().getFirstChild()
+				.getFirstChild().getChildNodes();
+		Element elLeft = (Element) side_Eq_Side.getItem(0);
+		Element elRight = (Element) side_Eq_Side.getItem(2);
+		
+		
+		/*Window.alert("\nmathMLHeight" + mathML.getOffsetHeight() + "\nmathMLHeight"
+				+ mathML.getOffsetHeight() +"\nLeftHeight" + elLeft.getOffsetHeight() + "\nRightHeight"
+				+ elRight.getOffsetHeight() + "\nLeftWidth"
+				+ elLeft.getOffsetWidth() + "\nRightWidth"
+				+ elRight.getOffsetWidth());
+		*/// Window.alert(elLeft.getInnerHTML()+" is "+elRight.getInnerHTML());
+
+		MLElementWrapper wrapLeft = new MLElementWrapper(elLeft, false, true);
+		MLElementWrapper wrapRight = new MLElementWrapper(elRight, false, false);
+		TreeItem rootLeftSide = this.addItem("$" + elLeft.getInnerText() + "$");
+		TreeItem rootRightSide = this.addItem("$" + elRight.getInnerText()
+				+ "$");
 
 		wrappersLeft.add(wrapLeft);
 		wrappersRight.add(wrapRight);
-		addChildren(htmlLeft.getElement(), rootLeftSide, true);
-		addChildren(htmlRight.getElement(), rootRightSide, false);
-	}
-
-	private void splitSides(HTML wholeEq) {
-		String divTag = wholeEq.getElement().toString().split(">", 2)[0] + ">";
-		String mathTag = wholeEq.getElement().toString().split(">", 3)[1] + ">";
-
-		String[] sideStrings = wholeEq.toString().split("<mo>=</mo>");
-
-		String leftString = sideStrings[0].replaceFirst(divTag, "")
-				+ "</mrow></math>";
-		String rightString = mathTag + "<mrow>"
-				+ sideStrings[1].replaceFirst("</div>", "");
-
-		htmlLeft = new HTML(leftString);
-		htmlRight = new HTML(rightString);
+		addChildren(elLeft, rootLeftSide, true);
+		addChildren(elRight, rootRightSide, false);
 	}
 
 	/**
@@ -91,8 +81,8 @@ public class EquationTree extends Tree {
 		// Add each child to the tree and wrap them in a MLElementWrapper widget
 		for (int i = 0; i < fromMLchildrenEl.size(); i++) {
 
-			wrap = MLElementWrapper.getWrapByElementType(fromMLchildrenEl
-					.get(i), isLeft);
+			wrap = MLElementWrapper.getWrapByElementType(
+					fromMLchildrenEl.get(i), isLeft);
 
 			if (wrap != null) {
 				if (isLeft) {
