@@ -46,8 +46,8 @@ public class EquationTree extends Tree {
 				+ elRight.getOffsetWidth());
 		*/// Window.alert(elLeft.getInnerHTML()+" is "+elRight.getInnerHTML());
 
-		MLElementWrapper wrapLeft = new MLElementWrapper(elLeft, false, true);
-		MLElementWrapper wrapRight = new MLElementWrapper(elRight, false, false);
+		MLElementWrapper wrapLeft = MLElementWrapper.wrapperFactory(elLeft, true);
+		MLElementWrapper wrapRight = MLElementWrapper.wrapperFactory(elRight, false);
 		TreeItem rootLeftSide = this.addItem("$" + elLeft.getInnerText() + "$");
 		TreeItem rootRightSide = this.addItem("$" + elRight.getInnerText()
 				+ "$");
@@ -81,7 +81,7 @@ public class EquationTree extends Tree {
 		// Add each child to the tree and wrap them in a MLElementWrapper widget
 		for (int i = 0; i < fromMLchildrenEl.size(); i++) {
 
-			wrap = MLElementWrapper.getWrapByElementType(
+			wrap = MLElementWrapper.wrapperFactory(
 					fromMLchildrenEl.get(i), isLeft);
 
 			if (wrap != null) {

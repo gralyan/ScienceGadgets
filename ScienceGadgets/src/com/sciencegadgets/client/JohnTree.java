@@ -22,35 +22,19 @@ public class JohnTree{
 		NodeList<Node> topLayer = mathML.getElement().getFirstChild()
 				.getFirstChild().getChildNodes();		
 		Node equal = topLayer.getItem(1);
-		Node l = topLayer.getItem(0);
-		Node r = topLayer.getItem(2);
+		Node leftSide = topLayer.getItem(0);
+		Node rightSide = topLayer.getItem(2);
 		
 		//print for debug
-		System.out.println("root " + ((Element)equal).getInnerText());
-		System.out.println("left " + ((Element)l).getInnerText());
-		System.out.println("right " + ((Element)r).getInnerText());
-		
+		//System.out.println("root " + ((Element)equal).getInnerText());
+		//System.out.println("left " + ((Element)l).getInnerText());
+		//System.out.println("right " + ((Element)r).getInnerText());
 		
 		//Cast to John Nodes
 		root = new JohnNode(equal);
 		
-		root.add(l);
-		root.add(r);
-		
-		/*
-		JohnNode left = new JohnNode(l);
-		JohnNode right = new JohnNode(r);
-		*/
-		
-		/*
-		left.getChildren();
-		right.getChildren();
-		
-		
-		//finish the tree
-		root.add(left);
-		root.add(right);
-		*/
+		root.add(leftSide);
+		root.add(rightSide);
 		
 		//Draw(Context2d);
 	}
@@ -69,6 +53,8 @@ public class JohnTree{
 		
 		int w = width/2;
 		
+		//(getChild()
+		
 		context.fillText("=", w, 30);
 		//context.arc(x, y, radius, startAngle, endAngle, anticlockwise)
 		context.fillText("a", w-30, 60);
@@ -77,63 +63,63 @@ public class JohnTree{
 		context.fillText("b", w+45, 90);
 	}
 	
-	private class JohnNode{
-		Type type;
-		String symbol;
+	//private DrawNode(){
 		
+	//}
+	
+	private class JohnNode{
 		//encapsulated dom node
-		Node node;
+		private Node node;
+		private Type type;
+		private String symbol;
+		
 		
 		private List<JohnNode> children = new LinkedList<JohnNode>();
 		
-		
-		//Nodes may be rows!
 		public JohnNode(Node n){
-			
-			
-			
 			node = n;
-			determineType(n);
+			type = determineType(n);
 			symbol = ((Element)n).getInnerText();
-		}
-		
-		public void Fragment(Node n){
-			List<JohnNode>Fragments = new LinkedList<JohnNode>();
-						
-			String row = ((Element)n).getInnerText();
-			int size = row.length();
 			
-			for(int i = 0; i < size; i++){
-				String c = "" + row.charAt(i);
-				HTML  h = new HTML(c);
-				Node x = (Node)h.getElement();
-				Fragments.add(new JohnNode(x));
-			}
-			
-			//This is temporary, adds in order, not by order of operations :(
-			for(JohnNode y : Fragments)
-				this.add(y);
+			add(n);
 		}
-		
-		private void determineType(Node n){
-			String tag = n.getNodeName();
+
+		/**
+		 * Determines the type of node <p>eg. Operand, Equals...</p><p>Returns null if none found</p>
+		 * @param node
+		 * @return type of node
+		 */
+		private Type determineType(Node node){
+			String tag = node.getNodeName();
 			
 			if (tag.equalsIgnoreCase("mn"))
-				type = Type.Operand;
+				return Type.Operand;
+			else if(tag.equalsIgnoreCase("mi"))
+				return Type.Operand;
 			else if(tag.equalsIgnoreCase("mo")){
 				if(tag.equalsIgnoreCase("="))// fixxxx
-					type = Type.Equals;
+					return Type.Equals;
 				else
-					type = Type.Operator;
-			}			
+					return Type.Operator;
+			}
+		//	throw new Exception("DERP");
+			return null;
 		}
 		
-		/*
+		/**
 		 * The tree is expanded by adding MatHML rows.
 		 * This method splits the MathML row into JohnNodes which are added to the JohnTree
 		 */
 		public void add(Node n){
-			Fragment(n);
+			if(n.getChildCount() >  1){
+				//This is temporary, adds in flat order, not hierachy order of operations :(
+				for(int i=0 ; i<n.getChildCount() ; i++){
+						Node  node = n.getChild(i);
+						String x = ((Element)node).getInnerText();
+						System.out.println("CHILD   NODE: " + x);
+						this.add(new JohnNode(node));
+				}
+			}
 		}
 		
 		private void add(JohnNode jn){
@@ -168,3 +154,36 @@ public class JohnTree{
 		Operand;
 	}
 }
+
+
+
+
+
+
+
+
+
+/*
+String row = ((Element)n).getInnerText();
+int size = row.length();
+
+for(int i = 0; i < size; i++){
+	String c = "" + row.charAt(i);
+	HTML  h = new HTML(c);
+	Node x = (Node)h.getElement();
+	Fragments.add(new JohnNode(x));
+}
+
+
+for(JohnNode y : Fragments)
+	this.add(y);*/
+
+
+
+
+
+
+
+
+
+

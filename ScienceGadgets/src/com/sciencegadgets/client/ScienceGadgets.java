@@ -333,12 +333,10 @@ public class ScienceGadgets implements EntryPoint {
 		EquationTree eqTree = new EquationTree(draggableEquation);
 		eqTreePanel.clear();
 		eqTreePanel.add(eqTree);
-		
+
+		// Make the tree on canvas
 		JohnTree jt = new JohnTree(draggableEquation);
-		
 		Canvas canvasTree = Canvas.createIfSupported();
-		//canvasTree.addL
-		
 		RootPanel.get().add(canvasTree);
 		jt.Draw(canvasTree);
 		
