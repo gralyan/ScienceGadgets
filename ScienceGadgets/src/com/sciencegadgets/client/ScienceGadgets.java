@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptException;
@@ -332,7 +333,16 @@ public class ScienceGadgets implements EntryPoint {
 		EquationTree eqTree = new EquationTree(draggableEquation);
 		eqTreePanel.clear();
 		eqTreePanel.add(eqTree);
-
+		
+		JohnTree jt = new JohnTree(draggableEquation);
+		
+		Canvas canvasTree = Canvas.createIfSupported();
+		//canvasTree.addL
+		
+		RootPanel.get().add(canvasTree);
+		jt.Draw(canvasTree);
+		
+		
 		Iterator<TreeItem> it = eqTree.treeItemIterator();
 		while (it.hasNext()) {
 			TreeItem nextTreeItem = it.next();
