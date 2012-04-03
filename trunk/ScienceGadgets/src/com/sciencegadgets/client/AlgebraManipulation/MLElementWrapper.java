@@ -42,7 +42,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
-	 * available. A style for mouse over events must be specified.
+	 * available. Use the static method {@link MLElementWrapper.wrapperFactory} to automate this process
 	 * <p>
 	 * <b>Note - this widget can only be draggable if it's attached to an
 	 * {@link AbsolutePanel}</b>
@@ -99,7 +99,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		this.isLeft = isLeft;
 	}
 
-	public static MLElementWrapper getWrapByElementType(Element element,
+	public static MLElementWrapper wrapperFactory(Element element,
 			Boolean isLeft) {
 		String tag = element.getNodeName();
 		// TODO parse the mathML to apply the wrappers appropriately
