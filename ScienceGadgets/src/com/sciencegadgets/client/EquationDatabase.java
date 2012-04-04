@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-
 /**
  * This class holds all the data and retrieval methods for Equations, Variables,
  * Quantities and Units. Anytime a new Equation is added to the EQUATIONS array,
@@ -46,16 +44,16 @@ public final class EquationDatabase {
 			/* 2 */{ "ν^2=ν_0^2 + 2a(x - x_0)",
 					"upsilon^2 = upsilon o^2 + 2 a Delta x" },
 			/* 3 */{ "∑F=F_{net} = ma", "Sigma F = F = ma" },
-			/* 4 */{ "F_{fric}≤μN", "F≤ mu N" },
+			/* 4 */{ "F_\\fric≤μN", "F≤ mu N" },
 			/* 5 */{ "a_c={ν^2}/r", "a_c=( upsilon ^2)/r" },
-			/* 6 */{ "τ=rF sinθ", "tau =rF sin varTheta" },
+			/* 6 */{ "τ=rF \\sinθ", "tau =rF sin varTheta" },
 			/* 7 */{ "p=mν", "p=m upsilon" },
 			/* 8 */{ "J=F\\Δt = \\Δp", "J=F Delta t = Delta p" },
 			/* 9 */{ "K=1/2mν^2", "K=(1/2)m upsilon ^2" },
 			/* 10 */{ "\\U_g=mgh", "U=mgh" },
-			/* 11 */{ "W=F\\Δrcosθ", "W=F\\DeltarcosvarTheta" },
-			/* 12 */{ "P_{avg}=W/Δt", "P=W/(Delta t)" },
-			/* 13 */{ "P=Fνcosθ", "P=F upsilon cos varTheta" },
+			/* 11 */{ "W=F\\Δr\\cosθ", "W=F\\DeltarcosvarTheta" },
+			/* 12 */{ "P_\\avg=W/Δt", "P=W/(Delta t)" },
+			/* 13 */{ "P=Fν\\cosθ", "P=F upsilon cos varTheta" },
 			/* 14 */{ "F_s=-kx", "F=-kx" },
 			/* 15 */{ "U_s=1/2kx^2", "U=(1/2)kx^2" },
 			/* 16 */{ "T_s=2π√{m/k}", "T=2pi\"√\"(m/k)" },
