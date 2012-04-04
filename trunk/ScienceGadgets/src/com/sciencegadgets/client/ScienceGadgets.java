@@ -473,7 +473,7 @@ public class ScienceGadgets implements EntryPoint {
 				}
 
 				String equation = null;
-				String sendEq = null;
+				//String sendEq = null;
 
 				// For Algebra practice mode
 				if (table.equals(algGrid)) {
