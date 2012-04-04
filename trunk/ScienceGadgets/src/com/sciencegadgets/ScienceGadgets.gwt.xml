@@ -4,6 +4,7 @@
   <inherits name='com.google.gwt.user.theme.clean.Clean'/>
   
    <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/> 
+   <inherits name='org.vaadin.gwtgraphics.GWTGraphics'/>
 
   <entry-point class='com.sciencegadgets.client.ScienceGadgets'/>
 

@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-dnd-3.1.2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/symja-0.0.7a.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-graphics-1.0.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

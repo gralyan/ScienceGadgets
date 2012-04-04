@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.vaadin.gwtgraphics.client.DrawingArea;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -58,7 +60,7 @@ public class ScienceGadgets implements EntryPoint {
 	private TextBox coefBox;
 	private AbsolutePanel algDragPanel = new AbsolutePanel();
 	private HTML algDragHTML = new HTML();
-	private AbsolutePanel eqTreePanel = new AbsolutePanel();
+	private DrawingArea eqTreeCanvas = new DrawingArea(400, 400);
 	private ScrollPanel spAlg = new ScrollPanel(algOut);
 	private String selectedEquation;
 	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
@@ -209,7 +211,7 @@ public class ScienceGadgets implements EntryPoint {
 		AlgebraVerticalPanel.add(spAlg);
 		AlgebraVerticalPanel.add(algDragPanel);
 		algebraPanel.add(AlgebraVerticalPanel);
-		spTree = new ScrollPanel(eqTreePanel);
+		spTree = new ScrollPanel(eqTreeCanvas);
 		algebraPanel.add(spTree);
 
 		// Add styles
@@ -302,12 +304,13 @@ public class ScienceGadgets implements EntryPoint {
 		// Initial AlgOut line
 		labelSumEq.setText("$" + equation + "$");
 		// TODO labelSumEq.setHTML(equation);
-		HTML algOutFirstHTML = new HTML(equation);
+		HTML algOutFirstHTML = new HTML("$"+equation+"$");
 		algOut.clear(true);
 		algOut.resizeRows(1);
 		algOut.setWidget(0, 0, algOutFirstHTML);
 		// TODO
 		parseJQMath(labelSumEq.getElement());
+		parseJQMath(algOutFirstHTML.getElement());
 
 		// make algebra manipulator
 		HTML draggableEquation = new HTML();
@@ -327,9 +330,10 @@ public class ScienceGadgets implements EntryPoint {
 
 		// Make the tree on canvas
 	  	JohnTree johnTree = new JohnTree(draggableEquation);
-		Canvas canvasTree = Canvas.createIfSupported();
-		eqTreePanel.add(canvasTree);
-		johnTree.draw(canvasTree);
+		//Canvas canvasTree = Canvas.createIfSupported();
+	  	//eqTreeCanvas.add(canvasTree);
+	  	eqTreeCanvas.clear();
+		johnTree.draw(eqTreeCanvas);
 
 		/*	
 		Iterator<TreeItem> it = eqTree.treeItemIterator();
@@ -623,13 +627,13 @@ public class ScienceGadgets implements EntryPoint {
 				browserPanel.clear();
 				algDragPanel.clear();
 				algOut.clear(true);
-				eqTreePanel.clear();
+				eqTreeCanvas.clear();
 				createAlgBrowser();
 			} else if (clicked.equals(modeSelectSci)) {
 				browserPanel.clear();
 				algDragPanel.clear();
 				algOut.clear(true);
-				eqTreePanel.clear();
+				eqTreeCanvas.clear();
 				createSciBrowser();
 			}
 		}
