@@ -1,4 +1,4 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.EquationTree;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.AlgebraManipulation.MathMLParser;
+import com.sciencegadgets.client.ScienceGadgets;
 
 public class JohnTree {
 
