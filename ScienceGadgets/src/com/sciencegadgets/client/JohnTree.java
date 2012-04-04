@@ -7,9 +7,7 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.JohnTree.MLtoJohnTree;
 import com.sciencegadgets.client.AlgebraManipulation.MathMLParser;
 
 public class JohnTree {
@@ -19,7 +17,7 @@ public class JohnTree {
 	private JohnNode rightSide;
 
 	public JohnTree(HTML mathML) {
-		JohnTree johnT = new MLtoJohnTree(mathML).johnTree;
+		new MLtoJohnTree(mathML);
 	}
 
 	public JohnTree(JohnNode leftSide, JohnNode equalsRoot, JohnNode rightSide) {
@@ -84,7 +82,9 @@ public class JohnTree {
 
 	private class JohnNode {
 		// encapsulated dom node
+		@SuppressWarnings("unused")
 		private Node node;
+		@SuppressWarnings("unused")
 		private Type type;
 		private String symbol;
 
@@ -144,12 +144,14 @@ public class JohnTree {
 		public List<JohnNode> getChildren() {
 			return children;
 		}
+		@SuppressWarnings("unused")
 		public JohnNode getFirstChild(){
 			return children.get(0);
 		}
 		public JohnNode getChildAt(int index){
 			return children.get(index);
 		}
+		@SuppressWarnings("unused")
 		public JohnNode getNextSibling(){
 			int nextIndex = this.indexInSiblings + 1;
 			return this.getParent().getChildAt(nextIndex);
@@ -160,6 +162,7 @@ public class JohnTree {
 		public String toString() {
 			return symbol;
 		}
+		@SuppressWarnings("unused")
 		public HTML toMathML() {
 			HTML mathML = new HTML("$" + symbol + "$");
 			ScienceGadgets.parseJQMath(mathML.getElement());
