@@ -6,9 +6,16 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.ui.HTML;
 
 public abstract class MathMLParser {
+	public Node elLeft;
+	public Node elEquals;
+	public Node elRight;
 
 	/**
-	 * Abstract class whose subclass parses a MathML HTML
+	 * Abstract class whose subclass parses a MathML HTML, there will be 3 super
+	 * field than can be used:
+	 * <p>
+	 * elLeft, elEquals, and elRight
+	 * </p>
 	 * 
 	 * @param mathMLequation
 	 */
@@ -16,9 +23,9 @@ public abstract class MathMLParser {
 
 		NodeList<Node> sideEqSide = mathMLequation.getElement().getFirstChild()
 				.getFirstChild().getChildNodes();
-		Node elLeft = sideEqSide.getItem(0);
-		Node elEquals = sideEqSide.getItem(1);
-		Node elRight = sideEqSide.getItem(2);
+		elLeft = sideEqSide.getItem(0);
+		elEquals = sideEqSide.getItem(1);
+		elRight = sideEqSide.getItem(2);
 
 		onRootsFound(elLeft, elEquals, elRight);
 
