@@ -1,11 +1,9 @@
 package com.sciencegadgets.client;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -34,9 +32,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sciencegadgets.client.AlgebraManipulation.EquationTree;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 
 public class ScienceGadgets implements EntryPoint {
@@ -97,7 +93,7 @@ public class ScienceGadgets implements EntryPoint {
 
 		ClickHandler handler = new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				string2MathML_BySymja_OnServer("a+b");
+				//string2MathML_BySymja_OnServer("a+b");
 			}
 		};
 
@@ -329,18 +325,13 @@ public class ScienceGadgets implements EntryPoint {
 		algDragPanel.clear();
 		algDragPanel.add(draggableEquation);
 
-		// Make EquationTree
-		EquationTree eqTree = new EquationTree(draggableEquation);
-		eqTreePanel.clear();
-		eqTreePanel.add(eqTree);
-
 		// Make the tree on canvas
-		JohnTree jt = new JohnTree(draggableEquation);
+	  	JohnTree johnTree = new JohnTree(draggableEquation);
 		Canvas canvasTree = Canvas.createIfSupported();
-		RootPanel.get().add(canvasTree);
-		jt.Draw(canvasTree);
-		
-		
+		eqTreePanel.add(canvasTree);
+		johnTree.draw(canvasTree);
+
+		/*	
 		Iterator<TreeItem> it = eqTree.treeItemIterator();
 		while (it.hasNext()) {
 			TreeItem nextTreeItem = it.next();
@@ -350,7 +341,7 @@ public class ScienceGadgets implements EntryPoint {
 
 		placeWrappers(draggableEquation, eqTree.wrappersLeft);
 		placeWrappers(draggableEquation, eqTree.wrappersRight);
-
+*/
 		if (modeSelectSci.getValue()) {
 			fillSummary();
 		}
@@ -361,7 +352,7 @@ public class ScienceGadgets implements EntryPoint {
 		// Make draggable overlays on the equation
 		int algLeft = algDragPanel.getAbsoluteLeft();
 		int algTop = algDragPanel.getAbsoluteTop();
-
+		System.out.println("\n\n");
 		for (MLElementWrapper wrap : wrappers) {
 			try {
 
@@ -390,7 +381,9 @@ public class ScienceGadgets implements EntryPoint {
 				//wrap.setHeight( "40px");
 
 				algDragPanel.add(wrap,positionLeft, positionTop);
+				System.out.println("is  wrapped\t"+wrap.getElementWrapped().getTagName()+"\t"+wrap.getElementWrapped().getInnerText());
 			} catch (JavaScriptException e) {
+				System.out.println("NOT wrapped\t"+wrap.getElementWrapped().getTagName()+"\t"+wrap.getElementWrapped().getInnerText());
 			}
 		}
 	}

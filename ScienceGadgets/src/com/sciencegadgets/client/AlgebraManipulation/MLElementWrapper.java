@@ -1,15 +1,11 @@
 package com.sciencegadgets.client.AlgebraManipulation;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
-import com.allen_sauer.gwt.dnd.client.HasDragHandle;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.HasDragStartHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
@@ -18,11 +14,8 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -42,7 +35,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
-	 * available. Use the static method {@link MLElementWrapper.wrapperFactory} to automate this process
+	 * available. Use the static method {@link MLElementWrapper.wrapperFactory}
+	 * to automate this process
 	 * <p>
 	 * <b>Note - this widget can only be draggable if it's attached to an
 	 * {@link AbsolutePanel}</b>
@@ -286,4 +280,43 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
+	class MLWrappingParser extends MathMLParser {
+
+		private List<MLElementWrapper> wrappersLeft;
+		private List<MLElementWrapper> wrappersRight;
+		private MLElementWrapper wrap;
+
+		public MLWrappingParser(HTML mathMLequation) {
+			super(mathMLequation);
+
+		}
+
+		@Override
+		protected void onRootsFound(Node nodeLeft, Node nodeEquals, Node nodeRight) {
+
+			MLElementWrapper wrapLeft = MLElementWrapper.wrapperFactory(
+					(Element) nodeLeft, true);
+			MLElementWrapper wrapRight = MLElementWrapper.wrapperFactory(
+					(Element) nodeRight, false);
+
+			wrappersLeft.add(wrapLeft);
+			wrappersRight.add(wrapRight);
+		}
+
+		@Override
+		protected void onVisitNode(Node currentNode, Boolean isLeft) {
+			wrap = MLElementWrapper.wrapperFactory(
+					(Element) currentNode, isLeft);
+
+			if (wrap != null) {
+				if (isLeft) {
+					wrappersLeft.add(wrap);
+				} else {
+					wrappersRight.add(wrap);
+				}
+
+			}
+
+		}
+	}
 }
