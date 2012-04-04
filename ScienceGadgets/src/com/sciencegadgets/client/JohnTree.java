@@ -8,6 +8,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JohnTree.MLtoJohnTree;
 import com.sciencegadgets.client.AlgebraManipulation.MathMLParser;
 
 public class JohnTree {
@@ -17,7 +18,12 @@ public class JohnTree {
 	private JohnNode rightSide;
 
 	public JohnTree(HTML mathML) {
-		new MLtoJohnTree(mathML);
+		MLtoJohnTree ml = new MLtoJohnTree(mathML);
+		root = ml.nEq;
+		leftSide = ml.nLeft;
+		rightSide = ml.nRight;
+		root.add(leftSide);
+		root.add(rightSide);
 	}
 
 	public JohnTree(JohnNode leftSide, JohnNode equalsRoot, JohnNode rightSide) {
@@ -38,7 +44,7 @@ public class JohnTree {
 
 	public void draw(Canvas canvas) {
 		Context2d context = canvas.getContext2d();
-		
+
 		int height = 600;
 		int width = 600;
 
@@ -46,34 +52,42 @@ public class JohnTree {
 		canvas.setHeight(height + "px");
 		canvas.setCoordinateSpaceWidth(width);
 		canvas.setCoordinateSpaceHeight(height);
-		context.setFont("bold 40px sans-serif");
+		context.setFont("bold 15px sans-serif");
 
 		int center = width / 2;
 		int rowHeight = 30;
-		int childWidth = 60;
-		
+		int childWidth = 10;
+
 		context.fillText("=", center, rowHeight);
-		drawChildren(context, this.root, childWidth, 2*rowHeight);
-		
+		drawChildren(context, this.root, center, childWidth, 2 * rowHeight);
+
 		// (getChild()
 		// context.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-		//context.fillText("=", center, 30);
-		//context.fillText("a", center - 30, 60);
-		//context.fillText("-", center + 30, 60);
-		//context.fillText("x", center + 15, 90);
-		//context.fillText("b", center + 45, 90);
+		// context.fillText("=", center, 30);
+		// context.fillText("a", center - 30, 60);
+		// context.fillText("-", center + 30, 60);
+		// context.fillText("x", center + 15, 90);
+		// context.fillText("b", center + 45, 90);
 	}
-	private void drawChildren(Context2d context, JohnNode node,int childWidth, int rowHeight){
-		System.out.println("aaaa");
+
+	private void drawChildren(Context2d context, JohnNode node, int center, int childWidth,
+			int rowHeight) {
+
 		List<JohnNode> kids = node.getChildren();
-		System.out.println("bb");
-		int leftMost = -(kids.size()-childWidth)/2;
-		for(JohnNode child : kids){
-			context.fillText(child.toString(), leftMost, rowHeight);
-			if(child.getChildren().size() != 0){
-			drawChildren(context, child,(leftMost + (childWidth/2)), rowHeight+30);
-		}}
-		
+
+		int offset = childWidth;
+
+		for (JohnNode child : kids) {
+			context.fillText(child.toString(), (center + offset), rowHeight);
+			
+			if (child.getChildCount() != 0) {
+				drawChildren(context, child, center+offset, childWidth,
+						rowHeight + 30);
+			}
+			offset =+ (childWidth/2);
+			
+		}
+
 	}
 
 	// private DrawNode(){
@@ -99,8 +113,7 @@ public class JohnTree {
 		}
 
 		/**
-		 * Determines the type of node 
-		 * eg. Operand, Equals...
+		 * Determines the type of node eg. Operand, Equals...
 		 * <p>
 		 * Returns null if none found
 		 * </p>
@@ -132,36 +145,47 @@ public class JohnTree {
 		 */
 		public void add(Node node) {
 			add(new JohnNode(node));
-			//children.add(jNode);
-			//jNode.indexInSiblings = children.indexOf(jNode);
-			//jNode.parent = this;
+			// children.add(jNode);
+			// jNode.indexInSiblings = children.indexOf(jNode);
+			// jNode.parent = this;
 		}
+
 		private void add(JohnNode jNode) {
 			children.add(jNode);
 			jNode.indexInSiblings = children.indexOf(jNode);
 			jNode.parent = this;
 		}
+
 		public List<JohnNode> getChildren() {
 			return children;
 		}
+
 		@SuppressWarnings("unused")
-		public JohnNode getFirstChild(){
+		public JohnNode getFirstChild() {
 			return children.get(0);
 		}
-		public JohnNode getChildAt(int index){
+
+		public JohnNode getChildAt(int index) {
 			return children.get(index);
 		}
+		public int getChildCount(){
+			return children.size();
+		}
+
 		@SuppressWarnings("unused")
-		public JohnNode getNextSibling(){
+		public JohnNode getNextSibling() {
 			int nextIndex = this.indexInSiblings + 1;
 			return this.getParent().getChildAt(nextIndex);
 		}
-		public JohnNode getParent(){
+
+		public JohnNode getParent() {
 			return parent;
 		}
+
 		public String toString() {
 			return symbol;
 		}
+
 		@SuppressWarnings("unused")
 		public HTML toMathML() {
 			HTML mathML = new HTML("$" + symbol + "$");
@@ -173,27 +197,32 @@ public class JohnTree {
 	private static enum Type {
 		Term, Equals, Operator, Operand;
 	}
-	
 
 	class MLtoJohnTree extends MathMLParser {
-		private JohnTree johnTree;
+		//private JohnTree johnTree;
 		private JohnNode prevLeftNode;
 		private JohnNode prevRightNode;
 		private JohnNode curNode;
+		JohnNode nLeft;
+		JohnNode nEq;
+		JohnNode nRight;
 
 		public MLtoJohnTree(HTML mathMLequation) {
 			super(mathMLequation);
+			//nLeft = new JohnNode(super.elLeft);
+			//nEq = new JohnNode(super.elEquals);
+			//nRight = new JohnNode(super.elRight);
+			//prevLeftNode = nLeft;
+			//prevRightNode = nRight;
 		}
-
 		@Override
 		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
 				Node nodeRight) {
-			JohnNode nLeft = new JohnNode(nodeLeft);
-			JohnNode nEq = new JohnNode(nodeEquals);
-			JohnNode nRight = new JohnNode(nodeRight);
-			
+			nLeft = new JohnNode(nodeLeft);
+			nEq = new JohnNode(nodeEquals);
+			nRight = new JohnNode(nodeRight);
 
-			johnTree = new JohnTree(nLeft, nEq, nRight);
+			//johnTree = new JohnTree(nLeft, nEq, nRight);
 			prevLeftNode = nLeft;
 			prevRightNode = nRight;
 		}
@@ -212,10 +241,9 @@ public class JohnTree {
 			}
 
 		}
-		public JohnTree getJohnTree(){
-			return johnTree;
-		}
+
 	}
+
 }
 
 /*
