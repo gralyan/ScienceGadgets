@@ -1,21 +1,16 @@
 package com.sciencegadgets.client;
 
-import java.awt.Panel;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Line;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
-import org.vaadin.gwtgraphics.client.shape.Text;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.JohnTree.MLtoJohnTree;
 import com.sciencegadgets.client.AlgebraManipulation.MathMLParser;
 
 public class JohnTree {
@@ -23,6 +18,10 @@ public class JohnTree {
 	private JohnNode root;
 	private JohnNode leftSide;
 	private JohnNode rightSide;
+	private int childWidth;
+	private int rowHeight;
+	private AbsolutePanel panel;
+	private DrawingArea canvas;
 
 	public JohnTree(HTML mathML) {
 		MLtoJohnTree ml = new MLtoJohnTree(mathML);
@@ -49,78 +48,77 @@ public class JohnTree {
 		root.add(this.rightSide);
 	}
 
-	public void draw(/* Canvas canvas */DrawingArea canvas) {
-		// Context2d context = canvas.getContext2d();
-
-		// int height = 600;
-		// int width = 600;
-
-		// canvas.setWidth(width + "px");
-		// canvas.setHeight(height + "px");
-		// canvas.setCoordinateSpaceWidth(width);
-		// canvas.setCoordinateSpaceHeight(height);
-		// context.setFont("bold 15px sans-serif");
-		// int center = width / 2;
-
-		// context.fillText("=", center, rowHeight);
-		// drawChildren(context, this.root, center, childWidth, 2 * rowHeight);
-
-		// (getChild()
-		// context.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-		// context.fillText("=", center, 30);
-		// context.fillText("a", center - 30, 60);
-		// context.fillText("-", center + 30, 60);
-		// context.fillText("x", center + 15, 90);
-		// context.fillText("b", center + 45, 90);
+	public JohnNode getRoot() {
+		return root;
+	}
+	public JohnNode getLeftSide() {
+		return leftSide;
+	}
+	public JohnNode getRightSide() {
+		return rightSide;
+	}
+	/*
+	public void draw(AbsolutePanel panel) {
+		// Widgets displaying nodes will be added to the panel, drawings like
+		// connecting likes are added to the canvas. Both are same size, canvas
+		// in panel
+		canvas = new DrawingArea(panel.getOffsetWidth(),
+				panel.getOffsetHeight());
+		panel.add(canvas);
+		this.panel = panel;
 
 		int center = canvas.getWidth() / 2;
-		int rowHeight = 30;
-		int childWidth = center / 5;
-		canvas.add(new Text(center, 0, root.toString()));
-		drawChildren(canvas, this.root, center, childWidth, rowHeight, (byte)1);
-		
+		rowHeight = canvas.getHeight() / 10;
+		childWidth = center / 5;
+
+		panel.add(this.root.toMathML(), center, 0);
+		drawChildren(this.root, center, (byte) 1);
+
 	}
 
-	private void drawChildren(/* Context2d context */DrawingArea canvas,
-			JohnNode pNode,int parentX, int childWidth, int rowHeight, byte layer) {
+	private void drawChildren(JohnNode pNode, int parentX, byte layer) {
 
 		List<JohnNode> kids = pNode.getChildren();
 
+		// The distance from the center of the parent node to the farthest edge
+		// of the child
 		int offset = pNode.getChildCount() * childWidth / 2;
-		int layerHeight = 2*rowHeight*layer;
+		int layerHeight = 2 * rowHeight * layer;
 
 		for (JohnNode child : kids) {
-			// context.fillText(child.toString(), (center + offset), rowHeight);
-			Text text = new Text((parentX-offset),layerHeight, child.toString());
-			text.setFontSize(12);
-			//text.setWidth(childWidth+"px");
-			//text.setHeight(rowHeight+"px");
+			HTML childHTML = child.toMathML();
+			panel.add(childHTML, (parentX - offset), layerHeight);
+
+			int childLeft = childHTML.getAbsoluteLeft()-panel.getAbsoluteLeft();
+			int childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
 			
-			int x = text.getAbsoluteLeft()+(childWidth/2);
-			int y = text.getAbsoluteTop()+rowHeight;
-			
-			Rectangle box = new Rectangle(text.getX(), text.getY(), text.getTextWidth(), text.getTextHeight());
-			Line line = new Line( parentX, layerHeight,x,y);
+			int pad = 5;
+			int lineX = childLeft + childHTML.getOffsetWidth()/2 + pad;// (childWidth / 2);
+			int lineY = childTop;
+
+
+			Rectangle box = new Rectangle(childLeft - pad,
+					childTop,
+					childHTML.getOffsetWidth() + 2 * pad,
+					childHTML.getOffsetHeight() * 4 / 3);
+			Line line = new Line(parentX, layerHeight-rowHeight, lineX, lineY);
 			canvas.add(line);
 			canvas.add(box);
-			canvas.add(text);
 			if (child.getChildCount() != 0) {
-				drawChildren(canvas, child,x, childWidth,
-						rowHeight, ++layer);
+				drawChildren(child, lineX, (byte)(layer+1));
 			}
 			offset -= (childWidth);
 		}
 
 	}
-
+*/
 	// private DrawNode(){
 
 	// }
 
-	private class JohnNode {
+	protected class JohnNode {
 		// encapsulated dom node
-		@SuppressWarnings("unused")
-		private Node node;
+		private Node domNode;
 		@SuppressWarnings("unused")
 		private Type type;
 		private String symbol;
@@ -129,10 +127,10 @@ public class JohnTree {
 		private int indexInSiblings;
 		private List<JohnNode> children = new LinkedList<JohnNode>();
 
-		public JohnNode(Node n) {
-			node = n;
-			type = determineType(n);
-			symbol = ((Element) n).getInnerText();
+		public JohnNode(Node node) {
+			domNode = node;
+			type = determineType(node);
+			symbol = ((Element) node).getInnerText();
 		}
 
 		/**
@@ -173,10 +171,10 @@ public class JohnTree {
 			// jNode.parent = this;
 		}
 
-		private void add(JohnNode jNode) {
-			children.add(jNode);
-			jNode.indexInSiblings = children.indexOf(jNode);
-			jNode.parent = this;
+		private void add(JohnNode johnNode) {
+			children.add(johnNode);
+			johnNode.indexInSiblings = children.indexOf(johnNode);
+			johnNode.parent = this;
 		}
 
 		public List<JohnNode> getChildren() {
@@ -205,12 +203,15 @@ public class JohnTree {
 		public JohnNode getParent() {
 			return parent;
 		}
+		@SuppressWarnings("unused")
+		public Node getDomNode(){
+			return domNode;
+		}
 
 		public String toString() {
 			return symbol;
 		}
 
-		@SuppressWarnings("unused")
 		public HTML toMathML() {
 			HTML mathML = new HTML("$" + symbol + "$");
 			ScienceGadgets.parseJQMath(mathML.getElement());
@@ -233,13 +234,7 @@ public class JohnTree {
 
 		public MLtoJohnTree(HTML mathMLequation) {
 			super(mathMLequation);
-			// nLeft = new JohnNode(super.elLeft);
-			// nEq = new JohnNode(super.elEquals);
-			// nRight = new JohnNode(super.elRight);
-			// prevLeftNode = nLeft;
-			// prevRightNode = nRight;
 		}
-
 		@Override
 		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
 				Node nodeRight) {
@@ -247,7 +242,6 @@ public class JohnTree {
 			nEq = new JohnNode(nodeEquals);
 			nRight = new JohnNode(nodeRight);
 
-			// johnTree = new JohnTree(nLeft, nEq, nRight);
 			prevLeftNode = nLeft;
 			prevRightNode = nRight;
 		}

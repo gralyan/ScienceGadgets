@@ -4,9 +4,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.vaadin.gwtgraphics.client.DrawingArea;
-
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptException;
@@ -60,13 +57,13 @@ public class ScienceGadgets implements EntryPoint {
 	private TextBox coefBox;
 	private AbsolutePanel algDragPanel = new AbsolutePanel();
 	private HTML algDragHTML = new HTML();
-	private DrawingArea eqTreeCanvas = new DrawingArea(400, 400);
 	private ScrollPanel spAlg = new ScrollPanel(algOut);
 	private String selectedEquation;
 	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science Mode");
+	private AbsolutePanel apTree = new AbsolutePanel();
 
-	private ScrollPanel spTree;
+	private TreeCanvas treeCanvas;
 
 	public void onModuleLoad() {
 		modeSelectAlg.setSize("50em", "10em");
@@ -211,15 +208,14 @@ public class ScienceGadgets implements EntryPoint {
 		AlgebraVerticalPanel.add(spAlg);
 		AlgebraVerticalPanel.add(algDragPanel);
 		algebraPanel.add(AlgebraVerticalPanel);
-		spTree = new ScrollPanel(eqTreeCanvas);
-		algebraPanel.add(spTree);
+		algebraPanel.add(apTree);
 
 		// Add styles
 		algOut.setStyleName("algOutPanel");
 		spAlg.setStyleName("algOutPanel");
 		algDragPanel.setStyleName("algDragPanel");
 		// eqTreePanel.setStyleName("treePanel");
-		spTree.setStyleName("treePanel");
+		apTree.setStyleName("treePanel");
 
 		// make it pretty
 		parseJQMath(varGrid.getElement());
@@ -303,24 +299,21 @@ public class ScienceGadgets implements EntryPoint {
 
 		// Initial AlgOut line
 		labelSumEq.setText("$" + equation + "$");
-		// TODO labelSumEq.setHTML(equation);
 		HTML algOutFirstHTML = new HTML("$"+equation+"$");
 		algOut.clear(true);
 		algOut.resizeRows(1);
 		algOut.setWidget(0, 0, algOutFirstHTML);
-		// TODO
 		parseJQMath(labelSumEq.getElement());
 		parseJQMath(algOutFirstHTML.getElement());
 
 		// make algebra manipulator
 		HTML draggableEquation = new HTML();
 		draggableEquation.setHTML("$" + equation + "$");
-		// TODO draggableEquation.setHTML(equation);
 		parseJQMath(draggableEquation.getElement());
-		// The main mathML element is fmath in chrome, math in firefox
 		Element draggableEquationElement = (Element) draggableEquation
 				.getElement().getElementsByTagName("math").getItem(0);
 		if (draggableEquationElement == null) {
+			// The main mathML element is fmath in chrome, math in firefox
 			draggableEquationElement = (Element) draggableEquation.getElement()
 					.getElementsByTagName("fmath").getItem(0);
 		}
@@ -332,9 +325,9 @@ public class ScienceGadgets implements EntryPoint {
 	  	JohnTree johnTree = new JohnTree(draggableEquation);
 		//Canvas canvasTree = Canvas.createIfSupported();
 	  	//eqTreeCanvas.add(canvasTree);
-	  	eqTreeCanvas.clear();
-		johnTree.draw(eqTreeCanvas);
-
+	  	apTree.clear();
+	  	treeCanvas = new TreeCanvas(apTree, johnTree);
+	  	
 		/*	
 		Iterator<TreeItem> it = eqTree.treeItemIterator();
 		while (it.hasNext()) {
@@ -374,11 +367,6 @@ public class ScienceGadgets implements EntryPoint {
 				int width = (int) ((0.75) * draggableEquation.getOffsetHeight());
 				int height = draggableEquation.getOffsetHeight();
 
-				//Window.alert("wrapLeft: " + wrapLeft + "algLeft: " + algLeft
-				//		+ "wrapTop: " + wrapTop + "algTop: " + algTop);
-				// Window.alert("positionTop: "+positionTop+"positionLeft: "+positionLeft+"width: "+width
-				// +"height: "+height);
-				
 				wrap.setWidth(width + "px");
 				wrap.setHeight(height + "px");
 				//wrap.setWidth( "40px");
@@ -481,14 +469,6 @@ public class ScienceGadgets implements EntryPoint {
 
 				// For Algebra practice mode
 				if (table.equals(algGrid)) {
-					/*
-					 * TODO s try { equation = data.getAlgAttribute(
-					 * data.FLAG_ALGEBRA_EQUATION, clickedEl.getInnerText());
-					 * sendEq = equation; } catch (ElementNotFoundExeption e) {
-					 * e.printStackTrace();
-					 * 
-					 * }
-					 */
 					equation = clickedEl.getInnerText();
 
 					// For Science Mode
@@ -502,16 +482,8 @@ public class ScienceGadgets implements EntryPoint {
 								"fmath").getItem(0);
 					}
 					equation = DOM.getElementAttribute(element, "alttext");
-					/*
-					 * TODO symja impl try { sendEq =
-					 * data.getAttribute(data.FLAG_EQUATION_SYMJA, equation); }
-					 * catch (ElementNotFoundExeption e) { e.printStackTrace();
-					 * }
-					 */
 				}
 				selectedEquation = equation;
-				// TODO symja impl
-				// string2MathML_BySymja_OnServer(sendEq);
 				onEqSelect(equation);
 			}
 		}
@@ -627,13 +599,13 @@ public class ScienceGadgets implements EntryPoint {
 				browserPanel.clear();
 				algDragPanel.clear();
 				algOut.clear(true);
-				eqTreeCanvas.clear();
+				apTree.clear();
 				createAlgBrowser();
 			} else if (clicked.equals(modeSelectSci)) {
 				browserPanel.clear();
 				algDragPanel.clear();
 				algOut.clear(true);
-				eqTreeCanvas.clear();
+				apTree.clear();
 				createSciBrowser();
 			}
 		}
