@@ -17,6 +17,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.EquationTree.MathMLParser;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
