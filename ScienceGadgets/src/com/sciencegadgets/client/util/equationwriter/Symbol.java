@@ -1,4 +1,4 @@
-package com.sciencegadgets.util.equationWriter;
+package com.sciencegadgets.client.util.equationwriter;
 
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;

@@ -1,4 +1,4 @@
-package com.sciencegadgets.util.equationWriter;
+package com.sciencegadgets.client.util.equationwriter;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Label;

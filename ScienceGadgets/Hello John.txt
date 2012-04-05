@@ -1,3 +1,0 @@
-1. why are some .jar files in war/lib and some in libs?
-2. why is logger properties in war/lib?
-3. added .classpath to the ignore list
