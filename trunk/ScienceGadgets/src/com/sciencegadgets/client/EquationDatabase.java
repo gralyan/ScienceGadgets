@@ -39,28 +39,28 @@ public final class EquationDatabase {
 	// 0-equation 1-description 2
 	private final String[][] EQUATIONS = {
 			// Newtonian Mechanics
-			/* 0 */{ "ν=ν_0 + at", "upsilon=upsilon o + at" },
-			/* 1 */{ "x=x_0 + ν_0t + 1/2at^2", "x=xo + upsilon o t + (1/2)at^2" },
+			/* 0 */{ "ν=ν_0 + at", "" },
+			/* 1 */{ "x=x_0 + ν_0t + 1/2at^2", "" },
 			/* 2 */{ "ν^2=ν_0^2 + 2a(x - x_0)",
-					"upsilon^2 = upsilon o^2 + 2 a Delta x" },
-			/* 3 */{ "∑F=F_{net} = ma", "Sigma F = F = ma" },
-			/* 4 */{ "F_\\fric≤μN", "F≤ mu N" },
-			/* 5 */{ "a_c={ν^2}/r", "a_c=( upsilon ^2)/r" },
-			/* 6 */{ "τ=rF \\sinθ", "tau =rF sin varTheta" },
-			/* 7 */{ "p=mν", "p=m upsilon" },
-			/* 8 */{ "J=F\\Δt = \\Δp", "J=F Delta t = Delta p" },
-			/* 9 */{ "K=1/2mν^2", "K=(1/2)m upsilon ^2" },
-			/* 10 */{ "\\U_g=mgh", "U=mgh" },
-			/* 11 */{ "W=F\\Δr\\cosθ", "W=F\\DeltarcosvarTheta" },
-			/* 12 */{ "P_\\avg=W/Δt", "P=W/(Delta t)" },
-			/* 13 */{ "P=Fν\\cosθ", "P=F upsilon cos varTheta" },
-			/* 14 */{ "F_s=-kx", "F=-kx" },
-			/* 15 */{ "U_s=1/2kx^2", "U=(1/2)kx^2" },
-			/* 16 */{ "T_s=2π√{m/k}", "T=2pi\"√\"(m/k)" },
-			/* 17 */{ "T_p=2π√{l/g}", "T=2pi\"√\"(l/g)" },
-			/* 18 */{ "T=1/f", "T=1/f" },
-			/* 19 */{ "F_G=-{Gm_1m_2}/{r^2}", "F_G=-(Gm_1m_2)/(r^2)" },
-			/* 20 */{ "U_G=-{Gm_1m_2}/{r}", "U_G=-(Gm_1m_2)/(r)" }
+					"" },
+			/* 3 */{ "F_\\net = ma", "" },
+			/* 4 */{ "F_\\fric≤μN", "" },
+			/* 5 */{ "a_c={ν^2}/r", "" },
+			/* 6 */{ "τ=rF\\sinθ", "" },
+			/* 7 */{ "p=mν", "" },
+			/* 8 */{ "J=F\\Δt", "" },
+			/* 9 */{ "K=1/2mν^2", "" },
+			/* 10 */{ "\\U_g=mgh", "" },
+			/* 11 */{ "W=F\\Δr\\cosθ", "" },
+			/* 12 */{ "P_\\avg=W/Δt", "" },
+			/* 13 */{ "P=Fν\\cosθ", "" },
+			/* 14 */{ "F_s=-kx", "" },
+			/* 15 */{ "U_s=1/2kx^2", "" },
+			/* 16 */{ "T_s=2π√{m/k}", "" },
+			/* 17 */{ "T_p=2π√{l/g}", "" },
+			/* 18 */{ "T=1/f", "" },
+			/* 19 */{ "F_G=-{Gm_1m_2}/{r^2}", "" },
+			/* 20 */{ "U_G=-{Gm_1m_2}/{r}", "" }
 	/**/};
 
 	private final String[][] VARIABLES = {
@@ -93,7 +93,8 @@ public final class EquationDatabase {
 	/* 14 */{ "a=x+b", "vara=x+varb" },
 	/* 15 */{ "a=x-b", "vara=x+(-varb)" },
 	/* 16 */{ "a=x/b", "vara=x / varb" },
-	/* 17 */{ "a=b*x", "vara=varb * x" }
+	/* 17 */{ "a=b*x", "vara=varb * x" },
+	/*debug*/{"a+bc=de+fg"}
 	/**/};
 
 	private enum V {
