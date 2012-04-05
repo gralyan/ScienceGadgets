@@ -65,7 +65,6 @@ public class ScienceGadgets implements EntryPoint {
 	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science Mode");
 	private AbsolutePanel apTree = new AbsolutePanel();
-
 	private TreeCanvas treeCanvas;
 
 	public void onModuleLoad() {
@@ -329,7 +328,7 @@ public class ScienceGadgets implements EntryPoint {
 	  	apTree.clear();
 	  	treeCanvas = new TreeCanvas(apTree, johnTree);
 	  	
-	  	
+
 		/*     
 		MathTree mathTree = new MathTree(draggableEquation);
 		RootPanel.get().add(mathTree.getTreeDrawing());
