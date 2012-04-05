@@ -305,7 +305,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 
 		@Override
-		protected void onVisitNode(Node currentNode, Boolean isLeft) {
+		protected void onVisitNode(Node currentNode, Boolean isLeft, int indexOfSiblings) {
 			wrap = MLElementWrapper.wrapperFactory(
 					(Element) currentNode, isLeft);
 
@@ -318,6 +318,12 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 			}
 
+		}
+
+		@Override
+		protected void onGoingToNextChild(Node currentNode) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 }
