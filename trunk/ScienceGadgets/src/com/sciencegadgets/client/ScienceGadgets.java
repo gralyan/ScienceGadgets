@@ -33,6 +33,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sciencegadgets.client.EquationTree.JohnTree;
+import com.sciencegadgets.client.EquationTree.TreeCanvas;
 
 public class ScienceGadgets implements EntryPoint {
 
