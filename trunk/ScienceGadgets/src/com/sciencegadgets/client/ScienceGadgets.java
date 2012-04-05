@@ -325,8 +325,6 @@ public class ScienceGadgets implements EntryPoint {
 
 		// Make the tree on canvas
 	  	JohnTree johnTree = new JohnTree(draggableEquation);
-		//Canvas canvasTree = Canvas.createIfSupported();
-	  	//eqTreeCanvas.add(canvasTree);
 	  	apTree.clear();
 	  	treeCanvas = new TreeCanvas(apTree, johnTree);
 	  	

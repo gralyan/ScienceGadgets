@@ -1,15 +1,11 @@
 package com.sciencegadgets.client.EquationTree;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.vaadin.gwtgraphics.client.DrawingArea;
-import org.vaadin.gwtgraphics.client.Line;
-import org.vaadin.gwtgraphics.client.shape.Rectangle;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.ScienceGadgets;
 
@@ -18,10 +14,6 @@ public class JohnTree {
 	private JohnNode root;
 	private JohnNode leftSide;
 	private JohnNode rightSide;
-	private int childWidth;
-	private int rowHeight;
-	private AbsolutePanel panel;
-	private DrawingArea canvas;
 
 	public JohnTree(HTML mathML) {
 		MLtoJohnTree ml = new MLtoJohnTree(mathML);
@@ -51,67 +43,56 @@ public class JohnTree {
 	public JohnNode getRoot() {
 		return root;
 	}
+
 	public JohnNode getLeftSide() {
 		return leftSide;
 	}
+
 	public JohnNode getRightSide() {
 		return rightSide;
 	}
+
 	/*
-	public void draw(AbsolutePanel panel) {
-		// Widgets displaying nodes will be added to the panel, drawings like
-		// connecting likes are added to the canvas. Both are same size, canvas
-		// in panel
-		canvas = new DrawingArea(panel.getOffsetWidth(),
-				panel.getOffsetHeight());
-		panel.add(canvas);
-		this.panel = panel;
-
-		int center = canvas.getWidth() / 2;
-		rowHeight = canvas.getHeight() / 10;
-		childWidth = center / 5;
-
-		panel.add(this.root.toMathML(), center, 0);
-		drawChildren(this.root, center, (byte) 1);
-
-	}
-
-	private void drawChildren(JohnNode pNode, int parentX, byte layer) {
-
-		List<JohnNode> kids = pNode.getChildren();
-
-		// The distance from the center of the parent node to the farthest edge
-		// of the child
-		int offset = pNode.getChildCount() * childWidth / 2;
-		int layerHeight = 2 * rowHeight * layer;
-
-		for (JohnNode child : kids) {
-			HTML childHTML = child.toMathML();
-			panel.add(childHTML, (parentX - offset), layerHeight);
-
-			int childLeft = childHTML.getAbsoluteLeft()-panel.getAbsoluteLeft();
-			int childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
-			
-			int pad = 5;
-			int lineX = childLeft + childHTML.getOffsetWidth()/2 + pad;// (childWidth / 2);
-			int lineY = childTop;
-
-
-			Rectangle box = new Rectangle(childLeft - pad,
-					childTop,
-					childHTML.getOffsetWidth() + 2 * pad,
-					childHTML.getOffsetHeight() * 4 / 3);
-			Line line = new Line(parentX, layerHeight-rowHeight, lineX, lineY);
-			canvas.add(line);
-			canvas.add(box);
-			if (child.getChildCount() != 0) {
-				drawChildren(child, lineX, (byte)(layer+1));
-			}
-			offset -= (childWidth);
-		}
-
-	}
-*/
+	 * public void draw(AbsolutePanel panel) { // Widgets displaying nodes will
+	 * be added to the panel, drawings like // connecting likes are added to the
+	 * canvas. Both are same size, canvas // in panel canvas = new
+	 * DrawingArea(panel.getOffsetWidth(), panel.getOffsetHeight());
+	 * panel.add(canvas); this.panel = panel;
+	 * 
+	 * int center = canvas.getWidth() / 2; rowHeight = canvas.getHeight() / 10;
+	 * childWidth = center / 5;
+	 * 
+	 * panel.add(this.root.toMathML(), center, 0); drawChildren(this.root,
+	 * center, (byte) 1);
+	 * 
+	 * }
+	 * 
+	 * private void drawChildren(JohnNode pNode, int parentX, byte layer) {
+	 * 
+	 * List<JohnNode> kids = pNode.getChildren();
+	 * 
+	 * // The distance from the center of the parent node to the farthest edge
+	 * // of the child int offset = pNode.getChildCount() * childWidth / 2; int
+	 * layerHeight = 2 * rowHeight * layer;
+	 * 
+	 * for (JohnNode child : kids) { HTML childHTML = child.toMathML();
+	 * panel.add(childHTML, (parentX - offset), layerHeight);
+	 * 
+	 * int childLeft = childHTML.getAbsoluteLeft()-panel.getAbsoluteLeft(); int
+	 * childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
+	 * 
+	 * int pad = 5; int lineX = childLeft + childHTML.getOffsetWidth()/2 +
+	 * pad;// (childWidth / 2); int lineY = childTop;
+	 * 
+	 * 
+	 * Rectangle box = new Rectangle(childLeft - pad, childTop,
+	 * childHTML.getOffsetWidth() + 2 * pad, childHTML.getOffsetHeight() * 4 /
+	 * 3); Line line = new Line(parentX, layerHeight-rowHeight, lineX, lineY);
+	 * canvas.add(line); canvas.add(box); if (child.getChildCount() != 0) {
+	 * drawChildren(child, lineX, (byte)(layer+1)); } offset -= (childWidth); }
+	 * 
+	 * }
+	 */
 	// private DrawNode(){
 
 	// }
@@ -181,7 +162,6 @@ public class JohnTree {
 			return children;
 		}
 
-		@SuppressWarnings("unused")
 		public JohnNode getFirstChild() {
 			return children.get(0);
 		}
@@ -194,7 +174,6 @@ public class JohnTree {
 			return children.size();
 		}
 
-		@SuppressWarnings("unused")
 		public JohnNode getNextSibling() {
 			int nextIndex = this.indexInSiblings + 1;
 			return this.getParent().getChildAt(nextIndex);
@@ -203,8 +182,8 @@ public class JohnTree {
 		public JohnNode getParent() {
 			return parent;
 		}
-		@SuppressWarnings("unused")
-		public Node getDomNode(){
+
+		public Node getDomNode() {
 			return domNode;
 		}
 
@@ -224,9 +203,10 @@ public class JohnTree {
 	}
 
 	class MLtoJohnTree extends MathMLParser {
-		// private JohnTree johnTree;
+		HashMap<Node, JohnNode> nodeMap;
 		private JohnNode prevLeftNode;
 		private JohnNode prevRightNode;
+		private JohnNode prevSibling;
 		private JohnNode curNode;
 		JohnNode nLeft;
 		JohnNode nEq;
@@ -235,9 +215,11 @@ public class JohnTree {
 		public MLtoJohnTree(HTML mathMLequation) {
 			super(mathMLequation);
 		}
+
 		@Override
 		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
 				Node nodeRight) {
+			nodeMap = new HashMap<Node, JohnNode>();
 			nLeft = new JohnNode(nodeLeft);
 			nEq = new JohnNode(nodeEquals);
 			nRight = new JohnNode(nodeRight);
@@ -248,30 +230,35 @@ public class JohnTree {
 
 		// TODO may possibly add children linearly???
 		@Override
-		protected void onVisitNode(Node currentNode, Boolean isLeft) {
+		protected void onVisitNode(Node currentNode, Boolean isLeft,
+				int indexOfChildren) {
+			curNode = new JohnNode(currentNode);
+
 			if (isLeft) {
-				curNode = new JohnNode(currentNode);
-				prevLeftNode.add(curNode);
+				//
+				if (indexOfChildren == 0) {
+					prevLeftNode.add(curNode);
+				} else {
+					prevSibling.getParent().add(curNode);
+				}
 				prevLeftNode = curNode;
 			} else {
-				curNode = new JohnNode(currentNode);
-				prevRightNode.add(currentNode);
-				prevLeftNode = curNode;
+				// curNode = new JohnNode(currentNode);
+				if (indexOfChildren == 0) {
+					prevRightNode.add(curNode);
+				} else {
+					prevSibling.getParent().add(curNode);
+				}
+				prevRightNode = curNode;
 			}
+			nodeMap.put(currentNode, curNode);
 
 		}
 
+		@Override
+		protected void onGoingToNextChild(Node currentNode) {
+			prevSibling = nodeMap.get(currentNode);
+
+		}
 	}
-
 }
-
-/*
- * String row = ((Element)n).getInnerText(); int size = row.length();
- * 
- * for(int i = 0; i < size; i++){ String c = "" + row.charAt(i); HTML h = new
- * HTML(c); Node x = (Node)h.getElement(); Fragments.add(new JohnNode(x)); }
- * 
- * 
- * for(JohnNode y : Fragments) this.add(y);
- */
-

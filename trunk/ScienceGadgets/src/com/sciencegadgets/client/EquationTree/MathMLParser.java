@@ -46,11 +46,12 @@ public abstract class MathMLParser {
 
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Node currentNode = mathMLChildren.getItem(i);
-			onVisitNode(currentNode, isLeft);
+			onVisitNode(currentNode, isLeft, i);
 
 			if (currentNode.getChildCount() > 1) {
 				addChildren((Element) currentNode, isLeft);
 			}
+			onGoingToNextChild (currentNode);
 		}
 	}
 
@@ -73,6 +74,6 @@ public abstract class MathMLParser {
 	 *            - true if this node is on the left side of the equation
 	 *            (arbitrary boolean)
 	 */
-	protected abstract void onVisitNode(Node currentNode, Boolean isLeft);
-
+	protected abstract void onVisitNode(Node currentNode, Boolean isLeft, int indexOfSiblings);
+	protected abstract void onGoingToNextChild (Node currentNode);
 }
