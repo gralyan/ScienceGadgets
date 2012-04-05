@@ -35,6 +35,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
+import com.sciencegadgets.client.util.MathTree;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -327,6 +328,13 @@ public class ScienceGadgets implements EntryPoint {
 	  	JohnTree johnTree = new JohnTree(draggableEquation);
 	  	apTree.clear();
 	  	treeCanvas = new TreeCanvas(apTree, johnTree);
+	  	
+	  	
+		/*     
+		MathTree mathTree = new MathTree(draggableEquation);
+		RootPanel.get().add(mathTree.getTreeDrawing());
+	  	*/
+	  	
 	  	
 		/*	
 		Iterator<TreeItem> it = eqTree.treeItemIterator();
