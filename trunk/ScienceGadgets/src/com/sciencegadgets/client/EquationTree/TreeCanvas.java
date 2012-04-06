@@ -15,7 +15,8 @@ public class TreeCanvas extends DrawingArea {
 	private int childWidth;
 	private int rowHeight;
 	private AbsolutePanel panel;
-	private int sideLength;
+	private int sideLengthLeft;
+	private int sideLengthRight;
 
 	// The number of members in each row
 	private byte[] leftLayerCounts;
@@ -50,7 +51,7 @@ public class TreeCanvas extends DrawingArea {
 		leftCounters = new byte[20];
 		rightCounters = new byte[20];
 
-		// The count in each layer will allow for maximum spacing, index 0 is
+		// The counting in each layer will allow for maximum spacing, index 0 is
 		// each side
 		leftLayerCounts[0]++;
 		rightLayerCounts[0]++;
@@ -58,28 +59,35 @@ public class TreeCanvas extends DrawingArea {
 		getNextLayerCounts(jTree.getRightSide(), (byte) 1, false);
 		// resizeLayers();
 
-		// Resize side lengths depending on the ratio of side member density
+		// Resize side lengths depending on the ratio of side member density.
+		// This keeps the tree from looking lopsided when there are many more
+		// variables on one side
 		int leftMemberCount = 0;
 		int rightMemberCount = 0;
 		for (int i = 0; i < leftLayerCounts.length; i++) {
-			leftMemberCount += leftLayerCounts[i];
+			// Count all the members in this side, giving more weight to the
+			// higher layers by dividing by i. (*100 to aleviate truncation,
+			// only the ratio matters anyway)
+			leftMemberCount += (leftLayerCounts[i]*100 / (i+1));
 		}
 		for (int i = 0; i < rightLayerCounts.length; i++) {
-			rightMemberCount += rightLayerCounts[i];
+			rightMemberCount += rightLayerCounts[i]*100/(i+1);
 		}
-		sideLength = this.getWidth()*leftMemberCount / rightMemberCount;
+
+		sideLengthLeft = (this.getWidth() * leftMemberCount)
+				/ (rightMemberCount + leftMemberCount);
+		sideLengthRight = this.getWidth() - sideLengthLeft;
+
 		rowHeight = this.getHeight() / 6;
-		// childWidth = center / 5;
 
 		panel.add(this);
-		panel.add(jTree.getRoot().toMathML(), sideLength, 0);
-		panel.add(jTree.getLeftSide().toMathML(), sideLength / 2, 0);
+		panel.add(jTree.getRoot().toMathML(), sideLengthLeft, 0);
+		panel.add(jTree.getLeftSide().toMathML(), sideLengthLeft / 2, 0);
 		panel.add(jTree.getRightSide().toMathML(),
-				(sideLength + (this.getWidth() - sideLength) / 2), 0);
-		System.out.println("\n\n");
-		drawChildren(jTree.getLeftSide(), (sideLength / 2), (byte) 1, true);
-		drawChildren(jTree.getRightSide(), (this.getWidth() - sideLength), (byte) 1,
-				false);
+				(sideLengthLeft + sideLengthRight / 2), 0);
+		drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2), (byte) 1, true);
+		drawChildren(jTree.getRightSide(),
+				(sideLengthLeft + sideLengthRight / 2), (byte) 1, false);
 
 	}
 
@@ -91,10 +99,9 @@ public class TreeCanvas extends DrawingArea {
 				leftLayerCounts[layer]++;
 			} else {
 				rightLayerCounts[layer]++;
-
-				if (child.getChildCount() > 1) {
-					getNextLayerCounts(child, (byte) (layer + 1), isLeft);
-				}
+			}
+			if (child.getChildCount() > 1) {
+				getNextLayerCounts(child, (byte) (layer + 1), isLeft);
 			}
 		}
 	}
@@ -103,28 +110,34 @@ public class TreeCanvas extends DrawingArea {
 			Boolean isLeft) {
 
 		List<JohnNode> children = pNode.getChildren();
-
 		int layerHeight = rowHeight * (layer);
 
 		for (JohnNode child : children) {
+
+			// Find the maximum width any child can have in the layer
 			if (isLeft) {
-				childWidth = sideLength / leftLayerCounts[layer];
+				childWidth = sideLengthLeft / leftLayerCounts[layer];
 			} else {
-				childWidth = (this.getWidth() - sideLength)
-						/ rightLayerCounts[layer];
+				childWidth = (sideLengthRight) / rightLayerCounts[layer];
 			}
 
 			HTML childHTML = child.toMathML();
 			if (isLeft) {
-				panel.add(childHTML, (childWidth * (leftCounters[layer])),
-						layerHeight);
+				int placement = childWidth * (leftCounters[layer]);
+				// Add gravity towards parent node
+				// placement = (placement + parentX) / 2;
+				panel.add(childHTML, placement, layerHeight);
 				leftCounters[layer]++;
 			} else {
-				panel.add(childHTML,
-						(childWidth * (rightCounters[layer]) + sideLength),
-						layerHeight);
+				int placement = (childWidth * rightCounters[layer]);
+				// Shift to right side
+				placement += sideLengthLeft;
+				// Add gravity towards parent node
+				// placement = (placement + parentX) / 2;
+				panel.add(childHTML, placement, layerHeight);
 				rightCounters[layer]++;
 			}
+
 			int childLeft = childHTML.getAbsoluteLeft()
 					- panel.getAbsoluteLeft();
 			int childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
@@ -148,5 +161,4 @@ public class TreeCanvas extends DrawingArea {
 
 	}
 
-	
 }
