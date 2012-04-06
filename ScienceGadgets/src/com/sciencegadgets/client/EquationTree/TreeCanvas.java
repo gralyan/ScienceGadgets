@@ -12,7 +12,7 @@ import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
 public class TreeCanvas extends DrawingArea {
 
-	private int childWidth;
+	private int childSpace;
 	private int rowHeight;
 	private AbsolutePanel panel;
 	private int sideLengthLeft;
@@ -68,10 +68,10 @@ public class TreeCanvas extends DrawingArea {
 			// Count all the members in this side, giving more weight to the
 			// higher layers by dividing by i. (*100 to aleviate truncation,
 			// only the ratio matters anyway)
-			leftMemberCount += (leftLayerCounts[i]*100 / (i+1));
+			leftMemberCount += (leftLayerCounts[i] * 100 / (i + 1));
 		}
 		for (int i = 0; i < rightLayerCounts.length; i++) {
-			rightMemberCount += rightLayerCounts[i]*100/(i+1);
+			rightMemberCount += rightLayerCounts[i] * 100 / (i + 1);
 		}
 
 		sideLengthLeft = (this.getWidth() * leftMemberCount)
@@ -116,34 +116,40 @@ public class TreeCanvas extends DrawingArea {
 
 			// Find the maximum width any child can have in the layer
 			if (isLeft) {
-				childWidth = sideLengthLeft / leftLayerCounts[layer];
+				childSpace = sideLengthLeft / leftLayerCounts[layer];
 			} else {
-				childWidth = (sideLengthRight) / rightLayerCounts[layer];
+				childSpace = (sideLengthRight) / rightLayerCounts[layer];
 			}
-
 			HTML childHTML = child.toMathML();
+			int childWidth = childHTML.getOffsetWidth();
+			int childHeight = childHTML.getOffsetHeight();
+
+			int placement;
 			if (isLeft) {
-				int placement = childWidth * (leftCounters[layer]);
-				// Add gravity towards parent node
-				// placement = (placement + parentX) / 2;
-				panel.add(childHTML, placement, layerHeight);
+				placement = childSpace * (leftCounters[layer]);
 				leftCounters[layer]++;
+
 			} else {
-				int placement = (childWidth * rightCounters[layer]);
+				placement = (childSpace * rightCounters[layer]);
+				rightCounters[layer]++;
 				// Shift to right side
 				placement += sideLengthLeft;
-				// Add gravity towards parent node
-				// placement = (placement + parentX) / 2;
-				panel.add(childHTML, placement, layerHeight);
-				rightCounters[layer]++;
 			}
+			// placement = (placement + parentX) / 2; // Add gravity towards
+			// parent node
+			placement += childSpace / 4;// padding
+			if (childWidth >= childSpace) {
+				// If the child is too big and going to overflow pull it back
+				placement -= childSpace / 4;
+			}
+			panel.add(childHTML, placement, layerHeight);
 
 			int childLeft = childHTML.getAbsoluteLeft()
 					- panel.getAbsoluteLeft();
 			int childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
 
 			int pad = 5;
-			int lineX = childLeft + childHTML.getOffsetWidth() / 2 + pad;
+			int lineX = childLeft + childWidth / 2 + pad;
 			int lineY = childTop;
 
 			Rectangle box = new Rectangle(childLeft - pad, childTop,
