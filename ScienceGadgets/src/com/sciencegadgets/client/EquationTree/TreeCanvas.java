@@ -8,6 +8,7 @@ import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
 public class TreeCanvas extends DrawingArea {
@@ -121,6 +122,8 @@ public class TreeCanvas extends DrawingArea {
 				childSpace = (sideLengthRight) / rightLayerCounts[layer];
 			}
 			HTML childHTML = child.toMathML();
+			childHTML.getHTML();
+			
 			int childWidth = childHTML.getOffsetWidth();
 			int childHeight = childHTML.getOffsetHeight();
 
@@ -155,10 +158,17 @@ public class TreeCanvas extends DrawingArea {
 			Rectangle box = new Rectangle(childLeft - pad, childTop,
 					childHTML.getOffsetWidth() + 2 * pad,
 					childHTML.getOffsetHeight() * 4 / 3);
+			
 			Line line = new Line(parentX, layerHeight - rowHeight / 2, lineX,
 					lineY);
 			this.add(line);
 			this.add(box);
+			
+			MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
+			wrap.setHeight(box.getHeight()+"px");
+			wrap.setWidth(box.getWidth()+"px");
+			panel.add(wrap, box.getAbsoluteLeft(), box.getAbsoluteTop());
+			
 			if (child.getChildCount() > 1) {
 				drawChildren(child, lineX, (byte) (layer + 1), isLeft);
 			}

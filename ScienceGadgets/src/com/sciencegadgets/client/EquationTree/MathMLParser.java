@@ -41,7 +41,7 @@ public abstract class MathMLParser {
 	 * @param isLeft
 	 */
 	private void addChildren(Element mathMLNode, Boolean isLeft) {
-
+mathMLNode.setId("mathroot");
 		NodeList<Node> mathMLChildren = mathMLNode.getChildNodes();
 
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
@@ -54,6 +54,7 @@ public abstract class MathMLParser {
 			onGoingToNextChild (currentNode);
 		}
 	}
+	
 
 	/**
 	 * This method is called when the roots are found. These roots are the sides

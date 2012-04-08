@@ -8,15 +8,18 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.ScienceGadgets;
+import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 
 public class JohnTree {
 
 	private JohnNode root;
 	private JohnNode leftSide;
 	private JohnNode rightSide;
+	private LinkedList<MLElementWrapper> wrappers;
 
 	public JohnTree(HTML mathML) {
 		MLtoJohnTree ml = new MLtoJohnTree(mathML);
+		wrappers = ml.wrappers;
 		root = ml.nEq;
 		leftSide = ml.nLeft;
 		rightSide = ml.nRight;
@@ -32,14 +35,12 @@ public class JohnTree {
 		root.add(this.rightSide);
 	}
 
-	public JohnTree(Node leftSide, Node equalsRoot, Node rightSide) {
-		root = new JohnNode(equalsRoot);
-		this.leftSide = new JohnNode(leftSide);
-		this.rightSide = new JohnNode(rightSide);
-		root.add(this.leftSide);
-		root.add(this.rightSide);
-	}
-
+	/*
+	 * public JohnTree(Node leftSide, Node equalsRoot, Node rightSide) { root =
+	 * new JohnNode(equalsRoot); this.leftSide = new JohnNode(leftSide);
+	 * this.rightSide = new JohnNode(rightSide); root.add(this.leftSide);
+	 * root.add(this.rightSide); }
+	 */
 	public JohnNode getRoot() {
 		return root;
 	}
@@ -50,6 +51,10 @@ public class JohnTree {
 
 	public JohnNode getRightSide() {
 		return rightSide;
+	}
+
+	public LinkedList<MLElementWrapper> getWrappers() {
+		return wrappers;
 	}
 
 	/*
@@ -103,13 +108,17 @@ public class JohnTree {
 		@SuppressWarnings("unused")
 		private Type type;
 		private String symbol;
+		private String tag;
+		private MLElementWrapper wrapper;
 
 		private JohnNode parent;
 		private int indexInSiblings;
 		private List<JohnNode> children = new LinkedList<JohnNode>();
 
-		public JohnNode(Node node) {
+		public JohnNode(Node node, MLElementWrapper wrap) {
+			wrapper = wrap;
 			domNode = node;
+			tag = node.getNodeName();
 			type = determineType(node);
 			symbol = ((Element) node).getInnerText();
 		}
@@ -145,8 +154,8 @@ public class JohnTree {
 		 * {@link JohnNode}
 		 * 
 		 */
-		public void add(Node node) {
-			add(new JohnNode(node));
+		public void add(Node node, MLElementWrapper wrap) {
+			add(new JohnNode(node, wrap));
 			// children.add(jNode);
 			// jNode.indexInSiblings = children.indexOf(jNode);
 			// jNode.parent = this;
@@ -191,8 +200,12 @@ public class JohnTree {
 			return symbol;
 		}
 
+		public MLElementWrapper getWrapper() {
+			return wrapper;
+		}
+
 		public HTML toMathML() {
-			HTML mathML = new HTML("$" + symbol + "$");
+			HTML mathML = new HTML(tag + " " + "$" + symbol + "$");
 			ScienceGadgets.parseJQMath(mathML.getElement());
 			return mathML;
 		}
@@ -211,6 +224,8 @@ public class JohnTree {
 		JohnNode nLeft;
 		JohnNode nEq;
 		JohnNode nRight;
+		private LinkedList<MLElementWrapper> wrappers;
+		private MLElementWrapper wrap;
 
 		public MLtoJohnTree(HTML mathMLequation) {
 			super(mathMLequation);
@@ -220,30 +235,40 @@ public class JohnTree {
 		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
 				Node nodeRight) {
 			nodeMap = new HashMap<Node, JohnNode>();
-			nLeft = new JohnNode(nodeLeft);
-			nEq = new JohnNode(nodeEquals);
-			nRight = new JohnNode(nodeRight);
+			nEq = new JohnNode(nodeEquals, null);
+
+			wrappers = new LinkedList<MLElementWrapper>();
+
+			wrap = MLElementWrapper.wrapperFactory((Element) nodeLeft);
+			wrappers.add(wrap);
+			nLeft = new JohnNode(nodeLeft, wrap);
+
+			wrap = MLElementWrapper.wrapperFactory((Element) nodeRight);
+			wrappers.add(wrap);
+			nRight = new JohnNode(nodeRight, wrap);
 
 			prevLeftNode = nLeft;
 			prevRightNode = nRight;
 		}
 
-		// TODO may possibly add children linearly???
 		@Override
 		protected void onVisitNode(Node currentNode, Boolean isLeft,
 				int indexOfChildren) {
-			curNode = new JohnNode(currentNode);
+			wrap = MLElementWrapper
+					.wrapperFactory((Element) currentNode);
+			wrappers.add(wrap);
+			curNode = new JohnNode(currentNode, wrap);
 
 			if (isLeft) {
-				//
 				if (indexOfChildren == 0) {
 					prevLeftNode.add(curNode);
 				} else {
 					prevSibling.getParent().add(curNode);
 				}
 				prevLeftNode = curNode;
+
 			} else {
-				// curNode = new JohnNode(currentNode);
+
 				if (indexOfChildren == 0) {
 					prevRightNode.add(curNode);
 				} else {
