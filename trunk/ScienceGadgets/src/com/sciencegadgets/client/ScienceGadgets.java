@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,7 +34,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
-import com.sciencegadgets.client.util.MathTree;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -342,25 +340,22 @@ public class ScienceGadgets implements EntryPoint {
 			nextTreeItem.setState(true, false);
 			parseJQMath(nextTreeItem.getElement());
 		}
-
-		placeWrappers(draggableEquation, eqTree.wrappersLeft);
-		placeWrappers(draggableEquation, eqTree.wrappersRight);
 */
+		placeWrappers(draggableEquation, johnTree.getWrappers(), algDragPanel);
+
 		if (modeSelectSci.getValue()) {
 			fillSummary();
 		}
 	}
 
+
 	private void placeWrappers(HTML draggableEquation,
-			LinkedList<MLElementWrapper> wrappers) {
+			LinkedList<MLElementWrapper> wrappers, AbsolutePanel algDragPanel) {
 		// Make draggable overlays on the equation
 		int algLeft = algDragPanel.getAbsoluteLeft();
 		int algTop = algDragPanel.getAbsoluteTop();
 		System.out.println("\n\n");
 		for (MLElementWrapper wrap : wrappers) {
-			try {
-
-				// Window.alert(wrap.getElementWrapped().toString());
 
 				int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
 				int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
@@ -381,12 +376,9 @@ public class ScienceGadgets implements EntryPoint {
 
 				algDragPanel.add(wrap,positionLeft, positionTop);
 				System.out.println("is  wrapped\t"+wrap.getElementWrapped().getTagName()+"\t"+wrap.getElementWrapped().getInnerText());
-			} catch (JavaScriptException e) {
-				System.out.println("NOT wrapped\t"+wrap.getElementWrapped().getTagName()+"\t"+wrap.getElementWrapped().getInnerText());
-			}
+		
 		}
 	}
-
 	/**
 	 * fills the summary box
 	 */
