@@ -3,6 +3,7 @@ package com.sciencegadgets.client.EquationTree;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HTML;
 
 public abstract class MathMLParser {

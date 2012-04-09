@@ -357,6 +357,10 @@ public class ScienceGadgets implements EntryPoint {
 		System.out.println("\n\n");
 		for (MLElementWrapper wrap : wrappers) {
 
+			if(wrap == null){
+				continue;
+			}
+			
 				int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
 				int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
 
