@@ -123,7 +123,7 @@ public class TreeCanvas extends DrawingArea {
 			}
 			HTML childHTML = child.toMathML();
 			childHTML.getHTML();
-			
+
 			int childWidth = childHTML.getOffsetWidth();
 			int childHeight = childHTML.getOffsetHeight();
 
@@ -158,21 +158,21 @@ public class TreeCanvas extends DrawingArea {
 			Rectangle box = new Rectangle(childLeft - pad, childTop,
 					childHTML.getOffsetWidth() + 2 * pad,
 					childHTML.getOffsetHeight() * 4 / 3);
-			
+
 			Line line = new Line(parentX, layerHeight - rowHeight / 2, lineX,
 					lineY);
 			this.add(line);
 			this.add(box);
-			
-			MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
-			wrap.setHeight(box.getHeight()+"px");
-			wrap.setWidth(box.getWidth()+"px");
-			panel.add(wrap, box.getAbsoluteLeft(), box.getAbsoluteTop());
-			
+
+			if (child.getWrapper() != null) {
+				MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
+				wrap.setHeight(box.getHeight() + "px");
+				wrap.setWidth(box.getWidth() + "px");
+				panel.add(wrap, childLeft - pad, childTop);
+			}
 			if (child.getChildCount() > 1) {
 				drawChildren(child, lineX, (byte) (layer + 1), isLeft);
 			}
-			// offset -= (childWidth);
 		}
 
 	}

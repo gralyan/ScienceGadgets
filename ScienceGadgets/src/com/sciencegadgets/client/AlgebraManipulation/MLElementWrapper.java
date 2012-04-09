@@ -109,9 +109,11 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		String tag = element.getNodeName();
 		// TODO parse the mathML to apply the wrappers appropriately
 		
+		if(tag.equalsIgnoreCase("mn") | tag.equalsIgnoreCase("mi")){
 		return new MLElementWrapper(element, "mouseOverlayNumber", true,
 				 null);
-		
+		}
+		return null;
 		// if (tag.equalsIgnoreCase("mn")) {
 		// return new MLElementWrapper(element, "mouseOverlayNumber", true,
 		// isLeft);
@@ -318,7 +320,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 		@Override
 		protected void onGoingToNextChild(Node currentNode) {
-			// TODO Auto-generated method stub
 
 		}
 	}
