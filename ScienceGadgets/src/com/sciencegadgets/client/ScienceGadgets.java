@@ -31,7 +31,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.AlgebraManipulation.AlgebraManipulator;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sciencegadgets.client.EquationTree.DropControllAssigner;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
 
@@ -47,8 +49,6 @@ public class ScienceGadgets implements EntryPoint {
 	private Grid sumGrid = new Grid(1, 2);
 	private Grid algGrid = new Grid(1, 1);
 	private Grid algOut = new Grid(1, 1);
-	String varGridWidth = "5em";
-	String columnWidth = "150em";
 	private HTML labelSumEq = new HTML("");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
@@ -57,13 +57,11 @@ public class ScienceGadgets implements EntryPoint {
 	private ListBox funBox;
 	private TextBox coefBox;
 	private AbsolutePanel algDragPanel = new AbsolutePanel();
-	private HTML algDragHTML = new HTML();
 	private ScrollPanel spAlg = new ScrollPanel(algOut);
 	private String selectedEquation;
 	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science Mode");
 	private AbsolutePanel apTree = new AbsolutePanel();
-	private TreeCanvas treeCanvas;
 
 	public void onModuleLoad() {
 		modeSelectAlg.setSize("50em", "10em");
@@ -306,26 +304,20 @@ public class ScienceGadgets implements EntryPoint {
 		parseJQMath(labelSumEq.getElement());
 		parseJQMath(algOutFirstHTML.getElement());
 
-		// make algebra manipulator
 		HTML draggableEquation = new HTML();
 		draggableEquation.setHTML("$" + equation + "$");
-		parseJQMath(draggableEquation.getElement());
-		Element draggableEquationElement = (Element) draggableEquation
-				.getElement().getElementsByTagName("math").getItem(0);
-		if (draggableEquationElement == null) {
-			// The main mathML element is fmath in chrome, math in firefox
-			draggableEquationElement = (Element) draggableEquation.getElement()
-					.getElementsByTagName("fmath").getItem(0);
-		}
-		DOM.setElementAttribute(draggableEquationElement, "mathsize", "300%");
-		algDragPanel.clear();
-		algDragPanel.add(draggableEquation);
-
+		ScienceGadgets.parseJQMath(draggableEquation.getElement());
+		
 		// Make the tree on canvas
 	  	JohnTree johnTree = new JohnTree(draggableEquation);
 	  	apTree.clear();
-	  	treeCanvas = new TreeCanvas(apTree, johnTree);
+	  	TreeCanvas treeCanvas = new TreeCanvas(apTree, johnTree);
 	  	
+	  	// Make draggable algebra area
+	  	algDragPanel.add(new AlgebraManipulator(draggableEquation,
+				johnTree.getWrappers(), algDragPanel));
+
+	  	DropControllAssigner a = new DropControllAssigner(johnTree);
 
 		/*     
 		MathTree mathTree = new MathTree(draggableEquation);
@@ -341,7 +333,6 @@ public class ScienceGadgets implements EntryPoint {
 			parseJQMath(nextTreeItem.getElement());
 		}
 */
-		placeWrappers(draggableEquation, johnTree.getWrappers(), algDragPanel);
 
 		if (modeSelectSci.getValue()) {
 			fillSummary();
@@ -349,40 +340,6 @@ public class ScienceGadgets implements EntryPoint {
 	}
 
 
-	private void placeWrappers(HTML draggableEquation,
-			LinkedList<MLElementWrapper> wrappers, AbsolutePanel algDragPanel) {
-		// Make draggable overlays on the equation
-		int algLeft = algDragPanel.getAbsoluteLeft();
-		int algTop = algDragPanel.getAbsoluteTop();
-		System.out.println("\n\n");
-		for (MLElementWrapper wrap : wrappers) {
-
-			if(wrap == null){
-				continue;
-			}
-			
-				int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
-				int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
-
-				int positionLeft = wrapLeft - algLeft;
-				int positionTop = wrapTop - algTop;
-				
-				//int width = wrap.getElementWrapped().getOffsetWidth();
-				//int height = wrap.getElementWrapped().getOffsetHeight();
-
-				int width = (int) ((0.75) * draggableEquation.getOffsetHeight());
-				int height = draggableEquation.getOffsetHeight();
-
-				wrap.setWidth(width + "px");
-				wrap.setHeight(height + "px");
-				//wrap.setWidth( "40px");
-				//wrap.setHeight( "40px");
-
-				algDragPanel.add(wrap,positionLeft, positionTop);
-				System.out.println("is  wrapped\t"+wrap.getElementWrapped().getTagName()+"\t"+wrap.getElementWrapped().getInnerText());
-		
-		}
-	}
 	/**
 	 * fills the summary box
 	 */

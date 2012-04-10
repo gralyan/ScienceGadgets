@@ -209,6 +209,9 @@ public class JohnTree {
 			ScienceGadgets.parseJQMath(mathML.getElement());
 			return mathML;
 		}
+		public String getTag(){
+			return tag;
+		}
 	}
 
 	private static enum Type {

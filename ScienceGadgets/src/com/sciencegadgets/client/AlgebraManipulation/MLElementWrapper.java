@@ -29,7 +29,7 @@ import com.sciencegadgets.client.EquationTree.MathMLParser;
 public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		HasMouseOverHandlers, HasDragStartHandlers {
 
-	PickupDragController dragController = null;
+	ElementDragController dragController = null;
 	private Element element = null;
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
@@ -49,7 +49,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 *            - the slyle that will be added to element for
 	 *            {@link MouseOverHandler} and {@link MouseOutHandler}
 	 * @param isDraggable
-	 *            - if true, adds a default drag {@link PickupDragController}
+	 *            - if true, adds a default drag {@link ElementDragController}
 	 *            for the parent {@link AbsolutePanel} it is currently in
 	 * @param isLeft
 	 *            - Arbitrarily chosen distinction between sides. True if the
@@ -64,11 +64,12 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		addMouseOutHandlerDefault(mouseOverStyle);
 
 		if (joinedWrapper == null) {
-			this.joinedWrapper = new MLElementWrapper(null,
-					mouseOverStyle, isDraggable, this);
+			this.joinedWrapper = new MLElementWrapper(theElement, mouseOverStyle,
+					isDraggable, this);
 		} else {
 			this.joinedWrapper = joinedWrapper;
 		}
+
 	}
 
 	/**
@@ -82,7 +83,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * @param theElement
 	 *            - the element to wrap in widget
 	 * @param isDraggable
-	 *            - if true, adds a default drag {@link PickupDragController}
+	 *            - if true, adds a default drag {@link ElementDragController}
 	 *            for the parent {@link AbsolutePanel} it is currently in
 	 * @param isLeft
 	 *            - Arbitrarily chosen distinction between sides. True if the
@@ -90,7 +91,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 *            right
 	 */
 	public MLElementWrapper(Element theElement, Boolean isDraggable,
-			 MLElementWrapper joinedWrapper) {
+			MLElementWrapper joinedWrapper) {
 		// setElement(theElement);
 		// onAttach();
 		// this.setHTML(theElement.getInnerText());
@@ -98,8 +99,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		this.isDraggable = isDraggable;
 
 		if (joinedWrapper == null) {
-			this.joinedWrapper = new MLElementWrapper(null, isDraggable,
-					 this);
+			this.joinedWrapper = new MLElementWrapper(theElement, isDraggable, this);
 		} else {
 			this.joinedWrapper = joinedWrapper;
 		}
@@ -108,10 +108,10 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public static MLElementWrapper wrapperFactory(Element element) {
 		String tag = element.getNodeName();
 		// TODO parse the mathML to apply the wrappers appropriately
-		
-		if(tag.equalsIgnoreCase("mn") | tag.equalsIgnoreCase("mi")){
-		return new MLElementWrapper(element, "mouseOverlayNumber", true,
-				 null);
+
+		if (tag.equalsIgnoreCase("mn") | tag.equalsIgnoreCase("mi")) {
+			return new MLElementWrapper(element, "mouseOverlayNumber", true,
+					null);
 		}
 		return null;
 		// if (tag.equalsIgnoreCase("mn")) {
@@ -143,12 +143,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		super.onAttach();
 
 		if (isDraggable) {
-			try {
-				PickupDragController dragC = new PickupDragController(
-						(AbsolutePanel) this.getParent(), true);
-				addDragController(dragC);
-			} catch (Exception e) {
-			}
+			ElementDragController dragC = new ElementDragController(
+					(AbsolutePanel) this.getParent(), true);
+			addDragController(dragC);
 		}
 
 	}
@@ -177,7 +174,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 	/**
 	 * Add a drag controller to this widget, can be a subclass of
-	 * {@link AbstractDragController} such as {@link PickupDragController}
+	 * {@link AbstractDragController} such as {@link ElementDragController}
 	 * <p>
 	 * If a drag controller already exists, it is overridden
 	 * </p>
@@ -186,7 +183,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * @return
 	 * @throws DragControllerException
 	 */
-	public PickupDragController addDragController(PickupDragController dragCtrl) {
+	public ElementDragController addDragController(ElementDragController dragCtrl) {
 		dragController = dragCtrl;
 		dragController.makeDraggable(this);
 		return dragController;
@@ -198,7 +195,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * @param dragCtrl
 	 * @throws Exception
 	 */
-	public void removeDragController(PickupDragController dragCtrl)
+	public void removeDragController(ElementDragController dragCtrl)
 			throws Exception {
 		if (dragController != null) {
 			dragController.makeNotDraggable(this);
@@ -206,19 +203,11 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
-	// TODO addDropContoller
-
-	// public MathMLDropController addDropTarget(Widget target) throws
-	// DragControllerException {
-	// MathMLDropController dropCtrl = new MathMLDropController(target);
-	// if(dragController != null){
-	// dragController.registerDropController(dropCtrl);
-	// }else{
-	// throw new
-	// DragControllerException("Must add a drag controller before a drop controller/target");
-	// }
-	// return dropCtrl;
-	// }
+	public MathMLDropController addDropTarget(Widget target) {
+		MathMLDropController dropCtrl = new MathMLDropController(target);
+		dragController.registerDropController(dropCtrl);
+		return dropCtrl;
+	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Inner Class Handlers
@@ -277,6 +266,28 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			// "mathbackground", colorOnOver);
 		}
 	}
+	
+	class ElementDragController extends PickupDragController{
+
+		public ElementDragController(AbsolutePanel boundaryPanel,
+				boolean allowDroppingOnBoundaryPanel) {
+			super(boundaryPanel, allowDroppingOnBoundaryPanel);
+		}
+		
+		@Override
+		public void dragStart() {
+			super.dragStart();
+	//		MLElementWrapper wrap = (MLElementWrapper)context.draggable;
+	//		wrap.setText(wrap.getElementWrapped().getInnerText());
+		}
+		@Override
+		public void dragEnd() {
+			super.dragEnd();
+	//		MLElementWrapper wrap = (MLElementWrapper)context.draggable;
+	//		wrap.setText("");
+		}
+	}
+	
 
 	class MLWrappingParser extends MathMLParser {
 
@@ -293,10 +304,10 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
 				Node nodeRight) {
 
-			MLElementWrapper wrapLeft = MLElementWrapper.wrapperFactory(
-					(Element) nodeLeft);
-			MLElementWrapper wrapRight = MLElementWrapper.wrapperFactory(
-					(Element) nodeRight);
+			MLElementWrapper wrapLeft = MLElementWrapper
+					.wrapperFactory((Element) nodeLeft);
+			MLElementWrapper wrapRight = MLElementWrapper
+					.wrapperFactory((Element) nodeRight);
 
 			wrappersLeft.add(wrapLeft);
 			wrappersRight.add(wrapRight);
