@@ -277,14 +277,14 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		@Override
 		public void dragStart() {
 			super.dragStart();
-	//		MLElementWrapper wrap = (MLElementWrapper)context.draggable;
-	//		wrap.setText(wrap.getElementWrapped().getInnerText());
+			MLElementWrapper wrap = (MLElementWrapper)context.draggable;
+			wrap.setText(wrap.getElementWrapped().getInnerText());
 		}
 		@Override
 		public void dragEnd() {
 			super.dragEnd();
-	//		MLElementWrapper wrap = (MLElementWrapper)context.draggable;
-	//		wrap.setText("");
+			MLElementWrapper wrap = (MLElementWrapper)context.draggable;
+			wrap.setText("");
 		}
 	}
 	

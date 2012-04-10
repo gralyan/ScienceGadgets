@@ -6,9 +6,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MathMLDropController extends AbstractDropController {
+	MLElementWrapper target;
 
 	public MathMLDropController(Widget dropTarget) {
 		super(dropTarget);
+		target = (MLElementWrapper) dropTarget;
 	}
 
 	@Override
@@ -17,7 +19,7 @@ public class MathMLDropController extends AbstractDropController {
 	  }
 	@Override
 	  public void onEnter(DragContext context) {
-	    getDropTarget().addStyleName("selectedVar");
+	    target.addStyleName("selectedVar");
 	  }
 
 

@@ -62,6 +62,7 @@ public class ScienceGadgets implements EntryPoint {
 	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science Mode");
 	private AbsolutePanel apTree = new AbsolutePanel();
+	AbsolutePanel parsedTreePanel;
 
 	public void onModuleLoad() {
 		modeSelectAlg.setSize("50em", "10em");
@@ -309,9 +310,17 @@ public class ScienceGadgets implements EntryPoint {
 		ScienceGadgets.parseJQMath(draggableEquation.getElement());
 		
 		// Make the tree on canvas
-	  	JohnTree johnTree = new JohnTree(draggableEquation);
+	  	JohnTree johnTree = new JohnTree(draggableEquation, false);
 	  	apTree.clear();
 	  	TreeCanvas treeCanvas = new TreeCanvas(apTree, johnTree);
+	  	
+	  	parsedTreePanel = new AbsolutePanel();
+	  	parsedTreePanel.setStyleName("treePanel");
+	  	RootPanel.get().add(parsedTreePanel);
+	  	JohnTree jTree = new JohnTree (draggableEquation, true);
+	  	TreeCanvas tCanvas = new TreeCanvas(parsedTreePanel, jTree);
+	  	
+	  	
 	  	
 	  	// Make draggable algebra area
 	  	algDragPanel.add(new AlgebraManipulator(draggableEquation,
@@ -323,16 +332,6 @@ public class ScienceGadgets implements EntryPoint {
 		MathTree mathTree = new MathTree(draggableEquation);
 		RootPanel.get().add(mathTree.getTreeDrawing());
 	  	*/
-	  	
-	  	
-		/*	
-		Iterator<TreeItem> it = eqTree.treeItemIterator();
-		while (it.hasNext()) {
-			TreeItem nextTreeItem = it.next();
-			nextTreeItem.setState(true, false);
-			parseJQMath(nextTreeItem.getElement());
-		}
-*/
 
 		if (modeSelectSci.getValue()) {
 			fillSummary();
