@@ -23,21 +23,21 @@ public class DropControllAssigner {
 
 		for (JohnNode child : children) {
 			if (child.getTag().equalsIgnoreCase("mi")) {
-				
-				//Handle errors better
-				
-				JohnNode sib = null;
+
+				// Handle errors better
+
 				try {
-					sib = child.getNextSibling();
+					JohnNode sib = child.getNextSibling();
+					if (sib.getTag().equalsIgnoreCase("mi")
+							| sib.getTag().equalsIgnoreCase("mn")) {
+						child.getWrapper().addDropTarget(sib.getWrapper());
+						child.getWrapper().getJoinedWrapper().addDropTarget(sib.getWrapper().getJoinedWrapper());
+					}
+					// System.out.println("added " + child.toString() + "to "
+					// + child.getNextSibling().toString());
 				} catch (IndexOutOfBoundsException e) {
 
 				}
-				if (sib != null) {
-					child.getWrapper().addDropTarget(sib.getWrapper());
-				}
-
-				System.out.println("added " + child.toString() + "to "
-						+ child.getNextSibling().toString());
 
 			}
 			if (child.getChildCount() > 0) {

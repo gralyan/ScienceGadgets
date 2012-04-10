@@ -4,11 +4,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.math.ConvergenceException;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.ScienceGadgets;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
+import com.sciencegadgets.client.EquationTree.JohnTree.MLTreeToMathTree;
 
 public class JohnTree {
 
@@ -17,7 +22,17 @@ public class JohnTree {
 	private JohnNode rightSide;
 	private LinkedList<MLElementWrapper> wrappers;
 
-	public JohnTree(HTML mathML) {
+	/**
+	 * A tree representation of an equation.
+	 * 
+	 * @param mathML
+	 *            - The equation written in MathML XML
+	 * @param isParsedForMath
+	 *            - If true, the tree is an abstract syntax tree that can be
+	 *            manipulated as math. If false it is a tree of MathML as taken
+	 *            from XML
+	 */
+	public JohnTree(HTML mathML, Boolean isParsedForMath) {
 		MLtoJohnTree ml = new MLtoJohnTree(mathML);
 		wrappers = ml.wrappers;
 		root = ml.nEq;
@@ -25,6 +40,10 @@ public class JohnTree {
 		rightSide = ml.nRight;
 		root.add(leftSide);
 		root.add(rightSide);
+
+		if (isParsedForMath) {
+			MLTreeToMathTree mathTree = new MLTreeToMathTree(this);
+		}
 	}
 
 	public JohnTree(JohnNode leftSide, JohnNode equalsRoot, JohnNode rightSide) {
@@ -112,41 +131,15 @@ public class JohnTree {
 		private MLElementWrapper wrapper;
 
 		private JohnNode parent;
-		private int indexInSiblings;
+		// private int indexInSiblings;
 		private List<JohnNode> children = new LinkedList<JohnNode>();
 
 		public JohnNode(Node node, MLElementWrapper wrap) {
 			wrapper = wrap;
 			domNode = node;
 			tag = node.getNodeName();
-			type = determineType(node);
+			type = null;
 			symbol = ((Element) node).getInnerText();
-		}
-
-		/**
-		 * Determines the type of node eg. Operand, Equals...
-		 * <p>
-		 * Returns null if none found
-		 * </p>
-		 * 
-		 * @param node
-		 * @return type of node from the emum Type
-		 */
-		private Type determineType(Node node) {
-			String tag = node.getNodeName();
-
-			if (tag.equalsIgnoreCase("mn"))
-				return Type.Operand;
-			else if (tag.equalsIgnoreCase("mi"))
-				return Type.Operand;
-			else if (tag.equalsIgnoreCase("mo")) {
-				if (tag.equalsIgnoreCase("="))// fixxxx
-					return Type.Equals;
-				else
-					return Type.Operator;
-			}
-			// throw new Exception("DERP");
-			return null;
 		}
 
 		/**
@@ -163,7 +156,7 @@ public class JohnTree {
 
 		private void add(JohnNode johnNode) {
 			children.add(johnNode);
-			johnNode.indexInSiblings = children.indexOf(johnNode);
+			// johnNode.indexInSiblings = children.indexOf(johnNode);
 			johnNode.parent = this;
 		}
 
@@ -184,9 +177,20 @@ public class JohnTree {
 		}
 
 		public JohnNode getNextSibling() {
-			int nextIndex = this.indexInSiblings + 1;
+			int nextIndex = this.getParent().getChildren().indexOf(this) + 1;// this.indexInSiblings
+																				// +
+																				// 1;
 			return this.getParent().getChildAt(nextIndex);
 		}
+
+		public void remove() {
+			// int index = this.indexInSiblings;
+			List<JohnNode> sibs = this.parent.getChildren();
+			sibs.remove(this.parent.getChildren().lastIndexOf(this));
+			/*
+			 * for (JohnNode child : sibs) { if (child.indexInSiblings > index)
+			 * { child.indexInSiblings -= 1; } }
+			 */}
 
 		public JohnNode getParent() {
 			return parent;
@@ -205,17 +209,27 @@ public class JohnTree {
 		}
 
 		public HTML toMathML() {
-			HTML mathML = new HTML(tag + " " + "$" + symbol + "$");
+			HTML mathML;
+			if (type == null) {
+				mathML = new HTML(tag + " " + "$" + symbol + "$");
+			} else {
+				mathML = new HTML(type + tag + " " + "$" + symbol + "$");
+			}
 			ScienceGadgets.parseJQMath(mathML.getElement());
 			return mathML;
 		}
-		public String getTag(){
+
+		public Type getType() {
+			return type;
+		}
+
+		public String getTag() {
 			return tag;
 		}
 	}
 
 	private static enum Type {
-		Term, Equals, Operator, Operand;
+		Term, Series, Equals, Function, Variable, Number;
 	}
 
 	class MLtoJohnTree extends MathMLParser {
@@ -257,8 +271,7 @@ public class JohnTree {
 		@Override
 		protected void onVisitNode(Node currentNode, Boolean isLeft,
 				int indexOfChildren) {
-			wrap = MLElementWrapper
-					.wrapperFactory((Element) currentNode);
+			wrap = MLElementWrapper.wrapperFactory((Element) currentNode);
 			wrappers.add(wrap);
 			curNode = new JohnNode(currentNode, wrap);
 
@@ -287,6 +300,63 @@ public class JohnTree {
 		protected void onGoingToNextChild(Node currentNode) {
 			prevSibling = nodeMap.get(currentNode);
 
+		}
+	}
+
+	class MLTreeToMathTree {
+
+		JohnNode mathRight;
+		JohnNode mathLeft;
+
+		MLTreeToMathTree(JohnTree jTree) {
+			mathLeft = jTree.getLeftSide();
+			mathRight = jTree.getRightSide();
+			commenseRevolution(mathLeft);
+			commenseRevolution(mathRight);
+		}
+
+		private void commenseRevolution(JohnNode jNode) {
+			if (jNode.getTag().equalsIgnoreCase("mrow")) {
+				convertRow(jNode);
+				rearrangeRows(jNode);
+			}
+		}
+
+		private void convertRow(JohnNode jNode) {
+			List<JohnNode> kids = jNode.getChildren();
+			jNode.type = Type.Term;
+
+			for (JohnNode child : kids) {
+				if (child.getTag().equalsIgnoreCase("mo")) {
+					jNode.type = Type.Series;
+					child.remove();
+				}
+				if (child.getTag().equalsIgnoreCase("mrow")) {
+					convertRow(child);
+				}
+			}
+
+		}
+
+		private void rearrangeRows(JohnNode jNode) {
+			List<JohnNode> kids = jNode.getChildren();
+
+			for (JohnNode kid : kids) {
+				if ((Type.Series).equals(jNode.parent.getType())) {
+					List<JohnNode> orphans = kid.getChildren();
+					
+					for (JohnNode orphan : orphans) {
+						Window.alert(jNode.toString());
+						orphan.parent = jNode.parent;
+						jNode.parent.children.add(orphan);
+						jNode.remove();
+
+					}
+				}
+				if(kid.getChildCount() >0){
+					rearrangeRows(kid);
+				}
+			}
 		}
 	}
 }
