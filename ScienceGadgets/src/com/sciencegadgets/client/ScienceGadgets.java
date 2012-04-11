@@ -566,6 +566,7 @@ public class ScienceGadgets implements EntryPoint {
 				algOut.clear(true);
 				apTree.clear();
 				createSciBrowser();
+				sumGrid.clear(true);
 			}
 		}
 	}
