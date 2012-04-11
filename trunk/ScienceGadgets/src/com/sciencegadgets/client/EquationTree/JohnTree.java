@@ -1,10 +1,9 @@
 package com.sciencegadgets.client.EquationTree;
 
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.math.ConvergenceException;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -12,8 +11,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.ScienceGadgets;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
-import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
-import com.sciencegadgets.client.EquationTree.JohnTree.MLTreeToMathTree;
 
 public class JohnTree {
 
@@ -33,16 +30,10 @@ public class JohnTree {
 	 *            from XML
 	 */
 	public JohnTree(HTML mathML, Boolean isParsedForMath) {
-		MLtoJohnTree ml = new MLtoJohnTree(mathML);
-		wrappers = ml.wrappers;
-		root = ml.nEq;
-		leftSide = ml.nLeft;
-		rightSide = ml.nRight;
-		root.add(leftSide);
-		root.add(rightSide);
+		new MLtoJohnTree(mathML).change(this);
 
 		if (isParsedForMath) {
-			MLTreeToMathTree mathTree = new MLTreeToMathTree(this);
+			new MLTreeToMathTree().change(this);
 		}
 	}
 
@@ -54,12 +45,6 @@ public class JohnTree {
 		root.add(this.rightSide);
 	}
 
-	/*
-	 * public JohnTree(Node leftSide, Node equalsRoot, Node rightSide) { root =
-	 * new JohnNode(equalsRoot); this.leftSide = new JohnNode(leftSide);
-	 * this.rightSide = new JohnNode(rightSide); root.add(this.leftSide);
-	 * root.add(this.rightSide); }
-	 */
 	public JohnNode getRoot() {
 		return root;
 	}
@@ -76,55 +61,9 @@ public class JohnTree {
 		return wrappers;
 	}
 
-	/*
-	 * public void draw(AbsolutePanel panel) { // Widgets displaying nodes will
-	 * be added to the panel, drawings like // connecting likes are added to the
-	 * canvas. Both are same size, canvas // in panel canvas = new
-	 * DrawingArea(panel.getOffsetWidth(), panel.getOffsetHeight());
-	 * panel.add(canvas); this.panel = panel;
-	 * 
-	 * int center = canvas.getWidth() / 2; rowHeight = canvas.getHeight() / 10;
-	 * childWidth = center / 5;
-	 * 
-	 * panel.add(this.root.toMathML(), center, 0); drawChildren(this.root,
-	 * center, (byte) 1);
-	 * 
-	 * }
-	 * 
-	 * private void drawChildren(JohnNode pNode, int parentX, byte layer) {
-	 * 
-	 * List<JohnNode> kids = pNode.getChildren();
-	 * 
-	 * // The distance from the center of the parent node to the farthest edge
-	 * // of the child int offset = pNode.getChildCount() * childWidth / 2; int
-	 * layerHeight = 2 * rowHeight * layer;
-	 * 
-	 * for (JohnNode child : kids) { HTML childHTML = child.toMathML();
-	 * panel.add(childHTML, (parentX - offset), layerHeight);
-	 * 
-	 * int childLeft = childHTML.getAbsoluteLeft()-panel.getAbsoluteLeft(); int
-	 * childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
-	 * 
-	 * int pad = 5; int lineX = childLeft + childHTML.getOffsetWidth()/2 +
-	 * pad;// (childWidth / 2); int lineY = childTop;
-	 * 
-	 * 
-	 * Rectangle box = new Rectangle(childLeft - pad, childTop,
-	 * childHTML.getOffsetWidth() + 2 * pad, childHTML.getOffsetHeight() * 4 /
-	 * 3); Line line = new Line(parentX, layerHeight-rowHeight, lineX, lineY);
-	 * canvas.add(line); canvas.add(box); if (child.getChildCount() != 0) {
-	 * drawChildren(child, lineX, (byte)(layer+1)); } offset -= (childWidth); }
-	 * 
-	 * }
-	 */
-	// private DrawNode(){
-
-	// }
-
 	protected class JohnNode {
 		// encapsulated dom node
 		private Node domNode;
-		@SuppressWarnings("unused")
 		private Type type;
 		private String symbol;
 		private String tag;
@@ -149,14 +88,10 @@ public class JohnTree {
 		 */
 		public void add(Node node, MLElementWrapper wrap) {
 			add(new JohnNode(node, wrap));
-			// children.add(jNode);
-			// jNode.indexInSiblings = children.indexOf(jNode);
-			// jNode.parent = this;
 		}
 
 		private void add(JohnNode johnNode) {
 			children.add(johnNode);
-			// johnNode.indexInSiblings = children.indexOf(johnNode);
 			johnNode.parent = this;
 		}
 
@@ -177,20 +112,14 @@ public class JohnTree {
 		}
 
 		public JohnNode getNextSibling() {
-			int nextIndex = this.getParent().getChildren().indexOf(this) + 1;// this.indexInSiblings
-																				// +
-																				// 1;
+			int nextIndex = this.getParent().getChildren().indexOf(this) + 1;
 			return this.getParent().getChildAt(nextIndex);
 		}
 
 		public void remove() {
-			// int index = this.indexInSiblings;
 			List<JohnNode> sibs = this.parent.getChildren();
 			sibs.remove(this.parent.getChildren().lastIndexOf(this));
-			/*
-			 * for (JohnNode child : sibs) { if (child.indexInSiblings > index)
-			 * { child.indexInSiblings -= 1; } }
-			 */}
+		}
 
 		public JohnNode getParent() {
 			return parent;
@@ -213,7 +142,7 @@ public class JohnTree {
 			if (type == null) {
 				mathML = new HTML(tag + " " + "$" + symbol + "$");
 			} else {
-				mathML = new HTML(type + tag + " " + "$" + symbol + "$");
+				mathML = new HTML(type + " " + "$" + symbol + "$");
 			}
 			ScienceGadgets.parseJQMath(mathML.getElement());
 			return mathML;
@@ -229,7 +158,7 @@ public class JohnTree {
 	}
 
 	private static enum Type {
-		Term, Series, Equals, Function, Variable, Number;
+		T, S, E, Fn, V, N, Fr;
 	}
 
 	class MLtoJohnTree extends MathMLParser {
@@ -246,6 +175,16 @@ public class JohnTree {
 
 		public MLtoJohnTree(HTML mathMLequation) {
 			super(mathMLequation);
+		}
+
+		public void change(JohnTree jTree) {
+			jTree.root = nEq;
+			jTree.leftSide = nLeft;
+			jTree.rightSide = nRight;
+			jTree.root.add(jTree.leftSide);
+			jTree.root.add(jTree.rightSide);
+			jTree.wrappers = wrappers;
+
 		}
 
 		@Override
@@ -305,57 +244,105 @@ public class JohnTree {
 
 	class MLTreeToMathTree {
 
-		JohnNode mathRight;
-		JohnNode mathLeft;
+		JohnNode mathRoot;
+		private LinkedList<JohnNode> nestedMrows = new LinkedList<JohnNode>();
+		private LinkedList<JohnNode> operatorList = new LinkedList<JohnNode>();
 
-		MLTreeToMathTree(JohnTree jTree) {
-			mathLeft = jTree.getLeftSide();
-			mathRight = jTree.getRightSide();
-			commenseRevolution(mathLeft);
-			commenseRevolution(mathRight);
+		public void change(JohnTree jTree) {
+			mathRoot = jTree.getRoot();
+			commenseRevolution(mathRoot);
 		}
 
 		private void commenseRevolution(JohnNode jNode) {
-			if (jNode.getTag().equalsIgnoreCase("mrow")) {
-				convertRow(jNode);
-				rearrangeRows(jNode);
-			}
+			convertChildrensMrow(jNode);
+			deleteOperators();
+			findNestedMrows(jNode);
+			rearrangeNestedMrows();
 		}
 
-		private void convertRow(JohnNode jNode) {
+		/**
+		 * Converts all mrow tags to either {@link Type.Term} or
+		 * {@link Type.Series}
+		 * 
+		 * @param jNode
+		 * @return
+		 */
+		private void convertChildrensMrow(JohnNode jNode) {
 			List<JohnNode> kids = jNode.getChildren();
-			jNode.type = Type.Term;
-
-			for (JohnNode child : kids) {
-				if (child.getTag().equalsIgnoreCase("mo")) {
-					jNode.type = Type.Series;
-					child.remove();
-				}
-				if (child.getTag().equalsIgnoreCase("mrow")) {
-					convertRow(child);
-				}
+			if (kids == null) {
+				return;
 			}
-
-		}
-
-		private void rearrangeRows(JohnNode jNode) {
-			List<JohnNode> kids = jNode.getChildren();
-
 			for (JohnNode kid : kids) {
-				if ((Type.Series).equals(jNode.parent.getType())) {
-					List<JohnNode> orphans = kid.getChildren();
-					
-					for (JohnNode orphan : orphans) {
-						Window.alert(jNode.toString());
-						orphan.parent = jNode.parent;
-						jNode.parent.children.add(orphan);
-						jNode.remove();
+				if ("mrow".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.T;
 
+					for (JohnNode baby : kid.getChildren()) {
+						if ("mo".equalsIgnoreCase(baby.getTag())) {
+							kid.type = Type.S;
+							operatorList.add(baby);
+						}
 					}
+				} else if ("mi".equalsIgnoreCase(kid.getTag())
+						|| "msub".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.V;
+				} else if ("mn".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.N;
+				} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.Fr;
 				}
-				if(kid.getChildCount() >0){
-					rearrangeRows(kid);
+				if (kid.getChildCount() > 0) {
+					convertChildrensMrow(kid);
 				}
+			}
+		}
+		private void deleteOperators(){
+			for(JohnNode op : operatorList){
+				op.remove();
+			}
+		}
+
+		/**
+		 * Finds all instances where there is a series inside a series or a term
+		 * inside a term. These will be compiled into one node to make the tree
+		 * more mathematically sound by conveying the associative property. Due
+		 * to {@link ConcurrentModificationException} problems, the actual
+		 * re-arrangement is done in another step: {@link rearrangeNestedMrows}
+		 * 
+		 * @param parent
+		 * @param nestMrow
+		 */
+		private void findNestedMrows(JohnNode parent) {
+			if (parent.getChildCount() == 0) {
+				return;
+			}
+
+			List<JohnNode> kids = parent.getChildren();
+			for (JohnNode kid : kids) {
+				if (((Type.S).equals(kid.getType()) && (Type.S).equals(parent
+						.getType()))
+						|| ((Type.T).equals(kid.getType()) && (Type.T)
+								.equals(parent.getType()))) {
+					nestedMrows.add(kid);
+				}
+				findNestedMrows(kid);
+			}
+		}
+
+		/**
+		 * Second part of {@link findNestedMrows}, compiles all nested
+		 * {@link Type.Series} and {@link Type.Term} to one node
+		 */
+		private void rearrangeNestedMrows() {
+			if (nestedMrows == null) {
+				return;
+			}
+
+			for (JohnNode kid : nestedMrows) {
+				List<JohnNode> babies = kid.getChildren();
+				for (JohnNode baby : babies) {
+					kid.getParent().add(baby);
+				}
+				kid.remove();
 			}
 		}
 	}

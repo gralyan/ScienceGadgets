@@ -94,7 +94,7 @@ public final class EquationDatabase {
 	/* 15 */{ "a=x-b", "vara=x+(-varb)" },
 	/* 16 */{ "a=x/b", "vara=x / varb" },
 	/* 17 */{ "a=b*x", "vara=varb * x" },
-	/*debug*/{"a+bc=de+fg"}
+	/*debug*/{"a+bc=de+fg+jo+hn+j"}
 	/**/};
 
 	private enum V {
