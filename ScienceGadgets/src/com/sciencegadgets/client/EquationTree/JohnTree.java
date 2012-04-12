@@ -11,6 +11,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.ScienceGadgets;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
 public class JohnTree {
 
@@ -95,6 +96,11 @@ public class JohnTree {
 			johnNode.parent = this;
 		}
 
+		private void add(int index, JohnNode johnNode) {
+			children.add(index, johnNode);
+			johnNode.parent = this;
+		}
+
 		public List<JohnNode> getChildren() {
 			return children;
 		}
@@ -118,7 +124,11 @@ public class JohnTree {
 
 		public void remove() {
 			List<JohnNode> sibs = this.parent.getChildren();
-			sibs.remove(this.parent.getChildren().lastIndexOf(this));
+			sibs.remove(sibs.indexOf(this));
+		}
+
+		public int getIndex() {
+			return this.parent.getChildren().indexOf(this);
 		}
 
 		public JohnNode getParent() {
@@ -190,6 +200,7 @@ public class JohnTree {
 		@Override
 		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
 				Node nodeRight) {
+
 			nodeMap = new HashMap<Node, JohnNode>();
 			nEq = new JohnNode(nodeEquals, null);
 
@@ -246,7 +257,7 @@ public class JohnTree {
 
 		JohnNode mathRoot;
 		private LinkedList<JohnNode> nestedMrows = new LinkedList<JohnNode>();
-		private LinkedList<JohnNode> operatorList = new LinkedList<JohnNode>();
+		private LinkedList<JohnNode> removeList = new LinkedList<JohnNode>();
 
 		public void change(JohnTree jTree) {
 			mathRoot = jTree.getRoot();
@@ -254,10 +265,39 @@ public class JohnTree {
 		}
 
 		private void commenseRevolution(JohnNode jNode) {
+			assignTypes(jNode);
+			deleteRemoveListItems();
 			convertChildrensMrow(jNode);
-			deleteOperators();
+			deleteRemoveListItems();
 			findNestedMrows(jNode);
 			rearrangeNestedMrows();
+		}
+
+		private void assignTypes(JohnNode jNode) {
+			List<JohnNode> kids = jNode.getChildren();
+			if (kids == null) {
+				return;
+			}
+			for (JohnNode kid : kids) {
+				if ("mi".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.V;
+				} else if ("mn".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.N;
+				} else if ("msub".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.V;
+				} else if ("msup".equalsIgnoreCase(kid.getTag())
+						|| "msubsup".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.E;
+				} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
+					kid.type = Type.Fr;
+				} else if ("mspace".equalsIgnoreCase(kid.getTag())) {
+					//kid.remove();
+					removeList.add(kid);
+				}
+				if (kid.getChildCount() > 0) {
+					assignTypes(kid);
+				}
+			}
 		}
 
 		/**
@@ -272,32 +312,66 @@ public class JohnTree {
 			if (kids == null) {
 				return;
 			}
-			for (JohnNode kid : kids) {
+			kids: for (JohnNode kid : kids) {
 				if ("mrow".equalsIgnoreCase(kid.getTag())) {
 					kid.type = Type.T;
 
 					for (JohnNode baby : kid.getChildren()) {
+
+						// For Series
 						if ("mo".equalsIgnoreCase(baby.getTag())) {
-							kid.type = Type.S;
-							operatorList.add(baby);
+
+							// Negate the next node because we'll delete all mo
+							if ("−".equals(baby.toString())) {
+								negatePropagate(baby.getNextSibling());
+							}
+							if ("−".equals(baby.toString())
+									|| "+".equals(baby.toString())) {
+								// A "-" at the beginning doesn't make it a
+								// series
+								if (baby.getIndex() > 0) {
+									kid.type = Type.S;
+								}
+
+								removeList.add(baby);// Save <mo> for deletion
+							}
+							
+							// For Δ: Δa should be treated as one variable
+						} else if ("Δ".equals(baby.toString())) {
+
+							kid.type = Type.V;
+							kid.children = new LinkedList<JohnNode>();
+							continue kids;
+						} else if ("cos".equals(baby.toString())
+								|| "sin".equals(baby.toString())) {
+							kid.type = Type.Fn;
+							//TODO not sure why removing the trig function also removes the argument???
+							removeList.add(baby);
+							continue kids;
 						}
 					}
-				} else if ("mi".equalsIgnoreCase(kid.getTag())
-						|| "msub".equalsIgnoreCase(kid.getTag())) {
-					kid.type = Type.V;
-				} else if ("mn".equalsIgnoreCase(kid.getTag())) {
-					kid.type = Type.N;
-				} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
-					kid.type = Type.Fr;
 				}
 				if (kid.getChildCount() > 0) {
 					convertChildrensMrow(kid);
 				}
 			}
 		}
-		private void deleteOperators(){
-			for(JohnNode op : operatorList){
-				op.remove();
+
+		/**
+		 * Propagate a negation down the first of every child
+		 * 
+		 * @param node
+		 */
+		private void negatePropagate(JohnNode node) {
+			node.symbol = "-" + node.symbol;
+			if (node.getChildCount() > 0) {
+				negatePropagate(node.getChildAt(0));
+			}
+		}
+
+		private void deleteRemoveListItems() {
+			for (JohnNode r : removeList) {
+				r.remove();
 			}
 		}
 
@@ -318,6 +392,7 @@ public class JohnTree {
 
 			List<JohnNode> kids = parent.getChildren();
 			for (JohnNode kid : kids) {
+				// If it's a term within a term or a series within a series
 				if (((Type.S).equals(kid.getType()) && (Type.S).equals(parent
 						.getType()))
 						|| ((Type.T).equals(kid.getType()) && (Type.T)
@@ -336,13 +411,21 @@ public class JohnTree {
 			if (nestedMrows == null) {
 				return;
 			}
-
-			for (JohnNode kid : nestedMrows) {
-				List<JohnNode> babies = kid.getChildren();
-				for (JohnNode baby : babies) {
-					kid.getParent().add(baby);
+			for (JohnNode nest : nestedMrows) {
+				List<JohnNode> kids = nest.getChildren();
+				for (JohnNode kid : kids) {
+					// Add to the beginning in order to preserve order, nests
+					// come in pairs
+					switch (nest.getIndex() % 2) {
+					case 0:
+						nest.getParent().add(0, kid);
+						break;
+					case 1:
+						nest.getParent().add(1, kid);
+						break;
+					}
 				}
-				kid.remove();
+				nest.remove();
 			}
 		}
 	}

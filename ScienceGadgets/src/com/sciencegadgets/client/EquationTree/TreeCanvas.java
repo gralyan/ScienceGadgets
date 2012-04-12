@@ -86,9 +86,12 @@ public class TreeCanvas extends DrawingArea {
 		panel.add(jTree.getLeftSide().toMathML(), sideLengthLeft / 2, 0);
 		panel.add(jTree.getRightSide().toMathML(),
 				(sideLengthLeft + sideLengthRight / 2), 0);
-		drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2), (byte) 1, true);
-		drawChildren(jTree.getRightSide(),
-				(sideLengthLeft + sideLengthRight / 2), (byte) 1, false);
+		if (jTree.getLeftSide().getChildCount() > 1)
+			drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2), (byte) 1,
+					true);
+		if (jTree.getRightSide().getChildCount() > 1)
+			drawChildren(jTree.getRightSide(),
+					(sideLengthLeft + sideLengthRight / 2), (byte) 1, false);
 
 	}
 
@@ -96,6 +99,21 @@ public class TreeCanvas extends DrawingArea {
 		List<JohnNode> children = pNode.getChildren();
 
 		for (JohnNode child : children) {
+
+			// Nodes not to draw, also in the drawChildren loop
+
+			// Don't show subscripts because it's really one variable
+			if ("mo".equals(child.getTag())
+					&& "msub".equals(child.getParent().getTag())
+					|| ("msubsup".equals(child.getParent().getTag()) && child
+							.getIndex() == 1)) {
+				continue;
+				// No need to show parentheses
+			} else if ("(".equals(child.toString())
+					|| ")".equals(child.toString())) {
+				continue;
+			}
+
 			if (isLeft) {
 				leftLayerCounts[layer]++;
 			} else {
@@ -115,6 +133,20 @@ public class TreeCanvas extends DrawingArea {
 
 		for (JohnNode child : children) {
 
+			// Nodes not to draw, also in the getNextLayerCounts loop
+
+			// Don't show subscripts because it's really one variable
+			if ("mo".equals(child.getTag())
+					&& "msub".equals(child.getParent().getTag())
+					|| ("msubsup".equals(child.getParent().getTag()) && child
+							.getIndex() == 1)) {
+				continue;
+				// No need to show parentheses
+			} else if ("(".equals(child.toString())
+					|| ")".equals(child.toString())) {
+				continue;
+			}
+
 			// Find the maximum width any child can have in the layer
 			if (isLeft) {
 				childSpace = sideLengthLeft / leftLayerCounts[layer];
@@ -125,7 +157,7 @@ public class TreeCanvas extends DrawingArea {
 			childHTML.getHTML();
 
 			int childWidth = childHTML.getOffsetWidth();
-			int childHeight = childHTML.getOffsetHeight();
+			// int childHeight = childHTML.getOffsetHeight();
 
 			int placement;
 			if (isLeft) {
