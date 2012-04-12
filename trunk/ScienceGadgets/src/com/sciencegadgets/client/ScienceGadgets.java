@@ -320,13 +320,13 @@ public class ScienceGadgets implements EntryPoint {
 	  	JohnTree jTree = new JohnTree (draggableEquation, true);
 	  	TreeCanvas tCanvas = new TreeCanvas(parsedTreePanel, jTree);
 	  	
-	  	
+	  	System.out.println(algOutFirstHTML.getHTML());
 	  	
 	  	// Make draggable algebra area
 	  	algDragPanel.add(new AlgebraManipulator(draggableEquation,
 				johnTree.getWrappers(), algDragPanel));
 
-	  	DropControllAssigner a = new DropControllAssigner(johnTree);
+	  	//DropControllAssigner a = new DropControllAssigner(johnTree);
 
 		/*     
 		MathTree mathTree = new MathTree(draggableEquation);
