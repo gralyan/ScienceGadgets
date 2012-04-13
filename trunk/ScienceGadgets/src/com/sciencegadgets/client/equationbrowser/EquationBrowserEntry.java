@@ -1,4 +1,4 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.equationbrowser;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,11 +25,13 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.ScienceGadgets;
 import com.sciencegadgets.client.AlgebraManipulation.AlgebraManipulator;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
+import com.sciencegadgets.client.EquationTree.TreeEntry;
 
-public class EquationBrowser implements EntryPoint {
+public class EquationBrowserEntry implements EntryPoint {
 
 	EquationDatabase data = new EquationDatabase();
 
@@ -43,7 +45,6 @@ public class EquationBrowser implements EntryPoint {
 	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science Mode");
 	private HTML labelSumEq = new HTML("");
-	AbsolutePanel parsedTreePanel;
 
 	public void onModuleLoad() {
 
@@ -200,16 +201,19 @@ public class EquationBrowser implements EntryPoint {
 
 		// Make the tree on canvas
 		JohnTree johnTree = new JohnTree(draggableEquation, false);
-		ScienceGadgets.apTree.clear();
-		TreeCanvas treeCanvas = new TreeCanvas(ScienceGadgets.apTree, johnTree);
-
-		parsedTreePanel = new AbsolutePanel();
-		parsedTreePanel.setStyleName("treePanel");
-		RootPanel.get().add(parsedTreePanel);
+		TreeEntry.apTree.clear();
+		TreeCanvas treeCanvas = new TreeCanvas(TreeEntry.apTree, johnTree);
+		
+		///////////////////////////////
+		//
+		// Second tree to visualize difference
+		//
+		////////////////////////////
 		JohnTree jTree = new JohnTree(draggableEquation, true);
-		TreeCanvas tCanvas = new TreeCanvas(parsedTreePanel, jTree);
+		TreeEntry.parsedTreePanel.clear();
+		TreeCanvas tCanvas = new TreeCanvas(TreeEntry.parsedTreePanel, jTree);
 
-		System.out.println(algOutFirstHTML.getHTML());
+		//System.out.println(algOutFirstHTML.getHTML());
 
 		// Make draggable algebra area
 		ScienceGadgets.algDragPanel.add(new AlgebraManipulator(
@@ -405,13 +409,13 @@ public class EquationBrowser implements EntryPoint {
 				browserPanel.clear();
 				ScienceGadgets.algDragPanel.clear();
 				ScienceGadgets.algOut.clear(true);
-				ScienceGadgets.apTree.clear();
+				TreeEntry.apTree.clear();
 				createAlgBrowser();
 			} else if (clicked.equals(modeSelectSci)) {
 				browserPanel.clear();
 				ScienceGadgets.algDragPanel.clear();
 				ScienceGadgets.algOut.clear(true);
-				ScienceGadgets.apTree.clear();
+				TreeEntry.apTree.clear();
 				createSciBrowser();
 				sumGrid.clear(true);
 			}
@@ -430,7 +434,7 @@ public class EquationBrowser implements EntryPoint {
 	 *            - the web element to parse as math
 	 */
 	public static native void parseJQMath(Element element) /*-{
-															$wnd.M.parseMath(element);
-															}-*/;
+		$wnd.M.parseMath(element);
+	}-*/;
 
 }

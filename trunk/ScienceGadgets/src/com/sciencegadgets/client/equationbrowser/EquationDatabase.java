@@ -1,4 +1,4 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.equationbrowser;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,14 +45,14 @@ public final class EquationDatabase {
 			/* 3 */{ "F_\\net = ma", "" },
 			/* 4 */{ "F_\\fric ≤ μN", "" },
 			/* 5 */{ "a_c = ν^2/r", "" },
-			/* 6 */{ "τ=rF{\\sin(θ)}", "" },
+			/* 6 */{ "τ=rF{\\sinθ}", "" },
 			/* 7 */{ "p=mν", "" },
 			/* 8 */{ "J=F{Δt}", "" },
 			/* 9 */{ "K=1/2mν^2", "" },
 			/* 10 */{ "\\U_g=mgh", "" },
-			/* 11 */{ "W=F{Δr}{\\cos(θ)}", "" },
+			/* 11 */{ "W=F{Δr}{\\cosθ}", "" },
 			/* 12 */{ "P_\\avg=W/{Δt}", "" },
-			/* 13 */{ "P=Fν{\\cos(θ)}", "" },
+			/* 13 */{ "P=Fν{\\cosθ}", "" },
 			/* 14 */{ "F_s=-kx", "" },
 			/* 15 */{ "U_s=1/2kx^2", "" },
 			/* 16 */{ "T_s=2π√{m/k}", "" },
