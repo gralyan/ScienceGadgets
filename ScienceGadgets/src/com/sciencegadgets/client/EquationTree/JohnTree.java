@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.EquationBrowser;
 import com.sciencegadgets.client.ScienceGadgets;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
@@ -154,7 +155,7 @@ public class JohnTree {
 			} else {
 				mathML = new HTML(type + " " + "$" + symbol + "$");
 			}
-			ScienceGadgets.parseJQMath(mathML.getElement());
+			EquationBrowser.parseJQMath(mathML.getElement());
 			return mathML;
 		}
 
