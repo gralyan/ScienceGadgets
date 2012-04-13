@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.equationbrowser.EquationDatabase;
 
 public class ScienceGadgets implements EntryPoint {
 
@@ -31,16 +32,12 @@ public class ScienceGadgets implements EntryPoint {
 	public static TextBox coefBox;
 	public static AbsolutePanel algDragPanel = new AbsolutePanel();
 	public static ScrollPanel spAlg = new ScrollPanel(algOut);
-	public static AbsolutePanel apTree = new AbsolutePanel();
 	EquationDatabase data;
 
 	public void onModuleLoad() {
-		//EquationBrowser eq = new EquationBrowser();
 		createAlgebraPanel();
-
 		RootPanel.get().add(algebraPanel);
 
-		
 		// /////////////////////////////////////////
 		// experimental
 		// ////////////////////////////////
@@ -79,7 +76,6 @@ public class ScienceGadgets implements EntryPoint {
 		algMenuPanel.add(coefBox);
 		// variable
 		varBox = new ListBox();
-		varBox.getElement().setId("varBox");
 		algMenuPanel.add(varBox);
 		// to both sides button
 		Button toBothSides = new Button("To Both Sides",
@@ -96,17 +92,11 @@ public class ScienceGadgets implements EntryPoint {
 		AlgebraVerticalPanel.add(spAlg);
 		AlgebraVerticalPanel.add(algDragPanel);
 		algebraPanel.add(AlgebraVerticalPanel);
-		algebraPanel.add(apTree);
 
 		// Add styles
 		algOut.setStyleName("algOutPanel");
-		algOut.getElement().setId("algOut");
 		spAlg.setStyleName("algOutPanel");
 		algDragPanel.setStyleName("algDragPanel");
-		algDragPanel.getElement().setId("algDragPanel");
-		// eqTreePanel.setStyleName("treePanel");
-		apTree.setStyleName("apTree");
-		apTree.getElement().setId("apTree");
 
 	}
 

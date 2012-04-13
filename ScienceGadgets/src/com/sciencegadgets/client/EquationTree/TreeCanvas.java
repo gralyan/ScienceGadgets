@@ -95,22 +95,21 @@ public class TreeCanvas extends DrawingArea {
 
 	}
 
-	public void getNextLayerCounts(JohnNode pNode, byte layer, Boolean isLeft) {
+	/**
+	 * Prepares the canvas spacing by recursively looking through the tree and
+	 * counting the number of members in each layer
+	 * 
+	 * @param pNode
+	 * @param layer
+	 * @param isLeft
+	 */
+	private void getNextLayerCounts(JohnNode pNode, byte layer, Boolean isLeft) {
 		List<JohnNode> children = pNode.getChildren();
 
 		for (JohnNode child : children) {
 
-			// Nodes not to draw, also in the drawChildren loop
-
-			// Don't show subscripts because it's really one variable
-			if ("mo".equals(child.getTag())
-					&& "msub".equals(child.getParent().getTag())
-					|| ("msubsup".equals(child.getParent().getTag()) && child
-							.getIndex() == 1)) {
-				continue;
-				// No need to show parentheses
-			} else if ("(".equals(child.toString())
-					|| ")".equals(child.toString())) {
+			// Don't show certain nodes meant only for MathML display
+			if (isHidden(child)) {
 				continue;
 			}
 
@@ -133,17 +132,8 @@ public class TreeCanvas extends DrawingArea {
 
 		for (JohnNode child : children) {
 
-			// Nodes not to draw, also in the getNextLayerCounts loop
-
-			// Don't show subscripts because it's really one variable
-			if ("mo".equals(child.getTag())
-					&& "msub".equals(child.getParent().getTag())
-					|| ("msubsup".equals(child.getParent().getTag()) && child
-							.getIndex() == 1)) {
-				continue;
-				// No need to show parentheses
-			} else if ("(".equals(child.toString())
-					|| ")".equals(child.toString())) {
+			// Don't show certain nodes meant only for MathML display
+			if (isHidden(child)) {
 				continue;
 			}
 
@@ -207,6 +197,35 @@ public class TreeCanvas extends DrawingArea {
 			}
 		}
 
+	}
+
+	private Boolean isHidden(JohnNode child) {
+		// Nodes not to draw, also in the getNextLayerCounts loop
+
+		// Don't show subscripts because it's really one variable
+		if ("mo".equals(child.getTag())
+				&& "msub".equals(child.getParent().getTag())
+				|| ("msubsup".equals(child.getParent().getTag()) && child
+						.getIndex() == 1)) {
+			return true;
+			// No need to show parentheses
+		} else if ("(".equals(child.toString()) || ")".equals(child.toString())) {
+			return true;
+		} else if ("mspace".equalsIgnoreCase(child.getTag())) {
+			return true;
+		}else if ("cos".equals(child.toString())
+				|| "sin".equals(child.toString())
+				|| "tan".equals(child.toString())
+				|| "sec".equals(child.toString())
+				|| "csc".equals(child.toString())
+				|| "cot".equals(child.toString())
+				|| "sinh".equals(child.toString())
+				|| "cosh".equals(child.toString())
+				|| "tanh".equals(child.toString())) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

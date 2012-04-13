@@ -9,10 +9,10 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.EquationBrowser;
 import com.sciencegadgets.client.ScienceGadgets;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
+import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
 public class JohnTree {
 
@@ -155,7 +155,7 @@ public class JohnTree {
 			} else {
 				mathML = new HTML(type + " " + "$" + symbol + "$");
 			}
-			EquationBrowser.parseJQMath(mathML.getElement());
+			EquationBrowserEntry.parseJQMath(mathML.getElement());
 			return mathML;
 		}
 
@@ -293,7 +293,7 @@ public class JohnTree {
 					kid.type = Type.Fr;
 				} else if ("mspace".equalsIgnoreCase(kid.getTag())) {
 					//kid.remove();
-					removeList.add(kid);
+					//removeList.add(kid);
 				}
 				if (kid.getChildCount() > 0) {
 					assignTypes(kid);
@@ -303,7 +303,7 @@ public class JohnTree {
 
 		/**
 		 * Converts all mrow tags to either {@link Type.Term} or
-		 * {@link Type.Series}
+		 * {@link Type.Series}. Also takes case of special cases such as delta and functions 
 		 * 
 		 * @param jNode
 		 * @return
@@ -333,7 +333,6 @@ public class JohnTree {
 								if (baby.getIndex() > 0) {
 									kid.type = Type.S;
 								}
-
 								removeList.add(baby);// Save <mo> for deletion
 							}
 							
@@ -344,11 +343,18 @@ public class JohnTree {
 							kid.children = new LinkedList<JohnNode>();
 							continue kids;
 						} else if ("cos".equals(baby.toString())
-								|| "sin".equals(baby.toString())) {
+								|| "sin".equals(baby.toString())
+								|| "tan".equals(baby.toString())
+								|| "sec".equals(baby.toString())
+								|| "csc".equals(baby.toString())
+								|| "cot".equals(baby.toString())
+								|| "sinh".equals(baby.toString())
+								|| "cosh".equals(baby.toString())
+								|| "tanh".equals(baby.toString())) {
 							kid.type = Type.Fn;
-							//TODO not sure why removing the trig function also removes the argument???
-							removeList.add(baby);
-							continue kids;
+//							//TODO not sure why removing the trig function also removes the argument???
+//							removeList.add(baby);
+//							continue kids;
 						}
 					}
 				}
