@@ -3,6 +3,7 @@ package com.sciencegadgets.client.EquationTree;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 
 public abstract class MathMLParser {
@@ -41,20 +42,26 @@ public abstract class MathMLParser {
 	 * @param isLeft
 	 */
 	private void addChildren(Element mathMLNode, Boolean isLeft) {
-mathMLNode.setId("mathroot");
+		mathMLNode.setId("mathroot");
 		NodeList<Node> mathMLChildren = mathMLNode.getChildNodes();
 
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Node currentNode = mathMLChildren.getItem(i);
-			onVisitNode(currentNode, isLeft, i);
 
-			if (currentNode.getChildCount() > 1) {
+			// Nodes with no children are either inner text or formatting only
+			if (currentNode.getChildCount() > 0) {
+				
+				//Subclasses do whatever they want with the node
+				onVisitNode(currentNode, isLeft, i);
+				
+				//Recursive call
 				addChildren((Element) currentNode, isLeft);
+				
+				//Returning from the stack
+				onGoingToNextChild(currentNode);
 			}
-			onGoingToNextChild (currentNode);
 		}
 	}
-	
 
 	/**
 	 * This method is called when the roots are found. These roots are the sides
@@ -75,6 +82,8 @@ mathMLNode.setId("mathroot");
 	 *            - true if this node is on the left side of the equation
 	 *            (arbitrary boolean)
 	 */
-	protected abstract void onVisitNode(Node currentNode, Boolean isLeft, int indexOfSiblings);
-	protected abstract void onGoingToNextChild (Node currentNode);
+	protected abstract void onVisitNode(Node currentNode, Boolean isLeft,
+			int indexOfSiblings);
+
+	protected abstract void onGoingToNextChild(Node currentNode);
 }
