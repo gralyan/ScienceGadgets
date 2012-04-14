@@ -1,14 +1,17 @@
 package com.sciencegadgets.client.EquationTree;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Line;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
@@ -19,6 +22,7 @@ public class TreeCanvas extends DrawingArea {
 	private AbsolutePanel panel;
 	private int sideLengthLeft;
 	private int sideLengthRight;
+	private HashMap<JohnTree.Type, String> palette;
 
 	// The number of members in each row
 	private byte[] leftLayerCounts;
@@ -48,6 +52,8 @@ public class TreeCanvas extends DrawingArea {
 
 	public void draw(JohnTree jTree) {
 
+		createPalette();
+
 		leftLayerCounts = new byte[20];
 		rightLayerCounts = new byte[20];
 		leftCounters = new byte[20];
@@ -65,14 +71,14 @@ public class TreeCanvas extends DrawingArea {
 		// variables on one side
 		int leftMemberCount = 0;
 		int rightMemberCount = 0;
-		
+
 		for (int i = 0; i < leftLayerCounts.length; i++) {
 			// Count all the members in this side, giving more weight to the
 			// higher layers by dividing by i. (*100 to aleviate truncation,
 			// only the ratio matters anyway)
 			leftMemberCount += (leftLayerCounts[i] * 100 / (i + 1));
 		}
-		
+
 		for (int i = 0; i < rightLayerCounts.length; i++) {
 			rightMemberCount += rightLayerCounts[i] * 100 / (i + 1);
 		}
@@ -182,6 +188,9 @@ public class TreeCanvas extends DrawingArea {
 			Rectangle box = new Rectangle(childLeft - pad, childTop,
 					childHTML.getOffsetWidth() + 2 * pad,
 					childHTML.getOffsetHeight() * 4 / 3);
+			//TODO
+			System.out.println(palette.get(child.getType()));
+			//box.setFillColor(palette.get(child.getType()));
 
 			Line line = new Line(parentX, layerHeight - rowHeight / 2, lineX,
 					lineY);
@@ -200,6 +209,23 @@ public class TreeCanvas extends DrawingArea {
 			}
 		}
 
+	}
+
+	/**
+	 * Since the GWT graphics library doesn't look into CSS files, this method
+	 * is meant to get the color names from the CSS file and add them to a
+	 * palette which will be used to add the appropriate color to each box
+	 */
+	private void createPalette() {
+		palette = new HashMap<JohnTree.Type, String>();
+		SimplePanel dummyPanel = new SimplePanel();
+		Element from = dummyPanel.getElement();
+		String att = "color";
+
+		for(JohnTree.Type t : JohnTree.Type.values()){
+		dummyPanel.setStyleName(t.toString());
+		palette.put(t, DOM.getStyleAttribute(from, att));
+		}
 	}
 
 	private Boolean isHidden(JohnNode child) {
