@@ -165,7 +165,7 @@ public class JohnTree {
 		}
 	}
 
-	private static enum Type {
+	static enum Type {
 		T, S, E, Fn, V, N, Fr;
 	}
 
@@ -219,7 +219,7 @@ public class JohnTree {
 		@Override
 		protected void onVisitNode(Node currentNode, Boolean isLeft,
 				int indexOfChildren) {
-					
+
 			wrap = MLElementWrapper.wrapperFactory((Element) currentNode);
 			wrappers.add(wrap);
 			curNode = new JohnNode(currentNode, wrap);
@@ -260,38 +260,38 @@ public class JohnTree {
 		public void change(JohnTree jTree) {
 			mathRoot = jTree.getRoot();
 			commenseRevolution(mathRoot);
-		}
-
-		private void commenseRevolution(JohnNode jNode) {
-			assignSimpleTypes(jNode);
-			assignComplexChildMrow(jNode);
-			findNestedMrows(jNode);
 			rearrangeNestedMrows();
 		}
 
-		private void assignSimpleTypes(JohnNode jNode) {
+		private void commenseRevolution(JohnNode jNode) {
 			List<JohnNode> kids = jNode.getChildren();
 			if (kids == null) {
 				return;
 			}
 			for (JohnNode kid : kids) {
-				if ("mi".equalsIgnoreCase(kid.getTag())) {
-					kid.type = Type.V;
-				} else if ("mn".equalsIgnoreCase(kid.getTag())) {
-					kid.type = Type.N;
-				} else if ("msub".equalsIgnoreCase(kid.getTag())) {
-					kid.type = Type.V;
-				} else if ("msup".equalsIgnoreCase(kid.getTag())
-						|| "msubsup".equalsIgnoreCase(kid.getTag())
-						|| "msqrt".equalsIgnoreCase(kid.getTag())
-				) {
-					kid.type = Type.E;
-				} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
-					kid.type = Type.Fr;
-				}
+				assignSimpleTypes(jNode, kid);
+				assignComplexChildMrow(jNode, kid);
+				findNestedMrows(jNode, kid);
+
 				if (kid.getChildCount() > 0) {
-					assignSimpleTypes(kid);
+					commenseRevolution(kid);
 				}
+			}
+		}
+
+		private void assignSimpleTypes(JohnNode jNode, JohnNode kid) {
+			if ("mi".equalsIgnoreCase(kid.getTag())) {
+				kid.type = Type.V;
+			} else if ("mn".equalsIgnoreCase(kid.getTag())) {
+				kid.type = Type.N;
+			} else if ("msub".equalsIgnoreCase(kid.getTag())) {
+				kid.type = Type.V;
+			} else if ("msup".equalsIgnoreCase(kid.getTag())
+					|| "msubsup".equalsIgnoreCase(kid.getTag())
+					|| "msqrt".equalsIgnoreCase(kid.getTag())) {
+				kid.type = Type.E;
+			} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
+				kid.type = Type.Fr;
 			}
 		}
 
@@ -303,55 +303,45 @@ public class JohnTree {
 		 * @param jNode
 		 * @return
 		 */
-		private void assignComplexChildMrow(JohnNode jNode) {
-			List<JohnNode> kids = jNode.getChildren();
-			if (kids == null) {
-				return;
-			}
-			kids: for (JohnNode kid : kids) {
-				if ("mrow".equalsIgnoreCase(kid.getTag())) {
-					//Default to term until + or - found in children
-					kid.type = Type.T;
+		private void assignComplexChildMrow(JohnNode jNode, JohnNode kid) {
+			if ("mrow".equalsIgnoreCase(kid.getTag())) {
+				// Default to term until + or - found in children
+				kid.type = Type.T;
 
-					for (JohnNode baby : kid.getChildren()) {
+				for (JohnNode baby : kid.getChildren()) {
 
-						// Check children for +/- => series
-						if ("mo".equalsIgnoreCase(baby.getTag())) {
+					// Check children for +/- => series
+					if ("mo".equalsIgnoreCase(baby.getTag())) {
 
-							// Negate the next node because we don't want -
-							if ("−".equals(baby.toString())) {
-								negatePropagate(baby.getNextSibling());
-							}
-							if ("−".equals(baby.toString())
-									|| "+".equals(baby.toString())) {
-								// A "-" at the beginning doesn't make it a
-								// series
-								if (baby.getIndex() > 0) {
-									kid.type = Type.S;
-								}
-							}
-
-							// For Δ: Δa should be treated as one variable
-						} else if ("Δ".equals(baby.toString())) {
-
-							kid.type = Type.V;
-							kid.children = new LinkedList<JohnNode>();
-							continue kids;
-						} else if ("cos".equals(baby.toString())
-								|| "sin".equals(baby.toString())
-								|| "tan".equals(baby.toString())
-								|| "sec".equals(baby.toString())
-								|| "csc".equals(baby.toString())
-								|| "cot".equals(baby.toString())
-								|| "sinh".equals(baby.toString())
-								|| "cosh".equals(baby.toString())
-								|| "tanh".equals(baby.toString())) {
-							kid.type = Type.Fn;
+						// Negate the next node because we don't want -
+						if ("−".equals(baby.toString())) {
+							negatePropagate(baby.getNextSibling());
 						}
+						if ("−".equals(baby.toString())
+								|| "+".equals(baby.toString())) {
+							// A "-" at the beginning doesn't make it a
+							// series
+							if (baby.getIndex() > 0) {
+								kid.type = Type.S;
+							}
+						}
+
+						// For Δ: Δa should be treated as one variable
+					} else if ("Δ".equals(baby.toString())) {
+
+						kid.type = Type.V;
+						kid.children = new LinkedList<JohnNode>();
+					} else if ("cos".equals(baby.toString())
+							|| "sin".equals(baby.toString())
+							|| "tan".equals(baby.toString())
+							|| "sec".equals(baby.toString())
+							|| "csc".equals(baby.toString())
+							|| "cot".equals(baby.toString())
+							|| "sinh".equals(baby.toString())
+							|| "cosh".equals(baby.toString())
+							|| "tanh".equals(baby.toString())) {
+						kid.type = Type.Fn;
 					}
-				}
-				if (kid.getChildCount() > 0) {
-					assignComplexChildMrow(kid);
 				}
 			}
 		}
@@ -378,21 +368,12 @@ public class JohnTree {
 		 * @param parent
 		 * @param nestMrow
 		 */
-		private void findNestedMrows(JohnNode parent) {
-			if (parent.getChildCount() == 0) {
-				return;
-			}
-
-			List<JohnNode> kids = parent.getChildren();
-			for (JohnNode kid : kids) {
-				// If it's a term within a term or a series within a series
-				if (((Type.S).equals(kid.getType()) && (Type.S).equals(parent
-						.getType()))
-						|| ((Type.T).equals(kid.getType()) && (Type.T)
-								.equals(parent.getType()))) {
-					nestedMrows.add(kid);
-				}
-				findNestedMrows(kid);
+		private void findNestedMrows(JohnNode parent, JohnNode kid) {
+			if (((Type.S).equals(kid.getType())
+			/**/&& (Type.S).equals(parent.getType()))
+			/**/|| ((Type.T).equals(kid.getType())
+			/**/&& (Type.T).equals(parent.getType()))) {
+				nestedMrows.add(kid);
 			}
 		}
 
@@ -409,6 +390,7 @@ public class JohnTree {
 				for (JohnNode kid : kids) {
 					// Add to the beginning in order to preserve order, nests
 					// come in pairs
+					// TODO Ok, maybe not, try to get them in order eventually
 					switch (nest.getIndex() % 2) {
 					case 0:
 						nest.getParent().add(0, kid);
