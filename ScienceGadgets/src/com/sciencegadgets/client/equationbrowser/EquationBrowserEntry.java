@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.ScienceGadgets;
+import com.sciencegadgets.client.AlgebraManipulation.AlgOutEntry;
 import com.sciencegadgets.client.AlgebraManipulation.AlgebraManipulator;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
@@ -189,9 +190,9 @@ public class EquationBrowserEntry implements EntryPoint {
 		// Initial AlgOut line
 		labelSumEq.setText("$" + equation + "$");
 		HTML algOutFirstHTML = new HTML("$" + equation + "$");
-		ScienceGadgets.algOut.clear(true);
-		ScienceGadgets.algOut.resizeRows(1);
-		ScienceGadgets.algOut.setWidget(0, 0, algOutFirstHTML);
+		AlgOutEntry.algOut.clear(true);
+		AlgOutEntry.algOut.resizeRows(1);
+		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
 		parseJQMath(labelSumEq.getElement());
 		parseJQMath(algOutFirstHTML.getElement());
 
@@ -216,9 +217,9 @@ public class EquationBrowserEntry implements EntryPoint {
 		//System.out.println(algOutFirstHTML.getHTML());
 
 		// Make draggable algebra area
-		ScienceGadgets.algDragPanel.add(new AlgebraManipulator(
+		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(
 				draggableEquation, johnTree.getWrappers(),
-				ScienceGadgets.algDragPanel));
+				AlgOutEntry.algDragPanel));
 
 		// DropControllAssigner a = new DropControllAssigner(johnTree);
 
@@ -367,7 +368,7 @@ public class EquationBrowserEntry implements EntryPoint {
 				}
 				sumGrid.clear(true);
 				labelSumEq.setText("");
-				ScienceGadgets.algOut.clear(true);
+				AlgOutEntry.algOut.clear(true);
 				onVarSelect(selectedVars);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
@@ -407,14 +408,14 @@ public class EquationBrowserEntry implements EntryPoint {
 
 			if (clicked.equals(modeSelectAlg)) {
 				browserPanel.clear();
-				ScienceGadgets.algDragPanel.clear();
-				ScienceGadgets.algOut.clear(true);
+				AlgOutEntry.algDragPanel.clear();
+				AlgOutEntry.algOut.clear(true);
 				TreeEntry.apTree.clear();
 				createAlgBrowser();
 			} else if (clicked.equals(modeSelectSci)) {
 				browserPanel.clear();
-				ScienceGadgets.algDragPanel.clear();
-				ScienceGadgets.algOut.clear(true);
+				AlgOutEntry.algDragPanel.clear();
+				AlgOutEntry.algOut.clear(true);
 				TreeEntry.apTree.clear();
 				createSciBrowser();
 				sumGrid.clear(true);

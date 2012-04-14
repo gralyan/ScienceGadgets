@@ -6,6 +6,7 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Line;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
@@ -58,19 +59,20 @@ public class TreeCanvas extends DrawingArea {
 		rightLayerCounts[0]++;
 		getNextLayerCounts(jTree.getLeftSide(), (byte) 1, true);
 		getNextLayerCounts(jTree.getRightSide(), (byte) 1, false);
-		// resizeLayers();
 
 		// Resize side lengths depending on the ratio of side member density.
 		// This keeps the tree from looking lopsided when there are many more
 		// variables on one side
 		int leftMemberCount = 0;
 		int rightMemberCount = 0;
+		
 		for (int i = 0; i < leftLayerCounts.length; i++) {
 			// Count all the members in this side, giving more weight to the
 			// higher layers by dividing by i. (*100 to aleviate truncation,
 			// only the ratio matters anyway)
 			leftMemberCount += (leftLayerCounts[i] * 100 / (i + 1));
 		}
+		
 		for (int i = 0; i < rightLayerCounts.length; i++) {
 			rightMemberCount += rightLayerCounts[i] * 100 / (i + 1);
 		}
@@ -118,7 +120,7 @@ public class TreeCanvas extends DrawingArea {
 			} else {
 				rightLayerCounts[layer]++;
 			}
-			if (child.getChildCount() > 1) {
+			if (child.getChildCount() > 0) {
 				getNextLayerCounts(child, (byte) (layer + 1), isLeft);
 			}
 		}
@@ -192,7 +194,8 @@ public class TreeCanvas extends DrawingArea {
 				wrap.setWidth(box.getWidth() + "px");
 				panel.add(wrap, childLeft - pad, childTop);
 			}
-			if (child.getChildCount() > 1) {
+
+			if (child.getChildCount() > 0) {
 				drawChildren(child, lineX, (byte) (layer + 1), isLeft);
 			}
 		}
@@ -200,28 +203,28 @@ public class TreeCanvas extends DrawingArea {
 	}
 
 	private Boolean isHidden(JohnNode child) {
-		// Nodes not to draw, also in the getNextLayerCounts loop
-
-		// Don't show subscripts because it's really one variable
-		if ("mo".equals(child.getTag())
-				&& "msub".equals(child.getParent().getTag())
-				|| ("msubsup".equals(child.getParent().getTag()) && child
-						.getIndex() == 1)) {
-			return true;
+		if ("(".equals(child.toString()) || ")".equals(child.toString())) {
 			// No need to show parentheses
-		} else if ("(".equals(child.toString()) || ")".equals(child.toString())) {
 			return true;
-		} else if ("mspace".equalsIgnoreCase(child.getTag())) {
+		} else if ("mo".equals(child.getTag())) {
 			return true;
-		}else if ("cos".equals(child.toString())
+		} else if ("cos".equals(child.toString())
 				|| "sin".equals(child.toString())
 				|| "tan".equals(child.toString())
 				|| "sec".equals(child.toString())
 				|| "csc".equals(child.toString())
 				|| "cot".equals(child.toString())
-				|| "sinh".equals(child.toString())
-				|| "cosh".equals(child.toString())
-				|| "tanh".equals(child.toString())) {
+				|| "log".equals(child.toString())
+				|| "ln".equals(child.toString())
+		// Don't show function name as child, parent will be function
+		// Changes here must also be made to
+		// MLTreeToMathTree.assignComplexChildMrow
+		) {
+			return true;
+		} else if ("msub".equals(child.getParent().getTag())
+		// Don't show subscripts because it's really one variable
+				|| ("msubsup".equals(child.getParent().getTag()) && child
+						.getIndex() == 1)) {
 			return true;
 		}
 
