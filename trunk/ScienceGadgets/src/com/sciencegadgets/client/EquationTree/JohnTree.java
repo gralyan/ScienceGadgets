@@ -60,17 +60,22 @@ public class JohnTree {
 		return wrappers;
 	}
 
-	protected class JohnNode {
+	public class JohnNode {
 		// encapsulated dom node
 		private Node domNode;
 		private Type type;
 		private String symbol;
 		private String tag;
 		private MLElementWrapper wrapper;
-
 		private JohnNode parent;
-		// private int indexInSiblings;
 		private List<JohnNode> children = new LinkedList<JohnNode>();
+
+		public JohnNode(Node node) {
+			domNode = node;
+			tag = node.getNodeName();
+			type = null;
+			symbol = ((Element) node).getInnerText();
+		}
 
 		public JohnNode(Node node, MLElementWrapper wrap) {
 			wrapper = wrap;
@@ -141,6 +146,10 @@ public class JohnTree {
 			return symbol;
 		}
 
+		public void setWrapper(MLElementWrapper wrap) {
+			wrapper = wrap;
+		}
+
 		public MLElementWrapper getWrapper() {
 			return wrapper;
 		}
@@ -150,7 +159,8 @@ public class JohnTree {
 			if (type == null) {
 				mathML = new HTML(tag + " " + "$" + symbol + "$");
 			} else {
-				mathML = new HTML(type + " " + "$" + symbol + "$");
+				mathML = new HTML(type.toString().substring(0, 2) + " " + "$"
+						+ symbol + "$");
 			}
 			EquationBrowserEntry.parseJQMath(mathML.getElement());
 			return mathML;
@@ -166,7 +176,7 @@ public class JohnTree {
 	}
 
 	static enum Type {
-		T, S, E, Fn, V, N, Fr;
+		Term, Series, Function, Exponent, Fraction, Variable, Number;
 	}
 
 	class MLtoJohnTree extends MathMLParser {
@@ -178,8 +188,6 @@ public class JohnTree {
 		JohnNode nLeft;
 		JohnNode nEq;
 		JohnNode nRight;
-		private LinkedList<MLElementWrapper> wrappers;
-		private MLElementWrapper wrap;
 
 		public MLtoJohnTree(HTML mathMLequation) {
 			super(mathMLequation);
@@ -191,7 +199,7 @@ public class JohnTree {
 			jTree.rightSide = nRight;
 			jTree.root.add(jTree.leftSide);
 			jTree.root.add(jTree.rightSide);
-			jTree.wrappers = wrappers;
+			//jTree.wrappers = wrappers;
 
 		}
 
@@ -202,15 +210,16 @@ public class JohnTree {
 			nodeMap = new HashMap<Node, JohnNode>();
 			nEq = new JohnNode(nodeEquals, null);
 
-			wrappers = new LinkedList<MLElementWrapper>();
 
-			wrap = MLElementWrapper.wrapperFactory((Element) nodeLeft);
-			wrappers.add(wrap);
-			nLeft = new JohnNode(nodeLeft, wrap);
+			nLeft = new JohnNode(nodeLeft);
+//			wrap = MLElementWrapper.wrapperFactory(nLeft);
+//			nLeft.setWrapper(wrap);
+//			wrappers.add(wrap);
 
-			wrap = MLElementWrapper.wrapperFactory((Element) nodeRight);
-			wrappers.add(wrap);
-			nRight = new JohnNode(nodeRight, wrap);
+			nRight = new JohnNode(nodeRight);
+//			wrap = MLElementWrapper.wrapperFactory(nRight);
+//			nRight.setWrapper(wrap);
+//			wrappers.add(wrap);
 
 			prevLeftNode = nLeft;
 			prevRightNode = nRight;
@@ -220,10 +229,11 @@ public class JohnTree {
 		protected void onVisitNode(Node currentNode, Boolean isLeft,
 				int indexOfChildren) {
 
-			wrap = MLElementWrapper.wrapperFactory((Element) currentNode);
-			wrappers.add(wrap);
-			curNode = new JohnNode(currentNode, wrap);
-
+			curNode = new JohnNode(currentNode);
+//			wrap = MLElementWrapper.wrapperFactory(curNode);
+//			curNode.setWrapper(wrap);
+//			wrappers.add(wrap);
+			
 			if (isLeft) {
 				if (indexOfChildren == 0) {
 					prevLeftNode.add(curNode);
@@ -256,9 +266,11 @@ public class JohnTree {
 
 		JohnNode mathRoot;
 		private LinkedList<JohnNode> nestedMrows = new LinkedList<JohnNode>();
+		private MLElementWrapper wrap;
 
 		public void change(JohnTree jTree) {
 			mathRoot = jTree.getRoot();
+			wrappers = new LinkedList<MLElementWrapper>();
 			commenseRevolution(mathRoot);
 			rearrangeNestedMrows();
 		}
@@ -272,6 +284,7 @@ public class JohnTree {
 				assignSimpleTypes(jNode, kid);
 				assignComplexChildMrow(jNode, kid);
 				findNestedMrows(jNode, kid);
+				wrapNode(kid);
 
 				if (kid.getChildCount() > 0) {
 					commenseRevolution(kid);
@@ -281,17 +294,17 @@ public class JohnTree {
 
 		private void assignSimpleTypes(JohnNode jNode, JohnNode kid) {
 			if ("mi".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.V;
+				kid.type = Type.Variable;
 			} else if ("mn".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.N;
+				kid.type = Type.Number;
 			} else if ("msub".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.V;
+				kid.type = Type.Variable;
 			} else if ("msup".equalsIgnoreCase(kid.getTag())
 					|| "msubsup".equalsIgnoreCase(kid.getTag())
 					|| "msqrt".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.E;
+				kid.type = Type.Exponent;
 			} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.Fr;
+				kid.type = Type.Fraction;
 			}
 		}
 
@@ -306,7 +319,7 @@ public class JohnTree {
 		private void assignComplexChildMrow(JohnNode jNode, JohnNode kid) {
 			if ("mrow".equalsIgnoreCase(kid.getTag())) {
 				// Default to term until + or - found in children
-				kid.type = Type.T;
+				kid.type = Type.Term;
 
 				for (JohnNode baby : kid.getChildren()) {
 
@@ -322,14 +335,14 @@ public class JohnTree {
 							// A "-" at the beginning doesn't make it a
 							// series
 							if (baby.getIndex() > 0) {
-								kid.type = Type.S;
+								kid.type = Type.Series;
 							}
 						}
 
 						// For Δ: Δa should be treated as one variable
 					} else if ("Δ".equals(baby.toString())) {
 
-						kid.type = Type.V;
+						kid.type = Type.Variable;
 						kid.children = new LinkedList<JohnNode>();
 					} else if ("cos".equals(baby.toString())
 							|| "sin".equals(baby.toString())
@@ -340,7 +353,7 @@ public class JohnTree {
 							|| "sinh".equals(baby.toString())
 							|| "cosh".equals(baby.toString())
 							|| "tanh".equals(baby.toString())) {
-						kid.type = Type.Fn;
+						kid.type = Type.Function;
 					}
 				}
 			}
@@ -369,10 +382,10 @@ public class JohnTree {
 		 * @param nestMrow
 		 */
 		private void findNestedMrows(JohnNode parent, JohnNode kid) {
-			if (((Type.S).equals(kid.getType())
-			/**/&& (Type.S).equals(parent.getType()))
-			/**/|| ((Type.T).equals(kid.getType())
-			/**/&& (Type.T).equals(parent.getType()))) {
+			if (((Type.Series).equals(kid.getType())
+			/**/&& (Type.Series).equals(parent.getType()))
+			/**/|| ((Type.Term).equals(kid.getType())
+			/**/&& (Type.Term).equals(parent.getType()))) {
 				nestedMrows.add(kid);
 			}
 		}
@@ -393,15 +406,20 @@ public class JohnTree {
 					// TODO Ok, maybe not, try to get them in order eventually
 					switch (nest.getIndex() % 2) {
 					case 0:
-						nest.getParent().add(0, kid);
+						nest.getParent().add(1, kid);
 						break;
 					case 1:
-						nest.getParent().add(1, kid);
+						nest.getParent().add(0, kid);
 						break;
 					}
 				}
 				nest.remove();
 			}
+		}
+		private void wrapNode(JohnNode curNode){
+			wrap = MLElementWrapper.wrapperFactory(curNode);
+			curNode.setWrapper(wrap);
+			wrappers.add(wrap);
 		}
 	}
 }

@@ -89,10 +89,19 @@ public final class EquationDatabase {
 	/**/};
 
 	private final String[][] ALGEBRA = {
-	/* 14 */{ "a=x+b", "vara=x+varb" },
-	/* 15 */{ "a=x-b", "vara=x+(-varb)" },
-	/* 16 */{ "a=x/b", "vara=x / varb" },
-	/* 17 */{ "a=b*x", "vara=varb * x" },
+	/* 0 */{ "a=x+b", "vara=x+varb" },
+	/* 1 */{ "a=x-b", "vara=x+(-varb)" },
+	/* 2 */{ "a=x/b", "vara=x / varb" },
+	/* 3 */{ "a=b*x", "vara=varb * x" },
+	/* 3 */{ "a=b*x*c", "vara=varb * x" },
+	/* 3 */{ "a=b*x/c", "vara=varb * x" },
+	/* 3 */{ "a=b+x/c", "vara=varb * x" },
+	/* 3 */{ "a={b+x}/c", "vara=varb * x" },
+	/* 3 */{ "a=c/{b*x}", "vara=varb * x" },
+	/* 3 */{ "a=b*x^c", "vara=varb * x" },
+	/* 3 */{ "a={\\cosθ}*x", "vara=varb * x" },
+	/* 3 */{ "a={\\cosθ*x}", "vara=varb * x" },
+	/* 3 */{ "a=b*c*d*e", "vara=varb * x" },
 	/*debug*/{"a+bc=de+fg+jo+hn+j"}
 	/**/};
 

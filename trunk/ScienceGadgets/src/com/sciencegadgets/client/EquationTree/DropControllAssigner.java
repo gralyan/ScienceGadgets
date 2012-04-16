@@ -2,6 +2,7 @@ package com.sciencegadgets.client.EquationTree;
 
 import java.util.List;
 
+import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
 public class DropControllAssigner {
@@ -23,18 +24,15 @@ public class DropControllAssigner {
 
 		for (JohnNode child : children) {
 			if (child.getTag().equalsIgnoreCase("mi")) {
-
 				// Handle errors better
 
 				try {
 					JohnNode sib = child.getNextSibling();
-					if (sib.getTag().equalsIgnoreCase("mi")
-							| sib.getTag().equalsIgnoreCase("mn")) {
+					if (child.getTag().equalsIgnoreCase("mi")) {
+						
 						child.getWrapper().addDropTarget(sib.getWrapper());
 						child.getWrapper().getJoinedWrapper().addDropTarget(sib.getWrapper().getJoinedWrapper());
 					}
-					// System.out.println("added " + child.toString() + "to "
-					// + child.getNextSibling().toString());
 				} catch (IndexOutOfBoundsException e) {
 
 				}

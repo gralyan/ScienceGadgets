@@ -1,11 +1,8 @@
 package com.sciencegadgets.client.AlgebraManipulation;
 
-import java.util.List;
-
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.HasDragStartHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
@@ -17,7 +14,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.EquationTree.MathMLParser;
+import com.sciencegadgets.client.EquationTree.JohnTree;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -33,6 +30,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	private Element element = null;
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
+	private JohnTree.JohnNode johnNode;
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
@@ -60,8 +58,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			Boolean isDraggable, MLElementWrapper joinedWrapper) {
 		this.element = theElement;
 		this.isDraggable = isDraggable;
-		addMouseOverHandlerDefault(mouseOverStyle);
-		addMouseOutHandlerDefault(mouseOverStyle);
+		addMouseOverHandlerDefault();
+		addMouseOutHandlerDefault();
 
 		if (joinedWrapper == null) {
 			this.joinedWrapper = new MLElementWrapper(theElement, mouseOverStyle,
@@ -105,15 +103,19 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
-	public static MLElementWrapper wrapperFactory(Element element) {
+	public static MLElementWrapper wrapperFactory(JohnTree.JohnNode jNode) {
+		Element element = (Element)jNode.getDomNode();
 		String tag = element.getNodeName();
+		//Type type = jNode.getType();
 		// TODO parse the mathML to apply the wrappers appropriately
 
-		if (tag.equalsIgnoreCase("mn") | tag.equalsIgnoreCase("mi")) {
+		//if (tag.equalsIgnoreCase("mn") | tag.equalsIgnoreCase("mi")) {
 			return new MLElementWrapper(element, "mouseOverlayNumber", true,
 					null);
-		}
-		return null;
+		//}
+		//return null;
+			
+			
 		// if (tag.equalsIgnoreCase("mn")) {
 		// return new MLElementWrapper(element, "mouseOverlayNumber", true,
 		// isLeft);
@@ -134,6 +136,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public MLElementWrapper getJoinedWrapper() {
 		return joinedWrapper;
 	}
+	public JohnTree.JohnNode getJohnNode(){
+		return johnNode;
+	}
 
 	/**
 	 * Called when attaching Widget. If it is draggable, it can only be attached
@@ -153,8 +158,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// /////////////////////
 	// addMouse-OVER-Handler handler methods
 	// /////////////////////////////
-	public HandlerRegistration addMouseOverHandlerDefault(String style) {
-		return addMouseOverHandler(new ElementOverHandler(style));
+	public HandlerRegistration addMouseOverHandlerDefault() {
+		return addMouseOverHandler(new ElementOverHandler());
 	}
 
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
@@ -164,13 +169,14 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// /////////////////////
 	// addMouse-OUT-Handler handler methods
 	// /////////////////////////////
-	public HandlerRegistration addMouseOutHandlerDefault(String style) {
-		return addMouseOutHandler(new ElementOutHandler(style));
+	public HandlerRegistration addMouseOutHandlerDefault() {
+		return addMouseOutHandler(new ElementOutHandler());
 	}
 
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
 	}
+	
 
 	/**
 	 * Add a drag controller to this widget, can be a subclass of
@@ -213,57 +219,17 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// Inner Class Handlers
 	// /////////////////////////////////////////////////////////////////////////////////////
 	class ElementOverHandler implements MouseOverHandler {
-		String styleOnOver = "mouseOverlayDefault";
-
-		/**
-		 * MouseOverHandler for elements with default highlight background color
-		 */
-		ElementOverHandler() {
-		}
-
-		/**
-		 * MouseOverHandler for elements
-		 */
-		ElementOverHandler(String colorOnOver) {
-			this.styleOnOver = colorOnOver;
-		}
-
 		public void onMouseOver(MouseOverEvent event) {
-			((MLElementWrapper) event.getSource()).setStyleName(styleOnOver,
-					true);
-			((MLElementWrapper) event.getSource()).getJoinedWrapper()
-					.setStyleName(styleOnOver, true);
-			// DOM.setElementAttribute(((Widget)
-			// event.getSource()).getElement(),
-			// "mathbackground", colorOnOver);
+			((MLElementWrapper) event.getSource()).getElement().setId("selectedWrapper");
+			((MLElementWrapper) event.getSource()).getJoinedWrapper().getElement().setId("selectedJoinedWrapper");
 		}
 	}
 
 	class ElementOutHandler implements MouseOutHandler {
-		String styleOnOver = "mouseOverlayDefault";
-
-		/**
-		 * MouseOutHandler for elements with default return background color
-		 * (white)
-		 */
-		ElementOutHandler() {
-		}
-
-		/**
-		 * MouseOutHandler for elements
-		 */
-		ElementOutHandler(String styleOnOver) {
-			this.styleOnOver = styleOnOver;
-		}
-
 		public void onMouseOut(MouseOutEvent event) {
-			((MLElementWrapper) event.getSource()).setStyleName(styleOnOver,
-					false);
-			((MLElementWrapper) event.getSource()).getJoinedWrapper()
-					.setStyleName(styleOnOver, false);
-			// DOM.setElementAttribute(((Widget)
-			// event.getSource()).getElement(),
-			// "mathbackground", colorOnOver);
+			((MLElementWrapper) event.getSource()).getElement().removeAttribute("id");
+			((MLElementWrapper) event.getSource()).getJoinedWrapper().getElement().removeAttribute("id");
+			
 		}
 	}
 	
@@ -285,53 +251,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			super.dragEnd();
 			MLElementWrapper wrap = (MLElementWrapper)context.draggable;
 			wrap.setText("");
-		}
-	}
-	
-
-	class MLWrappingParser extends MathMLParser {
-
-		private List<MLElementWrapper> wrappersLeft;
-		private List<MLElementWrapper> wrappersRight;
-		private MLElementWrapper wrap;
-
-		public MLWrappingParser(HTML mathMLequation) {
-			super(mathMLequation);
-
-		}
-
-		@Override
-		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
-				Node nodeRight) {
-
-			MLElementWrapper wrapLeft = MLElementWrapper
-					.wrapperFactory((Element) nodeLeft);
-			MLElementWrapper wrapRight = MLElementWrapper
-					.wrapperFactory((Element) nodeRight);
-
-			wrappersLeft.add(wrapLeft);
-			wrappersRight.add(wrapRight);
-		}
-
-		@Override
-		protected void onVisitNode(Node currentNode, Boolean isLeft,
-				int indexOfSiblings) {
-			wrap = MLElementWrapper.wrapperFactory((Element) currentNode);
-
-			if (wrap != null) {
-				if (isLeft) {
-					wrappersLeft.add(wrap);
-				} else {
-					wrappersRight.add(wrap);
-				}
-
-			}
-
-		}
-
-		@Override
-		protected void onGoingToNextChild(Node currentNode) {
-
 		}
 	}
 }
