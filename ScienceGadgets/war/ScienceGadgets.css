@@ -60,7 +60,15 @@ body {
 #selectedEq{
 	background-color: #9999ff;
 }
-
+#selectedWrapper{
+	background-color: #77ff77;
+	cursor: move;
+	opacity:0.6;
+}
+#selectedJoinedWrapper{
+	background-color: #77ff77;
+	opacity:0.6;
+}
 .var{
 	background-color: #CCCCFF;
 }
@@ -86,24 +94,4 @@ body {
 	background-color: #eeaaaa;
 	cursor: move;
 	opacity:0.6;
-}
-.T{
-	color: #9999ff;
-}
-.S{
-	color: #9999ff;
-}
-.E{
-	color: #9999ff;
-}
-.Fn{
-	color: #9999ff;
-}
-.V{
-	color: #9999ff;
-}
-.N{
-	color: #9999ff;
-}.Fr{
-	color: #9999ff;
 }

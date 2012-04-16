@@ -89,11 +89,29 @@ public class TreeCanvas extends DrawingArea {
 
 		rowHeight = this.getHeight() / 6;
 
+		HTML lHTML = jTree.getLeftSide().toMathML();
+		HTML rHTML = jTree.getRightSide().toMathML();
+		
+		// Add HTML widgets of top level of each side
 		panel.add(this);
 		panel.add(jTree.getRoot().toMathML(), sideLengthLeft, 0);
-		panel.add(jTree.getLeftSide().toMathML(), sideLengthLeft / 2, 0);
-		panel.add(jTree.getRightSide().toMathML(),
-				(sideLengthLeft + sideLengthRight / 2), 0);
+		panel.add(lHTML, sideLengthLeft / 2, 0);
+		panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), 0);
+
+		// Add top level wrappers
+		MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
+				.getJoinedWrapper();
+		lWrap.setHeight(lHTML.getOffsetHeight() + "px");
+		lWrap.setWidth(lHTML.getOffsetWidth() + "px");
+		panel.add(lWrap, sideLengthLeft / 2, 0);
+
+		MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
+				.getJoinedWrapper();
+		rWrap.setHeight(rHTML.getOffsetHeight() + "px");
+		rWrap.setWidth(rHTML.getOffsetWidth() + "px");
+		panel.add(rWrap, (sideLengthLeft + sideLengthRight / 2), 0);
+
+		// Recursively create the resr of the tree
 		if (jTree.getLeftSide().getChildCount() > 1)
 			drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2), (byte) 1,
 					true);
@@ -152,7 +170,7 @@ public class TreeCanvas extends DrawingArea {
 				childSpace = (sideLengthRight) / rightLayerCounts[layer];
 			}
 			HTML childHTML = child.toMathML();
-			childHTML.getHTML();
+			// childHTML.getHTML();
 
 			int childWidth = childHTML.getOffsetWidth();
 			// int childHeight = childHTML.getOffsetHeight();
@@ -188,9 +206,7 @@ public class TreeCanvas extends DrawingArea {
 			Rectangle box = new Rectangle(childLeft - pad, childTop,
 					childHTML.getOffsetWidth() + 2 * pad,
 					childHTML.getOffsetHeight() * 4 / 3);
-			//TODO
-			System.out.println(palette.get(child.getType()));
-			//box.setFillColor(palette.get(child.getType()));
+			box.setFillColor(palette.get(child.getType()));
 
 			Line line = new Line(parentX, layerHeight - rowHeight / 2, lineX,
 					lineY);
@@ -211,21 +227,30 @@ public class TreeCanvas extends DrawingArea {
 
 	}
 
-	/**
-	 * Since the GWT graphics library doesn't look into CSS files, this method
-	 * is meant to get the color names from the CSS file and add them to a
-	 * palette which will be used to add the appropriate color to each box
-	 */
 	private void createPalette() {
 		palette = new HashMap<JohnTree.Type, String>();
-		SimplePanel dummyPanel = new SimplePanel();
-		Element from = dummyPanel.getElement();
-		String att = "color";
-
-		for(JohnTree.Type t : JohnTree.Type.values()){
-		dummyPanel.setStyleName(t.toString());
-		palette.put(t, DOM.getStyleAttribute(from, att));
-		}
+		/*
+		 * Since the GWT graphics library doesn't look into CSS files, this
+		 * method is meant to get the color names from the CSS file and add them
+		 * to a palette which will be used to add the appropriate color to each
+		 * box
+		 */
+		/*
+		 * SimplePanel dummyPanel = new SimplePanel(); Element from =
+		 * dummyPanel.getElement(); String attribute = "color"; // Doesn't get
+		 * the CSS attributes for (JohnTree.Type type : JohnTree.Type.values())
+		 * { dummyPanel.setStyleName(type.toString()); palette.put(type,
+		 * DOM.getStyleAttribute(from, attribute));
+		 * 
+		 * System.out.println("\n" + from.getStyle().getBackgroundColor()); }
+		 */
+		palette.put(JohnTree.Type.Term, "#7FFFD4");
+		palette.put(JohnTree.Type.Series, "#87CEFA");
+		palette.put(JohnTree.Type.Function, "#FFD700");
+		palette.put(JohnTree.Type.Exponent, "#E6E6FA");
+		palette.put(JohnTree.Type.Fraction, "#FAEBD7");
+		palette.put(JohnTree.Type.Variable, "#F0F8FF");
+		palette.put(JohnTree.Type.Number, "#F0FFF0");
 	}
 
 	private Boolean isHidden(JohnNode child) {

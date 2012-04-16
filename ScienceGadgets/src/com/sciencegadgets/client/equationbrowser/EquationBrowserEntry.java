@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.ScienceGadgets;
 import com.sciencegadgets.client.AlgebraManipulation.AlgOutEntry;
 import com.sciencegadgets.client.AlgebraManipulation.AlgebraManipulator;
+import com.sciencegadgets.client.EquationTree.DropControllAssigner;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
 import com.sciencegadgets.client.EquationTree.TreeEntry;
@@ -201,9 +202,9 @@ public class EquationBrowserEntry implements EntryPoint {
 		parseJQMath(draggableEquation.getElement());
 
 		// Make the tree on canvas
-		JohnTree johnTree = new JohnTree(draggableEquation, false);
-		TreeEntry.apTree.clear();
-		TreeCanvas treeCanvas = new TreeCanvas(TreeEntry.apTree, johnTree);
+		//JohnTree johnTree = new JohnTree(draggableEquation, false);
+		//TreeEntry.apTree.clear();
+		//TreeCanvas treeCanvas = new TreeCanvas(TreeEntry.apTree, johnTree);
 		
 		///////////////////////////////
 		//
@@ -218,10 +219,10 @@ public class EquationBrowserEntry implements EntryPoint {
 
 		// Make draggable algebra area
 		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(
-				draggableEquation, johnTree.getWrappers(),
+				draggableEquation, jTree.getWrappers(),
 				AlgOutEntry.algDragPanel));
 
-		// DropControllAssigner a = new DropControllAssigner(johnTree);
+		DropControllAssigner a = new DropControllAssigner(jTree);
 
 		/*
 		 * MathTree mathTree = new MathTree(draggableEquation);
