@@ -7,16 +7,14 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Line;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
 public class TreeCanvas extends DrawingArea {
 
+	private JohnTree johnTree;
 	private int childSpace;
 	private int rowHeight;
 	private AbsolutePanel panel;
@@ -43,11 +41,17 @@ public class TreeCanvas extends DrawingArea {
 	public TreeCanvas(AbsolutePanel panel, JohnTree jTree) {
 		this(panel.getOffsetWidth(), panel.getOffsetHeight(), jTree);
 		this.panel = panel;
+		this.johnTree = jTree;
 		draw(jTree);
 	}
 
 	private TreeCanvas(int width, int height, JohnTree jTree) {
 		super(width, height);
+	}
+	public void reDraw(){
+		this.clear();
+		panel.clear();
+		draw(johnTree);
 	}
 
 	public void draw(JohnTree jTree) {
@@ -135,7 +139,7 @@ public class TreeCanvas extends DrawingArea {
 		for (JohnNode child : children) {
 
 			// Don't show certain nodes meant only for MathML display
-			if (isHidden(child)) {
+			if (child.isHidden()) {
 				continue;
 			}
 
@@ -159,7 +163,7 @@ public class TreeCanvas extends DrawingArea {
 		for (JohnNode child : children) {
 
 			// Don't show certain nodes meant only for MathML display
-			if (isHidden(child)) {
+			if (child.isHidden()) {
 				continue;
 			}
 
@@ -252,34 +256,4 @@ public class TreeCanvas extends DrawingArea {
 		palette.put(JohnTree.Type.Variable, "#F0F8FF");
 		palette.put(JohnTree.Type.Number, "#F0FFF0");
 	}
-
-	private Boolean isHidden(JohnNode child) {
-		if ("(".equals(child.toString()) || ")".equals(child.toString())) {
-			// No need to show parentheses
-			return true;
-		} else if ("mo".equals(child.getTag())) {
-			return true;
-		} else if ("cos".equals(child.toString())
-				|| "sin".equals(child.toString())
-				|| "tan".equals(child.toString())
-				|| "sec".equals(child.toString())
-				|| "csc".equals(child.toString())
-				|| "cot".equals(child.toString())
-				|| "log".equals(child.toString())
-				|| "ln".equals(child.toString())
-		// Don't show function name as child, parent will be function
-		// Changes here must also be made to
-		// MLTreeToMathTree.assignComplexChildMrow
-		) {
-			return true;
-		} else if ("msub".equals(child.getParent().getTag())
-		// Don't show subscripts because it's really one variable
-				|| ("msubsup".equals(child.getParent().getTag()) && child
-						.getIndex() == 1)) {
-			return true;
-		}
-
-		return false;
-	}
-
 }
