@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.AlgebraManipulation;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
+import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.HasDragStartHandlers;
@@ -15,6 +16,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.EquationTree.JohnTree;
+import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -26,11 +28,11 @@ import com.sciencegadgets.client.EquationTree.JohnTree;
 public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		HasMouseOverHandlers, HasDragStartHandlers {
 
-	ElementDragController dragController = null;
+	private ElementDragController dragController = null;
 	private Element element = null;
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
-	private JohnTree.JohnNode johnNode;
+	private JohnNode johnNode;
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
@@ -52,15 +54,16 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 *            instances of the same wrapper that communicate in different
 	 *            views
 	 */
-	public MLElementWrapper(Element theElement, Boolean isDraggable,
+	public MLElementWrapper(JohnNode jNode, Boolean isDraggable,
 			Boolean isJoined) {
-		this.element = theElement;
+		this.element = (Element) jNode.getDomNode();
+		this.johnNode = jNode;
 		this.isDraggable = isDraggable;
 		addMouseOverHandlerDefault();
 		addMouseOutHandlerDefault();
 
 		if (isJoined == true) {
-			this.joinedWrapper = new MLElementWrapper(theElement, isDraggable,
+			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable,
 					this);
 		}
 	}
@@ -74,9 +77,10 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * @param isDraggable
 	 * @param joinedWrapper
 	 */
-	private MLElementWrapper(Element theElement, Boolean isDraggable,
+	private MLElementWrapper(JohnNode jNode, Boolean isDraggable,
 			MLElementWrapper joinedWrapper) {
-		this.element = theElement;
+		this.element = (Element) jNode.getDomNode();
+		this.johnNode = jNode;
 		this.isDraggable = isDraggable;
 		addMouseOverHandlerDefault();
 		addMouseOutHandlerDefault();
@@ -84,12 +88,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		this.joinedWrapper = joinedWrapper;
 	}
 
-	public static MLElementWrapper wrapperFactory(JohnTree.JohnNode jNode) {
-		Element element = (Element) jNode.getDomNode();
-
-		return new MLElementWrapper(element, true, true);
-
-	}
 
 	public Element getElementWrapped() {
 		return element;
@@ -101,6 +99,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 	public JohnTree.JohnNode getJohnNode() {
 		return johnNode;
+	}
+	public DragController getDragControl(){
+		return dragController;
 	}
 
 	/**

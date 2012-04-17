@@ -75,23 +75,8 @@ body {
 .varName{
 	background-color: #99CCFF;
 }
-.mouseOverlayDefault{
+.mouseOverlay{
 	background-color: #111111;
 	cursor: move;
-	opacity:0.6;
-}
-.mouseOverlayNumber{
-	background-color: #aaaaaa;
-	cursor: move;
-	opacity:0.6;
-}
-.mouseOverlayOperator{
-	background-color: #77ee77;
-	cursor: move;
-	opacity:0.6;
-}
-.mouseOverlayTerm{
-	background-color: #eeaaaa;
-	cursor: move;
-	opacity:0.6;
+	opacity:0.4;
 }
