@@ -43,89 +43,51 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * 
 	 * @param theElement
 	 *            - the element to wrap in widget
-	 * @param mouseOverStyle
-	 *            - the slyle that will be added to element for
-	 *            {@link MouseOverHandler} and {@link MouseOutHandler}
 	 * @param isDraggable
 	 *            - if true, adds a default drag {@link ElementDragController}
 	 *            for the parent {@link AbsolutePanel} it is currently in
-	 * @param isLeft
-	 *            - Arbitrarily chosen distinction between sides. True if the
-	 *            wrapper is on the left side of the equation, false if on the
-	 *            right
+	 * @param isJoined
+	 *            - If true, there will be two wrappers made which point to one
+	 *            another by the joinedWrapper field. This allows for multiple
+	 *            instances of the same wrapper that communicate in different
+	 *            views
 	 */
-	public MLElementWrapper(Element theElement, String mouseOverStyle,
-			Boolean isDraggable, MLElementWrapper joinedWrapper) {
+	public MLElementWrapper(Element theElement, Boolean isDraggable,
+			Boolean isJoined) {
 		this.element = theElement;
 		this.isDraggable = isDraggable;
 		addMouseOverHandlerDefault();
 		addMouseOutHandlerDefault();
 
-		if (joinedWrapper == null) {
-			this.joinedWrapper = new MLElementWrapper(theElement, mouseOverStyle,
-					isDraggable, this);
-		} else {
-			this.joinedWrapper = joinedWrapper;
+		if (isJoined == true) {
+			this.joinedWrapper = new MLElementWrapper(theElement, isDraggable,
+					this);
 		}
-
 	}
 
 	/**
-	 * Construct that can explicitly state weather default handlers will be
-	 * available.
-	 * <p>
-	 * <b>Note - this widget can only be draggable if it's attached to an
-	 * {@link AbsolutePanel}</b>
-	 * </p>
+	 * Private constructor for making a joined wrapper. Joined wrappers
+	 * represent the same element in different widgets eg. the same variable in
+	 * the equation manipulator view and the tree view
 	 * 
 	 * @param theElement
-	 *            - the element to wrap in widget
 	 * @param isDraggable
-	 *            - if true, adds a default drag {@link ElementDragController}
-	 *            for the parent {@link AbsolutePanel} it is currently in
-	 * @param isLeft
-	 *            - Arbitrarily chosen distinction between sides. True if the
-	 *            wrapper is on the left side of the equation, false if on the
-	 *            right
+	 * @param joinedWrapper
 	 */
-	public MLElementWrapper(Element theElement, Boolean isDraggable,
+	private MLElementWrapper(Element theElement, Boolean isDraggable,
 			MLElementWrapper joinedWrapper) {
-		// setElement(theElement);
-		// onAttach();
-		// this.setHTML(theElement.getInnerText());
 		this.element = theElement;
 		this.isDraggable = isDraggable;
+		addMouseOverHandlerDefault();
+		addMouseOutHandlerDefault();
 
-		if (joinedWrapper == null) {
-			this.joinedWrapper = new MLElementWrapper(theElement, isDraggable, this);
-		} else {
-			this.joinedWrapper = joinedWrapper;
-		}
+		this.joinedWrapper = joinedWrapper;
 	}
 
 	public static MLElementWrapper wrapperFactory(JohnTree.JohnNode jNode) {
-		Element element = (Element)jNode.getDomNode();
-		String tag = element.getNodeName();
-		//Type type = jNode.getType();
-		// TODO parse the mathML to apply the wrappers appropriately
+		Element element = (Element) jNode.getDomNode();
 
-		//if (tag.equalsIgnoreCase("mn") | tag.equalsIgnoreCase("mi")) {
-			return new MLElementWrapper(element, "mouseOverlayNumber", true,
-					null);
-		//}
-		//return null;
-			
-			
-		// if (tag.equalsIgnoreCase("mn")) {
-		// return new MLElementWrapper(element, "mouseOverlayNumber", true,
-		// isLeft);
-		// } else if (tag.equalsIgnoreCase("mo") &
-		// !element.getInnerText().equals("=")) {
-		// return new MLElementWrapper(element, "mouseOverlayDefault", false,
-		// isLeft);
-		// }
-
-		// return null;
+		return new MLElementWrapper(element, true, true);
 
 	}
 
@@ -136,7 +98,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public MLElementWrapper getJoinedWrapper() {
 		return joinedWrapper;
 	}
-	public JohnTree.JohnNode getJohnNode(){
+
+	public JohnTree.JohnNode getJohnNode() {
 		return johnNode;
 	}
 
@@ -176,7 +139,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
 	}
-	
 
 	/**
 	 * Add a drag controller to this widget, can be a subclass of
@@ -189,7 +151,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * @return
 	 * @throws DragControllerException
 	 */
-	public ElementDragController addDragController(ElementDragController dragCtrl) {
+	public ElementDragController addDragController(
+			ElementDragController dragCtrl) {
 		dragController = dragCtrl;
 		dragController.makeDraggable(this);
 		return dragController;
@@ -220,36 +183,41 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// /////////////////////////////////////////////////////////////////////////////////////
 	class ElementOverHandler implements MouseOverHandler {
 		public void onMouseOver(MouseOverEvent event) {
-			((MLElementWrapper) event.getSource()).getElement().setId("selectedWrapper");
-			((MLElementWrapper) event.getSource()).getJoinedWrapper().getElement().setId("selectedJoinedWrapper");
+			((MLElementWrapper) event.getSource()).getElement().setId(
+					"selectedWrapper");
+			((MLElementWrapper) event.getSource()).getJoinedWrapper()
+					.getElement().setId("selectedJoinedWrapper");
 		}
 	}
 
 	class ElementOutHandler implements MouseOutHandler {
 		public void onMouseOut(MouseOutEvent event) {
-			((MLElementWrapper) event.getSource()).getElement().removeAttribute("id");
-			((MLElementWrapper) event.getSource()).getJoinedWrapper().getElement().removeAttribute("id");
-			
+			((MLElementWrapper) event.getSource()).getElement()
+					.removeAttribute("id");
+			((MLElementWrapper) event.getSource()).getJoinedWrapper()
+					.getElement().removeAttribute("id");
+
 		}
 	}
-	
-	class ElementDragController extends PickupDragController{
+
+	class ElementDragController extends PickupDragController {
 
 		public ElementDragController(AbsolutePanel boundaryPanel,
 				boolean allowDroppingOnBoundaryPanel) {
 			super(boundaryPanel, allowDroppingOnBoundaryPanel);
 		}
-		
+
 		@Override
 		public void dragStart() {
 			super.dragStart();
-			MLElementWrapper wrap = (MLElementWrapper)context.draggable;
+			MLElementWrapper wrap = (MLElementWrapper) context.draggable;
 			wrap.setText(wrap.getElementWrapped().getInnerText());
 		}
+
 		@Override
 		public void dragEnd() {
 			super.dragEnd();
-			MLElementWrapper wrap = (MLElementWrapper)context.draggable;
+			MLElementWrapper wrap = (MLElementWrapper) context.draggable;
 			wrap.setText("");
 		}
 	}
