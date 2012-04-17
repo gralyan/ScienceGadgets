@@ -13,6 +13,7 @@ import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
 public class JohnTree {
 
+	private JohnTree tree = this;
 	private JohnNode root;
 	private JohnNode leftSide;
 	private JohnNode rightSide;
@@ -69,6 +70,7 @@ public class JohnTree {
 		private MLElementWrapper wrapper;
 		private JohnNode parent;
 		private List<JohnNode> children = new LinkedList<JohnNode>();
+		private Boolean isHidden = false;
 
 		public JohnNode(Node node) {
 			domNode = node;
@@ -145,6 +147,13 @@ public class JohnTree {
 		public String toString() {
 			return symbol;
 		}
+		public void setString(String string){
+			this.symbol = string;
+		}
+
+		public Boolean isHidden() {
+			return isHidden;
+		}
 
 		public void setWrapper(MLElementWrapper wrap) {
 			wrapper = wrap;
@@ -173,9 +182,12 @@ public class JohnTree {
 		public String getTag() {
 			return tag;
 		}
+		public JohnTree getTree(){
+			return tree;
+		}
 	}
 
-	static enum Type {
+	public static enum Type {
 		Term, Series, Function, Exponent, Fraction, Variable, Number;
 	}
 
@@ -199,7 +211,7 @@ public class JohnTree {
 			jTree.rightSide = nRight;
 			jTree.root.add(jTree.leftSide);
 			jTree.root.add(jTree.rightSide);
-			//jTree.wrappers = wrappers;
+			// jTree.wrappers = wrappers;
 
 		}
 
@@ -209,17 +221,8 @@ public class JohnTree {
 
 			nodeMap = new HashMap<Node, JohnNode>();
 			nEq = new JohnNode(nodeEquals, null);
-
-
 			nLeft = new JohnNode(nodeLeft);
-//			wrap = MLElementWrapper.wrapperFactory(nLeft);
-//			nLeft.setWrapper(wrap);
-//			wrappers.add(wrap);
-
 			nRight = new JohnNode(nodeRight);
-//			wrap = MLElementWrapper.wrapperFactory(nRight);
-//			nRight.setWrapper(wrap);
-//			wrappers.add(wrap);
 
 			prevLeftNode = nLeft;
 			prevRightNode = nRight;
@@ -228,12 +231,11 @@ public class JohnTree {
 		@Override
 		protected void onVisitNode(Node currentNode, Boolean isLeft,
 				int indexOfChildren) {
+			// Must be separated to allow the TreeCanvas to allocate space
+			// proportional to member count ratio of sides of the equation
 
 			curNode = new JohnNode(currentNode);
-//			wrap = MLElementWrapper.wrapperFactory(curNode);
-//			curNode.setWrapper(wrap);
-//			wrappers.add(wrap);
-			
+
 			if (isLeft) {
 				if (indexOfChildren == 0) {
 					prevLeftNode.add(curNode);
@@ -284,6 +286,7 @@ public class JohnTree {
 				assignSimpleTypes(jNode, kid);
 				assignComplexChildMrow(jNode, kid);
 				findNestedMrows(jNode, kid);
+				kid.isHidden = checkIsHidden(kid);
 				wrapNode(kid);
 
 				if (kid.getChildCount() > 0) {
@@ -292,6 +295,14 @@ public class JohnTree {
 			}
 		}
 
+		/**
+		 * Assigns the MathML tags to JohnNode {@link Type}. This method is
+		 * designed to take care of the simple cases, the more complex cases are
+		 * assigned in assignComplexChildMrow
+		 * 
+		 * @param jNode
+		 * @param kid
+		 */
 		private void assignSimpleTypes(JohnNode jNode, JohnNode kid) {
 			if ("mi".equalsIgnoreCase(kid.getTag())) {
 				kid.type = Type.Variable;
@@ -416,10 +427,44 @@ public class JohnTree {
 				nest.remove();
 			}
 		}
-		private void wrapNode(JohnNode curNode){
-			wrap = MLElementWrapper.wrapperFactory(curNode);
-			curNode.setWrapper(wrap);
-			wrappers.add(wrap);
+
+		private Boolean checkIsHidden(JohnNode jNode) {
+
+			if ("(".equals(jNode.toString()) || ")".equals(jNode.toString())) {
+				// No need to show parentheses
+				return true;
+			} else if ("mo".equals(jNode.getTag())) {
+				return true;
+			} else if ("cos".equals(jNode.toString())
+					|| "sin".equals(jNode.toString())
+					|| "tan".equals(jNode.toString())
+					|| "sec".equals(jNode.toString())
+					|| "csc".equals(jNode.toString())
+					|| "cot".equals(jNode.toString())
+					|| "log".equals(jNode.toString())
+					|| "ln".equals(jNode.toString())
+			// Don't show function name as child, parent will be function
+			// Changes here must also be made to
+			// MLTreeToMathTree.assignComplexChildMrow
+			) {
+				return true;
+			} else if ("msub".equals(jNode.getParent().getTag())
+			// Don't show subscripts because it's really one variable
+					|| ("msubsup".equals(jNode.getParent().getTag()) && jNode
+							.getIndex() == 1)) {
+				return true;
+			}
+
+			return false;
+
+		}
+
+		private void wrapNode(JohnNode curNode) {
+			if (!curNode.isHidden()) {
+				wrap = MLElementWrapper.wrapperFactory(curNode);
+				curNode.setWrapper(wrap);
+				wrappers.add(wrap);
+			}
 		}
 	}
 }

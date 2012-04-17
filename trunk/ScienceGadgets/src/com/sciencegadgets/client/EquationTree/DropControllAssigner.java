@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
+import com.sciencegadgets.client.EquationTree.JohnTree.Type;
 
 public class DropControllAssigner {
 
@@ -21,22 +22,20 @@ public class DropControllAssigner {
 
 	private void doChildren(JohnNode jNode) {
 		List<JohnNode> children = jNode.getChildren();
-
 		for (JohnNode child : children) {
-			if (child.getTag().equalsIgnoreCase("mi")) {
-				// Handle errors better
 
-				try {
-					JohnNode sib = child.getNextSibling();
-					if (child.getTag().equalsIgnoreCase("mi")) {
-						
+			if (Type.Number.equals(child.getType())) {
+				List<JohnNode> siblings = child.getParent().getChildren();
+				for (JohnNode sib : siblings) {
+					if (Type.Number.equals(sib.getType())) {
+
 						child.getWrapper().addDropTarget(sib.getWrapper());
-						child.getWrapper().getJoinedWrapper().addDropTarget(sib.getWrapper().getJoinedWrapper());
+						child.getWrapper()
+								.getJoinedWrapper()
+								.addDropTarget(
+										sib.getWrapper().getJoinedWrapper());
 					}
-				} catch (IndexOutOfBoundsException e) {
-
 				}
-
 			}
 			if (child.getChildCount() > 0) {
 				doChildren(child);
