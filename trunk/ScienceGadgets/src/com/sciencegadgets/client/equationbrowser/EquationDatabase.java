@@ -89,6 +89,7 @@ public final class EquationDatabase {
 	/**/};
 
 	private final String[][] ALGEBRA = {
+			/*debug*/{"1+2+3+4 = 5*6*7*8*9"},
 	/* 0 */{ "a=x+b", "vara=x+varb" },
 	/* 1 */{ "a=x-b", "vara=x+(-varb)" },
 	/* 2 */{ "a=x/b", "vara=x / varb" },
