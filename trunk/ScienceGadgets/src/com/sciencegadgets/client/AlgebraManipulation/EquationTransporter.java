@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.AlgebraManipulation;
 
+import java.util.LinkedList;
+
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.EquationTree.DropControllAssigner;
@@ -10,6 +12,8 @@ import com.sciencegadgets.client.EquationTree.TreeEntry;
 public class EquationTransporter {
 	
 	public static TreeCanvas tCanvas;
+	private static DropControllAssigner dropAssigner;
+	public static LinkedList<MathMLDropController> dropControllers;
 	public static void transport(String equation){
 
 
@@ -45,7 +49,7 @@ public class EquationTransporter {
 				draggableEquation, jTree.getWrappers(),
 				AlgOutEntry.algDragPanel));
 
-		DropControllAssigner a = new DropControllAssigner(jTree);
+		dropAssigner = new DropControllAssigner(jTree.getWrappers(), true);
 
 		/*
 		 * MathTree mathTree = new MathTree(draggableEquation);

@@ -461,7 +461,7 @@ public class JohnTree {
 
 		private void wrapNode(JohnNode curNode) {
 			if (!curNode.isHidden()) {
-				wrap = MLElementWrapper.wrapperFactory(curNode);
+				wrap = new MLElementWrapper(curNode, true, true);
 				curNode.setWrapper(wrap);
 				wrappers.add(wrap);
 			}
