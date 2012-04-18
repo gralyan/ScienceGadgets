@@ -13,11 +13,5 @@ public class TreeEntry implements EntryPoint {
 		RootPanel.get().add(apTree);
 		apTree.setStyleName("apTree");
 		
-		
-		////////////////////
-		//Juxtapose ML tree with Math tree
-		////////////////
-		parsedTreePanel.setStyleName("apTree");
-		RootPanel.get().add(parsedTreePanel);
 	}
 }

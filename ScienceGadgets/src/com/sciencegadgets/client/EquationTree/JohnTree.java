@@ -7,8 +7,13 @@ import java.util.List;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.sciencegadgets.client.AlgebraManipulation.EquationTransporter;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
+import com.sciencegadgets.client.EquationTree.JohnTree.MathTreeToML;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
 public class JohnTree {
@@ -30,11 +35,16 @@ public class JohnTree {
 	 *            from XML
 	 */
 	public JohnTree(HTML mathML, Boolean isParsedForMath) {
-		new MLtoJohnTree(mathML).change(this);
+		new MLtoMLTree(mathML).change(this);
 
 		if (isParsedForMath) {
 			new MLTreeToMathTree().change(this);
 		}
+		
+		MathTreeToML a = new MathTreeToML(this);
+		HTML b = new HTML(a.mlBuild);
+		RootPanel.get().add(b);
+		EquationTransporter.parseJQMath(b.getElement());
 	}
 
 	public JohnTree(JohnNode leftSide, JohnNode equalsRoot, JohnNode rightSide) {
@@ -79,22 +89,22 @@ public class JohnTree {
 			symbol = ((Element) node).getInnerText();
 		}
 
-		public JohnNode(Node node, MLElementWrapper wrap) {
-			wrapper = wrap;
-			domNode = node;
-			tag = node.getNodeName();
-			type = null;
-			symbol = ((Element) node).getInnerText();
-		}
+		// public JohnNode(Node node, MLElementWrapper wrap) {
+		// wrapper = wrap;
+		// domNode = node;
+		// tag = node.getNodeName();
+		// type = null;
+		// symbol = ((Element) node).getInnerText();
+		// }
 
 		/**
 		 * Adds a {@link Node} to the {@link JohnTree} by creating a new
 		 * {@link JohnNode}
 		 * 
 		 */
-		public void add(Node node, MLElementWrapper wrap) {
-			add(new JohnNode(node, wrap));
-		}
+		// public void add(Node node, MLElementWrapper wrap) {
+		// add(new JohnNode(node, wrap));
+		// }
 
 		private void add(JohnNode johnNode) {
 			children.add(johnNode);
@@ -147,7 +157,8 @@ public class JohnTree {
 		public String toString() {
 			return symbol;
 		}
-		public void setString(String string){
+
+		public void setString(String string) {
 			this.symbol = string;
 		}
 
@@ -182,7 +193,8 @@ public class JohnTree {
 		public String getTag() {
 			return tag;
 		}
-		public JohnTree getTree(){
+
+		public JohnTree getTree() {
 			return tree;
 		}
 	}
@@ -191,7 +203,7 @@ public class JohnTree {
 		Term, Series, Function, Exponent, Fraction, Variable, Number;
 	}
 
-	class MLtoJohnTree extends MathMLParser {
+	class MLtoMLTree extends MathMLParser {
 		HashMap<Node, JohnNode> nodeMap;
 		private JohnNode prevLeftNode;
 		private JohnNode prevRightNode;
@@ -201,7 +213,7 @@ public class JohnTree {
 		JohnNode nEq;
 		JohnNode nRight;
 
-		public MLtoJohnTree(HTML mathMLequation) {
+		public MLtoMLTree(HTML mathMLequation) {
 			super(mathMLequation);
 		}
 
@@ -211,7 +223,6 @@ public class JohnTree {
 			jTree.rightSide = nRight;
 			jTree.root.add(jTree.leftSide);
 			jTree.root.add(jTree.rightSide);
-			// jTree.wrappers = wrappers;
 
 		}
 
@@ -220,7 +231,7 @@ public class JohnTree {
 				Node nodeRight) {
 
 			nodeMap = new HashMap<Node, JohnNode>();
-			nEq = new JohnNode(nodeEquals, null);
+			nEq = new JohnNode(nodeEquals);
 			nLeft = new JohnNode(nodeLeft);
 			nRight = new JohnNode(nodeRight);
 
@@ -464,6 +475,35 @@ public class JohnTree {
 				wrap = new MLElementWrapper(curNode, true, true);
 				curNode.setWrapper(wrap);
 				wrappers.add(wrap);
+			}
+		}
+	}
+
+	class MathTreeToML {
+		String mlBuild = "<math>";
+
+		MathTreeToML(JohnTree tree) {
+			//TODO LEft side
+			//mlBuild = mlBuild + "<mo>=</mo>";
+			addChild(tree.getLeftSide());
+			mlBuild = mlBuild + "<mo>=</mo>";
+			//TODO right side
+			//mlBuild = mlBuild + "</math>";
+			addChild(tree.getRightSide());
+			mlBuild = mlBuild + "</math>";
+		}
+
+		private void addChild(JohnNode node) {
+			List<JohnNode> children = node.getChildren();
+			for (JohnNode child : children) {
+				mlBuild = mlBuild + "<" + child.getTag() + ">";
+				if("mi".equals(child.getTag()) | "mn".equals(child.getTag()) | "mo".equals(child.getTag())){
+					mlBuild = mlBuild +	child.toString();
+				}
+				if (child.getChildCount() > 0) {
+					addChild(child);
+				}
+				mlBuild = mlBuild + "</" + child.getTag() + ">";
 			}
 		}
 	}
