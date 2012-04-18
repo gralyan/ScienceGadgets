@@ -10,44 +10,36 @@ import com.sciencegadgets.client.EquationTree.TreeCanvas;
 import com.sciencegadgets.client.EquationTree.TreeEntry;
 
 public class EquationTransporter {
-	
+
 	public static TreeCanvas tCanvas;
 	private static DropControllAssigner dropAssigner;
 	public static LinkedList<MathMLDropController> dropControllers;
-	public static void transport(String equation){
 
-
-		// Initial AlgOut line
-		HTML algOutFirstHTML = new HTML("$" + equation + "$");
-		AlgOutEntry.algOut.clear(true);
-		AlgOutEntry.algOut.resizeRows(1);
-		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
-		parseJQMath(algOutFirstHTML.getElement());
+	public static void transport(String equation) {
 
 		HTML draggableEquation = new HTML();
 		draggableEquation.setHTML("$" + equation + "$");
 		parseJQMath(draggableEquation.getElement());
 
-		// Make the tree on canvas
-		//JohnTree johnTree = new JohnTree(draggableEquation, false);
-		//TreeEntry.apTree.clear();
-		//TreeCanvas treeCanvas = new TreeCanvas(TreeEntry.apTree, johnTree);
+		transport(draggableEquation);
+	}
+
+	private static void transport(HTML mathML){
+		// Initial AlgOut line
+		HTML algOutFirstHTML = new HTML(mathML.getHTML());
+		AlgOutEntry.algOut.clear(true);
+		AlgOutEntry.algOut.resizeRows(1);
+		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
+		//parseJQMath(algOutFirstHTML.getElement());
+
+		// Make equation tree
+		JohnTree jTree = new JohnTree(mathML, true);
+		TreeEntry.apTree.clear();
+		tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
 		
-		///////////////////////////////
-		//
-		// Second tree to visualize difference
-		//
-		////////////////////////////
-		JohnTree jTree = new JohnTree(draggableEquation, true);
-		TreeEntry.parsedTreePanel.clear();
-		tCanvas = new TreeCanvas(TreeEntry.parsedTreePanel, jTree);
-
-		//System.out.println(algOutFirstHTML.getHTML());
-
 		// Make draggable algebra area
-		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(
-				draggableEquation, jTree.getWrappers(),
-				AlgOutEntry.algDragPanel));
+		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(mathML,
+				jTree.getWrappers(), AlgOutEntry.algDragPanel));
 
 		dropAssigner = new DropControllAssigner(jTree.getWrappers(), true);
 
@@ -55,12 +47,10 @@ public class EquationTransporter {
 		 * MathTree mathTree = new MathTree(draggableEquation);
 		 * RootPanel.get().add(mathTree.getTreeDrawing());
 		 */
-
-		
 	}
+	
 	public static native void parseJQMath(Element element) /*-{
-	$wnd.M.parseMath(element);
-}-*/;
+		$wnd.M.parseMath(element);
+	}-*/;
 
 }
-
