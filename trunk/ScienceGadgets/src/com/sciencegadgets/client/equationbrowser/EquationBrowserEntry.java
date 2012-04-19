@@ -364,17 +364,14 @@ public class EquationBrowserEntry implements EntryPoint {
 		public void onClick(ClickEvent event) {
 			RadioButton clicked = ((RadioButton) event.getSource());
 
+			browserPanel.clear();
+			AlgOutEntry.algDragPanel.clear();
+			AlgOutEntry.algOut.clear(true);
+			TreeEntry.apTree.clear();
+
 			if (clicked.equals(modeSelectAlg)) {
-				browserPanel.clear();
-				AlgOutEntry.algDragPanel.clear();
-				AlgOutEntry.algOut.clear(true);
-				TreeEntry.apTree.clear();
 				createAlgBrowser();
 			} else if (clicked.equals(modeSelectSci)) {
-				browserPanel.clear();
-				AlgOutEntry.algDragPanel.clear();
-				AlgOutEntry.algOut.clear(true);
-				TreeEntry.apTree.clear();
 				createSciBrowser();
 				sumGrid.clear(true);
 			}

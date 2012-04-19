@@ -27,10 +27,11 @@ public class AlgOutEntry implements EntryPoint {
 	public static AbsolutePanel algDragPanel = new AbsolutePanel();
 	public static ScrollPanel spAlg = new ScrollPanel(algOut);
 	EquationDatabase data;
+
 	public void onModuleLoad() {
 		createAlgebraPanel();
 		RootPanel.get().add(algebraPanel);
-		
+
 	}
 
 	private void createAlgebraPanel() {
@@ -77,11 +78,20 @@ public class AlgOutEntry implements EntryPoint {
 
 	}
 
+	public static void updateAlgOut() {
+		int newRowCount = algOut.getRowCount() + 2;
+		algOut.resizeRows(newRowCount);
+
+		algOut.setWidget(newRowCount - 2, 0, new Label(" to both sides"
+		// inpFun + inpCoef+ inpVar + "    " + inpFun + inpCoef + inpVar
+				));
+		algOut.setWidget(newRowCount - 1, 0, new Label("equation"));
+		spAlg.scrollToBottom();
+	}
+
 	class ToBothSidesHandler implements ClickHandler {
 
 		public void onClick(ClickEvent event) {
-			int newRowCount = algOut.getRowCount() + 2;
-			algOut.resizeRows(newRowCount);
 
 			String inpFun = funBox.getItemText(funBox.getSelectedIndex());
 			String inpCoef = coefBox.getText();
@@ -93,11 +103,8 @@ public class AlgOutEntry implements EntryPoint {
 				Window.alert("The coefficient must be a number");
 				return;
 			}
-
-			algOut.setWidget(newRowCount - 2, 0, new Label(inpFun + inpCoef
-					+ inpVar + "    " + inpFun + inpCoef + inpVar));
-			algOut.setWidget(newRowCount - 1, 0, new Label("equation"));
-			spAlg.scrollToBottom();
+			
+			updateAlgOut();
 		}
 
 	}
