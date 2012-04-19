@@ -29,6 +29,7 @@ public class DropControllAssigner {
 
 			if (Type.Number.equals(jNode.getType())) {
 				List<JohnNode> siblings = jNode.getParent().getChildren();
+				
 				for (JohnNode sib : siblings) {
 					if (Type.Number.equals(sib.getType())) {
 

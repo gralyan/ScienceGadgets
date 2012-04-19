@@ -7,13 +7,10 @@ import java.util.List;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.AlgebraManipulation.EquationTransporter;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
-import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
-import com.sciencegadgets.client.EquationTree.JohnTree.MathTreeToML;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
 public class JohnTree {
@@ -48,6 +45,11 @@ public class JohnTree {
 		EquationTransporter.parseJQMath(b.getElement());
 	}
 
+	public HTML toMathML(){
+		MathTreeToML a = new MathTreeToML(this);
+		return new HTML(a.mlBuild);
+	}
+	
 	public JohnNode getRoot() {
 		return root;
 	}
@@ -59,6 +61,7 @@ public class JohnTree {
 	public JohnNode getRightSide() {
 		return rightSide;
 	}
+
 	public JohnNode getEquals() {
 		return equals;
 	}
@@ -285,6 +288,7 @@ public class JohnTree {
 			commenseRevolution(mathRoot);
 			rearrangeNestedMrows();
 			rearrangeNegatives();
+			wrapChildren(mathRoot);
 		}
 
 		private void commenseRevolution(JohnNode jNode) {
@@ -297,7 +301,6 @@ public class JohnTree {
 				assignComplexChildMrow(jNode, kid);
 				findNestedMrows(jNode, kid);
 				kid.isHidden = checkIsHidden(kid);
-				wrapNode(kid);
 
 				if (kid.getChildCount() > 0) {
 					commenseRevolution(kid);
@@ -385,13 +388,13 @@ public class JohnTree {
 		 * 
 		 * @param node
 		 */
-		private void negatePropagate(JohnNode node) {
+/*		private void negatePropagate(JohnNode node) {
 			node.symbol = "-" + node.symbol;
 			if (node.getChildCount() > 0) {
 				negatePropagate(node.getChildAt(0));
 			}
 		}
-
+*/
 		/**
 		 * Finds all instances where there is a series inside a series or a term
 		 * inside a term. These will be compiled into one node to make the tree
@@ -434,23 +437,22 @@ public class JohnTree {
 		 * term for negative terms in a series.
 		 */
 		private void rearrangeNegatives() {
-			for (JohnNode baby : negatives) {
-				
-				JohnNode neg1 = new JohnNode(null, "mn", Type.Number, "-1");
+			for (JohnNode neg : negatives) {
 
-				if (baby.getParent().type == Type.Series) {
-					JohnNode t = baby.getNextSibling();
+				JohnNode neg1 = new JohnNode(neg.getDomNode(), "mn", Type.Number, "-1");
 
-					JohnNode encasingTerm = new JohnNode(null, "mrow",
-							Type.Term, "-" + t.toString());
-					baby.getParent().add(t.getIndex(), encasingTerm);
+				if (neg.getParent().type == Type.Series) {
+					JohnNode negArg = neg.getNextSibling();
+
+					JohnNode encasingTerm = new JohnNode(negArg.getDomNode(), "mrow",
+							Type.Term, "-" + negArg.toString());
+					neg.getParent().add(negArg.getIndex(), encasingTerm);
 
 					encasingTerm.add(neg1);
-					t.remove();
-
-					encasingTerm.add(t);
+					negArg.remove();
+					encasingTerm.add(negArg);
 				} else {
-					baby.getParent().add(baby.getIndex() + 1, neg1);
+					neg.getParent().add(neg.getIndex() + 1, neg1);
 				}
 			}
 		}
@@ -486,11 +488,19 @@ public class JohnTree {
 
 		}
 
-		private void wrapNode(JohnNode curNode) {
-			if (!curNode.isHidden()) {
-				wrap = new MLElementWrapper(curNode, true, true);
-				curNode.setWrapper(wrap);
-				wrappers.add(wrap);
+		private void wrapChildren(JohnNode jNode) {
+			List<JohnNode> children = jNode.getChildren();
+
+			for (JohnNode child : children) {
+				if (!child.isHidden()) {
+					wrap = new MLElementWrapper(child, true, true);
+					child.setWrapper(wrap);
+					wrappers.add(wrap);
+				}
+				if(child.getChildCount() > 0){
+					wrapChildren(child);
+			}
+				
 			}
 		}
 	}
