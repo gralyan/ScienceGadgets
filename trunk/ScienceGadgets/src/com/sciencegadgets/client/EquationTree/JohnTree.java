@@ -21,6 +21,7 @@ public class JohnTree {
 	private JohnTree tree = this;
 	private JohnNode root;
 	private JohnNode leftSide;
+	private JohnNode equals;
 	private JohnNode rightSide;
 	private LinkedList<MLElementWrapper> wrappers;
 
@@ -57,6 +58,9 @@ public class JohnTree {
 
 	public JohnNode getRightSide() {
 		return rightSide;
+	}
+	public JohnNode getEquals() {
+		return equals;
 	}
 
 	public LinkedList<MLElementWrapper> getWrappers() {
@@ -211,9 +215,10 @@ public class JohnTree {
 		public void change(JohnTree jTree) {
 			jTree.root = new JohnNode(null, null, null, null);
 			jTree.leftSide = nLeft;
+			jTree.equals = nEq;
 			jTree.rightSide = nRight;
 			jTree.root.add(jTree.leftSide);
-			jTree.root.add(nEq);
+			jTree.root.add(jTree.equals);
 			jTree.root.add(jTree.rightSide);
 
 		}
@@ -348,22 +353,11 @@ public class JohnTree {
 							if (baby.getIndex() > 0) {
 								kid.type = Type.Series;
 							}
+							// Negate the next node because we don't want minus
+							if ("−".equals(baby.toString())) {
+								negatives.add(baby);
+							}
 						}
-
-						// Negate the next node because we don't want minus
-						if ("−".equals(baby.toString())) {
-							// TODO
-							// if (kid.type != Type.Series) {
-							// kid.add(baby.getIndex()+1, new JohnNode(null,
-							// "mn", Type.Number, "-1"));
-							// baby.tag = "mn";
-							// baby.symbol = "-1";
-							// } else {
-							negatives.add(baby);
-							// }
-							// negatePropagate(baby.getNextSibling());
-						}
-
 						// For Δ: Δa should be treated as one variable
 					} else if ("Δ".equals(baby.toString())) {
 
@@ -444,9 +438,7 @@ public class JohnTree {
 				
 				JohnNode neg1 = new JohnNode(null, "mn", Type.Number, "-1");
 
-				if (baby.getParent().type != Type.Series) {
-					baby.getParent().add(baby.getIndex() + 1, neg1);
-				} else {
+				if (baby.getParent().type == Type.Series) {
 					JohnNode t = baby.getNextSibling();
 
 					JohnNode encasingTerm = new JohnNode(null, "mrow",
@@ -457,6 +449,8 @@ public class JohnTree {
 					t.remove();
 
 					encasingTerm.add(t);
+				} else {
+					baby.getParent().add(baby.getIndex() + 1, neg1);
 				}
 			}
 		}
