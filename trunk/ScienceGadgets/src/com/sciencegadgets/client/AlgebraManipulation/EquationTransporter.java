@@ -41,7 +41,7 @@ public class EquationTransporter {
 		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(mathML,
 				jTree.getWrappers(), AlgOutEntry.algDragPanel));
 
-		dropAssigner = new DropControllAssigner(jTree.getWrappers(), true);
+		//dropAssigner = new DropControllAssigner(jTree.getWrappers(), true);
 
 		/*
 		 * MathTree mathTree = new MathTree(draggableEquation);

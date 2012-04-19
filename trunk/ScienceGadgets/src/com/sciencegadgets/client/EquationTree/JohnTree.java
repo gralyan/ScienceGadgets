@@ -40,19 +40,11 @@ public class JohnTree {
 		if (isParsedForMath) {
 			new MLTreeToMathTree().change(this);
 		}
-		
+
 		MathTreeToML a = new MathTreeToML(this);
 		HTML b = new HTML(a.mlBuild);
 		RootPanel.get().add(b);
 		EquationTransporter.parseJQMath(b.getElement());
-	}
-
-	public JohnTree(JohnNode leftSide, JohnNode equalsRoot, JohnNode rightSide) {
-		root = equalsRoot;
-		this.leftSide = leftSide;
-		this.rightSide = rightSide;
-		root.add(this.leftSide);
-		root.add(this.rightSide);
 	}
 
 	public JohnNode getRoot() {
@@ -82,20 +74,19 @@ public class JohnTree {
 		private List<JohnNode> children = new LinkedList<JohnNode>();
 		private Boolean isHidden = false;
 
+		public JohnNode(Node domNode, String tag, Type type, String symbol) {
+			this.domNode = domNode;
+			this.tag = tag;
+			this.type = type;
+			this.symbol = symbol;
+		}
+
 		public JohnNode(Node node) {
 			domNode = node;
 			tag = node.getNodeName();
 			type = null;
 			symbol = ((Element) node).getInnerText();
 		}
-
-		// public JohnNode(Node node, MLElementWrapper wrap) {
-		// wrapper = wrap;
-		// domNode = node;
-		// tag = node.getNodeName();
-		// type = null;
-		// symbol = ((Element) node).getInnerText();
-		// }
 
 		/**
 		 * Adds a {@link Node} to the {@link JohnTree} by creating a new
@@ -218,10 +209,11 @@ public class JohnTree {
 		}
 
 		public void change(JohnTree jTree) {
-			jTree.root = nEq;
+			jTree.root = new JohnNode(null, null, null, null);
 			jTree.leftSide = nLeft;
 			jTree.rightSide = nRight;
 			jTree.root.add(jTree.leftSide);
+			jTree.root.add(nEq);
 			jTree.root.add(jTree.rightSide);
 
 		}
@@ -279,6 +271,7 @@ public class JohnTree {
 
 		JohnNode mathRoot;
 		private LinkedList<JohnNode> nestedMrows = new LinkedList<JohnNode>();
+		private LinkedList<JohnNode> negatives = new LinkedList<JohnNode>();
 		private MLElementWrapper wrap;
 
 		public void change(JohnTree jTree) {
@@ -286,6 +279,7 @@ public class JohnTree {
 			wrappers = new LinkedList<MLElementWrapper>();
 			commenseRevolution(mathRoot);
 			rearrangeNestedMrows();
+			rearrangeNegatives();
 		}
 
 		private void commenseRevolution(JohnNode jNode) {
@@ -347,11 +341,6 @@ public class JohnTree {
 
 					// Check children for +/- => series
 					if ("mo".equalsIgnoreCase(baby.getTag())) {
-
-						// Negate the next node because we don't want -
-						if ("−".equals(baby.toString())) {
-							negatePropagate(baby.getNextSibling());
-						}
 						if ("−".equals(baby.toString())
 								|| "+".equals(baby.toString())) {
 							// A "-" at the beginning doesn't make it a
@@ -359,6 +348,20 @@ public class JohnTree {
 							if (baby.getIndex() > 0) {
 								kid.type = Type.Series;
 							}
+						}
+
+						// Negate the next node because we don't want minus
+						if ("−".equals(baby.toString())) {
+							// TODO
+							// if (kid.type != Type.Series) {
+							// kid.add(baby.getIndex()+1, new JohnNode(null,
+							// "mn", Type.Number, "-1"));
+							// baby.tag = "mn";
+							// baby.symbol = "-1";
+							// } else {
+							negatives.add(baby);
+							// }
+							// negatePropagate(baby.getNextSibling());
 						}
 
 						// For Δ: Δa should be treated as one variable
@@ -374,7 +377,9 @@ public class JohnTree {
 							|| "cot".equals(baby.toString())
 							|| "sinh".equals(baby.toString())
 							|| "cosh".equals(baby.toString())
-							|| "tanh".equals(baby.toString())) {
+							|| "tanh".equals(baby.toString())
+							|| "log".equals(jNode.toString())
+							|| "ln".equals(jNode.toString())) {
 						kid.type = Type.Function;
 					}
 				}
@@ -423,19 +428,36 @@ public class JohnTree {
 			for (JohnNode nest : nestedMrows) {
 				List<JohnNode> kids = nest.getChildren();
 				for (JohnNode kid : kids) {
-					// Add to the beginning in order to preserve order, nests
-					// come in pairs
-					// TODO Ok, maybe not, try to get them in order eventually
-					switch (nest.getIndex() % 2) {
-					case 0:
-						nest.getParent().add(1, kid);
-						break;
-					case 1:
-						nest.getParent().add(0, kid);
-						break;
-					}
+					nest.getParent().add(nest.getIndex(), kid);
 				}
 				nest.remove();
+			}
+		}
+
+		/**
+		 * This method allows the "invisible negative one" to be displayed
+		 * explicitly and maneuvered accordingly. It makes an encasing sentinel
+		 * term for negative terms in a series.
+		 */
+		private void rearrangeNegatives() {
+			for (JohnNode baby : negatives) {
+				
+				JohnNode neg1 = new JohnNode(null, "mn", Type.Number, "-1");
+
+				if (baby.getParent().type != Type.Series) {
+					baby.getParent().add(baby.getIndex() + 1, neg1);
+				} else {
+					JohnNode t = baby.getNextSibling();
+
+					JohnNode encasingTerm = new JohnNode(null, "mrow",
+							Type.Term, "-" + t.toString());
+					baby.getParent().add(t.getIndex(), encasingTerm);
+
+					encasingTerm.add(neg1);
+					t.remove();
+
+					encasingTerm.add(t);
+				}
 			}
 		}
 
@@ -483,22 +505,22 @@ public class JohnTree {
 		String mlBuild = "<math>";
 
 		MathTreeToML(JohnTree tree) {
-			//TODO LEft side
-			//mlBuild = mlBuild + "<mo>=</mo>";
-			addChild(tree.getLeftSide());
-			mlBuild = mlBuild + "<mo>=</mo>";
-			//TODO right side
-			//mlBuild = mlBuild + "</math>";
-			addChild(tree.getRightSide());
+			addChild(tree.getRoot());
 			mlBuild = mlBuild + "</math>";
+			// System.out.println(mlBuild);
 		}
 
 		private void addChild(JohnNode node) {
 			List<JohnNode> children = node.getChildren();
 			for (JohnNode child : children) {
+
 				mlBuild = mlBuild + "<" + child.getTag() + ">";
-				if("mi".equals(child.getTag()) | "mn".equals(child.getTag()) | "mo".equals(child.getTag())){
-					mlBuild = mlBuild +	child.toString();
+				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
+						| "mo".equals(child.getTag())) {
+
+					if (child.toString() != "-1") {
+						mlBuild = mlBuild + child.toString();
+					}
 				}
 				if (child.getChildCount() > 0) {
 					addChild(child);
