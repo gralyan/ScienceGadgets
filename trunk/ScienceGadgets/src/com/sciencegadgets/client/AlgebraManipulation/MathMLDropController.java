@@ -21,37 +21,50 @@ public class MathMLDropController extends AbstractDropController {
 	@Override
 	public void onDrop(DragContext context) {
 		MLElementWrapper source = ((MLElementWrapper) context.draggable);
+		JohnNode sourceNode = source.getJohnNode();
+		JohnNode targetNode = target.getJohnNode();
 
-		// Add drop source to terget
+
+		
+		// Add drop source value to target value
 		int src = Integer.parseInt(source.getElementWrapped().getInnerText());
 		int targ = Integer
 				.parseInt((target).getElementWrapped().getInnerText());
 		int ans = src + targ;
 
 		// All drop controllers must me unregistered
-		for (MLElementWrapper wrap : target.getJohnNode().getTree()
-				.getWrappers()) {
+		for (MLElementWrapper wrap : targetNode.getTree().getWrappers()) {
 			((PickupDragController) wrap.getDragControl())
 					.unregisterDropControllers();
 			((PickupDragController) wrap.getJoinedWrapper().getDragControl())
-			.unregisterDropControllers();
+					.unregisterDropControllers();
 		}
-		target.getJohnNode().setString("" + ans);
-		
-		JohnNode prevChild = target.getJohnNode().getParent().getChildAt(target.getJohnNode().getIndex()-1);
-		if("mo".equals(prevChild.getTag())){
-			prevChild.remove();
+
+		// Main change
+		targetNode.setString("" + ans);
+
+		// Peripheral changes
+		int sIndex = sourceNode.getIndex();
+		if (sIndex > 0) {
+			JohnNode prevChild = sourceNode.getParent().getChildAt(sIndex-1);
+			if ("mo".equals(prevChild.getTag())) {
+				prevChild.remove();
+			}
+		}else if("+".equals(sourceNode.getNextSibling().toString())){
+			sourceNode.getNextSibling().remove();
 		}
-		source.getJohnNode().remove();
-		
+
+		sourceNode.getTree().getWrappers().remove(sourceNode.getWrapper());
+		sourceNode.getWrapper().removeFromParent();
+		sourceNode.getWrapper().getJoinedWrapper().removeFromParent();
+		sourceNode.remove();
+
+		// Updates
+		HTML mathML = targetNode.getTree().toMathML();
 		EquationTransporter.tCanvas.reDraw();
-		AlgOutEntry.updateAlgOut();
-		
-		HTML b = target.getJohnNode().getTree().toMathML();
-		RootPanel.get().add(b);
-		EquationTransporter.parseJQMath(b.getElement());
-//		EquationTransporter.changeEquation(target.getJohnNode().getTree().toMathML());
-		
+		AlgOutEntry.updateAlgOut(mathML);
+
+		EquationTransporter.changeEquation(targetNode.getTree().toMathML());
 
 	}
 
@@ -65,6 +78,5 @@ public class MathMLDropController extends AbstractDropController {
 		target.removeStyleName("mouseOverlay");
 		super.onLeave(context);
 	}
-	
 
 }

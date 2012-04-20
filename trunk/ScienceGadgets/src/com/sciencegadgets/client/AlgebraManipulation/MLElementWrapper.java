@@ -92,6 +92,10 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public Element getElementWrapped() {
 		return element;
 	}
+	
+	public void setElementWrapped(Element el){
+		element = el;
+	}
 
 	public MLElementWrapper getJoinedWrapper() {
 		return joinedWrapper;
