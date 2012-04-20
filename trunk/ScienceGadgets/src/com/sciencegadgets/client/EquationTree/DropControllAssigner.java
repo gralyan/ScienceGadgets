@@ -14,21 +14,20 @@ import com.sciencegadgets.client.EquationTree.JohnTree.Type;
 
 public class DropControllAssigner {
 
-	// private JohnNode root;
-	// private JohnNode rightSide;
-	// private JohnNode leftSide;
 	private JohnNode jNode;
-//	private HashMap<MathMLDropController, PickupDragController> DropControllers = new HashMap<MathMLDropController, PickupDragController>();
 
 	public DropControllAssigner(LinkedList<MLElementWrapper> wrappers,
 			Boolean hasJoiner) {
 //		MathMLDropController dropC = null;
 //		MathMLDropController dropCJ = null;
+//		System.out.println("\n\n");
 		for (MLElementWrapper wrap : wrappers) {
 			jNode = wrap.getJohnNode();
-
+			
 			if (Type.Number.equals(jNode.getType())) {
 				List<JohnNode> siblings = jNode.getParent().getChildren();
+
+//				System.out.println("Node: "+jNode.toString()+" wrpa "+wrap);
 				
 				for (JohnNode sib : siblings) {
 					if (Type.Number.equals(sib.getType())) {
@@ -50,33 +49,4 @@ public class DropControllAssigner {
 		}
 
 	}
-
-/*	public HashMap<MathMLDropController, PickupDragController> getDropControllers() {
-		return DropControllers;
-	}
-	public void unregisterAll(){
-			Iterator<MathMLDropController> it = DropControllers.keySet().iterator();
-			while (it.hasNext()){
-				PickupDragController a = DropControllers.get(it.next());
-				a.unregisterDropControllers();
-			}
-		
-	}
-*/	/*
-	 * public DropControllAssigner(JohnTree jTree) { root = jTree.getRoot();
-	 * leftSide = jTree.getLeftSide(); rightSide = jTree.getRightSide();
-	 * 
-	 * doChildren(root); }
-	 * 
-	 * private void doChildren(JohnNode jNode) { List<JohnNode> children =
-	 * jNode.getChildren(); for (JohnNode child : children) {
-	 * 
-	 * if (Type.Number.equals(child.getType())) { List<JohnNode> siblings =
-	 * child.getParent().getChildren(); for (JohnNode sib : siblings) { if
-	 * (Type.Number.equals(sib.getType())) {
-	 * 
-	 * child.getWrapper().addDropTarget(sib.getWrapper()); child.getWrapper()
-	 * .getJoinedWrapper() .addDropTarget( sib.getWrapper().getJoinedWrapper());
-	 * } } } if (child.getChildCount() > 0) { doChildren(child); } } }
-	 */
 }

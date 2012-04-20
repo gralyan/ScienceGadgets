@@ -41,8 +41,9 @@ public class MathMLDropController extends AbstractDropController {
 		}
 
 		// Main change
+		targetNode.getWrapper().getElementWrapped().setInnerText(""+ans);
 		targetNode.setString("" + ans);
-
+		
 		// Peripheral changes
 		int sIndex = sourceNode.getIndex();
 		if (sIndex > 0) {
@@ -64,7 +65,7 @@ public class MathMLDropController extends AbstractDropController {
 		EquationTransporter.tCanvas.reDraw();
 		AlgOutEntry.updateAlgOut(mathML);
 
-		EquationTransporter.changeEquation(targetNode.getTree().toMathML());
+		EquationTransporter.changeEquation(mathML);
 
 	}
 
