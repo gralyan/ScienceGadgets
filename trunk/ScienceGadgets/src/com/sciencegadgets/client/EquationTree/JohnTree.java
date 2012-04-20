@@ -8,8 +8,6 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.sciencegadgets.client.AlgebraManipulation.EquationTransporter;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
@@ -38,11 +36,6 @@ public class JohnTree {
 		if (isParsedForMath) {
 			new MLTreeToMathTree().change(this);
 		}
-
-		// MathTreeToML a = new MathTreeToML(this);
-		// HTML b = new HTML(a.mlBuild);
-		// RootPanel.get().add(b);
-		// EquationTransporter.parseJQMath(b.getElement());
 	}
 
 	public HTML toMathML() {
@@ -526,13 +519,12 @@ public class JohnTree {
 
 				Node childTo = to.appendChild(child.getDomNode().cloneNode(
 						false));
-				try {
+				if(!child.isHidden()){
 					child.getWrapper().setElementWrapped((Element) childTo);
 					child.getWrapper().removeStyleName("dragdrop-dropTarget");
-					System.out.println("a: "+child.getWrapper());
-				} catch (NullPointerException e) {
-					// System.out.println("child: " +
-					// child.tag+" "+child.toString());
+					child.getWrapper().removeDragController();
+					child.getWrapper().addDragController();
+					//System.out.println("a: " + child.getWrapper());
 				}
 
 				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())

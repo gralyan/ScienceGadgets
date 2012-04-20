@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
-import com.sciencegadgets.client.EquationTree.JohnTree.Type;
 
 public class TreeCanvas extends DrawingArea {
 
@@ -22,7 +21,7 @@ public class TreeCanvas extends DrawingArea {
 	private int sideLengthLeft;
 	private int sideLengthRight;
 	private HashMap<JohnTree.Type, String> palette;
-	int pad = 5;
+	private int pad = 5;
 
 	// The number of members in each row
 	private byte[] leftLayerCounts;
@@ -34,11 +33,8 @@ public class TreeCanvas extends DrawingArea {
 
 	/**
 	 * Constructor of the canvas that automatically adds it to the given panel
-	 * 
-	 * @param panel
-	 *            - panel to paint on
-	 * @param jTree
-	 *            - tree to paint
+	 * @param panel - panel to paint on
+	 * @param jTree - tree to paint
 	 */
 	public TreeCanvas(AbsolutePanel panel, JohnTree jTree) {
 		this(panel.getOffsetWidth(), panel.getOffsetHeight(), jTree);
@@ -58,21 +54,6 @@ public class TreeCanvas extends DrawingArea {
 
 	private void createPalette() {
 		palette = new HashMap<JohnTree.Type, String>();
-		/*
-		 * Since the GWT graphics library doesn't look into CSS files, this
-		 * method is meant to get the color names from the CSS file and add them
-		 * to a palette which will be used to add the appropriate color to each
-		 * box
-		 */
-		/*
-		 * SimplePanel dummyPanel = new SimplePanel(); Element from =
-		 * dummyPanel.getElement(); String attribute = "color"; // Doesn't get
-		 * the CSS attributes for (JohnTree.Type type : JohnTree.Type.values())
-		 * { dummyPanel.setStyleName(type.toString()); palette.put(type,
-		 * DOM.getStyleAttribute(from, attribute));
-		 * 
-		 * System.out.println("\n" + from.getStyle().getBackgroundColor()); }
-		 */
 		palette.put(JohnTree.Type.Term, "#7FFFD4");
 		palette.put(JohnTree.Type.Series, "#87CEFA");
 		palette.put(JohnTree.Type.Function, "#FFD700");
