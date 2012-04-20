@@ -63,8 +63,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		addMouseOutHandlerDefault();
 
 		if (isJoined == true) {
-			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable,
-					this);
+			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, this);
 		}
 	}
 
@@ -88,12 +87,11 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		this.joinedWrapper = joinedWrapper;
 	}
 
-
 	public Element getElementWrapped() {
 		return element;
 	}
-	
-	public void setElementWrapped(Element el){
+
+	public void setElementWrapped(Element el) {
 		element = el;
 	}
 
@@ -104,7 +102,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public JohnTree.JohnNode getJohnNode() {
 		return johnNode;
 	}
-	public DragController getDragControl(){
+
+	public DragController getDragControl() {
 		return dragController;
 	}
 
@@ -114,13 +113,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 */
 	public void onAttach() {
 		super.onAttach();
-
-		if (isDraggable) {
-			ElementDragController dragC = new ElementDragController(
-					(AbsolutePanel) this.getParent(), true);
-			addDragController(dragC);
-		}
-
+		addDragController();
 	}
 
 	// /////////////////////
@@ -152,25 +145,26 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * If a drag controller already exists, it is overridden
 	 * </p>
 	 * 
-	 * @param dragCtrl
-	 * @return
-	 * @throws DragControllerException
+	 * @return The new drag controller added
 	 */
-	public ElementDragController addDragController(
-			ElementDragController dragCtrl) {
-		dragController = dragCtrl;
-		dragController.makeDraggable(this);
+	public ElementDragController addDragController() {
+
+		if (isDraggable) {
+			ElementDragController dragC = new ElementDragController(
+					(AbsolutePanel) this.getParent(), true);
+
+			dragController = dragC;
+			dragController.makeDraggable(this);
+		}
 		return dragController;
 	}
 
 	/**
 	 * removes a drag controller from this widget
 	 * 
-	 * @param dragCtrl
 	 * @throws Exception
 	 */
-	public void removeDragController(ElementDragController dragCtrl)
-			throws Exception {
+	public void removeDragController() {
 		if (dragController != null) {
 			dragController.makeNotDraggable(this);
 			dragController = null;

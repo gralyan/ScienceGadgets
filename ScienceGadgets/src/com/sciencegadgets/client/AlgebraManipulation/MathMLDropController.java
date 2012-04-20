@@ -3,12 +3,9 @@ package com.sciencegadgets.client.AlgebraManipulation;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
-import com.sciencegadgets.client.EquationTree.JohnTree.Type;
 
 public class MathMLDropController extends AbstractDropController {
 	MLElementWrapper target;
@@ -63,7 +60,7 @@ public class MathMLDropController extends AbstractDropController {
 		// Updates
 		HTML mathML = targetNode.getTree().toMathML();
 		EquationTransporter.tCanvas.reDraw();
-		AlgOutEntry.updateAlgOut(mathML);
+		AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
 
 		EquationTransporter.changeEquation(mathML);
 

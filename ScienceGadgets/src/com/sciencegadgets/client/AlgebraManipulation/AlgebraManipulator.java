@@ -36,14 +36,12 @@ public class AlgebraManipulator extends AbsolutePanel {
 		int algLeft = parentPanel.getAbsoluteLeft();
 		int algTop = parentPanel.getAbsoluteTop();
 		for (MLElementWrapper wrap : wrappers) {
-
+			
 			if (wrap == null) {
 				continue;
 			}
 			int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
 			int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
-
-			
 			
 			int positionLeft = wrapLeft - algLeft;
 			int positionTop = wrapTop - algTop;

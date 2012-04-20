@@ -14,25 +14,32 @@ import com.sciencegadgets.client.EquationTree.JohnTree.Type;
 
 public class DropControllAssigner {
 
-	private JohnNode jNode;
+	//private JohnNode jNode;
 
 	public DropControllAssigner(LinkedList<MLElementWrapper> wrappers,
 			Boolean hasJoiner) {
-//		MathMLDropController dropC = null;
+assign(wrappers, hasJoiner);
+
+	}
+
+	public static void assign(LinkedList<MLElementWrapper> wrappers, Boolean hasJoiner) {
+		//		MathMLDropController dropC = null;
 //		MathMLDropController dropCJ = null;
-//		System.out.println("\n\n");
+		//System.out.println("\n\n");
+		JohnNode jNode;
 		for (MLElementWrapper wrap : wrappers) {
 			jNode = wrap.getJohnNode();
 			
 			if (Type.Number.equals(jNode.getType())) {
 				List<JohnNode> siblings = jNode.getParent().getChildren();
 
-//				System.out.println("Node: "+jNode.toString()+" wrpa "+wrap);
 				
 				for (JohnNode sib : siblings) {
-					if (Type.Number.equals(sib.getType())) {
+					if (Type.Number.equals(sib.getType()) && !jNode.equals(sib)) {
+				//System.out.println("Node: "+jNode.toString()+" wrpa "+wrap);
 
 						wrap.addDropTarget(sib.getWrapper());
+				//System.out.println("Node: "+jNode.toString()+" wrpa "+wrap);
 						if (hasJoiner) {
 							wrap.getJoinedWrapper().addDropTarget(
 									sib.getWrapper().getJoinedWrapper());
@@ -47,6 +54,5 @@ public class DropControllAssigner {
 //				}
 //			}
 		}
-
 	}
 }

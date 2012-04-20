@@ -2,8 +2,14 @@ package com.sciencegadgets.client.AlgebraManipulation;
 
 import java.util.LinkedList;
 
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.EquationTree.DropControllAssigner;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
@@ -36,7 +42,6 @@ public class EquationTransporter {
 		AlgOutEntry.algOut.clear(true);
 		AlgOutEntry.algOut.resizeRows(1);
 		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
-		// parseJQMath(algOutFirstHTML.getElement());
 		
 		// Make equation tree
 		TreeEntry.apTree.clear();
@@ -49,6 +54,7 @@ public class EquationTransporter {
 		 * MathTree mathTree = new MathTree(draggableEquation);
 		 * RootPanel.get().add(mathTree.getTreeDrawing());
 		 */
+		
 	}
 
 	/**
@@ -58,15 +64,42 @@ public class EquationTransporter {
 	 */
 	public static void changeEquation(HTML mathML) {
 
-
 		// Make draggable algebra area
 		AlgOutEntry.algDragPanel.clear();
 		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(mathML, jTree
 				.getWrappers(), AlgOutEntry.algDragPanel));
 
-		dropAssigner = new DropControllAssigner(jTree.getWrappers(), true);
+		DropControllAssigner.assign(jTree.getWrappers(), true);
+		
+		/////////////////////////
+		//EXPERIMANTAL see if you can unregister and re-register drop controllers
+		////////////////////
+		Button butt = new Button("unregister");
+		Button butt2 = new Button("reregister");
+		butt.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				for(MLElementWrapper wrap : jTree.getWrappers()){
 
-		//AlgOutEntry.updateAlgOut();
+					((PickupDragController) wrap.getDragControl())
+							.unregisterDropControllers();
+					((PickupDragController) wrap.getJoinedWrapper().getDragControl())
+							.unregisterDropControllers();
+				}
+				Window.alert("unredisterwes");
+			}
+		});
+		butt2.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				DropControllAssigner.assign(jTree.getWrappers(), true);
+				Window.alert("regists");
+				
+			}
+		});
+RootPanel.get().add(butt);
+RootPanel.get().add(butt2);
+	
 	}
 
 	public static native void parseJQMath(Element element) /*-{
@@ -74,3 +107,4 @@ public class EquationTransporter {
 	}-*/;
 
 }
+
