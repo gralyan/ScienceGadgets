@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -78,14 +79,14 @@ public class AlgOutEntry implements EntryPoint {
 
 	}
 
-	public static void updateAlgOut() {
+	public static void updateAlgOut(HTML mathML) {
 		int newRowCount = algOut.getRowCount() + 2;
 		algOut.resizeRows(newRowCount);
 
 		algOut.setWidget(newRowCount - 2, 0, new Label(" to both sides"
 		// inpFun + inpCoef+ inpVar + "    " + inpFun + inpCoef + inpVar
 				));
-		algOut.setWidget(newRowCount - 1, 0, new Label("equation"));
+		algOut.setWidget(newRowCount - 1, 0, mathML);
 		spAlg.scrollToBottom();
 	}
 
@@ -104,7 +105,7 @@ public class AlgOutEntry implements EntryPoint {
 				return;
 			}
 			
-			updateAlgOut();
+			updateAlgOut(new HTML("<span>equation</span>"));
 		}
 
 	}

@@ -39,15 +39,15 @@ public class JohnTree {
 			new MLTreeToMathTree().change(this);
 		}
 
-		MathTreeToML a = new MathTreeToML(this);
-		HTML b = new HTML(a.mlBuild);
-		RootPanel.get().add(b);
-		EquationTransporter.parseJQMath(b.getElement());
+		//MathTreeToML a = new MathTreeToML(this);
+		//HTML b = new HTML(a.mlBuild);
+		//RootPanel.get().add(b);
+		//EquationTransporter.parseJQMath(b.getElement());
 	}
 
 	public HTML toMathML(){
 		MathTreeToML a = new MathTreeToML(this);
-		return new HTML(a.mlBuild);
+		return a.mlHTML;
 	}
 	
 	public JohnNode getRoot() {
@@ -506,30 +506,40 @@ public class JohnTree {
 	}
 
 	class MathTreeToML {
-		String mlBuild = "<math>";
+		//String mlBuild = "<math>";
+		HTML mlHTML = new HTML("<math></math>");
 
 		MathTreeToML(JohnTree tree) {
-			addChild(tree.getRoot());
-			mlBuild = mlBuild + "</math>";
-			// System.out.println(mlBuild);
+			Element firstNode = mlHTML.getElement().getFirstChildElement();
+			addChild(tree.getRoot(), firstNode);
+			//mlBuild = mlBuild + "</math>";
+			//System.out.println(mlBuild);
+			System.out.println(mlHTML.getHTML());
+			
 		}
 
-		private void addChild(JohnNode node) {
-			List<JohnNode> children = node.getChildren();
+		private void addChild(JohnNode from, Node to) {
+			List<JohnNode> children = from.getChildren();
+			
 			for (JohnNode child : children) {
-
-				mlBuild = mlBuild + "<" + child.getTag() + ">";
+				
+				Node childTo = to.appendChild(child.getDomNode().cloneNode(false));
+				try {
+					child.getWrapper().setElementWrapped((Element)childTo);
+				} catch (NullPointerException e) {
+					//System.out.println("child: " + child.tag+" "+child.toString());
+				}
+				
 				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
 						| "mo".equals(child.getTag())) {
 
 					if (child.toString() != "-1") {
-						mlBuild = mlBuild + child.toString();
+						((Element)childTo).setInnerText(child.toString());
 					}
 				}
 				if (child.getChildCount() > 0) {
-					addChild(child);
+					addChild(child, childTo);
 				}
-				mlBuild = mlBuild + "</" + child.getTag() + ">";
 			}
 		}
 	}
