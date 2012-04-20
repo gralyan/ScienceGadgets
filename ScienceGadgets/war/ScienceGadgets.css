@@ -23,13 +23,13 @@ body {
 }
 .algOutPanel{
 	height: 20em;
-	width: 30em;
+	width: 40em;
 		text-align: center;
 		
 }
 .algDragPanel{
 	height: 10em;
-	width: 30em;
+	width: 40em;
 	border: 1px solid silver;
 	text-align: center;
 }

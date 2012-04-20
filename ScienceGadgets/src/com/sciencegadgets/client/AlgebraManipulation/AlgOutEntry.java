@@ -86,6 +86,7 @@ public class AlgOutEntry implements EntryPoint {
 		algOut.setWidget(newRowCount - 2, 0, new Label(" to both sides"
 		// inpFun + inpCoef+ inpVar + "    " + inpFun + inpCoef + inpVar
 				));
+		Window.alert(mathML.getHTML());
 		algOut.setWidget(newRowCount - 1, 0, mathML);
 		spAlg.scrollToBottom();
 	}

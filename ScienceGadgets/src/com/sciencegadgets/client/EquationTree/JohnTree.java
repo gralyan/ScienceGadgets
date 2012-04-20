@@ -39,17 +39,17 @@ public class JohnTree {
 			new MLTreeToMathTree().change(this);
 		}
 
-		//MathTreeToML a = new MathTreeToML(this);
-		//HTML b = new HTML(a.mlBuild);
-		//RootPanel.get().add(b);
-		//EquationTransporter.parseJQMath(b.getElement());
+		// MathTreeToML a = new MathTreeToML(this);
+		// HTML b = new HTML(a.mlBuild);
+		// RootPanel.get().add(b);
+		// EquationTransporter.parseJQMath(b.getElement());
 	}
 
-	public HTML toMathML(){
+	public HTML toMathML() {
 		MathTreeToML a = new MathTreeToML(this);
 		return a.mlHTML;
 	}
-	
+
 	public JohnNode getRoot() {
 		return root;
 	}
@@ -388,13 +388,11 @@ public class JohnTree {
 		 * 
 		 * @param node
 		 */
-/*		private void negatePropagate(JohnNode node) {
-			node.symbol = "-" + node.symbol;
-			if (node.getChildCount() > 0) {
-				negatePropagate(node.getChildAt(0));
-			}
-		}
-*/
+		/*
+		 * private void negatePropagate(JohnNode node) { node.symbol = "-" +
+		 * node.symbol; if (node.getChildCount() > 0) {
+		 * negatePropagate(node.getChildAt(0)); } }
+		 */
 		/**
 		 * Finds all instances where there is a series inside a series or a term
 		 * inside a term. These will be compiled into one node to make the tree
@@ -439,13 +437,14 @@ public class JohnTree {
 		private void rearrangeNegatives() {
 			for (JohnNode neg : negatives) {
 
-				JohnNode neg1 = new JohnNode(neg.getDomNode(), "mn", Type.Number, "-1");
+				JohnNode neg1 = new JohnNode(neg.getDomNode(), "mn",
+						Type.Number, "-1");
 
 				if (neg.getParent().type == Type.Series) {
 					JohnNode negArg = neg.getNextSibling();
 
-					JohnNode encasingTerm = new JohnNode(negArg.getDomNode(), "mrow",
-							Type.Term, "-" + negArg.toString());
+					JohnNode encasingTerm = new JohnNode(negArg.getDomNode(),
+							"mrow", Type.Term, "-" + negArg.toString());
 					neg.getParent().add(negArg.getIndex(), encasingTerm);
 
 					encasingTerm.add(neg1);
@@ -497,44 +496,50 @@ public class JohnTree {
 					child.setWrapper(wrap);
 					wrappers.add(wrap);
 				}
-				if(child.getChildCount() > 0){
+				if (child.getChildCount() > 0) {
 					wrapChildren(child);
-			}
-				
+				}
+
 			}
 		}
 	}
 
+	/**
+	 * This class allows the tree representation of the equation to be converted
+	 * back into MathML for display.
+	 * 
+	 * @author John Gralyan
+	 * 
+	 */
 	class MathTreeToML {
-		//String mlBuild = "<math>";
 		HTML mlHTML = new HTML("<math></math>");
 
 		MathTreeToML(JohnTree tree) {
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(tree.getRoot(), firstNode);
-			//mlBuild = mlBuild + "</math>";
-			//System.out.println(mlBuild);
-			System.out.println(mlHTML.getHTML());
-			
 		}
 
 		private void addChild(JohnNode from, Node to) {
 			List<JohnNode> children = from.getChildren();
-			
+
 			for (JohnNode child : children) {
-				
-				Node childTo = to.appendChild(child.getDomNode().cloneNode(false));
+
+				Node childTo = to.appendChild(child.getDomNode().cloneNode(
+						false));
 				try {
-					child.getWrapper().setElementWrapped((Element)childTo);
+					child.getWrapper().setElementWrapped((Element) childTo);
+					child.getWrapper().removeStyleName("dragdrop-dropTarget");
+					System.out.println("a: "+child.getWrapper());
 				} catch (NullPointerException e) {
-					//System.out.println("child: " + child.tag+" "+child.toString());
+					// System.out.println("child: " +
+					// child.tag+" "+child.toString());
 				}
-				
+
 				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
 						| "mo".equals(child.getTag())) {
 
 					if (child.toString() != "-1") {
-						((Element)childTo).setInnerText(child.toString());
+						((Element) childTo).setInnerText(child.toString());
 					}
 				}
 				if (child.getChildCount() > 0) {
