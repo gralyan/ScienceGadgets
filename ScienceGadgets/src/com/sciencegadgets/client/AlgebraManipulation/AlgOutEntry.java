@@ -66,7 +66,7 @@ public class AlgOutEntry implements EntryPoint {
 		// Assemble Algebra panel
 		algebraPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		algebraPanel.setStyleName("albebraPanel");
+		algebraPanel.setStyleName("algebraPanel");
 		VerticalPanel AlgebraVerticalPanel = new VerticalPanel();
 		AlgebraVerticalPanel.add(spAlg);
 		AlgebraVerticalPanel.add(algDragPanel);

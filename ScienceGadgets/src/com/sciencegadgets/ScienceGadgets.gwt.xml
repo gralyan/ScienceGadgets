@@ -6,7 +6,7 @@
    <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/> 
    <inherits name='org.vaadin.gwtgraphics.GWTGraphics'/>
 
-  <entry-point class='com.sciencegadgets.client.DragDropTesting'/>
+<!--   <entry-point class='com.sciencegadgets.client.DragDropTesting'/> -->
   <entry-point class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry'/>
   <entry-point class='com.sciencegadgets.client.EquationTree.TreeEntry'/>
   <entry-point class='com.sciencegadgets.client.AlgebraManipulation.AlgOutEntry'/>
