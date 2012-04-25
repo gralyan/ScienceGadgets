@@ -61,12 +61,13 @@ body {
 	background-color: #9999ff;
 }
 #selectedWrapper{
+	background-color: #7777cc;
+	cursor: move;
+	opacity:0.3;
+}
+.selectedDropWrapper{
 	background-color: #77ff77;
 	cursor: move;
-	opacity:0.6;
-}
-#selectedJoinedWrapper{
-	background-color: #77ff77;
 	opacity:0.6;
 }
 .var{
