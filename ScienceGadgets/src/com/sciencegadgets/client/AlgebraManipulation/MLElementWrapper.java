@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.AlgebraManipulation;
 
+import java.util.LinkedList;
+
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
@@ -33,6 +35,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
 	private JohnNode johnNode;
+	private LinkedList<MLElementWrapper> dropList = new LinkedList<MLElementWrapper>();
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
@@ -171,10 +174,16 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
-	public MathMLDropController addDropTarget(Widget target) {
+	public MathMLDropController addDropTarget(MLElementWrapper target) {
 		MathMLDropController dropCtrl = new MathMLDropController(target);
 		dragController.registerDropController(dropCtrl);
+		dropList.add(target);
 		return dropCtrl;
+	}
+	
+	public void removeDropTargets(){
+		dragController.unregisterDropControllers();
+		dropList.clear();
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
@@ -182,10 +191,20 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// /////////////////////////////////////////////////////////////////////////////////////
 	class ElementOverHandler implements MouseOverHandler {
 		public void onMouseOver(MouseOverEvent event) {
+			//Highlights selected
 			((MLElementWrapper) event.getSource()).getElement().setId(
 					"selectedWrapper");
+			//Highlights Joiner
 			((MLElementWrapper) event.getSource()).getJoinedWrapper()
-					.getElement().setId("selectedJoinedWrapper");
+					.getElement().setId("selectedWrapper");
+			//Highlights drop targets
+			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
+				wrap.setStyleName("selectedDropWrapper", true);
+			}
+			//Highlights joiner drop targets
+			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
+				wrap.getJoinedWrapper().setStyleName("selectedDropWrapper", true);
+			}
 		}
 	}
 
@@ -195,7 +214,12 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 					.removeAttribute("id");
 			((MLElementWrapper) event.getSource()).getJoinedWrapper()
 					.getElement().removeAttribute("id");
-
+			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
+				wrap.setStyleName("selectedDropWrapper", false);
+			}
+			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
+				wrap.getJoinedWrapper().setStyleName("selectedDropWrapper", false);
+			}
 		}
 	}
 

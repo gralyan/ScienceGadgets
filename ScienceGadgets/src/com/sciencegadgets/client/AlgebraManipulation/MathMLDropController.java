@@ -63,7 +63,9 @@ public class MathMLDropController extends AbstractDropController {
 		AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
 
 		EquationTransporter.changeEquation(mathML);
-
+		
+@SuppressWarnings("unused")
+int a = 1;
 	}
 
 	@Override
