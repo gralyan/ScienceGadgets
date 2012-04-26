@@ -63,6 +63,8 @@ public class EquationTransporter {
 	 * @param mathML
 	 */
 	public static void changeEquation(HTML mathML) {
+		
+		
 
 		// Make draggable algebra area
 		AlgOutEntry.algDragPanel.clear();

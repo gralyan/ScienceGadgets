@@ -18,7 +18,7 @@ public class JohnTree {
 	private JohnNode leftSide;
 	private JohnNode equals;
 	private JohnNode rightSide;
-	private LinkedList<MLElementWrapper> wrappers;
+	private LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();;
 
 	/**
 	 * A tree representation of an equation.
@@ -61,6 +61,28 @@ public class JohnTree {
 
 	public LinkedList<MLElementWrapper> getWrappers() {
 		return wrappers;
+	}
+	
+	public LinkedList<MLElementWrapper> wrapTree(){
+		wrapChildren(root);
+		return wrappers;
+	}
+
+	private void wrapChildren(JohnNode jNode) {
+		MLElementWrapper wrap;
+		List<JohnNode> children = jNode.getChildren();
+
+		for (JohnNode child : children) {
+			if (!child.isHidden()) {
+				wrap = new MLElementWrapper(child, true, true);
+				child.setWrapper(wrap);
+				wrappers.add(wrap);
+			}
+			if (child.getChildCount() > 0) {
+				wrapChildren(child);
+			}
+
+		}
 	}
 
 	public class JohnNode {
@@ -188,6 +210,7 @@ public class JohnTree {
 		public JohnTree getTree() {
 			return tree;
 		}
+
 	}
 
 	public static enum Type {
@@ -273,15 +296,13 @@ public class JohnTree {
 		JohnNode mathRoot;
 		private LinkedList<JohnNode> nestedMrows = new LinkedList<JohnNode>();
 		private LinkedList<JohnNode> negatives = new LinkedList<JohnNode>();
-		private MLElementWrapper wrap;
 
 		public void change(JohnTree jTree) {
 			mathRoot = jTree.getRoot();
-			wrappers = new LinkedList<MLElementWrapper>();
 			commenseRevolution(mathRoot);
 			rearrangeNestedMrows();
 			rearrangeNegatives();
-			wrapChildren(mathRoot);
+			jTree.wrapTree();
 		}
 
 		private void commenseRevolution(JohnNode jNode) {
@@ -480,21 +501,6 @@ public class JohnTree {
 
 		}
 
-		private void wrapChildren(JohnNode jNode) {
-			List<JohnNode> children = jNode.getChildren();
-
-			for (JohnNode child : children) {
-				if (!child.isHidden()) {
-					wrap = new MLElementWrapper(child, true, true);
-					child.setWrapper(wrap);
-					wrappers.add(wrap);
-				}
-				if (child.getChildCount() > 0) {
-					wrapChildren(child);
-				}
-
-			}
-		}
 	}
 
 	/**
@@ -510,6 +516,9 @@ public class JohnTree {
 		MathTreeToML(JohnTree tree) {
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(tree.getRoot(), firstNode);
+			tree.getWrappers().clear();
+			tree.wrapTree();
+
 		}
 
 		private void addChild(JohnNode from, Node to) {
@@ -519,13 +528,13 @@ public class JohnTree {
 
 				Node childTo = to.appendChild(child.getDomNode().cloneNode(
 						false));
-				if(!child.isHidden()){
-					child.getWrapper().setElementWrapped((Element) childTo);
-					child.getWrapper().removeStyleName("dragdrop-dropTarget");
-					child.getWrapper().removeDragController();
-					child.getWrapper().addDragController();
-					//System.out.println("a: " + child.getWrapper());
-				}
+				 if(!child.isHidden()){
+				// child.getWrapper().setElementWrapped((Element) childTo);
+				 child.getWrapper().removeStyleName("dragdrop-dropTarget");
+				 child.getWrapper().removeDragController();
+				// child.getWrapper().addDragController();
+				// //System.out.println("a: " + child.getWrapper());
+				 }
 
 				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
 						| "mo".equals(child.getTag())) {

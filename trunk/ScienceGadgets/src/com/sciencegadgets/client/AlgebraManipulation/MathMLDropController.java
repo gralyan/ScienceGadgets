@@ -21,34 +21,37 @@ public class MathMLDropController extends AbstractDropController {
 		JohnNode sourceNode = source.getJohnNode();
 		JohnNode targetNode = target.getJohnNode();
 
-
-		
 		// Add drop source value to target value
 		int src = Integer.parseInt(source.getElementWrapped().getInnerText());
 		int targ = Integer
 				.parseInt((target).getElementWrapped().getInnerText());
 		int ans = src + targ;
 
-		// All drop controllers must me unregistered
+		// All drop controllers must be unregistered
 		for (MLElementWrapper wrap : targetNode.getTree().getWrappers()) {
+
 			((PickupDragController) wrap.getDragControl())
 					.unregisterDropControllers();
 			((PickupDragController) wrap.getJoinedWrapper().getDragControl())
 					.unregisterDropControllers();
+
+			wrap.removeStyleName("selectedDropWrapper");
+			wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
 		}
 
 		// Main change
-		targetNode.getWrapper().getElementWrapped().setInnerText(""+ans);
+		targetNode.getWrapper().getElementWrapped().setInnerText("" + ans);
 		targetNode.setString("" + ans);
-		
+
 		// Peripheral changes
+
 		int sIndex = sourceNode.getIndex();
 		if (sIndex > 0) {
-			JohnNode prevChild = sourceNode.getParent().getChildAt(sIndex-1);
+			JohnNode prevChild = sourceNode.getParent().getChildAt(sIndex - 1);
 			if ("mo".equals(prevChild.getTag())) {
 				prevChild.remove();
 			}
-		}else if("+".equals(sourceNode.getNextSibling().toString())){
+		} else if ("+".equals(sourceNode.getNextSibling().toString())) {
 			sourceNode.getNextSibling().remove();
 		}
 
@@ -63,9 +66,6 @@ public class MathMLDropController extends AbstractDropController {
 		AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
 
 		EquationTransporter.changeEquation(mathML);
-		
-@SuppressWarnings("unused")
-int a = 1;
 	}
 
 	@Override
@@ -75,8 +75,8 @@ int a = 1;
 
 	@Override
 	public void onLeave(DragContext context) {
-		target.removeStyleName("mouseOverlay");
 		super.onLeave(context);
+		target.removeStyleName("mouseOverlay");
 	}
 
 }
