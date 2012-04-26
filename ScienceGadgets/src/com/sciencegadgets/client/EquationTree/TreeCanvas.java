@@ -110,7 +110,7 @@ public class TreeCanvas extends DrawingArea {
 		// Add HTML widgets of top level of each side
 		int[] topLayerHeights = addFirstLayer(jTree, lHTML, rHTML);
 
-		// Recursively create the resr of the tree
+		// Recursively create the rest of the tree
 		if (jTree.getLeftSide().getChildCount() > 1)
 			drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2),topLayerHeights[0], (byte) 1,
 					true);

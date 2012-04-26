@@ -30,12 +30,11 @@ import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		HasMouseOverHandlers, HasDragStartHandlers {
 
-	private ElementDragController dragController = null;
+	private WrapDragController dragController = null;
 	private Element element = null;
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
 	private JohnNode johnNode;
-	private LinkedList<MLElementWrapper> dropList = new LinkedList<MLElementWrapper>();
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
@@ -150,10 +149,10 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * 
 	 * @return The new drag controller added
 	 */
-	public ElementDragController addDragController() {
+	public WrapDragController addDragController() {
 
 		if (isDraggable) {
-			ElementDragController dragC = new ElementDragController(
+			WrapDragController dragC = new WrapDragController(
 					(AbsolutePanel) this.getParent(), true);
 
 			dragController = dragC;
@@ -177,13 +176,13 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public MathMLDropController addDropTarget(MLElementWrapper target) {
 		MathMLDropController dropCtrl = new MathMLDropController(target);
 		dragController.registerDropController(dropCtrl);
-		dropList.add(target);
+		// dragController.getDropList().add(target);
 		return dropCtrl;
 	}
-	
-	public void removeDropTargets(){
+
+	public void removeDropTargets() {
 		dragController.unregisterDropControllers();
-		dropList.clear();
+		dragController.getDropList().clear();
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
@@ -191,57 +190,46 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// /////////////////////////////////////////////////////////////////////////////////////
 	class ElementOverHandler implements MouseOverHandler {
 		public void onMouseOver(MouseOverEvent event) {
-			//Highlights selected
-			((MLElementWrapper) event.getSource()).getElement().setId(
-					"selectedWrapper");
-			//Highlights Joiner
-			((MLElementWrapper) event.getSource()).getJoinedWrapper()
-					.getElement().setId("selectedWrapper");
-			//Highlights drop targets
-			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
-				wrap.setStyleName("selectedDropWrapper", true);
-			}
-			//Highlights joiner drop targets
-			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
-				wrap.getJoinedWrapper().setStyleName("selectedDropWrapper", true);
-			}
+			select((MLElementWrapper) event.getSource(), true);
 		}
 	}
 
 	class ElementOutHandler implements MouseOutHandler {
 		public void onMouseOut(MouseOutEvent event) {
-			((MLElementWrapper) event.getSource()).getElement()
-					.removeAttribute("id");
-			((MLElementWrapper) event.getSource()).getJoinedWrapper()
-					.getElement().removeAttribute("id");
-			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
-				wrap.setStyleName("selectedDropWrapper", false);
-			}
-			for (MLElementWrapper wrap : ((MLElementWrapper) event.getSource()).dropList){
-				wrap.getJoinedWrapper().setStyleName("selectedDropWrapper", false);
-			}
+			select((MLElementWrapper) event.getSource(), false);
 		}
 	}
 
-	class ElementDragController extends PickupDragController {
+	/**
+	 * Highlights the selected wrapper and joiner as well as all the drop
+	 * targets associated with the selected
+	 * 
+	 * @param wrapper
+	 * @param select
+	 *            - selects if true, unselects if false
+	 */
+	void select(MLElementWrapper wrapper, Boolean select) {
+		if (select) {
+			// Highlights selected
+			wrapper.getElement().setId("selectedWrapper");
+			// Highlights joiner
+			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
+			
+			for (MLElementWrapper wrap : wrapper.dragController.getDropWrapList()) {
+				// Highlights drop targets
+				wrap.setStyleName("selectedDropWrapper");
+				// Highlights joiner drop targets
+				wrap.getJoinedWrapper().setStyleName("selectedDropWrapper");
+			}
 
-		public ElementDragController(AbsolutePanel boundaryPanel,
-				boolean allowDroppingOnBoundaryPanel) {
-			super(boundaryPanel, allowDroppingOnBoundaryPanel);
-		}
+		} else {
+			wrapper.getElement().removeAttribute("id");
+			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
 
-		@Override
-		public void dragStart() {
-			super.dragStart();
-			MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-			wrap.setText(wrap.getElementWrapped().getInnerText());
-		}
-
-		@Override
-		public void dragEnd() {
-			super.dragEnd();
-			MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-			wrap.setText("");
+			for (MLElementWrapper wrap : wrapper.dragController.getDropWrapList()) {
+				wrap.removeStyleName("selectedDropWrapper");
+				wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
+			}
 		}
 	}
 }
