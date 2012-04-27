@@ -59,34 +59,21 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public MLElementWrapper(JohnNode jNode, Boolean isDraggable,
 			Boolean isJoined) {
 		this.element = (Element) jNode.getDomNode();
+
+		System.out.println("jNode\t" + jNode.toString() + "\tdomN\t"
+				+ element.toString() + " point: ("
+				+ element.getAbsoluteTop() + ", "
+				+ element.getAbsoluteLeft() + ")");
+
 		this.johnNode = jNode;
 		this.isDraggable = isDraggable;
 		addMouseOverHandlerDefault();
 		addMouseOutHandlerDefault();
 
 		if (isJoined == true) {
-			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, this);
+			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, false);
+			this.joinedWrapper.joinedWrapper = this;
 		}
-	}
-
-	/**
-	 * Private constructor for making a joined wrapper. Joined wrappers
-	 * represent the same element in different widgets eg. the same variable in
-	 * the equation manipulator view and the tree view
-	 * 
-	 * @param theElement
-	 * @param isDraggable
-	 * @param joinedWrapper
-	 */
-	private MLElementWrapper(JohnNode jNode, Boolean isDraggable,
-			MLElementWrapper joinedWrapper) {
-		this.element = (Element) jNode.getDomNode();
-		this.johnNode = jNode;
-		this.isDraggable = isDraggable;
-		addMouseOverHandlerDefault();
-		addMouseOutHandlerDefault();
-
-		this.joinedWrapper = joinedWrapper;
 	}
 
 	public Element getElementWrapped() {
@@ -214,8 +201,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			wrapper.getElement().setId("selectedWrapper");
 			// Highlights joiner
 			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
-			
-			for (MLElementWrapper wrap : wrapper.dragController.getDropWrapList()) {
+
+			for (MLElementWrapper wrap : wrapper.dragController
+					.getDropWrapList()) {
 				// Highlights drop targets
 				wrap.setStyleName("selectedDropWrapper");
 				// Highlights joiner drop targets
@@ -226,7 +214,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			wrapper.getElement().removeAttribute("id");
 			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
 
-			for (MLElementWrapper wrap : wrapper.dragController.getDropWrapList()) {
+			for (MLElementWrapper wrap : wrapper.dragController
+					.getDropWrapList()) {
 				wrap.removeStyleName("selectedDropWrapper");
 				wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
 			}

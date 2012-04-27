@@ -18,7 +18,8 @@ public class JohnTree {
 	private JohnNode leftSide;
 	private JohnNode equals;
 	private JohnNode rightSide;
-	private LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();;
+	private LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
+	private HTML mathML;
 
 	/**
 	 * A tree representation of an equation.
@@ -31,6 +32,8 @@ public class JohnTree {
 	 *            from XML
 	 */
 	public JohnTree(HTML mathML, Boolean isParsedForMath) {
+		this.mathML = mathML;
+		
 		new MLtoMLTree(mathML).change(this);
 
 		if (isParsedForMath) {
@@ -39,8 +42,12 @@ public class JohnTree {
 	}
 
 	public HTML toMathML() {
-		MathTreeToML a = new MathTreeToML(this);
-		return a.mlHTML;
+		MathTreeToML mathTreeToML = new MathTreeToML(this);
+		mathML = mathTreeToML.mlHTML;
+		return mathML;
+	}
+	public HTML getMathML(){
+		return mathML;
 	}
 
 	public JohnNode getRoot() {
@@ -64,6 +71,7 @@ public class JohnTree {
 	}
 	
 	public LinkedList<MLElementWrapper> wrapTree(){
+		wrappers.clear();
 		wrapChildren(root);
 		return wrappers;
 	}
@@ -516,7 +524,6 @@ public class JohnTree {
 		MathTreeToML(JohnTree tree) {
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(tree.getRoot(), firstNode);
-			tree.getWrappers().clear();
 			tree.wrapTree();
 
 		}

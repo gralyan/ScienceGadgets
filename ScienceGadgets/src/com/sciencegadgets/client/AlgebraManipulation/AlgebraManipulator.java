@@ -16,8 +16,8 @@ public class AlgebraManipulator extends AbsolutePanel {
 
 		this.draggableEquation = draggableEquation;
 		this.parentPanel = parentPanel;
-		//this.setStyleName(parentPanel.getStyleName());
-		
+		// this.setStyleName(parentPanel.getStyleName());
+
 		Element draggableEquationElement = (Element) draggableEquation
 				.getElement().getElementsByTagName("math").getItem(0);
 		if (draggableEquationElement == null) {
@@ -36,13 +36,13 @@ public class AlgebraManipulator extends AbsolutePanel {
 		int algLeft = parentPanel.getAbsoluteLeft();
 		int algTop = parentPanel.getAbsoluteTop();
 		for (MLElementWrapper wrap : wrappers) {
-			
+
 			if (wrap == null) {
 				continue;
 			}
 			int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
 			int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
-			
+
 			int positionLeft = wrapLeft - algLeft;
 			int positionTop = wrapTop - algTop;
 
@@ -53,6 +53,13 @@ public class AlgebraManipulator extends AbsolutePanel {
 			wrap.setHeight(height + "px");
 
 			parentPanel.add(wrap, positionLeft, positionTop);
+			
+//			System.out.println("point: (" + wrap.getAbsoluteLeft() + ", "
+//					+ wrap.getAbsoluteTop() + ") DIM: ("
+//					+ wrap.getOffsetWidth() + ", " + wrap.getOffsetHeight()
+//					+ ")");
+			
+			System.out.println("L: "+wrapLeft+"-"+algLeft+" \tR: "+wrapTop+"-"+algTop);
 		}
 	}
 }
