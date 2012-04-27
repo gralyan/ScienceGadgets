@@ -48,13 +48,7 @@ public class EquationTransporter {
 		jTree = new JohnTree(mathML, true);
 		tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
 
-		changeEquation(mathML);
-
-		/*
-		 * MathTree mathTree = new MathTree(draggableEquation);
-		 * RootPanel.get().add(mathTree.getTreeDrawing());
-		 */
-		
+		changeEquation();
 	}
 
 	/**
@@ -62,13 +56,11 @@ public class EquationTransporter {
 	 * 
 	 * @param mathML
 	 */
-	public static void changeEquation(HTML mathML) {
-		
-		
+	public static void changeEquation() {
 
 		// Make draggable algebra area
 		AlgOutEntry.algDragPanel.clear();
-		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(mathML, jTree
+		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(jTree.getMathML(), jTree
 				.getWrappers(), AlgOutEntry.algDragPanel));
 
 		DropControllAssigner.assign(jTree.getWrappers(), true);
