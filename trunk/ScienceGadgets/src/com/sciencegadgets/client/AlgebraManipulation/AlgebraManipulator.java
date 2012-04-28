@@ -53,13 +53,6 @@ public class AlgebraManipulator extends AbsolutePanel {
 			wrap.setHeight(height + "px");
 
 			parentPanel.add(wrap, positionLeft, positionTop);
-			
-//			System.out.println("point: (" + wrap.getAbsoluteLeft() + ", "
-//					+ wrap.getAbsoluteTop() + ") DIM: ("
-//					+ wrap.getOffsetWidth() + ", " + wrap.getOffsetHeight()
-//					+ ")");
-			
-			System.out.println("L: "+wrapLeft+"-"+algLeft+" \tR: "+wrapTop+"-"+algTop);
 		}
 	}
 }

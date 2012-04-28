@@ -27,24 +27,23 @@ public class MathMLDropController extends AbstractDropController {
 				.parseInt((target).getElementWrapped().getInnerText());
 		int ans = src + targ;
 
-		// All drop controllers must be unregistered
 		for (MLElementWrapper wrap : targetNode.getTree().getWrappers()) {
 
-			((PickupDragController) wrap.getDragControl())
-					.unregisterDropControllers();
-			((PickupDragController) wrap.getJoinedWrapper().getDragControl())
-					.unregisterDropControllers();
+			// All drop controllers must be unregistered
+//			((PickupDragController) wrap.getDragControl())
+//					.unregisterDropControllers();
+//			((PickupDragController) wrap.getJoinedWrapper().getDragControl())
+//					.unregisterDropControllers();
 
 			wrap.removeStyleName("selectedDropWrapper");
 			wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
 		}
 
 		// Main change
-		targetNode.getWrapper().getElementWrapped().setInnerText("" + ans);
 		targetNode.setString("" + ans);
+		targetNode.getWrapper().getElementWrapped().setInnerText("" + ans);
 
 		// Peripheral changes
-
 		int sIndex = sourceNode.getIndex();
 		if (sIndex > 0) {
 			JohnNode prevChild = sourceNode.getParent().getChildAt(sIndex - 1);
@@ -55,9 +54,9 @@ public class MathMLDropController extends AbstractDropController {
 			sourceNode.getNextSibling().remove();
 		}
 
-		sourceNode.getTree().getWrappers().remove(sourceNode.getWrapper());
-		sourceNode.getWrapper().removeFromParent();
-		sourceNode.getWrapper().getJoinedWrapper().removeFromParent();
+//		sourceNode.getTree().getWrappers().remove(sourceNode.getWrapper());
+//		sourceNode.getWrapper().removeFromParent();
+//		sourceNode.getWrapper().getJoinedWrapper().removeFromParent();
 		sourceNode.remove();
 
 		// Updates
