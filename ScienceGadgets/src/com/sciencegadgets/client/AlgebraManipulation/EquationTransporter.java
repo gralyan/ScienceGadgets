@@ -64,36 +64,6 @@ public class EquationTransporter {
 				.getWrappers(), AlgOutEntry.algDragPanel));
 
 		DropControllAssigner.assign(jTree.getWrappers(), true);
-		
-		/////////////////////////
-		//EXPERIMANTAL see if you can unregister and re-register drop controllers
-		////////////////////
-		Button butt = new Button("unregister");
-		Button butt2 = new Button("reregister");
-		butt.addClickHandler(new ClickHandler() {
-			
-			public void onClick(ClickEvent event) {
-				for(MLElementWrapper wrap : jTree.getWrappers()){
-
-					((PickupDragController) wrap.getDragControl())
-							.unregisterDropControllers();
-					((PickupDragController) wrap.getJoinedWrapper().getDragControl())
-							.unregisterDropControllers();
-				}
-				Window.alert("unredisterwes");
-			}
-		});
-		butt2.addClickHandler(new ClickHandler() {
-			
-			public void onClick(ClickEvent event) {
-				DropControllAssigner.assign(jTree.getWrappers(), true);
-				Window.alert("regists");
-				
-			}
-		});
-RootPanel.get().add(butt);
-RootPanel.get().add(butt2);
-	
 	}
 
 	public static native void parseJQMath(Element element) /*-{

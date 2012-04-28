@@ -140,7 +140,6 @@ public class TreeCanvas extends DrawingArea {
 				childSpace = (sideLengthRight) / rightLayerCounts[layer];
 			}
 			HTML childHTML = child.toMathML();
-			// childHTML.getHTML();
 
 			int childWidth = childHTML.getOffsetWidth();
 			// int childHeight = childHTML.getOffsetHeight();
@@ -228,7 +227,7 @@ public class TreeCanvas extends DrawingArea {
 
 	private int[] addFirstLayer(JohnTree jTree, HTML lHTML, HTML rHTML) {
 	
-		panel.add(jTree.getEquals().toMathML(), sideLengthLeft, 0);
+		panel.add(/*jTree.getEquals().toMathML()*/new HTML("="), sideLengthLeft, 0);
 		panel.add(lHTML, sideLengthLeft / 2, 0);
 		panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), 0);
 		

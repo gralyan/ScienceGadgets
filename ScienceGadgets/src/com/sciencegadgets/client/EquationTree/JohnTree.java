@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
 public class JohnTree {
@@ -33,7 +34,7 @@ public class JohnTree {
 	 */
 	public JohnTree(HTML mathML, Boolean isParsedForMath) {
 		this.mathML = mathML;
-		
+
 		new MLtoMLTree(mathML).change(this);
 
 		if (isParsedForMath) {
@@ -42,11 +43,12 @@ public class JohnTree {
 	}
 
 	public HTML toMathML() {
-		MathTreeToML mathTreeToML = new MathTreeToML(this);
+		MathTreeToML mathTreeToML = new MathTreeToML(this, true);
 		mathML = mathTreeToML.mlHTML;
 		return mathML;
 	}
-	public HTML getMathML(){
+
+	public HTML getMathML() {
 		return mathML;
 	}
 
@@ -69,8 +71,8 @@ public class JohnTree {
 	public LinkedList<MLElementWrapper> getWrappers() {
 		return wrappers;
 	}
-	
-	public LinkedList<MLElementWrapper> wrapTree(){
+
+	public LinkedList<MLElementWrapper> wrapTree() {
 		wrappers.clear();
 		wrapChildren(root);
 		return wrappers;
@@ -175,6 +177,10 @@ public class JohnTree {
 			return domNode;
 		}
 
+		public void setDomNode(Node node) {
+			domNode = node;
+		}
+
 		public String toString() {
 			return symbol;
 		}
@@ -195,17 +201,33 @@ public class JohnTree {
 			return wrapper;
 		}
 
+		// TODO recursively build mathML for each node
 		public HTML toMathML() {
-			HTML mathML;
-			if (type == null) {
-				mathML = new HTML(tag + " " + "$" + symbol + "$");
-			} else {
-				mathML = new HTML(type.toString().substring(0, 2) + " " + "$"
-						+ symbol + "$");
-			}
-			EquationBrowserEntry.parseJQMath(mathML.getElement());
-			return mathML;
+//			MathTreeToML mathTreeToML = new MathTreeToML(this);
+//			System.out.println(mathTreeToML.mlHTML);
+//			return mathTreeToML.mlHTML;
+
+			 HTML mathML;
+			 if (type == null) {
+			 mathML = new HTML(tag + " " + "$" + symbol + "$");
+			 } else {
+			 mathML = new HTML(type.toString().substring(0, 2) + " " + "$"
+			 + symbol + "$");
+			 }
+			 EquationBrowserEntry.parseJQMath(mathML.getElement());
+			 return mathML;
 		}
+
+		// private void addChildrenToML(JohnNode jNode){
+		// List<JohnNode> kids = jNode.getChildren();
+		//
+		// for (JohnNode kid : kids){
+		//
+		// if(kid.getChildCount()>0){
+		// addChildrenToML(kid);
+		// }
+		// }
+		// }
 
 		public Type getType() {
 			return type;
@@ -520,11 +542,18 @@ public class JohnTree {
 	 */
 	class MathTreeToML {
 		HTML mlHTML = new HTML("<math></math>");
+		Boolean changeDomNodes = false;
 
-		MathTreeToML(JohnTree tree) {
+		MathTreeToML(JohnTree sourceTree, Boolean changeDomNodes) {
+			this.changeDomNodes = changeDomNodes;
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
-			addChild(tree.getRoot(), firstNode);
-			tree.wrapTree();
+			addChild(sourceTree.getRoot(), firstNode);
+			sourceTree.wrapTree();
+		}
+
+		MathTreeToML(JohnNode jNode) {
+			Element firstNode = mlHTML.getElement().getFirstChildElement();
+			addChild(jNode, firstNode);
 
 		}
 
@@ -535,14 +564,10 @@ public class JohnTree {
 
 				Node childTo = to.appendChild(child.getDomNode().cloneNode(
 						false));
-				 if(!child.isHidden()){
-				// child.getWrapper().setElementWrapped((Element) childTo);
-				 child.getWrapper().removeStyleName("dragdrop-dropTarget");
-				 child.getWrapper().removeDragController();
-				// child.getWrapper().addDragController();
-				// //System.out.println("a: " + child.getWrapper());
-				 }
-
+				if (changeDomNodes) {
+					child.setDomNode(childTo);
+				}
+				
 				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
 						| "mo".equals(child.getTag())) {
 
@@ -550,7 +575,7 @@ public class JohnTree {
 						((Element) childTo).setInnerText(child.toString());
 					}
 				}
-				if (child.getChildCount() > 0) {
+				if (child.getChildCount() >= 0) {
 					addChild(child, childTo);
 				}
 			}

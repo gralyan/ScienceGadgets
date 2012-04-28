@@ -1,6 +1,8 @@
 package com.sciencegadgets.client.EquationTree;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Text;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Window;
@@ -30,8 +32,8 @@ public abstract class MathMLParser {
 
 		onRootsFound(elLeft, elEquals, elRight);
 
-		addChildren((Element) elLeft, true);
-		addChildren((Element) elRight, false);
+		addChildren(elLeft, true);
+		addChildren(elRight, false);
 	}
 
 	/**
@@ -41,10 +43,10 @@ public abstract class MathMLParser {
 	 * @param fromMLN
 	 * @param isLeft
 	 */
-	private void addChildren(Element mathMLNode, Boolean isLeft) {
-		mathMLNode.setId("mathroot");
-		NodeList<Node> mathMLChildren = mathMLNode.getChildNodes();
-
+	private void addChildren(Node mathMLNode, Boolean isLeft) {
+		//mathMLNode.setId("mathroot");
+		NodeList<Node> mathMLChildren = ((Element)mathMLNode).getChildNodes();
+		
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Node currentNode = mathMLChildren.getItem(i);
 

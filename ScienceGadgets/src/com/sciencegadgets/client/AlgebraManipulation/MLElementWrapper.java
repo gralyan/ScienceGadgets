@@ -16,7 +16,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 
@@ -59,12 +58,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public MLElementWrapper(JohnNode jNode, Boolean isDraggable,
 			Boolean isJoined) {
 		this.element = (Element) jNode.getDomNode();
-
-		System.out.println("jNode\t" + jNode.toString() + "\tdomN\t"
-				+ element.toString() + " point: ("
-				+ element.getAbsoluteTop() + ", "
-				+ element.getAbsoluteLeft() + ")");
-
 		this.johnNode = jNode;
 		this.isDraggable = isDraggable;
 		addMouseOverHandlerDefault();
