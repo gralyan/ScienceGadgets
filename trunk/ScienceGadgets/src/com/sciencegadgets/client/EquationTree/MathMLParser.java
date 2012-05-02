@@ -1,12 +1,10 @@
 package com.sciencegadgets.client.EquationTree;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Text;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.TopNodesNotFoundException;
 
 public abstract class MathMLParser {
 	public Node elLeft;
@@ -21,11 +19,35 @@ public abstract class MathMLParser {
 	 * </p>
 	 * 
 	 * @param mathMLequation
+	 * @throws TopNodesNotFoundException
 	 */
-	public MathMLParser(HTML mathMLequation) {
+	public MathMLParser(HTML mathMLequation) throws TopNodesNotFoundException {
 
-		NodeList<Node> sideEqSide = mathMLequation.getElement().getFirstChild()
-				.getFirstChild().getChildNodes();
+		// Find the top tree nodes
+		Element rootNode = mathMLequation.getElement();
+		String middleString = "";
+
+		while (!"=".equals(middleString)) {
+			switch (rootNode.getChildCount()) {
+			case 0: // prevent infinite loop
+				throw new TopNodesNotFoundException(
+						"The MathML is invalid, It must contain the following pattern for the top layer of the equation:"
+								+ "\n<mrow>[left side of eqation]</mrow>"
+								+ "\n\t<mo>=<mo>"
+								+ "\n<mrow>[right side of eqation]</mrow>\n");
+			case 1:
+				rootNode = rootNode.getFirstChildElement();
+				break;
+			default:
+				middleString = ((Element) rootNode.getChild(1)).getInnerText();
+				if (!"=".equals(middleString)) {
+					rootNode = rootNode.getFirstChildElement();
+				}
+			}
+		}
+
+		NodeList<Node> sideEqSide = rootNode.getChildNodes();
+
 		elLeft = sideEqSide.getItem(0);
 		elEquals = sideEqSide.getItem(1);
 		elRight = sideEqSide.getItem(2);
@@ -44,22 +66,22 @@ public abstract class MathMLParser {
 	 * @param isLeft
 	 */
 	private void addChildren(Node mathMLNode, Boolean isLeft) {
-		//mathMLNode.setId("mathroot");
-		NodeList<Node> mathMLChildren = ((Element)mathMLNode).getChildNodes();
-		
+		// mathMLNode.setId("mathroot");
+		NodeList<Node> mathMLChildren = ((Element) mathMLNode).getChildNodes();
+
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Node currentNode = mathMLChildren.getItem(i);
 
 			// Nodes with no children are either inner text or formatting only
 			if (currentNode.getChildCount() > 0) {
-				
-				//Subclasses do whatever they want with the node
+
+				// Subclasses do whatever they want with the node
 				onVisitNode(currentNode, isLeft, i);
-				
-				//Recursive call
+
+				// Recursive call
 				addChildren((Element) currentNode, isLeft);
-				
-				//Returning from the stack
+
+				// Returning from the stack
 				onGoingToNextChild(currentNode);
 			}
 		}

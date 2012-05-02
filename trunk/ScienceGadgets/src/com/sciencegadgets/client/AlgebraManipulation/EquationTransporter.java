@@ -2,14 +2,8 @@ package com.sciencegadgets.client.AlgebraManipulation;
 
 import java.util.LinkedList;
 
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.EquationTree.DropControllAssigner;
 import com.sciencegadgets.client.EquationTree.JohnTree;
 import com.sciencegadgets.client.EquationTree.TreeCanvas;
@@ -42,13 +36,8 @@ public class EquationTransporter {
 		AlgOutEntry.algOut.clear(true);
 		AlgOutEntry.algOut.resizeRows(1);
 		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
-		
-		// Make equation tree
-		TreeEntry.apTree.clear();
-		jTree = new JohnTree(mathML, true);
-		tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
 
-		changeEquation();
+		changeEquation(mathML);
 	}
 
 	/**
@@ -56,7 +45,15 @@ public class EquationTransporter {
 	 * 
 	 * @param mathML
 	 */
-	public static void changeEquation() {
+	public static void changeEquation(HTML mathML) {
+		// Make equation tree and draw it to the canvas
+		TreeEntry.apTree.clear();
+		try {
+			jTree = new JohnTree(mathML, true);
+			tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
+		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		// Make draggable algebra area
 		AlgOutEntry.algDragPanel.clear();
