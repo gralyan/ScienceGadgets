@@ -61,10 +61,10 @@ public class MathMLDropController extends AbstractDropController {
 
 		// Updates
 		HTML mathML = targetNode.getTree().toMathML();
-		EquationTransporter.tCanvas.reDraw();
+		//EquationTransporter.tCanvas.reDraw();
 		AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
 
-		EquationTransporter.changeEquation();
+		EquationTransporter.changeEquation(mathML);
 	}
 
 	@Override

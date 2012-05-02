@@ -8,8 +8,8 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
-import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
 public class JohnTree {
@@ -31,8 +31,9 @@ public class JohnTree {
 	 *            - If true, the tree is an abstract syntax tree that can be
 	 *            manipulated as math. If false it is a tree of MathML as taken
 	 *            from XML
+	 * @throws TopNodesNotFoundException 
 	 */
-	public JohnTree(HTML mathML, Boolean isParsedForMath) {
+	public JohnTree(HTML mathML, Boolean isParsedForMath) throws TopNodesNotFoundException {
 		this.mathML = mathML;
 
 		new MLtoMLTree(mathML).change(this);
@@ -201,12 +202,7 @@ public class JohnTree {
 			return wrapper;
 		}
 
-		// TODO recursively build mathML for each node
 		public HTML toMathML() {
-//			MathTreeToML mathTreeToML = new MathTreeToML(this);
-//			System.out.println(mathTreeToML.mlHTML);
-//			return mathTreeToML.mlHTML;
-
 			 HTML mathML;
 			 if (type == null) {
 			 mathML = new HTML(tag + " " + "$" + symbol + "$");
@@ -217,17 +213,6 @@ public class JohnTree {
 			 EquationBrowserEntry.parseJQMath(mathML.getElement());
 			 return mathML;
 		}
-
-		// private void addChildrenToML(JohnNode jNode){
-		// List<JohnNode> kids = jNode.getChildren();
-		//
-		// for (JohnNode kid : kids){
-		//
-		// if(kid.getChildCount()>0){
-		// addChildrenToML(kid);
-		// }
-		// }
-		// }
 
 		public Type getType() {
 			return type;
@@ -257,7 +242,7 @@ public class JohnTree {
 		JohnNode nEq;
 		JohnNode nRight;
 
-		public MLtoMLTree(HTML mathMLequation) {
+		public MLtoMLTree(HTML mathMLequation) throws TopNodesNotFoundException {
 			super(mathMLequation);
 		}
 
@@ -329,13 +314,13 @@ public class JohnTree {
 
 		public void change(JohnTree jTree) {
 			mathRoot = jTree.getRoot();
-			commenseRevolution(mathRoot);
+			parseTree(mathRoot);
 			rearrangeNestedMrows();
 			rearrangeNegatives();
 			jTree.wrapTree();
 		}
 
-		private void commenseRevolution(JohnNode jNode) {
+		private void parseTree(JohnNode jNode) {
 			List<JohnNode> kids = jNode.getChildren();
 			if (kids == null) {
 				return;
@@ -347,7 +332,7 @@ public class JohnTree {
 				kid.isHidden = checkIsHidden(kid);
 
 				if (kid.getChildCount() > 0) {
-					commenseRevolution(kid);
+					parseTree(kid);
 				}
 			}
 		}
