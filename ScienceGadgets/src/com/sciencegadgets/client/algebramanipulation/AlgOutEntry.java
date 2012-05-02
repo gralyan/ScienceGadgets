@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.AlgebraManipulation;
+package com.sciencegadgets.client.algebramanipulation;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ClickEvent;

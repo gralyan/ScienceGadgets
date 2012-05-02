@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sciencegadgets.client.AlgebraManipulation.AlgOutEntry;
-import com.sciencegadgets.client.AlgebraManipulation.EquationTransporter;
-import com.sciencegadgets.client.EquationTree.TreeEntry;
+import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
+import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
+import com.sciencegadgets.client.equationtree.TreeEntry;
 
 public class EquationBrowserEntry implements EntryPoint {
 

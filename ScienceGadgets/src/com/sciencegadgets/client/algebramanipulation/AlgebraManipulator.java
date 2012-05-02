@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.AlgebraManipulation;
+package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
 

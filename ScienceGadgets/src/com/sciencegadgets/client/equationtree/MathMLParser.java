@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.EquationTree;
+package com.sciencegadgets.client.equationtree;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;

@@ -434,13 +434,18 @@ public class JohnTree {
 		 * @param nestMrow
 		 */
 		private void findNestedMrows(JohnNode parent, JohnNode kid) {
-			if (((Type.Series).equals(kid.getType())
+
+			if (
+			/**/((Type.Series).equals(kid.getType())
 			/**/&& (Type.Series).equals(parent.getType()))
-			/**/|| ((Type.Term).equals(kid.getType())
+			/**/||
+			/**/((Type.Term).equals(kid.getType())
 			/**/&& (Type.Term).equals(parent.getType()))
-			/**/|| "mrow".equals(parent.getTag())
-			//TODO Check if this is workingS
-			/**/&& (parent.getChildCount() == 0)) {
+//			/**/||
+//			/**/(("mrow").equals(kid.getTag())
+//			/**/&& (kid.getChildCount() == 1))
+
+			) {
 				nestedMrows.add(kid);
 			}
 		}
@@ -453,12 +458,12 @@ public class JohnTree {
 			if (nestedMrows == null) {
 				return;
 			}
-			for (JohnNode nest : nestedMrows) {
-				List<JohnNode> kids = nest.getChildren();
-				for (JohnNode kid : kids) {
-					nest.getParent().add(nest.getIndex(), kid);
+			for (JohnNode kid : nestedMrows) {
+				List<JohnNode> nests = kid.getChildren();
+				for (JohnNode nest : nests) {
+					kid.getParent().add(kid.getIndex(), nest);
 				}
-				nest.remove();
+				kid.remove();
 			}
 		}
 

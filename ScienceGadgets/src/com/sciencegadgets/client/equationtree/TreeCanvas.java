@@ -228,7 +228,7 @@ public class TreeCanvas extends DrawingArea {
 	private int[] addFirstLayer(JohnTree jTree, HTML lHTML, HTML rHTML) {
 	
 		panel.add(lHTML, sideLengthLeft / 2, 0);
-		panel.add(/*jTree.getEquals().toMathML()*/new HTML("="), sideLengthLeft, 0);
+		panel.add(new HTML("="), sideLengthLeft, 0);
 		panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), 0);
 		
 		int lHeight = lHTML.getOffsetHeight();
@@ -245,23 +245,27 @@ public class TreeCanvas extends DrawingArea {
 		lbox.setFillColor(palette.get(jTree.getLeftSide().getType()));
 		this.add(lbox);
 		
+		if (jTree.getLeftSide().getWrapper() != null) {
 		MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
 				.getJoinedWrapper();
 		lWrap.setHeight(lbox.getHeight() + "px");
 		lWrap.setWidth(lbox.getWidth() + "px");
 		panel.add(lWrap, lLeft-pad, 0);
-	
+		}
+		
 		Rectangle rbox = new Rectangle(rLeft - pad, 0,
 				rWidth + 2 * pad,
 				rHeight * 4 / 3);
 		rbox.setFillColor(palette.get(jTree.getRightSide().getType()));
 		this.add(rbox);
 		
+		if (jTree.getRightSide().getWrapper() != null) {
 		MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
 				.getJoinedWrapper();
 		rWrap.setHeight(rbox.getHeight() + "px");
 		rWrap.setWidth(rbox.getWidth() + "px");
 		panel.add(rWrap, rLeft-pad, 0);
+		}
 		
 		int[] a = {lbox.getHeight(),rbox.getHeight()};
 		return a;
