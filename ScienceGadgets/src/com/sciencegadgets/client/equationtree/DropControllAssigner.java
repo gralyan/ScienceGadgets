@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.EquationTree;
+package com.sciencegadgets.client.equationtree;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,10 +10,10 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
-import com.sciencegadgets.client.AlgebraManipulation.MathMLDropController;
-import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
-import com.sciencegadgets.client.EquationTree.JohnTree.Type;
+import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
+import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
+import com.sciencegadgets.client.equationtree.JohnTree.Type;
 
 public class DropControllAssigner {
 

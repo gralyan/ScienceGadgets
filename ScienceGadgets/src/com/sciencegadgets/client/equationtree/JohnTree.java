@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.EquationTree;
+package com.sciencegadgets.client.equationtree;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.TopNodesNotFoundException;
-import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
+import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 
 public class JohnTree {
@@ -31,9 +31,10 @@ public class JohnTree {
 	 *            - If true, the tree is an abstract syntax tree that can be
 	 *            manipulated as math. If false it is a tree of MathML as taken
 	 *            from XML
-	 * @throws TopNodesNotFoundException 
+	 * @throws TopNodesNotFoundException
 	 */
-	public JohnTree(HTML mathML, Boolean isParsedForMath) throws TopNodesNotFoundException {
+	public JohnTree(HTML mathML, Boolean isParsedForMath)
+			throws TopNodesNotFoundException {
 		this.mathML = mathML;
 
 		new MLtoMLTree(mathML).change(this);
@@ -203,15 +204,15 @@ public class JohnTree {
 		}
 
 		public HTML toMathML() {
-			 HTML mathML;
-			 if (type == null) {
-			 mathML = new HTML(tag + " " + "$" + symbol + "$");
-			 } else {
-			 mathML = new HTML(type.toString().substring(0, 2) + " " + "$"
-			 + symbol + "$");
-			 }
-			 EquationBrowserEntry.parseJQMath(mathML.getElement());
-			 return mathML;
+			HTML mathML;
+			if (type == null) {
+				mathML = new HTML(tag + " " + "$" + symbol + "$");
+			} else {
+				mathML = new HTML(type.toString().substring(0, 2) + " " + "$"
+						+ symbol + "$");
+			}
+			EquationBrowserEntry.parseJQMath(mathML.getElement());
+			return mathML;
 		}
 
 		public Type getType() {
@@ -376,8 +377,8 @@ public class JohnTree {
 
 				for (JohnNode baby : kid.getChildren()) {
 
-					// Check children for +/- => series
 					if ("mo".equalsIgnoreCase(baby.getTag())) {
+						// Check children for +/- => series
 						if ("−".equals(baby.toString())
 								|| "+".equals(baby.toString())) {
 							// A "-" at the beginning doesn't make it a
@@ -436,7 +437,10 @@ public class JohnTree {
 			if (((Type.Series).equals(kid.getType())
 			/**/&& (Type.Series).equals(parent.getType()))
 			/**/|| ((Type.Term).equals(kid.getType())
-			/**/&& (Type.Term).equals(parent.getType()))) {
+			/**/&& (Type.Term).equals(parent.getType()))
+			/**/|| "mrow".equals(parent.getTag())
+			//TODO Check if this is workingS
+			/**/&& (parent.getChildCount() == 0)) {
 				nestedMrows.add(kid);
 			}
 		}
@@ -552,7 +556,7 @@ public class JohnTree {
 				if (changeDomNodes) {
 					child.setDomNode(childTo);
 				}
-				
+
 				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
 						| "mo".equals(child.getTag())) {
 

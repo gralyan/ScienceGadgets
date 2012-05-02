@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.EquationTree;
+package com.sciencegadgets.client.equationtree;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +9,8 @@ import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.AlgebraManipulation.MLElementWrapper;
-import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
+import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
+import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public class TreeCanvas extends DrawingArea {
 
