@@ -8,8 +8,8 @@
 
 <!--   <entry-point class='com.sciencegadgets.client.DragDropTesting'/> -->
   <entry-point class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry'/>
-  <entry-point class='com.sciencegadgets.client.EquationTree.TreeEntry'/>
-  <entry-point class='com.sciencegadgets.client.AlgebraManipulation.AlgOutEntry'/>
+  <entry-point class='com.sciencegadgets.client.equationtree.TreeEntry'/>
+  <entry-point class='com.sciencegadgets.client.algebramanipulation.AlgOutEntry'/>
 
   <source path='client'/>
   <source path='shared'/>

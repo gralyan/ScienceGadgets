@@ -1,10 +1,7 @@
-package com.sciencegadgets.client.AlgebraManipulation;
-
-import java.util.LinkedList;
+package com.sciencegadgets.client.algebramanipulation;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.DragController;
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.HasDragStartHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
@@ -16,8 +13,10 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.EquationTree.JohnTree;
-import com.sciencegadgets.client.EquationTree.JohnTree.JohnNode;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition;
+import com.sciencegadgets.client.equationtree.JohnTree;
+import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -153,10 +152,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
-	public MathMLDropController addDropTarget(MLElementWrapper target) {
-		MathMLDropController dropCtrl = new MathMLDropController(target);
+	public AbstractMathDropController addDropTarget(MLElementWrapper target) {
+		DropControllerAddition dropCtrl = new DropControllerAddition(target);
 		dragController.registerDropController(dropCtrl);
-		// dragController.getDropList().add(target);
 		return dropCtrl;
 	}
 

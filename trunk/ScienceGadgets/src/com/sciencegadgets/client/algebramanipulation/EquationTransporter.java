@@ -1,19 +1,20 @@
-package com.sciencegadgets.client.AlgebraManipulation;
+package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
 
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.EquationTree.DropControllAssigner;
-import com.sciencegadgets.client.EquationTree.JohnTree;
-import com.sciencegadgets.client.EquationTree.TreeCanvas;
-import com.sciencegadgets.client.EquationTree.TreeEntry;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
+import com.sciencegadgets.client.equationtree.DropControllAssigner;
+import com.sciencegadgets.client.equationtree.JohnTree;
+import com.sciencegadgets.client.equationtree.TreeCanvas;
+import com.sciencegadgets.client.equationtree.TreeEntry;
 
 public class EquationTransporter {
 
 	public static TreeCanvas tCanvas;
 	private static DropControllAssigner dropAssigner;
-	public static LinkedList<MathMLDropController> dropControllers;
+	public static LinkedList<AbstractMathDropController> dropControllers;
 	private static JohnTree jTree;
 
 	public static void transport(String equation) {
