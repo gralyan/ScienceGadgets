@@ -132,7 +132,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 		if (isDraggable) {
 			WrapDragController dragC = new WrapDragController(
-					(AbsolutePanel) this.getParent(), true);
+					(AbsolutePanel) this.getParent(), false);
 
 			dragController = dragC;
 			dragController.makeDraggable(this);
