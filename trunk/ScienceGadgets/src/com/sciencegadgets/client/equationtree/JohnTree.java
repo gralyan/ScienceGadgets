@@ -441,9 +441,9 @@ public class JohnTree {
 			/**/||
 			/**/((Type.Term).equals(kid.getType())
 			/**/&& (Type.Term).equals(parent.getType()))
-//			/**/||
-//			/**/(("mrow").equals(kid.getTag())
-//			/**/&& (kid.getChildCount() == 1))
+			// /**/||
+			// /**/(("mrow").equals(kid.getTag())
+			// /**/&& (kid.getChildCount() == 1))
 
 			) {
 				nestedMrows.add(kid);
