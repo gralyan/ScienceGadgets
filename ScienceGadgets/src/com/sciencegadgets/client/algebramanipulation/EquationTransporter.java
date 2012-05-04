@@ -2,10 +2,7 @@ package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
 
-import org.vaadin.gwtgraphics.client.DrawingArea;
-
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.DropControllAssigner;
@@ -22,7 +19,7 @@ public class EquationTransporter {
 
 	public static TreeCanvas mltCanvas;
 	private static JohnTree mljTree;
-	
+
 	public static void transport(String equation) {
 		HTML draggableEquation = new HTML();
 		draggableEquation.setHTML("$" + equation + "$");
@@ -60,9 +57,12 @@ public class EquationTransporter {
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
 		}
-		//////////////////////////////////////////////////////////
-		//just to visualize the mathml
-		////////////////////////////////////////////
+		
+		
+		
+		// ////////////////////////////////////////////////////////
+		// just to visualize the mathml
+		// //////////////////////////////////////////
 		TreeEntry.mlTree.clear();
 		try {
 			mljTree = new JohnTree(mathML, false);
@@ -70,11 +70,16 @@ public class EquationTransporter {
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
 		}
-/////////////////////////////////////////////////////////
+		// ///////////////////////////////////////////////////////
+		
+		
+		
+		
+		
 		// Make draggable algebra area
 		AlgOutEntry.algDragPanel.clear();
-		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(jTree.getMathML(), jTree
-				.getWrappers(), AlgOutEntry.algDragPanel));
+		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(jTree.getMathML(),
+				jTree.getWrappers(), AlgOutEntry.algDragPanel));
 
 		DropControllAssigner.assign(jTree.getWrappers(), true);
 	}
@@ -84,4 +89,3 @@ public class EquationTransporter {
 	}-*/;
 
 }
-
