@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
+import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public class JohnTree {
 
@@ -158,8 +159,34 @@ public class JohnTree {
 		}
 
 		public JohnNode getNextSibling() {
-			int nextIndex = this.getParent().getChildren().indexOf(this) + 1;
-			return this.getParent().getChildAt(nextIndex);
+			return getSibling(1);
+		}
+
+		public JohnNode getPrevSibling() {
+			return getSibling(-1);
+		}
+
+		/**
+		 * This method gets the sibling at a position relative the this node
+		 * 
+		 * @param indexesAway
+		 *            - the number of indexes away from this sibling positive
+		 *            for siblings to the right, negative for siblings to the
+		 *            left
+		 * @return
+		 */
+		private JohnNode getSibling(int indexesAway) {
+			int siblingIndex = this.getParent().getChildren().indexOf(this)
+					+ indexesAway;
+			try {
+				JohnNode sibling = this.getParent().getChildAt(siblingIndex);
+				return sibling;
+			} catch (IndexOutOfBoundsException e) {
+				throw new IndexOutOfBoundsException("there is no sibling "
+						+ siblingIndex + "indexes away from\n"
+						+ this.toString() + "\n" + this);
+			}
+
 		}
 
 		public void remove() {
@@ -172,6 +199,10 @@ public class JohnTree {
 		}
 
 		public JohnNode getParent() {
+			if (parent == null) {
+				throw new NullPointerException("There is no parent for:\n"
+						+ this.toString() + "\n" + this);
+			}
 			return parent;
 		}
 
