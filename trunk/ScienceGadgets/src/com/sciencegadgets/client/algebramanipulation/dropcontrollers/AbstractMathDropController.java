@@ -38,8 +38,6 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		HTML mathML = targetNode.getTree().toMathML();
 		AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
 		EquationTransporter.changeEquation(mathML);
-
-	System.out.println(mathML.getHTML());
 	}
 
 	@Override

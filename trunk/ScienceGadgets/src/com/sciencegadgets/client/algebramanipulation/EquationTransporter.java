@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.DropControllAssigner;
 import com.sciencegadgets.client.equationtree.JohnTree;
@@ -40,7 +41,13 @@ public class EquationTransporter {
 		AlgOutEntry.algOut.resizeRows(1);
 		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
 
-		changeEquation(mathML);
+		try {
+			mathML = new JohnTree(mathML, true).toMathML();
+			changeEquation(mathML);
+		} catch (TopNodesNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -57,9 +64,7 @@ public class EquationTransporter {
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
+
 		// ////////////////////////////////////////////////////////
 		// just to visualize the mathml
 		// //////////////////////////////////////////
@@ -71,11 +76,7 @@ public class EquationTransporter {
 			e.printStackTrace();
 		}
 		// ///////////////////////////////////////////////////////
-		
-		
-		
-		
-		
+
 		// Make draggable algebra area
 		AlgOutEntry.algDragPanel.clear();
 		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(jTree.getMathML(),
