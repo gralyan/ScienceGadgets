@@ -1,6 +1,5 @@
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
