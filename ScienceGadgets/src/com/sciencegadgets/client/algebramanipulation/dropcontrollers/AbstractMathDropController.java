@@ -25,6 +25,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		source = ((MLElementWrapper) context.draggable);
 		sourceNode = source.getJohnNode();
 		targetNode = target.getJohnNode();
+		
 
 		// Actual changes, abstract method to be overridden
 		onChange();

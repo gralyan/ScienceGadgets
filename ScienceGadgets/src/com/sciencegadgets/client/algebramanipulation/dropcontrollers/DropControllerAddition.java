@@ -12,17 +12,17 @@ public class DropControllerAddition extends AbstractMathDropController {
 
 	void onChange() {
 
-		// Add drop source value to target value
-		int src = Integer.parseInt(source.getElementWrapped().getInnerText());
-		int targ = Integer
+		// Parse source values
+		int sourceValue = Integer.parseInt(source.getElementWrapped().getInnerText());
+		int targetValue = Integer
 				.parseInt((target).getElementWrapped().getInnerText());
-		int ans = src + targ;
+		int answer = sourceValue + targetValue;
 
 		/*
 		 * Main changes
 		 */
-		targetNode.setString("" + ans);
-		targetNode.getWrapper().getElementWrapped().setInnerText("" + ans);
+		targetNode.setString("" + answer);
+		targetNode.getWrapper().getElementWrapped().setInnerText("" + answer);
 
 		/*
 		 * Peripheral changes

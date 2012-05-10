@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication;
+import com.sciencegadgets.client.equationtree.DropControllAssigner;
 import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
@@ -152,9 +154,22 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
-	public AbstractMathDropController addDropTarget(MLElementWrapper target) {
-		DropControllerAddition dropCtrl = new DropControllerAddition(target);
+	public AbstractMathDropController addDropTarget(MLElementWrapper target,
+			DropControllAssigner.DropType dropType) {
+
+		AbstractMathDropController dropCtrl = null;
+
+		switch (dropType) {
+		case Add:
+			dropCtrl = new DropControllerAddition(target);
+			break;
+		case Multiply:
+			dropCtrl = new DropControllerMultiplication(target);
+			break;
+		}
+
 		dragController.registerDropController(dropCtrl);
+
 		return dropCtrl;
 	}
 
