@@ -41,6 +41,7 @@ public class ScienceGadgets implements EntryPoint {
 	 * 
 	 * @param textToServer
 	 */
+	@SuppressWarnings("unused")
 	private void string2MathML_BySymja_OnServer(String textToServer) {
 
 		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
