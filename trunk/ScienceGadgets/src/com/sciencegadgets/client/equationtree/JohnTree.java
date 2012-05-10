@@ -43,6 +43,7 @@ public class JohnTree {
 		if (isParsedForMath) {
 			new MLTreeToMathTree().change(this);
 		}
+			this.wrapTree();
 	}
 
 	public HTML toMathML() {
@@ -305,11 +306,11 @@ public class JohnTree {
 		@Override
 		protected void onVisitNode(Node currentNode, Boolean isLeft,
 				int indexOfChildren) {
-			// Must be separated to allow the TreeCanvas to allocate space
-			// proportional to member count ratio of sides of the equation
 
 			curNode = new JohnNode(currentNode);
 
+			// Must be separated to allow the TreeCanvas to allocate space
+			// proportional to member count ratio of sides of the equation
 			if (isLeft) {
 				if (indexOfChildren == 0) {
 					prevLeftNode.add(curNode);
@@ -340,16 +341,14 @@ public class JohnTree {
 
 	class MLTreeToMathTree {
 
-		JohnNode mathRoot;
 		private LinkedList<JohnNode> nestedMrows = new LinkedList<JohnNode>();
 		private LinkedList<JohnNode> negatives = new LinkedList<JohnNode>();
 
 		public void change(JohnTree jTree) {
-			mathRoot = jTree.getRoot();
-			parseTree(mathRoot);
+			parseTree(jTree.getRoot());
 			rearrangeNestedMrows();
 			rearrangeNegatives();
-			jTree.wrapTree();
+			// jTree.wrapTree();
 		}
 
 		private void parseTree(JohnNode jNode) {
@@ -427,17 +426,7 @@ public class JohnTree {
 
 						kid.type = Type.Variable;
 						kid.children = new LinkedList<JohnNode>();
-					} else if ("cos".equals(baby.toString())
-							|| "sin".equals(baby.toString())
-							|| "tan".equals(baby.toString())
-							|| "sec".equals(baby.toString())
-							|| "csc".equals(baby.toString())
-							|| "cot".equals(baby.toString())
-							|| "sinh".equals(baby.toString())
-							|| "cosh".equals(baby.toString())
-							|| "tanh".equals(baby.toString())
-							|| "log".equals(jNode.toString())
-							|| "ln".equals(jNode.toString())) {
+					} else if (isFunction(baby.toString())) {
 						kid.type = Type.Function;
 					}
 				}
@@ -497,7 +486,6 @@ public class JohnTree {
 				kid.remove();
 			}
 		}
-
 		/**
 		 * This method allows the "invisible negative one" to be displayed
 		 * explicitly and maneuvered accordingly. It makes an encasing sentinel
@@ -532,17 +520,8 @@ public class JohnTree {
 				return true;
 			} else if ("mo".equals(jNode.getTag())) {
 				return true;
-			} else if ("cos".equals(jNode.toString())
-					|| "sin".equals(jNode.toString())
-					|| "tan".equals(jNode.toString())
-					|| "sec".equals(jNode.toString())
-					|| "csc".equals(jNode.toString())
-					|| "cot".equals(jNode.toString())
-					|| "log".equals(jNode.toString())
-					|| "ln".equals(jNode.toString())
+			} else if (isFunction(jNode.toString())
 			// Don't show function name as child, parent will be function
-			// Changes here must also be made to
-			// MLTreeToMathTree.assignComplexChildMrow
 			) {
 				return true;
 			} else if ("msub".equals(jNode.getParent().getTag())
@@ -554,6 +533,19 @@ public class JohnTree {
 
 			return false;
 
+		}
+
+		private Boolean isFunction(String nodeString) {
+			if ("cos".equals(nodeString) || "sin".equals(nodeString)
+					|| "tan".equals(nodeString) || "sec".equals(nodeString)
+					|| "csc".equals(nodeString) || "cot".equals(nodeString)
+					|| "sinh".equals(nodeString) || "cosh".equals(nodeString)
+					|| "tanh".equals(nodeString) || "log".equals(nodeString)
+					|| "ln".equals(nodeString)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 	}
@@ -573,7 +565,7 @@ public class JohnTree {
 			this.changeDomNodes = changeDomNodes;
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(sourceTree.getRoot(), firstNode);
-			sourceTree.wrapTree();
+			// sourceTree.wrapTree();
 		}
 
 		MathTreeToML(JohnNode jNode) {
