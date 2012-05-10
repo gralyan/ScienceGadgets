@@ -1,6 +1,10 @@
 package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
@@ -8,14 +12,16 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 
 class WrapDragController extends PickupDragController {
 
-	private ArrayList<DropController> dropList;
-	private ArrayList<MLElementWrapper> dropWrapperList;
+	// private ArrayList<DropController> dropList;
+	// private ArrayList<MLElementWrapper> dropWrapperList;
+	private Map<DropController, MLElementWrapper> dropMap;
 
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
 		super(boundaryPanel, allowDroppingOnBoundaryPanel);
-		dropList = new ArrayList<DropController>();
-		dropWrapperList = new ArrayList<MLElementWrapper>();
+		// dropList = new ArrayList<DropController>();
+		// dropWrapperList = new ArrayList<MLElementWrapper>();
+		dropMap = new HashMap<DropController, MLElementWrapper>();
 		this.setBehaviorDragStartSensitivity(5);
 	}
 
@@ -33,37 +39,47 @@ class WrapDragController extends PickupDragController {
 		wrap.setText("");
 	}
 
-	ArrayList<DropController> getDropList() {
-		return dropList;
+	Set<DropController> getDropList() {
+		// return dropList;
+		return dropMap.keySet();
 	}
 
-	ArrayList<MLElementWrapper> getDropWrapList() {
-		return dropWrapperList;
+	Collection<MLElementWrapper> getDropWrapList() {
+		// return dropWrapperList;
+		return dropMap.values();
 	}
 
 	@Override
 	public void registerDropController(DropController dropController) {
 		super.registerDropController(dropController);
 		if (dropController.getDropTarget() instanceof MLElementWrapper) {
-			dropWrapperList.add((MLElementWrapper) dropController
-					.getDropTarget());
-			dropList.add(dropController);
+			// dropWrapperList.add((MLElementWrapper) dropController
+			// .getDropTarget());
+			// dropList.add(dropController);
+			dropMap.put(dropController,
+					(MLElementWrapper) dropController.getDropTarget());
+		} else {
+			//TODO
+//			throw new ClassCastException(
+//					"The Drop controller must have an MLElementWrapper as a target");
 		}
 	}
 
 	@Override
 	public void unregisterDropController(DropController dropController) {
 		super.unregisterDropController(dropController);
-		dropWrapperList.remove((MLElementWrapper) dropController
-				.getDropTarget());
-		dropList.remove(dropController);
+//		dropWrapperList.remove((MLElementWrapper) dropController
+//				.getDropTarget());
+//		dropList.remove(dropController);
+dropMap.remove(dropController);
 	}
 
 	@Override
 	public void unregisterDropControllers() {
 		super.unregisterDropControllers();
-		dropWrapperList.clear();
-		dropList.clear();
+//		dropWrapperList.clear();
+//		dropList.clear();
+	dropMap.clear();
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.DropControllAssigner;
@@ -12,7 +13,7 @@ import com.sciencegadgets.client.equationtree.TreeCanvas;
 import com.sciencegadgets.client.equationtree.TreeEntry;
 
 public class EquationTransporter {
-
+	
 	public static TreeCanvas tCanvas;
 	private static DropControllAssigner dropAssigner;
 	public static LinkedList<AbstractMathDropController> dropControllers;
@@ -42,10 +43,13 @@ public class EquationTransporter {
 		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
 
 		try {
+			Log.info( "____Initial tree, making____");
 			mathML = new JohnTree(mathML, true).toMathML();
+			Log.info( "____Initial tree, made____");
 			changeEquation(mathML);
 		} catch (TopNodesNotFoundException e) {
 			e.printStackTrace();
+			Log.severe( "INITIAL TREE FAIL");
 		}
 
 	}
@@ -59,10 +63,13 @@ public class EquationTransporter {
 		// Make equation tree and draw it to the canvas
 		TreeEntry.apTree.clear();
 		try {
+			Log.info("----New Tree, making----");
 			jTree = new JohnTree(mathML, true);
 			tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
+			Log.info( "====New Tree, made====");
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
+			Log.severe( "NEW TREE FAIL");
 		}
 
 		// ////////////////////////////////////////////////////////
