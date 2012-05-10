@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebramanipulation;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.DragController;
+import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.HasDragStartHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
@@ -167,7 +168,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			dropCtrl = new DropControllerMultiplication(target);
 			break;
 		}
-
 		dragController.registerDropController(dropCtrl);
 
 		return dropCtrl;
@@ -208,12 +208,18 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			// Highlights joiner
 			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
 
-			for (MLElementWrapper wrap : wrapper.dragController
-					.getDropWrapList()) {
+			String style = null;
+			for (DropController dropC : wrapper.dragController
+					.getDropList()) {
+				
+				switch(dropC.getClass().getName()){
+				case "DropControllerAddition":
+					style = "selectedDropWrapper";
+				}
 				// Highlights drop targets
-				wrap.setStyleName("selectedDropWrapper");
+				dropC.getDropTarget().setStyleName(style);
 				// Highlights joiner drop targets
-				wrap.getJoinedWrapper().setStyleName("selectedDropWrapper");
+				((MLElementWrapper) dropC.getDropTarget()).getJoinedWrapper().setStyleName("selectedDropWrapper");
 			}
 
 		} else {

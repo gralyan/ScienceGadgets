@@ -9,6 +9,7 @@ import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
@@ -64,7 +65,7 @@ public class TreeCanvas extends DrawingArea {
 	}
 
 	public void draw(JohnTree jTree) {
-
+		
 		createPalette();
 
 		leftLayerCounts = new byte[20];
@@ -130,6 +131,7 @@ public class TreeCanvas extends DrawingArea {
 
 			// Don't show certain nodes meant only for MathML display
 			if (child.isHidden()) {
+				Log.info("Skip drawing isHidden: " + child);
 				continue;
 			}
 

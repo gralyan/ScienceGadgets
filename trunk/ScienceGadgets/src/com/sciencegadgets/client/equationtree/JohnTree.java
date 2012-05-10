@@ -8,10 +8,10 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
-import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public class JohnTree {
 
@@ -43,7 +43,7 @@ public class JohnTree {
 		if (isParsedForMath) {
 			new MLTreeToMathTree().change(this);
 		}
-			this.wrapTree();
+		this.wrapTree();
 	}
 
 	public HTML toMathML() {
@@ -401,7 +401,9 @@ public class JohnTree {
 		 * @return
 		 */
 		private void assignComplexChildMrow(JohnNode jNode, JohnNode kid) {
+
 			if ("mrow".equalsIgnoreCase(kid.getTag())) {
+
 				// Default to term until + or - found in children
 				kid.type = Type.Term;
 
@@ -419,11 +421,15 @@ public class JohnTree {
 							// Negate the next node because we don't want minus
 							if ("−".equals(baby.toString())) {
 								negatives.add(baby);
+
 							}
 						}
-						// For Δ: Δa should be treated as one variable
-					} else if ("Δ".equals(baby.toString())) {
 
+						/*
+						 * Special cases
+						 */
+					} else if ("Δ".equals(baby.toString())) {
+						// For Δ: Δa should be treated as one variable
 						kid.type = Type.Variable;
 						kid.children = new LinkedList<JohnNode>();
 					} else if (isFunction(baby.toString())) {
@@ -484,8 +490,10 @@ public class JohnTree {
 					kid.getParent().add(kid.getIndex(), nest);
 				}
 				kid.remove();
+				Log.info( "Removing nested mrow :" + kid);
 			}
 		}
+
 		/**
 		 * This method allows the "invisible negative one" to be displayed
 		 * explicitly and maneuvered accordingly. It makes an encasing sentinel
@@ -494,7 +502,7 @@ public class JohnTree {
 		private void rearrangeNegatives() {
 			for (JohnNode neg : negatives) {
 
-				JohnNode neg1 = new JohnNode(neg.getDomNode(), "mn",
+				JohnNode negOne = new JohnNode(neg.getDomNode(), "mn",
 						Type.Number, "-1");
 
 				if (neg.getParent().type == Type.Series) {
@@ -502,13 +510,16 @@ public class JohnTree {
 
 					JohnNode encasingTerm = new JohnNode(negArg.getDomNode(),
 							"mrow", Type.Term, "-" + negArg.toString());
+					
 					neg.getParent().add(negArg.getIndex(), encasingTerm);
 
-					encasingTerm.add(neg1);
+					encasingTerm.add(negOne);
 					negArg.remove();
 					encasingTerm.add(negArg);
+					Log.info( "Rearranging the negative for: "+negArg);
 				} else {
-					neg.getParent().add(neg.getIndex() + 1, neg1);
+					neg.getParent().add(neg.getIndex() + 1, negOne);
+					Log.info("Adding -1 node to the term");
 				}
 			}
 		}
