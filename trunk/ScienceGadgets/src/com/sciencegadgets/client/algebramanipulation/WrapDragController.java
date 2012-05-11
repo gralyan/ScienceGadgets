@@ -8,6 +8,7 @@ import java.util.Set;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.sciencegadgets.client.Log;
 
 class WrapDragController extends PickupDragController {
 
@@ -57,7 +58,8 @@ class WrapDragController extends PickupDragController {
 			// dropList.add(dropController);
 			dropMap.put(dropController,
 					(MLElementWrapper) dropController.getDropTarget());
-		} else {
+		} else if(!(dropController.getDropTarget() instanceof AbsolutePanel)) {
+			Log.severe("Didn't register "+dropController.getDropTarget().toString());
 			//TODO
 //			throw new ClassCastException(
 //					"The Drop controller must have an MLElementWrapper as a target");

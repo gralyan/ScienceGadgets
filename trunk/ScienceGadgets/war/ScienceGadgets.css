@@ -65,10 +65,17 @@ body {
 	cursor: move;
 	opacity:0.3;
 }
-.selectedDropWrapper{
-	background-color: #77ff77;
-	cursor: move;
-	opacity:0.6;
+.selectedDropWrapperDefault{
+	border-style:ridge;
+	border-color:aqua;
+}
+.selectedDropWrapperAddition{
+	border-style:ridge;
+	border-color:lime;
+}
+.selectedDropWrapperMultiplication{
+	border-style:ridge;
+	border-color:navy;
 }
 .var{
 	background-color: #CCCCFF;

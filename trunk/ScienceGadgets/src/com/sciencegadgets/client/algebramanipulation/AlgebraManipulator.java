@@ -6,6 +6,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Log;
 
 public class AlgebraManipulator extends AbsolutePanel {
 	HTML draggableEquation;
@@ -16,9 +17,9 @@ public class AlgebraManipulator extends AbsolutePanel {
 
 		this.draggableEquation = draggableEquation;
 		this.parentPanel = parentPanel;
-		// this.setStyleName(parentPanel.getStyleName());
 
-		Element draggableEquationElement = (Element) draggableEquation
+		/*
+		 Element draggableEquationElement = (Element) draggableEquation
 				.getElement().getElementsByTagName("math").getItem(0);
 		if (draggableEquationElement == null) {
 			// The main mathML element is fmath in chrome, math in firefox
@@ -26,6 +27,7 @@ public class AlgebraManipulator extends AbsolutePanel {
 					.getElementsByTagName("fmath").getItem(0);
 		}
 		DOM.setElementAttribute(draggableEquationElement, "mathsize", "300%");
+		*/
 		parentPanel.clear();
 		parentPanel.add(draggableEquation);
 		makeWrappers(wrappers);
