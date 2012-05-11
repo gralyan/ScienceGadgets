@@ -4,6 +4,8 @@ import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasDragStartHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
@@ -14,6 +16,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication;
@@ -62,8 +65,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		this.element = (Element) jNode.getDomNode();
 		this.johnNode = jNode;
 		this.isDraggable = isDraggable;
-		addMouseOverHandlerDefault();
-		addMouseOutHandlerDefault();
+		addMouseOverHandler();
+		addMouseOutHandler();
+		addClickHandler();
 
 		if (isJoined == true) {
 			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, false);
@@ -100,26 +104,19 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		addDragController();
 	}
 
-	// /////////////////////
-	// addMouse-OVER-Handler handler methods
 	// /////////////////////////////
-	public HandlerRegistration addMouseOverHandlerDefault() {
-		return addMouseOverHandler(new ElementOverHandler());
-	}
-
-	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
-		return addDomHandler(handler, MouseOverEvent.getType());
-	}
-
-	// /////////////////////
-	// addMouse-OUT-Handler handler methods
+	// add handler methods
 	// /////////////////////////////
-	public HandlerRegistration addMouseOutHandlerDefault() {
-		return addMouseOutHandler(new ElementOutHandler());
+	public HandlerRegistration addMouseOverHandler() {
+		return addDomHandler(new ElementOverHandler(), MouseOverEvent.getType());
 	}
 
-	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-		return addDomHandler(handler, MouseOutEvent.getType());
+	public HandlerRegistration addMouseOutHandler() {
+		return addDomHandler(new ElementOutHandler(), MouseOutEvent.getType());
+	}
+	
+	public HandlerRegistration addClickHandler(){
+		return addDomHandler(new ElementClickHandler(), ClickEvent.getType());
 	}
 
 	/**
@@ -192,6 +189,13 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			select((MLElementWrapper) event.getSource(), false);
 		}
 	}
+	
+	class ElementClickHandler implements ClickHandler{
+		@Override
+		public void onClick(ClickEvent event) {
+			select((MLElementWrapper) event.getSource(), true);
+		}
+	}
 
 	/**
 	 * Highlights the selected wrapper and joiner as well as all the drop
@@ -209,27 +213,42 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
 
 			String style = null;
-			for (DropController dropC : wrapper.dragController
-					.getDropList()) {
-				
-				switch(dropC.getClass().getName()){
-				case "DropControllerAddition":
-					style = "selectedDropWrapper";
+			for (DropController dropC : wrapper.dragController.getDropList()) {
+
+				if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition"
+						.equals(dropC.getClass().getName())) {
+					style = "selectedDropWrapperAddition";
+				} else if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication"
+						.equals(dropC.getClass().getName())) {
+					style = "selectedDropWrapperMultiplication";
+				} else {
+					style = "selectedDropWrapperDefault";
 				}
+
 				// Highlights drop targets
 				dropC.getDropTarget().setStyleName(style);
 				// Highlights joiner drop targets
-				((MLElementWrapper) dropC.getDropTarget()).getJoinedWrapper().setStyleName("selectedDropWrapper");
+				((MLElementWrapper) dropC.getDropTarget()).getJoinedWrapper()
+						.setStyleName(style);
 			}
 
 		} else {
 			wrapper.getElement().removeAttribute("id");
 			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
 
-			for (MLElementWrapper wrap : wrapper.dragController
-					.getDropWrapList()) {
-				wrap.removeStyleName("selectedDropWrapper");
-				wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
+			for (DropController dropC : wrapper.dragController.getDropList()) {
+
+				String[] styles = dropC.getDropTarget().getStyleName()
+						.split(" ");
+
+				for (String style : styles) {
+					if (style.startsWith("selectedDropWrapper")) {
+						dropC.getDropTarget().removeStyleName(style);
+						((MLElementWrapper) dropC.getDropTarget())
+								.getJoinedWrapper().removeStyleName(style);
+					}
+				}
+
 			}
 		}
 	}

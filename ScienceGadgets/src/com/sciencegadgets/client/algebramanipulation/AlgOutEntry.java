@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.algebramanipulation;
 
+import java.util.LinkedList;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -20,13 +22,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.equationbrowser.EquationDatabase;
 
 public class AlgOutEntry implements EntryPoint {
-	public static Grid algOut = new Grid(1, 1);
+	public static Grid algOut = new Grid(0, 1);
+	public static AbsolutePanel wrapperPanel = new AbsolutePanel();
 	public static HorizontalPanel algebraPanel = new HorizontalPanel();
 	public static ListBox varBox;
 	public static ListBox funBox;
 	public static TextBox coefBox;
 	public static AbsolutePanel algDragPanel = new AbsolutePanel();
 	public static ScrollPanel spAlg = new ScrollPanel(algOut);
+	private static HTML prevEquation;
 	EquationDatabase data;
 
 	public void onModuleLoad() {
@@ -79,14 +83,33 @@ public class AlgOutEntry implements EntryPoint {
 
 	}
 
-	public static void updateAlgOut(HTML mathML) {
-		int newRowCount = algOut.getRowCount() + 2;
-		algOut.resizeRows(newRowCount);
+	public static void updateAlgOut(HTML mathML,
+			LinkedList<MLElementWrapper> wrappers) {
 
-		algOut.setWidget(newRowCount - 2, 0, new Label(" to both sides"
-		// inpFun + inpCoef+ inpVar + "    " + inpFun + inpCoef + inpVar
-				));
-		algOut.setWidget(newRowCount - 1, 0, mathML);
+		int newRowCount = algOut.getRowCount();
+
+		if (newRowCount == 0) {
+			newRowCount++;
+			algOut.resizeRows(newRowCount);
+		} else {
+			newRowCount = algOut.getRowCount() + 2;
+			algOut.resizeRows(newRowCount);
+			algOut.setWidget(newRowCount - 2, 0, new Label(" to both sides"
+			// inpFun + inpCoef+ inpVar + "    " + inpFun + inpCoef + inpVar
+					));
+
+			// Place previous draggable equation in a regular HTML
+			algOut.setWidget(newRowCount - 3, 0, prevEquation);
+		}
+
+		algOut.setWidget(newRowCount - 1, 0, wrapperPanel);
+		prevEquation = new HTML(mathML.getHTML());
+
+		// Make draggable algebra area
+		wrapperPanel.clear();
+		wrapperPanel
+				.add(new AlgebraManipulator(mathML, wrappers, wrapperPanel));
+
 		spAlg.scrollToBottom();
 	}
 
@@ -104,9 +127,7 @@ public class AlgOutEntry implements EntryPoint {
 				Window.alert("The coefficient must be a number");
 				return;
 			}
-			
-			updateAlgOut(new HTML("<span>equation</span>"));
+			updateAlgOut(new HTML("<span>equation</span>"), null);
 		}
-
 	}
 }

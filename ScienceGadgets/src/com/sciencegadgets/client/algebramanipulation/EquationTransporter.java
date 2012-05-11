@@ -36,22 +36,24 @@ public class EquationTransporter {
 	 * @param mathML
 	 */
 	private static void transport(HTML mathML) {
-		// Initial AlgOut line
-		HTML algOutFirstHTML = new HTML(mathML.getHTML());
-		AlgOutEntry.algOut.clear(true);
-		AlgOutEntry.algOut.resizeRows(1);
-		AlgOutEntry.algOut.setWidget(0, 0, algOutFirstHTML);
 
 		try {
-			Log.info( "____Initial tree, making____");
-			mathML = new JohnTree(mathML, true).toMathML();
-			Log.info( "____Initial tree, made____");
+			Log.info( "----Initial tree, making----");
+			jTree= new JohnTree(mathML, true);
+			mathML = jTree.toMathML();
+			Log.info( "----Initial tree, made----");
+
+			// Initial AlgOut line
+//			//HTML algOutFirstHTML = new HTML(mathML.getHTML());
+//			AlgOutEntry.algOut.clear(true);
+//			AlgOutEntry.algOut.resizeRows(1);
+//			AlgOutEntry.algOut.setWidget(0, 0, jTree.getMathML());
+
 			changeEquation(mathML);
 		} catch (TopNodesNotFoundException e) {
 			e.printStackTrace();
 			Log.severe( "INITIAL TREE FAIL");
 		}
-
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class EquationTransporter {
 		// Make equation tree and draw it to the canvas
 		TreeEntry.apTree.clear();
 		try {
-			Log.info("----New Tree, making----");
+			Log.info("____New Tree, making____");
 			jTree = new JohnTree(mathML, true);
 			tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
 			Log.info( "====New Tree, made====");
@@ -77,18 +79,20 @@ public class EquationTransporter {
 		// //////////////////////////////////////////
 		TreeEntry.mlTree.clear();
 		try {
-			mljTree = new JohnTree(mathML, false);
+			mljTree = new JohnTree(new HTML(mathML.getHTML()), false);
 			mltCanvas = new TreeCanvas(TreeEntry.mlTree, mljTree);
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
 		}
 		// ///////////////////////////////////////////////////////
 
-		// Make draggable algebra area
-		AlgOutEntry.algDragPanel.clear();
-		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(jTree.getMathML(),
-				jTree.getWrappers(), AlgOutEntry.algDragPanel));
-
+//		// Make draggable algebra area
+//		AlgOutEntry.algDragPanel.clear();
+//		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(jTree.getMathML(),
+//				jTree.getWrappers(), AlgOutEntry.algDragPanel));
+		
+		AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers());
+		
 		DropControllAssigner.assign(jTree.getWrappers(), true);
 	}
 
