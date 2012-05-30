@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Log;
@@ -180,20 +181,20 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// /////////////////////////////////////////////////////////////////////////////////////
 	class ElementOverHandler implements MouseOverHandler {
 		public void onMouseOver(MouseOverEvent event) {
-			select((MLElementWrapper) event.getSource(), true);
+			select(/*(MLElementWrapper) event.getSource(),*/ true);
 		}
 	}
 
 	class ElementOutHandler implements MouseOutHandler {
 		public void onMouseOut(MouseOutEvent event) {
-			select((MLElementWrapper) event.getSource(), false);
+			select(/*(MLElementWrapper) event.getSource(),*/ false);
 		}
 	}
 	
 	class ElementClickHandler implements ClickHandler{
 		@Override
 		public void onClick(ClickEvent event) {
-			select((MLElementWrapper) event.getSource(), true);
+			select(/*(MLElementWrapper) event.getSource(),*/ true);
 		}
 	}
 
@@ -205,7 +206,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * @param select
 	 *            - selects if true, unselects if false
 	 */
-	void select(MLElementWrapper wrapper, Boolean select) {
+	void select(/*MLElementWrapper wrapper,*/ Boolean select) {
+		MLElementWrapper wrapper = this;
+
 		if (select) {
 			// Highlights selected
 			wrapper.getElement().setId("selectedWrapper");
@@ -237,10 +240,10 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
 
 			for (DropController dropC : wrapper.dragController.getDropList()) {
-
+				
 				String[] styles = dropC.getDropTarget().getStyleName()
 						.split(" ");
-
+				
 				for (String style : styles) {
 					if (style.startsWith("selectedDropWrapper")) {
 						dropC.getDropTarget().removeStyleName(style);
@@ -248,7 +251,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 								.getJoinedWrapper().removeStyleName(style);
 					}
 				}
-
 			}
 		}
 	}
