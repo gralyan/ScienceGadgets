@@ -37,6 +37,9 @@ class WrapDragController extends PickupDragController {
 		super.dragEnd();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
 		wrap.setText("");
+		// TODO This should clear the drop target highlights as well as the
+		// wrapper being dragged. The drop targets aren't being cleared.
+		wrap.select(false);
 	}
 
 	Set<DropController> getDropList() {
@@ -58,29 +61,29 @@ class WrapDragController extends PickupDragController {
 			// dropList.add(dropController);
 			dropMap.put(dropController,
 					(MLElementWrapper) dropController.getDropTarget());
-		} else if(!(dropController.getDropTarget() instanceof AbsolutePanel)) {
-			Log.severe("Didn't register "+dropController.getDropTarget().toString());
-			//TODO
-//			throw new ClassCastException(
-//					"The Drop controller must have an MLElementWrapper as a target");
+		} else if (!(dropController.getDropTarget() instanceof AbsolutePanel)) {
+			Log.severe("Didn't register "
+					+ dropController.getDropTarget().toString());
+			throw new ClassCastException(
+					"The Drop controller must have an MLElementWrapper as a target");
 		}
 	}
 
 	@Override
 	public void unregisterDropController(DropController dropController) {
 		super.unregisterDropController(dropController);
-//		dropWrapperList.remove((MLElementWrapper) dropController
-//				.getDropTarget());
-//		dropList.remove(dropController);
-dropMap.remove(dropController);
+		// dropWrapperList.remove((MLElementWrapper) dropController
+		// .getDropTarget());
+		// dropList.remove(dropController);
+		dropMap.remove(dropController);
 	}
 
 	@Override
 	public void unregisterDropControllers() {
 		super.unregisterDropControllers();
-//		dropWrapperList.clear();
-//		dropList.clear();
-	dropMap.clear();
+		// dropWrapperList.clear();
+		// dropList.clear();
+		dropMap.clear();
 	}
 
 }

@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
@@ -22,10 +23,10 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 
 	@Override
 	public void onDrop(DragContext context) {
+		
 		source = ((MLElementWrapper) context.draggable);
 		sourceNode = source.getJohnNode();
 		targetNode = target.getJohnNode();
-		
 
 		// Actual changes, abstract method to be overridden
 		onChange();

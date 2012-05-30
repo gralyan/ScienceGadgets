@@ -44,10 +44,8 @@ public class EquationTransporter {
 			Log.info( "----Initial tree, made----");
 
 			// Initial AlgOut line
-//			//HTML algOutFirstHTML = new HTML(mathML.getHTML());
-//			AlgOutEntry.algOut.clear(true);
-//			AlgOutEntry.algOut.resizeRows(1);
-//			AlgOutEntry.algOut.setWidget(0, 0, jTree.getMathML());
+			AlgOutEntry.algOut.clear(true);
+			AlgOutEntry.algOut.resizeRows(0);
 
 			changeEquation(mathML);
 		} catch (TopNodesNotFoundException e) {
@@ -86,11 +84,6 @@ public class EquationTransporter {
 		}
 		// ///////////////////////////////////////////////////////
 
-//		// Make draggable algebra area
-//		AlgOutEntry.algDragPanel.clear();
-//		AlgOutEntry.algDragPanel.add(new AlgebraManipulator(jTree.getMathML(),
-//				jTree.getWrappers(), AlgOutEntry.algDragPanel));
-		
 		AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers());
 		
 		DropControllAssigner.assign(jTree.getWrappers(), true);
