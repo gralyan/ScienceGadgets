@@ -1,0 +1,20 @@
+<project name="scienceGadgets" basedir="." default="default">
+ 
+	<target name="default" depends="buildwar,deploy"></target>
+ 
+	<target name="buildwar">
+		<war basedir="war" destfile="
+scienceGadgets.war" webxml="war/WEB-INF/web.xml">
+			<exclude name="WEB-INF/**" />
+			<webinf dir="war/WEB-INF/">
+				<include name="**/*.jar" />
+			</webinf>
+		</war>
+	</target>
+ 
+	<target name="deploy">
+		<copy file="
+scienceGadgets.war" todir="." />
+	</target>
+ 
+</project>
