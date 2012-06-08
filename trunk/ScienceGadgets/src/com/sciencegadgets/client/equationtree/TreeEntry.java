@@ -16,7 +16,7 @@ public class TreeEntry implements EntryPoint {
 		////////////////////////////
 		//Just to visualize ml
 		//////////////////////////
-		mlTree.setStyleName("apTree");
-		RootPanel.get().add(mlTree);
+//		mlTree.setStyleName("apTree");
+//		RootPanel.get().add(mlTree);
 	}
 }

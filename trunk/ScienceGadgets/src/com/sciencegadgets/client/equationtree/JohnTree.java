@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
@@ -66,6 +67,14 @@ public class JohnTree {
 
 	public JohnNode getRightSide() {
 		return rightSide;
+	}
+
+	public void setLeftSide(JohnNode jNode) {
+		leftSide = jNode;
+	}
+
+	public void setRightSide(JohnNode jNode) {
+		rightSide = jNode;
 	}
 
 	public JohnNode getEquals() {
@@ -133,12 +142,12 @@ public class JohnTree {
 		// add(new JohnNode(node, wrap));
 		// }
 
-		private void add(JohnNode johnNode) {
+		public void add(JohnNode johnNode) {
 			children.add(johnNode);
 			johnNode.parent = this;
 		}
 
-		private void add(int index, JohnNode johnNode) {
+		public void add(int index, JohnNode johnNode) {
 			children.add(index, johnNode);
 			johnNode.parent = this;
 		}
@@ -147,6 +156,18 @@ public class JohnTree {
 			return children;
 		}
 
+		public JohnNode encase(String tag, Type type){
+			com.google.gwt.user.client.Element newDomNode = DOM.createElement(tag);
+			this.getDomNode().getParentElement().insertAfter(newDomNode, this.getDomNode());
+			newDomNode.appendChild(this.getDomNode());
+			
+			JohnNode encasing = new JohnNode(newDomNode, tag, type, this.toString());
+			this.getParent().add(this.getIndex(), encasing);
+			this.remove();
+			encasing.add(this);
+			
+			return encasing;
+		}
 		public JohnNode getFirstChild() {
 			return children.get(0);
 		}
@@ -183,14 +204,16 @@ public class JohnTree {
 				JohnNode sibling = this.getParent().getChildAt(siblingIndex);
 				return sibling;
 			} catch (IndexOutOfBoundsException e) {
-				throw new IndexOutOfBoundsException("there is no sibling "
-						+ siblingIndex + "indexes away from\n"
-						+ this.toString() + "\n" + this);
+				throw new IndexOutOfBoundsException(
+						"there is no child at index " + siblingIndex + ", "
+								+ indexesAway + "indexes away from sibling: \n"
+								+ this.toString() + "\n" + this);
 			}
 
 		}
 
 		public void remove() {
+//			Log.severe("REMOVING: " + this.toString());
 			List<JohnNode> sibs = this.parent.getChildren();
 			sibs.remove(sibs.indexOf(this));
 		}
@@ -348,7 +371,6 @@ public class JohnTree {
 			parseTree(jTree.getRoot());
 			rearrangeNestedMrows();
 			rearrangeNegatives();
-			// jTree.wrapTree();
 		}
 
 		private void parseTree(JohnNode jNode) {
@@ -357,8 +379,11 @@ public class JohnTree {
 				return;
 			}
 			for (JohnNode kid : kids) {
-				assignSimpleTypes(jNode, kid);
-				assignComplexChildMrow(jNode, kid);
+				if ("mrow".equalsIgnoreCase(kid.getTag())) {
+					assignComplexChildMrow(kid);
+				} else {
+					assignSimpleTypes(kid);
+				}
 				findNestedMrows(jNode, kid);
 				kid.isHidden = checkIsHidden(kid);
 
@@ -373,10 +398,9 @@ public class JohnTree {
 		 * designed to take care of the simple cases, the more complex cases are
 		 * assigned in assignComplexChildMrow
 		 * 
-		 * @param jNode
 		 * @param kid
 		 */
-		private void assignSimpleTypes(JohnNode jNode, JohnNode kid) {
+		private void assignSimpleTypes(JohnNode kid) {
 			if ("mi".equalsIgnoreCase(kid.getTag())) {
 				kid.type = Type.Variable;
 			} else if ("mn".equalsIgnoreCase(kid.getTag())) {
@@ -397,12 +421,15 @@ public class JohnTree {
 		 * {@link Type.Series}. Also takes case of special cases such as delta
 		 * and functions
 		 * 
-		 * @param jNode
+		 * @param kid
 		 * @return
 		 */
-		private void assignComplexChildMrow(JohnNode jNode, JohnNode kid) {
+		private void assignComplexChildMrow(JohnNode kid) {
 
-			if ("mrow".equalsIgnoreCase(kid.getTag())) {
+			if (kid.getChildCount() == 0) {
+				Log.severe("mrow without children: " + kid);
+				kid.remove();
+			} else {
 
 				// Default to term until + or - found in children
 				kid.type = Type.Term;
@@ -420,7 +447,10 @@ public class JohnTree {
 							}
 							// Negate the next node because we don't want minus
 							if ("−".equals(baby.toString())) {
-								negatives.add(baby);
+								// negatives.add(baby);
+
+								baby.setString("+");
+								negatePropagate(baby.getNextSibling());
 
 							}
 						}
@@ -444,11 +474,14 @@ public class JohnTree {
 		 * 
 		 * @param node
 		 */
-		/*
-		 * private void negatePropagate(JohnNode node) { node.symbol = "-" +
-		 * node.symbol; if (node.getChildCount() > 0) {
-		 * negatePropagate(node.getChildAt(0)); } }
-		 */
+
+		private void negatePropagate(JohnNode node) {
+			node.symbol = "-" + node.symbol;
+			if (node.getChildCount() > 0) {
+				negatePropagate(node.getChildAt(0));
+			}
+		}
+
 		/**
 		 * Finds all instances where there is a series inside a series or a term
 		 * inside a term. These will be compiled into one node to make the tree
@@ -467,10 +500,7 @@ public class JohnTree {
 			/**/||
 			/**/((Type.Term).equals(kid.getType())
 			/**/&& (Type.Term).equals(parent.getType()))
-			// /**/||
-			// /**/(("mrow").equals(kid.getTag())
-			// /**/&& (kid.getChildCount() == 1))
-
+			
 			) {
 				nestedMrows.add(kid);
 			}
@@ -490,7 +520,7 @@ public class JohnTree {
 					kid.getParent().add(kid.getIndex(), nest);
 				}
 				kid.remove();
-				Log.info( "Removing nested mrow :" + kid);
+				Log.info("Removing nested mrow :" + kid);
 			}
 		}
 
@@ -500,6 +530,7 @@ public class JohnTree {
 		 * term for negative terms in a series.
 		 */
 		private void rearrangeNegatives() {
+			// TODO
 			for (JohnNode neg : negatives) {
 
 				JohnNode negOne = new JohnNode(neg.getDomNode(), "mn",
@@ -510,13 +541,17 @@ public class JohnTree {
 
 					JohnNode encasingTerm = new JohnNode(negArg.getDomNode(),
 							"mrow", Type.Term, "-" + negArg.toString());
-					
+
 					neg.getParent().add(negArg.getIndex(), encasingTerm);
 
 					encasingTerm.add(negOne);
 					negArg.remove();
 					encasingTerm.add(negArg);
-					Log.info( "Rearranging the negative for: "+negArg);
+
+					Log.info("neg: " + neg + ", tag: " + neg.getTag()
+							+ ", type: " + neg.getType() + ", parent: "
+							+ neg.getParent());
+					Log.info("Rearranging the negative for: " + negArg);
 				} else {
 					neg.getParent().add(neg.getIndex() + 1, negOne);
 					Log.info("Adding -1 node to the term");
@@ -576,13 +611,11 @@ public class JohnTree {
 			this.changeDomNodes = changeDomNodes;
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(sourceTree.getRoot(), firstNode);
-			// sourceTree.wrapTree();
 		}
 
 		MathTreeToML(JohnNode jNode) {
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(jNode, firstNode);
-
 		}
 
 		private void addChild(JohnNode from, Node to) {
@@ -590,8 +623,13 @@ public class JohnTree {
 
 			for (JohnNode child : children) {
 
+				// if ("-1".equals(child.toString()) ) {
+				// continue;
+				// }
+
 				Node childTo = to.appendChild(child.getDomNode().cloneNode(
 						false));
+
 				if (changeDomNodes) {
 					child.setDomNode(childTo);
 				}
@@ -599,14 +637,14 @@ public class JohnTree {
 				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
 						| "mo".equals(child.getTag())) {
 
-					if (child.toString() != "-1") {
-						((Element) childTo).setInnerText(child.toString());
-					}
+					((Element) childTo).setInnerText(child.toString());
 				}
+
 				if (child.getChildCount() >= 0) {
 					addChild(child, childTo);
 				}
 			}
 		}
+
 	}
 }
