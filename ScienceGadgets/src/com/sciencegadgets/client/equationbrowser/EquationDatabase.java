@@ -90,7 +90,12 @@ public final class EquationDatabase {
 
 	private final String[][] ALGEBRA = {
 			/*debug*/{"(1+2)*(3+4) = (5+6)*(8+9)"},
-			/*debug*/{"1+2+3-4 = 5*6*7*8*9"},
+			/*debug*/{"3+x = 5*6"},
+			/*debug*/{"3+x-4 = 5*6+7"},
+			/*debug*/{"3+4 = 5*6"},
+			/*debug*/{"1+2+3+4 = 5-6*7*8*9"},
+			/*debug*/{"1+2+3-4 = 5-6*7*8*9"},
+			/*debug*/{"1-2+3-4 = 5-6*7*8*9"},
 			/*debug*/{"-a(c+d) = -(e+f)"},
 			/*debug*/{"-a(-c+d) = -(e-f)"},
 	/* 0 */{ "a=x+b", "vara=x+varb" },

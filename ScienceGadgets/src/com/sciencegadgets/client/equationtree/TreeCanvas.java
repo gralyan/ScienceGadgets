@@ -34,8 +34,11 @@ public class TreeCanvas extends DrawingArea {
 
 	/**
 	 * Constructor of the canvas that automatically adds it to the given panel
-	 * @param panel - panel to paint on
-	 * @param jTree - tree to paint
+	 * 
+	 * @param panel
+	 *            - panel to paint on
+	 * @param jTree
+	 *            - tree to paint
 	 */
 	public TreeCanvas(AbsolutePanel panel, JohnTree jTree) {
 		this(panel.getOffsetWidth(), panel.getOffsetHeight(), jTree);
@@ -47,7 +50,8 @@ public class TreeCanvas extends DrawingArea {
 	private TreeCanvas(int width, int height, JohnTree jTree) {
 		super(width, height);
 	}
-	public void reDraw(){
+
+	public void reDraw() {
 		this.clear();
 		panel.clear();
 		draw(johnTree);
@@ -65,7 +69,7 @@ public class TreeCanvas extends DrawingArea {
 	}
 
 	public void draw(JohnTree jTree) {
-		
+
 		createPalette();
 
 		leftLayerCounts = new byte[20];
@@ -105,24 +109,25 @@ public class TreeCanvas extends DrawingArea {
 
 		HTML lHTML = jTree.getLeftSide().toMathML();
 		HTML rHTML = jTree.getRightSide().toMathML();
-		
+
 		panel.add(this);
-		
+
 		// Add HTML widgets of top level of each side
 		int[] topLayerHeights = addFirstLayer(jTree, lHTML, rHTML);
 
 		// Recursively create the rest of the tree
 		if (jTree.getLeftSide().getChildCount() > 1)
-			drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2),topLayerHeights[0], (byte) 1,
-					true);
+			drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2),
+					topLayerHeights[0], (byte) 1, true);
 		if (jTree.getRightSide().getChildCount() > 1)
 			drawChildren(jTree.getRightSide(),
-					(sideLengthLeft + sideLengthRight / 2),topLayerHeights[1], (byte) 1, false);
+					(sideLengthLeft + sideLengthRight / 2), topLayerHeights[1],
+					(byte) 1, false);
 
 	}
 
-	private void drawChildren(JohnNode pNode, int parentX,int parentY, byte layer,
-			Boolean isLeft) {
+	private void drawChildren(JohnNode pNode, int parentX, int parentY,
+			byte layer, Boolean isLeft) {
 
 		List<JohnNode> children = pNode.getChildren();
 		int layerHeight = rowHeight * (layer);
@@ -176,11 +181,11 @@ public class TreeCanvas extends DrawingArea {
 			Rectangle box = new Rectangle(childLeft - pad, childTop,
 					childHTML.getOffsetWidth() + 2 * pad,
 					childHTML.getOffsetHeight() * 4 / 3);
-			box.setFillColor(palette.get(child.getType()));
 
-			Line line = new Line(parentX, parentY
-					, lineX,
-					lineY);
+			box.setFillColor(palette.get(child.getType()));
+			box.setStrokeOpacity(0);
+
+			Line line = new Line(parentX, parentY, lineX, lineY);
 			this.add(line);
 			this.add(box);
 
@@ -192,7 +197,8 @@ public class TreeCanvas extends DrawingArea {
 			}
 
 			if (child.getChildCount() > 0) {
-				drawChildren(child, lineX,childTop+box.getHeight(), (byte) (layer + 1), isLeft);
+				drawChildren(child, lineX, childTop + box.getHeight(),
+						(byte) (layer + 1), isLeft);
 			}
 		}
 
@@ -208,14 +214,14 @@ public class TreeCanvas extends DrawingArea {
 	 */
 	private void getNextLayerCounts(JohnNode pNode, byte layer, Boolean isLeft) {
 		List<JohnNode> children = pNode.getChildren();
-	
+
 		for (JohnNode child : children) {
-	
+
 			// Don't show certain nodes meant only for MathML display
 			if (child.isHidden()) {
 				continue;
 			}
-	
+
 			if (isLeft) {
 				leftLayerCounts[layer]++;
 			} else {
@@ -228,48 +234,48 @@ public class TreeCanvas extends DrawingArea {
 	}
 
 	private int[] addFirstLayer(JohnTree jTree, HTML lHTML, HTML rHTML) {
-	
+
 		panel.add(lHTML, sideLengthLeft / 2, 0);
 		panel.add(new HTML("="), sideLengthLeft, 0);
 		panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), 0);
-		
+
 		int lHeight = lHTML.getOffsetHeight();
 		int lWidth = lHTML.getOffsetWidth();
 		int lLeft = sideLengthLeft / 2;
 		int rHeight = rHTML.getOffsetHeight();
 		int rWidth = rHTML.getOffsetWidth();
 		int rLeft = sideLengthLeft + sideLengthRight / 2;
-	
+
 		// Add top level wrappers
-		Rectangle lbox = new Rectangle(lLeft - pad, 0,
-				lWidth + 2 * pad,
+		Rectangle lbox = new Rectangle(lLeft - pad, 0, lWidth + 2 * pad,
 				lHeight * 4 / 3);
 		lbox.setFillColor(palette.get(jTree.getLeftSide().getType()));
+		lbox.setStrokeOpacity(0);
 		this.add(lbox);
-		
+
 		if (jTree.getLeftSide().getWrapper() != null) {
-		MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
-				.getJoinedWrapper();
-		lWrap.setHeight(lbox.getHeight() + "px");
-		lWrap.setWidth(lbox.getWidth() + "px");
-		panel.add(lWrap, lLeft-pad, 0);
+			MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
+					.getJoinedWrapper();
+			lWrap.setHeight(lbox.getHeight() + "px");
+			lWrap.setWidth(lbox.getWidth() + "px");
+			panel.add(lWrap, lLeft - pad, 0);
 		}
-		
-		Rectangle rbox = new Rectangle(rLeft - pad, 0,
-				rWidth + 2 * pad,
+
+		Rectangle rbox = new Rectangle(rLeft - pad, 0, rWidth + 2 * pad,
 				rHeight * 4 / 3);
 		rbox.setFillColor(palette.get(jTree.getRightSide().getType()));
+		rbox.setStrokeOpacity(0);
 		this.add(rbox);
-		
+
 		if (jTree.getRightSide().getWrapper() != null) {
-		MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
-				.getJoinedWrapper();
-		rWrap.setHeight(rbox.getHeight() + "px");
-		rWrap.setWidth(rbox.getWidth() + "px");
-		panel.add(rWrap, rLeft-pad, 0);
+			MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
+					.getJoinedWrapper();
+			rWrap.setHeight(rbox.getHeight() + "px");
+			rWrap.setWidth(rbox.getWidth() + "px");
+			panel.add(rWrap, rLeft - pad, 0);
 		}
-		
-		int[] a = {lbox.getHeight(),rbox.getHeight()};
+
+		int[] a = { lbox.getHeight(), rbox.getHeight() };
 		return a;
 	}
 }
