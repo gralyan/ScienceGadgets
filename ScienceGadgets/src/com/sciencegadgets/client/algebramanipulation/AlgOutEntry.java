@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -18,13 +17,11 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.equationbrowser.EquationDatabase;
 
 public class AlgOutEntry implements EntryPoint {
 	public static Grid algOut = new Grid(0, 1);
 	public static AbsolutePanel wrapperPanel = new AbsolutePanel();
-	public static HorizontalPanel algebraPanel = new HorizontalPanel();
 	public static ListBox varBox;
 	public static ListBox funBox;
 	public static TextBox coefBox;
@@ -35,7 +32,7 @@ public class AlgOutEntry implements EntryPoint {
 
 	public void onModuleLoad() {
 		createAlgebraPanel();
-		RootPanel.get().add(algebraPanel);
+		RootPanel.get().add(spAlg);
 
 	}
 
@@ -68,23 +65,13 @@ public class AlgOutEntry implements EntryPoint {
 		algMenuPanel.add(toBothSides);
 
 		// Assemble Algebra panel
-		algebraPanel
-				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		algebraPanel.setStyleName("algebraPanel");
-		VerticalPanel AlgebraVerticalPanel = new VerticalPanel();
-		AlgebraVerticalPanel.add(spAlg);
-		AlgebraVerticalPanel.add(algDragPanel);
-		algebraPanel.add(AlgebraVerticalPanel);
-
-		// Add styles
+		spAlg.setStyleName("algebraPanel");
 		algOut.setStyleName("algOutPanel");
-		spAlg.setStyleName("algOutPanel");
-		algDragPanel.setStyleName("algDragPanel");
 
 	}
 
 	public static void updateAlgOut(HTML mathML,
-			LinkedList<MLElementWrapper> wrappers) {
+			LinkedList<MLElementWrapper> wrappers, String change) {
 
 		int newRowCount = algOut.getRowCount();
 
@@ -94,7 +81,8 @@ public class AlgOutEntry implements EntryPoint {
 		} else {
 			newRowCount = algOut.getRowCount() + 2;
 			algOut.resizeRows(newRowCount);
-			algOut.setWidget(newRowCount - 2, 0, new Label(" to both sides"
+			algOut.getCellFormatter().setStyleName(newRowCount-2,  0, "var");
+			algOut.setWidget(newRowCount - 2, 0, new HTML(change
 			// inpFun + inpCoef+ inpVar + "    " + inpFun + inpCoef + inpVar
 					));
 
@@ -127,7 +115,7 @@ public class AlgOutEntry implements EntryPoint {
 				Window.alert("The coefficient must be a number");
 				return;
 			}
-			updateAlgOut(new HTML("<span>equation</span>"), null);
+			updateAlgOut(new HTML("<span>equation</span>"), null, "");
 		}
 	}
 }

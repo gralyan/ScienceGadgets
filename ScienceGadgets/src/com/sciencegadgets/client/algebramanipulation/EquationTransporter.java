@@ -2,6 +2,8 @@ package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Log;
@@ -47,7 +49,7 @@ public class EquationTransporter {
 			AlgOutEntry.algOut.clear(true);
 			AlgOutEntry.algOut.resizeRows(0);
 
-			changeEquation(mathML);
+			selectEquation(mathML,"firstComment");
 		} catch (TopNodesNotFoundException e) {
 			e.printStackTrace();
 			Log.severe( "INITIAL TREE FAIL");
@@ -59,7 +61,10 @@ public class EquationTransporter {
 	 * 
 	 * @param mathML
 	 */
-	public static void changeEquation(HTML mathML) {
+	public static void selectEquation(HTML mathML, String changeComment) {
+		
+		Log.info("EqTrans: "+mathML.getHTML());
+
 		// Make equation tree and draw it to the canvas
 		TreeEntry.apTree.clear();
 		try {
@@ -75,16 +80,16 @@ public class EquationTransporter {
 		// ////////////////////////////////////////////////////////
 		// just to visualize the mathml
 		// //////////////////////////////////////////
-		TreeEntry.mlTree.clear();
-		try {
-			mljTree = new JohnTree(new HTML(mathML.getHTML()), false);
-			mltCanvas = new TreeCanvas(TreeEntry.mlTree, mljTree);
-		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
-			e.printStackTrace();
-		}
+//		TreeEntry.mlTree.clear();
+//		try {
+//			mljTree = new JohnTree(new HTML(mathML.getHTML()), false);
+//			mltCanvas = new TreeCanvas(TreeEntry.mlTree, mljTree);
+//		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
+//			e.printStackTrace();
+//		}
 		// ///////////////////////////////////////////////////////
 
-		AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers());
+		AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers(), changeComment);
 		
 		DropControllAssigner.assign(jTree.getWrappers(), true);
 	}

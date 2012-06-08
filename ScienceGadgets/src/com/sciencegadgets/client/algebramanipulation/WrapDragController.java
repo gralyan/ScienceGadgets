@@ -10,7 +10,7 @@ import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.Log;
 
-class WrapDragController extends PickupDragController {
+public class WrapDragController extends PickupDragController {
 
 	// private ArrayList<DropController> dropList;
 	// private ArrayList<MLElementWrapper> dropWrapperList;
@@ -29,7 +29,7 @@ class WrapDragController extends PickupDragController {
 	public void dragStart() {
 		super.dragStart();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-		wrap.setText(wrap.getElementWrapped().getInnerText());
+		wrap.setText(wrap.getJohnNode().toString());//getElementWrapped().getInnerText());
 	}
 
 	@Override
