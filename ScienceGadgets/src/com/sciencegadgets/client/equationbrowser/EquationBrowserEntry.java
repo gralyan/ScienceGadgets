@@ -25,9 +25,6 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
-import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
-import com.sciencegadgets.client.equationtree.TreeEntry;
 
 @com.google.gwt.gadgets.client.Gadget.ModulePrefs(//
 title = "ScienceGadgets", //
@@ -288,7 +285,8 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 				labelSumEq.setText("$" + equation + "$");
 				parseJQMath(EquationBrowserEntry.labelSumEq.getElement());
 
-				EquationTransporter.transport(equation);
+				//TODO
+//				EquationTransporter.transport(equation);
 			}
 		}
 	}
@@ -336,7 +334,8 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 				}
 				sumGrid.clear(true);
 				labelSumEq.setText("");
-				AlgOutEntry.algOut.clear(true);
+				//TODO
+//				AlgOutEntry.algOut.clear(true);
 				onVarSelect(selectedVars);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
@@ -378,10 +377,11 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 
 		public void onClick(ClickEvent event) {
 			browserPanel.clear();
-			AlgOutEntry.algDragPanel.clear();
-			AlgOutEntry.algOut.clear(true);
-			AlgOutEntry.algOut.resizeRows(0);
-			TreeEntry.apTree.clear();
+			//TODO
+//			AlgOutEntry.algDragPanel.clear();
+//			AlgOutEntry.algOut.clear(true);
+//			AlgOutEntry.algOut.resizeRows(0);
+//			TreeEntry.apTree.clear();
 
 			if ("algebra".equals(mode)) {
 				createAlgBrowser();
