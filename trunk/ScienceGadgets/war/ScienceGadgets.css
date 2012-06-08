@@ -18,12 +18,12 @@ body {
 	border: 1px solid silver;
 	padding: 0px;
 	margin:0px;
-	height: 30em;
-	width: 40em;
+	height: 20em;
+	width: 60em;
 }
 .algOutPanel{
 	height: 20em;
-	width: 40em;
+	width: 60em;
 		text-align: center;
 		
 }
@@ -35,9 +35,10 @@ body {
 }
 .apTree{
 	height: 30em;
-	width: 80em;	
+	width: 60em;	
 		border: 1px solid silver;
 }
+/*browser scroll panel*/
 .sp{
 	height: 15em;
 	width: 12em;
@@ -74,11 +75,11 @@ body {
 	border-color:lime;
 }
 .selectedDropWrapperMultiplication{
-	border-style:ridge;
+	border-style:double;
 	border-color:navy;
 }
 .var{
-	background-color: #CCCCFF;
+	background-color: #F5F5F5;
 }
 .varName{
 	background-color: #99CCFF;
