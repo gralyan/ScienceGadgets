@@ -1,7 +1,6 @@
 package com.sciencegadgets.client.algebramanipulation;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
-import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,12 +13,11 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerBothSides_Add;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication;
 import com.sciencegadgets.client.equationtree.DropControllAssigner;
 import com.sciencegadgets.client.equationtree.JohnTree;
@@ -92,7 +90,7 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		return johnNode;
 	}
 
-	public DragController getDragControl() {
+	public WrapDragController getDragControl() {
 		return dragController;
 	}
 
@@ -153,23 +151,25 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
-	public AbstractMathDropController addDropTarget(MLElementWrapper target,
-			DropControllAssigner.DropType dropType) {
-
-		AbstractMathDropController dropCtrl = null;
-
-		switch (dropType) {
-		case Add:
-			dropCtrl = new DropControllerAddition(target);
-			break;
-		case Multiply:
-			dropCtrl = new DropControllerMultiplication(target);
-			break;
-		}
-		dragController.registerDropController(dropCtrl);
-
-		return dropCtrl;
-	}
+//	public AbstractMathDropController addDropTarget(MLElementWrapper target,
+//			DropControllAssigner.DropType dropType) {
+//
+//		AbstractMathDropController dropCtrl = null;
+//
+//		switch (dropType) {
+//		case Add:
+//			dropCtrl = new DropControllerAddition(target);
+//			break;
+//		case Multiply:
+//			dropCtrl = new DropControllerMultiplication(target);
+//			break;
+//		case AddBothSides:
+//			dropCtrl = new DropControllerBothSides_Add(target);
+//		}
+//		dragController.registerDropController(dropCtrl);
+//
+//		return dropCtrl;
+//	}
 
 	public void removeDropTargets() {
 		dragController.unregisterDropControllers();

@@ -42,6 +42,10 @@ public class AlgebraManipulator extends AbsolutePanel {
 			if (wrap == null) {
 				continue;
 			}
+			if(wrap.getElementWrapped() == null){
+				Log.severe("no element for: " + wrap.toString());
+				continue;
+			}
 			int wrapLeft = wrap.getElementWrapped().getAbsoluteLeft();
 			int wrapTop = wrap.getElementWrapped().getAbsoluteTop();
 

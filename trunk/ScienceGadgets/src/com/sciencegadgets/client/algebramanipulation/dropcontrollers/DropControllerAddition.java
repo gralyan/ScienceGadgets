@@ -1,6 +1,8 @@
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.Log;
+import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public class DropControllerAddition extends AbstractMathDropController {
@@ -12,10 +14,13 @@ public class DropControllerAddition extends AbstractMathDropController {
 	void onChange() {
 
 		// Parse source values
-		int sourceValue = Integer.parseInt(source.getElementWrapped().getInnerText());
-		int targetValue = Integer
-				.parseInt((target).getElementWrapped().getInnerText());
+		int sourceValue = Integer.parseInt(source.getJohnNode().toString());
+		// getElementWrapped().getInnerText());
+		int targetValue = Integer.parseInt((target).getJohnNode().toString());
+		// .getElementWrapped().getInnerText());
 		int answer = sourceValue + targetValue;
+
+		change = targetValue + " + " + sourceValue + " = " + answer;
 
 		/*
 		 * Main changes
@@ -24,23 +29,21 @@ public class DropControllerAddition extends AbstractMathDropController {
 		targetNode.getWrapper().getElementWrapped().setInnerText("" + answer);
 
 		/*
-		 * Peripheral changes
+		 * Peripheral operation changes
 		 */
-		int sourceIndex = sourceNode.getIndex();
-		if (sourceIndex > 0) {// Remove the + or - associated with source
+		if (sourceNode.getIndex() > 0) {// Remove the (+) associated with source
 			JohnNode prevChild = sourceNode.getPrevSibling();
-			if ("mo".equals(prevChild.getTag())) {
+			if ("+".equals(prevChild.toString())) {
 				prevChild.remove();
 			}
-		} else {// (sIndex=0) remove + leftover in front
+		} else {// (index=0) remove (+) leftover in front
 			if ("+".equals(sourceNode.getNextSibling().toString())) {
 				sourceNode.getNextSibling().remove();
-
 			}
 		}
 
 		// Get rid of () if unnecessary
-		JohnNode targetParent;
+		JohnNode targetParent = null;
 		JohnNode leftPerentheses = null;
 		JohnNode rightPerentheses = null;
 
@@ -62,15 +65,17 @@ public class DropControllerAddition extends AbstractMathDropController {
 				try {
 					leftNode = leftPerentheses.getPrevSibling();
 				} catch (IndexOutOfBoundsException n) {
-//					leftNode = null;
+					// leftNode = null;
 				}
 				try {
 					rightNode = rightPerentheses.getNextSibling();
 				} catch (IndexOutOfBoundsException e) {
-//					rightNode = null;
+					// rightNode = null;
 				}
 
-				if ((leftNode == null || "mo".equals(leftNode.getTag())) && (rightNode == null || "mo".equals(rightNode.getTag()))) {
+				if ((leftNode == null || "mo".equals(leftNode.getTag()))
+						&& (rightNode == null || "mo"
+								.equals(rightNode.getTag()))) {
 					leftPerentheses.remove();
 					rightPerentheses.remove();
 				}
@@ -78,5 +83,11 @@ public class DropControllerAddition extends AbstractMathDropController {
 			}
 		}
 		sourceNode.remove();
+
+	}
+
+	@Override
+	String changeComment() {
+		return "Simplify: " + change;
 	}
 }
