@@ -3,10 +3,11 @@ package com.sciencegadgets.client.equationbrowser;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.gadgets.client.Gadget;
+import com.google.gwt.gadgets.client.UserPreferences;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
@@ -28,7 +29,13 @@ import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.equationtree.TreeEntry;
 
-public class EquationBrowserEntry implements EntryPoint {
+@com.google.gwt.gadgets.client.Gadget.ModulePrefs(//
+title = "ScienceGadgets", //
+author = "John Gralyan", //
+author_email = "john.gralyan@gmail.com")
+@com.google.gwt.gadgets.client.Gadget.UseLongManifestName(false)
+@com.google.gwt.gadgets.client.Gadget.AllowHtmlQuirksMode(false)
+public class EquationBrowserEntry extends Gadget<UserPreferences> {
 
 	EquationDatabase data = new EquationDatabase();
 
@@ -39,11 +46,12 @@ public class EquationBrowserEntry implements EntryPoint {
 	private Grid algGrid = new Grid(1, 1);
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
-	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra Mode");
-	private RadioButton modeSelectSci = new RadioButton("mode", "Science Mode");
+	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra");
+	private RadioButton modeSelectSci = new RadioButton("mode", "Science");
 	public static HTML labelSumEq = new HTML("");
 
-	public void onModuleLoad() {
+	@Override
+	protected void init(UserPreferences preferences) {
 
 		modeSelectAlg.setSize("50em", "10em");
 		modeSelectSci.setSize("50em", "10em");
@@ -53,9 +61,11 @@ public class EquationBrowserEntry implements EntryPoint {
 		RootPanel.get().add(modeSelectSci);
 		RootPanel.get().add(browserPanel);
 
-		ModeSelectHandler modeSelectHandle = new ModeSelectHandler();
-		modeSelectAlg.addClickHandler(modeSelectHandle);
-		modeSelectSci.addClickHandler(modeSelectHandle);
+		modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
+		modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
+
+		modeSelectAlg.setValue(true, true);
+		createAlgBrowser();
 	}
 
 	private void createSciBrowser() {
@@ -360,18 +370,22 @@ public class EquationBrowserEntry implements EntryPoint {
 	}
 
 	class ModeSelectHandler implements ClickHandler {
+		String mode = "algebra";
+
+		private ModeSelectHandler(String mode) {
+			this.mode = mode;
+		}
 
 		public void onClick(ClickEvent event) {
-			RadioButton clicked = ((RadioButton) event.getSource());
-
 			browserPanel.clear();
 			AlgOutEntry.algDragPanel.clear();
 			AlgOutEntry.algOut.clear(true);
+			AlgOutEntry.algOut.resizeRows(0);
 			TreeEntry.apTree.clear();
 
-			if (clicked.equals(modeSelectAlg)) {
+			if ("algebra".equals(mode)) {
 				createAlgBrowser();
-			} else if (clicked.equals(modeSelectSci)) {
+			} else if ("science".equals(mode)) {
 				createSciBrowser();
 				sumGrid.clear(true);
 			}

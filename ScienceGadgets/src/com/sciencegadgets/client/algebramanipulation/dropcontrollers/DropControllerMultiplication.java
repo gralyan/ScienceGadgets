@@ -13,11 +13,14 @@ public class DropControllerMultiplication extends AbstractMathDropController {
 	void onChange() {
 
 		// Parse source values
-		int sourceValue = Integer.parseInt(source.getElementWrapped().getInnerText());
-		int targetValue = Integer
-				.parseInt((target).getElementWrapped().getInnerText());
+		int sourceValue = Integer.parseInt(source.getJohnNode().toString());
+		// .getElementWrapped().getInnerText());
+		int targetValue = Integer.parseInt((target).getJohnNode().toString());
+		// .getElementWrapped().getInnerText()); 
 		int answer = sourceValue * targetValue;
-		
+
+		change = targetValue + " * " + sourceValue + " = " + answer;
+
 		// Main changes
 		targetNode.setString("" + answer);
 		targetNode.getWrapper().getElementWrapped().setInnerText("" + answer);
@@ -33,7 +36,12 @@ public class DropControllerMultiplication extends AbstractMathDropController {
 			sourceNode.getNextSibling().remove();
 		}
 		sourceNode.remove();
-		
+
+	}
+
+	@Override
+	String changeComment() {
+		return "Simplify: " + change;
 	}
 
 }
