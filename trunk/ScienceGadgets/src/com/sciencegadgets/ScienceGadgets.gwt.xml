@@ -9,7 +9,7 @@
    <inherits name='org.vaadin.gwtgraphics.GWTGraphics'/>
    
 <!--    Logger just for debugging -->
-    <inherits name="com.google.gwt.logging.Logging"/>
+<!--     <inherits name="com.google.gwt.logging.Logging"/> -->
    
 
 <!--  Uncomment this for faster compile time
@@ -18,11 +18,11 @@
 
 
 <!--   <entry-point class='com.sciencegadgets.client.DragDropTesting'/> -->
-<!--   <entry-point class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry'/> -->
+  <entry-point class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry'/>
 <!--   <entry-point class='com.sciencegadgets.client.algebramanipulation.AlgOutEntry'/> -->
 <!--   <entry-point class='com.sciencegadgets.client.equationtree.TreeEntry'/> -->
 
   <source path='client'/>
-  <source path='shared'/>
+<!--   <source path='shared'/> -->
 
 </module>

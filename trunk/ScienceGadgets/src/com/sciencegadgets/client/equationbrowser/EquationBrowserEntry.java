@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+//TODO
 @com.google.gwt.gadgets.client.Gadget.ModulePrefs(//
 title = "ScienceGadgets", //
 author = "John Gralyan", //
@@ -33,6 +34,7 @@ author_email = "john.gralyan@gmail.com")
 @com.google.gwt.gadgets.client.Gadget.UseLongManifestName(false)
 @com.google.gwt.gadgets.client.Gadget.AllowHtmlQuirksMode(false)
 public class EquationBrowserEntry extends Gadget<UserPreferences> {
+//public class EquationBrowserEntry implements EntryPoint{
 
 	EquationDatabase data = new EquationDatabase();
 
@@ -47,8 +49,12 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science");
 	public static HTML labelSumEq = new HTML("");
 
+	//TODO
 	@Override
 	protected void init(UserPreferences preferences) {
+//	@Override
+//	public void onModuleLoad() {
+	
 
 		modeSelectAlg.setSize("50em", "10em");
 		modeSelectSci.setSize("50em", "10em");
@@ -406,5 +412,6 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 	public static native void parseJQMath(Element element) /*-{
 		$wnd.M.parseMath(element);
 	}-*/;
+
 
 }
