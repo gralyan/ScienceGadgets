@@ -3,11 +3,10 @@ package com.sciencegadgets.client.equationbrowser;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.gadgets.client.Gadget;
-import com.google.gwt.gadgets.client.UserPreferences;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
@@ -25,16 +24,19 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
+import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
+import com.sciencegadgets.client.equationtree.TreeEntry;
 
 //TODO
-@com.google.gwt.gadgets.client.Gadget.ModulePrefs(//
-title = "ScienceGadgets", //
-author = "John Gralyan", //
-author_email = "john.gralyan@gmail.com")
-@com.google.gwt.gadgets.client.Gadget.UseLongManifestName(false)
-@com.google.gwt.gadgets.client.Gadget.AllowHtmlQuirksMode(false)
-public class EquationBrowserEntry extends Gadget<UserPreferences> {
-//public class EquationBrowserEntry implements EntryPoint{
+//@com.google.gwt.gadgets.client.Gadget.ModulePrefs(//
+//title = "ScienceGadgets", //
+//author = "John Gralyan", //
+//author_email = "john.gralyan@gmail.com")
+//@com.google.gwt.gadgets.client.Gadget.UseLongManifestName(false)
+//@com.google.gwt.gadgets.client.Gadget.AllowHtmlQuirksMode(false)
+//public class EquationBrowserEntry extends Gadget<UserPreferences> {
+public class EquationBrowserEntry implements EntryPoint{
 
 	EquationDatabase data = new EquationDatabase();
 
@@ -50,10 +52,10 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 	public static HTML labelSumEq = new HTML("");
 
 	//TODO
-	@Override
-	protected void init(UserPreferences preferences) {
 //	@Override
-//	public void onModuleLoad() {
+//	protected void init(UserPreferences preferences) {
+	@Override
+	public void onModuleLoad() {
 	
 
 		modeSelectAlg.setSize("50em", "10em");
@@ -292,7 +294,7 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 				parseJQMath(EquationBrowserEntry.labelSumEq.getElement());
 
 				//TODO
-//				EquationTransporter.transport(equation);
+				EquationTransporter.transport(equation);
 			}
 		}
 	}
@@ -341,7 +343,7 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 				sumGrid.clear(true);
 				labelSumEq.setText("");
 				//TODO
-//				AlgOutEntry.algOut.clear(true);
+				AlgOutEntry.algOut.clear(true);
 				onVarSelect(selectedVars);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
@@ -384,10 +386,10 @@ public class EquationBrowserEntry extends Gadget<UserPreferences> {
 		public void onClick(ClickEvent event) {
 			browserPanel.clear();
 			//TODO
-//			AlgOutEntry.algDragPanel.clear();
-//			AlgOutEntry.algOut.clear(true);
-//			AlgOutEntry.algOut.resizeRows(0);
-//			TreeEntry.apTree.clear();
+			AlgOutEntry.algDragPanel.clear();
+			AlgOutEntry.algOut.clear(true);
+			AlgOutEntry.algOut.resizeRows(0);
+			TreeEntry.apTree.clear();
 
 			if ("algebra".equals(mode)) {
 				createAlgBrowser();
