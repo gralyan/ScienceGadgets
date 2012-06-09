@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.equationtree.TreeEntry;
@@ -36,7 +37,7 @@ import com.sciencegadgets.client.equationtree.TreeEntry;
 //@com.google.gwt.gadgets.client.Gadget.UseLongManifestName(false)
 //@com.google.gwt.gadgets.client.Gadget.AllowHtmlQuirksMode(false)
 //public class EquationBrowserEntry extends Gadget<UserPreferences> {
-public class EquationBrowserEntry implements EntryPoint{
+public class EquationBrowserEntry implements EntryPoint {
 
 	EquationDatabase data = new EquationDatabase();
 
@@ -51,12 +52,11 @@ public class EquationBrowserEntry implements EntryPoint{
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science");
 	public static HTML labelSumEq = new HTML("");
 
-	//TODO
-//	@Override
-//	protected void init(UserPreferences preferences) {
+	// TODO
+	// @Override
+	// protected void init(UserPreferences preferences) {
 	@Override
 	public void onModuleLoad() {
-	
 
 		modeSelectAlg.setSize("50em", "10em");
 		modeSelectSci.setSize("50em", "10em");
@@ -138,9 +138,13 @@ public class EquationBrowserEntry implements EntryPoint{
 
 		// Fill panel
 		String[] algNameList = data.getAll(data.FLAG_ALGEBRA_NAME);
+		String[] algMLList = data.getAll(data.FLAG_ALGEBRA_EQUATION);
 		algGrid.resizeRows(algNameList.length);
 		for (int i = 0; i < algNameList.length; i++) {
 			algGrid.setText(i, 0, algNameList[i]);
+			Label cell = new Label(algNameList[i]);
+			algGrid.setWidget(i, 0, cell);
+			cell.setTitle(algMLList[i]);
 		}
 
 		browserPanel.add(vpAlg);
@@ -182,7 +186,9 @@ public class EquationBrowserEntry implements EntryPoint{
 		for (int i = 0; i < eqList.length; i++) {
 			eqHTML = "<span style=\"cursor:pointer;width:10em;\">$" + eqList[i]
 					+ "$</span>";
-			eqGrid.setHTML(i, 0, eqHTML);
+			HTML html = new HTML(eqHTML);
+			html.setTitle("<math alttext=\"5 = 6\"><mrow><mn>5</mn><mo>=</mo><mn>6</mn></mrow></math>");
+			eqGrid.setWidget(i, 0, html);
 			eqGrid.getCellFormatter().setAlignment(i, 0,
 					HasHorizontalAlignment.ALIGN_CENTER,
 					HasVerticalAlignment.ALIGN_MIDDLE);
@@ -268,33 +274,43 @@ public class EquationBrowserEntry implements EntryPoint{
 				}
 
 				String equation = null;
-				// String sendEq = null;
+
+				Grid grid = null;
 
 				// For Algebra practice mode
 				if (table.equals(algGrid)) {
-					equation = clickedEl.getInnerText();
-
+					grid = algGrid;
 					// For Science Mode
 				} else if (table.equals(eqGrid)) {
 
-					Element element = (Element) clickedEl.getElementsByTagName(
-							"math").getItem(0);
-					if (element == null) {
-						Window.alert("Your browser may not show everything correctly. Try another browser");
-						element = (Element) clickedEl.getElementsByTagName(
-								"fmath").getItem(0);
+					// Element element = (Element)
+					// clickedEl.getElementsByTagName(
+					// "math").getItem(0);
+					// if (element == null) {
+					// Window.alert("Your browser may not show everything correctly. Try another browser");
+					// element = (Element) clickedEl.getElementsByTagName(
+					// "fmath").getItem(0);
+					// }
+					// equation = DOM.getElementAttribute(element, "alttext");
+
+					grid = eqGrid;
+
+					if (modeSelectSci.getValue()) {
+						fillSummary(clickedEl.getInnerText());
 					}
-					equation = DOM.getElementAttribute(element, "alttext");
 				}
 
-				if (modeSelectSci.getValue()) {
-					fillSummary(equation);
-				}
-				labelSumEq.setText("$" + equation + "$");
-				parseJQMath(EquationBrowserEntry.labelSumEq.getElement());
+				if (table != null) {
+					Widget cell = table.getWidget(clickedCell.getRowIndex(),
+							clickedCell.getCellIndex());
+					equation = cell.getTitle();
 
-				//TODO
-				EquationTransporter.transport(equation);
+					// labelSumEq.setText("$" + equation + "$");
+					// parseJQMath(EquationBrowserEntry.labelSumEq.getElement());
+
+					// TODO
+					EquationTransporter.transport(equation);
+				}
 			}
 		}
 	}
@@ -342,7 +358,7 @@ public class EquationBrowserEntry implements EntryPoint{
 				}
 				sumGrid.clear(true);
 				labelSumEq.setText("");
-				//TODO
+				// TODO
 				AlgOutEntry.algOut.clear(true);
 				onVarSelect(selectedVars);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
@@ -385,7 +401,7 @@ public class EquationBrowserEntry implements EntryPoint{
 
 		public void onClick(ClickEvent event) {
 			browserPanel.clear();
-			//TODO
+			// TODO
 			AlgOutEntry.algDragPanel.clear();
 			AlgOutEntry.algOut.clear(true);
 			AlgOutEntry.algOut.resizeRows(0);
@@ -414,6 +430,5 @@ public class EquationBrowserEntry implements EntryPoint{
 	public static native void parseJQMath(Element element) /*-{
 		$wnd.M.parseMath(element);
 	}-*/;
-
 
 }

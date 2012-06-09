@@ -24,12 +24,13 @@ public class EquationTransporter {
 	public static TreeCanvas mltCanvas;
 	private static JohnTree mljTree;
 
-	public static void transport(String equation) {
-		HTML draggableEquation = new HTML();
-		draggableEquation.setHTML("$" + equation + "$");
-		parseJQMath(draggableEquation.getElement());
+	public static String transport(String equation) {
+		HTML html = new HTML();
+		html.setHTML("$" + equation + "$");
+		parseJQMath(html.getElement());
 
-		transport(draggableEquation);
+		transport(html);
+		return html.getHTML();
 	}
 
 	/**
@@ -37,8 +38,8 @@ public class EquationTransporter {
 	 * 
 	 * @param mathML
 	 */
-	private static void transport(HTML mathML) {
-
+	public static void transport(HTML mathML) {
+		
 		try {
 			Log.info( "----Initial tree, making----");
 			jTree= new JohnTree(mathML, true);
