@@ -162,7 +162,8 @@ public class TreeCanvas extends DrawingArea {
 				// Shift to right side
 				placement += sideLengthLeft;
 			}
-			// placement = (placement + parentX) / 2; // Add gravity towards
+			//TODO gravity
+			 placement = (placement + parentX) / 2; // Add gravity towards
 			// parent node
 			placement += childSpace / 4;// padding
 			if (childWidth >= childSpace) {

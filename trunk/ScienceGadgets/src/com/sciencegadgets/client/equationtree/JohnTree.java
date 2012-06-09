@@ -261,9 +261,9 @@ public class JohnTree {
 		public HTML toMathML() {
 			HTML mathML;
 			if (type == null) {
-				mathML = new HTML(tag + " " + "$" + symbol + "$");
+				mathML = new HTML(/*tag + " " +*/ "$" + symbol + "$");
 			} else {
-				mathML = new HTML(type.toString().substring(0, 2) + " " + "$"
+				mathML = new HTML(/*type.toString().substring(0, 2) + " " +*/ "$"
 						+ symbol + "$");
 			}
 			EquationBrowserEntry.parseJQMath(mathML.getElement());
