@@ -24,9 +24,14 @@ public class EquationTransporter {
 	public static TreeCanvas mltCanvas;
 	private static JohnTree mljTree;
 
-	public static String transport(String equation) {
+	/**
+	 * 
+	 * @param equation - the equation as a jqmath String
+	 * @return - the Math ML as a String
+	 */
+	public static String transport(String jqMath) {
 		HTML html = new HTML();
-		html.setHTML("$" + equation + "$");
+		html.setHTML("$" + jqMath + "$");
 		parseJQMath(html.getElement());
 
 		transport(html);
