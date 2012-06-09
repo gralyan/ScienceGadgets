@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='sciencegadgets'>
-  <inherits name='com.google.gwt.user.User'/>
-  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
-  
-<!--   <inherits name='com.google.gwt.gadgets.Gadgets' /> -->
-  
-   <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/> 
-   <inherits name='org.vaadin.gwtgraphics.GWTGraphics'/>
-   
-<!--    Logger just for debugging -->
-<!--     <inherits name="com.google.gwt.logging.Logging"/> -->
-   
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 
-<!--  Uncomment this for faster compile time
-<set-property name="user.agent" value="gecko1_8" />
--->
+	<!--   <inherits name='com.google.gwt.gadgets.Gadgets' /> -->
+
+	<inherits name='com.allen_sauer.gwt.dnd.gwt-dnd' />
+	<inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
+
+	<!--    Logger just for debugging -->
+	<!--     <inherits name="com.google.gwt.logging.Logging"/> -->
 
 
-<!--   <entry-point class='com.sciencegadgets.client.DragDropTesting'/> -->
-  <entry-point class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry'/>
-  <entry-point class='com.sciencegadgets.client.algebramanipulation.AlgOutEntry'/>
-  <entry-point class='com.sciencegadgets.client.equationtree.TreeEntry'/>
+	<!--  Uncomment this for faster compile time
+		<set-property name="user.agent" value="gecko1_8" />
+	-->
 
-  <source path='client'/>
-<!--   <source path='shared'/> -->
 
+	<!--   <entry-point class='com.sciencegadgets.client.DragDropTesting'/> -->
+	<entry-point
+		class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry' />
+	<entry-point
+		class='com.sciencegadgets.client.TextBoxEntry' />
+	<entry-point
+		class='com.sciencegadgets.client.algebramanipulation.AlgOutEntry' />
+	<entry-point
+		class='com.sciencegadgets.client.equationtree.TreeEntry' />
+
+	<source path='client' />
+	<!--   <source path='shared'/> -->
+
+	<entry-point class="com.sciencegadgets.client.TextBoxEntry"></entry-point>
 </module>
