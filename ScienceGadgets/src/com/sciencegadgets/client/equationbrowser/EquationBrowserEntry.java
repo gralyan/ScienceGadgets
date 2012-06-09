@@ -7,9 +7,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -275,30 +273,28 @@ public class EquationBrowserEntry implements EntryPoint {
 
 				String equation = null;
 
-				Grid grid = null;
-
-				// For Algebra practice mode
-				if (table.equals(algGrid)) {
-					grid = algGrid;
-					// For Science Mode
-				} else if (table.equals(eqGrid)) {
-
-					// Element element = (Element)
-					// clickedEl.getElementsByTagName(
-					// "math").getItem(0);
-					// if (element == null) {
-					// Window.alert("Your browser may not show everything correctly. Try another browser");
-					// element = (Element) clickedEl.getElementsByTagName(
-					// "fmath").getItem(0);
-					// }
-					// equation = DOM.getElementAttribute(element, "alttext");
-
-					grid = eqGrid;
-
-					if (modeSelectSci.getValue()) {
-						fillSummary(clickedEl.getInnerText());
-					}
-				}
+//				// For Algebra practice mode
+//				if (table.equals(algGrid)) {
+//					grid = algGrid;
+//					// For Science Mode
+//				} else if (table.equals(eqGrid)) {
+//
+//					 Element element = (Element)
+//					 clickedEl.getElementsByTagName(
+//					 "math").getItem(0);
+//					 if (element == null) {
+//					 Window.alert("Your browser may not show everything correctly. Try another browser");
+//					 element = (Element) clickedEl.getElementsByTagName(
+//					 "fmath").getItem(0);
+//					 }
+//					 equation = DOM.getElementAttribute(element, "alttext");
+//
+//					grid = eqGrid;
+//
+//					if (modeSelectSci.getValue()) {
+//						fillSummary(clickedEl.getInnerText());
+//					}
+//				}
 
 				if (table != null) {
 					Widget cell = table.getWidget(clickedCell.getRowIndex(),
