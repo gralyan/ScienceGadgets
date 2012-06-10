@@ -30,6 +30,7 @@ public class EquationTransporter {
 	 * @return - the Math ML as a String
 	 */
 	public static String transport(String jqMath) {
+		//jqMath to MathML to transport
 		HTML html = new HTML();
 		html.setHTML("$" + jqMath + "$");
 		parseJQMath(html.getElement());
@@ -39,27 +40,28 @@ public class EquationTransporter {
 	}
 
 	/**
-	 * Initializes an equation
+	 * Sends the given equation to the views of it
 	 * 
 	 * @param mathML
 	 */
 	public static void transport(HTML mathML) {
 		
 		try {
+			// Initial AlgOut line
+			AlgOutEntry.algOut.clear(true);
+			AlgOutEntry.algOut.resizeRows(0);
+			
 			Log.info( "----Initial tree, making----");
 			jTree= new JohnTree(mathML, true);
 			mathML = jTree.toMathML();
 			Log.info( "----Initial tree, made----");
 
-			// Initial AlgOut line
-			AlgOutEntry.algOut.clear(true);
-			AlgOutEntry.algOut.resizeRows(0);
-
 			selectEquation(mathML,"firstComment");
 		} catch (TopNodesNotFoundException e) {
 			e.printStackTrace();
-			Log.severe( "INITIAL TREE FAIL");
-		}
+			Log.severe("TopNodesNotFound: the MathML must be standard and well formed");
+		}			
+
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class EquationTransporter {
 		}
 
 		// ////////////////////////////////////////////////////////
-		// just to visualize the mathml
+		// just to visualize the mathml, the box must be uncommented in TreeEntry also
 		// //////////////////////////////////////////
 //		TreeEntry.mlTree.clear();
 //		try {

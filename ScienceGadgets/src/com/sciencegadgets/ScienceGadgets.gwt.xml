@@ -30,5 +30,4 @@
 	<source path='client' />
 	<!--   <source path='shared'/> -->
 
-	<entry-point class="com.sciencegadgets.client.TextBoxEntry"></entry-point>
 </module>
