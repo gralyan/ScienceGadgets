@@ -26,27 +26,21 @@ public class TextBoxEntry implements EntryPoint {
 		jqInput = new TextBox();
 		Button mlButton = new Button("use", new InputHandler(InputTypes.ml));
 		Button jqButton = new Button("use", new InputHandler(InputTypes.jq));
+		Label mlLabel = new Label("Math ML");
 
-//		HorizontalPanel mlPanel = new HorizontalPanel();
-//		HorizontalPanel jqPanel = new HorizontalPanel();
-//		VerticalPanel inputPanel = new VerticalPanel();
-//
-//		mlPanel.add(new Label("Math ML"));
-//		mlPanel.add(mlInput);
-//		mlPanel.add(mlButton);
-//		jqPanel.add(new Label("jqMath"));
-//		jqPanel.add(jqInput);
-//		jqPanel.add(jqButton);
-//		inputPanel.add(mlPanel);
-//		inputPanel.add(jqPanel);
-		
 		Grid inputGrid = new Grid(2, 3);
-		inputGrid.setWidget(0,0 , new Label("Math ML"));
-		inputGrid.setWidget(0,1 , mlInput);
+		inputGrid.setStyleName("inputGrid");
+		inputGrid.setWidget(0,0 , mlLabel);
 		inputGrid.setWidget(0,2 , mlButton);
 		inputGrid.setWidget(1,0 , new Label("jqMath"));
-		inputGrid.setWidget(1,1 , jqInput);
 		inputGrid.setWidget(1,2 , jqButton);
+		inputGrid.setWidget(0,1 , mlInput);
+		inputGrid.setWidget(1,1 , jqInput);
+		mlInput.setWidth("50em");
+		jqInput.setWidth("50em");
+		// TODO don't hard code width
+//		int maxInputWidth = inputGrid.getOffsetWidth() - (mlButton.getOffsetWidth() + mlLabel.getOffsetWidth());
+//		inputGrid.getColumnFormatter().setWidth(1, inputGrid.getOffsetWidth()+"px");
 
 		RootPanel.get().add(inputGrid);
 	}

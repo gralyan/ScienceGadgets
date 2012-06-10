@@ -4,8 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
+import org.vaadin.gwtgraphics.client.Image;
 import org.vaadin.gwtgraphics.client.Line;
+import org.vaadin.gwtgraphics.client.VectorObject;
+import org.vaadin.gwtgraphics.client.shape.Path;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
+import org.vaadin.gwtgraphics.client.shape.path.CurveTo;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -44,6 +48,12 @@ public class TreeCanvas extends DrawingArea {
 		this(panel.getOffsetWidth(), panel.getOffsetHeight(), jTree);
 		this.panel = panel;
 		this.johnTree = jTree;
+		this.setStyleName("sky");
+
+		Image backgroundImg = new Image(0, 0, panel.getOffsetWidth(), panel.getOffsetHeight(), "http://ecoartfilm.files.wordpress.com/2012/05/tree.jpg");
+		backgroundImg.setRotation(180);
+		panel.add(backgroundImg);
+		
 		draw(jTree);
 	}
 
@@ -105,12 +115,12 @@ public class TreeCanvas extends DrawingArea {
 				/ (rightMemberCount + leftMemberCount);
 		sideLengthRight = this.getWidth() - sideLengthLeft;
 
-		rowHeight = this.getHeight() / 6;
+		rowHeight = this.getHeight() / 4;
 
 		HTML lHTML = jTree.getLeftSide().toMathML();
 		HTML rHTML = jTree.getRightSide().toMathML();
 
-		panel.add(this);
+//		panel.add(this);
 
 		// Add HTML widgets of top level of each side
 		int[] topLayerHeights = addFirstLayer(jTree, lHTML, rHTML);
@@ -125,6 +135,7 @@ public class TreeCanvas extends DrawingArea {
 					(byte) 1, false);
 
 	}
+
 
 	private void drawChildren(JohnNode pNode, int parentX, int parentY,
 			byte layer, Boolean isLeft) {
@@ -179,26 +190,32 @@ public class TreeCanvas extends DrawingArea {
 			int lineX = childLeft + childWidth / 2 + pad;
 			int lineY = childTop;
 
-			Rectangle box = new Rectangle(childLeft - pad, childTop,
+			Rectangle nodeBox = new Rectangle(childLeft - pad, childTop,
+					childHTML.getOffsetWidth() + 2 * pad,
+					childHTML.getOffsetHeight() * 4 / 3);
+			
+			VectorObject nodePic = createNodeShape(childLeft - pad, childTop,
 					childHTML.getOffsetWidth() + 2 * pad,
 					childHTML.getOffsetHeight() * 4 / 3);
 
-			box.setFillColor(palette.get(child.getType()));
-			box.setStrokeOpacity(0);
+//			nodePic.setFillColor(palette.get(child.getType()));
+//			nodeBox.setFillColor(palette.get(child.getType()));
+			nodeBox.setStrokeOpacity(0);
 
-			Line line = new Line(parentX, parentY, lineX, lineY);
-			this.add(line);
-			this.add(box);
+			Line connectingLine = new Line(parentX, parentY, lineX, lineY);
+			this.add(connectingLine);
+			this.add(nodePic);
+//			this.add(nodeBox);
 
 			if (child.getWrapper() != null) {
 				MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
-				wrap.setHeight(box.getHeight() + "px");
-				wrap.setWidth(box.getWidth() + "px");
+				wrap.setHeight(nodeBox.getHeight()*1.5 + "px");
+				wrap.setWidth(nodeBox.getWidth() + "px");
 				panel.add(wrap, childLeft - pad, childTop);
 			}
 
 			if (child.getChildCount() > 0) {
-				drawChildren(child, lineX, childTop + box.getHeight(),
+				drawChildren(child, lineX, childTop + nodeBox.getHeight(),
 						(byte) (layer + 1), isLeft);
 			}
 		}
@@ -278,5 +295,16 @@ public class TreeCanvas extends DrawingArea {
 
 		int[] a = { lbox.getHeight(), rbox.getHeight() };
 		return a;
+	}
+
+	private VectorObject createNodeShape(int x, int y, int width, int height) {
+		Image img = new Image(x, y, width, height, "http://www.silencephoto.ru/wp-content/uploads/2012/02/cloud_soft_edge.jpg");
+//		Path path = new Path(x, y);
+//		path.curveRelativelyTo(0, 0, 0, 0, 10, 0);
+//		path.curveRelativelyTo(10, -10, 10, -10, 0, 10);
+//		path.curveRelativelyTo(10, -10, 10, -10, -10, 0);
+//		path.close();
+		
+		return img;
 	}
 }
