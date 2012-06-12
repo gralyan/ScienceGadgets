@@ -15,11 +15,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerBothSides_Add;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication;
-import com.sciencegadgets.client.equationtree.DropControllAssigner;
 import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
@@ -38,6 +33,9 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
 	private JohnNode johnNode;
+
+	private static MLElementWrapper selectedWrapper;
+	private static MLElementWrapper SelectedWrapperJoiner;
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
@@ -113,8 +111,8 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	public HandlerRegistration addMouseOutHandler() {
 		return addDomHandler(new ElementOutHandler(), MouseOutEvent.getType());
 	}
-	
-	public HandlerRegistration addClickHandler(){
+
+	public HandlerRegistration addClickHandler() {
 		return addDomHandler(new ElementClickHandler(), ClickEvent.getType());
 	}
 
@@ -151,26 +149,6 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 		}
 	}
 
-//	public AbstractMathDropController addDropTarget(MLElementWrapper target,
-//			DropControllAssigner.DropType dropType) {
-//
-//		AbstractMathDropController dropCtrl = null;
-//
-//		switch (dropType) {
-//		case Add:
-//			dropCtrl = new DropControllerAddition(target);
-//			break;
-//		case Multiply:
-//			dropCtrl = new DropControllerMultiplication(target);
-//			break;
-//		case AddBothSides:
-//			dropCtrl = new DropControllerBothSides_Add(target);
-//		}
-//		dragController.registerDropController(dropCtrl);
-//
-//		return dropCtrl;
-//	}
-
 	public void removeDropTargets() {
 		dragController.unregisterDropControllers();
 		dragController.getDropList().clear();
@@ -181,20 +159,23 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	// /////////////////////////////////////////////////////////////////////////////////////
 	class ElementOverHandler implements MouseOverHandler {
 		public void onMouseOver(MouseOverEvent event) {
-			select(/*(MLElementWrapper) event.getSource(),*/ true);
+			select(true);
 		}
 	}
 
 	class ElementOutHandler implements MouseOutHandler {
 		public void onMouseOut(MouseOutEvent event) {
-			select(/*(MLElementWrapper) event.getSource(),*/ false);
+			select(false);
 		}
 	}
-	
-	class ElementClickHandler implements ClickHandler{
+
+	class ElementClickHandler implements ClickHandler {
 		@Override
 		public void onClick(ClickEvent event) {
-			select(/*(MLElementWrapper) event.getSource(),*/ true);
+			if (selectedWrapper != null) {
+				selectedWrapper.select(false);
+			}
+			select(true);
 		}
 	}
 
@@ -206,18 +187,21 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 	 * @param select
 	 *            - selects if true, unselects if false
 	 */
-	void select(/*MLElementWrapper wrapper,*/ Boolean select) {
+	void select(Boolean select) {
 		MLElementWrapper wrapper = this;
 
 		if (select) {
 			// Highlights selected
 			wrapper.getElement().setId("selectedWrapper");
-			// Highlights joiner
 			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
+
+			// Save selected statically
+			selectedWrapper = this;
+			SelectedWrapperJoiner = this.getJoinedWrapper();
 
 			String style = null;
 			for (DropController dropC : wrapper.dragController.getDropList()) {
-
+				// Style of highlight on potential targets
 				if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition"
 						.equals(dropC.getClass().getName())) {
 					style = "selectedDropWrapperAddition";
@@ -230,20 +214,24 @@ public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
 
 				// Highlights drop targets
 				dropC.getDropTarget().setStyleName(style);
-				// Highlights joiner drop targets
 				((MLElementWrapper) dropC.getDropTarget()).getJoinedWrapper()
 						.setStyleName(style);
 			}
 
 		} else {
+			// Removes style: selectedWrapper
 			wrapper.getElement().removeAttribute("id");
 			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
 
+			// Removes static reference to this as selected
+			selectedWrapper = null;
+			SelectedWrapperJoiner = null;
+
 			for (DropController dropC : wrapper.dragController.getDropList()) {
-				
+
 				String[] styles = dropC.getDropTarget().getStyleName()
 						.split(" ");
-				
+
 				for (String style : styles) {
 					if (style.startsWith("selectedDropWrapper")) {
 						dropC.getDropTarget().removeStyleName(style);
