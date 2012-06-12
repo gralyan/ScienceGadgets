@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
+import org.vaadin.gwtgraphics.client.Group;
 import org.vaadin.gwtgraphics.client.Image;
 import org.vaadin.gwtgraphics.client.Line;
 import org.vaadin.gwtgraphics.client.VectorObject;
+import org.vaadin.gwtgraphics.client.shape.Circle;
+import org.vaadin.gwtgraphics.client.shape.Ellipse;
 import org.vaadin.gwtgraphics.client.shape.Path;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
 import org.vaadin.gwtgraphics.client.shape.path.CurveTo;
@@ -16,6 +19,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
+import com.sciencegadgets.client.equationtree.JohnTree.Type;
 
 public class TreeCanvas extends DrawingArea {
 
@@ -27,6 +31,7 @@ public class TreeCanvas extends DrawingArea {
 	private int sideLengthRight;
 	private HashMap<JohnTree.Type, String> palette;
 	private int pad = 5;
+	private String nodePicUrl = "http://www.lanxuan.org/download/openclipart/calloutscloud.svg.SVG";
 
 	// The number of members in each row
 	private byte[] leftLayerCounts;
@@ -50,10 +55,12 @@ public class TreeCanvas extends DrawingArea {
 		this.johnTree = jTree;
 		this.setStyleName("sky");
 
-		Image backgroundImg = new Image(0, 0, panel.getOffsetWidth(), panel.getOffsetHeight(), "http://ecoartfilm.files.wordpress.com/2012/05/tree.jpg");
-		backgroundImg.setRotation(180);
-		panel.add(backgroundImg);
-		
+		// Image backgroundImg = new Image(0, 0, panel.getOffsetWidth(),
+		// panel.getOffsetHeight(),
+		// "http://ecoartfilm.files.wordpress.com/2012/05/tree.jpg");
+		// backgroundImg.setRotation(180);
+		// panel.add(backgroundImg);
+
 		draw(jTree);
 	}
 
@@ -120,7 +127,7 @@ public class TreeCanvas extends DrawingArea {
 		HTML lHTML = jTree.getLeftSide().toMathML();
 		HTML rHTML = jTree.getRightSide().toMathML();
 
-//		panel.add(this);
+		panel.add(this);
 
 		// Add HTML widgets of top level of each side
 		int[] topLayerHeights = addFirstLayer(jTree, lHTML, rHTML);
@@ -135,7 +142,6 @@ public class TreeCanvas extends DrawingArea {
 					(byte) 1, false);
 
 	}
-
 
 	private void drawChildren(JohnNode pNode, int parentX, int parentY,
 			byte layer, Boolean isLeft) {
@@ -173,8 +179,8 @@ public class TreeCanvas extends DrawingArea {
 				// Shift to right side
 				placement += sideLengthLeft;
 			}
-			//TODO gravity
-			 placement = (placement + parentX) / 2; // Add gravity towards
+			// TODO gravity
+			placement = (placement + parentX) / 2; // Add gravity towards
 			// parent node
 			placement += childSpace / 4;// padding
 			if (childWidth >= childSpace) {
@@ -190,32 +196,32 @@ public class TreeCanvas extends DrawingArea {
 			int lineX = childLeft + childWidth / 2 + pad;
 			int lineY = childTop;
 
-			Rectangle nodeBox = new Rectangle(childLeft - pad, childTop,
-					childHTML.getOffsetWidth() + 2 * pad,
-					childHTML.getOffsetHeight() * 4 / 3);
-			
-			VectorObject nodePic = createNodeShape(childLeft - pad, childTop,
-					childHTML.getOffsetWidth() + 2 * pad,
-					childHTML.getOffsetHeight() * 4 / 3);
+			int boxLeft = childLeft - pad;
+			int boxTop = childTop - pad;
+			int boxWidth = childHTML.getOffsetWidth() + 2 * pad;
+			int boxHeight = childHTML.getOffsetHeight() * 4 / 3;
 
-//			nodePic.setFillColor(palette.get(child.getType()));
-//			nodeBox.setFillColor(palette.get(child.getType()));
-			nodeBox.setStrokeOpacity(0);
+			VectorObject nodeShape = createNodeShape(child.getType(), boxLeft,
+					boxTop, boxWidth, boxHeight);
+			this.add(nodeShape);
 
-			Line connectingLine = new Line(parentX, parentY, lineX, lineY);
+			Line connectingLine = new Line(parentX, parentY, lineX,
+					(nodeShape.getAbsoluteTop() - panel.getAbsoluteTop()));
 			this.add(connectingLine);
-			this.add(nodePic);
-//			this.add(nodeBox);
+
+			// Image nodePic = new Image(boxLeft, boxTop-boxHeight, boxWidth,
+			// boxHeight*2, nodePicUrl);
+			// this.add(nodePic);
 
 			if (child.getWrapper() != null) {
 				MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
-				wrap.setHeight(nodeBox.getHeight()*1.5 + "px");
-				wrap.setWidth(nodeBox.getWidth() + "px");
+				wrap.setHeight(boxHeight * 1.5 + "px");
+				wrap.setWidth(boxWidth + "px");
 				panel.add(wrap, childLeft - pad, childTop);
 			}
 
 			if (child.getChildCount() > 0) {
-				drawChildren(child, lineX, childTop + nodeBox.getHeight(),
+				drawChildren(child, lineX, childTop + boxHeight,
 						(byte) (layer + 1), isLeft);
 			}
 		}
@@ -297,14 +303,92 @@ public class TreeCanvas extends DrawingArea {
 		return a;
 	}
 
-	private VectorObject createNodeShape(int x, int y, int width, int height) {
-		Image img = new Image(x, y, width, height, "http://www.silencephoto.ru/wp-content/uploads/2012/02/cloud_soft_edge.jpg");
-//		Path path = new Path(x, y);
-//		path.curveRelativelyTo(0, 0, 0, 0, 10, 0);
-//		path.curveRelativelyTo(10, -10, 10, -10, 0, 10);
-//		path.curveRelativelyTo(10, -10, 10, -10, -10, 0);
-//		path.close();
-		
-		return img;
+	private Group createNodeShape(Type type, int x, int y, int width, int height) {
+		Group shape = new Group();
+
+		switch (type) {
+		case Term:
+
+			int skew = height / 2;
+			int spline = height * 5 / 16;// NURB length for Bézier curves
+
+			Path front = new Path(x, y);// Box Front, starts at top left
+			front.curveRelativelyTo(-spline, 0, -spline, height, 0, height);// down
+			front.lineRelativelyTo(width, 0);// right
+			front.curveRelativelyTo(spline, 0, spline, -height, 0, -height);// up
+			front.close();
+			front.setFillColor("yellow");
+
+			Path top = new Path(x, y);// Box Top, starts bottom left corner
+			top.lineRelativelyTo(skew, -skew);// up to the right
+			top.lineRelativelyTo(width, 0);// right
+			top.lineRelativelyTo(-skew, skew);// down left
+			top.close();
+			top.setFillColor("blue");
+
+			Path side = new Path(x + width, y + height);// Side, starts lowest
+			side.lineRelativelyTo(skew, -skew);// up, right
+			side.curveRelativelyTo(spline, -spline, spline, -height, 0, -height);// up
+			side.lineRelativelyTo(-skew, skew);// down,left
+			side.close();
+			side.setFillColor("red");
+
+			shape.add(side);
+			shape.add(front);// front added after side to overlap curve
+			shape.add(top);
+			break;
+
+		case Series:
+
+			Rectangle rectangle = new Rectangle(x, y, width, height);
+			rectangle.setFillColor("yellow");
+
+			shape.add(rectangle);
+			break;
+
+		case Number:
+
+			Ellipse ellipseNum = new Ellipse(x + width / 2, y + height / 2,
+					width, height);
+			ellipseNum.setFillColor("lime");
+
+			shape.add(ellipseNum);
+			break;
+
+		case Variable:
+
+			Ellipse ellipseVar = new Ellipse(x + width / 2, y + height / 2,
+					width, height);
+			ellipseVar.setFillColor("green");
+
+			shape.add(ellipseVar);
+			break;
+
+		case Fraction:
+
+			// TODO
+			Ellipse frac = new Ellipse(x + width / 2, y + height / 2, width,
+					height);
+			shape.add(frac);
+			break;
+
+		case Exponent:
+
+			// TODO
+			Ellipse exp = new Ellipse(x + width / 2, y + height / 2, width,
+					height);
+			shape.add(exp);
+			break;
+
+		case Function:
+			// TODO
+			Ellipse fun = new Ellipse(x + width / 2, y + height / 2, width,
+					height);
+			shape.add(fun);
+			break;
+
+		}
+
+		return shape;
 	}
 }
