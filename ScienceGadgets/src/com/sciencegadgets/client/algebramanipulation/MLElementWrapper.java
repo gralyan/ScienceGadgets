@@ -5,6 +5,7 @@ import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.HasDragStartHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
@@ -15,6 +16,9 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
@@ -25,8 +29,7 @@ import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
  * @author John Gralyan
  * 
  */
-public class MLElementWrapper extends HTML implements HasMouseOutHandlers,
-		HasMouseOverHandlers, HasDragStartHandlers {
+public class MLElementWrapper extends HTML {
 
 	private WrapDragController dragController = null;
 	private Element element = null;

@@ -8,6 +8,7 @@ import java.util.Set;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Log;
 
 public class WrapDragController extends PickupDragController {
@@ -29,13 +30,15 @@ public class WrapDragController extends PickupDragController {
 	public void dragStart() {
 		super.dragStart();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-		wrap.setText(wrap.getJohnNode().toString());//getElementWrapped().getInnerText());
+//		wrap.add(new HTML (wrap.getJohnNode().toString()));
+		wrap.setText(wrap.getJohnNode().toString());
 	}
 
 	@Override
 	public void dragEnd() {
 		super.dragEnd();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
+//		wrap.remove(wrap.getWidget());
 		wrap.setText("");
 		// TODO This should clear the drop target highlights as well as the
 		// wrapper being dragged. The drop targets aren't being cleared.
