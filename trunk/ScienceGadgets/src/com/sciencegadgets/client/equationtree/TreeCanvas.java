@@ -124,13 +124,10 @@ public class TreeCanvas extends DrawingArea {
 
 		rowHeight = this.getHeight() / 4;
 
-		HTML lHTML = jTree.getLeftSide().toMathML();
-		HTML rHTML = jTree.getRightSide().toMathML();
-
 		panel.add(this);
 
 		// Add HTML widgets of top level of each side
-		int[] topLayerHeights = addFirstLayer(jTree, lHTML, rHTML);
+		int[] topLayerHeights = addFirstLayer(jTree);
 
 		// Recursively create the rest of the tree
 		if (jTree.getLeftSide().getChildCount() > 1)
@@ -257,7 +254,10 @@ public class TreeCanvas extends DrawingArea {
 		}
 	}
 
-	private int[] addFirstLayer(JohnTree jTree, HTML lHTML, HTML rHTML) {
+	private int[] addFirstLayer(JohnTree jTree) {
+		
+		HTML lHTML = jTree.getLeftSide().toMathML();
+		HTML rHTML = jTree.getRightSide().toMathML();
 
 		panel.add(lHTML, sideLengthLeft / 2, 0);
 		panel.add(new HTML("="), sideLengthLeft, 0);
@@ -270,12 +270,21 @@ public class TreeCanvas extends DrawingArea {
 		int rWidth = rHTML.getOffsetWidth();
 		int rLeft = sideLengthLeft + sideLengthRight / 2;
 
-		// Add top level wrappers
+		// Left - Add top level wrappers
 		Rectangle lbox = new Rectangle(lLeft - pad, 0, lWidth + 2 * pad,
 				lHeight * 4 / 3);
 		lbox.setFillColor(palette.get(jTree.getLeftSide().getType()));
 		lbox.setStrokeOpacity(0);
 		this.add(lbox);
+
+		int lboxLeft = lLeft - pad;
+		int lboxTop = 0;
+		int lboxWidth = lWidth + 2 * pad;
+		int lboxHeight = lHeight * 4 / 3;
+
+		VectorObject lNodeShape = createNodeShape(jTree.getLeftSide().getType(), lboxLeft,
+				lboxTop, lboxWidth, lboxHeight);
+		this.add(lNodeShape);
 
 		if (jTree.getLeftSide().getWrapper() != null) {
 			MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
@@ -285,21 +294,25 @@ public class TreeCanvas extends DrawingArea {
 			panel.add(lWrap, lLeft - pad, 0);
 		}
 
-		Rectangle rbox = new Rectangle(rLeft - pad, 0, rWidth + 2 * pad,
-				rHeight * 4 / 3);
-		rbox.setFillColor(palette.get(jTree.getRightSide().getType()));
-		rbox.setStrokeOpacity(0);
-		this.add(rbox);
+		// Right - Add top level wrappers
+		int rboxLeft = rLeft - pad;
+		int rboxTop = 0;
+		int rboxWidth = rWidth + 2 * pad;
+		int rboxHeight = rHeight * 4 / 3;
 
+		VectorObject rNodeShape = createNodeShape(jTree.getRightSide().getType(), rboxLeft,
+				rboxTop, rboxWidth, rboxHeight);
+		this.add(rNodeShape);
+		
 		if (jTree.getRightSide().getWrapper() != null) {
 			MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
 					.getJoinedWrapper();
-			rWrap.setHeight(rbox.getHeight() + "px");
-			rWrap.setWidth(rbox.getWidth() + "px");
+			rWrap.setHeight(rboxHeight + "px");
+			rWrap.setWidth(rboxWidth + "px");
 			panel.add(rWrap, rLeft - pad, 0);
 		}
 
-		int[] a = { lbox.getHeight(), rbox.getHeight() };
+		int[] a = { lbox.getHeight(), rboxHeight };
 		return a;
 	}
 
