@@ -6,13 +6,17 @@ body {
 	border: 1px solid silver;
 	padding: 2px;
 	margin:6px;
-	height: 18em;
-	width: 12em;
+	height: 20em;
+	width: 19em;
 	cursor: default;
 }
+.scrollPanel{
+	height: 15em;
+	width: 19em;
+}
 .browserPanel{
-	height: 18em;
-	width: 40em;
+	height: 20em;
+	width: 60em;
 }
 .algebraPanel {
 	border: 1px solid silver;
@@ -38,10 +42,8 @@ body {
 	width: 60em;	
 		border: 1px solid silver;
 }
-/*browser scroll panel*/
-.sp{
-	height: 15em;
-	width: 12em;
+.inputGrid{
+	width: 60em;
 }
 
 .rowHeader{
@@ -65,6 +67,7 @@ body {
 	background-color: #7777cc;
 	cursor: move;
 	opacity:0.3;
+	
 }
 .selectedDropWrapperDefault{
 	border-style:ridge;
@@ -79,7 +82,8 @@ body {
 	border-color:navy;
 }
 .var{
-	background-color: #F5F5F5;
+	background-color: #DCDCDC;
+	text-align: center;
 }
 .varName{
 	background-color: #99CCFF;
@@ -88,4 +92,7 @@ body {
 	background-color: #111111;
 	cursor: move;
 	opacity:0.4;
+}
+.sky{
+	background-color: #87CEFA;
 }
