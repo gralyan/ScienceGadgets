@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.equationbrowser;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,6 +10,8 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -21,13 +25,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.equationtree.TreeEntry;
 
-//TODO
+//Uncomment to use as gadget////////////////////////////////////
+//
 //@com.google.gwt.gadgets.client.Gadget.ModulePrefs(//
 //title = "ScienceGadgets", //
 //author = "John Gralyan", //
@@ -42,15 +48,20 @@ public class EquationBrowserEntry implements EntryPoint {
 	HorizontalPanel browserPanel = new HorizontalPanel();
 	private Grid eqGrid = new Grid(1, 1);
 	private Grid varGrid = new Grid(1, 1);
-	private Grid sumGrid = new Grid(1, 2);
+	private Grid sumGrid = new Grid(1, 4);
 	private Grid algGrid = new Grid(1, 1);
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
 	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra");
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science");
+	private Button sumButton = new Button("Use");
+	private Button combineEqButton = new Button("Combine");
+	private HashMap<TextBox, String> inputBinding = new HashMap<TextBox, String>();
+
 	public static HTML labelSumEq = new HTML("");
 
-	// TODO
+	// Uncomment to use as gadget////////////////////////
+	//
 	// @Override
 	// protected void init(UserPreferences preferences) {
 	@Override
@@ -72,9 +83,12 @@ public class EquationBrowserEntry implements EntryPoint {
 	}
 
 	private void createSciBrowser() {
+
+		// 111111111111111111111111
 		// First box, Variable list
 		VerticalPanel vpVar = new VerticalPanel();
 		Label labelVar = new Label("Variables");
+		varGrid.getColumnFormatter().setWidth(0, "5em");
 		ScrollPanel spVar = new ScrollPanel(varGrid);
 		varGrid.addClickHandler(new VarClickHandler(varGrid));
 		vpVar.add(labelVar);
@@ -83,40 +97,58 @@ public class EquationBrowserEntry implements EntryPoint {
 		multiSwitch.addClickHandler(new MultiSwitchClickHandler());
 		fillVarList();
 
+		// 22222222222222222222222222
 		// Second box, Equation list
 		VerticalPanel vpEq = new VerticalPanel();
 		Label labelEq = new Label("Equations");
 		ScrollPanel spEq = new ScrollPanel(eqGrid);
 		eqGrid.addClickHandler(new EqClickHandler(eqGrid));
+		eqGrid.setWidth("17em");
+		combineEqButton.setVisible(false);
 		vpEq.add(labelEq);
 		vpEq.add(spEq);
+		vpEq.add(combineEqButton);
 
+		// 3333333333333333333333333333
 		// Third box, equation summary
 		VerticalPanel vpSum = new VerticalPanel();
 		Label labelSum = new Label("Summary");
+		sumButton.setVisible(false);
+		labelSumEq.setStyleName("var");
 		ScrollPanel spSum = new ScrollPanel(sumGrid);
-		labelSumEq.setHeight("2em");
+		sumGrid.setWidth("19em");
+
+		HorizontalPanel eqAndButtonPanel = new HorizontalPanel();
+		eqAndButtonPanel.setWidth("19em");
+		eqAndButtonPanel.add(labelSumEq);
+		eqAndButtonPanel.add(sumButton);
+		eqAndButtonPanel.setCellHorizontalAlignment(sumButton,
+				HasHorizontalAlignment.ALIGN_RIGHT);
+		sumButton.addClickHandler(new UseEquation());
+
 		vpSum.add(labelSum);
-		vpSum.add(labelSumEq);
+		vpSum.add(eqAndButtonPanel);
 		vpSum.add(spSum);
 
 		// Assemble browserPanel
+		// //////////////////////
 		browserPanel.add(vpVar);
 		browserPanel.add(vpEq);
 		browserPanel.add(vpSum);
 
 		// Add styles
-		vpVar.setStylePrimaryName("gridBox");
-		vpEq.setStylePrimaryName("gridBox");
-		vpSum.setStylePrimaryName("gridBox");
-
-		spVar.setStylePrimaryName("sp");
-		spEq.setStylePrimaryName("sp");
-		spSum.setStylePrimaryName("sp");
+		// ///////////
+		spVar.setStylePrimaryName("scrollPanel");
+		spEq.setStylePrimaryName("scrollPanel");
+		spSum.setStylePrimaryName("scrollPanel");
 
 		labelVar.setStylePrimaryName("rowHeader");
 		labelEq.setStylePrimaryName("rowHeader");
 		labelSum.setStylePrimaryName("rowHeader");
+
+		vpVar.setStylePrimaryName("gridBox");
+		vpEq.setStylePrimaryName("gridBox");
+		vpSum.setStylePrimaryName("gridBox");
 
 		parseJQMath(varGrid.getElement());
 
@@ -161,8 +193,8 @@ public class EquationBrowserEntry implements EntryPoint {
 		varGrid.resizeRows(vars.length);
 
 		for (int i = 0; i < vars.length; i++) {
-			varHTML = "<span style=\"cursor:pointer;\">$" + vars[i] + "$ "
-					+ desc[i] + "</span>";
+			varHTML = "<span style=\"cursor:pointer;\">$" + vars[i]
+					+ "$ &nbsp; &nbsp; " + desc[i] + "</span>";
 			varGrid.setHTML(i, 0, varHTML);
 		}
 	}
@@ -179,13 +211,14 @@ public class EquationBrowserEntry implements EntryPoint {
 		String[] eqList = data.getEquationsByVariables(varSet);
 
 		eqGrid.resizeRows(eqList.length);
-
+		combineEqButton.setVisible(true);
 		sumGrid.clear();
+
 		for (int i = 0; i < eqList.length; i++) {
 			eqHTML = "<span style=\"cursor:pointer;width:10em;\">$" + eqList[i]
 					+ "$</span>";
 			HTML html = new HTML(eqHTML);
-			html.setTitle("<math alttext=\"5 = 6\"><mrow><mn>5</mn><mo>=</mo><mn>6</mn></mrow></math>");
+			html.getElement().setId(eqList[i]);
 			eqGrid.setWidget(i, 0, html);
 			eqGrid.getCellFormatter().setAlignment(i, 0,
 					HasHorizontalAlignment.ALIGN_CENTER,
@@ -207,11 +240,17 @@ public class EquationBrowserEntry implements EntryPoint {
 	 * fills the summary box
 	 */
 	void fillSummary(String equation) {
+
+		labelSumEq.setText("$" + equation + "$");
+		parseJQMath(labelSumEq.getElement());
+
+		sumButton.setVisible(true);
+
 		// fill variable summary
 		String[] variables;
 		try {
 			variables = data.getVariablesByEquation(equation);
-		} catch (Exception e) {
+		} catch (ElementNotFoundExeption e) {
 			e.printStackTrace();
 			return;
 		}
@@ -221,8 +260,11 @@ public class EquationBrowserEntry implements EntryPoint {
 		sumGrid.clear(true);
 		sumGrid.resizeRows(variables.length);
 
+		inputBinding.clear();
+
 		for (String var : variables) {
 			varHTML = "<span class=\"var\">$" + var + "$ </span>";
+
 			try {
 				descHTML = "<span>$"
 						+ data.getAttribute(data.FLAG_VARIABLE_DESCRIPTION, var)
@@ -232,10 +274,20 @@ public class EquationBrowserEntry implements EntryPoint {
 				descHTML = "<span></span>";
 			}
 
+			TextBox valueInput = new TextBox();
+			inputBinding.put(valueInput, var);
+			valueInput.setWidth("4em");
+
+			Button findButton = new Button("Find");
+			findButton.addClickHandler(new FindClickHandler(valueInput));
+
 			sumGrid.setHTML(row, 0, varHTML);
 			sumGrid.setHTML(row, 1, descHTML);
+			sumGrid.setWidget(row, 2, valueInput);
+			sumGrid.setWidget(row, 3, findButton);
 			row++;
 		}
+
 		parseJQMath(sumGrid.getElement());
 
 		// Fill varBox (algebra menu)
@@ -244,7 +296,30 @@ public class EquationBrowserEntry implements EntryPoint {
 		 * (int i = 0; i < sumGrid.getRowCount(); i++) {
 		 * scienceGadgets.varBox.addItem(variables[i]); }
 		 * parseJQMath(scienceGadgets.varBox.getElement());
-		 */}
+		 */
+
+	}
+
+	/**
+	 * JavaScript method in jqMath that would parse the given element and
+	 * display all equations in standard mathematical symbols. This will parse
+	 * every string surrounded by $'s
+	 * <p>
+	 * ex. $ K=1/2mÎ½^2 $
+	 * </p>
+	 * 
+	 * @param element
+	 *            - the web element to parse as math
+	 */
+	public static native void parseJQMath(Element element) /*-{
+		$wnd.M.parseMath(element);
+	}-*/;
+
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+	// Inner Classes
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
 
 	/**
 	 * Single selection handler for equation list
@@ -273,28 +348,25 @@ public class EquationBrowserEntry implements EntryPoint {
 
 				String equation = null;
 
-//				// For Algebra practice mode
-//				if (table.equals(algGrid)) {
-//					grid = algGrid;
-//					// For Science Mode
-//				} else if (table.equals(eqGrid)) {
-//
-//					 Element element = (Element)
-//					 clickedEl.getElementsByTagName(
-//					 "math").getItem(0);
-//					 if (element == null) {
-//					 Window.alert("Your browser may not show everything correctly. Try another browser");
-//					 element = (Element) clickedEl.getElementsByTagName(
-//					 "fmath").getItem(0);
-//					 }
-//					 equation = DOM.getElementAttribute(element, "alttext");
-//
-//					grid = eqGrid;
-//
-//					if (modeSelectSci.getValue()) {
-//						fillSummary(clickedEl.getInnerText());
-//					}
-//				}
+				// // For Algebra practice mode
+				// if (table.equals(algGrid)) {
+				// grid = algGrid;
+				// // For Science Mode
+				// } else if (table.equals(eqGrid)) {
+				//
+				// Element element = (Element)
+				// clickedEl.getElementsByTagName(
+				// "math").getItem(0);
+				// if (element == null) {
+				// Window.alert("Your browser may not show everything correctly. Try another browser");
+				// element = (Element) clickedEl.getElementsByTagName(
+				// "fmath").getItem(0);
+				// }
+				// equation = DOM.getElementAttribute(element, "alttext");
+				//
+				// grid = eqGrid;
+				//
+				// }
 
 				if (table != null) {
 					Widget cell = table.getWidget(clickedCell.getRowIndex(),
@@ -304,8 +376,17 @@ public class EquationBrowserEntry implements EntryPoint {
 					// labelSumEq.setText("$" + equation + "$");
 					// parseJQMath(EquationBrowserEntry.labelSumEq.getElement());
 
-					// TODO
-					EquationTransporter.transport(equation);
+					if (table.equals(algGrid)) { // For Algebra practice mode
+
+						EquationTransporter.transport(equation);
+
+					} else if (table.equals(eqGrid)) { // For Science Mode
+
+						if (modeSelectSci.getValue()) {
+							fillSummary(((Element) clickedEl.getFirstChild())
+									.getId());// clickedEl.getInnerText());
+						}
+					}
 				}
 			}
 		}
@@ -354,7 +435,7 @@ public class EquationBrowserEntry implements EntryPoint {
 				}
 				sumGrid.clear(true);
 				labelSumEq.setText("");
-				// TODO
+				sumButton.setVisible(false);
 				AlgOutEntry.algOut.clear(true);
 				onVarSelect(selectedVars);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
@@ -397,7 +478,6 @@ public class EquationBrowserEntry implements EntryPoint {
 
 		public void onClick(ClickEvent event) {
 			browserPanel.clear();
-			// TODO
 			AlgOutEntry.algDragPanel.clear();
 			AlgOutEntry.algOut.clear(true);
 			AlgOutEntry.algOut.resizeRows(0);
@@ -412,19 +492,54 @@ public class EquationBrowserEntry implements EntryPoint {
 		}
 	}
 
-	/**
-	 * JavaScript method in jqMath that would parse the given element and
-	 * display all equations in standard mathematical symbols. This will parse
-	 * every string surrounded by $'s
-	 * <p>
-	 * ex. $ K=1/2mÎ½^2 $
-	 * </p>
-	 * 
-	 * @param element
-	 *            - the web element to parse as math
-	 */
-	public static native void parseJQMath(Element element) /*-{
-		$wnd.M.parseMath(element);
-	}-*/;
+	class FindClickHandler implements ClickHandler {
+		TextBox textBox;
 
+		FindClickHandler(TextBox textBox) {
+			this.textBox = textBox;
+		}
+
+		@Override
+		public void onClick(ClickEvent arg0) {
+
+			boolean unknownExists = false;
+
+			for (TextBox box : inputBinding.keySet()) {
+				if (!box.isEnabled()) {
+					unknownExists = true;
+				}
+			}
+
+			if (unknownExists) {
+				Window.alert("There should only be one unknown variable to find");
+			} else {
+				textBox.setText("???");
+				textBox.setEnabled(false);
+			}
+		}
+	}
+
+	class UseEquation implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent arg0) {
+			// System.out.println("clicked");
+
+			for (TextBox box : inputBinding.keySet()) {
+				if (box.isEnabled()) {
+					try {
+						float value = Float.parseFloat(box.getText());
+						System.out
+								.println(inputBinding.get(box) + ": " + value);
+					} catch (NumberFormatException e) {
+						Window.alert("All values should be numbers (except for unknown variable to find)");
+					}
+
+				} else {
+					System.out.println(inputBinding.get(box) + ": ???");
+				}
+			}
+		}
+
+	}
 }
