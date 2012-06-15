@@ -9,7 +9,9 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -174,7 +176,8 @@ public class EquationBrowserEntry implements EntryPoint {
 			algGrid.setText(i, 0, algNameList[i]);
 			Label cell = new Label(algNameList[i]);
 			algGrid.setWidget(i, 0, cell);
-			cell.setTitle(algMLList[i]);
+			// cell.setTitle(algMLList[i]);
+			cell.getElement().setId(algMLList[i]);
 		}
 
 		browserPanel.add(vpAlg);
@@ -242,6 +245,13 @@ public class EquationBrowserEntry implements EntryPoint {
 	void fillSummary(String equation) {
 
 		labelSumEq.setText("$" + equation + "$");
+		String mlEq;
+		try {
+			mlEq = data.getAttribute(data.FLAG_EQUATION_ML, equation);
+			labelSumEq.getElement().setId(mlEq);
+		} catch (ElementNotFoundExeption e1) {
+			e1.printStackTrace();
+		}
 		parseJQMath(labelSumEq.getElement());
 
 		sumButton.setVisible(true);
@@ -348,40 +358,17 @@ public class EquationBrowserEntry implements EntryPoint {
 
 				String equation = null;
 
-				// // For Algebra practice mode
-				// if (table.equals(algGrid)) {
-				// grid = algGrid;
-				// // For Science Mode
-				// } else if (table.equals(eqGrid)) {
-				//
-				// Element element = (Element)
-				// clickedEl.getElementsByTagName(
-				// "math").getItem(0);
-				// if (element == null) {
-				// Window.alert("Your browser may not show everything correctly. Try another browser");
-				// element = (Element) clickedEl.getElementsByTagName(
-				// "fmath").getItem(0);
-				// }
-				// equation = DOM.getElementAttribute(element, "alttext");
-				//
-				// grid = eqGrid;
-				//
-				// }
-
 				if (table != null) {
 					Widget cell = table.getWidget(clickedCell.getRowIndex(),
 							clickedCell.getCellIndex());
-					equation = cell.getTitle();
 
-					// labelSumEq.setText("$" + equation + "$");
-					// parseJQMath(EquationBrowserEntry.labelSumEq.getElement());
+					equation = cell.getElement().getId();
 
 					if (table.equals(algGrid)) { // For Algebra practice mode
-
-						EquationTransporter.transport(equation);
+						// EquationTransporter.transport(new HTML(equation));
+						sendAlgebraEquation(equation);
 
 					} else if (table.equals(eqGrid)) { // For Science Mode
-
 						if (modeSelectSci.getValue()) {
 							fillSummary(((Element) clickedEl.getFirstChild())
 									.getId());// clickedEl.getInnerText());
@@ -390,6 +377,21 @@ public class EquationBrowserEntry implements EntryPoint {
 				}
 			}
 		}
+	}
+
+	private void sendAlgebraEquation(String equation) {
+		String randomizedEquation = equation;
+		String prevIteration = "";
+
+		while (!randomizedEquation.equals(prevIteration)) {
+			int posOrNeg = Random.nextBoolean() ? 1 : -1;
+			int randomNumber = posOrNeg * ((int) (Math.random() * 10) + 1);
+
+			prevIteration = randomizedEquation;
+			randomizedEquation = randomizedEquation.replaceFirst("<mi>"
+					+ "[a-z]" + "</mi>", "<mn>" + randomNumber + "</mn>");
+		}
+		EquationTransporter.transport(new HTML(randomizedEquation));
 	}
 
 	/**
@@ -485,9 +487,42 @@ public class EquationBrowserEntry implements EntryPoint {
 
 			if ("algebra".equals(mode)) {
 				createAlgBrowser();
+
+				// ////////////////////////////////////////////////
+				// uncomment to get the MathML form of all algebra equations
+				// /////////////////////////////////////////////////
+
+				// String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);
+				// for (int i = 0; i < eqList.length; i++) {
+				// HTML a = new HTML("$" + eqList[i] + "$");
+				// parseJQMath(a.getElement());
+				// System.out.println("/* "
+				// + i
+				// + " */{ \""
+				// + eqList[i].replace("\\", "\\\\")
+				// + "\", \""
+				// + a.getHTML().replace("\\", "\\\\")
+				// .replace("\"", "\\\"") + "\" },");
+				// }
+
 			} else if ("science".equals(mode)) {
 				createSciBrowser();
 				sumGrid.clear(true);
+
+				// ////////////////////////////////////////////////
+				// uncomment to get the MathML form of all science equations
+				// /////////////////////////////////////////////////
+
+				// String[] eqList = data.getAll(data.FLAG_EQUATION_JQMATH);
+				// for (int i = 0; i < eqList.length; i++) {
+				// HTML a = new HTML("$" + eqList[i] + "$");
+				// parseJQMath(a.getElement());
+				// System.out.println("/* " + i + " */{ \"" +
+				// eqList[i].replace("\\", "\\\\")
+				// + "\", \"" + a.getHTML().replace("\\", "\\\\").replace("\"",
+				// "\\\"")
+				// + "\" },");
+				// }
 			}
 		}
 	}
@@ -523,22 +558,27 @@ public class EquationBrowserEntry implements EntryPoint {
 
 		@Override
 		public void onClick(ClickEvent arg0) {
-			// System.out.println("clicked");
 
 			for (TextBox box : inputBinding.keySet()) {
 				if (box.isEnabled()) {
 					try {
 						float value = Float.parseFloat(box.getText());
-						System.out
-								.println(inputBinding.get(box) + ": " + value);
+						// System.out.println(inputBinding.get(box) + ": " +
+						// value);
 					} catch (NumberFormatException e) {
 						Window.alert("All values should be numbers (except for unknown variable to find)");
+						return;
 					}
 
 				} else {
-					System.out.println(inputBinding.get(box) + ": ???");
+					// System.out.println(inputBinding.get(box) + ": ???");
 				}
 			}
+			EquationTransporter.transport(new HTML(labelSumEq.getElement()
+					.getId()));
+			// TODO replace the variables with the proper values before
+			// transporting equation
+			Window.alert("Algebra in science mode is not very functional yet :(");
 		}
 
 	}

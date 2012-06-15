@@ -25,7 +25,7 @@ public class EquationTransporter {
 	private static JohnTree mljTree;
 
 	/**
-	 * 
+	 * Only works in firefox
 	 * @param equation - the equation as a jqmath String
 	 * @return - the Math ML as a String
 	 */
@@ -57,9 +57,11 @@ public class EquationTransporter {
 			Log.info( "----Initial tree, made----");
 
 			selectEquation(mathML,"firstComment");
+			
 		} catch (TopNodesNotFoundException e) {
 			e.printStackTrace();
 			Log.severe("TopNodesNotFound: the MathML must be standard and well formed");
+			
 		}			
 
 	}
