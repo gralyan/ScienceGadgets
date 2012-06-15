@@ -5,6 +5,8 @@ import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public class DropControllerMultiplication extends AbstractMathDropController {
 
+	private int answer;
+
 	public DropControllerMultiplication(Widget dropTarget) {
 		super(dropTarget);
 	}
@@ -12,14 +14,7 @@ public class DropControllerMultiplication extends AbstractMathDropController {
 	@Override
 	void onChange() {
 
-		// Parse source values
-		int sourceValue = Integer.parseInt(source.getJohnNode().toString());
-		// .getElementWrapped().getInnerText());
-		int targetValue = Integer.parseInt((target).getJohnNode().toString());
-		// .getElementWrapped().getInnerText()); 
-		int answer = sourceValue * targetValue;
-
-		change = targetValue + " * " + sourceValue + " = " + answer;
+		findChange(sourceNode);
 
 		// Main changes
 		targetNode.setString("" + answer);
@@ -39,6 +34,18 @@ public class DropControllerMultiplication extends AbstractMathDropController {
 
 	}
 
+	@Override
+	public String findChange(JohnNode sourceNode){
+
+		// Parse source values
+		int sourceValue = Integer.parseInt(sourceNode.toString());
+		int targetValue = Integer.parseInt(targetNode.toString());
+		answer = sourceValue * targetValue;
+		
+		change = targetValue + " * " + sourceValue + " = " + answer;
+		return change;
+	}
+	
 	@Override
 	String changeComment() {
 		return "Simplify: " + change;

@@ -1,11 +1,11 @@
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.Log;
-import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public class DropControllerAddition extends AbstractMathDropController {
+
+	private int answer;
 
 	public DropControllerAddition(Widget dropTarget) {
 		super(dropTarget);
@@ -13,14 +13,7 @@ public class DropControllerAddition extends AbstractMathDropController {
 
 	void onChange() {
 
-		// Parse source values
-		int sourceValue = Integer.parseInt(source.getJohnNode().toString());
-		// getElementWrapped().getInnerText());
-		int targetValue = Integer.parseInt((target).getJohnNode().toString());
-		// .getElementWrapped().getInnerText());
-		int answer = sourceValue + targetValue;
-
-		change = targetValue + " + " + sourceValue + " = " + answer;
+		findChange(sourceNode);
 
 		/*
 		 * Main changes
@@ -84,6 +77,19 @@ public class DropControllerAddition extends AbstractMathDropController {
 		}
 		sourceNode.remove();
 
+	}
+	
+	@Override
+	public String findChange(JohnNode sourceNode) {
+
+		// Parse source values
+		int sourceValue = Integer.parseInt(sourceNode.toString());
+		int targetValue = Integer.parseInt(targetNode.toString());
+		answer = sourceValue + targetValue;
+
+		change = targetValue + " + " + sourceValue + " = " + answer;
+		
+		return change;
 	}
 
 	@Override

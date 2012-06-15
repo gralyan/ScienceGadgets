@@ -96,3 +96,8 @@ body {
 .sky{
 	background-color: #87CEFA;
 }
+.dropDescriptor{
+	background-color: white;
+	border-color: fuchsia;
+	border-style: groove;
+}
