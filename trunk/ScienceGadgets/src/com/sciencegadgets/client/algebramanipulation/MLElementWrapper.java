@@ -202,16 +202,24 @@ public class MLElementWrapper extends HTML {
 			SelectedWrapperJoiner = this.getJoinedWrapper();
 
 			String style = null;
+			String changeDescription = "";
 			for (DropController dropC : wrapper.dragController.getDropList()) {
 				// Style of highlight on potential targets
 				if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition"
 						.equals(dropC.getClass().getName())) {
 					style = "selectedDropWrapperAddition";
+					changeDescription = "Simplify";
 				} else if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication"
 						.equals(dropC.getClass().getName())) {
 					style = "selectedDropWrapperMultiplication";
+					changeDescription = "Simplify";
+				} else if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerBothSides_Add"
+						.equals(dropC.getClass().getName())) {
+					style = "selectedDropWrapperDefault";
+					changeDescription = "Add to both sides";
 				} else {
 					style = "selectedDropWrapperDefault";
+					changeDescription = "???";
 				}
 
 				// Highlights drop targets
@@ -222,7 +230,7 @@ public class MLElementWrapper extends HTML {
 
 				// Descriptors
 				HTML dropDesc = dropCwrap.getDropDescriptor();
-				dropDesc.setText(((AbstractMathDropController) dropC)
+				dropDesc.setHTML(changeDescription+": </br>"+((AbstractMathDropController) dropC)
 						.findChange(getJohnNode()));
 				dropDesc.setStyleName("dropDescriptor");
 			}

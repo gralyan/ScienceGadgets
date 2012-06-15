@@ -2,9 +2,9 @@ package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
@@ -15,7 +15,7 @@ import com.sciencegadgets.client.equationtree.TreeCanvas;
 import com.sciencegadgets.client.equationtree.TreeEntry;
 
 public class EquationTransporter {
-	
+
 	public static TreeCanvas tCanvas;
 	private static DropControllAssigner dropAssigner;
 	public static LinkedList<AbstractMathDropController> dropControllers;
@@ -26,11 +26,13 @@ public class EquationTransporter {
 
 	/**
 	 * Only works in firefox
-	 * @param equation - the equation as a jqmath String
+	 * 
+	 * @param equation
+	 *            - the equation as a jqmath String
 	 * @return - the Math ML as a String
 	 */
 	public static String transport(String jqMath) {
-		//jqMath to MathML to transport
+		// jqMath to MathML to transport
 		HTML html = new HTML();
 		html.setHTML("$" + jqMath + "$");
 		parseJQMath(html.getElement());
@@ -45,24 +47,26 @@ public class EquationTransporter {
 	 * @param mathML
 	 */
 	public static void transport(HTML mathML) {
-		
+
 		try {
 			// Initial AlgOut line
 			AlgOutEntry.algOut.clear(true);
 			AlgOutEntry.algOut.resizeRows(0);
-			
-			Log.info( "----Initial tree, making----");
-			jTree= new JohnTree(mathML, true);
-			mathML = jTree.toMathML();
-			Log.info( "----Initial tree, made----");
 
-			selectEquation(mathML,"firstComment");
-			
+			Log.info("----Initial tree, making----");
+			jTree = new JohnTree(mathML, true);
+			mathML = jTree.toMathML();
+			Log.info("----Initial tree, made----");
+
+			selectEquation(mathML, "firstComment");
+
 		} catch (TopNodesNotFoundException e) {
+			Window.alert("This browser does not support this function");
 			e.printStackTrace();
 			Log.severe("TopNodesNotFound: the MathML must be standard and well formed");
-			
-		}			
+		} catch (JavaScriptException e) {
+			Log.severe("Input is not in correct form");
+		}
 
 	}
 
@@ -72,8 +76,8 @@ public class EquationTransporter {
 	 * @param mathML
 	 */
 	public static void selectEquation(HTML mathML, String changeComment) {
-		
-		Log.info("EqTrans: "+mathML.getHTML());
+
+		Log.info("EqTrans: " + mathML.getHTML());
 
 		// Make equation tree and draw it to the canvas
 		TreeEntry.apTree.clear();
@@ -81,31 +85,33 @@ public class EquationTransporter {
 			Log.info("____New Tree, making____");
 			jTree = new JohnTree(mathML, true);
 			tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
-			Log.info( "====New Tree, made====");
+			Log.info("====New Tree, made====");
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
-			Log.severe( "NEW TREE FAIL");
+			Log.severe("NEW TREE FAIL");
 		}
 
 		// ////////////////////////////////////////////////////////
-		// just to visualize the mathml, the box must be uncommented in TreeEntry also
+		// just to visualize the mathml, the box must be uncommented in
+		// TreeEntry also
 		// //////////////////////////////////////////
-//		TreeEntry.mlTree.clear();
-//		try {
-//			mljTree = new JohnTree(new HTML(mathML.getHTML()), false);
-//			mltCanvas = new TreeCanvas(TreeEntry.mlTree, mljTree);
-//		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
-//			e.printStackTrace();
-//		}
+		// TreeEntry.mlTree.clear();
+		// try {
+		// mljTree = new JohnTree(new HTML(mathML.getHTML()), false);
+		// mltCanvas = new TreeCanvas(TreeEntry.mlTree, mljTree);
+		// } catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
+		// e.printStackTrace();
+		// }
 		// ///////////////////////////////////////////////////////
 
-		AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers(), changeComment);
-		
+		AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers(),
+				changeComment);
+
 		DropControllAssigner.assign(jTree.getWrappers(), true);
 	}
 
 	public static native void parseJQMath(Element element) /*-{
-		$wnd.M.parseMath(element);
-	}-*/;
+															$wnd.M.parseMath(element);
+															}-*/;
 
 }
