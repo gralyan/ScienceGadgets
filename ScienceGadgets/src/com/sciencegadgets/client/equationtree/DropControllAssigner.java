@@ -6,9 +6,10 @@ import java.util.List;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerBothSides_Add;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Add;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Add;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Divide;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Multiply;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 import com.sciencegadgets.client.equationtree.JohnTree.Type;
 
@@ -28,8 +29,12 @@ public class DropControllAssigner {
 		wrapFor: for (MLElementWrapper wrap : wrappers) {
 			jNode = wrap.getJohnNode();
 			jParent = jNode.getParent();
-			DropType bothSideDropType = null;
+			List<JohnNode> siblings = jParent.getChildren();
 
+			DropType bothSideDropType = null;
+			DropType dropType = null;
+
+			
 			// Make sure jParent has a type
 			Type parentType = null;
 			try {
@@ -42,39 +47,45 @@ public class DropControllAssigner {
 				continue wrapFor;
 			}
 
+			
 			assignments: switch (jNode.getType()) {
 			case Number:
 //			case Variable:
 
-				List<JohnNode> siblings = jParent.getChildren();
-				DropType dropType = null;
 
 				sipmlifySiblings: switch (parentType) {
 				case Series:
-					dropType = DropType.AddSimplify;
-					bothSideDropType = DropType.AddBothSides;
+					dropType = DropType.Simplify_Add;
+					bothSideDropType = DropType.BothSides_Add;
 					break sipmlifySiblings;
 				case Term:
-					dropType = DropType.MultiplySimplify;
-					bothSideDropType = DropType.MultiplyBothSides;
+					dropType = DropType.Simplify_Multiply;
+					bothSideDropType = DropType.BothSides_Multiply;
 					break sipmlifySiblings;
-				}
-
-				for (JohnNode sib : siblings) {
-					if (Type.Number.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
-
-						addDropTarget(wrap, sib.getWrapper(), dropType,
-								hasJoiner);
-					}
+				case Fraction:
+//					dropType = 
 				}
 			}
 			
+			// Give simplify drop targets
+			for (JohnNode sib : siblings) {
+				if (Type.Number.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
+					
+					addDropTarget(wrap, sib.getWrapper(), dropType,
+							hasJoiner);
+				}
+			}
+			
+			//Give bothSides drop targets
 			if (bothSideDropType != null) {
 				JohnTree tree = jNode.getTree();
 				if (tree.getLeftSide().equals(jParent)) {
+					
 					addDropTarget(wrap, tree.getRightSide().getWrapper(),
 							bothSideDropType, hasJoiner);
+					
 				} else if (tree.getRightSide().equals(jParent)) {
+					
 					addDropTarget(wrap, tree.getLeftSide().getWrapper(),
 							bothSideDropType, hasJoiner);
 				}
@@ -89,17 +100,25 @@ public class DropControllAssigner {
 		AbstractMathDropController dropCtrl = null;
 
 		switch (dropType) {
-		case AddSimplify:
-			dropCtrl = new DropControllerAddition(target);
+		case Simplify_Add:
+			dropCtrl = new DropController_Simplify_Add(target);
 			break;
-		case MultiplySimplify:
-			dropCtrl = new DropControllerMultiplication(target);
+		case Simplify_Multiply:
+			dropCtrl = new DropController_Simplify_Multiply(target);
 			break;
-		case AddBothSides:
-			dropCtrl = new DropControllerBothSides_Add(target);
+		case Simplify_Divide:
+			dropCtrl = new DropController_Simplify_Divide(target);
 			break;
-		case MultiplyBothSides:
-			dropCtrl = new DropControllerBothSides_Add(target);
+		case BothSides_Add:
+			dropCtrl = new DropController_BothSides_Add(target);
+			break;
+		case BothSides_Multiply:
+			//TODO
+//			dropCtrl = new DropController_BothSides_Multiply(target);
+			break;
+		case BothSides_Divide:
+			//TODO
+//			dropCtrl = new DropController_BothSides_Divide(target);
 			break;
 		}
 
@@ -118,6 +137,6 @@ public class DropControllAssigner {
 	}
 
 	public static enum DropType {
-		AddSimplify, MultiplySimplify, AddBothSides, MultiplyBothSides;
+		Simplify_Add, Simplify_Multiply, Simplify_Divide, BothSides_Add, BothSides_Multiply, BothSides_Divide;
 	}
 }

@@ -61,11 +61,11 @@ public class EquationTransporter {
 			selectEquation(mathML, "firstComment");
 
 		} catch (TopNodesNotFoundException e) {
-			Window.alert("This browser does not support this function");
+			Window.alert("Either this browser does not support this function, or the equation is not in the form (side)=(side)");
 			e.printStackTrace();
 			Log.severe("TopNodesNotFound: the MathML must be standard and well formed");
 		} catch (JavaScriptException e) {
-			Log.severe("Input is not in correct form");
+			Log.severe("Input must be in form (side)=(side)");
 		}
 
 	}

@@ -327,12 +327,12 @@ public class TreeCanvas extends DrawingArea {
 		equalsBottom.setFillColor("black");
 
 		Line verticalLine = new Line(sideLengthLeft,
-				equalsBottom.getAbsoluteTop(), sideLengthLeft, this.getHeight());
+				equalsBottom.getY()+ topPad*2, sideLengthLeft, this.getHeight());
 
 		Group split = new Group();
 		split.add(equalsTop);
 		split.add(equalsBottom);
-		// split.add(verticalLine);
+		 split.add(verticalLine);
 
 		this.add(split);
 
@@ -352,7 +352,7 @@ public class TreeCanvas extends DrawingArea {
 			front.lineRelativelyTo(width, 0);// right
 			front.curveRelativelyTo(spline, 0, spline, -height, 0, -height);// up
 			front.close();
-			front.setFillColor("orange");
+			front.setFillColor("yellow");
 
 			Path top = new Path(x, y);// Box Top, starts bottom left corner
 			top.lineRelativelyTo(skew, -skew);// up to the right
@@ -374,12 +374,11 @@ public class TreeCanvas extends DrawingArea {
 			break;
 
 		case Series:
-			Group ruler = new Group();
 
 			Rectangle rectangle = new Rectangle(x, y - pad, width,
 					height);
 			rectangle.setFillColor("yellow");
-			ruler.add(rectangle);
+			shape.add(rectangle);
 
 			int tickCount = rectangle.getWidth() / pad;
 			for (int i = 0; i < tickCount; i++) {
@@ -393,9 +392,8 @@ public class TreeCanvas extends DrawingArea {
 					tickHeight = pad * 2 / 3;
 				}
 				Line tick = new Line(xPos, y - pad, xPos, y - pad + tickHeight);
-				ruler.add(tick);
+				shape.add(tick);
 			}
-			shape.add(ruler);
 			break;
 
 		case Number:
@@ -430,23 +428,32 @@ public class TreeCanvas extends DrawingArea {
 
 		case Fraction:
 
-			// TODO
-			Rectangle frac = new Rectangle(x + width / 2, y + height / 2, width,
-					height);
-			shape.add(frac);
+			Ellipse pieTop = new Ellipse(x + width / 2, y + height / 2, width,
+					height/2);
+			pieTop.setFillColor("orange");
+			
+			Path piePan = new Path(x-width/2, y+height/2);
+			piePan.lineRelativelyTo(width/2, height);
+			piePan.lineRelativelyTo(width, 0);
+			piePan.lineRelativelyTo(width/2, -height);
+			piePan.close();
+			piePan.setFillColor("silver");
+			
+			shape.add(piePan);
+			shape.add(pieTop);
 			break;
 
 		case Exponent:
 
 			// TODO
-			Rectangle exp = new Rectangle(x + width / 2, y + height / 2, width,
+			Rectangle exp = new Rectangle(x, y + height, width,
 					height);
 			shape.add(exp);
 			break;
 
 		case Function:
 			// TODO
-			Rectangle fun = new Rectangle(x + width / 2, y + height / 2, width,
+			Rectangle fun = new Rectangle(x + width, y + height, width,
 					height);
 			shape.add(fun);
 			break;

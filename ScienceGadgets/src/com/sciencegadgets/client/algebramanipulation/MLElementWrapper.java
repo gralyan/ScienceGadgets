@@ -201,37 +201,50 @@ public class MLElementWrapper extends HTML {
 			selectedWrapper = this;
 			SelectedWrapperJoiner = this.getJoinedWrapper();
 
-			String style = null;
-			String changeDescription = "";
+			String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
+			String changeDesc = "";
+			
 			for (DropController dropC : wrapper.dragController.getDropList()) {
+
+				String className = dropC.getClass().getName();
+				String change = ((AbstractMathDropController) dropC)
+						.findChange(getJohnNode());
+
 				// Style of highlight on potential targets
-				if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerAddition"
-						.equals(dropC.getClass().getName())) {
-					style = "selectedDropWrapperAddition";
-					changeDescription = "Simplify";
-				} else if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerMultiplication"
-						.equals(dropC.getClass().getName())) {
-					style = "selectedDropWrapperMultiplication";
-					changeDescription = "Simplify";
-				} else if ("com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControllerBothSides_Add"
-						.equals(dropC.getClass().getName())) {
-					style = "selectedDropWrapperDefault";
-					changeDescription = "Add to both sides";
+				if ((path + "Simplify_Add").equals(className)) {
+					changeDesc = "<b>Simplify</b> <br/>" + change;
+					
+				} else if ((path + "Simplify_Multiply").equals(className)) {
+					changeDesc = "<b>Simplify</b> <br/>" + change;
+					
+				} else if ((path + "Simplify_Divide").equals(className)) {
+					changeDesc = "<b>Simplify</b> <br/>" + change;
+
+				} else if ((path + "BothSides_Add").equals(className)) {
+					changeDesc = "<b>Add &nbsp; " + change
+							+ "</b><br/>to both sides";
+					
+				} else if ((path + "BothSides_Multiply").equals(className)) {
+					changeDesc = "<b>Multiply &nbsp; " + change
+							+ "</b><br/>with both sides";
+					
+				} else if ((path + "BothSides_Divide").equals(className)) {
+					changeDesc = "<b>Divide &nbsp; " + change
+							+ "</b><br/>on both sides";
+
 				} else {
-					style = "selectedDropWrapperDefault";
-					changeDescription = "???";
+					changeDesc = "???";
 				}
 
 				// Highlights drop targets
 				MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
 						.getDropTarget());
-				dropC.getDropTarget().setStyleName(style);
-				dropCwrap.getJoinedWrapper().setStyleName(style);
+				dropC.getDropTarget().setStyleName("selectedDropWrapper");
+				dropCwrap.getJoinedWrapper().setStyleName("selectedDropWrapper");
 
 				// Descriptors
 				HTML dropDesc = dropCwrap.getDropDescriptor();
-				dropDesc.setHTML(changeDescription+": </br>"+((AbstractMathDropController) dropC)
-						.findChange(getJohnNode()));
+				dropDesc.setHTML(changeDesc);
 				dropDesc.setStyleName("dropDescriptor");
 			}
 

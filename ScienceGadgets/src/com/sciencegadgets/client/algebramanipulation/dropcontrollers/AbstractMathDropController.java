@@ -80,8 +80,8 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 
 	abstract void onChange();
 	
-	abstract String changeComment();
-	
 	public abstract String findChange(JohnNode sourceNode);
+	
+	abstract String changeComment();
 
 }
