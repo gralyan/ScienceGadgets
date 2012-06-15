@@ -5,9 +5,9 @@ import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 import com.sciencegadgets.client.equationtree.JohnTree.Type;
 
-public class DropControllerBothSides_Add extends AbstractMathDropController {
+public class DropController_BothSides_Add extends AbstractMathDropController {
 
-	public DropControllerBothSides_Add(Widget dropTarget) {
+	public DropController_BothSides_Add(Widget dropTarget) {
 		super(dropTarget);
 	}
 

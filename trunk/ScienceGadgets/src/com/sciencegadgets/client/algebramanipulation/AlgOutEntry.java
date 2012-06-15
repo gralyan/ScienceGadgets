@@ -65,8 +65,8 @@ public class AlgOutEntry implements EntryPoint {
 		algMenuPanel.add(toBothSides);
 
 		// Assemble Algebra panel
-		spAlg.setStyleName("algebraPanel");
-		algOut.setStyleName("algOutPanel");
+		spAlg.setStyleName("algOutScrollPanel");
+		algOut.setStyleName("algOutGrid");
 
 	}
 
