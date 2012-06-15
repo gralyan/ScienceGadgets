@@ -34,13 +34,9 @@ public class DropControllerBothSides_Add extends AbstractMathDropController {
 		}
 
 		sourceNode.remove();
+		
+		findChange(sourceNode);
 
-		// Change sign on opposite side
-		if (sourceNode.toString().startsWith("-")) {
-			change = sourceNode.toString().replaceFirst("-", "");
-		} else {
-			change = "-" + sourceNode.toString();
-		}
 		sourceNode.setString(change);
 
 		// Move nodes to other side
@@ -64,6 +60,18 @@ public class DropControllerBothSides_Add extends AbstractMathDropController {
 			encasingSeriese.add(sourceNode);
 		}
 
+	}
+
+	@Override
+	public String findChange(JohnNode sourceNode){
+		// Change sign on opposite side
+		if (sourceNode.toString().startsWith("-")) {
+			change = sourceNode.toString().replaceFirst("-", "");
+		} else {
+			change = "-" + sourceNode.toString();
+		}
+		
+		return change;
 	}
 
 	@Override

@@ -216,6 +216,7 @@ public class TreeCanvas extends DrawingArea {
 				wrap.setHeight(boxHeight + "px");
 				wrap.setWidth(boxWidth + "px");
 				panel.add(wrap, childLeft - pad, childTop);
+				panel.add(wrap.getDropDescriptor(), childLeft - pad, childTop + boxHeight);
 			}
 
 			if (child.getChildCount() > 0) {
@@ -272,12 +273,6 @@ public class TreeCanvas extends DrawingArea {
 		int rLeft = sideLengthLeft + sideLengthRight / 2;
 
 		// Left - Add top level wrappers
-		Rectangle lbox = new Rectangle(lLeft - pad, 0, lWidth + 2 * pad,
-				lHeight * 4 / 3);
-		lbox.setFillColor(palette.get(jTree.getLeftSide().getType()));
-		lbox.setStrokeOpacity(0);
-		this.add(lbox);
-
 		int lboxLeft = lLeft - pad;
 		int lboxTop = topPad;
 		int lboxWidth = lWidth + 2 * pad;
@@ -291,9 +286,10 @@ public class TreeCanvas extends DrawingArea {
 		if (jTree.getLeftSide().getWrapper() != null) {
 			MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
 					.getJoinedWrapper();
-			lWrap.setHeight(lbox.getHeight() + "px");
-			lWrap.setWidth(lbox.getWidth() + "px");
+			lWrap.setHeight(lboxHeight + "px");
+			lWrap.setWidth(lboxWidth + "px");
 			panel.add(lWrap, lLeft - pad, topPad);
+			panel.add(lWrap.getDropDescriptor(), lLeft - pad, topPad + lboxHeight);
 		}
 
 		// Right - Add top level wrappers
@@ -312,9 +308,10 @@ public class TreeCanvas extends DrawingArea {
 			rWrap.setHeight(rboxHeight + "px");
 			rWrap.setWidth(rboxWidth + "px");
 			panel.add(rWrap, rLeft - pad, topPad);
+			panel.add(rWrap.getDropDescriptor(), rLeft - pad, topPad + rboxHeight);
 		}
 
-		int[] a = { lbox.getHeight() + topPad, rboxHeight + topPad };
+		int[] a = { lboxHeight + topPad, rboxHeight + topPad };
 		return a;
 	}
 

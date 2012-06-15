@@ -2,14 +2,11 @@ package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Log;
-import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
-import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public abstract class AbstractMathDropController extends AbstractDropController {
@@ -17,11 +14,13 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 	protected MLElementWrapper target;
 	protected JohnNode sourceNode;
 	protected JohnNode targetNode;
-	protected String change = "";
+	public String change = "";
 
 	public AbstractMathDropController(Widget dropTarget) {
 		super(dropTarget);
 		target = (MLElementWrapper) dropTarget;
+		targetNode = target.getJohnNode();
+
 	}
 
 	@Override
@@ -29,7 +28,6 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 
 		source = ((MLElementWrapper) context.draggable);
 		sourceNode = source.getJohnNode();
-		targetNode = target.getJohnNode();
 		JohnNode sourceParent = sourceNode.getParent();
 
 		/**
@@ -81,6 +79,9 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 	}
 
 	abstract void onChange();
+	
 	abstract String changeComment();
+	
+	public abstract String findChange(JohnNode sourceNode);
 
 }

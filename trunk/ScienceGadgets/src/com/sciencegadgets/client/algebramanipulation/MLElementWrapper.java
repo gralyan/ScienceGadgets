@@ -1,16 +1,10 @@
 package com.sciencegadgets.client.algebramanipulation;
 
-import javax.swing.RootPaneContainer;
-
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DragStartHandler;
-import com.google.gwt.event.dom.client.HasDragStartHandlers;
-import com.google.gwt.event.dom.client.HasMouseOutHandlers;
-import com.google.gwt.event.dom.client.HasMouseOverHandlers;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -18,10 +12,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.JohnTree;
 import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
@@ -39,6 +30,7 @@ public class MLElementWrapper extends HTML {
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
 	private JohnNode johnNode;
+	private HTML dropDescriptor = new HTML();
 
 	private static MLElementWrapper selectedWrapper;
 	private static MLElementWrapper SelectedWrapperJoiner;
@@ -76,6 +68,10 @@ public class MLElementWrapper extends HTML {
 			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, false);
 			this.joinedWrapper.joinedWrapper = this;
 		}
+	}
+
+	public HTML getDropDescriptor() {
+		return dropDescriptor;
 	}
 
 	public Element getElementWrapped() {
@@ -219,17 +215,16 @@ public class MLElementWrapper extends HTML {
 				}
 
 				// Highlights drop targets
+				MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
+						.getDropTarget());
 				dropC.getDropTarget().setStyleName(style);
-				((MLElementWrapper) dropC.getDropTarget()).getJoinedWrapper()
-						.setStyleName(style);
-				//TODO
-//				MLElementWrapper dropCwrap = ((MLElementWrapper) dropC.getDropTarget());
-//				int top = dropCwrap.getAbsoluteTop();
-//				int left = dropCwrap.getAbsoluteLeft();
-//				
-//				HTML dropDescription = new HTML("Drop Desc");
-//				dropDescription.getElement().setClassName("description");
-//				RootPanel.get().add(dropDescription, left, top);
+				dropCwrap.getJoinedWrapper().setStyleName(style);
+
+				// Descriptors
+				HTML dropDesc = dropCwrap.getDropDescriptor();
+				dropDesc.setText(((AbstractMathDropController) dropC)
+						.findChange(getJohnNode()));
+				dropDesc.setStyleName("dropDescriptor");
 			}
 
 		} else {
@@ -246,12 +241,18 @@ public class MLElementWrapper extends HTML {
 				String[] styles = dropC.getDropTarget().getStyleName()
 						.split(" ");
 
+				MLElementWrapper dropCwrap = (MLElementWrapper) dropC
+						.getDropTarget();
+
 				for (String style : styles) {
 					if (style.startsWith("selectedDropWrapper")) {
-						dropC.getDropTarget().removeStyleName(style);
-						((MLElementWrapper) dropC.getDropTarget())
-								.getJoinedWrapper().removeStyleName(style);
+						dropCwrap.removeStyleName(style);
+						dropCwrap.getJoinedWrapper().removeStyleName(style);
 					}
+
+					HTML dropDesc = dropCwrap.getDropDescriptor();
+					dropDesc.setText("");
+					dropDesc.removeStyleName("dropDescriptor");
 				}
 			}
 		}
