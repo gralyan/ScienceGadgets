@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.algebramanipulation;
 
+import javax.swing.RootPaneContainer;
+
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
@@ -17,6 +19,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.JohnTree;
@@ -219,10 +222,18 @@ public class MLElementWrapper extends HTML {
 				dropC.getDropTarget().setStyleName(style);
 				((MLElementWrapper) dropC.getDropTarget()).getJoinedWrapper()
 						.setStyleName(style);
+				//TODO
+//				MLElementWrapper dropCwrap = ((MLElementWrapper) dropC.getDropTarget());
+//				int top = dropCwrap.getAbsoluteTop();
+//				int left = dropCwrap.getAbsoluteLeft();
+//				
+//				HTML dropDescription = new HTML("Drop Desc");
+//				dropDescription.getElement().setClassName("description");
+//				RootPanel.get().add(dropDescription, left, top);
 			}
 
 		} else {
-			// Removes style: selectedWrapper
+			// Removes style - selectedWrapper
 			wrapper.getElement().removeAttribute("id");
 			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
 

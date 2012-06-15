@@ -5,14 +5,11 @@ import java.util.List;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Group;
-import org.vaadin.gwtgraphics.client.Image;
 import org.vaadin.gwtgraphics.client.Line;
 import org.vaadin.gwtgraphics.client.VectorObject;
-import org.vaadin.gwtgraphics.client.shape.Circle;
 import org.vaadin.gwtgraphics.client.shape.Ellipse;
 import org.vaadin.gwtgraphics.client.shape.Path;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
-import org.vaadin.gwtgraphics.client.shape.path.CurveTo;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -31,7 +28,9 @@ public class TreeCanvas extends DrawingArea {
 	private int sideLengthRight;
 	private HashMap<JohnTree.Type, String> palette;
 	private int pad = 5;
-	private String nodePicUrl = "http://www.lanxuan.org/download/openclipart/calloutscloud.svg.SVG";
+	private int topPad = 10;
+	// private String nodePicUrl =
+	// "http://www.lanxuan.org/download/openclipart/calloutscloud.svg.SVG";
 
 	// The number of members in each row
 	private byte[] leftLayerCounts;
@@ -126,6 +125,8 @@ public class TreeCanvas extends DrawingArea {
 
 		panel.add(this);
 
+		splitSidesInMiddle();
+
 		// Add HTML widgets of top level of each side
 		int[] topLayerHeights = addFirstLayer(jTree);
 
@@ -176,7 +177,7 @@ public class TreeCanvas extends DrawingArea {
 				// Shift to right side
 				placement += sideLengthLeft;
 			}
-			// TODO gravity
+			// TODO comment/uncomment for gravity
 			placement = (placement + parentX) / 2; // Add gravity towards
 			// parent node
 			placement += childSpace / 4;// padding
@@ -194,7 +195,7 @@ public class TreeCanvas extends DrawingArea {
 			int lineY = childTop;
 
 			int boxLeft = childLeft - pad;
-			int boxTop = childTop - pad;
+			int boxTop = childTop;
 			int boxWidth = childHTML.getOffsetWidth() + 2 * pad;
 			int boxHeight = childHTML.getOffsetHeight() * 4 / 3;
 
@@ -212,7 +213,7 @@ public class TreeCanvas extends DrawingArea {
 
 			if (child.getWrapper() != null) {
 				MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
-				wrap.setHeight(boxHeight * 1.5 + "px");
+				wrap.setHeight(boxHeight + "px");
 				wrap.setWidth(boxWidth + "px");
 				panel.add(wrap, childLeft - pad, childTop);
 			}
@@ -255,13 +256,13 @@ public class TreeCanvas extends DrawingArea {
 	}
 
 	private int[] addFirstLayer(JohnTree jTree) {
-		
+
 		HTML lHTML = jTree.getLeftSide().toMathML();
 		HTML rHTML = jTree.getRightSide().toMathML();
 
-		panel.add(lHTML, sideLengthLeft / 2, 0);
-		panel.add(new HTML("="), sideLengthLeft, 0);
-		panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), 0);
+		panel.add(lHTML, sideLengthLeft / 2, topPad);
+		// panel.add(new HTML("="), sideLengthLeft, topPad);
+		panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), topPad);
 
 		int lHeight = lHTML.getOffsetHeight();
 		int lWidth = lHTML.getOffsetWidth();
@@ -278,12 +279,13 @@ public class TreeCanvas extends DrawingArea {
 		this.add(lbox);
 
 		int lboxLeft = lLeft - pad;
-		int lboxTop = 0;
+		int lboxTop = topPad;
 		int lboxWidth = lWidth + 2 * pad;
 		int lboxHeight = lHeight * 4 / 3;
 
-		VectorObject lNodeShape = createNodeShape(jTree.getLeftSide().getType(), lboxLeft,
-				lboxTop, lboxWidth, lboxHeight);
+		VectorObject lNodeShape = createNodeShape(
+				jTree.getLeftSide().getType(), lboxLeft, lboxTop, lboxWidth,
+				lboxHeight);
 		this.add(lNodeShape);
 
 		if (jTree.getLeftSide().getWrapper() != null) {
@@ -291,29 +293,52 @@ public class TreeCanvas extends DrawingArea {
 					.getJoinedWrapper();
 			lWrap.setHeight(lbox.getHeight() + "px");
 			lWrap.setWidth(lbox.getWidth() + "px");
-			panel.add(lWrap, lLeft - pad, 0);
+			panel.add(lWrap, lLeft - pad, topPad);
 		}
 
 		// Right - Add top level wrappers
 		int rboxLeft = rLeft - pad;
-		int rboxTop = 0;
+		int rboxTop = topPad;
 		int rboxWidth = rWidth + 2 * pad;
 		int rboxHeight = rHeight * 4 / 3;
 
-		VectorObject rNodeShape = createNodeShape(jTree.getRightSide().getType(), rboxLeft,
-				rboxTop, rboxWidth, rboxHeight);
+		VectorObject rNodeShape = createNodeShape(jTree.getRightSide()
+				.getType(), rboxLeft, rboxTop, rboxWidth, rboxHeight);
 		this.add(rNodeShape);
-		
+
 		if (jTree.getRightSide().getWrapper() != null) {
 			MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
 					.getJoinedWrapper();
 			rWrap.setHeight(rboxHeight + "px");
 			rWrap.setWidth(rboxWidth + "px");
-			panel.add(rWrap, rLeft - pad, 0);
+			panel.add(rWrap, rLeft - pad, topPad);
 		}
 
-		int[] a = { lbox.getHeight(), rboxHeight };
+		int[] a = { lbox.getHeight() + topPad, rboxHeight + topPad };
 		return a;
+	}
+
+	private void splitSidesInMiddle() {
+
+		Rectangle equalsTop = new Rectangle(sideLengthLeft - topPad, topPad,
+				topPad * 2, topPad / 2);
+		Rectangle equalsBottom = new Rectangle(equalsTop.getX(),
+				equalsTop.getY() + topPad, equalsTop.getWidth(),
+				equalsTop.getHeight());
+
+		equalsTop.setFillColor("black");
+		equalsBottom.setFillColor("black");
+
+		Line verticalLine = new Line(sideLengthLeft,
+				equalsBottom.getAbsoluteTop(), sideLengthLeft, this.getHeight());
+
+		Group split = new Group();
+		split.add(equalsTop);
+		split.add(equalsBottom);
+		// split.add(verticalLine);
+
+		this.add(split);
+
 	}
 
 	private Group createNodeShape(Type type, int x, int y, int width, int height) {
@@ -330,7 +355,7 @@ public class TreeCanvas extends DrawingArea {
 			front.lineRelativelyTo(width, 0);// right
 			front.curveRelativelyTo(spline, 0, spline, -height, 0, -height);// up
 			front.close();
-			front.setFillColor("yellow");
+			front.setFillColor("orange");
 
 			Path top = new Path(x, y);// Box Top, starts bottom left corner
 			top.lineRelativelyTo(skew, -skew);// up to the right
@@ -352,17 +377,34 @@ public class TreeCanvas extends DrawingArea {
 			break;
 
 		case Series:
+			Group ruler = new Group();
 
-			Rectangle rectangle = new Rectangle(x, y, width, height);
+			Rectangle rectangle = new Rectangle(x, y - pad, width,
+					height);
 			rectangle.setFillColor("yellow");
+			ruler.add(rectangle);
 
-			shape.add(rectangle);
+			int tickCount = rectangle.getWidth() / pad;
+			for (int i = 0; i < tickCount; i++) {
+				int xPos = x + (pad * i);
+				int tickHeight;
+				if (i % 8 == 0) {
+					tickHeight = pad * 3 / 2;
+				} else if (i % 4 == 0) {
+					tickHeight = pad;
+				} else {
+					tickHeight = pad * 2 / 3;
+				}
+				Line tick = new Line(xPos, y - pad, xPos, y - pad + tickHeight);
+				ruler.add(tick);
+			}
+			shape.add(ruler);
 			break;
 
 		case Number:
 
 			Ellipse ellipseNum = new Ellipse(x + width / 2, y + height / 2,
-					width, height);
+					width*2/3, height*2/3);
 			ellipseNum.setFillColor("lime");
 
 			shape.add(ellipseNum);
@@ -370,17 +412,29 @@ public class TreeCanvas extends DrawingArea {
 
 		case Variable:
 
-			Ellipse ellipseVar = new Ellipse(x + width / 2, y + height / 2,
-					width, height);
-			ellipseVar.setFillColor("green");
+			// Starts at top left inner corner
+			Path star = new Path(x, y);// ( 0, 50),
+			star.lineRelativelyTo(10, -30);
+			star.lineRelativelyTo(10, 30);// ( 10, 20),
+			star.lineRelativelyTo(30, 0);// ( 40, 20),
+			star.lineRelativelyTo(-20, 20);// ( 20, 0),
+			star.lineRelativelyTo(10, 30);// ( 30, -30),
+			star.lineRelativelyTo(-30, -20);// ( 0, -10),
+			star.lineRelativelyTo(-30, 20);// (-30, -30),
+			star.lineRelativelyTo(10, -30);// (-20, 0),
+			star.lineRelativelyTo(-20, -20);// (-40, 20),
+			// star.lineRelativelyTo(30, 0);// (-10, 20),
+			star.close();
 
-			shape.add(ellipseVar);
+			star.setFillColor("red");
+
+			shape.add(star);
 			break;
 
 		case Fraction:
 
 			// TODO
-			Ellipse frac = new Ellipse(x + width / 2, y + height / 2, width,
+			Rectangle frac = new Rectangle(x + width / 2, y + height / 2, width,
 					height);
 			shape.add(frac);
 			break;
@@ -388,14 +442,14 @@ public class TreeCanvas extends DrawingArea {
 		case Exponent:
 
 			// TODO
-			Ellipse exp = new Ellipse(x + width / 2, y + height / 2, width,
+			Rectangle exp = new Rectangle(x + width / 2, y + height / 2, width,
 					height);
 			shape.add(exp);
 			break;
 
 		case Function:
 			// TODO
-			Ellipse fun = new Ellipse(x + width / 2, y + height / 2, width,
+			Rectangle fun = new Rectangle(x + width / 2, y + height / 2, width,
 					height);
 			shape.add(fun);
 			break;

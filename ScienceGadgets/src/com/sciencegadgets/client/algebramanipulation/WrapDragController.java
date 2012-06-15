@@ -40,9 +40,11 @@ public class WrapDragController extends PickupDragController {
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
 //		wrap.remove(wrap.getWidget());
 		wrap.setText("");
+		
 		// TODO This should clear the drop target highlights as well as the
 		// wrapper being dragged. The drop targets aren't being cleared.
 		wrap.select(false);
+		
 	}
 
 	Set<DropController> getDropList() {
