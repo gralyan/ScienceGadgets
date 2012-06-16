@@ -63,7 +63,8 @@ public class DropControllAssigner {
 					bothSideDropType = DropType.BothSides_Multiply;
 					break sipmlifySiblings;
 				case Fraction:
-//					dropType = 
+					dropType = DropType.Simplify_Divide;
+					break sipmlifySiblings;
 				}
 			}
 			
