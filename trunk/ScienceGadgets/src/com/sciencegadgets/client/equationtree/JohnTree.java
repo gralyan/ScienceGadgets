@@ -13,6 +13,7 @@ import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
+import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
 
 public class JohnTree {
 
@@ -109,7 +110,6 @@ public class JohnTree {
 	}
 
 	public class JohnNode {
-		// encapsulated dom node
 		private Node domNode;
 		private Type type;
 		private String symbol;
@@ -119,14 +119,28 @@ public class JohnTree {
 		private List<JohnNode> children = new LinkedList<JohnNode>();
 		private Boolean isHidden = false;
 
-		public JohnNode(Node domNode, String tag, Type type, String symbol) {
+		/**
+		 * Construct node for existing domNode and appropriate info
+		 * 
+		 * @param domNode
+		 *            - existing MathMl node
+		 * @param tag
+		 * @param type
+		 * @param symbol
+		 */
+		private JohnNode(Node domNode, String tag, Type type, String symbol) {
 			this.domNode = domNode;
 			this.tag = tag;
 			this.type = type;
 			this.symbol = symbol;
 		}
 
-		public JohnNode(Node node) {
+		/**
+		 * Wrap existing MathML node
+		 * 
+		 * @param node
+		 */
+		private JohnNode(Node node) {
 			domNode = node;
 			tag = node.getNodeName();
 			type = null;
@@ -134,49 +148,106 @@ public class JohnTree {
 		}
 
 		/**
-		 * Adds a {@link Node} to the {@link JohnTree} by creating a new
-		 * {@link JohnNode}
+		 * Creates a new MathML DOM node which should be added into the MathML
+		 * in the same position this node is added to the tree. It can be found
+		 * with <b>getDomNode()</b>;
 		 * 
+		 * @param tag
+		 *            - MathML tag
+		 * @param type
+		 *            - type of node
+		 * @param symbol
+		 *            - inner text
 		 */
-		// public void add(Node node, MLElementWrapper wrap) {
-		// add(new JohnNode(node, wrap));
-		// }
+		private JohnNode(String tag, Type type, String symbol) {
+			com.google.gwt.user.client.Element newDomNode = DOM
+					.createElement(tag);
 
-		public void add(JohnNode johnNode) {
-			children.add(johnNode);
-			johnNode.parent = this;
+			this.domNode = newDomNode;
+			this.tag = tag;
+			this.type = type;
+			this.symbol = symbol;
+			
+			Log.severe("tag: "+tag);
+			
 		}
 
+		/**
+		 * Adds a node between this node and its parent, encasing this branch of
+		 * the tree in a new node. <br/>
+		 * The text will be it's children's, to set a new text use:
+		 * <p>
+		 * <b>[encasing node].setString(String)</b>
+		 * </p>
+		 * 
+		 * @param tag
+		 *            - the tag of the new node
+		 * @param type
+		 *            - the type of the new node
+		 * @return - encasing node
+		 */
+		public JohnNode encase(String tag, Type type) {
+			JohnNode encasing = new JohnNode(tag, type, this.toString());
+			this.getParent().add(this.getIndex(), encasing);
+			this.remove();
+			encasing.add(this);
+
+			this.getDomNode().getParentElement()
+					.insertAfter(encasing.getDomNode(), this.getDomNode());
+			encasing.getDomNode().appendChild(this.getDomNode());
+
+			return encasing;
+		}
+
+		/**
+		 * Creates a node to add as a child at the specified index. Use index -1
+		 * to append to the end of the child list
+		 * 
+		 * @param index
+		 * @param tag
+		 * @param type
+		 * @param symbol
+		 * @return - The newly create child
+		 */
+		public JohnNode add(int index, String tag, Type type, String symbol) {
+			JohnNode child = new JohnNode(tag, type, symbol);
+			if (index < 0) {
+				this.add(-1, child);
+			} else {
+				this.add(index, child);
+			}
+			return child;
+		}
+
+		/**
+		 * Adds a child at the specified index. Use index -1 to addend to the
+		 * end of the child list
+		 * 
+		 * @param index
+		 * @param johnNode
+		 */
 		public void add(int index, JohnNode johnNode) {
-			children.add(index, johnNode);
+			if (index < 0) {
+				children.add(johnNode);
+			} else {
+				children.add(index, johnNode);
+			}
 			johnNode.parent = this;
+			
+			johnNode.isHidden = johnNode.checkIsHidden();
+		}
+		
+		public void add(JohnNode johnNode) {
+			add(-1, johnNode);
+		}
+		public JohnNode add(String tag, Type type, String symbol) {
+			return add(-1, tag, type, symbol);
 		}
 
 		public List<JohnNode> getChildren() {
 			return children;
 		}
 
-		/**
-		 * Adds a node between this node and its parent, encasing this branch of the tree in a new node. <br/> 
-		 * The text will be it's children's, to set a new text use:
-		 * <p><b>[encasing node].setString(String)</b></p>
-		 *  
-		 * @param tag - the tag of the new node
-		 * @param type - the type of the new node
-		 * @return - encasing node
-		 */
-		public JohnNode encase(String tag, Type type){
-			com.google.gwt.user.client.Element newDomNode = DOM.createElement(tag);
-			this.getDomNode().getParentElement().insertAfter(newDomNode, this.getDomNode());
-			newDomNode.appendChild(this.getDomNode());
-			
-			JohnNode encasing = new JohnNode(newDomNode, tag, type, this.toString());
-			this.getParent().add(this.getIndex(), encasing);
-			this.remove();
-			encasing.add(this);
-			
-			return encasing;
-		}
 		public JohnNode getFirstChild() {
 			return children.get(0);
 		}
@@ -222,7 +293,7 @@ public class JohnTree {
 		}
 
 		public void remove() {
-//			Log.severe("REMOVING: " + this.toString());
+			// Log.severe("REMOVING: " + this.toString());
 			List<JohnNode> sibs = this.parent.getChildren();
 			sibs.remove(sibs.indexOf(this));
 		}
@@ -270,10 +341,10 @@ public class JohnTree {
 		public HTML toMathML() {
 			HTML mathML;
 			if (type == null) {
-				mathML = new HTML(/*tag + " " +*/ "$" + symbol + "$");
+				mathML = new HTML(/* tag + " " + */"$" + symbol + "$");
 			} else {
-				mathML = new HTML(/*type.toString().substring(0, 2) + " " +*/ "$"
-						+ symbol + "$");
+				mathML = new HTML(
+				/* type.toString().substring(0, 2) + " " + */"$" + symbol + "$");
 			}
 			EquationBrowserEntry.parseJQMath(mathML.getElement());
 			return mathML;
@@ -291,6 +362,40 @@ public class JohnTree {
 			return tree;
 		}
 
+
+		private Boolean checkIsHidden() {
+
+			if ("(".equals(this.toString()) || ")".equals(this.toString())) {
+				return true;
+			} else if ("mo".equalsIgnoreCase(this.getTag())) {
+				return true;
+			} else if (this.isFunction()
+			// Don't show function name as child, parent will be function
+			) {
+				return true;
+			} else if ("msub".equalsIgnoreCase(this.getParent().getTag())
+			// Don't show subscripts because it's really one variable
+					|| ("msubsup".equalsIgnoreCase(this.getParent().getTag()) && this
+							.getIndex() == 1)) {
+				return true;
+			}
+			return false;
+
+		}
+
+		private Boolean isFunction() {
+			String nodeString = this.toString();
+			if ("cos".equals(nodeString) || "sin".equals(nodeString)
+					|| "tan".equalsIgnoreCase(nodeString) || "sec".equalsIgnoreCase(nodeString)
+					|| "csc".equalsIgnoreCase(nodeString) || "cot".equalsIgnoreCase(nodeString)
+					|| "sinh".equalsIgnoreCase(nodeString) || "cosh".equalsIgnoreCase(nodeString)
+					|| "tanh".equalsIgnoreCase(nodeString) || "log".equalsIgnoreCase(nodeString)
+					|| "ln".equalsIgnoreCase(nodeString)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	public static enum Type {
@@ -394,7 +499,9 @@ public class JohnTree {
 					assignSimpleTypes(kid);
 				}
 				findNestedMrows(jNode, kid);
-				kid.isHidden = checkIsHidden(kid);
+				//TODO
+				kid.isHidden = kid.checkIsHidden();
+//				kid.isHidden = checkIsHidden(kid);
 
 				if (kid.getChildCount() > 0) {
 					parseTree(kid);
@@ -471,8 +578,10 @@ public class JohnTree {
 						// For Δ: Δa should be treated as one variable
 						kid.type = Type.Variable;
 						kid.children = new LinkedList<JohnNode>();
-					} else if (isFunction(baby.toString())) {
-						kid.type = Type.Function;
+						//TODO
+					} else if (baby.isFunction()) {
+//					} else if (isFunction(baby.toString())) {
+//						kid.type = Type.Function;
 					}
 				}
 			}
@@ -509,7 +618,7 @@ public class JohnTree {
 			/**/||
 			/**/((Type.Term).equals(kid.getType())
 			/**/&& (Type.Term).equals(parent.getType()))
-			
+
 			) {
 				nestedMrows.add(kid);
 			}
@@ -565,41 +674,6 @@ public class JohnTree {
 					neg.getParent().add(neg.getIndex() + 1, negOne);
 					Log.info("Adding -1 node to the term");
 				}
-			}
-		}
-
-		private Boolean checkIsHidden(JohnNode jNode) {
-
-			if ("(".equals(jNode.toString()) || ")".equals(jNode.toString())) {
-				// No need to show parentheses
-				return true;
-			} else if ("mo".equals(jNode.getTag())) {
-				return true;
-			} else if (isFunction(jNode.toString())
-			// Don't show function name as child, parent will be function
-			) {
-				return true;
-			} else if ("msub".equals(jNode.getParent().getTag())
-			// Don't show subscripts because it's really one variable
-					|| ("msubsup".equals(jNode.getParent().getTag()) && jNode
-							.getIndex() == 1)) {
-				return true;
-			}
-
-			return false;
-
-		}
-
-		private Boolean isFunction(String nodeString) {
-			if ("cos".equals(nodeString) || "sin".equals(nodeString)
-					|| "tan".equals(nodeString) || "sec".equals(nodeString)
-					|| "csc".equals(nodeString) || "cot".equals(nodeString)
-					|| "sinh".equals(nodeString) || "cosh".equals(nodeString)
-					|| "tanh".equals(nodeString) || "log".equals(nodeString)
-					|| "ln".equals(nodeString)) {
-				return true;
-			} else {
-				return false;
 			}
 		}
 

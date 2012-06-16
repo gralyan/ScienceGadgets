@@ -6,6 +6,7 @@ import java.util.List;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Multiply;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Add;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Add;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Divide;
@@ -60,15 +61,20 @@ public class DropControllAssigner {
 					break sipmlifySiblings;
 				case Term:
 					dropType = DropType.Simplify_Multiply;
-					bothSideDropType = DropType.BothSides_Multiply;
+//					bothSideDropType = DropType.BothSides_Divide;
 					break sipmlifySiblings;
 				case Fraction:
 					dropType = DropType.Simplify_Divide;
+					if(jNode.getIndex() == 1){
+						bothSideDropType = DropType.BothSides_Multiply;
+					}else{
+//						bothSideDropType = DropType.BothSides_Divide;
+					}
 					break sipmlifySiblings;
 				}
 			}
 			
-			// Give simplify drop targets
+			// Give "simplify" drop targets
 			for (JohnNode sib : siblings) {
 				if (Type.Number.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
 					
@@ -77,7 +83,7 @@ public class DropControllAssigner {
 				}
 			}
 			
-			//Give bothSides drop targets
+			//Give "bothSides" drop targets
 			if (bothSideDropType != null) {
 				JohnTree tree = jNode.getTree();
 				if (tree.getLeftSide().equals(jParent)) {
@@ -115,7 +121,7 @@ public class DropControllAssigner {
 			break;
 		case BothSides_Multiply:
 			//TODO
-//			dropCtrl = new DropController_BothSides_Multiply(target);
+			dropCtrl = new DropController_BothSides_Multiply(target);
 			break;
 		case BothSides_Divide:
 			//TODO
@@ -137,7 +143,7 @@ public class DropControllAssigner {
 		return dropCtrl;
 	}
 
-	public static enum DropType {
+	public enum DropType {
 		Simplify_Add, Simplify_Multiply, Simplify_Divide, BothSides_Add, BothSides_Multiply, BothSides_Divide;
 	}
 }
