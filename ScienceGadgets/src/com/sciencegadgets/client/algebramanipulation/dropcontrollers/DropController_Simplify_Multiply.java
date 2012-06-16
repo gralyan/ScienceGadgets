@@ -41,6 +41,7 @@ public class DropController_Simplify_Multiply extends AbstractMathDropController
 		float sourceValue = Float.parseFloat(sourceNode.toString());
 		float targetValue = Float.parseFloat(targetNode.toString());
 		answer = sourceValue * targetValue;
+		Math.round(answer);
 		
 		change = targetValue + " * " + sourceValue + " = " + answer;
 		return change;
