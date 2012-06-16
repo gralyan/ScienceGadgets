@@ -139,10 +139,12 @@ public final class EquationDatabase {
 			/* 0 */{ "a+X+b=c+d*e", "<math alttext=\"a+X+b=c+d*e\"><mrow><mrow><mrow><mi>a</mi><mo>+</mo><mi>X</mi></mrow><mo>+</mo><mi>b</mi></mrow><mo>=</mo><mrow><mi>c</mi><mo>+</mo><mrow><mi>d</mi><mo>*</mo><mi>e</mi></mrow></mrow></mrow></math>" },
 			/* 1 */{ "a*b=c*X*d*e", "<math alttext=\"a*b=c*X*d*e\"><mrow><mrow><mi>a</mi><mo>*</mo><mi>b</mi></mrow><mo>=</mo><mrow><mrow><mrow><mi>c</mi><mo>*</mo><mi>X</mi></mrow><mo>*</mo><mi>d</mi></mrow><mo>*</mo><mi>e</mi></mrow></mrow></math>" },
 			/* 2 */{ "X+a*b=c*d+e", "<math alttext=\"X+a*b=c*d+e\"><mrow><mrow><mi>X</mi><mo>+</mo><mrow><mi>a</mi><mo>*</mo><mi>b</mi></mrow></mrow><mo>=</mo><mrow><mrow><mi>c</mi><mo>*</mo><mi>d</mi></mrow><mo>+</mo><mi>e</mi></mrow></mrow></math>" },
-			/* 3 */{ "a+b*X=c*d/e", "<math alttext=\"a+b*X=c*d/e\"><mrow><mrow><mi>a</mi><mo>+</mo><mrow><mi>b</mi><mo>*</mo><mi>X</mi></mrow></mrow><mo>=</mo><mrow><mi>c</mi><mo>*</mo><mfrac><mi>d</mi><mi>e</mi></mfrac></mrow></mrow></math>" },
-			/* 4 */{ "a+X/b=c/d", "<math alttext=\"a+X/b=c/d\"><mrow><mrow><mi>a</mi><mo>+</mo><mfrac><mi>X</mi><mi>b</mi></mfrac></mrow><mo>=</mo><mfrac><mi>c</mi><mi>d</mi></mfrac></mrow></math>" },
-			/* 5 */{ "a/X=c*d", "<math alttext=\"a/X=c*d\"><mrow><mfrac><mi>a</mi><mi>X</mi></mfrac><mo>=</mo><mrow><mi>c</mi><mo>*</mo><mi>d</mi></mrow></mrow></math>" },
-			/* 6 */{ "a*X*b+c/d=e*f*g/h", "<math alttext=\"a*X*b+c/d=e*f*g/h\"><mrow><mrow><mrow><mrow><mi>a</mi><mo>*</mo><mi>X</mi></mrow><mo>*</mo><mi>b</mi></mrow><mo>+</mo><mfrac><mi>c</mi><mi>d</mi></mfrac></mrow><mo>=</mo><mrow><mrow><mi>e</mi><mo>*</mo><mi>f</mi></mrow><mo>*</mo><mfrac><mi>g</mi><mi>h</mi></mfrac></mrow></mrow></math>" },
+			/* 3 */{ "a*X=d/e", "<math alttext=\"a*X=d/e\"><mrow><mrow><mi>a</mi><mo>*</mo><mi>X</mi></mrow><mo>=</mo><mfrac><mi>d</mi><mi>e</mi></mfrac></mrow></math>" },
+			/* 4 */{ "a+X=d/e", "<math alttext=\"a+X=d/e\"><mrow><mrow><mi>a</mi><mo>+</mo><mi>X</mi></mrow><mo>=</mo><mfrac><mi>d</mi><mi>e</mi></mfrac></mrow></math>" },
+			/* 5 */{ "a+b*X=c*d/e", "<math alttext=\"a+b*X=c*d/e\"><mrow><mrow><mi>a</mi><mo>+</mo><mrow><mi>b</mi><mo>*</mo><mi>X</mi></mrow></mrow><mo>=</mo><mrow><mi>c</mi><mo>*</mo><mfrac><mi>d</mi><mi>e</mi></mfrac></mrow></mrow></math>" },
+			/* 6 */{ "a+X/b=c/d", "<math alttext=\"a+X/b=c/d\"><mrow><mrow><mi>a</mi><mo>+</mo><mfrac><mi>X</mi><mi>b</mi></mfrac></mrow><mo>=</mo><mfrac><mi>c</mi><mi>d</mi></mfrac></mrow></math>" },
+			/* 7 */{ "a/X=c*d", "<math alttext=\"a/X=c*d\"><mrow><mfrac><mi>a</mi><mi>X</mi></mfrac><mo>=</mo><mrow><mi>c</mi><mo>*</mo><mi>d</mi></mrow></mrow></math>" },
+			/* 8 */{ "a*X*b+c/d=e*f*g/h", "<math alttext=\"a*X*b+c/d=e*f*g/h\"><mrow><mrow><mrow><mrow><mi>a</mi><mo>*</mo><mi>X</mi></mrow><mo>*</mo><mi>b</mi></mrow><mo>+</mo><mfrac><mi>c</mi><mi>d</mi></mfrac></mrow><mo>=</mo><mrow><mrow><mi>e</mi><mo>*</mo><mi>f</mi></mrow><mo>*</mo><mfrac><mi>g</mi><mi>h</mi></mfrac></mrow></mrow></math>" },
 
 	/**/};
 

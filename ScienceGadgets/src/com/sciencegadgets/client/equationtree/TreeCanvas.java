@@ -153,6 +153,8 @@ public class TreeCanvas extends DrawingArea {
 			if (child.isHidden()) {
 				Log.info("Skip drawing isHidden: " + child);
 				continue;
+			}else{
+				
 			}
 
 			// Find the maximum width any child can have in the layer
@@ -178,8 +180,9 @@ public class TreeCanvas extends DrawingArea {
 				placement += sideLengthLeft;
 			}
 			// TODO comment/uncomment for gravity
-			placement = (placement + parentX) / 2; // Add gravity towards
-			// parent node
+			// Add gravity towards parent node
+			placement = (placement + parentX) / 2;
+			
 			placement += childSpace / 4;// padding
 			if (childWidth >= childSpace) {
 				// If the child is too big and going to overflow pull it back
@@ -216,6 +219,7 @@ public class TreeCanvas extends DrawingArea {
 				wrap.setHeight(boxHeight + "px");
 				wrap.setWidth(boxWidth + "px");
 				panel.add(wrap, childLeft - pad, childTop);
+				//Hint under drop target
 				panel.add(wrap.getDropDescriptor(), childLeft - pad, childTop + boxHeight);
 			}
 

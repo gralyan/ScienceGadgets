@@ -13,6 +13,10 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 
 	@Override
 	void onChange() {
+		
+		findChange(sourceNode);
+		
+		sourceNode.setString(change);
 
 		/*
 		 * Remove the (+) from this side, to be moved to the other side
@@ -34,10 +38,6 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 		}
 
 		sourceNode.remove();
-		
-		findChange(sourceNode);
-
-		sourceNode.setString(change);
 
 		// Move nodes to other side
 		if (Type.Series.equals(targetNode.getType())) {
@@ -63,23 +63,24 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 	}
 
 	@Override
-	public String findChange(JohnNode sourceNode){
+	public String findChange(JohnNode sourceNode) {
 		// Change sign on opposite side
 		if (sourceNode.toString().startsWith("-")) {
 			change = sourceNode.toString().replaceFirst("-", "");
 		} else {
 			change = "-" + sourceNode.toString();
 		}
-		
+
 		return change;
 	}
 
 	@Override
 	String changeComment() {
-		if(change.startsWith("-")){
-			return change+" &nbsp; &nbsp; &nbsp; &nbsp; "+change;
-		}else{
-		return "+"+change+" &nbsp; &nbsp; &nbsp; &nbsp; +"+change;
-	}}
+		if (change.startsWith("-")) {
+			return change + " &nbsp; &nbsp; &nbsp; &nbsp; " + change;
+		} else {
+			return "+" + change + " &nbsp; &nbsp; &nbsp; &nbsp; +" + change;
+		}
+	}
 
 }
