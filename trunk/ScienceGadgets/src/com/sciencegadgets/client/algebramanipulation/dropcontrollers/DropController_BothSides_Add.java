@@ -13,9 +13,9 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 
 	@Override
 	void onChange() {
-		
+
 		findChange(sourceNode);
-		
+
 		sourceNode.setString(change);
 
 		/*
@@ -44,12 +44,11 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 			targetNode.add(operatorToMove);
 			targetNode.add(sourceNode);
 		} else {
-			JohnTree tree = targetNode.getTree();
-
 			JohnNode encasingSeriese = targetNode.encase("mrow", Type.Series);
 
-			// If making new encasing series, set it as the tree's leftSide or
-			// rightSide
+			JohnTree tree = targetNode.getTree();
+
+			// Set new encasing series as the tree's leftSide or rightSide
 			if (targetNode.equals(tree.getLeftSide())) {
 				tree.setLeftSide(encasingSeriese);
 			} else if (targetNode.equals(tree.getRightSide())) {

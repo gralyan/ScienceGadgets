@@ -6,6 +6,7 @@ import java.util.List;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Divide;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Multiply;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Add;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Add;
@@ -61,14 +62,14 @@ public class DropControllAssigner {
 					break sipmlifySiblings;
 				case Term:
 					dropType = DropType.Simplify_Multiply;
-//					bothSideDropType = DropType.BothSides_Divide;
+					bothSideDropType = DropType.BothSides_Divide;
 					break sipmlifySiblings;
 				case Fraction:
 					dropType = DropType.Simplify_Divide;
 					if(jNode.getIndex() == 1){
 						bothSideDropType = DropType.BothSides_Multiply;
 					}else{
-//						bothSideDropType = DropType.BothSides_Divide;
+						bothSideDropType = DropType.BothSides_Divide;
 					}
 					break sipmlifySiblings;
 				}
@@ -120,12 +121,10 @@ public class DropControllAssigner {
 			dropCtrl = new DropController_BothSides_Add(target);
 			break;
 		case BothSides_Multiply:
-			//TODO
 			dropCtrl = new DropController_BothSides_Multiply(target);
 			break;
 		case BothSides_Divide:
-			//TODO
-//			dropCtrl = new DropController_BothSides_Divide(target);
+			dropCtrl = new DropController_BothSides_Divide(target);
 			break;
 		}
 

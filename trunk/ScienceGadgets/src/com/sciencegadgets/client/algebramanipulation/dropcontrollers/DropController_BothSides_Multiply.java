@@ -23,36 +23,41 @@ public class DropController_BothSides_Multiply extends
 		if (Type.Term.equals(targetNode.getType())) {
 			targetNode.add("mo", null, "*");
 			targetNode.add(sourceNode);
+
+			// Rearrange fraction the source was in
+			// ??? for some reason it already rearranges itself ???
 			
-			//Rearrange fraction the source was in
-//			sourceNode.getPrevSibling().rc();
-			
+			// sourceNode.getParent().getParent().add(sourceNode.getPrevSibling());
+			// sourceNode.getParent().remove();
+
 		} else {
-//			JohnTree tree = targetNode.getTree();
-//
-//			JohnNode encasingSeriese = targetNode.encase("mrow", Type.Series);
-//
-//			// If making new encasing series, set it as the tree's leftSide or
-//			// rightSide
-//			if (targetNode.equals(tree.getLeftSide())) {
-//				tree.setLeftSide(encasingSeriese);
-//			} else if (targetNode.equals(tree.getRightSide())) {
-//				tree.setRightSide(encasingSeriese);
-//			}
-//
-//			encasingSeriese.add(operatorToMove);
-//			encasingSeriese.add(sourceNode);
-		}		
+			JohnNode encasingTerm = targetNode.encase("mrow", Type.Term);
+
+			JohnTree tree = targetNode.getTree();
+			
+			// Set new encasing term as the tree's leftSide or rightSide
+			if (targetNode.equals(tree.getLeftSide())) {
+				tree.setLeftSide(encasingTerm);
+			} else if (targetNode.equals(tree.getRightSide())) {
+				tree.setRightSide(encasingTerm);
+			}
+
+			encasingTerm.add(0, "mo", null, "*");
+			encasingTerm.add(0, sourceNode);
+
+			targetNode.add(0, "mo", null, "(");
+			targetNode.add("mo", null, ")");
+		}
 	}
 
 	@Override
 	public String findChange(JohnNode sourceNode) {
-		return change = "-" + sourceNode.toString();
+		return change = sourceNode.toString();
 	}
 
 	@Override
 	String changeComment() {
-			return "*"+change + " &nbsp; &nbsp; &nbsp; &nbsp; *" + change;
+		return "*" + change + " &nbsp; &nbsp; &nbsp; &nbsp; *" + change;
 	}
 
 }

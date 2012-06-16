@@ -168,8 +168,6 @@ public class JohnTree {
 			this.type = type;
 			this.symbol = symbol;
 			
-			Log.severe("tag: "+tag);
-			
 		}
 
 		/**

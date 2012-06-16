@@ -35,6 +35,7 @@ public class DropController_Simplify_Divide extends AbstractMathDropController {
 
 		if (sourceNode.getIndex() == 0) {
 			answer = sourceValue / targetValue;
+			answer = Math.round(answer);
 			change = sourceValue + " / " + targetValue + " = " + answer;
 		} else {
 			answer = targetValue / sourceValue;
