@@ -18,24 +18,18 @@ body {
 	height: 20em;
 	width: 60em;
 }
-.algebraPanel {
+.algOutScrollPanel {
 	border: 1px solid silver;
 	padding: 0px;
 	margin:0px;
 	height: 20em;
 	width: 60em;
 }
-.algOutPanel{
+.algOutGrid{
 	height: 20em;
-	width: 60em;
+	width: 58em;
 		text-align: center;
 		
-}
-.algDragPanel{
-	height: 10em;
-	width: 40em;
-	border: 1px solid silver;
-	text-align: center;
 }
 .apTree{
 	height: 30em;
@@ -69,17 +63,14 @@ body {
 	opacity:0.3;
 	
 }
-.selectedDropWrapperDefault{
-	border-style:ridge;
+.selectedDropWrapper{
+	border-style:solid;
 	border-color:aqua;
 }
-.selectedDropWrapperAddition{
-	border-style:ridge;
-	border-color:lime;
-}
-.selectedDropWrapperMultiplication{
-	border-style:double;
-	border-color:navy;
+.dropDescriptor{
+	background-color: white;
+	border-color: fuchsia;
+	border-style: inset;
 }
 .var{
 	background-color: #DCDCDC;
@@ -95,9 +86,4 @@ body {
 }
 .sky{
 	background-color: #87CEFA;
-}
-.dropDescriptor{
-	background-color: white;
-	border-color: fuchsia;
-	border-style: groove;
 }
