@@ -78,10 +78,22 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		target.removeStyleName("mouseOverlay");
 	}
 
+	/**
+	 * The changes that occur in the tree. findChange should be called first.
+	 */
 	abstract void onChange();
 	
+	/**
+	 * A description of the change that occurs, to be used for hints
+	 * @param sourceNode
+	 * @return
+	 */
 	public abstract String findChange(JohnNode sourceNode);
 	
+	/**
+	 * A comment for the change, to be used for the AlgOut comment
+	 * @return
+	 */
 	abstract String changeComment();
 
 }

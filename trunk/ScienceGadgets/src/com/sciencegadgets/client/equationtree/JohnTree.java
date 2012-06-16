@@ -156,6 +156,15 @@ public class JohnTree {
 			return children;
 		}
 
+		/**
+		 * Adds a node between this node and its parent, encasing this branch of the tree in a new node. <br/> 
+		 * The text will be it's children's, to set a new text use:
+		 * <p><b>[encasing node].setString(String)</b></p>
+		 *  
+		 * @param tag - the tag of the new node
+		 * @param type - the type of the new node
+		 * @return - encasing node
+		 */
 		public JohnNode encase(String tag, Type type){
 			com.google.gwt.user.client.Element newDomNode = DOM.createElement(tag);
 			this.getDomNode().getParentElement().insertAfter(newDomNode, this.getDomNode());
