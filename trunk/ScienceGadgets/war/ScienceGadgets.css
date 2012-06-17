@@ -2,88 +2,112 @@ body {
 	padding: 10px;
 }
 
+.mainTable {
+	margin: auto;
+}
+
+#appArea {
+	background-color: #ADD8E6;
+	margin: auto;
+}
+
 .gridBox {
 	border: 1px solid silver;
+	background-color: white;
 	padding: 2px;
-	margin:6px;
+	margin: 4px;
 	height: 20em;
 	width: 19em;
 	cursor: default;
 }
-.scrollPanel{
+.modes{
+	margin: auto;
+	padding: 4px;
+	background-color: silver;
+}
+
+.scrollPanel {
 	height: 15em;
 	width: 19em;
 }
-.browserPanel{
+
+.browserPanel {
 	height: 20em;
-	width: 60em;
+	margin: auto;
+/* 	width: 60em; */
 }
+
 .algOutScrollPanel {
-	border: 1px solid silver;
-	padding: 0px;
-	margin:0px;
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
 	height: 20em;
-	width: 60em;
-}
-.algOutGrid{
-	height: 20em;
-	width: 58em;
-		text-align: center;
-		
-}
-.apTree{
-	height: 30em;
-	width: 60em;	
-		border: 1px solid silver;
-}
-.inputGrid{
 	width: 60em;
 }
 
-.rowHeader{
-	border-bottom-color:silver;
-	border-bottom-style:solid;
-	border-bottom-width:thin;
+.algOutGrid {
+	height: 20em;
+	width: 60em;
+	text-align: center;
+}
+
+.apTree {
+	height: 30em;
+	width: 60em;
+}
+
+.inputGrid {
+	width: 60em;
+}
+
+.rowHeader {
+	border-bottom-color: silver;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
 	background-color: #eeeeee;
 	text-align: center;
 }
-.selectedVar{
-	background-color: #9999ff;
-}
-#selectedVar{
+
+.selectedVar {
 	background-color: #9999ff;
 }
 
-#selectedEq{
+#selectedVar {
 	background-color: #9999ff;
 }
-#selectedWrapper{
+
+#selectedEq {
+	background-color: #9999ff;
+}
+
+#selectedWrapper {
 	background-color: #7777cc;
 	cursor: move;
-	opacity:0.3;
-	
+	opacity: 0.3;
 }
-.selectedDropWrapper{
-	border-style:solid;
-	border-color:aqua;
+
+.selectedDropWrapper {
+	border-style: solid;
+	border-color: aqua;
 }
-.dropDescriptor{
+
+.dropDescriptor {
 	background-color: white;
 	border-color: fuchsia;
 	border-style: inset;
 }
-.var{
+
+.var {
 	background-color: #DCDCDC;
 	text-align: center;
 }
-.varName{
+
+.varName {
 	background-color: #99CCFF;
 }
-.mouseOverlay{
+
+.mouseOverlay {
 	background-color: #111111;
 	cursor: move;
-	opacity:0.4;
+	opacity: 0.4;
 }
-.sky{
-	background-color: #87CEFA;
-}
+

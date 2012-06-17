@@ -52,7 +52,6 @@ public class TreeCanvas extends DrawingArea {
 		this(panel.getOffsetWidth(), panel.getOffsetHeight(), jTree);
 		this.panel = panel;
 		this.johnTree = jTree;
-		this.setStyleName("sky");
 
 		// Image backgroundImg = new Image(0, 0, panel.getOffsetWidth(),
 		// panel.getOffsetHeight(),

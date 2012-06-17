@@ -18,22 +18,28 @@ public class ScienceGadgets implements EntryPoint {
 
 	public void onModuleLoad() {
 		
-		// /////////////////////////////////////////
-		// experimental
-		// ////////////////////////////////
+		try {
+			// /////////////////////////////////////////
+			// experimenting with RPC calls
+			// ////////////////////////////////
 
-		final Button sendButton = new Button("Send");
+			final Button sendButton = new Button("Send");
 
-		RootPanel.get().add(sendButton);
-		// RootPanel.get().add(new EquationWriter());
+			RootPanel.get("appArea").add(sendButton);
+			// RootPanel.get().add(new EquationWriter());
 
-		ClickHandler handler = new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				//string2MathML_BySymja_OnServer("a+b");
-			}
-		};
+			ClickHandler handler = new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					//string2MathML_BySymja_OnServer("a+b");
+				}
+			};
 
-		sendButton.addClickHandler(handler);
+			sendButton.addClickHandler(handler);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			Window.alert("Please refresh Page");
+		}
 	}
 
 	/**
