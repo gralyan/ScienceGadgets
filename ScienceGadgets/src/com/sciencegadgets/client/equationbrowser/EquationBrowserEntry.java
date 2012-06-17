@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -69,19 +70,26 @@ public class EquationBrowserEntry implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 
-		modeSelectAlg.setSize("50em", "10em");
-		modeSelectSci.setSize("50em", "10em");
-		browserPanel.setStylePrimaryName("browserPanel");
+		try {
+			browserPanel.setStylePrimaryName("browserPanel");
+			
+			Grid modes = new Grid(1,2);
+			modes.setWidget(0,0,modeSelectAlg);
+			modes.setWidget(0,1,modeSelectSci);
+			modes.setStyleName("modes");
 
-		RootPanel.get().add(modeSelectAlg);
-		RootPanel.get().add(modeSelectSci);
-		RootPanel.get().add(browserPanel);
+			RootPanel.get("appArea").add(modes);
+			RootPanel.get("appArea").add(browserPanel);
 
-		modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
-		modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
+			modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
+			modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
 
-		modeSelectAlg.setValue(true, true);
-		createAlgBrowser();
+			modeSelectAlg.setValue(true, true);
+			createAlgBrowser();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Window.alert("Please refresh the page");
+		}
 	}
 
 	private void createSciBrowser() {
@@ -176,7 +184,6 @@ public class EquationBrowserEntry implements EntryPoint {
 			algGrid.setText(i, 0, algNameList[i]);
 			Label cell = new Label(algNameList[i]);
 			algGrid.setWidget(i, 0, cell);
-			// cell.setTitle(algMLList[i]);
 			cell.getElement().setId(algMLList[i]);
 		}
 
@@ -492,18 +499,18 @@ public class EquationBrowserEntry implements EntryPoint {
 				// uncomment to get the MathML form of all algebra equations
 				// /////////////////////////////////////////////////
 
-//				 String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);
-//				 for (int i = 0; i < eqList.length; i++) {
-//				 HTML a = new HTML("$" + eqList[i] + "$");
-//				 parseJQMath(a.getElement());
-//				 System.out.println("/* "
-//				 + i
-//				 + " */{ \""
-//				 + eqList[i].replace("\\", "\\\\")
-//				 + "\", \""
-//				 + a.getHTML().replace("\\", "\\\\")
-//				 .replace("\"", "\\\"") + "\" },");
-//				 }
+				// String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);
+				// for (int i = 0; i < eqList.length; i++) {
+				// HTML a = new HTML("$" + eqList[i] + "$");
+				// parseJQMath(a.getElement());
+				// System.out.println("/* "
+				// + i
+				// + " */{ \""
+				// + eqList[i].replace("\\", "\\\\")
+				// + "\", \""
+				// + a.getHTML().replace("\\", "\\\\")
+				// .replace("\"", "\\\"") + "\" },");
+				// }
 
 			} else if ("science".equals(mode)) {
 				createSciBrowser();

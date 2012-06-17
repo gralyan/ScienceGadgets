@@ -31,8 +31,13 @@ public class AlgOutEntry implements EntryPoint {
 	EquationDatabase data;
 
 	public void onModuleLoad() {
-		createAlgebraPanel();
-		RootPanel.get().add(spAlg);
+		try {
+			createAlgebraPanel();
+			RootPanel.get("appArea").add(spAlg);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Window.alert("Please refresh");
+		}
 
 	}
 
