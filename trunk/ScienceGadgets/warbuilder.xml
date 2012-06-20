@@ -3,8 +3,7 @@
 	<target name="default" depends="buildwar,deploy"></target>
  
 	<target name="buildwar">
-		<war basedir="war" destfile="
-scienceGadgets.war" webxml="war/WEB-INF/web.xml">
+		<war basedir="war" destfile="scienceGadgets.war" webxml="war/WEB-INF/web.xml">
 			<exclude name="WEB-INF/**" />
 			<webinf dir="war/WEB-INF/">
 				<include name="**/*.jar" />
@@ -13,8 +12,7 @@ scienceGadgets.war" webxml="war/WEB-INF/web.xml">
 	</target>
  
 	<target name="deploy">
-		<copy file="
-scienceGadgets.war" todir="." />
+		<copy file="scienceGadgets.war" todir="." />
 	</target>
  
 </project>
