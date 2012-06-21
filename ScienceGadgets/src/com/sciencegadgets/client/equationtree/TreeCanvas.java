@@ -222,6 +222,11 @@ public class TreeCanvas extends DrawingArea {
 				placement -= childWidth - childSpace;
 			}
 			panel.add(childHTML, placement, layerHeight);
+			
+			// Operation symbols only, no wrapper or line
+			if("mo".equals(child.getTag())){
+				continue;
+			}
 
 			int childLeft = childHTML.getAbsoluteLeft()
 					- panel.getAbsoluteLeft();
@@ -448,18 +453,31 @@ public class TreeCanvas extends DrawingArea {
 		case Variable:
 
 			// Starts at top left inner corner
-			Path star = new Path(x, y);// ( 0, 50),
-			star.lineRelativelyTo(10, -30);
-			star.lineRelativelyTo(10, 30);// ( 10, 20),
-			star.lineRelativelyTo(30, 0);// ( 40, 20),
-			star.lineRelativelyTo(-20, 20);// ( 20, 0),
-			star.lineRelativelyTo(10, 30);// ( 30, -30),
-			star.lineRelativelyTo(-30, -20);// ( 0, -10),
-			star.lineRelativelyTo(-30, 20);// (-30, -30),
-			star.lineRelativelyTo(10, -30);// (-20, 0),
-			star.lineRelativelyTo(-20, -20);// (-40, 20),
+			Path star = new Path(x+pad, y);// ( 0, 50),
+			star.lineRelativelyTo(5, -15);
+			star.lineRelativelyTo(5, 15);// ( 10, 20),
+			star.lineRelativelyTo(15, 0);// ( 40, 20),
+			star.lineRelativelyTo(-10, 10);// ( 20, 0),
+			star.lineRelativelyTo(5, 15);// ( 30, -30),
+			star.lineRelativelyTo(-15, -10);// ( 0, -10),
+			star.lineRelativelyTo(-15, 10);// (-30, -30),
+			star.lineRelativelyTo(5, -15);// (-20, 0),
+			star.lineRelativelyTo(-10, -10);// (-40, 20),
 			// star.lineRelativelyTo(30, 0);// (-10, 20),
 			star.close();
+//			// Starts at top left inner corner
+//			Path star = new Path(x, y);// ( 0, 50),
+//			star.lineRelativelyTo(10, -30);
+//			star.lineRelativelyTo(10, 30);// ( 10, 20),
+//			star.lineRelativelyTo(30, 0);// ( 40, 20),
+//			star.lineRelativelyTo(-20, 20);// ( 20, 0),
+//			star.lineRelativelyTo(10, 30);// ( 30, -30),
+//			star.lineRelativelyTo(-30, -20);// ( 0, -10),
+//			star.lineRelativelyTo(-30, 20);// (-30, -30),
+//			star.lineRelativelyTo(10, -30);// (-20, 0),
+//			star.lineRelativelyTo(-20, -20);// (-40, 20),
+//			// star.lineRelativelyTo(30, 0);// (-10, 20),
+//			star.close();
 
 			star.setFillColor("red");
 

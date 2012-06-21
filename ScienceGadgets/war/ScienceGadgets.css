@@ -1,13 +1,13 @@
 body {
 }
 
-.mainTable {
+.center {
 	margin: auto;
 }
-.navigationArea{
-	width:100%;
+/* .navigationArea{ */
+/* 	width:100%; */
 	
-}
+/* } */
 
 #scienceGadgetArea {
 	background-color: #ADD8E6;
