@@ -1,3 +1,17 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.equationtree;
 
 import java.util.HashMap;
@@ -11,22 +25,23 @@ import org.vaadin.gwtgraphics.client.shape.Ellipse;
 import org.vaadin.gwtgraphics.client.shape.Path;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
-import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
-import com.sciencegadgets.client.equationtree.JohnTree.Type;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class TreeCanvas extends DrawingArea {
 
-	private JohnTree johnTree;
+	private MathMLBindingTree mathMLBindingTree;
 	private int childSpace;
 	private int rowHeight;
 	private AbsolutePanel panel;
 	private int sideLengthLeft;
 	private int sideLengthRight;
-	private HashMap<JohnTree.Type, String> palette;
+	private HashMap<MathMLBindingTree.Type, String> palette;
 	private int pad = 5;
 	private int topPad = 10;
 	// private String nodePicUrl =
@@ -48,10 +63,15 @@ public class TreeCanvas extends DrawingArea {
 	 * @param jTree
 	 *            - tree to paint
 	 */
-	public TreeCanvas(AbsolutePanel panel, JohnTree jTree) {
-		this(panel.getOffsetWidth(), panel.getOffsetHeight(), jTree);
+	public TreeCanvas(AbsolutePanel panel, MathMLBindingTree jTree) {
+		this(panel.getParent().getOffsetWidth(), panel.getParent()
+				.getOffsetHeight(), jTree);
+
+		// Placements are relative to the AbsolutePanel
+		panel.getElement().getStyle().setPosition(Position.RELATIVE);
+
 		this.panel = panel;
-		this.johnTree = jTree;
+		this.mathMLBindingTree = jTree;
 
 		// Image backgroundImg = new Image(0, 0, panel.getOffsetWidth(),
 		// panel.getOffsetHeight(),
@@ -62,28 +82,28 @@ public class TreeCanvas extends DrawingArea {
 		draw(jTree);
 	}
 
-	private TreeCanvas(int width, int height, JohnTree jTree) {
+	private TreeCanvas(int width, int height, MathMLBindingTree jTree) {
 		super(width, height);
 	}
 
 	public void reDraw() {
 		this.clear();
 		panel.clear();
-		draw(johnTree);
+		draw(mathMLBindingTree);
 	}
 
 	private void createPalette() {
-		palette = new HashMap<JohnTree.Type, String>();
-		palette.put(JohnTree.Type.Term, "#7FFFD4");
-		palette.put(JohnTree.Type.Series, "#87CEFA");
-		palette.put(JohnTree.Type.Function, "#FFD700");
-		palette.put(JohnTree.Type.Exponent, "#E6E6FA");
-		palette.put(JohnTree.Type.Fraction, "#FAEBD7");
-		palette.put(JohnTree.Type.Variable, "#F0F8FF");
-		palette.put(JohnTree.Type.Number, "#F0FFF0");
+		palette = new HashMap<MathMLBindingTree.Type, String>();
+		palette.put(MathMLBindingTree.Type.Term, "#7FFFD4");
+		palette.put(MathMLBindingTree.Type.Series, "#87CEFA");
+		palette.put(MathMLBindingTree.Type.Function, "#FFD700");
+		palette.put(MathMLBindingTree.Type.Exponent, "#E6E6FA");
+		palette.put(MathMLBindingTree.Type.Fraction, "#FAEBD7");
+		palette.put(MathMLBindingTree.Type.Variable, "#F0F8FF");
+		palette.put(MathMLBindingTree.Type.Number, "#F0FFF0");
 	}
 
-	public void draw(JohnTree jTree) {
+	public void draw(MathMLBindingTree jTree) {
 
 		createPalette();
 
@@ -120,7 +140,22 @@ public class TreeCanvas extends DrawingArea {
 				/ (rightMemberCount + leftMemberCount);
 		sideLengthRight = this.getWidth() - sideLengthLeft;
 
-		rowHeight = this.getHeight() / 4;
+		rowHeight = panel.getParent().getOffsetHeight() / 3;
+
+		// Set the size of the canvas
+//		int layerCount = leftLayerCounts.length > rightLayerCounts.length ? leftLayerCounts.length
+//				: rightLayerCounts.length;
+		int layerCount = 0;
+		for(int i=0 ; i<leftLayerCounts.length ; i++){
+			if(leftLayerCounts[i] != 0 || rightLayerCounts[i] != 0){
+				layerCount++;
+			}
+		}
+		
+
+		int canvasHeight = layerCount * rowHeight;
+		panel.setHeight(canvasHeight + "px");
+		this.setHeight(canvasHeight + "px");
 
 		panel.add(this);
 
@@ -140,20 +175,20 @@ public class TreeCanvas extends DrawingArea {
 
 	}
 
-	private void drawChildren(JohnNode pNode, int parentX, int parentY,
-			byte layer, Boolean isLeft) {
+	private void drawChildren(MathMLBindingNode pNode, int parentX,
+			int parentY, byte layer, Boolean isLeft) {
 
-		List<JohnNode> children = pNode.getChildren();
+		List<MathMLBindingNode> children = pNode.getChildren();
 		int layerHeight = rowHeight * (layer);
 
-		for (JohnNode child : children) {
+		for (MathMLBindingNode child : children) {
 
 			// Don't show certain nodes meant only for MathML display
 			if (child.isHidden()) {
 				Log.info("Skip drawing isHidden: " + child);
 				continue;
-			}else{
-				
+			} else {
+
 			}
 
 			// Find the maximum width any child can have in the layer
@@ -178,14 +213,13 @@ public class TreeCanvas extends DrawingArea {
 				// Shift to right side
 				placement += sideLengthLeft;
 			}
-			// TODO comment/uncomment for gravity
 			// Add gravity towards parent node
 			placement = (placement + parentX) / 2;
-			
+
 			placement += childSpace / 4;// padding
-			if (childWidth >= childSpace) {
+			if (childWidth > childSpace) {
 				// If the child is too big and going to overflow pull it back
-				placement -= childSpace / 4;
+				placement -= childWidth - childSpace;
 			}
 			panel.add(childHTML, placement, layerHeight);
 
@@ -218,8 +252,9 @@ public class TreeCanvas extends DrawingArea {
 				wrap.setHeight(boxHeight + "px");
 				wrap.setWidth(boxWidth + "px");
 				panel.add(wrap, childLeft - pad, childTop);
-				//Hint under drop target
-				panel.add(wrap.getDropDescriptor(), childLeft - pad, childTop + boxHeight);
+				// Hint under drop target
+				panel.add(wrap.getDropDescriptor(), childLeft - pad, childTop
+						+ boxHeight);
 			}
 
 			if (child.getChildCount() > 0) {
@@ -238,10 +273,11 @@ public class TreeCanvas extends DrawingArea {
 	 * @param layer
 	 * @param isLeft
 	 */
-	private void getNextLayerCounts(JohnNode pNode, byte layer, Boolean isLeft) {
-		List<JohnNode> children = pNode.getChildren();
+	private void getNextLayerCounts(MathMLBindingNode pNode, byte layer,
+			Boolean isLeft) {
+		List<MathMLBindingNode> children = pNode.getChildren();
 
-		for (JohnNode child : children) {
+		for (MathMLBindingNode child : children) {
 
 			// Don't show certain nodes meant only for MathML display
 			if (child.isHidden()) {
@@ -259,7 +295,7 @@ public class TreeCanvas extends DrawingArea {
 		}
 	}
 
-	private int[] addFirstLayer(JohnTree jTree) {
+	private int[] addFirstLayer(MathMLBindingTree jTree) {
 
 		HTML lHTML = jTree.getLeftSide().toMathML();
 		HTML rHTML = jTree.getRightSide().toMathML();
@@ -292,7 +328,8 @@ public class TreeCanvas extends DrawingArea {
 			lWrap.setHeight(lboxHeight + "px");
 			lWrap.setWidth(lboxWidth + "px");
 			panel.add(lWrap, lLeft - pad, topPad);
-			panel.add(lWrap.getDropDescriptor(), lLeft - pad, topPad + lboxHeight);
+			panel.add(lWrap.getDropDescriptor(), lLeft - pad, topPad
+					+ lboxHeight);
 		}
 
 		// Right - Add top level wrappers
@@ -311,7 +348,8 @@ public class TreeCanvas extends DrawingArea {
 			rWrap.setHeight(rboxHeight + "px");
 			rWrap.setWidth(rboxWidth + "px");
 			panel.add(rWrap, rLeft - pad, topPad);
-			panel.add(rWrap.getDropDescriptor(), rLeft - pad, topPad + rboxHeight);
+			panel.add(rWrap.getDropDescriptor(), rLeft - pad, topPad
+					+ rboxHeight);
 		}
 
 		int[] a = { lboxHeight + topPad, rboxHeight + topPad };
@@ -329,13 +367,13 @@ public class TreeCanvas extends DrawingArea {
 		equalsTop.setFillColor("black");
 		equalsBottom.setFillColor("black");
 
-		Line verticalLine = new Line(sideLengthLeft,
-				equalsBottom.getY()+ topPad*2, sideLengthLeft, this.getHeight());
+		Line verticalLine = new Line(sideLengthLeft, equalsBottom.getY()
+				+ topPad * 2, sideLengthLeft, this.getHeight());
 
 		Group split = new Group();
 		split.add(equalsTop);
 		split.add(equalsBottom);
-		 split.add(verticalLine);
+		split.add(verticalLine);
 
 		this.add(split);
 
@@ -378,8 +416,7 @@ public class TreeCanvas extends DrawingArea {
 
 		case Series:
 
-			Rectangle rectangle = new Rectangle(x, y - pad, width,
-					height);
+			Rectangle rectangle = new Rectangle(x, y - pad, width, height);
 			rectangle.setFillColor("yellow");
 			shape.add(rectangle);
 
@@ -402,7 +439,7 @@ public class TreeCanvas extends DrawingArea {
 		case Number:
 
 			Ellipse ellipseNum = new Ellipse(x + width / 2, y + height / 2,
-					width*2/3, height*2/3);
+					width * 2 / 3, height * 2 / 3);
 			ellipseNum.setFillColor("lime");
 
 			shape.add(ellipseNum);
@@ -432,16 +469,16 @@ public class TreeCanvas extends DrawingArea {
 		case Fraction:
 
 			Ellipse pieTop = new Ellipse(x + width / 2, y + height / 2, width,
-					height/2);
+					height / 2);
 			pieTop.setFillColor("orange");
-			
-			Path piePan = new Path(x-width/2, y+height/2);
-			piePan.lineRelativelyTo(width/2, height);
+
+			Path piePan = new Path(x - width / 2, y + height / 2);
+			piePan.lineRelativelyTo(width / 2, height);
 			piePan.lineRelativelyTo(width, 0);
-			piePan.lineRelativelyTo(width/2, -height);
+			piePan.lineRelativelyTo(width / 2, -height);
 			piePan.close();
 			piePan.setFillColor("silver");
-			
+
 			shape.add(piePan);
 			shape.add(pieTop);
 			break;
@@ -449,15 +486,13 @@ public class TreeCanvas extends DrawingArea {
 		case Exponent:
 
 			// TODO
-			Rectangle exp = new Rectangle(x, y + height, width,
-					height);
+			Rectangle exp = new Rectangle(x, y + height, width, height);
 			shape.add(exp);
 			break;
 
 		case Function:
 			// TODO
-			Rectangle fun = new Rectangle(x + width, y + height, width,
-					height);
+			Rectangle fun = new Rectangle(x + width, y + height, width, height);
 			shape.add(fun);
 			break;
 

@@ -1,6 +1,19 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.equationbrowser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +22,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
@@ -27,7 +39,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -77,9 +88,9 @@ public class EquationBrowserEntry implements EntryPoint {
 			modes.setWidget(0,0,modeSelectAlg);
 			modes.setWidget(0,1,modeSelectSci);
 			modes.setStyleName("modes");
-
-			RootPanel.get("appArea").add(modes);
-			RootPanel.get("appArea").add(browserPanel);
+			
+			RootPanel.get("scienceGadgetArea").add(modes);
+			RootPanel.get("scienceGadgetArea").add(browserPanel);
 
 			modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
 			modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
@@ -487,7 +498,6 @@ public class EquationBrowserEntry implements EntryPoint {
 
 		public void onClick(ClickEvent event) {
 			browserPanel.clear();
-			AlgOutEntry.algDragPanel.clear();
 			AlgOutEntry.algOut.clear(true);
 			AlgOutEntry.algOut.resizeRows(0);
 			TreeEntry.apTree.clear();
@@ -566,23 +576,23 @@ public class EquationBrowserEntry implements EntryPoint {
 		@Override
 		public void onClick(ClickEvent arg0) {
 
-			for (TextBox box : inputBinding.keySet()) {
-				if (box.isEnabled()) {
-					try {
-						float value = Float.parseFloat(box.getText());
-						// System.out.println(inputBinding.get(box) + ": " +
-						// value);
-					} catch (NumberFormatException e) {
-						Window.alert("All values should be numbers (except for unknown variable to find)");
-						return;
-					}
-
-				} else {
-					// System.out.println(inputBinding.get(box) + ": ???");
-				}
-			}
-			EquationTransporter.transport(new HTML(labelSumEq.getElement()
-					.getId()));
+//			for (TextBox box : inputBinding.keySet()) {
+//				if (box.isEnabled()) {
+//					try {
+//						float value = Float.parseFloat(box.getText());
+//						// System.out.println(inputBinding.get(box) + ": " +
+//						// value);
+//					} catch (NumberFormatException e) {
+//						Window.alert("All values should be numbers (except for unknown variable to find)");
+//						return;
+//					}
+//
+//				} else {
+//					// System.out.println(inputBinding.get(box) + ": ???");
+//				}
+//			}
+//			EquationTransporter.transport(new HTML(labelSumEq.getElement()
+//					.getId()));
 			// TODO replace the variables with the proper values before
 			// transporting equation
 			Window.alert("Algebra in science mode is not very functional yet :(");

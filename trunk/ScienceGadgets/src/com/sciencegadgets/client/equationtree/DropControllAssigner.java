@@ -1,3 +1,17 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.equationtree;
 
 import java.util.LinkedList;
@@ -12,8 +26,8 @@ import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropControl
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Add;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Divide;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Multiply;
-import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
-import com.sciencegadgets.client.equationtree.JohnTree.Type;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class DropControllAssigner {
 
@@ -25,13 +39,13 @@ public class DropControllAssigner {
 	public static void assign(LinkedList<MLElementWrapper> wrappers,
 			Boolean hasJoiner) {
 
-		JohnNode jNode;
-		JohnNode jParent;
+		MathMLBindingNode jNode;
+		MathMLBindingNode jParent;
 
 		wrapFor: for (MLElementWrapper wrap : wrappers) {
 			jNode = wrap.getJohnNode();
 			jParent = jNode.getParent();
-			List<JohnNode> siblings = jParent.getChildren();
+			List<MathMLBindingNode> siblings = jParent.getChildren();
 
 			DropType bothSideDropType = null;
 			DropType dropType = null;
@@ -76,7 +90,7 @@ public class DropControllAssigner {
 			}
 			
 			// Give "simplify" drop targets
-			for (JohnNode sib : siblings) {
+			for (MathMLBindingNode sib : siblings) {
 				if (Type.Number.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
 					
 					addDropTarget(wrap, sib.getWrapper(), dropType,
@@ -86,7 +100,7 @@ public class DropControllAssigner {
 			
 			//Give "bothSides" drop targets
 			if (bothSideDropType != null) {
-				JohnTree tree = jNode.getTree();
+				MathMLBindingTree tree = jNode.getTree();
 				if (tree.getLeftSide().equals(jParent)) {
 					
 					addDropTarget(wrap, tree.getRightSide().getWrapper(),

@@ -22,10 +22,10 @@
 		class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry' />
 	<entry-point
 		class='com.sciencegadgets.client.TextBoxEntry' />
-	<entry-point
-		class='com.sciencegadgets.client.algebramanipulation.AlgOutEntry' />
-	<entry-point
-		class='com.sciencegadgets.client.equationtree.TreeEntry' />
+<!-- 	<entry-point -->
+<!-- 		class='com.sciencegadgets.client.algebramanipulation.AlgOutEntry' /> -->
+<!-- 	<entry-point -->
+<!-- 		class='com.sciencegadgets.client.equationtree.TreeEntry' /> -->
 
 	<source path='client' />
 	<!--   <source path='shared'/> -->

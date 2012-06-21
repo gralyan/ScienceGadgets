@@ -1,3 +1,17 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
@@ -17,6 +31,8 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.sciencegadgets.client.TextBoxEntry;
+import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 import com.sciencegadgets.client.equationbrowser.EquationDatabase;
 
 public class AlgOutEntry implements EntryPoint {
@@ -25,15 +41,16 @@ public class AlgOutEntry implements EntryPoint {
 	public static ListBox varBox;
 	public static ListBox funBox;
 	public static TextBox coefBox;
-	public static AbsolutePanel algDragPanel = new AbsolutePanel();
 	public static ScrollPanel spAlg = new ScrollPanel(algOut);
 	private static HTML prevEquation;
+	private Button backButton = new Button("Back", new BackButtonHandler());
 	EquationDatabase data;
 
 	public void onModuleLoad() {
 		try {
 			createAlgebraPanel();
-			RootPanel.get("appArea").add(spAlg);
+			RootPanel.get("scienceGadgetArea").add(backButton);
+			RootPanel.get("scienceGadgetArea").add(spAlg);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Window.alert("Please refresh");
@@ -86,7 +103,7 @@ public class AlgOutEntry implements EntryPoint {
 		} else {
 			newRowCount = algOut.getRowCount() + 2;
 			algOut.resizeRows(newRowCount);
-			algOut.getCellFormatter().setStyleName(newRowCount-2,  0, "var");
+			algOut.getCellFormatter().setStyleName(newRowCount - 2, 0, "var");
 			algOut.setWidget(newRowCount - 2, 0, new HTML(change
 			// inpFun + inpCoef+ inpVar + "    " + inpFun + inpCoef + inpVar
 					));
@@ -104,6 +121,18 @@ public class AlgOutEntry implements EntryPoint {
 				.add(new AlgebraManipulator(mathML, wrappers, wrapperPanel));
 
 		spAlg.scrollToBottom();
+	}
+
+	class BackButtonHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent arg0) {
+			RootPanel.get("scienceGadgetArea").clear();
+
+			new EquationBrowserEntry().onModuleLoad();
+			new TextBoxEntry().onModuleLoad();
+		}
+
 	}
 
 	class ToBothSidesHandler implements ClickHandler {
