@@ -1,12 +1,11 @@
 body {
-	padding: 10px;
 }
 
 .mainTable {
 	margin: auto;
 }
 
-#appArea {
+#scienceGadgetArea {
 	background-color: #ADD8E6;
 	margin: auto;
 }
@@ -40,18 +39,18 @@ body {
 .algOutScrollPanel {
 	border-top: 1px solid gray;
 	border-bottom: 1px solid gray;
-	height: 20em;
+	height: 6em;
 	width: 60em;
 }
 
 .algOutGrid {
-	height: 20em;
-	width: 60em;
+	height: 6em;
+	width: 58em;
 	text-align: center;
 }
 
-.apTree {
-	height: 30em;
+.treeCanvas {
+	height: 20em;
 	width: 60em;
 }
 
@@ -80,14 +79,14 @@ body {
 }
 
 #selectedWrapper {
-	background-color: #7777cc;
+	background-color: fuchsia;
 	cursor: move;
-	opacity: 0.3;
+	opacity: 0.5;
 }
 
 .selectedDropWrapper {
 	border-style: solid;
-	border-color: aqua;
+	border-color: fuchsia;
 }
 
 .dropDescriptor {
@@ -106,7 +105,7 @@ body {
 }
 
 .mouseOverlay {
-	background-color: #111111;
+	background-color: gray;
 	cursor: move;
 	opacity: 0.4;
 }
