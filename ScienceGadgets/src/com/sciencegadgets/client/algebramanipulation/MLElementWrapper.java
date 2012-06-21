@@ -1,3 +1,17 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.algebramanipulation;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
@@ -13,8 +27,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
-import com.sciencegadgets.client.equationtree.JohnTree;
-import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -29,7 +43,7 @@ public class MLElementWrapper extends HTML {
 	private Element element = null;
 	private Boolean isDraggable;
 	private MLElementWrapper joinedWrapper;
-	private JohnNode johnNode;
+	private MathMLBindingNode mathMLBindingNode;
 	private HTML dropDescriptor = new HTML();
 
 	private static MLElementWrapper selectedWrapper;
@@ -55,10 +69,10 @@ public class MLElementWrapper extends HTML {
 	 *            instances of the same wrapper that communicate in different
 	 *            views
 	 */
-	public MLElementWrapper(JohnNode jNode, Boolean isDraggable,
+	public MLElementWrapper(MathMLBindingNode jNode, Boolean isDraggable,
 			Boolean isJoined) {
 		this.element = (Element) jNode.getDomNode();
-		this.johnNode = jNode;
+		this.mathMLBindingNode = jNode;
 		this.isDraggable = isDraggable;
 		addMouseOverHandler();
 		addMouseOutHandler();
@@ -86,8 +100,8 @@ public class MLElementWrapper extends HTML {
 		return joinedWrapper;
 	}
 
-	public JohnTree.JohnNode getJohnNode() {
-		return johnNode;
+	public MathMLBindingTree.MathMLBindingNode getJohnNode() {
+		return mathMLBindingNode;
 	}
 
 	public WrapDragController getDragControl() {

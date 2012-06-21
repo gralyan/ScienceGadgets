@@ -1,9 +1,23 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.equationtree.JohnTree;
-import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
-import com.sciencegadgets.client.equationtree.JohnTree.Type;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class DropController_BothSides_Add extends AbstractMathDropController {
 
@@ -21,11 +35,11 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 		/*
 		 * Remove the (+) from this side, to be moved to the other side
 		 */
-		JohnNode operatorToMove = null;
+		MathMLBindingNode operatorToMove = null;
 
 		if (sourceNode.getIndex() > 0) {// Remove the (+) or (-) associated with
 			// source
-			JohnNode prevChild = sourceNode.getPrevSibling();
+			MathMLBindingNode prevChild = sourceNode.getPrevSibling();
 			if ("mo".equals(prevChild.getTag())) {
 				operatorToMove = prevChild;
 				prevChild.remove();
@@ -44,9 +58,9 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 			targetNode.add(operatorToMove);
 			targetNode.add(sourceNode);
 		} else {
-			JohnNode encasingSeriese = targetNode.encase("mrow", Type.Series);
+			MathMLBindingNode encasingSeriese = targetNode.encase("mrow", Type.Series);
 
-			JohnTree tree = targetNode.getTree();
+			MathMLBindingTree tree = targetNode.getTree();
 
 			// Set new encasing series as the tree's leftSide or rightSide
 			if (targetNode.equals(tree.getLeftSide())) {
@@ -62,7 +76,7 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 	}
 
 	@Override
-	public String findChange(JohnNode sourceNode) {
+	public String findChange(MathMLBindingNode sourceNode) {
 		// Change sign on opposite side
 		if (sourceNode.toString().startsWith("-")) {
 			change = sourceNode.toString().replaceFirst("-", "");

@@ -1,3 +1,17 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.equationtree;
 
 import java.util.ConcurrentModificationException;
@@ -13,15 +27,15 @@ import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
-import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
-public class JohnTree {
+public class MathMLBindingTree {
 
-	private JohnTree tree = this;
-	private JohnNode root;
-	private JohnNode leftSide;
-	private JohnNode equals;
-	private JohnNode rightSide;
+	private MathMLBindingTree tree = this;
+	private MathMLBindingNode root;
+	private MathMLBindingNode leftSide;
+	private MathMLBindingNode equals;
+	private MathMLBindingNode rightSide;
 	private LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
 	private HTML mathML;
 
@@ -36,7 +50,7 @@ public class JohnTree {
 	 *            from XML
 	 * @throws TopNodesNotFoundException
 	 */
-	public JohnTree(HTML mathML, Boolean isParsedForMath)
+	public MathMLBindingTree(HTML mathML, Boolean isParsedForMath)
 			throws TopNodesNotFoundException {
 		this.mathML = mathML;
 
@@ -58,27 +72,27 @@ public class JohnTree {
 		return mathML;
 	}
 
-	public JohnNode getRoot() {
+	public MathMLBindingNode getRoot() {
 		return root;
 	}
 
-	public JohnNode getLeftSide() {
+	public MathMLBindingNode getLeftSide() {
 		return leftSide;
 	}
 
-	public JohnNode getRightSide() {
+	public MathMLBindingNode getRightSide() {
 		return rightSide;
 	}
 
-	public void setLeftSide(JohnNode jNode) {
+	public void setLeftSide(MathMLBindingNode jNode) {
 		leftSide = jNode;
 	}
 
-	public void setRightSide(JohnNode jNode) {
+	public void setRightSide(MathMLBindingNode jNode) {
 		rightSide = jNode;
 	}
 
-	public JohnNode getEquals() {
+	public MathMLBindingNode getEquals() {
 		return equals;
 	}
 
@@ -92,11 +106,11 @@ public class JohnTree {
 		return wrappers;
 	}
 
-	private void wrapChildren(JohnNode jNode) {
+	private void wrapChildren(MathMLBindingNode jNode) {
 		MLElementWrapper wrap;
-		List<JohnNode> children = jNode.getChildren();
+		List<MathMLBindingNode> children = jNode.getChildren();
 
-		for (JohnNode child : children) {
+		for (MathMLBindingNode child : children) {
 			if (!child.isHidden()) {
 				wrap = new MLElementWrapper(child, true, true);
 				child.setWrapper(wrap);
@@ -109,14 +123,14 @@ public class JohnTree {
 		}
 	}
 
-	public class JohnNode {
+	public class MathMLBindingNode {
 		private Node domNode;
 		private Type type;
 		private String symbol;
 		private String tag;
 		private MLElementWrapper wrapper;
-		private JohnNode parent;
-		private List<JohnNode> children = new LinkedList<JohnNode>();
+		private MathMLBindingNode parent;
+		private List<MathMLBindingNode> children = new LinkedList<MathMLBindingNode>();
 		private Boolean isHidden = false;
 
 		/**
@@ -128,7 +142,7 @@ public class JohnTree {
 		 * @param type
 		 * @param symbol
 		 */
-		private JohnNode(Node domNode, String tag, Type type, String symbol) {
+		private MathMLBindingNode(Node domNode, String tag, Type type, String symbol) {
 			this.domNode = domNode;
 			this.tag = tag;
 			this.type = type;
@@ -140,7 +154,7 @@ public class JohnTree {
 		 * 
 		 * @param node
 		 */
-		private JohnNode(Node node) {
+		private MathMLBindingNode(Node node) {
 			domNode = node;
 			tag = node.getNodeName();
 			type = null;
@@ -159,7 +173,7 @@ public class JohnTree {
 		 * @param symbol
 		 *            - inner text
 		 */
-		private JohnNode(String tag, Type type, String symbol) {
+		private MathMLBindingNode(String tag, Type type, String symbol) {
 			com.google.gwt.user.client.Element newDomNode = DOM
 					.createElement(tag);
 
@@ -184,8 +198,8 @@ public class JohnTree {
 		 *            - the type of the new node
 		 * @return - encasing node
 		 */
-		public JohnNode encase(String tag, Type type) {
-			JohnNode encasing = new JohnNode(tag, type, this.toString());
+		public MathMLBindingNode encase(String tag, Type type) {
+			MathMLBindingNode encasing = new MathMLBindingNode(tag, type, this.toString());
 			this.getParent().add(this.getIndex(), encasing);
 			this.remove();
 			encasing.add(this);
@@ -207,8 +221,8 @@ public class JohnTree {
 		 * @param symbol
 		 * @return - The newly create child
 		 */
-		public JohnNode add(int index, String tag, Type type, String symbol) {
-			JohnNode child = new JohnNode(tag, type, symbol);
+		public MathMLBindingNode add(int index, String tag, Type type, String symbol) {
+			MathMLBindingNode child = new MathMLBindingNode(tag, type, symbol);
 			if (index < 0) {
 				this.add(-1, child);
 			} else {
@@ -222,35 +236,35 @@ public class JohnTree {
 		 * end of the child list
 		 * 
 		 * @param index
-		 * @param johnNode
+		 * @param mathMLBindingNode
 		 */
-		public void add(int index, JohnNode johnNode) {
+		public void add(int index, MathMLBindingNode mathMLBindingNode) {
 			if (index < 0) {
-				children.add(johnNode);
+				children.add(mathMLBindingNode);
 			} else {
-				children.add(index, johnNode);
+				children.add(index, mathMLBindingNode);
 			}
-			johnNode.parent = this;
+			mathMLBindingNode.parent = this;
 			
-			johnNode.isHidden = johnNode.checkIsHidden();
+			mathMLBindingNode.isHidden = mathMLBindingNode.checkIsHidden();
 		}
 		
-		public void add(JohnNode johnNode) {
-			add(-1, johnNode);
+		public void add(MathMLBindingNode mathMLBindingNode) {
+			add(-1, mathMLBindingNode);
 		}
-		public JohnNode add(String tag, Type type, String symbol) {
+		public MathMLBindingNode add(String tag, Type type, String symbol) {
 			return add(-1, tag, type, symbol);
 		}
 
-		public List<JohnNode> getChildren() {
+		public List<MathMLBindingNode> getChildren() {
 			return children;
 		}
 
-		public JohnNode getFirstChild() {
+		public MathMLBindingNode getFirstChild() {
 			return children.get(0);
 		}
 
-		public JohnNode getChildAt(int index) {
+		public MathMLBindingNode getChildAt(int index) {
 			return children.get(index);
 		}
 
@@ -258,11 +272,11 @@ public class JohnTree {
 			return children.size();
 		}
 
-		public JohnNode getNextSibling() {
+		public MathMLBindingNode getNextSibling() {
 			return getSibling(1);
 		}
 
-		public JohnNode getPrevSibling() {
+		public MathMLBindingNode getPrevSibling() {
 			return getSibling(-1);
 		}
 
@@ -275,11 +289,11 @@ public class JohnTree {
 		 *            left
 		 * @return
 		 */
-		private JohnNode getSibling(int indexesAway) {
+		private MathMLBindingNode getSibling(int indexesAway) {
 			int siblingIndex = this.getParent().getChildren().indexOf(this)
 					+ indexesAway;
 			try {
-				JohnNode sibling = this.getParent().getChildAt(siblingIndex);
+				MathMLBindingNode sibling = this.getParent().getChildAt(siblingIndex);
 				return sibling;
 			} catch (IndexOutOfBoundsException e) {
 				throw new IndexOutOfBoundsException(
@@ -292,7 +306,7 @@ public class JohnTree {
 
 		public void remove() {
 			// Log.severe("REMOVING: " + this.toString());
-			List<JohnNode> sibs = this.parent.getChildren();
+			List<MathMLBindingNode> sibs = this.parent.getChildren();
 			sibs.remove(sibs.indexOf(this));
 		}
 
@@ -300,7 +314,7 @@ public class JohnTree {
 			return this.parent.getChildren().indexOf(this);
 		}
 
-		public JohnNode getParent() {
+		public MathMLBindingNode getParent() {
 			if (parent == null) {
 				throw new NullPointerException("There is no parent for:\n"
 						+ this.toString() + "\n" + this);
@@ -356,7 +370,7 @@ public class JohnTree {
 			return tag;
 		}
 
-		public JohnTree getTree() {
+		public MathMLBindingTree getTree() {
 			return tree;
 		}
 
@@ -401,21 +415,21 @@ public class JohnTree {
 	}
 
 	class MLtoMLTree extends MathMLParser {
-		HashMap<Node, JohnNode> nodeMap;
-		private JohnNode prevLeftNode;
-		private JohnNode prevRightNode;
-		private JohnNode prevSibling;
-		private JohnNode curNode;
-		JohnNode nLeft;
-		JohnNode nEq;
-		JohnNode nRight;
+		HashMap<Node, MathMLBindingNode> nodeMap;
+		private MathMLBindingNode prevLeftNode;
+		private MathMLBindingNode prevRightNode;
+		private MathMLBindingNode prevSibling;
+		private MathMLBindingNode curNode;
+		MathMLBindingNode nLeft;
+		MathMLBindingNode nEq;
+		MathMLBindingNode nRight;
 
 		public MLtoMLTree(HTML mathMLequation) throws TopNodesNotFoundException {
 			super(mathMLequation);
 		}
 
-		public void change(JohnTree jTree) {
-			jTree.root = new JohnNode(null, null, null, null);
+		public void change(MathMLBindingTree jTree) {
+			jTree.root = new MathMLBindingNode(null, null, null, null);
 			jTree.leftSide = nLeft;
 			jTree.equals = nEq;
 			jTree.rightSide = nRight;
@@ -429,10 +443,10 @@ public class JohnTree {
 		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
 				Node nodeRight) {
 
-			nodeMap = new HashMap<Node, JohnNode>();
-			nEq = new JohnNode(nodeEquals);
-			nLeft = new JohnNode(nodeLeft);
-			nRight = new JohnNode(nodeRight);
+			nodeMap = new HashMap<Node, MathMLBindingNode>();
+			nEq = new MathMLBindingNode(nodeEquals);
+			nLeft = new MathMLBindingNode(nodeLeft);
+			nRight = new MathMLBindingNode(nodeRight);
 
 			prevLeftNode = nLeft;
 			prevRightNode = nRight;
@@ -442,7 +456,7 @@ public class JohnTree {
 		protected void onVisitNode(Node currentNode, Boolean isLeft,
 				int indexOfChildren) {
 
-			curNode = new JohnNode(currentNode);
+			curNode = new MathMLBindingNode(currentNode);
 
 			// Must be separated to allow the TreeCanvas to allocate space
 			// proportional to member count ratio of sides of the equation
@@ -476,30 +490,29 @@ public class JohnTree {
 
 	class MLTreeToMathTree {
 
-		private LinkedList<JohnNode> nestedMrows = new LinkedList<JohnNode>();
-		private LinkedList<JohnNode> negatives = new LinkedList<JohnNode>();
+		private LinkedList<MathMLBindingNode> nestedMrows = new LinkedList<MathMLBindingNode>();
+		private LinkedList<MathMLBindingNode> negatives = new LinkedList<MathMLBindingNode>();
 
-		public void change(JohnTree jTree) {
+		public void change(MathMLBindingTree jTree) {
 			parseTree(jTree.getRoot());
 			rearrangeNestedMrows();
 			rearrangeNegatives();
 		}
 
-		private void parseTree(JohnNode jNode) {
-			List<JohnNode> kids = jNode.getChildren();
+		private void parseTree(MathMLBindingNode jNode) {
+			List<MathMLBindingNode> kids = jNode.getChildren();
 			if (kids == null) {
 				return;
 			}
-			for (JohnNode kid : kids) {
+			for (MathMLBindingNode kid : kids) {
 				if ("mrow".equalsIgnoreCase(kid.getTag())) {
 					assignComplexChildMrow(kid);
 				} else {
 					assignSimpleTypes(kid);
 				}
 				findNestedMrows(jNode, kid);
-				//TODO
+
 				kid.isHidden = kid.checkIsHidden();
-//				kid.isHidden = checkIsHidden(kid);
 
 				if (kid.getChildCount() > 0) {
 					parseTree(kid);
@@ -508,13 +521,13 @@ public class JohnTree {
 		}
 
 		/**
-		 * Assigns the MathML tags to JohnNode {@link Type}. This method is
+		 * Assigns the MathML tags to MathMLBindingNode {@link Type}. This method is
 		 * designed to take care of the simple cases, the more complex cases are
 		 * assigned in assignComplexChildMrow
 		 * 
 		 * @param kid
 		 */
-		private void assignSimpleTypes(JohnNode kid) {
+		private void assignSimpleTypes(MathMLBindingNode kid) {
 			if ("mi".equalsIgnoreCase(kid.getTag())) {
 				kid.type = Type.Variable;
 			} else if ("mn".equalsIgnoreCase(kid.getTag())) {
@@ -538,7 +551,7 @@ public class JohnTree {
 		 * @param kid
 		 * @return
 		 */
-		private void assignComplexChildMrow(JohnNode kid) {
+		private void assignComplexChildMrow(MathMLBindingNode kid) {
 
 			if (kid.getChildCount() == 0) {
 				Log.severe("mrow without children: " + kid);
@@ -548,7 +561,7 @@ public class JohnTree {
 				// Default to term until + or - found in children
 				kid.type = Type.Term;
 
-				for (JohnNode baby : kid.getChildren()) {
+				for (MathMLBindingNode baby : kid.getChildren()) {
 
 					if ("mo".equalsIgnoreCase(baby.getTag())) {
 						// Check children for +/- => series
@@ -575,11 +588,9 @@ public class JohnTree {
 					} else if ("Δ".equals(baby.toString())) {
 						// For Δ: Δa should be treated as one variable
 						kid.type = Type.Variable;
-						kid.children = new LinkedList<JohnNode>();
-						//TODO
+						kid.children = new LinkedList<MathMLBindingNode>();
 					} else if (baby.isFunction()) {
-//					} else if (isFunction(baby.toString())) {
-//						kid.type = Type.Function;
+						kid.type = Type.Function;
 					}
 				}
 			}
@@ -591,7 +602,7 @@ public class JohnTree {
 		 * @param node
 		 */
 
-		private void negatePropagate(JohnNode node) {
+		private void negatePropagate(MathMLBindingNode node) {
 			node.symbol = "-" + node.symbol;
 			if (node.getChildCount() > 0) {
 				negatePropagate(node.getChildAt(0));
@@ -608,7 +619,7 @@ public class JohnTree {
 		 * @param parent
 		 * @param nestMrow
 		 */
-		private void findNestedMrows(JohnNode parent, JohnNode kid) {
+		private void findNestedMrows(MathMLBindingNode parent, MathMLBindingNode kid) {
 
 			if (
 			/**/((Type.Series).equals(kid.getType())
@@ -630,9 +641,9 @@ public class JohnTree {
 			if (nestedMrows == null) {
 				return;
 			}
-			for (JohnNode kid : nestedMrows) {
-				List<JohnNode> nests = kid.getChildren();
-				for (JohnNode nest : nests) {
+			for (MathMLBindingNode kid : nestedMrows) {
+				List<MathMLBindingNode> nests = kid.getChildren();
+				for (MathMLBindingNode nest : nests) {
 					kid.getParent().add(kid.getIndex(), nest);
 				}
 				kid.remove();
@@ -647,15 +658,15 @@ public class JohnTree {
 		 */
 		private void rearrangeNegatives() {
 			// TODO
-			for (JohnNode neg : negatives) {
+			for (MathMLBindingNode neg : negatives) {
 
-				JohnNode negOne = new JohnNode(neg.getDomNode(), "mn",
+				MathMLBindingNode negOne = new MathMLBindingNode(neg.getDomNode(), "mn",
 						Type.Number, "-1");
 
 				if (neg.getParent().type == Type.Series) {
-					JohnNode negArg = neg.getNextSibling();
+					MathMLBindingNode negArg = neg.getNextSibling();
 
-					JohnNode encasingTerm = new JohnNode(negArg.getDomNode(),
+					MathMLBindingNode encasingTerm = new MathMLBindingNode(negArg.getDomNode(),
 							"mrow", Type.Term, "-" + negArg.toString());
 
 					neg.getParent().add(negArg.getIndex(), encasingTerm);
@@ -688,21 +699,21 @@ public class JohnTree {
 		HTML mlHTML = new HTML("<math></math>");
 		Boolean changeDomNodes = false;
 
-		MathTreeToML(JohnTree sourceTree, Boolean changeDomNodes) {
+		MathTreeToML(MathMLBindingTree sourceTree, Boolean changeDomNodes) {
 			this.changeDomNodes = changeDomNodes;
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(sourceTree.getRoot(), firstNode);
 		}
 
-		MathTreeToML(JohnNode jNode) {
+		MathTreeToML(MathMLBindingNode jNode) {
 			Element firstNode = mlHTML.getElement().getFirstChildElement();
 			addChild(jNode, firstNode);
 		}
 
-		private void addChild(JohnNode from, Node to) {
-			List<JohnNode> children = from.getChildren();
+		private void addChild(MathMLBindingNode from, Node to) {
+			List<MathMLBindingNode> children = from.getChildren();
 
-			for (JohnNode child : children) {
+			for (MathMLBindingNode child : children) {
 
 				// if ("-1".equals(child.toString()) ) {
 				// continue;

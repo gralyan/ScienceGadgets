@@ -1,3 +1,17 @@
+/*   Copyright 2012 John Gralyan
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
@@ -7,13 +21,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
-import com.sciencegadgets.client.equationtree.JohnTree.JohnNode;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public abstract class AbstractMathDropController extends AbstractDropController {
 	protected MLElementWrapper source;
 	protected MLElementWrapper target;
-	protected JohnNode sourceNode;
-	protected JohnNode targetNode;
+	protected MathMLBindingNode sourceNode;
+	protected MathMLBindingNode targetNode;
 	public String change = "";
 
 	public AbstractMathDropController(Widget dropTarget) {
@@ -28,7 +42,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 
 		source = ((MLElementWrapper) context.draggable);
 		sourceNode = source.getJohnNode();
-		JohnNode sourceParent = sourceNode.getParent();
+		MathMLBindingNode sourceParent = sourceNode.getParent();
 
 		/**
 		 * Actual changes, abstract method to be overridden
@@ -39,7 +53,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		try {
 			if (sourceParent.getChildCount() == 1) {
 				try {
-					JohnNode baseParent = sourceParent.getParent();
+					MathMLBindingNode baseParent = sourceParent.getParent();
 					baseParent.add(sourceParent.getIndex(), sourceParent.getFirstChild());
 					sourceParent.remove();
 					Log.info("removed obsolete parent: "+sourceParent.toString());
@@ -88,7 +102,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 	 * @param sourceNode
 	 * @return
 	 */
-	public abstract String findChange(JohnNode sourceNode);
+	public abstract String findChange(MathMLBindingNode sourceNode);
 	
 	/**
 	 * A comment for the change, to be used for the AlgOut comment
