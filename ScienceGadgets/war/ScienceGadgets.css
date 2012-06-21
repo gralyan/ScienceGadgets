@@ -4,6 +4,10 @@ body {
 .mainTable {
 	margin: auto;
 }
+.navigationArea{
+	width:100%;
+	
+}
 
 #scienceGadgetArea {
 	background-color: #ADD8E6;
@@ -37,7 +41,6 @@ body {
 }
 
 .algOutScrollPanel {
-	border-top: 1px solid gray;
 	border-bottom: 1px solid gray;
 	height: 6em;
 	width: 60em;
