@@ -379,8 +379,8 @@ public class MathMLBindingTree {
 
 			if ("(".equals(this.toString()) || ")".equals(this.toString())) {
 				return true;
-			} else if ("mo".equalsIgnoreCase(this.getTag())) {
-				return true;
+//			} else if ("mo".equalsIgnoreCase(this.getTag())) {
+//				return true;
 			} else if (this.isFunction()
 			// Don't show function name as child, parent will be function
 			) {
@@ -411,7 +411,7 @@ public class MathMLBindingTree {
 	}
 
 	public static enum Type {
-		Term, Series, Function, Exponent, Fraction, Variable, Number;
+		Term, Series, Function, Exponent, Fraction, Variable, Number, None;
 	}
 
 	class MLtoMLTree extends MathMLParser {
@@ -540,7 +540,9 @@ public class MathMLBindingTree {
 				kid.type = Type.Exponent;
 			} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
 				kid.type = Type.Fraction;
-			}
+		} else if ("mo".equalsIgnoreCase(kid.getTag())) {
+			kid.type = Type.None;
+		}
 		}
 
 		/**
