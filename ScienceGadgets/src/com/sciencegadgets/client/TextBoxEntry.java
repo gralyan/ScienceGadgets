@@ -21,11 +21,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 
 public class TextBoxEntry implements EntryPoint {
@@ -46,7 +44,7 @@ public class TextBoxEntry implements EntryPoint {
 			Button mlButton = new Button("use", new InputHandler(InputTypes.ml));
 			Button jqButton = new Button("use", new InputHandler(InputTypes.jq));
 			Label mlLabel = new Label("Math ML");
-			Label jqLabel = new Label("Regular");
+			Label jqLabel = new Label("Math Equation");
 
 			Grid inputGrid = new Grid(2, 3);
 			inputGrid.setStyleName("inputGrid");

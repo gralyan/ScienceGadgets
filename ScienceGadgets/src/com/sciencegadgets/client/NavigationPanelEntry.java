@@ -1,8 +1,5 @@
 package com.sciencegadgets.client;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -15,8 +12,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class NavigationPanelEntry implements EntryPoint {
 
-	private static final List<String> navigationIcons = Arrays.asList("About",
-			"Get ScienceGadgets", "Roadmap");
 	private ScrollPanel scrollInTabAbout = new ScrollPanel();
 	private ScrollPanel scrollInTabGetIt = new ScrollPanel();
 	private ScrollPanel scrollInTabRoadMap = new ScrollPanel();
@@ -80,7 +75,7 @@ public class NavigationPanelEntry implements EntryPoint {
 				"<p>Science Gadgets is an open source project under an Apache 2.0 liscence. "
 						+ "<p>You can find the <a href=\"http://code.google.com/p/sciencegadget/\">source code here</a></p>"
 						+ "<p>Since Science Gadgets are still ver early in development, it would be unwise to link directly to the demo above.</p>"
-						+ "<p>Once it has matured, I will post a proper way to add the components and configurations anyone can use on their own site.</p>");
+						+ "<p>Once it has matured, I will post a proper way to add the components and configurations so anyone can easily use it on their own site.</p>");
 		
 		vp.add(image);
 		vp.add(html);
@@ -93,7 +88,7 @@ public class NavigationPanelEntry implements EntryPoint {
 		roadmapPanel
 				.add(new HTML(
 						"<p>I wrote an Eclipse plug-in that would make a mind map of the source code. "
-								+ "It's much easier to navigate, discuss, brainstorm and visualize all the code and connections.</p>"
+								+ "It's much easier to navigate, discuss, brainstorm, experiment and visualize all the code and connections.</p>"
 								+ "<p>If you're interested in getting the plug-in please feel free to contact me.</p>"
 								+ "<p>You can download the actual map to explore in Freeplane, or view a snapshot image below.</p>"
 								+ "<p><b><a href=\"ScienceGadgets_6-20-2012.mm\" target=\"_blank\">Download Map</a></b></p>"));

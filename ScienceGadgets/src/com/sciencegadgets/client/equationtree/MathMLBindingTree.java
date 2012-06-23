@@ -27,7 +27,6 @@ import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class MathMLBindingTree {
 
