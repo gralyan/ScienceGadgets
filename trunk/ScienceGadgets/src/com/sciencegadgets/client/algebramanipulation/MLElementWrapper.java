@@ -23,6 +23,8 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -77,6 +79,7 @@ public class MLElementWrapper extends HTML {
 		addMouseOverHandler();
 		addMouseOutHandler();
 		addClickHandler();
+		addTouchHandler();
 
 		if (isJoined == true) {
 			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, false);
@@ -130,6 +133,9 @@ public class MLElementWrapper extends HTML {
 
 	public HandlerRegistration addClickHandler() {
 		return addDomHandler(new ElementClickHandler(), ClickEvent.getType());
+	}
+	public HandlerRegistration addTouchHandler() {
+		return addTouchStartHandler(new ElementTouchHandler());
 	}
 
 	/**
@@ -195,6 +201,18 @@ public class MLElementWrapper extends HTML {
 		}
 	}
 
+	class ElementTouchHandler implements TouchStartHandler {
+
+		@Override
+		public void onTouchStart(TouchStartEvent arg0) {
+			if (selectedWrapper != null) {
+				selectedWrapper.select(false);
+			}
+			select(true);
+
+		}
+	}
+
 	/**
 	 * Highlights the selected wrapper and joiner as well as all the drop
 	 * targets associated with the selected
@@ -217,7 +235,7 @@ public class MLElementWrapper extends HTML {
 
 			String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
 			String changeDesc = "";
-			
+
 			for (DropController dropC : wrapper.dragController.getDropList()) {
 
 				String className = dropC.getClass().getName();
@@ -227,21 +245,21 @@ public class MLElementWrapper extends HTML {
 				// Style of highlight on potential targets
 				if ((path + "Simplify_Add").equals(className)) {
 					changeDesc = "<b>Simplify</b> <br/>" + change;
-					
+
 				} else if ((path + "Simplify_Multiply").equals(className)) {
 					changeDesc = "<b>Simplify</b> <br/>" + change;
-					
+
 				} else if ((path + "Simplify_Divide").equals(className)) {
 					changeDesc = "<b>Simplify</b> <br/>" + change;
 
 				} else if ((path + "BothSides_Add").equals(className)) {
 					changeDesc = "<b>Add &nbsp; " + change
 							+ "</b><br/>to both sides";
-					
+
 				} else if ((path + "BothSides_Multiply").equals(className)) {
 					changeDesc = "<b>Multiply &nbsp; " + change
 							+ "</b><br/>with both sides";
-					
+
 				} else if ((path + "BothSides_Divide").equals(className)) {
 					changeDesc = "<b>Divide &nbsp; " + change
 							+ "</b><br/>on both sides";
@@ -254,7 +272,8 @@ public class MLElementWrapper extends HTML {
 				MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
 						.getDropTarget());
 				dropC.getDropTarget().setStyleName("selectedDropWrapper");
-				dropCwrap.getJoinedWrapper().setStyleName("selectedDropWrapper");
+				dropCwrap.getJoinedWrapper()
+						.setStyleName("selectedDropWrapper");
 
 				// Descriptors
 				HTML dropDesc = dropCwrap.getDropDescriptor();
