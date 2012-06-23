@@ -233,7 +233,7 @@ public class TreeCanvas extends DrawingArea {
 			int childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
 
 			int lineX = childLeft + childWidth / 2 + pad;
-			int lineY = childTop;
+//			int lineY = childTop;
 
 			int boxLeft = childLeft - pad;
 			int boxTop = childTop;
@@ -254,9 +254,9 @@ public class TreeCanvas extends DrawingArea {
 
 			if (child.getWrapper() != null) {
 				MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
-				wrap.setHeight(boxHeight + "px");
-				wrap.setWidth(boxWidth + "px");
-				panel.add(wrap, childLeft - pad, childTop);
+				wrap.setHeight(boxHeight+6*pad + "px");
+				wrap.setWidth(boxWidth + 6*pad + "px");
+				panel.add(wrap, childLeft - 3*pad, childTop-2*pad);
 				// Hint under drop target
 				panel.add(wrap.getDropDescriptor(), childLeft - pad, childTop
 						+ boxHeight);
@@ -267,7 +267,6 @@ public class TreeCanvas extends DrawingArea {
 						(byte) (layer + 1), isLeft);
 			}
 		}
-
 	}
 
 	/**
@@ -330,9 +329,9 @@ public class TreeCanvas extends DrawingArea {
 		if (jTree.getLeftSide().getWrapper() != null) {
 			MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
 					.getJoinedWrapper();
-			lWrap.setHeight(lboxHeight + "px");
-			lWrap.setWidth(lboxWidth + "px");
-			panel.add(lWrap, lLeft - pad, topPad);
+			lWrap.setHeight(lboxHeight+4*pad + "px");
+			lWrap.setWidth(lboxWidth+4*pad + "px");
+			panel.add(lWrap, lLeft - 3*pad, topPad-2*pad);
 			panel.add(lWrap.getDropDescriptor(), lLeft - pad, topPad
 					+ lboxHeight);
 		}
@@ -350,9 +349,9 @@ public class TreeCanvas extends DrawingArea {
 		if (jTree.getRightSide().getWrapper() != null) {
 			MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
 					.getJoinedWrapper();
-			rWrap.setHeight(rboxHeight + "px");
-			rWrap.setWidth(rboxWidth + "px");
-			panel.add(rWrap, rLeft - pad, topPad);
+			rWrap.setHeight(rboxHeight+4*pad + "px");
+			rWrap.setWidth(rboxWidth+4*pad + "px");
+			panel.add(rWrap, rLeft - 3*pad, topPad-2*pad);
 			panel.add(rWrap.getDropDescriptor(), rLeft - pad, topPad
 					+ rboxHeight);
 		}
