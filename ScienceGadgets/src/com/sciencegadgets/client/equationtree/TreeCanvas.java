@@ -258,10 +258,9 @@ public class TreeCanvas extends DrawingArea {
 				wrap.setWidth(boxWidth + 6*pad + "px");
 				panel.add(wrap, childLeft - 3*pad, childTop-2*pad);
 				// Hint under drop target
-				panel.add(wrap.getDropDescriptor(), childLeft - pad, childTop
-						+ boxHeight);
+				panel.add(wrap.getDropDescriptor(), childLeft - 3*pad, childTop + boxHeight+5*pad);
+						
 			}
-
 			if (child.getChildCount() > 0) {
 				drawChildren(child, lineX, childTop + boxHeight,
 						(byte) (layer + 1), isLeft);
@@ -332,8 +331,8 @@ public class TreeCanvas extends DrawingArea {
 			lWrap.setHeight(lboxHeight+4*pad + "px");
 			lWrap.setWidth(lboxWidth+4*pad + "px");
 			panel.add(lWrap, lLeft - 3*pad, topPad-2*pad);
-			panel.add(lWrap.getDropDescriptor(), lLeft - pad, topPad
-					+ lboxHeight);
+			panel.add(lWrap.getDropDescriptor(), lLeft - 3*pad, topPad
+					+ lboxHeight+3*pad);
 		}
 
 		// Right - Add top level wrappers
@@ -352,8 +351,8 @@ public class TreeCanvas extends DrawingArea {
 			rWrap.setHeight(rboxHeight+4*pad + "px");
 			rWrap.setWidth(rboxWidth+4*pad + "px");
 			panel.add(rWrap, rLeft - 3*pad, topPad-2*pad);
-			panel.add(rWrap.getDropDescriptor(), rLeft - pad, topPad
-					+ rboxHeight);
+			panel.add(rWrap.getDropDescriptor(), rLeft - 3*pad, topPad
+					+ rboxHeight+3*pad);
 		}
 
 		int[] a = { lboxHeight + topPad, rboxHeight + topPad };
