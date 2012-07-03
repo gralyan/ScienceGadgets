@@ -14,6 +14,7 @@
  */
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -27,7 +28,12 @@ public class DropController_BothSides_Multiply extends
 	}
 
 	@Override
-	void onChange() {
+	protected Boolean askQuestion() {
+		return true;
+	}
+
+	@Override
+	protected void onChange() {
 
 		findChange(sourceNode);
 

@@ -14,6 +14,7 @@
  */
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
@@ -25,9 +26,16 @@ public class DropController_Simplify_Divide extends AbstractMathDropController {
 	public DropController_Simplify_Divide(Widget dropTarget) {
 		super(dropTarget);
 	}
+	
+	@Override
+	protected Boolean askQuestion() {
+		final String[] questionAndAnswer = findChange(sourceNode).split("=");
+		DialogBox dialogBox = new InputDialogBox(questionAndAnswer);
+		return true;
+	}
 
 	@Override
-	void onChange() {
+	protected void onChange() {
 
 		findChange(sourceNode);
 
