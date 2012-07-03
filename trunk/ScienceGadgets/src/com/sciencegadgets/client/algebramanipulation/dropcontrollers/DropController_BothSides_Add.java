@@ -24,9 +24,14 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 	public DropController_BothSides_Add(Widget dropTarget) {
 		super(dropTarget);
 	}
+	
+	@Override
+	protected Boolean askQuestion() {
+		return true;
+	}
 
 	@Override
-	void onChange() {
+	protected void onChange() {
 
 		findChange(sourceNode);
 

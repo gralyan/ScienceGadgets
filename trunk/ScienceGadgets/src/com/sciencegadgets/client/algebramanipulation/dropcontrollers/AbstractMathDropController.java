@@ -16,6 +16,7 @@ package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Log;
@@ -44,19 +45,25 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		sourceNode = source.getJohnNode();
 		MathMLBindingNode sourceParent = sourceNode.getParent();
 
-		/**
-		 * Actual changes, abstract method to be overridden
-		 */
-		onChange();
+		Boolean isCorrect = askQuestion();
+		if (isCorrect){
+			// Actual changes. Abstract method - to be overridden
+			onChange();
+		}else{
+			Window.alert("Fail");
+		}
+		
 
 		// If the source is the last child, get rid of the parent
 		try {
 			if (sourceParent.getChildCount() == 1) {
 				try {
 					MathMLBindingNode baseParent = sourceParent.getParent();
-					baseParent.add(sourceParent.getIndex(), sourceParent.getFirstChild());
+					baseParent.add(sourceParent.getIndex(),
+							sourceParent.getFirstChild());
 					sourceParent.remove();
-					Log.info("removed obsolete parent: "+sourceParent.toString());
+					Log.info("removed obsolete parent: "
+							+ sourceParent.toString());
 
 				} catch (NullPointerException e) {
 					e.printStackTrace();
@@ -93,19 +100,27 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 	}
 
 	/**
-	 * The changes that occur in the tree. findChange should be called first.
+	 * Prompts the user with the question.
+	 * @return True if Pass, False if Fail
 	 */
-	abstract void onChange();
+	protected abstract Boolean askQuestion();
 	
 	/**
+	 * The changes that occur in the tree. findChange should be called first.
+	 */
+	protected abstract void onChange();
+
+	/**
 	 * A description of the change that occurs, to be used for hints
+	 * 
 	 * @param sourceNode
 	 * @return
 	 */
 	public abstract String findChange(MathMLBindingNode sourceNode);
-	
+
 	/**
 	 * A comment for the change, to be used for the AlgOut comment
+	 * 
 	 * @return
 	 */
 	abstract String changeComment();

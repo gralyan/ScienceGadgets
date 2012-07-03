@@ -14,6 +14,7 @@
  */
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
@@ -24,8 +25,15 @@ public class DropController_Simplify_Add extends AbstractMathDropController {
 	public DropController_Simplify_Add(Widget dropTarget) {
 		super(dropTarget);
 	}
+	
+	@Override
+	protected Boolean askQuestion() {
+		final String[] questionAndAnswer = findChange(sourceNode).split("=");
+		DialogBox dialogBox = new InputDialogBox(questionAndAnswer);
+		return true;
+	}
 
-	void onChange() {
+	protected void onChange() {
 
 		findChange(sourceNode);
 
@@ -105,9 +113,13 @@ public class DropController_Simplify_Add extends AbstractMathDropController {
 		
 		return change;
 	}
-
+	
 	@Override
 	String changeComment() {
 		return "Simplify: " + change;
 	}
+	
+	
+	
+
 }
