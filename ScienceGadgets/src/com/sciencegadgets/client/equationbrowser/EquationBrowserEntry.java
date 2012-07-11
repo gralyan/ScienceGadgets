@@ -509,18 +509,18 @@ public class EquationBrowserEntry implements EntryPoint {
 				// uncomment to get the MathML form of all algebra equations
 				// /////////////////////////////////////////////////
 
-				// String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);
-				// for (int i = 0; i < eqList.length; i++) {
-				// HTML a = new HTML("$" + eqList[i] + "$");
-				// parseJQMath(a.getElement());
-				// System.out.println("/* "
-				// + i
-				// + " */{ \""
-				// + eqList[i].replace("\\", "\\\\")
-				// + "\", \""
-				// + a.getHTML().replace("\\", "\\\\")
-				// .replace("\"", "\\\"") + "\" },");
-				// }
+				 String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);
+				 for (int i = 0; i < eqList.length; i++) {
+				 HTML a = new HTML("$" + eqList[i] + "$");
+				 parseJQMath(a.getElement());
+				 System.out.println("/* "
+				 + i
+				 + " */{ \""
+				 + eqList[i].replace("\\", "\\\\")
+				 + "\", \""
+				 + a.getHTML().replace("\\", "\\\\")
+				 .replace("\"", "\\\"") + "\" },");
+				 }
 
 			} else if ("science".equals(mode)) {
 				createSciBrowser();

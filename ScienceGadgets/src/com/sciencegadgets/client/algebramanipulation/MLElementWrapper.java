@@ -237,7 +237,7 @@ public class MLElementWrapper extends HTML {
 			String changeDesc = "";
 
 			for (DropController dropC : wrapper.dragController.getDropList()) {
-
+				
 				String className = dropC.getClass().getName();
 				String change = ((AbstractMathDropController) dropC)
 						.findChange(getJohnNode());
@@ -261,11 +261,8 @@ public class MLElementWrapper extends HTML {
 							+ "</b><br/>with both sides";
 
 				} else if ((path + "BothSides_Divide").equals(className)) {
-					changeDesc = "<b>Divide &nbsp; " + change
+					changeDesc = "<b>Divide by &nbsp; " + change
 							+ "</b><br/>on both sides";
-
-				} else {
-					changeDesc = "???";
 				}
 
 				// Highlights drop targets
@@ -281,7 +278,8 @@ public class MLElementWrapper extends HTML {
 				dropDesc.setStyleName("dropDescriptor");
 			}
 
-		} else {
+		} else { // Deselect
+			
 			// Removes style - selectedWrapper
 			wrapper.getElement().removeAttribute("id");
 			wrapper.getJoinedWrapper().getElement().removeAttribute("id");

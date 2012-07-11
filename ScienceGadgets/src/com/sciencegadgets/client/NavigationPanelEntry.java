@@ -51,7 +51,8 @@ public class NavigationPanelEntry implements EntryPoint {
 						+
 
 						"<p>The collection currently consists of an equation browser, algebra manipulating area, "
-						+ "and a graphical representation of the equation as a tree of its components. "
+						+ "and a graphical representation of the equation as a tree of its components. " 
+						+ "Algebra has been the main focus because it is the core prerequisire most students struggle with. "
 						+ "The components may be hovered over by mouse (or clicked on in touchscreen devices) "
 						+ "in order to display all the possible changes it can make on the equation as hints. "
 						+ "Students can explore all these possibilities in their own direction without being force fed one algorithm of solving particular equations. "
@@ -74,7 +75,6 @@ public class NavigationPanelEntry implements EntryPoint {
 				"<img href=\"http://upload.wikimedia.org/wikipedia/commons/c/cd/ASF-logo.svg\"></img>" +
 				"<p>Science Gadgets is an open source project under an Apache 2.0 liscence. "
 						+ "<p>You can find the <a href=\"http://code.google.com/p/sciencegadget/\">source code here</a></p>"
-						+ "<p>Since Science Gadgets are still ver early in development, it would be unwise to link directly to the demo above.</p>"
 						+ "<p>Once it has matured, I will post a proper way to add the components and configurations so anyone can easily use it on their own site.</p>");
 		
 		vp.add(image);
@@ -88,13 +88,12 @@ public class NavigationPanelEntry implements EntryPoint {
 		roadmapPanel
 				.add(new HTML(
 						"<p>I wrote an Eclipse plug-in that would make a mind map of the source code. "
-								+ "It's much easier to navigate, discuss, brainstorm, experiment and visualize all the code and connections.</p>"
+								+ "It's much easier to navigate, share, brainstorm, experiment and visualize all the code and connections.</p>"
 								+ "<p>If you're interested in getting the plug-in please feel free to contact me.</p>"
 								+ "<p>You can download the actual map to explore in Freeplane, or view a snapshot image below.</p>"
+								+ "<p><a href=\"ScienceGadgets_Roadmap_6-20-2012.jpg\" target=\"_blank\">RoadMap Image</a></p>"
 								+ "<p><b><a href=\"ScienceGadgets_6-20-2012.mm\" target=\"_blank\">Download Map</a></b></p>"));
 
-		Image mapImage = new Image("ScienceGadgets_Roadmap_6-20-2012.jpg");
-		roadmapPanel.add(mapImage);
 		scrollInTabRoadMap.add(roadmapPanel);
 		return scrollInTabRoadMap;
 	}
