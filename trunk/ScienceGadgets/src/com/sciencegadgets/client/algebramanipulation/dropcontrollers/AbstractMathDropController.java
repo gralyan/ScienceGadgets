@@ -22,6 +22,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public abstract class AbstractMathDropController extends AbstractDropController {
@@ -44,15 +46,15 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		source = ((MLElementWrapper) context.draggable);
 		sourceNode = source.getJohnNode();
 		MathMLBindingNode sourceParent = sourceNode.getParent();
+		MathMLBindingTree tree = targetNode.getTree();
 
 		Boolean isCorrect = askQuestion();
-		if (isCorrect){
+		if (isCorrect) {
 			// Actual changes. Abstract method - to be overridden
 			onChange();
-		}else{
+		} else {
 			Window.alert("Fail");
 		}
-		
 
 		// If the source is the last child, get rid of the parent
 		try {
@@ -75,16 +77,28 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		}
 
 		// Clean wrappers
-		for (MLElementWrapper wrap : targetNode.getTree().getWrappers()) {
+		for (MLElementWrapper wrap : tree.getWrappers()) {
 			wrap.removeStyleName("selectedDropWrapper");
 			wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
 		}
 
 		// Updates
-		HTML mathML = targetNode.getTree().toMathML();
+		HTML mathML = tree.toMathML();
 		Log.info("transporting: " + mathML.getHTML());
 		// AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
 		EquationTransporter.selectEquation(mathML, changeComment());
+
+		// TODO number is registering as series
+//		System.out.println("\nleft: "+tree.getLeftSide().getType()+"\nright: "+tree.getRightSide().getType());
+//		
+//		// The ending, when problem is solved
+//		if ((Type.Variable.equals(tree.getLeftSide().getType()) //
+//				&& Type.Number.equals(tree.getRightSide().getType()))//
+//				|| (Type.Variable.equals(tree.getRightSide().getType()) //
+//				&& Type.Number.equals(tree.getLeftSide().getType()))) {
+//			System.out.println("You WIN!!!! YAAAAAYYYY!!!!!! ");
+//
+//		}
 	}
 
 	@Override
@@ -101,10 +115,11 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 
 	/**
 	 * Prompts the user with the question.
+	 * 
 	 * @return True if Pass, False if Fail
 	 */
 	protected abstract Boolean askQuestion();
-	
+
 	/**
 	 * The changes that occur in the tree. findChange should be called first.
 	 */
