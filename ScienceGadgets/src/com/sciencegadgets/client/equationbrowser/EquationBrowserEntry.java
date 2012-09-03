@@ -506,7 +506,7 @@ public class EquationBrowserEntry implements EntryPoint {
 				createAlgBrowser();
 
 				// ////////////////////////////////////////////////
-				// uncomment to get the MathML form of all algebra equations
+				// uncomment to get the MathML form of all algebra equations to consol
 				// /////////////////////////////////////////////////
 
 				 String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);

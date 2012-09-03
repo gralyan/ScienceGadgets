@@ -116,8 +116,8 @@ public class TreeCanvas extends DrawingArea {
 		// each side
 		leftLayerCounts[0]++;
 		rightLayerCounts[0]++;
-		getNextLayerCounts(jTree.getLeftSide(), (byte) 1, true);
-		getNextLayerCounts(jTree.getRightSide(), (byte) 1, false);
+		getNextLayerCounts(jTree.getLeftSide(), (byte) 0, true);
+		getNextLayerCounts(jTree.getRightSide(), (byte) 0, false);
 
 		// Resize side lengths depending on the ratio of side member density.
 		// This keeps the tree from looking lopsided when there are many more
@@ -143,15 +143,15 @@ public class TreeCanvas extends DrawingArea {
 		rowHeight = panel.getParent().getOffsetHeight() / 3;
 
 		// Set the size of the canvas
-//		int layerCount = leftLayerCounts.length > rightLayerCounts.length ? leftLayerCounts.length
-//				: rightLayerCounts.length;
+		// int layerCount = leftLayerCounts.length > rightLayerCounts.length ?
+		// leftLayerCounts.length
+		// : rightLayerCounts.length;
 		int layerCount = 0;
-		for(int i=0 ; i<leftLayerCounts.length ; i++){
-			if(leftLayerCounts[i] != 0 || rightLayerCounts[i] != 0){
+		for (int i = 0; i < leftLayerCounts.length; i++) {
+			if (leftLayerCounts[i] != 0 || rightLayerCounts[i] != 0) {
 				layerCount++;
 			}
 		}
-		
 
 		int canvasHeight = layerCount * rowHeight;
 		panel.setHeight(canvasHeight + "px");
@@ -162,16 +162,16 @@ public class TreeCanvas extends DrawingArea {
 		splitSidesInMiddle();
 
 		// Add HTML widgets of top level of each side
-		int[] topLayerHeights = addFirstLayer(jTree);
+//		int[] topLayerHeights = addFirstLayer(jTree);
 
 		// Recursively create the rest of the tree
 		if (jTree.getLeftSide().getChildCount() > 1)
 			drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2),
-					topLayerHeights[0], (byte) 1, true);
+					/*topLayerHeights[0]*/0, (byte) 0, true);
 		if (jTree.getRightSide().getChildCount() > 1)
 			drawChildren(jTree.getRightSide(),
-					(sideLengthLeft + sideLengthRight / 2), topLayerHeights[1],
-					(byte) 1, false);
+					(sideLengthLeft + sideLengthRight / 2), /*topLayerHeights[1]*/0,
+					(byte) 0, false);
 
 	}
 
@@ -179,7 +179,7 @@ public class TreeCanvas extends DrawingArea {
 			int parentY, byte layer, Boolean isLeft) {
 
 		List<MathMLBindingNode> children = pNode.getChildren();
-		int layerHeight = rowHeight * (layer);
+		int layerHeight = rowHeight * layer+topPad;
 
 		for (MathMLBindingNode child : children) {
 
@@ -198,9 +198,11 @@ public class TreeCanvas extends DrawingArea {
 				childSpace = (sideLengthRight) / rightLayerCounts[layer];
 			}
 			HTML childHTML = child.toMathML();
+			panel.add(childHTML, 0, 0);
 
 			int childWidth = childHTML.getOffsetWidth();
-			// int childHeight = childHTML.getOffsetHeight();
+			int childHeight = childHTML.getOffsetHeight();
+			panel.remove(childHTML);
 
 			int placement;
 			if (isLeft) {
@@ -221,45 +223,52 @@ public class TreeCanvas extends DrawingArea {
 				// If the child is too big and going to overflow pull it back
 				placement -= childWidth - childSpace;
 			}
-			panel.add(childHTML, placement, layerHeight);
+			System.out.println(childWidth);
 			
-			// Operation symbols only, no wrapper or line
-			if("mo".equals(child.getTag())){
+			// Operation spacing only. No symbols, no wrapper or line
+			if ("mo".equals(child.getTag())) {
+				VectorObject operation = createOperationShape(layerHeight,placement, childHeight);
+				this.add(operation);		
 				continue;
 			}
+			panel.add(childHTML, placement, layerHeight);
+			
 
 			int childLeft = childHTML.getAbsoluteLeft()
 					- panel.getAbsoluteLeft();
 			int childTop = childHTML.getAbsoluteTop() - panel.getAbsoluteTop();
 
 			int lineX = childLeft + childWidth / 2 + pad;
-//			int lineY = childTop;
+			// int lineY = childTop;
 
 			int boxLeft = childLeft - pad;
-			int boxTop = childTop;
+			int boxTop = childTop - pad;
 			int boxWidth = childHTML.getOffsetWidth() + 2 * pad;
-			int boxHeight = childHTML.getOffsetHeight() * 4 / 3;
+			int boxHeight = childHTML.getOffsetHeight() +2*pad;
 
-			VectorObject nodeShape = createNodeShape(child.getType(), boxLeft,
+			VectorObject nodeShape = createNodeShape(child.getParent().getType(), boxLeft,
 					boxTop, boxWidth, boxHeight);
 			this.add(nodeShape);
 
+			if(0!=layer){
 			Line connectingLine = new Line(parentX, parentY, lineX,
 					(nodeShape.getAbsoluteTop() - panel.getAbsoluteTop()));
 			this.add(connectingLine);
-
+			}
+			
 			// Image nodePic = new Image(boxLeft, boxTop-boxHeight, boxWidth,
 			// boxHeight*2, nodePicUrl);
 			// this.add(nodePic);
 
 			if (child.getWrapper() != null) {
 				MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
-				wrap.setHeight(boxHeight+6*pad + "px");
-				wrap.setWidth(boxWidth + 6*pad + "px");
-				panel.add(wrap, childLeft - 3*pad, childTop-2*pad);
+				wrap.setHeight(boxHeight + 6 * pad + "px");
+				wrap.setWidth(boxWidth + 6 * pad + "px");
+				panel.add(wrap, childLeft - 3 * pad, childTop - 2 * pad);
 				// Hint under drop target
-				panel.add(wrap.getDropDescriptor(), childLeft - 3*pad, childTop + boxHeight+5*pad);
-						
+				panel.add(wrap.getDropDescriptor(), childLeft - 3 * pad,
+						childTop + boxHeight + 5 * pad);
+
 			}
 			if (child.getChildCount() > 0) {
 				drawChildren(child, lineX, childTop + boxHeight,
@@ -328,11 +337,11 @@ public class TreeCanvas extends DrawingArea {
 		if (jTree.getLeftSide().getWrapper() != null) {
 			MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
 					.getJoinedWrapper();
-			lWrap.setHeight(lboxHeight+4*pad + "px");
-			lWrap.setWidth(lboxWidth+4*pad + "px");
-			panel.add(lWrap, lLeft - 3*pad, topPad-2*pad);
-			panel.add(lWrap.getDropDescriptor(), lLeft - 3*pad, topPad
-					+ lboxHeight+3*pad);
+			lWrap.setHeight(lboxHeight + 4 * pad + "px");
+			lWrap.setWidth(lboxWidth + 4 * pad + "px");
+			panel.add(lWrap, lLeft - 3 * pad, topPad - 2 * pad);
+			panel.add(lWrap.getDropDescriptor(), lLeft - 3 * pad, topPad
+					+ lboxHeight + 3 * pad);
 		}
 
 		// Right - Add top level wrappers
@@ -348,11 +357,11 @@ public class TreeCanvas extends DrawingArea {
 		if (jTree.getRightSide().getWrapper() != null) {
 			MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
 					.getJoinedWrapper();
-			rWrap.setHeight(rboxHeight+4*pad + "px");
-			rWrap.setWidth(rboxWidth+4*pad + "px");
-			panel.add(rWrap, rLeft - 3*pad, topPad-2*pad);
-			panel.add(rWrap.getDropDescriptor(), rLeft - 3*pad, topPad
-					+ rboxHeight+3*pad);
+			rWrap.setHeight(rboxHeight + 4 * pad + "px");
+			rWrap.setWidth(rboxWidth + 4 * pad + "px");
+			panel.add(rWrap, rLeft - 3 * pad, topPad - 2 * pad);
+			panel.add(rWrap.getDropDescriptor(), rLeft - 3 * pad, topPad
+					+ rboxHeight + 3 * pad);
 		}
 
 		int[] a = { lboxHeight + topPad, rboxHeight + topPad };
@@ -382,76 +391,40 @@ public class TreeCanvas extends DrawingArea {
 
 	}
 
+	private Group createOperationShape (int y, int x, int height){
+	Group shape = new Group();
+	
+	Path plus = new Path(x, y);
+	int inc = height/3;
+	plus.lineRelativelyTo(inc, 0);
+	plus.lineRelativelyTo(0, inc);
+	plus.lineRelativelyTo(inc, 0);
+	plus.lineRelativelyTo(0, inc);
+	plus.lineRelativelyTo(-inc, 0);
+	plus.lineRelativelyTo(0, inc);
+	plus.lineRelativelyTo(-inc, 0);
+	plus.lineRelativelyTo(0, -inc);
+	plus.lineRelativelyTo(-inc, 0);
+	plus.lineRelativelyTo(0, -inc);
+	plus.lineRelativelyTo(inc, 0);
+	plus.lineRelativelyTo(0, -inc);
+	plus.close();
+	
+	plus.setFillColor("orange");
+shape.add(plus);
+	
+	return shape;
+	}
+	
 	private Group createNodeShape(Type type, int x, int y, int width, int height) {
 		Group shape = new Group();
 
 		switch (type) {
-		case Term:
-
-			int skew = height / 2;
-			int spline = height * 5 / 16;// NURB length for Bézier curves
-
-			Path front = new Path(x, y);// Box Front, starts at top left
-			front.curveRelativelyTo(-spline, 0, -spline, height, 0, height);// down
-			front.lineRelativelyTo(width, 0);// right
-			front.curveRelativelyTo(spline, 0, spline, -height, 0, -height);// up
-			front.close();
-			front.setFillColor("yellow");
-
-			Path top = new Path(x, y);// Box Top, starts bottom left corner
-			top.lineRelativelyTo(skew, -skew);// up to the right
-			top.lineRelativelyTo(width, 0);// right
-			top.lineRelativelyTo(-skew, skew);// down left
-			top.close();
-			top.setFillColor("blue");
-
-			Path side = new Path(x + width, y + height);// Side, starts lowest
-			side.lineRelativelyTo(skew, -skew);// up, right
-			side.curveRelativelyTo(spline, -spline, spline, -height, 0, -height);// up
-			side.lineRelativelyTo(-skew, skew);// down,left
-			side.close();
-			side.setFillColor("red");
-
-			shape.add(side);
-			shape.add(front);// front added after side to overlap curve
-			shape.add(top);
-			break;
-
-		case Series:
-
-			Rectangle rectangle = new Rectangle(x, y - pad, width, height);
-			rectangle.setFillColor("yellow");
-			shape.add(rectangle);
-
-			int tickCount = rectangle.getWidth() / pad;
-			for (int i = 0; i < tickCount; i++) {
-				int xPos = x + (pad * i);
-				int tickHeight;
-				if (i % 8 == 0) {
-					tickHeight = pad * 3 / 2;
-				} else if (i % 4 == 0) {
-					tickHeight = pad;
-				} else {
-					tickHeight = pad * 2 / 3;
-				}
-				Line tick = new Line(xPos, y - pad, xPos, y - pad + tickHeight);
-				shape.add(tick);
-			}
-			break;
-
-		case Number:
-
-			Ellipse ellipseNum = new Ellipse(x + width / 2, y + height / 2,
-					width * 2 / 3, height * 2 / 3);
-			ellipseNum.setFillColor("lime");
-
-			shape.add(ellipseNum);
-			break;
 
 		case Variable:
 
 			// Starts at top left inner corner
-			Path star = new Path(x+pad, y);// ( 0, 50),
+			Path star = new Path(x + pad, y);// ( 0, 50),
 			star.lineRelativelyTo(5, -15);
 			star.lineRelativelyTo(5, 15);// ( 10, 20),
 			star.lineRelativelyTo(15, 0);// ( 40, 20),
@@ -463,24 +436,139 @@ public class TreeCanvas extends DrawingArea {
 			star.lineRelativelyTo(-10, -10);// (-40, 20),
 			// star.lineRelativelyTo(30, 0);// (-10, 20),
 			star.close();
-//			// Starts at top left inner corner
-//			Path star = new Path(x, y);// ( 0, 50),
-//			star.lineRelativelyTo(10, -30);
-//			star.lineRelativelyTo(10, 30);// ( 10, 20),
-//			star.lineRelativelyTo(30, 0);// ( 40, 20),
-//			star.lineRelativelyTo(-20, 20);// ( 20, 0),
-//			star.lineRelativelyTo(10, 30);// ( 30, -30),
-//			star.lineRelativelyTo(-30, -20);// ( 0, -10),
-//			star.lineRelativelyTo(-30, 20);// (-30, -30),
-//			star.lineRelativelyTo(10, -30);// (-20, 0),
-//			star.lineRelativelyTo(-20, -20);// (-40, 20),
-//			// star.lineRelativelyTo(30, 0);// (-10, 20),
-//			star.close();
+			// // Starts at top left inner corner
+			// Path star = new Path(x, y);// ( 0, 50),
+			// star.lineRelativelyTo(10, -30);
+			// star.lineRelativelyTo(10, 30);// ( 10, 20),
+			// star.lineRelativelyTo(30, 0);// ( 40, 20),
+			// star.lineRelativelyTo(-20, 20);// ( 20, 0),
+			// star.lineRelativelyTo(10, 30);// ( 30, -30),
+			// star.lineRelativelyTo(-30, -20);// ( 0, -10),
+			// star.lineRelativelyTo(-30, 20);// (-30, -30),
+			// star.lineRelativelyTo(10, -30);// (-20, 0),
+			// star.lineRelativelyTo(-20, -20);// (-40, 20),
+			// // star.lineRelativelyTo(30, 0);// (-10, 20),
+			// star.close();
 
 			star.setFillColor("red");
 
 			shape.add(star);
 			break;
+			
+		case Term:
+
+			Path diamond = new Path(x, y);
+			
+			diamond.lineRelativelyTo(width, 0);//top
+			
+			//left point
+			diamond.lineRelativelyTo(height/2, height/2);
+			diamond.lineRelativelyTo(-height/2, height/2);
+			
+			diamond.lineRelativelyTo(-width, 0);//bottom
+			
+			//right point
+			diamond.lineRelativelyTo(-height/2, -height/2);
+			diamond.lineRelativelyTo(height/2, -height/2);
+			
+			shape.add(diamond);
+			break;
+			
+//			int skew = height / 2;
+//			int spline = height * 5 / 16;// NURB length for Bézier curves
+//
+//			Path front = new Path(x, y);// Box Front, starts at top left
+//			front.curveRelativelyTo(-spline, 0, -spline, height, 0, height);// down
+//			front.lineRelativelyTo(width, 0);// right
+//			front.curveRelativelyTo(spline, 0, spline, -height, 0, -height);// up
+//			front.close();
+//			front.setFillColor("yellow");
+//
+//			Path top = new Path(x, y);// Box Top, starts bottom left corner
+//			top.lineRelativelyTo(skew, -skew);// up to the right
+//			top.lineRelativelyTo(width, 0);// right
+//			top.lineRelativelyTo(-skew, skew);// down left
+//			top.close();
+//			top.setFillColor("blue");
+//
+//			Path side = new Path(x + width, y + height);// Side, starts lowest
+//			side.lineRelativelyTo(skew, -skew);// up, right
+//			side.curveRelativelyTo(spline, -spline, spline, -height, 0, -height);// up
+//			side.lineRelativelyTo(-skew, skew);// down,left
+//			side.close();
+//			side.setFillColor("red");
+//
+//			shape.add(side);
+//			shape.add(front);// front added after side to overlap curve
+//			shape.add(top);
+//			break;
+
+		case Series:
+
+			Path rectangle = new Path(x - height/2, y);
+
+			rectangle.lineRelativelyTo(width + height, 0);// top
+
+			// right indent
+			rectangle.lineRelativelyTo(0, height / 5);// down
+			rectangle.lineRelativelyTo(-height / 5, 0);// left
+			rectangle.lineRelativelyTo(0, height / 5);// down
+			rectangle.lineRelativelyTo(-height / 5, 0);// left
+			rectangle.lineRelativelyTo(0, height / 5);// down
+			rectangle.lineRelativelyTo(height / 5, 0);// right
+			rectangle.lineRelativelyTo(0, height / 5);// down
+			rectangle.lineRelativelyTo(height / 5, 0);// right
+			rectangle.lineRelativelyTo(0, height / 5);// down
+
+			rectangle.lineRelativelyTo(-width - height, 0);// bottom
+
+			rectangle.lineRelativelyTo(0, -height / 5);// up
+			rectangle.lineRelativelyTo(height / 5, 0);// right
+			rectangle.lineRelativelyTo(0, -height / 5);// up
+			rectangle.lineRelativelyTo(height / 5, 0);// right
+			rectangle.lineRelativelyTo(0, -height / 5);// up
+			rectangle.lineRelativelyTo(-height / 5, 0);// left
+			rectangle.lineRelativelyTo(0, -height / 5);// up
+			rectangle.lineRelativelyTo(-height / 5, 0);// left
+			rectangle.lineRelativelyTo(0, -height / 5);// up
+
+			rectangle.close();
+
+			rectangle.setFillColor("yellow");
+			shape.add(rectangle);
+			break;
+
+		// Yellow Ruler with ticks
+
+		// Rectangle rectangle = new Rectangle(x, y - pad, width, height);
+		// rectangle.setFillColor("yellow");
+		// shape.add(rectangle);
+		//
+		// int tickCount = rectangle.getWidth() / pad;
+		// for (int i = 0; i < tickCount; i++) {
+		// int xPos = x + (pad * i);
+		// int tickHeight;
+		// if (i % 8 == 0) {
+		// tickHeight = pad * 3 / 2;
+		// } else if (i % 4 == 0) {
+		// tickHeight = pad;
+		// } else {
+		// tickHeight = pad * 2 / 3;
+		// }
+		// Line tick = new Line(xPos, y - pad, xPos, y - pad + tickHeight);
+		// shape.add(tick);
+		// }
+		// break;
+
+		case Number:
+
+			Ellipse ellipseNum = new Ellipse(x + width / 2, y + height / 2,
+					width * 2 / 3, height * 2 / 3);
+			ellipseNum.setFillColor("lime");
+
+			shape.add(ellipseNum);
+			break;
+
 
 		case Fraction:
 
