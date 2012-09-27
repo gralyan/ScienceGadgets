@@ -49,6 +49,7 @@ public class EquationTransporter {
 	 * @return - the Math ML as a String
 	 */
 	public static String transport(String jqMath) {
+
 		// jqMath to MathML to transport
 		HTML html = new HTML();
 		html.setHTML("$" + jqMath + "$");
@@ -140,5 +141,6 @@ public class EquationTransporter {
 	public static native void parseJQMath(Element element) /*-{
 															$wnd.M.parseMath(element);
 															}-*/;
+
 
 }
