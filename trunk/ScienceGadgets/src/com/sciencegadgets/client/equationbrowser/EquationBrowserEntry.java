@@ -16,12 +16,15 @@ package com.sciencegadgets.client.equationbrowser;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
@@ -83,12 +86,12 @@ public class EquationBrowserEntry implements EntryPoint {
 
 		try {
 			browserPanel.setStylePrimaryName("browserPanel");
-			
-			Grid modes = new Grid(1,2);
-			modes.setWidget(0,0,modeSelectAlg);
-			modes.setWidget(0,1,modeSelectSci);
+
+			Grid modes = new Grid(1, 2);
+			modes.setWidget(0, 0, modeSelectAlg);
+			modes.setWidget(0, 1, modeSelectSci);
 			modes.setStyleName("modes");
-			
+
 			RootPanel.get("scienceGadgetArea").add(modes);
 			RootPanel.get("scienceGadgetArea").add(browserPanel);
 
@@ -326,6 +329,44 @@ public class EquationBrowserEntry implements EntryPoint {
 		 * parseJQMath(scienceGadgets.varBox.getElement());
 		 */
 
+	}		
+	
+	/**
+	 * Replaces all lower case letters with random numbers
+	 * 
+	 * @param equation
+	 */
+	private void sendAlgebraEquation(String equation) {
+		HTML randomizedEquation = new HTML(equation);
+		
+		NodeList<com.google.gwt.dom.client.Element> variables = randomizedEquation
+				.getElement().getElementsByTagName("mi");
+		
+		// Can't iterate through while modifying a NodeList, so it will be transcribed to another list first
+		LinkedList<com.google.gwt.dom.client.Element> vars = new LinkedList<com.google.gwt.dom.client.Element>();
+		for(int i=0 ; i<variables.getLength() ; i++){
+			vars.add(variables.getItem(i));
+		}
+		
+		for (com.google.gwt.dom.client.Element var : vars) {
+			int posOrNeg = Random.nextBoolean() ? 1 : -1;
+			int randomNumber = posOrNeg * ((int) (Math.random() * 10) + 1);
+			
+			String id = var.getAttribute("id");
+			if (id != null) {
+				if (id.startsWith("0")) {
+					com.google.gwt.dom.client.Element newNumber = DOM.createElement("mn");
+					newNumber.setInnerText(randomNumber + "");
+					newNumber.setAttribute("id", id);
+					var.getParentElement().insertBefore(newNumber, var);
+					var.removeFromParent();
+				}
+			}
+		}
+		HTML eq = new HTML(randomizedEquation.toString());
+		randomizedEquation.removeFromParent();
+		
+		EquationTransporter.transport(eq);
 	}
 
 	/**
@@ -397,20 +438,6 @@ public class EquationBrowserEntry implements EntryPoint {
 		}
 	}
 
-	private void sendAlgebraEquation(String equation) {
-		String randomizedEquation = equation;
-		String prevIteration = "";
-
-		while (!randomizedEquation.equals(prevIteration)) {
-			int posOrNeg = Random.nextBoolean() ? 1 : -1;
-			int randomNumber = posOrNeg * ((int) (Math.random() * 10) + 1);
-
-			prevIteration = randomizedEquation;
-			randomizedEquation = randomizedEquation.replaceFirst("<mi>"
-					+ "[a-z]" + "</mi>", "<mn>" + randomNumber + "</mn>");
-		}
-		EquationTransporter.transport(new HTML(randomizedEquation));
-	}
 
 	/**
 	 * The multi-selection handler for variable list
@@ -506,21 +533,22 @@ public class EquationBrowserEntry implements EntryPoint {
 				createAlgBrowser();
 
 				// ////////////////////////////////////////////////
-				// uncomment to get the MathML form of all algebra equations to consol
+				// uncomment to get the MathML form of all algebra equations to
+				// consol
 				// /////////////////////////////////////////////////
 
-				 String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);
-				 for (int i = 0; i < eqList.length; i++) {
-				 HTML a = new HTML("$" + eqList[i] + "$");
-				 parseJQMath(a.getElement());
-				 System.out.println("/* "
-				 + i
-				 + " */{ \""
-				 + eqList[i].replace("\\", "\\\\")
-				 + "\", \""
-				 + a.getHTML().replace("\\", "\\\\")
-				 .replace("\"", "\\\"") + "\" },");
-				 }
+				String[] eqList = data.getAll(data.FLAG_ALGEBRA_NAME);
+				for (int i = 0; i < eqList.length; i++) {
+					HTML a = new HTML("$" + eqList[i] + "$");
+					parseJQMath(a.getElement());
+					System.out.println("/* "
+							+ i
+							+ " */{ \""
+							+ eqList[i].replace("\\", "\\\\")
+							+ "\", \""
+							+ a.getHTML().replace("\\", "\\\\")
+									.replace("\"", "\\\"") + "\" },");
+				}
 
 			} else if ("science".equals(mode)) {
 				createSciBrowser();
@@ -576,26 +604,25 @@ public class EquationBrowserEntry implements EntryPoint {
 		@Override
 		public void onClick(ClickEvent arg0) {
 
-//			for (TextBox box : inputBinding.keySet()) {
-//				if (box.isEnabled()) {
-//					try {
-//						float value = Float.parseFloat(box.getText());
-//						// System.out.println(inputBinding.get(box) + ": " +
-//						// value);
-//					} catch (NumberFormatException e) {
-//						Window.alert("All values should be numbers (except for unknown variable to find)");
-//						return;
-//					}
-//
-//				} else {
-//					// System.out.println(inputBinding.get(box) + ": ???");
-//				}
-//			}
-//			EquationTransporter.transport(new HTML(labelSumEq.getElement()
-//					.getId()));
+			for (TextBox box : inputBinding.keySet()) {
+				if (box.isEnabled()) {
+					try {
+						float value = Float.parseFloat(box.getText());
+//						 inputBinding.get(box).
+					} catch (NumberFormatException e) {
+						Window.alert("All values should be numbers (except for unknown variable to find)");
+						return;
+					}
+
+				} else {
+//					inputBinding.get(box).;
+				}
+			}
+			EquationTransporter.transport(new HTML(labelSumEq.getElement()
+					.getId()));
 			// TODO replace the variables with the proper values before
 			// transporting equation
-			Window.alert("Algebra in science mode is not very functional yet :(");
+//			Window.alert("Algebra in science mode is not very functional yet :(");
 		}
 
 	}

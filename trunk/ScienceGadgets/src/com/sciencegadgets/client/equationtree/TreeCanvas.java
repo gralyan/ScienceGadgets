@@ -223,7 +223,6 @@ public class TreeCanvas extends DrawingArea {
 				// If the child is too big and going to overflow pull it back
 				placement -= childWidth - childSpace;
 			}
-			System.out.println(childWidth);
 			
 			// Operation spacing only. No symbols, no wrapper or line
 			if ("mo".equals(child.getTag())) {

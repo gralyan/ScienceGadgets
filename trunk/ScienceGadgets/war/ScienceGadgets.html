@@ -8,11 +8,35 @@
 <link type="text/css" rel="stylesheet"
 	href="mathscribe/jqmath-0.2.0.css"></link>
 
+  
 <script type="text/javascript" language="javascript"
 	src="mathscribe/jquery-1.4.3.min.js"></script>
 
 <script type="text/javascript" language="javascript"
 	src="mathscribe/jqmath-etc-0.2.0.min.js"></script>
+	
+<script type="text/javascript"
+ src="mathjax/MathJax.js?config=TeX-AMS-MML_SVG"> 
+   
+MathJax.Hub.Config({
+  "SVG": {
+	addMMLclasses: true
+  }
+});
+
+document.prettify = function (area) {
+	MathJax.Hub.Queue(["Typeset",MathJax.Hub, area]);
+}
+
+//// All functions requiring typesetting should be queued after typsetting
+//// Difficulty getting Java functions queued, workaround is a timer for now
+//// See com.sciencegadgets.client.algebramanipulation.AlgebraManipulator
+//
+// document.queue = function (area){
+// 	MathJax.Hub.Queue(["Typeset",MathJax.Hub, area], [window.makeWrappers]);
+// }
+
+ </script> 
 
 
 <link type="text/css" rel="stylesheet" href="ScienceGadgets.css"></link>
@@ -29,10 +53,10 @@
 	<h1 style="text-align: center;">Science Gadgets demo</h1>
 	<div id="division"></div>
 	
+ 
 	<table class="center">
 		<tr id="scienceGadgetArea"></tr>
 	<tr id="navigationArea"></tr>
 	</table>
-	
 </body>
 </html>
