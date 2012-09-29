@@ -16,6 +16,7 @@
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -63,12 +64,12 @@ public class DropController_BothSides_Divide extends AbstractMathDropController 
 			MathMLBindingNode denominator = targetNode.getChildAt(1);
 
 			if (Type.Term.equals(denominator.getType())) {
-				denominator.add("mo", null, "*");
+				denominator.add("mo", null, new HTML("*"));
 				denominator.add(sourceNode);
 			} else {
 				MathMLBindingNode encasedDenominator = denominator.encase("mrow",
 						Type.Term);
-				encasedDenominator.add("mo", null, "*");
+				encasedDenominator.add("mo", null, new HTML("*"));
 				encasedDenominator.add(sourceNode);
 			}
 

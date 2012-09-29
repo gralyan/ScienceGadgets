@@ -28,7 +28,8 @@ public class TreeEntry implements EntryPoint {
 	
 	public void onModuleLoad() {
 		
-		try {
+		//TODO don't catch general exception
+//		try {
 			spTree.setStyleName("treeCanvas");
 			RootPanel.get("scienceGadgetArea").add(spTree);
 			
@@ -38,9 +39,9 @@ public class TreeEntry implements EntryPoint {
 //		mlTree.setStyleName("apTree");
 //		RootPanel.get("scienceGadgetArea").add(mlTree);
 			
-		} catch (Exception e) {
-			e.printStackTrace();
-			Window.alert("Please refresh this page");
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			Window.alert("Please refresh this page");
+//		}
 	}
 }

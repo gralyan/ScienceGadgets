@@ -14,29 +14,30 @@
  */
 package com.sciencegadgets.client.equationtree;
 
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Collection;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
-import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class MathMLBindingTree {
 
 	private MathMLBindingTree tree = this;
-	private MathMLBindingNode root;
+	public MathMLBindingNode root;
 	private MathMLBindingNode leftSide;
 	private MathMLBindingNode equals;
 	private MathMLBindingNode rightSide;
 	private LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
+	private HashMap<String, MathMLBindingNode> idMap = new HashMap<String, MathMLBindingNode>();
+	private HashMap<String, Node> idMLMap = new HashMap<String, Node>();
 	private HTML mathML;
 
 	/**
@@ -50,115 +51,135 @@ public class MathMLBindingTree {
 	 *            from XML
 	 * @throws TopNodesNotFoundException
 	 */
-	public MathMLBindingTree(HTML mathML, Boolean isParsedForMath)
+	public MathMLBindingTree(HTML mathML)
 			throws TopNodesNotFoundException {
 		this.mathML = mathML;
 
-		new MLtoMLTree(mathML).change(this);
+		bindMLtoNodes(mathML);
+		
+//		MLtoMLTree mlTomlTree = new MLtoMLTree(mathML);
+//		mlTomlTree.change(this);
 
-		if (isParsedForMath) {
-			new MLTreeToMathTree().change(this);
-		}
+//		if (isParsedForMath) {
+//			new MLTreeToMathTree().change(this);
+//		}
+		//TODO
 		this.wrapTree();
 	}
 
-	public HTML toMathML() {
-		MathTreeToML mathTreeToML = new MathTreeToML(this, true);
-		mathML = mathTreeToML.mlHTML;
-		return mathML;
-	}
+//	public HTML toMathML() {
+//		MathTreeToML mathTreeToML = new MathTreeToML(this, true);
+//		mathML = mathTreeToML.mlHTML;
+//		return mathML;
+//	}
 
 	public HTML getMathML() {
 		return mathML;
 	}
-
 	public MathMLBindingNode getRoot() {
 		return root;
 	}
-
 	public MathMLBindingNode getLeftSide() {
 		return leftSide;
 	}
-
 	public MathMLBindingNode getRightSide() {
 		return rightSide;
 	}
-
 	public void setLeftSide(MathMLBindingNode jNode) {
 		leftSide = jNode;
 	}
-
 	public void setRightSide(MathMLBindingNode jNode) {
 		rightSide = jNode;
 	}
-
 	public MathMLBindingNode getEquals() {
 		return equals;
 	}
-
 	public LinkedList<MLElementWrapper> getWrappers() {
 		return wrappers;
 	}
-
+	
 	public LinkedList<MLElementWrapper> wrapTree() {
+		System.out.println("Wrap 1 Wrap 1 Wrap 1 ");
+
+		Collection<MathMLBindingNode> children = idMap.values();
+		MLElementWrapper wrap;
 		wrappers.clear();
-		wrapChildren(root);
+
+		System.out.println("Wrap 2 Wrap 2 Wrap 2 ");
+		for (MathMLBindingNode child : children) {
+			System.out.println("Wrap 3 Wrap 3 Wrap 3 ");
+
+			wrap = new MLElementWrapper(child, true, true);
+			child.setWrapper(wrap);
+			wrappers.add(wrap);
+
+			System.out.println("Wrap 4 Wrap 4 Wrap 4 ");
+		}
+		System.out.println("Wrap 5 Wrap 5 Wrap 5 ");
 		return wrappers;
 	}
-
-	private void wrapChildren(MathMLBindingNode jNode) {
-		MLElementWrapper wrap;
-		List<MathMLBindingNode> children = jNode.getChildren();
-
-		for (MathMLBindingNode child : children) {
-			if (!child.isHidden()) {
-				wrap = new MLElementWrapper(child, true, true);
-				child.setWrapper(wrap);
-				wrappers.add(wrap);
-			}
-			if (child.getChildCount() > 0) {
-				wrapChildren(child);
-			}
-
-		}
-	}
+	
+//	public LinkedList<MLElementWrapper> wrapTree() {
+//		wrappers.clear();
+//		wrapChildren(root);
+//		return wrappers;
+//	}
+//
+//	private void wrapChildren(MathMLBindingNode jNode) {
+//		MLElementWrapper wrap;
+//		List<MathMLBindingNode> children = jNode.getChildren();
+//
+//		for (MathMLBindingNode child : children) {
+//			if (!child.isHidden()) {
+//				wrap = new MLElementWrapper(child, true, true);
+//				child.setWrapper(wrap);
+//				wrappers.add(wrap);
+//			}
+//			if (child.getChildCount() > 0) {
+//				wrapChildren(child);
+//			}
+//		}
+//	}
 
 	public MathMLBindingNode getNodeById(String id) {
 		id = id.replaceAll("[A-Za-z]", "");
-		System.out.println(id);
-		return checkIdOfChild(id, root);
+		System.out.println("root "+root);
+		return idMap.get(id);
+//		return checkIdOfChild(id, root);
 	}
 
-	private MathMLBindingNode checkIdOfChild(String id, MathMLBindingNode parent) {
-		if (id.equals(parent.getId())) {
-			return parent;
-		}
-
-		List<MathMLBindingNode> children = parent.getChildren();
-		MathMLBindingNode possibleFind = null;
-		
-		for (MathMLBindingNode child : children) {
-			possibleFind = checkIdOfChild(id, child);
-			if(possibleFind != null){
-				return possibleFind;
-			}
-		}
-		return null;
-	}
+//	private MathMLBindingNode checkIdOfChild(String id, MathMLBindingNode parent) {
+//		System.out.println("id1 "+id);
+//		System.out.println(" getid "+parent.getId());
+//		if (id.equals(parent.getId())) {
+//			return parent;
+//		}
+//
+//		List<MathMLBindingNode> children = parent.getChildren();
+//		MathMLBindingNode possibleFind = null;
+//		
+//		for (MathMLBindingNode child : children) {
+//			possibleFind = checkIdOfChild(id, child);
+//			if(possibleFind != null){
+//				return possibleFind;
+//			}
+//		}
+//		return null;
+//	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Node Class
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class MathMLBindingNode {
-		private Node domNode;
+		private Node mlNode;
 		private Type type;
-		private String symbol;
+		private HTML symbol;
 		private String tag;
 		private MLElementWrapper wrapper;
 		private MathMLBindingNode parent;
-		private List<MathMLBindingNode> children = new LinkedList<MathMLBindingNode>();
+//		private List<MathMLBindingNode> children = new LinkedList<MathMLBindingNode>();
 		private Boolean isHidden = false;
-		private String id = "";
+//		private String id = "";
 
 		/**
 		 * Construct node for existing domNode and appropriate info
@@ -169,9 +190,9 @@ public class MathMLBindingTree {
 		 * @param type
 		 * @param symbol
 		 */
-		private MathMLBindingNode(Node domNode, String tag, Type type,
-				String symbol) {
-			this.domNode = domNode;
+		private MathMLBindingNode(Node mlNode, String tag, Type type,
+				HTML symbol) {
+			this.mlNode = mlNode;
 			this.tag = tag;
 			this.type = type;
 			this.symbol = symbol;
@@ -182,12 +203,15 @@ public class MathMLBindingTree {
 		 * 
 		 * @param node
 		 */
-		private MathMLBindingNode(Node node) {
-			domNode = node;
-			tag = node.getNodeName();
+		private MathMLBindingNode(Node mlNode) {
+			this.mlNode = mlNode;
+			symbol = new HTML();
+			Node clone = ((Element) mlNode).cloneNode(true);
+			symbol.getElement().appendChild(clone);
+			
+			tag = mlNode.getNodeName();
 			type = null;
-			symbol = ((Element) node).getInnerText();
-			id = ((Element) node).getAttribute("id");
+//			id = ((Element) mlNode).getAttribute("id");
 		}
 
 		/**
@@ -202,11 +226,9 @@ public class MathMLBindingTree {
 		 * @param symbol
 		 *            - inner text
 		 */
-		private MathMLBindingNode(String tag, Type type, String symbol) {
-			com.google.gwt.user.client.Element newDomNode = DOM
-					.createElement(tag);
+		private MathMLBindingNode(String tag, Type type, HTML symbol) {
 
-			this.domNode = newDomNode;
+			this.mlNode = DOM.createElement(tag);
 			this.tag = tag;
 			this.type = type;
 			this.symbol = symbol;
@@ -227,16 +249,24 @@ public class MathMLBindingTree {
 		 *            - the type of the new node
 		 * @return - encasing node
 		 */
+		//TODO look at this again
 		public MathMLBindingNode encase(String tag, Type type) {
-			MathMLBindingNode encasing = new MathMLBindingNode(tag, type,
-					this.toString());
+			HTML smbl = new HTML();
+			Node clone = ((Element) this.getMLNode()).cloneNode(true);
+			smbl.getElement().appendChild(clone);
+
+			MathMLBindingNode encasing = new MathMLBindingNode(tag, type, smbl);
+			
+			//reformed
+//			MathMLBindingNode encasing = new MathMLBindingNode(tag, type,
+//					this.toString());
 			this.getParent().add(this.getIndex(), encasing);
 			this.remove();
 			encasing.add(this);
 
-			this.getDomNode().getParentElement()
-					.insertAfter(encasing.getDomNode(), this.getDomNode());
-			encasing.getDomNode().appendChild(this.getDomNode());
+			this.getMLNode().getParentElement()
+					.insertAfter(encasing.getMLNode(), this.getMLNode());
+			encasing.getMLNode().appendChild(this.getMLNode());
 
 			return encasing;
 		}
@@ -252,14 +282,22 @@ public class MathMLBindingTree {
 		 * @return - The newly create child
 		 */
 		public MathMLBindingNode add(int index, String tag, Type type,
-				String symbol) {
-			MathMLBindingNode child = new MathMLBindingNode(tag, type, symbol);
+				HTML symbol) {
+//			MathMLBindingNode child = new MathMLBindingNode(tag, type, symbol);
+			
+			int randId = Random.nextInt();
+			
+			Element elmnt = DOM.createElement(tag);
+			elmnt.setInnerText(symbol.toString());
+			elmnt.setAttribute("id",randId + "");
+			MathMLBindingNode newNode = new MathMLBindingNode(elmnt);
+			
 			if (index < 0) {
-				this.add(-1, child);
+				this.add(-1, newNode);
 			} else {
-				this.add(index, child);
+				this.add(index, newNode);
 			}
-			return child;
+			return newNode;
 		}
 
 		/**
@@ -269,39 +307,66 @@ public class MathMLBindingTree {
 		 * @param index
 		 * @param mathMLBindingNode
 		 */
-		public void add(int index, MathMLBindingNode mathMLBindingNode) {
+		public void add(int index, MathMLBindingNode newNode) {
 			if (index < 0) {
-				children.add(mathMLBindingNode);
+				newNode.getParent().add(newNode);
 			} else {
-				children.add(index, mathMLBindingNode);
+				newNode.getParent().add(index, newNode);
 			}
-			mathMLBindingNode.parent = this;
-
-			mathMLBindingNode.isHidden = mathMLBindingNode.checkIsHidden();
+//			mathMLBindingNode.parent = this;
+//			newNode.isHidden = newNode.checkIsHidden();
 		}
 
-		public void add(MathMLBindingNode mathMLBindingNode) {
-			add(-1, mathMLBindingNode);
+		public void add(MathMLBindingNode newNode) {
+			add(-1, newNode);
 		}
 
-		public MathMLBindingNode add(String tag, Type type, String symbol) {
+		public MathMLBindingNode add(String tag, Type type, HTML symbol) {
 			return add(-1, tag, type, symbol);
 		}
 
 		public List<MathMLBindingNode> getChildren() {
-			return children;
-		}
-
-		public MathMLBindingNode getFirstChild() {
-			return children.get(0);
+			NodeList<Node> childrenNodesList = getMLNode().getChildNodes();
+			LinkedList<MathMLBindingNode> childrenNodes = new LinkedList<MathMLBindingNode>();
+					
+			System.out.println("111111111111111 tag "+tag+" string "+toString());
+			System.out.println("mlnode "+mlNode);
+			System.out.println("mlnode "+mlNode.toString());
+			System.out.println("mlnode "+((Element)mlNode).getInnerHTML());
+			System.out.println("mlnode "+((Element)mlNode).getAttribute("id"));
+			for(int i=0 ; i<childrenNodesList.getLength() ; i++){
+				System.out.println("1 ");
+				Element childElement = ((Element)childrenNodesList.getItem(i));
+				System.out.println("listlength  "+childrenNodesList.getLength() + " i "+i);
+				System.out.println("childElement  "+childElement);
+				System.out.println("childElement tag "+childElement.getTagName());
+				System.out.println("childElement "+childElement.getInnerText());
+				String childId = childElement.getAttribute("id");
+				System.out.println("2 ");
+				childrenNodes.add(getNodeById(childId));
+				System.out.println("3 ");
+			}
+			System.out.println("222222222222222 ");
+			
+			return childrenNodes;
+//			return children;
 		}
 
 		public MathMLBindingNode getChildAt(int index) {
-			return children.get(index);
+			return getChildren().get(index);
+		}
+		
+		public MathMLBindingNode getFirstChild() {
+			return getChildAt(0);
 		}
 
 		public int getChildCount() {
-			return children.size();
+			System.out.println("getch ");
+			List<MathMLBindingNode> a =getChildren();
+			System.out.println("children "+a);
+			int b=	a.size();
+			System.out.println("childcount "+b);
+			return b;
 		}
 
 		public MathMLBindingNode getNextSibling() {
@@ -322,10 +387,12 @@ public class MathMLBindingTree {
 		 * @return
 		 */
 		private MathMLBindingNode getSibling(int indexesAway) {
-			int siblingIndex = this.getParent().getChildren().indexOf(this)
-					+ indexesAway;
+			MathMLBindingNode parent = this.getParent();
+//			int thisIndex = parent.getChildren().indexOf(this);
+			int siblingIndex = getIndex() + indexesAway;
+			
 			try {
-				MathMLBindingNode sibling = this.getParent().getChildAt(
+				MathMLBindingNode sibling = parent.getChildAt(
 						siblingIndex);
 				return sibling;
 			} catch (IndexOutOfBoundsException e) {
@@ -338,37 +405,45 @@ public class MathMLBindingTree {
 		}
 
 		public void remove() {
+			mlNode.removeFromParent();
 			// Log.severe("REMOVING: " + this.toString());
-			List<MathMLBindingNode> sibs = this.parent.getChildren();
-			sibs.remove(sibs.indexOf(this));
+//			List<MathMLBindingNode> sibs = this.getParent().getChildren();
+//			sibs.remove(sibs.indexOf(this));
 		}
 
 		public int getIndex() {
-			return this.parent.getChildren().indexOf(this);
+			return this.getParent().getChildren().indexOf(this);
 		}
 
 		public MathMLBindingNode getParent() {
-			if (parent == null) {
-				throw new NullPointerException("There is no parent for:\n"
-						+ this.toString() + "\n" + this);
-			}
-			return parent;
+//			if (parent == null) {
+//				throw new NullPointerException("There is no parent for:\n"
+//						+ this.toString() + "\n" + this);
+//			}
+			
+			Element parentElement = getMLNode().getParentElement();
+			System.out.println("element "+parentElement.getInnerText()+"-tag-"+parentElement.getTagName());
+			String parentId = parentElement.getAttribute("id");
+			System.out.println("id "+parentId);
+			MathMLBindingNode parentNode = getNodeById(parentId);
+			return parentNode;
+//			return parent;
 		}
 
-		public Node getDomNode() {
-			return domNode;
+		public Node getMLNode() {
+			return mlNode;
 		}
 
-		public void setDomNode(Node node) {
-			domNode = node;
+		public void setMLNode(Node mlNode) {
+			this.mlNode = mlNode;
 		}
 
 		public String toString() {
-			return symbol;
+			return symbol.getElement().getInnerHTML();
 		}
 
 		public void setString(String string) {
-			this.symbol = string;
+			this.symbol = new HTML(string);
 		}
 
 		public Boolean isHidden() {
@@ -384,15 +459,16 @@ public class MathMLBindingTree {
 		}
 
 		public HTML toMathML() {
-			HTML mathML;
-			if (type == null) {
-				mathML = new HTML(/* tag + " " + */"$" + symbol + "$");
-			} else {
-				mathML = new HTML(
-				/* type.toString().substring(0, 2) + " " + */"$" + symbol + "$");
-			}
-			EquationBrowserEntry.parseJQMath(mathML.getElement());
-			return mathML;
+//			HTML mathML;
+//			if (type == null) {
+//				mathML = new HTML(/* tag + " " + */"$" + symbol + "$");
+//			} else {
+//				mathML = new HTML(
+//				/* type.toString().substring(0, 2) + " " + */"$" + symbol + "$");
+//			}
+//			EquationBrowserEntry.parseJQMath(mathML.getElement());
+//			return mathML;
+			return symbol;
 		}
 
 		public Type getType() {
@@ -408,25 +484,26 @@ public class MathMLBindingTree {
 		}
 
 		public String getId() {
-			return id;
+			System.out.println("getId "+((Element) getMLNode()).getAttribute("id"));
+			return ((Element) getMLNode()).getAttribute("id");
 		}
 
 		private Boolean checkIsHidden() {
 
-			if ("(".equals(this.toString()) || ")".equals(this.toString())) {
-				return true;
-				// } else if ("mo".equalsIgnoreCase(this.getTag())) {
-				// return true;
-			} else if (this.isFunction()
-			// Don't show function name as child, parent will be function
-			) {
-				return true;
-			} else if ("msub".equalsIgnoreCase(this.getParent().getTag())
-			// Don't show subscripts because it's really one variable
-					|| ("msubsup".equalsIgnoreCase(this.getParent().getTag()) && this
-							.getIndex() == 1)) {
-				return true;
-			}
+//			if ("(".equals(this.toString()) || ")".equals(this.toString())) {
+//				return true;
+//				// } else if ("mo".equalsIgnoreCase(this.getTag())) {
+//				// return true;
+//			} else if (this.isFunction()
+//			// Don't show function name as child, parent will be function
+//			) {
+//				return true;
+//			} else if ("msub".equalsIgnoreCase(this.getParent().getTag())
+//			// Don't show subscripts because it's really one variable
+//					|| ("msubsup".equalsIgnoreCase(this.getParent().getTag()) && this
+//							.getIndex() == 1)) {
+//				return true;
+//			}
 			return false;
 
 		}
@@ -454,333 +531,405 @@ public class MathMLBindingTree {
 		Term, Series, Function, Exponent, Fraction, Variable, Number, None;
 	}
 
-	class MLtoMLTree extends MathMLParser {
-		HashMap<Node, MathMLBindingNode> nodeMap;
-		private MathMLBindingNode prevLeftNode;
-		private MathMLBindingNode prevRightNode;
-		private MathMLBindingNode prevSibling;
-		private MathMLBindingNode curNode;
-		MathMLBindingNode nLeft;
-		MathMLBindingNode nEq;
-		MathMLBindingNode nRight;
+	
+		private void bindMLtoNodes(HTML mathMLequation) throws TopNodesNotFoundException{
+			
+			// Find the top tree nodes
+			Element rootNode = mathMLequation.getElement().getFirstChildElement().getFirstChildElement();
+			String middleString = "";
 
-		public MLtoMLTree(HTML mathMLequation) throws TopNodesNotFoundException {
-			super(mathMLequation);
+//			while (!"=".equals(middleString)) {
+//				switch (rootNode.getChildCount()) {
+//				case 0: // prevent infinite loop
+//					throw new TopNodesNotFoundException(
+//							"The MathML is invalid, It must contain the following pattern for the top layer of the equation:"
+//									+ "\n<mrow>[left side of eqation]</mrow>"
+//									+ "\n\t<mo>=<mo>"
+//									+ "\n<mrow>[right side of eqation]</mrow>\n");
+//				case 1:
+//					rootNode = rootNode.getFirstChildElement();
+//					break;
+//				default:
+//					middleString = ((Element) rootNode.getChild(1)).getInnerText();
+//					if (!"=".equals(middleString)) {
+//						rootNode = rootNode.getFirstChildElement();
+//					}
+//				}
+//			}
+
+			NodeList<Node> sideEqSide = rootNode.getChildNodes();
+
+			this.root = new MathMLBindingNode(rootNode);
+			this.leftSide = new MathMLBindingNode(sideEqSide.getItem(0));
+			this.equals = new MathMLBindingNode(sideEqSide.getItem(1));
+			this.rightSide = new MathMLBindingNode(sideEqSide.getItem(2));
+
+			addChildren(rootNode);
 		}
 
-		public void change(MathMLBindingTree jTree) {
-			jTree.root = new MathMLBindingNode(null, null, null, null);
-			jTree.leftSide = nLeft;
-			jTree.equals = nEq;
-			jTree.rightSide = nRight;
-			jTree.root.add(jTree.leftSide);
-			jTree.root.add(jTree.equals);
-			jTree.root.add(jTree.rightSide);
+			
+		private void addChildren(Node mathMLNode) {
+			NodeList<Node> mathMLChildren = ((Element) mathMLNode).getChildNodes();
 
-		}
+			for (int i = 0; i < mathMLChildren.getLength(); i++) {
+				Node currentNode = mathMLChildren.getItem(i);
 
-		@Override
-		protected void onRootsFound(Node nodeLeft, Node nodeEquals,
-				Node nodeRight) {
-
-			nodeMap = new HashMap<Node, MathMLBindingNode>();
-			nEq = new MathMLBindingNode(nodeEquals);
-			nLeft = new MathMLBindingNode(nodeLeft);
-			nRight = new MathMLBindingNode(nodeRight);
-
-			prevLeftNode = nLeft;
-			prevRightNode = nRight;
-		}
-
-		@Override
-		protected void onVisitNode(Node currentNode, Boolean isLeft,
-				int indexOfChildren) {
-
-			curNode = new MathMLBindingNode(currentNode);
-
-			// Must be separated to allow the TreeCanvas to allocate space
-			// proportional to member count ratio of sides of the equation
-			if (isLeft) {
-				if (indexOfChildren == 0) {
-					prevLeftNode.add(curNode);
-				} else {
-					prevSibling.getParent().add(curNode);
-				}
-				prevLeftNode = curNode;
-
-			} else {
-
-				if (indexOfChildren == 0) {
-					prevRightNode.add(curNode);
-				} else {
-					prevSibling.getParent().add(curNode);
-				}
-				prevRightNode = curNode;
-			}
-			nodeMap.put(currentNode, curNode);
-
-		}
-
-		@Override
-		protected void onGoingToNextChild(Node currentNode) {
-			prevSibling = nodeMap.get(currentNode);
-
-		}
-	}
-
-	class MLTreeToMathTree {
-
-		private LinkedList<MathMLBindingNode> nestedMrows = new LinkedList<MathMLBindingNode>();
-		private LinkedList<MathMLBindingNode> negatives = new LinkedList<MathMLBindingNode>();
-
-		public void change(MathMLBindingTree jTree) {
-			parseTree(jTree.getRoot());
-			rearrangeNestedMrows();
-			rearrangeNegatives();
-		}
-
-		private void parseTree(MathMLBindingNode jNode) {
-			List<MathMLBindingNode> kids = jNode.getChildren();
-			if (kids == null) {
-				return;
-			}
-			for (MathMLBindingNode kid : kids) {
-				if ("mrow".equalsIgnoreCase(kid.getTag())) {
-					assignComplexChildMrow(kid);
-				} else {
-					assignSimpleTypes(kid);
-				}
-				findNestedMrows(jNode, kid);
-
-				kid.isHidden = kid.checkIsHidden();
-
-				if (kid.getChildCount() > 0) {
-					parseTree(kid);
+				// Nodes with no children are either inner text or formatting only
+				if (currentNode.getChildCount() > 0) {
+					
+					String id = ((Element)currentNode).getAttribute("id");
+					
+					idMLMap.put(id, currentNode);
+					idMap.put(id, new MathMLBindingNode(currentNode));
+					
+//					System.out.println("ml "+ idMLMap.get(id));
+//					System.out.println("map "+ idMap.get(id));
+					
+					addChildren((Element) currentNode);
 				}
 			}
 		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	class MLtoMLTree extends MathMLParser {
+//		HashMap<Node, MathMLBindingNode> nodeMap;
+//		private MathMLBindingNode prevLeftNode;
+//		private MathMLBindingNode prevRightNode;
+//		private MathMLBindingNode prevSibling;
+//		private MathMLBindingNode curNode;
+//		MathMLBindingTree jTree;
+//		MathMLBindingNode nLeft;
+//		MathMLBindingNode nEq;
+//		MathMLBindingNode nRight;
+//		MathMLBindingNode nRoot;
+//
+//		public MLtoMLTree(HTML mathMLequation) throws TopNodesNotFoundException {
+//			super(mathMLequation);
+//		}
+//
+//		public void change(MathMLBindingTree johnTree) {
+//			jTree = johnTree;
+////			jTree.root = new MathMLBindingNode(null, null, null, null);
+//			jTree.leftSide = nLeft;
+//			jTree.equals = nEq;
+//			jTree.rightSide = nRight;
+//
+//			jTree.root = nRoot;
+//			jTree.root.add(jTree.leftSide);
+//			jTree.root.add(jTree.equals);
+//			jTree.root.add(jTree.rightSide);
+//		}
+//
+//		@Override
+//		protected void onRootsFound(Node nodeRoot, Node nodeLeft, Node nodeEquals,
+//				Node nodeRight) {
+//
+//			nodeMap = new HashMap<Node, MathMLBindingNode>();
+//			nRoot = new MathMLBindingNode(nodeRoot);
+//			nEq = new MathMLBindingNode(nodeEquals);
+//			nLeft = new MathMLBindingNode(nodeLeft);
+//			nRight = new MathMLBindingNode(nodeRight);
+//
+//			prevLeftNode = nLeft;
+//			prevRightNode = nRight;
+//		}
+//
+//		@Override
+//		protected void onVisitNode(Node currentNode, Boolean isLeft,
+//				int indexOfChildren) {
+//
+//			curNode = new MathMLBindingNode(currentNode);
+//
+//			// Must be separated to allow the TreeCanvas to allocate space
+//			// proportional to member count ratio of sides of the equation
+//			if (isLeft) {
+//				if (indexOfChildren == 0) {
+//					prevLeftNode.add(curNode);
+//				} else {
+//					prevSibling.getParent().add(curNode);
+//				}
+//				prevLeftNode = curNode;
+//
+//			} else {
+//
+//				if (indexOfChildren == 0) {
+//					prevRightNode.add(curNode);
+//				} else {
+//					prevSibling.getParent().add(curNode);
+//				}
+//				prevRightNode = curNode;
+//			}
+//			nodeMap.put(currentNode, curNode);
+//
+//		}
+//
+//		@Override
+//		protected void onGoingToNextChild(Node currentNode) {
+//			prevSibling = nodeMap.get(currentNode);
+//
+//		}
+//	}
 
-		/**
-		 * Assigns the MathML tags to MathMLBindingNode {@link Type}. This
-		 * method is designed to take care of the simple cases, the more complex
-		 * cases are assigned in assignComplexChildMrow
-		 * 
-		 * @param kid
-		 */
-		private void assignSimpleTypes(MathMLBindingNode kid) {
-			if ("mi".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.Variable;
-			} else if ("mn".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.Number;
-			} else if ("msub".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.Variable;
-			} else if ("msup".equalsIgnoreCase(kid.getTag())
-					|| "msubsup".equalsIgnoreCase(kid.getTag())
-					|| "msqrt".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.Exponent;
-			} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.Fraction;
-			} else if ("mo".equalsIgnoreCase(kid.getTag())) {
-				kid.type = Type.None;
-			}
-		}
-
-		/**
-		 * Converts all mrow tags to either {@link Type.Term} or
-		 * {@link Type.Series}. Also takes case of special cases such as delta
-		 * and functions
-		 * 
-		 * @param kid
-		 * @return
-		 */
-		private void assignComplexChildMrow(MathMLBindingNode kid) {
-
-			if (kid.getChildCount() == 0) {
-				Log.severe("mrow without children: " + kid);
-				kid.remove();
-			} else {
-
-				// Default to term until + or - found in children
-				kid.type = Type.Term;
-
-				for (MathMLBindingNode baby : kid.getChildren()) {
-
-					if ("mo".equalsIgnoreCase(baby.getTag())) {
-						// Check children for +/- => series
-						if ("−".equals(baby.toString())
-								|| "+".equals(baby.toString())) {
-							// A "-" at the beginning doesn't make it a
-							// series
-							if (baby.getIndex() > 0) {
-								kid.type = Type.Series;
-							}
-							// Negate the next node because we don't want minus
-							if ("−".equals(baby.toString())) {
-								// negatives.add(baby);
-
-								baby.setString("+");
-								negatePropagate(baby.getNextSibling());
-
-							}
-						}
-
-						/*
-						 * Special cases
-						 */
-					} else if ("Δ".equals(baby.toString())) {
-						// For Δ: Δa should be treated as one variable
-						kid.type = Type.Variable;
-						kid.children = new LinkedList<MathMLBindingNode>();
-					} else if (baby.isFunction()) {
-						kid.type = Type.Function;
-					}
-				}
-			}
-		}
-
-		/**
-		 * Propagate a negation down the first of every child
-		 * 
-		 * @param node
-		 */
-
-		private void negatePropagate(MathMLBindingNode node) {
-			node.symbol = "-" + node.symbol;
-			if (node.getChildCount() > 0) {
-				negatePropagate(node.getChildAt(0));
-			}
-		}
-
-		/**
-		 * Finds all instances where there is a series inside a series or a term
-		 * inside a term. These will be compiled into one node to make the tree
-		 * more mathematically sound by conveying the associative property. Due
-		 * to {@link ConcurrentModificationException} problems, the actual
-		 * re-arrangement is done in another step: {@link rearrangeNestedMrows}
-		 * 
-		 * @param parent
-		 * @param nestMrow
-		 */
-		private void findNestedMrows(MathMLBindingNode parent,
-				MathMLBindingNode kid) {
-
-			if (
-			/**/((Type.Series).equals(kid.getType())
-			/**/&& (Type.Series).equals(parent.getType()))
-			/**/||
-			/**/((Type.Term).equals(kid.getType())
-			/**/&& (Type.Term).equals(parent.getType()))
-
-			) {
-				nestedMrows.add(kid);
-			}
-		}
-
-		/**
-		 * Second part of {@link findNestedMrows}, compiles all nested
-		 * {@link Type.Series} and {@link Type.Term} to one node
-		 */
-		private void rearrangeNestedMrows() {
-			if (nestedMrows == null) {
-				return;
-			}
-			for (MathMLBindingNode kid : nestedMrows) {
-				List<MathMLBindingNode> nests = kid.getChildren();
-				for (MathMLBindingNode nest : nests) {
-					kid.getParent().add(kid.getIndex(), nest);
-				}
-				kid.remove();
-				Log.info("Removing nested mrow :" + kid);
-			}
-		}
-
-		/**
-		 * This method allows the "invisible negative one" to be displayed
-		 * explicitly and maneuvered accordingly. It makes an encasing sentinel
-		 * term for negative terms in a series.
-		 */
-		private void rearrangeNegatives() {
-			// TODO
-			for (MathMLBindingNode neg : negatives) {
-
-				MathMLBindingNode negOne = new MathMLBindingNode(
-						neg.getDomNode(), "mn", Type.Number, "-1");
-
-				if (neg.getParent().type == Type.Series) {
-					MathMLBindingNode negArg = neg.getNextSibling();
-
-					MathMLBindingNode encasingTerm = new MathMLBindingNode(
-							negArg.getDomNode(), "mrow", Type.Term, "-"
-									+ negArg.toString());
-
-					neg.getParent().add(negArg.getIndex(), encasingTerm);
-
-					encasingTerm.add(negOne);
-					negArg.remove();
-					encasingTerm.add(negArg);
-
-					Log.info("neg: " + neg + ", tag: " + neg.getTag()
-							+ ", type: " + neg.getType() + ", parent: "
-							+ neg.getParent());
-					Log.info("Rearranging the negative for: " + negArg);
-				} else {
-					neg.getParent().add(neg.getIndex() + 1, negOne);
-					Log.info("Adding -1 node to the term");
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * This class allows the tree representation of the equation to be converted
-	 * back into MathML for display.
-	 * 
-	 * @author John Gralyan
-	 * 
-	 */
-	class MathTreeToML {
-		HTML mlHTML = new HTML("<math></math>");
-		Boolean changeDomNodes = false;
-
-		MathTreeToML(MathMLBindingTree sourceTree, Boolean changeDomNodes) {
-			this.changeDomNodes = changeDomNodes;
-			Element firstNode = mlHTML.getElement().getFirstChildElement();
-			addChild(sourceTree.getRoot(), firstNode);
-		}
-
-		MathTreeToML(MathMLBindingNode jNode) {
-			Element firstNode = mlHTML.getElement().getFirstChildElement();
-			addChild(jNode, firstNode);
-		}
-
-		private void addChild(MathMLBindingNode from, Node to) {
-			List<MathMLBindingNode> children = from.getChildren();
-
-			for (MathMLBindingNode child : children) {
-
-				// if ("-1".equals(child.toString()) ) {
-				// continue;
-				// }
-
-				Node childTo = to.appendChild(child.getDomNode().cloneNode(
-						false));
-
-				if (changeDomNodes) {
-					child.setDomNode(childTo);
-				}
-
-				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
-						| "mo".equals(child.getTag())) {
-
-					((Element) childTo).setInnerText(child.toString());
-				}
-
-				if (child.getChildCount() >= 0) {
-					addChild(child, childTo);
-				}
-			}
-		}
-
-	}
+//	class MLTreeToMathTree {
+//
+//		private LinkedList<MathMLBindingNode> nestedMrows = new LinkedList<MathMLBindingNode>();
+//		private LinkedList<MathMLBindingNode> negatives = new LinkedList<MathMLBindingNode>();
+//
+//		public void change(MathMLBindingTree jTree) {
+//			parseTree(jTree.getRoot());
+//			rearrangeNestedMrows();
+//			rearrangeNegatives();
+//		}
+//
+//		private void parseTree(MathMLBindingNode jNode) {
+//			List<MathMLBindingNode> kids = jNode.getChildren();
+//			if (kids == null) {
+//				return;
+//			}
+//			for (MathMLBindingNode kid : kids) {
+//				if ("mrow".equalsIgnoreCase(kid.getTag())) {
+//					assignComplexChildMrow(kid);
+//				} else {
+//					assignSimpleTypes(kid);
+//				}
+//				findNestedMrows(jNode, kid);
+//
+//				kid.isHidden = kid.checkIsHidden();
+//
+//				if (kid.getChildCount() > 0) {
+//					parseTree(kid);
+//				}
+//			}
+//		}
+//
+//		/**
+//		 * Assigns the MathML tags to MathMLBindingNode {@link Type}. This
+//		 * method is designed to take care of the simple cases, the more complex
+//		 * cases are assigned in assignComplexChildMrow
+//		 * 
+//		 * @param kid
+//		 */
+//		private void assignSimpleTypes(MathMLBindingNode kid) {
+//			if ("mi".equalsIgnoreCase(kid.getTag())) {
+//				kid.type = Type.Variable;
+//			} else if ("mn".equalsIgnoreCase(kid.getTag())) {
+//				kid.type = Type.Number;
+//			} else if ("msub".equalsIgnoreCase(kid.getTag())) {
+//				kid.type = Type.Variable;
+//			} else if ("msup".equalsIgnoreCase(kid.getTag())
+//					|| "msubsup".equalsIgnoreCase(kid.getTag())
+//					|| "msqrt".equalsIgnoreCase(kid.getTag())) {
+//				kid.type = Type.Exponent;
+//			} else if ("mfrac".equalsIgnoreCase(kid.getTag())) {
+//				kid.type = Type.Fraction;
+//			} else if ("mo".equalsIgnoreCase(kid.getTag())) {
+//				kid.type = Type.None;
+//			}
+//		}
+//
+//		/**
+//		 * Converts all mrow tags to either {@link Type.Term} or
+//		 * {@link Type.Series}. Also takes case of special cases such as delta
+//		 * and functions
+//		 * 
+//		 * @param kid
+//		 * @return
+//		 */
+//		private void assignComplexChildMrow(MathMLBindingNode kid) {
+//
+//			if (kid.getChildCount() == 0) {
+//				Log.severe("mrow without children: " + kid);
+//				kid.remove();
+//			} else {
+//
+//				// Default to term until + or - found in children
+//				kid.type = Type.Term;
+//
+//				for (MathMLBindingNode baby : kid.getChildren()) {
+//
+//					if ("mo".equalsIgnoreCase(baby.getTag())) {
+//						// Check children for +/- => series
+//						if ("−".equals(baby.toString())
+//								|| "+".equals(baby.toString())) {
+//							// A "-" at the beginning doesn't make it a
+//							// series
+//							if (baby.getIndex() > 0) {
+//								kid.type = Type.Series;
+//							}
+//							// Negate the next node because we don't want minus
+//							if ("−".equals(baby.toString())) {
+//								// negatives.add(baby);
+//
+////								baby.setString("+");
+//								negatePropagate(baby.getNextSibling());
+//
+//							}
+//						}
+//
+//						/*
+//						 * Special cases
+//						 */
+//					} else if ("Δ".equals(baby.toString())) {
+//						// For Δ: Δa should be treated as one variable
+//						kid.type = Type.Variable;
+//						kid.children = new LinkedList<MathMLBindingNode>();
+//					} else if (baby.isFunction()) {
+//						kid.type = Type.Function;
+//					}
+//				}
+//			}
+//		}
+//
+//		/**
+//		 * Propagate a negation down the first of every child
+//		 * 
+//		 * @param node
+//		 */
+//
+//		private void negatePropagate(MathMLBindingNode node) {
+////			node.symbol = "-" + node.symbol;
+//			if (node.getChildCount() > 0) {
+//				negatePropagate(node.getChildAt(0));
+//			}
+//		}
+//
+//		/**
+//		 * Finds all instances where there is a series inside a series or a term
+//		 * inside a term. These will be compiled into one node to make the tree
+//		 * more mathematically sound by conveying the associative property. Due
+//		 * to {@link ConcurrentModificationException} problems, the actual
+//		 * re-arrangement is done in another step: {@link rearrangeNestedMrows}
+//		 * 
+//		 * @param parent
+//		 * @param nestMrow
+//		 */
+//		private void findNestedMrows(MathMLBindingNode parent,
+//				MathMLBindingNode kid) {
+//
+//			if (
+//			/**/((Type.Series).equals(kid.getType())
+//			/**/&& (Type.Series).equals(parent.getType()))
+//			/**/||
+//			/**/((Type.Term).equals(kid.getType())
+//			/**/&& (Type.Term).equals(parent.getType()))
+//
+//			) {
+//				nestedMrows.add(kid);
+//			}
+//		}
+//
+//		/**
+//		 * Second part of {@link findNestedMrows}, compiles all nested
+//		 * {@link Type.Series} and {@link Type.Term} to one node
+//		 */
+//		private void rearrangeNestedMrows() {
+//			if (nestedMrows == null) {
+//				return;
+//			}
+//			for (MathMLBindingNode kid : nestedMrows) {
+//				List<MathMLBindingNode> nests = kid.getChildren();
+//				for (MathMLBindingNode nest : nests) {
+//					kid.getParent().add(kid.getIndex(), nest);
+//				}
+//				kid.remove();
+//				Log.info("Removing nested mrow :" + kid);
+//			}
+//		}
+//
+//		/**
+//		 * This method allows the "invisible negative one" to be displayed
+//		 * explicitly and maneuvered accordingly. It makes an encasing sentinel
+//		 * term for negative terms in a series.
+//		 */
+//		private void rearrangeNegatives() {
+//			for (MathMLBindingNode neg : negatives) {
+//
+//				MathMLBindingNode negOne = new MathMLBindingNode(
+//						neg.getMLNode(), "mn", Type.Number, new HTML("<mn>-1</mn>"));
+//
+//				if (neg.getParent().type == Type.Series) {
+//					MathMLBindingNode negArg = neg.getNextSibling();
+//
+//					MathMLBindingNode encasingTerm = new MathMLBindingNode(
+//							negArg.getMLNode(), "mrow", Type.Term,
+//									new HTML("-"+negArg.toString()));
+//
+//					neg.getParent().add(negArg.getIndex(), encasingTerm);
+//
+//					encasingTerm.add(negOne);
+//					negArg.remove();
+//					encasingTerm.add(negArg);
+//
+//					Log.info("neg: " + neg + ", tag: " + neg.getTag()
+//							+ ", type: " + neg.getType() + ", parent: "
+//							+ neg.getParent());
+//					Log.info("Rearranging the negative for: " + negArg);
+//				} else {
+//					neg.getParent().add(neg.getIndex() + 1, negOne);
+//					Log.info("Adding -1 node to the term");
+//				}
+//			}
+//		}
+//
+//	}
+//
+//	/**
+//	 * This class allows the tree representation of the equation to be converted
+//	 * back into MathML for display.
+//	 * 
+//	 * @author John Gralyan
+//	 * 
+//	 */
+//	class MathTreeToML {
+//		HTML mlHTML = new HTML("<math></math>");
+//		Boolean changeDomNodes = false;
+//
+//		MathTreeToML(MathMLBindingTree sourceTree, Boolean changeDomNodes) {
+//			this.changeDomNodes = changeDomNodes;
+//			Element firstNode = mlHTML.getElement().getFirstChildElement();
+//			addChild(sourceTree.getRoot(), firstNode);
+//		}
+//
+//		MathTreeToML(MathMLBindingNode jNode) {
+//			Element firstNode = mlHTML.getElement().getFirstChildElement();
+//			addChild(jNode, firstNode);
+//		}
+//
+//		private void addChild(MathMLBindingNode from, Node to) {
+//			List<MathMLBindingNode> children = from.getChildren();
+//
+//			for (MathMLBindingNode child : children) {
+//
+//				// if ("-1".equals(child.toString()) ) {
+//				// continue;
+//				// }
+//
+//				Node childTo = to.appendChild(child.getMLNode().cloneNode(
+//						false));
+//
+//				if (changeDomNodes) {
+//					child.setMLNode(childTo);
+//				}
+//
+//				if ("mi".equals(child.getTag()) | "mn".equals(child.getTag())
+//						| "mo".equals(child.getTag())) {
+//
+//					((Element) childTo).setInnerText(child.toString());
+//				}
+//
+//				if (child.getChildCount() >= 0) {
+//					addChild(child, childTo);
+//				}
+//			}
+//		}
+//
+//	}
 }

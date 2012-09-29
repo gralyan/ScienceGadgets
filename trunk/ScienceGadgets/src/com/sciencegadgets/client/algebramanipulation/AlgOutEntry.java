@@ -47,44 +47,46 @@ public class AlgOutEntry implements EntryPoint {
 	EquationDatabase data;
 
 	public void onModuleLoad() {
-		try {
+
+		//TODO don't catch general exception
+		//		try {
 			createAlgebraPanel();
 			RootPanel.get("scienceGadgetArea").add(backButton);
 			RootPanel.get("scienceGadgetArea").add(spAlg);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Window.alert("Please refresh");
-		}
+//		} catch (Exception e) {
+//			Window.alert("Please refresh");
+//			e.printStackTrace();
+//		}
 
 	}
 
 	private void createAlgebraPanel() {
 
-		// Assemble algebra menu panel
-		HorizontalPanel algMenuPanel = new HorizontalPanel();
-		algMenuPanel.setHeight("2em");
-		algMenuPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
-		// function
-		funBox = new ListBox();
-		data = new EquationDatabase();
-		for (String fun : data.functions) {
-			funBox.addItem(fun);
-		}
-		algMenuPanel.add(funBox);
-		// coefficient
-		coefBox = new TextBox();
-		coefBox.setValue("1");
-		coefBox.setWidth("2em");
-		algMenuPanel.add(coefBox);
-		// variable
-		varBox = new ListBox();
-		algMenuPanel.add(varBox);
-		// to both sides button
-		Button toBothSides = new Button("To Both Sides",
-				new ToBothSidesHandler());
-		toBothSides.setWidth("5em");
-		algMenuPanel.setHeight("2em");
-		algMenuPanel.add(toBothSides);
+//		// Assemble algebra menu panel
+//		HorizontalPanel algMenuPanel = new HorizontalPanel();
+//		algMenuPanel.setHeight("2em");
+//		algMenuPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+//		// function
+//		funBox = new ListBox();
+//		data = new EquationDatabase();
+//		for (String fun : data.functions) {
+//			funBox.addItem(fun);
+//		}
+//		algMenuPanel.add(funBox);
+//		// coefficient
+//		coefBox = new TextBox();
+//		coefBox.setValue("1");
+//		coefBox.setWidth("2em");
+//		algMenuPanel.add(coefBox);
+//		// variable
+//		varBox = new ListBox();
+//		algMenuPanel.add(varBox);
+//		// to both sides button
+//		Button toBothSides = new Button("To Both Sides",
+//				new ToBothSidesHandler());
+//		toBothSides.setWidth("5em");
+//		algMenuPanel.setHeight("2em");
+//		algMenuPanel.add(toBothSides);
 
 		// Assemble Algebra panel
 		spAlg.setStyleName("algOutScrollPanel");

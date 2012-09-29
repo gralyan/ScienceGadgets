@@ -83,10 +83,10 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		}
 
 		// Updates
-		HTML mathML = tree.toMathML();
-		Log.info("transporting: " + mathML.getHTML());
-		// AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
-		EquationTransporter.selectEquation(mathML, changeComment());
+//		HTML mathML = tree.toMathML();
+//		Log.info("transporting: " + mathML.getHTML());
+//		// AlgOutEntry.updateAlgOut(new HTML(mathML.getHTML()));
+//		EquationTransporter.selectEquation(mathML, changeComment());
 
 		// TODO number is registering as series
 //		System.out.println("\nleft: "+tree.getLeftSide().getType()+"\nright: "+tree.getRightSide().getType());

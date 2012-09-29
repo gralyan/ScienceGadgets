@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
@@ -48,6 +49,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.equationtree.TreeEntry;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 //Uncomment to use as gadget////////////////////////////////////
 //
@@ -84,7 +86,8 @@ public class EquationBrowserEntry implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 
-		try {
+		//TODO dont catch general exception
+//		try {
 			browserPanel.setStylePrimaryName("browserPanel");
 
 			Grid modes = new Grid(1, 2);
@@ -100,10 +103,10 @@ public class EquationBrowserEntry implements EntryPoint {
 
 			modeSelectAlg.setValue(true, true);
 			createAlgBrowser();
-		} catch (Exception e) {
-			e.printStackTrace();
-			Window.alert("Please refresh the page");
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			Window.alert("Please refresh the page");
+//		}
 	}
 
 	private void createSciBrowser() {
@@ -300,7 +303,7 @@ public class EquationBrowserEntry implements EntryPoint {
 				descHTML = "<span>$"
 						+ data.getAttribute(data.FLAG_VARIABLE_DESCRIPTION, var)
 						+ "$</span>";
-			} catch (Exception e) {
+			} catch (ElementNotFoundExeption e) {
 				e.printStackTrace();
 				descHTML = "<span></span>";
 			}
@@ -365,7 +368,7 @@ public class EquationBrowserEntry implements EntryPoint {
 		}
 		HTML eq = new HTML(randomizedEquation.toString());
 		randomizedEquation.removeFromParent();
-		
+
 		EquationTransporter.transport(eq);
 	}
 

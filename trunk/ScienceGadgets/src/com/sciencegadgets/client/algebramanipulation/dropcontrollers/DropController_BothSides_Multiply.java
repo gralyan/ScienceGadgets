@@ -15,6 +15,7 @@
 package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -41,7 +42,7 @@ public class DropController_BothSides_Multiply extends
 
 		// Move nodes to other side
 		if (Type.Term.equals(targetNode.getType())) {
-			targetNode.add("mo", null, "*");
+			targetNode.add("mo", null, new HTML("*"));
 			targetNode.add(sourceNode);
 
 			// Rearrange fraction the source was in
@@ -62,11 +63,11 @@ public class DropController_BothSides_Multiply extends
 				tree.setRightSide(encasingTerm);
 			}
 
-			encasingTerm.add(0, "mo", null, "*");
+			encasingTerm.add(0, "mo", null, new HTML("*"));
 			encasingTerm.add(0, sourceNode);
 
-			targetNode.add(0, "mo", null, "(");
-			targetNode.add("mo", null, ")");
+			targetNode.add(0, "mo", null, new HTML("("));
+			targetNode.add("mo", null, new HTML(")"));
 		}
 	}
 
