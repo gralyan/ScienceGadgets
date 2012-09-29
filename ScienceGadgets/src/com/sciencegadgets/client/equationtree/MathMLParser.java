@@ -66,7 +66,7 @@ public abstract class MathMLParser {
 		elEquals = sideEqSide.getItem(1);
 		elRight = sideEqSide.getItem(2);
 
-		onRootsFound(elLeft, elEquals, elRight);
+		onRootsFound(rootNode, elLeft, elEquals, elRight);
 
 		addChildren(elLeft, true);
 		addChildren(elRight, false);
@@ -109,7 +109,7 @@ public abstract class MathMLParser {
 	 * @param nodeEquals
 	 * @param nodeRight
 	 */
-	protected abstract void onRootsFound(Node nodeLeft, Node nodeEquals,
+	protected abstract void onRootsFound(Node nodeRoot, Node nodeLeft, Node nodeEquals,
 			Node nodeRight);
 
 	/**

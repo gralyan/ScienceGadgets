@@ -79,21 +79,11 @@ public class EquationTransporter {
 			AlgOutEntry.algOut.clear(true);
 			AlgOutEntry.algOut.resizeRows(0);
 
-			Log.info("----Initial tree, making----");
-			jTree = new MathMLBindingTree(mathML, true);
-			mathML = jTree.toMathML();
-			Log.info("----Initial tree, made----");
-
 			selectEquation(mathML, "firstComment");
 
-		} catch (TopNodesNotFoundException e) {
-			Window.alert("Either this browser does not support this function, or the equation is not in the form (side)=(side)");
-			e.printStackTrace();
-			Log.severe("TopNodesNotFound: the MathML must be standard and well formed");
 		} catch (JavaScriptException e) {
 			Log.severe("Input must be in form (side)=(side)");
 		}
-
 	}
 
 	/**
@@ -102,38 +92,21 @@ public class EquationTransporter {
 	 * @param mathML
 	 */
 	public static void selectEquation(HTML mathML, String changeComment) {
+		
 
 		Log.info("EqTrans: " + mathML.getHTML());
 
 		// Make equation tree and draw it to the canvas
 		treePanel.clear();
-//		TreeEntry.apTree.clear();
 		try {
-			Log.info("____New Tree, making____");
-			jTree = new MathMLBindingTree(mathML, true);
+			jTree = new MathMLBindingTree(mathML);
+			//TODO uncomment
+			AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers(),
+					changeComment);
 			tCanvas = new TreeCanvas(treePanel, jTree);
-//			tCanvas = new TreeCanvas(TreeEntry.apTree, jTree);
-			Log.info("====New Tree, made====");
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
-			Log.severe("NEW TREE FAIL");
 		}
-
-		// ////////////////////////////////////////////////////////
-		// just to visualize the mathml, the box must be uncommented in
-		// TreeEntry also
-		// //////////////////////////////////////////
-		// TreeEntry.mlTree.clear();
-		// try {
-		// mljTree = new MathMLBindingTree(new HTML(mathML.getHTML()), false);
-		// mltCanvas = new TreeCanvas(TreeEntry.mlTree, mljTree);
-		// } catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
-		// e.printStackTrace();
-		// }
-		// ///////////////////////////////////////////////////////
-
-		AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers(),
-				changeComment);
 
 		DropControllAssigner.assign(jTree.getWrappers(), true);
 	}

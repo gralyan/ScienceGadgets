@@ -73,7 +73,7 @@ public class MLElementWrapper extends HTML {
 	 */
 	public MLElementWrapper(MathMLBindingNode jNode, Boolean isDraggable,
 			Boolean isJoined) {
-		this.element = (Element) jNode.getDomNode();
+		this.element = (Element) jNode.getMLNode();
 		this.mathMLBindingNode = jNode;
 		this.isDraggable = isDraggable;
 		addMouseOverHandler();
@@ -162,7 +162,6 @@ public class MLElementWrapper extends HTML {
 	/**
 	 * removes a drag controller from this widget
 	 * 
-	 * @throws Exception
 	 */
 	public void removeDragController() {
 		if (dragController != null) {
