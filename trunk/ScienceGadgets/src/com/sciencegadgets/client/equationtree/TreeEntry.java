@@ -15,6 +15,7 @@
 package com.sciencegadgets.client.equationtree;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -30,6 +31,9 @@ public class TreeEntry implements EntryPoint {
 		
 		//TODO don't catch general exception
 //		try {
+
+		// Placements are relative to the AbsolutePanel
+//		apTree.getElement().getStyle().setPosition(Position.RELATIVE);
 			spTree.setStyleName("treeCanvas");
 			RootPanel.get("scienceGadgetArea").add(spTree);
 			

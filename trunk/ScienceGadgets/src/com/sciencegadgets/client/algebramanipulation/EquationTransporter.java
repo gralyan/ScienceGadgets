@@ -26,6 +26,7 @@ import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.DropControllAssigner;
+import com.sciencegadgets.client.equationtree.EquationList;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.TreeCanvas;
 import com.sciencegadgets.client.equationtree.TreeEntry;
@@ -103,7 +104,8 @@ public class EquationTransporter {
 			//TODO uncomment
 			AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers(),
 					changeComment);
-			tCanvas = new TreeCanvas(treePanel, jTree);
+			new EquationList(treePanel, jTree);
+//			tCanvas = new TreeCanvas(treePanel, jTree);
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
 		}
