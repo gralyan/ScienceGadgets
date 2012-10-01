@@ -58,7 +58,6 @@ public class AlgebraManipulator extends AbsolutePanel {
 		if (eqEl != null) {
 			System.out.println("2CAN DRAWWW!!!!!!");
 			timer.cancel();
-			makeWrappers();
 		}
 	}
 
