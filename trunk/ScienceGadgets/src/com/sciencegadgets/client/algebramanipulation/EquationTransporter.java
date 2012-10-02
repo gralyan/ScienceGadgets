@@ -110,7 +110,7 @@ public class EquationTransporter {
 			e.printStackTrace();
 		}
 
-		DropControllAssigner.assign(jTree.getWrappers(), true);
+//		DropControllAssigner.assign(jTree.getWrappers(), true);
 	}
 
 	public static native void parseJQMath(Element element) /*-{
