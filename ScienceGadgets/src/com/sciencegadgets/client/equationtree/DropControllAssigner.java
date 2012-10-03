@@ -36,7 +36,6 @@ public class DropControllAssigner {
 		assign(wrappers, hasJoiner);
 	}
 
-	@SuppressWarnings("unused")
 	public static void assign(LinkedList<MLElementWrapper> wrappers,
 			Boolean hasJoiner) {
 

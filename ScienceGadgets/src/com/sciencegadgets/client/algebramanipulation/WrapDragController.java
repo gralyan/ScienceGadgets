@@ -44,16 +44,16 @@ public class WrapDragController extends PickupDragController {
 	public void dragStart() {
 		super.dragStart();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-//		wrap.add(new HTML (wrap.getJohnNode().toString()));
-		wrap.setText(wrap.getJohnNode().toString());
+		wrap.setHTML("<math>"+wrap.getJohnNode().toString()+"</math>");
+//		wrap.setText(wrap.getJohnNode().toString());
 	}
 
 	@Override
 	public void dragEnd() {
 		super.dragEnd();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-//		wrap.remove(wrap.getWidget());
-		wrap.setText("");
+		wrap.setHTML("");
+//		wrap.setText("");
 		
 		// TODO This should clear the drop target highlights as well as the
 		// wrapper being dragged. The drop targets aren't being cleared.

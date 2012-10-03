@@ -10,25 +10,32 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class EquationList {
 	private MathMLBindingTree mathMLBindingTree;
 	private AbsolutePanel panel;
-	private Grid eqList = new Grid(0, 1);
+	private Grid eqList = new Grid(1, 1);
 	private Timer timer;
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
+	private HTML responseNotes = new HTML("notes");
 
 	public EquationList(AbsolutePanel panel, final MathMLBindingTree jTree) {
 
 		this.panel = panel;
 		this.mathMLBindingTree = jTree;
-
-		panel.add(eqList);
-		eqList.setWidth(panel.getOffsetWidth() / 3 + "px");
-		eqList.setStyleName("algOutGrid");
 		
-		fillNextNodeLayer(mathMLBindingTree.getRoot(), 0);
+		this.panel.add(eqList);
+		eqList.setWidth(panel.getOffsetWidth() + "px");
+		eqList.setStyleName("textCenter");
+		responseNotes.setSize(eqList.getOffsetWidth()+"px", "40px");
+		eqList.setWidget(0, 0, responseNotes);
+		
+		
+		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
+		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
 
 		// Wait for mathjax to format first
 		timer = new Timer() {
@@ -50,7 +57,7 @@ public class EquationList {
 
 	public void draw(MathMLBindingTree jTree) {
 
-		for (int i = 1; i < 4; i++) {
+		for (int i = 1; i < nodeLayers.size() + 1; i++) {
 			Node nextEq = mathMLBindingTree.getMathML().getElement()
 					.getFirstChild().cloneNode(true);
 
@@ -83,7 +90,9 @@ public class EquationList {
 		for(int i=0 ; i<children.size() ; i++){
 			MathMLBindingNode curChild = children.get(i);
 			
-			if(curChild.getChildCount()>1){
+//			if(curChild.getChildCount() > 0){
+			String curTag = curChild.getTag();
+			if(!curTag.equals("mo") && !curTag.equals("mn") && !curTag.equals("mi")){
 				fillNextNodeLayer(curChild, layer + 1);
 			}
 		}
@@ -94,19 +103,29 @@ public class EquationList {
 		
 		for(MathMLBindingNode node : nodes){
 			String bareId = node.getId();
-			System.out.println(bareId);
-			
-			HTML h = new HTML("wrapper");
-			h.setStyleName("var");
 			
 			Element el = DOM.getElementById(layer+1+"-svg"+bareId);
-//			panel.add(h, 0, 0);
-			panel.add(h, el.getAbsoluteLeft()-panel.getAbsoluteLeft(), el.getAbsoluteTop()-panel.getAbsoluteTop());
+			
+			el.setAttribute("style", "fill:red");
+
+			String height = JSNICalls.getHeight((com.google.gwt.user.client.Element) el)+"px";
+			String width = JSNICalls.getWidth((com.google.gwt.user.client.Element) el)+"px";
+
+			MLElementWrapper wrap = node.getWrapper().getJoinedWrapper();
+			wrap.setHeight(height);
+			wrap.setWidth(width);
+			
+			panel.add(wrap, el.getAbsoluteLeft()-panel.getAbsoluteLeft(), el.getAbsoluteTop()-panel.getAbsoluteTop());
 		}
-		if(nodeLayers.size()>layer+1){
+		if(nodeLayers.size() > layer+1){
 		placeNextEqWrappers(layer+1);
 	}}
-
+	
+	/**
+	 * Each equation must have a different set of ID's which only differ in the prefix. The prefix is the equations placement in the list
+	 * @param parent
+	 * @param eqRow
+	 */
 	private void replaceChildsId(Node parent, int eqRow) {
 		NodeList<Node> children = parent.getChildNodes();
 
@@ -122,7 +141,7 @@ public class EquationList {
 				}
 				String newId = oldId.replaceFirst("svg", eqRow + "-svg");
 				curEl.setAttribute("id", newId);
-
+				
 				// Each equation will have a different MathJax frame id
 				// MathJax-Element-[equation #]-Frame
 			} else if (oldId.contains("MathJax-Element")) {
@@ -135,7 +154,10 @@ public class EquationList {
 			}
 		}
 	}
-
+/**
+ * Gives the top node of each equation a certain size
+ * @param el
+ */
 	private void resizeEquations(Element el) {
 		String widthAnchor = "-widthAnchor-";
 		String heightAnchor = "-heightAnchor-";
@@ -168,7 +190,8 @@ public class EquationList {
 		}
 		newStyle = newStyle.replaceFirst("; ", "");
 
-		double newWidth = eqList.getOffsetWidth();
+		//Width will always be 1/2 the panel, height is calculated from width
+		double newWidth = panel.getOffsetWidth()/2;
 		double newHeight = height * (newWidth / width);
 
 		newStyle = newStyle.replaceFirst(widthAnchor, "" + (newWidth));
