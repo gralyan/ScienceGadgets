@@ -21,6 +21,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Log;
 
 public class AlgebraManipulator extends AbsolutePanel {
@@ -38,12 +39,11 @@ public class AlgebraManipulator extends AbsolutePanel {
 
 		parentPanel.clear();
 		parentPanel.add(draggableEquation);
-		parseMathJax();
+		JSNICalls.parseMathJax("scienceGadgetArea");
 
 		//Only make wrappers after the equation has been typeset by MathJax
 		timer = new Timer() {
 			public void run() {
-				System.out.println("2CHECKINGGGGGG");
 				checkIfWeCanDraw();
 			}
 		};
@@ -56,8 +56,8 @@ public class AlgebraManipulator extends AbsolutePanel {
 		Element eqEl = DOM.getElementById(eqId);
 
 		if (eqEl != null) {
-			System.out.println("2CAN DRAWWW!!!!!!");
 			timer.cancel();
+			makeWrappers();
 		}
 	}
 
@@ -87,25 +87,12 @@ public class AlgebraManipulator extends AbsolutePanel {
 			int positionLeft = wrapLeft - algLeft;
 			int positionTop = wrapTop - algTop;
 
-			wrap.setWidth(getWidth(el) + "px");
-			wrap.setHeight(getHeight(el) + "px");
-
+			wrap.setWidth(JSNICalls.getWidth(el) + "px");
+			wrap.setHeight(JSNICalls.getHeight(el) + "px");
+			
 			parentPanel.add(wrap, positionLeft, positionTop);
 		}
 	}
 
-	public native void parseMathJax() /*-{
-		$doc.prettify("scienceGadgetArea");
-	}-*/;
 
-	public static native double getWidth(Element elm) /*-{
-
-		return elm.getBoundingClientRect().width;
-		//		return elm.getBBox().width;
-	}-*/;
-
-	public static native double getHeight(Element elm) /*-{
-		return elm.getBoundingClientRect().height;
-		//		return elm.getBBox().height;
-	}-*/;
 }

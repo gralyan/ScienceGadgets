@@ -156,24 +156,26 @@ public final class EquationDatabase {
 			/* 3 */{ "X=(a+b)*c", 
 				"<math alttext=\"X=(a+b)*c\" id=\"0\">" +
 					
-					"<mrow id=\"0.0\">" +
+					"<mfenced open=\"\" close=\"\" id=\"0.0\">" +
 						"<mi id=\"0.0.0\">X</mi>" +
-					"</mrow>" +
+					"</mfenced>" +
 					
 					"<mo id=\"0.0.1\">=</mo>" +
 					
-					"<mrow id=\"0.0.2.0\">" +
-						"<mo id=\"0.0.2.0.0\">(</mo>" +
+					"<mfenced open=\"\" close=\"\" separators=\"+-\" id=\"0.0.2.0\">" +
 						"<mi id=\"0.0.2.0.1.0\">a</mi>" +
-						"<mo id=\"0.0.2.0.1.1\">+</mo>" +
-						"<mi id=\"0.0.2.0.1.2\">b</mi>" +
-						"<mo id=\"0.0.2.0.1.3\">)</mo>" +
-						"<mo id=\"0.0.2.0.2\">*</mo>" +
-						"<mfrac id=\"0.0.2.0.2.3\">" +
-							"<mi id=\"0.0.2.0.2.0\">c</mi>" +
-							"<mi id=\"0.0.2.0.2.1\">c</mi>" +
+						"<mfenced open=\"(\" close=\")\" separators=\"*\" id=\"0.0.2.0.9\">" +
+							"<mi id=\"0.0.2.0.1.2\">b</mi>" +
+							"<mfrac id=\"0.0.2.0.2.3\">" +
+								"<mi id=\"0.0.2.0.2.0\">c</mi>" +
+								"<mfrac id=\"0.0.2.0.2.3.9\">" +
+									"<mi id=\"0.0.2.0.2.1\">c</mi>" +
+									"<mi id=\"0.0.2.0.2.1.9\">p</mi>" +
+								"</mfrac>" +
 							"</mfrac>" +
-					"</mrow>" +
+							"</mfenced>" +
+						"<mi id=\"0.0.2.0.1.0.9\">f</mi>" +
+					"</mfenced>" +
 					
 					"</math>" },
 			/* 4 */{ "X+a=b+c*e", "<math alttext=\"X+a=b+c*e\"><mrow><mrow><mi>X</mi><mo>+</mo><mi>a</mi></mrow><mo>=</mo><mrow><mi>b</mi><mo>+</mo><mrow><mi>c</mi><mo>*</mo><mi>e</mi></mrow></mrow></mrow></math>" },

@@ -27,6 +27,7 @@ import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class MathMLBindingTree {
 
@@ -99,23 +100,17 @@ public class MathMLBindingTree {
 	}
 	
 	public LinkedList<MLElementWrapper> wrapTree() {
-		System.out.println("Wrap 1 Wrap 1 Wrap 1 ");
 
 		Collection<MathMLBindingNode> children = idMap.values();
 		MLElementWrapper wrap;
 		wrappers.clear();
 
-		System.out.println("Wrap 2 Wrap 2 Wrap 2 ");
 		for (MathMLBindingNode child : children) {
-			System.out.println("Wrap 3 Wrap 3 Wrap 3 ");
 
 			wrap = new MLElementWrapper(child, true, true);
 			child.setWrapper(wrap);
 			wrappers.add(wrap);
-
-			System.out.println("Wrap 4 Wrap 4 Wrap 4 ");
 		}
-		System.out.println("Wrap 5 Wrap 5 Wrap 5 ");
 		return wrappers;
 	}
 	
@@ -143,8 +138,11 @@ public class MathMLBindingTree {
 
 	public MathMLBindingNode getNodeById(String id) {
 		id = id.replaceAll("[A-Za-z]", "");
-		System.out.println("getNodeBy Id "+id+" node "+idMap.get(id));
-		return idMap.get(id);
+		MathMLBindingNode node = idMap.get(id);
+		if(node == null){
+			System.out.println("xxx CANT GET NODE BY ID: "+id+" xxx");
+		}
+		return node;
 //		return checkIdOfChild(id, root);
 	}
 
@@ -332,7 +330,7 @@ public class MathMLBindingTree {
 		public LinkedList<MathMLBindingNode> getChildren() {
 			NodeList<Node> childrenNodesList = getMLNode().getChildNodes();
 			LinkedList<MathMLBindingNode> childrenNodes = new LinkedList<MathMLBindingNode>();
-					
+			
 			for(int i=0 ; i<childrenNodesList.getLength() ; i++){
 				Element childElement = ((Element)childrenNodesList.getItem(i));
 				String childId = childElement.getAttribute("id");
@@ -340,7 +338,6 @@ public class MathMLBindingTree {
 			}
 			
 			return childrenNodes;
-//			return children;
 		}
 
 		public MathMLBindingNode getChildAt(int index) {
@@ -449,15 +446,6 @@ public class MathMLBindingTree {
 		}
 
 		public HTML toMathML() {
-//			HTML mathML;
-//			if (type == null) {
-//				mathML = new HTML(/* tag + " " + */"$" + symbol + "$");
-//			} else {
-//				mathML = new HTML(
-//				/* type.toString().substring(0, 2) + " " + */"$" + symbol + "$");
-//			}
-//			EquationBrowserEntry.parseJQMath(mathML.getElement());
-//			return mathML;
 			return symbol;
 		}
 
@@ -570,6 +558,8 @@ public class MathMLBindingTree {
 					
 					idMLMap.put(id, currentNode);
 					idMap.put(id, new MathMLBindingNode(currentNode));
+					
+					
 					
 					addChildren((Element) currentNode);
 				}

@@ -83,6 +83,7 @@ public class MLElementWrapper extends HTML {
 
 		if (isJoined == true) {
 			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, false);
+			this.joinedWrapper.setStyleName("var");
 			this.joinedWrapper.joinedWrapper = this;
 		}
 	}
