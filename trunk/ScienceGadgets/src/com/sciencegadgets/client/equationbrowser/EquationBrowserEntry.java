@@ -19,12 +19,18 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestBuilder.Method;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Random;
@@ -46,8 +52,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xml.client.Node;
 import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
+import com.sciencegadgets.client.equationbrowser.EquationXMLDatabase.Tags;
 import com.sciencegadgets.client.equationtree.TreeEntry;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
@@ -63,6 +71,7 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNod
 public class EquationBrowserEntry implements EntryPoint {
 
 	EquationDatabase data = new EquationDatabase();
+	EquationXMLDatabase dataXML;
 
 	HorizontalPanel browserPanel = new HorizontalPanel();
 	private Grid eqGrid = new Grid(1, 1);
@@ -102,11 +111,40 @@ public class EquationBrowserEntry implements EntryPoint {
 			modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
 
 			modeSelectAlg.setValue(true, true);
-			createAlgBrowser();
+			createDatabase();
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //			Window.alert("Please refresh the page");
 //		}
+	}
+	
+	private void createDatabase(){
+	
+		try {
+			new RequestBuilder(RequestBuilder.GET, "Equations.xml")
+					.sendRequest("", new RequestCallback() {
+
+						@Override
+						public void onResponseReceived(Request request,
+								Response response) {
+							//Gets the Equations.xml as a string
+							String text = response.getText();
+							//Parses Equation.xml to be queried as needed
+							dataXML = new EquationXMLDatabase(text);
+							createAlgBrowser();
+						}
+
+						@Override
+						public void onError(Request request, Throwable exception) {
+							System.out.println("error");
+
+						}
+					});
+		} catch (RequestException e) {
+			System.out.println("catched");
+			e.printStackTrace();
+
+		}
 	}
 
 	private void createSciBrowser() {
@@ -194,14 +232,16 @@ public class EquationBrowserEntry implements EntryPoint {
 		labelAlg.setStylePrimaryName("rowHeader");
 
 		// Fill panel
-		String[] algNameList = data.getAll(data.FLAG_ALGEBRA_NAME);
-		String[] algMLList = data.getAll(data.FLAG_ALGEBRA_EQUATION);
-		algGrid.resizeRows(algNameList.length);
-		for (int i = 0; i < algNameList.length; i++) {
-			algGrid.setText(i, 0, algNameList[i]);
-			Label cell = new Label(algNameList[i]);
+//		String[] algNameList = data.getAll(data.FLAG_ALGEBRA_NAME);
+//		String[] algMLList = data.getAll(data.FLAG_ALGEBRA_EQUATION);
+		//TODO
+		String[] algMLList = dataXML.getAll(Tags.algebra_equation);
+		algGrid.resizeRows(algMLList.length);
+		for (int i = 0; i < algMLList.length; i++) {
+			HTML cell = new HTML(algMLList[i]);
 			algGrid.setWidget(i, 0, cell);
-			cell.getElement().setId(algMLList[i]);
+			//TODO
+//			cell.getElement().setId(algMLList[i]);
 		}
 
 		browserPanel.add(vpAlg);
@@ -335,7 +375,7 @@ public class EquationBrowserEntry implements EntryPoint {
 	}		
 	
 	/**
-	 * Replaces all lower case letters with random numbers
+	 * Replaces all inner text of mn tags with random numbers before sending
 	 * 
 	 * @param equation
 	 */
@@ -343,32 +383,19 @@ public class EquationBrowserEntry implements EntryPoint {
 		HTML randomizedEquation = new HTML(equation);
 		
 		NodeList<com.google.gwt.dom.client.Element> variables = randomizedEquation
-				.getElement().getElementsByTagName("mi");
-		
-		// Can't iterate through while modifying a NodeList, so it will be transcribed to another list first
-		LinkedList<com.google.gwt.dom.client.Element> vars = new LinkedList<com.google.gwt.dom.client.Element>();
+				.getElement().getElementsByTagName("mn");
+
 		for(int i=0 ; i<variables.getLength() ; i++){
-			vars.add(variables.getItem(i));
-		}
-		
-		for (com.google.gwt.dom.client.Element var : vars) {
+			com.google.gwt.dom.client.Element var = variables.getItem(i);
+			
 			int posOrNeg = Random.nextBoolean() ? 1 : -1;
 			int randomNumber = posOrNeg * ((int) (Math.random() * 10) + 1);
 			
-			String id = var.getAttribute("id");
-			if (id != null) {
-				if (id.startsWith("0")) {
-					com.google.gwt.dom.client.Element newNumber = DOM.createElement("mn");
-					newNumber.setInnerText(randomNumber + "");
-					newNumber.setAttribute("id", id);
-					var.getParentElement().insertBefore(newNumber, var);
-					var.removeFromParent();
-				}
-			}
+			var.setInnerText(randomNumber + "");
 		}
+		
 		HTML eq = new HTML(randomizedEquation.toString());
 		randomizedEquation.removeFromParent();
-
 		EquationTransporter.transport(eq);
 	}
 
@@ -424,16 +451,16 @@ public class EquationBrowserEntry implements EntryPoint {
 					Widget cell = table.getWidget(clickedCell.getRowIndex(),
 							clickedCell.getCellIndex());
 
-					equation = cell.getElement().getId();
-
+					equation = cell.getElement().getInnerHTML();
+					
 					if (table.equals(algGrid)) { // For Algebra practice mode
-						// EquationTransporter.transport(new HTML(equation));
 						sendAlgebraEquation(equation);
 
 					} else if (table.equals(eqGrid)) { // For Science Mode
 						if (modeSelectSci.getValue()) {
 							fillSummary(((Element) clickedEl.getFirstChild())
 									.getId());// clickedEl.getInnerText());
+									//TODO
 						}
 					}
 				}
