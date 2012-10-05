@@ -163,18 +163,18 @@ public final class EquationDatabase {
 					"<mo id=\"0.0.1\">=</mo>" +
 					
 					"<mfenced open=\"\" close=\"\" separators=\"+-\" id=\"0.0.2.0\">" +
-						"<mi id=\"0.0.2.0.1.0\">a</mi>" +
+						"<mn id=\"0.0.2.0.1.0\">a</mn>" +
 						"<mfenced open=\"(\" close=\")\" separators=\"*\" id=\"0.0.2.0.9\">" +
-							"<mi id=\"0.0.2.0.1.2\">b</mi>" +
+							"<mn id=\"0.0.2.0.1.2\">b</mn>" +
 							"<mfrac id=\"0.0.2.0.2.3\">" +
-								"<mi id=\"0.0.2.0.2.0\">c</mi>" +
+								"<mn id=\"0.0.2.0.2.0\">c</mn>" +
 								"<mfrac id=\"0.0.2.0.2.3.9\">" +
-									"<mi id=\"0.0.2.0.2.1\">c</mi>" +
-									"<mi id=\"0.0.2.0.2.1.9\">p</mi>" +
+									"<mn id=\"0.0.2.0.2.1\">c</mn>" +
+									"<mn id=\"0.0.2.0.2.1.9\">p</mn>" +
 								"</mfrac>" +
 							"</mfrac>" +
 							"</mfenced>" +
-						"<mi id=\"0.0.2.0.1.0.9\">f</mi>" +
+						"<mn id=\"0.0.2.0.1.0.9\">f</mn>" +
 					"</mfenced>" +
 					
 					"</math>" },
