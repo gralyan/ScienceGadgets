@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<equations>
+
+	<algebra_equation>
+		<math id="0">
+
+			<mfenced open="" close="" id="0.0">
+				<mi id="0.0.0">X</mi>
+			</mfenced>
+
+			<mo id="0.0.1">=</mo>
+
+			<mfenced open="" close="" separators="+-" id="0.0.2.0">
+				<mn id="0.0.2.0.1.0">a</mn>
+				<mfenced open="(" close=")" separators="*" id="0.0.2.0.9">
+					<mn id="0.0.2.0.1.2">b</mn>
+					<mfrac id="0.0.2.0.2.3">
+						<mn id="0.0.2.0.2.0">c</mn>
+						<mfrac id="0.0.2.0.2.3.9">
+							<mn id="0.0.2.0.2.1">c</mn>
+							<mn id="0.0.2.0.2.1.9">p</mn>
+						</mfrac>
+					</mfrac>
+				</mfenced>
+				<mn id="0.0.2.0.1.0.9">f</mn>
+			</mfenced>
+
+		</math>
+	</algebra_equation>
+
+</equations>
