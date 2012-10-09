@@ -40,11 +40,10 @@ public class ScienceGadgets implements EntryPoint {
 			final Button sendButton = new Button("Send");
 
 			RootPanel.get("scienceGadgetArea").add(sendButton);
-			// RootPanel.get().add(new EquationWriter());
 
 			ClickHandler handler = new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					//string2MathML_BySymja_OnServer("a+b");
+//					sendToServer("a+b");
 				}
 			};
 
@@ -61,19 +60,17 @@ public class ScienceGadgets implements EntryPoint {
 	 * 
 	 * @param textToServer
 	 */
-	@SuppressWarnings("unused")
-	private void string2MathML_BySymja_OnServer(String textToServer) {
-
-		greetingService.greetServer(textToServer, new AsyncCallback<String>() {
-			public void onFailure(Throwable caught) {
-				Window.alert("Math parseing FAIL :(");
-			}
-
-			public void onSuccess(String result) {
-				//labelSumEq.setHTML(result);
-				//onEqSelect(result);
-			}
-		});
-	}
+//	private void sendToServer(String textToServer) {
+//
+//		greetingService.greetServer(textToServer, new AsyncCallback<String[]>() {
+//			public void onFailure(Throwable caught) {
+//				Window.alert("Math parseing FAIL :(");
+//			}
+//
+//			public void onSuccess(String[] result) {
+//				Window.alert(result[0]+"-"+result[1]+"-"+result[2]+"-");
+//			}
+//		});
+//	}
 
 }

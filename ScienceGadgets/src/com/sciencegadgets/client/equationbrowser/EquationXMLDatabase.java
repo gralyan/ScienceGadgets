@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.equationbrowser;
 
+import java.util.HashSet;
+
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
@@ -9,7 +11,7 @@ public class EquationXMLDatabase {
 	Document dataDoc;
 
 	public static enum Tags {
-		algebra_equation;
+		math, mi;
 	}
 
 	public EquationXMLDatabase(String data) {
@@ -17,16 +19,16 @@ public class EquationXMLDatabase {
 		XMLParser.removeWhitespace(dataDoc);
 	}
 
-	public String[] getAll(Tags tag) {
+	public String[] getAllTagged(Tags tag) {
 		NodeList elements = dataDoc.getElementsByTagName(tag.toString());
-		int tagCount = elements.getLength();
-		String[] list = new String[tagCount];
+		
+		HashSet<String> set = new HashSet<String>();
 		
 		for (int i = 0; i < elements.getLength(); i++) {
-			String value = elements.item(i).getFirstChild().toString();
-			list[i] = value;
+			String value = elements.item(i).toString();
+			set.add(value);
 		}
-		return list;
+		return set.toArray(new String[0]);
 	}
 
 }

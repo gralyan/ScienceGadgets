@@ -17,6 +17,7 @@
 		value="gecko1_8" /> -->
 
 
+<!-- 	<entry-point class='com.sciencegadgets.client.ScienceGadgets' /> -->
 	<entry-point class='com.sciencegadgets.client.NavigationPanelEntry' />
 	<entry-point
 		class='com.sciencegadgets.client.equationbrowser.EquationBrowserEntry' />
@@ -27,6 +28,6 @@
 	<!-- class='com.sciencegadgets.client.equationtree.TreeEntry' /> -->
 
 	<source path='client' />
-	<!-- <source path='shared'/> -->
+	<source path='shared'/>
 
 </module>
