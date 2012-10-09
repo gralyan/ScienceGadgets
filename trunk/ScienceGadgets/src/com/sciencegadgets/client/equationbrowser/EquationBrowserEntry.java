@@ -26,6 +26,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
@@ -53,6 +55,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.Node;
+import com.sciencegadgets.client.GreetingService;
+import com.sciencegadgets.client.GreetingServiceAsync;
 import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.equationbrowser.EquationXMLDatabase.Tags;
@@ -85,8 +89,12 @@ public class EquationBrowserEntry implements EntryPoint {
 	private Button sumButton = new Button("Use");
 	private Button combineEqButton = new Button("Combine");
 	private HashMap<TextBox, String> inputBinding = new HashMap<TextBox, String>();
-
 	public static HTML labelSumEq = new HTML("");
+	String[] algMLList = null;
+	String[] d = null;
+	
+	private final GreetingServiceAsync greetingService = GWT
+			.create(GreetingService.class);
 
 	// Uncomment to use as gadget////////////////////////
 	//
@@ -111,41 +119,58 @@ public class EquationBrowserEntry implements EntryPoint {
 			modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
 
 			modeSelectAlg.setValue(true, true);
-			createDatabase();
+//			createDatabase();
+			getVariables("");
+			
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //			Window.alert("Please refresh the page");
 //		}
 	}
 	
-	private void createDatabase(){
-	
-		try {
-			new RequestBuilder(RequestBuilder.GET, "Equations.xml")
-					.sendRequest("", new RequestCallback() {
 
-						@Override
-						public void onResponseReceived(Request request,
-								Response response) {
-							//Gets the Equations.xml as a string
-							String text = response.getText();
-							//Parses Equation.xml to be queried as needed
-							dataXML = new EquationXMLDatabase(text);
-							createAlgBrowser();
-						}
+	private void getVariables(String textToServer) {
 
-						@Override
-						public void onError(Request request, Throwable exception) {
-							System.out.println("error");
+		greetingService.greetServer(textToServer, new AsyncCallback<String[][]>() {
+			public void onFailure(Throwable caught) {
+				Window.alert("Math parseing FAIL :(");
+			}
 
-						}
-					});
-		} catch (RequestException e) {
-			System.out.println("catched");
-			e.printStackTrace();
-
-		}
+			public void onSuccess(String[][] result) {
+				algMLList = result[0];
+				d = result[1];
+				createAlgBrowser();
+			}
+		});
 	}
+	
+//	private void createDatabase(){
+//		try {
+//			new RequestBuilder(RequestBuilder.GET, "Equations.xml")
+//					.sendRequest("", new RequestCallback() {
+//
+//						@Override
+//						public void onResponseReceived(Request request,
+//								Response response) {
+//							//Gets the Equations.xml as a string
+//							String text = response.getText();
+//							//Parses Equation.xml to be queried as needed
+//							dataXML = new EquationXMLDatabase(text);
+//							createAlgBrowser();
+//						}
+//
+//						@Override
+//						public void onError(Request request, Throwable exception) {
+//							System.out.println("error");
+//
+//						}
+//					});
+//		} catch (RequestException e) {
+//			System.out.println("catched");
+//			e.printStackTrace();
+//
+//		}
+//	}
 
 	private void createSciBrowser() {
 
@@ -232,16 +257,11 @@ public class EquationBrowserEntry implements EntryPoint {
 		labelAlg.setStylePrimaryName("rowHeader");
 
 		// Fill panel
-//		String[] algNameList = data.getAll(data.FLAG_ALGEBRA_NAME);
-//		String[] algMLList = data.getAll(data.FLAG_ALGEBRA_EQUATION);
-		//TODO
-		String[] algMLList = dataXML.getAll(Tags.algebra_equation);
+//		String[] algMLList = dataXML.getAllTagged(Tags.math);
 		algGrid.resizeRows(algMLList.length);
 		for (int i = 0; i < algMLList.length; i++) {
-			HTML cell = new HTML(algMLList[i]);
+			HTML cell = new HTML("<math><mi>"+algMLList[i]+"</mi></math>"+" - "+d[i]);
 			algGrid.setWidget(i, 0, cell);
-			//TODO
-//			cell.getElement().setId(algMLList[i]);
 		}
 
 		browserPanel.add(vpAlg);
@@ -254,15 +274,17 @@ public class EquationBrowserEntry implements EntryPoint {
 	 *            - set of variables
 	 */
 	private void fillVarList() {
-		String varHTML;
-		String[] vars = data.getAll(data.FLAG_VARIABLE_LOOK);
-		String[] desc = data.getAll(data.FLAG_VARIABLE_DESCRIPTION);
-		varGrid.resizeRows(vars.length);
+//		String varHTML;
+//		String[] vars = dataXML.getAllTagged(Tags.mi);
+//		String[] vars = data.getAll(data.FLAG_VARIABLE_LOOK);
+//		String[] desc = data.getAll(data.FLAG_VARIABLE_DESCRIPTION);
+		varGrid.resizeRows(algMLList.length);
 
-		for (int i = 0; i < vars.length; i++) {
-			varHTML = "<span style=\"cursor:pointer;\">$" + vars[i]
-					+ "$ &nbsp; &nbsp; " + desc[i] + "</span>";
-			varGrid.setHTML(i, 0, varHTML);
+		for (int i = 0; i < algMLList.length; i++) {
+//			varHTML = "<span style=\"cursor:pointer;\">$" + vars[i]
+//					+ "$ &nbsp; &nbsp; " + desc[i] + "</span>";
+//			varHTML = algMLList[i];
+			varGrid.setHTML(i, 0, "<math><mi>"+algMLList[i]+"</mi></math>"+" - "+d[i]);
 		}
 	}
 
