@@ -4,13 +4,11 @@ body {
 .center {
 	margin: auto;
 }
-/* .navigationArea{ */
-/* 	width:100%; */
-	
-/* } */
-
+.textCenter{
+	text-align: center;
+}
 #scienceGadgetArea {
-	background-color: #ADD8E6;
+	background-color: #ADD850;
 	margin: auto;
 }
 
@@ -35,7 +33,7 @@ body {
 }
 
 .browserPanel {
-	height: 20em;
+	height: 40em;
 	margin: auto;
 /* 	width: 60em; */
 }
@@ -53,7 +51,7 @@ body {
 }
 
 .treeCanvas {
-	height: 20em;
+	height: 40em;
 	width: 60em;
 }
 
@@ -99,7 +97,9 @@ body {
 }
 
 .var {
-	background-color: #DCDCDC;
+	
+	opacity: .3;
+	background-color: #FFFFFF;
 	text-align: center;
 }
 
