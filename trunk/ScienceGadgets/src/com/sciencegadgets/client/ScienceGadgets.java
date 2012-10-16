@@ -25,8 +25,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class ScienceGadgets implements EntryPoint {
 
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
+	private final DatabaseHelperAsync greetingService = GWT
+			.create(DatabaseHelper.class);
 
 	
 
