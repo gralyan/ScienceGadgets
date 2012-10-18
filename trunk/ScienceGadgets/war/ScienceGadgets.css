@@ -7,6 +7,9 @@ body {
 .textCenter{
 	text-align: center;
 }
+.selectable{
+	cursor: pointer;
+}
 #scienceGadgetArea {
 	background-color: #ADD850;
 	margin: auto;
