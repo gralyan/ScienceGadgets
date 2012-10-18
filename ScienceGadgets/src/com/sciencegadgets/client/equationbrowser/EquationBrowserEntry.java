@@ -29,6 +29,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
@@ -81,7 +82,7 @@ public class EquationBrowserEntry implements EntryPoint {
 	private RadioButton modeSelectSci = new RadioButton("mode", "Science");
 	private Button sumButton = new Button("Use");
 	private Button combineEqButton = new Button("Combine");
-	private HashMap<TextBox, String> inputBinding = new HashMap<TextBox, String>();
+	private HashMap<TextBox, Element> inputBinding = new HashMap<TextBox, Element>();
 	public static HTML labelSumEq = new HTML("");
 	
 	private final DatabaseHelperAsync dataBase = GWT
@@ -154,7 +155,6 @@ public class EquationBrowserEntry implements EntryPoint {
 		VerticalPanel vpSum = new VerticalPanel();
 		Label labelSum = new Label("Summary");
 		sumButton.setVisible(false);
-		labelSumEq.setStyleName("var");
 		ScrollPanel spSum = new ScrollPanel(sumGrid);
 		sumGrid.setWidth("19em");
 
@@ -297,7 +297,7 @@ public class EquationBrowserEntry implements EntryPoint {
 			Label varLabel = new Label(varNodes.getItem(i).getInnerText());
 
 			TextBox valueInput = new TextBox();
-			inputBinding.put(valueInput, varNodes.getItem(i).getInnerText());
+			inputBinding.put(valueInput, (Element) varNodes.getItem(i));
 			valueInput.setWidth("4em");
 
 			Button findButton = new Button("Find");
@@ -329,7 +329,7 @@ public class EquationBrowserEntry implements EntryPoint {
 		
 		NodeList<com.google.gwt.dom.client.Element> variables = randomizedEquation
 				.getElement().getElementsByTagName("mn");
-
+		
 		for(int i=0 ; i<variables.getLength() ; i++){
 			com.google.gwt.dom.client.Element var = variables.getItem(i);
 			
@@ -538,25 +538,24 @@ public class EquationBrowserEntry implements EntryPoint {
 		@Override
 		public void onClick(ClickEvent arg0) {
 
+//Replace known variables with given values inputed
 			for (TextBox box : inputBinding.keySet()) {
 				if (box.isEnabled()) {
 					try {
 						float value = Float.parseFloat(box.getText());
-//						 inputBinding.get(box).
+						
+						Element oldElement = inputBinding.get(box);
+						Element newElement = DOM.createElement("mi");
+						oldElement.getParentElement().replaceChild(newElement, oldElement);
+//						oldElement.setInnerText(value+"");
+						newElement.setInnerText("5");//(value+"");
 					} catch (NumberFormatException e) {
 						Window.alert("All values should be numbers (except for unknown variable to find)");
 						return;
 					}
-
-				} else {
-//					inputBinding.get(box).;
 				}
 			}
-			EquationTransporter.transport(new HTML(labelSumEq.getElement()
-					.getId()));
-			// TODO replace the variables with the proper values before
-			// transporting equation
-//			Window.alert("Algebra in science mode is not very functional yet :(");
+			EquationTransporter.transport(labelSumEq);
 		}
 
 	}
