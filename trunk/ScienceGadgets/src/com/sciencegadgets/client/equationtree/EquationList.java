@@ -17,7 +17,7 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNod
 public class EquationList {
 	private MathMLBindingTree mathMLBindingTree;
 	private AbsolutePanel panel;
-	private Grid eqList = new Grid(1, 1);
+	private Grid eqGrid = new Grid(1, 1);
 	private Timer timer;
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
 	private HTML responseNotes = new HTML("notes");
@@ -27,12 +27,11 @@ public class EquationList {
 		this.panel = panel;
 		this.mathMLBindingTree = jTree;
 		
-		this.panel.add(eqList);
-		eqList.setWidth(panel.getOffsetWidth() + "px");
-		eqList.setStyleName("textCenter");
-		responseNotes.setSize(eqList.getOffsetWidth()+"px", "40px");
-		eqList.setWidget(0, 0, responseNotes);
-		
+		this.panel.add(eqGrid);
+		responseNotes.setSize(eqGrid.getOffsetWidth()+"px", "40px");
+		eqGrid.setWidth(panel.getOffsetWidth() + "px");
+		eqGrid.setStyleName("textCenter");
+		eqGrid.setWidget(0, 0, responseNotes);
 		
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
@@ -65,9 +64,9 @@ public class EquationList {
 			HTML eq = new HTML();
 			eq.getElement().appendChild(nextEq);
 
-			int rowCount = eqList.getRowCount() + 1;
-			eqList.resizeRows(rowCount);
-			eqList.setWidget(rowCount - 1, 0, eq);
+			int rowCount = eqGrid.getRowCount() + 1;
+			eqGrid.resizeRows(rowCount);
+			eqGrid.setWidget(rowCount - 1, 0, eq);
 		}
 		
 		placeNextEqWrappers(0);
@@ -81,18 +80,20 @@ public class EquationList {
 	private void fillNextNodeLayer(MathMLBindingNode parent, int layer){
 		LinkedList<MathMLBindingNode> children = parent.getChildren();
 
-		if(nodeLayers.size()<layer+1){
+		if(nodeLayers.size() < layer+1){
 			nodeLayers.add(new LinkedList<MathMLBindingNode>());
 		}
 		
 		nodeLayers.get(layer).addAll(children);
 		
 		for(int i=0 ; i<children.size() ; i++){
+			System.out.println("for layer: "+layer+"-"+i);
 			MathMLBindingNode curChild = children.get(i);
 			
-//			if(curChild.getChildCount() > 0){
 			String curTag = curChild.getTag();
-			if(!curTag.equals("mo") && !curTag.equals("mn") && !curTag.equals("mi")){
+//			if(curChild.getChildCount() > 0){
+			//TODO not the best implementation
+			if(!curTag.equalsIgnoreCase("mo") && !curTag.equalsIgnoreCase("mn") && !curTag.equalsIgnoreCase("mi") && !curTag.equalsIgnoreCase("msub")){
 				fillNextNodeLayer(curChild, layer + 1);
 			}
 		}

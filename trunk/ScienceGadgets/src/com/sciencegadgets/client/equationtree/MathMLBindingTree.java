@@ -55,24 +55,13 @@ public class MathMLBindingTree {
 	public MathMLBindingTree(HTML mathML)
 			throws TopNodesNotFoundException {
 		this.mathML = mathML;
+		
 
 		bindMLtoNodes(mathML);
+		System.out.println(mathML);
 		
-//		MLtoMLTree mlTomlTree = new MLtoMLTree(mathML);
-//		mlTomlTree.change(this);
-
-//		if (isParsedForMath) {
-//			new MLTreeToMathTree().change(this);
-//		}
-		//TODO
 		this.wrapTree();
 	}
-
-//	public HTML toMathML() {
-//		MathTreeToML mathTreeToML = new MathTreeToML(this, true);
-//		mathML = mathTreeToML.mlHTML;
-//		return mathML;
-//	}
 
 	public HTML getMathML() {
 		return mathML;
@@ -114,28 +103,6 @@ public class MathMLBindingTree {
 		return wrappers;
 	}
 	
-//	public LinkedList<MLElementWrapper> wrapTree() {
-//		wrappers.clear();
-//		wrapChildren(root);
-//		return wrappers;
-//	}
-//
-//	private void wrapChildren(MathMLBindingNode jNode) {
-//		MLElementWrapper wrap;
-//		List<MathMLBindingNode> children = jNode.getChildren();
-//
-//		for (MathMLBindingNode child : children) {
-//			if (!child.isHidden()) {
-//				wrap = new MLElementWrapper(child, true, true);
-//				child.setWrapper(wrap);
-//				wrappers.add(wrap);
-//			}
-//			if (child.getChildCount() > 0) {
-//				wrapChildren(child);
-//			}
-//		}
-//	}
-
 	public MathMLBindingNode getNodeById(String id) {
 		id = id.replaceAll("[A-Za-z]", "");
 		MathMLBindingNode node = idMap.get(id);
@@ -143,27 +110,8 @@ public class MathMLBindingTree {
 			System.out.println("xxx CANT GET NODE BY ID: "+id+" xxx");
 		}
 		return node;
-//		return checkIdOfChild(id, root);
 	}
 
-//	private MathMLBindingNode checkIdOfChild(String id, MathMLBindingNode parent) {
-//		System.out.println("id1 "+id);
-//		System.out.println(" getid "+parent.getId());
-//		if (id.equals(parent.getId())) {
-//			return parent;
-//		}
-//
-//		List<MathMLBindingNode> children = parent.getChildren();
-//		MathMLBindingNode possibleFind = null;
-//		
-//		for (MathMLBindingNode child : children) {
-//			possibleFind = checkIdOfChild(id, child);
-//			if(possibleFind != null){
-//				return possibleFind;
-//			}
-//		}
-//		return null;
-//	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Node Class
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,12 +127,6 @@ public class MathMLBindingTree {
 
 		/**
 		 * Construct node for existing domNode and appropriate info
-		 * 
-		 * @param domNode
-		 *            - existing MathMl node
-		 * @param tag
-		 * @param type
-		 * @param symbol
 		 */
 		private MathMLBindingNode(Element mlNode, String tag, Type type,
 				HTML symbol) {
@@ -196,8 +138,6 @@ public class MathMLBindingTree {
 
 		/**
 		 * Wrap existing MathML node
-		 * 
-		 * @param node
 		 */
 		private MathMLBindingNode(Element mlNode) {
 			this.mlNode = mlNode;
@@ -270,10 +210,6 @@ public class MathMLBindingTree {
 		 * Creates a node to add as a child at the specified index. Use index -1
 		 * to append to the end of the child list
 		 * 
-		 * @param index
-		 * @param tag
-		 * @param type
-		 * @param symbol
 		 * @return - The newly create child
 		 */
 		public MathMLBindingNode add(int index, String tag, Type type,
@@ -330,13 +266,12 @@ public class MathMLBindingTree {
 		public LinkedList<MathMLBindingNode> getChildren() {
 			NodeList<Node> childrenNodesList = getMLNode().getChildNodes();
 			LinkedList<MathMLBindingNode> childrenNodes = new LinkedList<MathMLBindingNode>();
-			
+
 			for(int i=0 ; i<childrenNodesList.getLength() ; i++){
 				Element childElement = ((Element)childrenNodesList.getItem(i));
 				String childId = childElement.getAttribute("id");
 				childrenNodes.add(getNodeById(childId));
 			}
-			
 			return childrenNodes;
 		}
 
@@ -511,28 +446,28 @@ public class MathMLBindingTree {
 	
 		private void bindMLtoNodes(HTML mathMLequation) throws TopNodesNotFoundException{
 			
-			// Find the top tree nodes
-			Element rootNode = mathMLequation.getElement().getFirstChildElement().getFirstChildElement();
+			// Find the top tree nodes: left side <mo>=<mo> right side
+			Element rootNode = mathMLequation.getElement();//.getFirstChildElement().getFirstChildElement();
 			String middleString = "";
 
-//			while (!"=".equals(middleString)) {
-//				switch (rootNode.getChildCount()) {
-//				case 0: // prevent infinite loop
-//					throw new TopNodesNotFoundException(
-//							"The MathML is invalid, It must contain the following pattern for the top layer of the equation:"
-//									+ "\n<mrow>[left side of eqation]</mrow>"
-//									+ "\n\t<mo>=<mo>"
-//									+ "\n<mrow>[right side of eqation]</mrow>\n");
-//				case 1:
-//					rootNode = rootNode.getFirstChildElement();
-//					break;
-//				default:
-//					middleString = ((Element) rootNode.getChild(1)).getInnerText();
-//					if (!"=".equals(middleString)) {
-//						rootNode = rootNode.getFirstChildElement();
-//					}
-//				}
-//			}
+			while (!"=".equals(middleString)) {
+				switch (rootNode.getChildCount()) {
+				case 0: // prevent infinite loop
+					throw new TopNodesNotFoundException(
+							"The MathML is invalid, It must contain the following pattern for the top layer of the equation:"
+									+ "\n<mrow>[left side of eqation]</mrow>"
+									+ "\n\t<mo>=<mo>"
+									+ "\n<mrow>[right side of eqation]</mrow>\n");
+				case 1:
+					rootNode = rootNode.getFirstChildElement();
+					break;
+				default:
+					middleString = ((Element) rootNode.getChild(1)).getInnerText();
+					if (!"=".equals(middleString)) {
+						rootNode = rootNode.getFirstChildElement();
+					}
+				}
+			}
 
 			NodeList<Node> sideEqSide = rootNode.getChildNodes();
 
@@ -554,12 +489,13 @@ public class MathMLBindingTree {
 				// Nodes with no children are either inner text or formatting only
 				if (currentNode.getChildCount() > 0) {
 					
-					String id = currentNode.getAttribute("id");
+					String id = Math.random()+"";
+					
+					currentNode.setAttribute("id", id);
+//					String id = currentNode.getAttribute("id");
 					
 					idMLMap.put(id, currentNode);
 					idMap.put(id, new MathMLBindingNode(currentNode));
-					
-					
 					
 					addChildren((Element) currentNode);
 				}
