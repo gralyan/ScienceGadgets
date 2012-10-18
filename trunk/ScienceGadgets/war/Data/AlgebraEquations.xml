@@ -12,8 +12,14 @@
 
 		<mfenced open="" close="" separators="+-" id="0.0.2.0">
 			<mn id="0.0.2.0.1.0">a</mn>
+			<mfenced separators="+-" id="0.0.2.6">
 				<mn id="0.0.2.0.1.2">b</mn>
-			<mn id="0.0.2.0.1.0.9">f</mn>
+				<mfenced separators="+-" id="0.0.2.03">
+					<mn id="0.0.2.0.1.25">b</mn>
+					<mn id="0.0.2.0.1.26">b</mn>
+				</mfenced>
+				<mn id="0.0.2.0.1.0.9">f</mn>
+			</mfenced>
 		</mfenced>
 
 	</math>
@@ -42,3 +48,6 @@
 	</math>
 
 </algebra_equations>
+
+
+

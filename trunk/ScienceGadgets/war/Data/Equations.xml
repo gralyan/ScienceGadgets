@@ -65,10 +65,20 @@
 	</math>
 
 	<math>
+		<mrow>
 			<mi>a</mi>
-			<mo>=</mo>
-			<mi>W</mi>
+			<mo>+</mo>
+			<mi>f</mi>
+		</mrow>
+		<mo>=</mo>
+		<mrow>
+			<mi>u</mi>
+			<mo>+</mo>
+			<mi>g</mi>
+		</mrow>
 	</math>
 
 
 </equations>
+
+
