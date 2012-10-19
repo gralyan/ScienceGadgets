@@ -548,7 +548,7 @@ public class EquationBrowserEntry implements EntryPoint {
 						Element newElement = DOM.createElement("mi");
 						oldElement.getParentElement().replaceChild(newElement, oldElement);
 //						oldElement.setInnerText(value+"");
-						newElement.setInnerText("5");//(value+"");
+						newElement.setInnerText(value+"");
 					} catch (NumberFormatException e) {
 						Window.alert("All values should be numbers (except for unknown variable to find)");
 						return;

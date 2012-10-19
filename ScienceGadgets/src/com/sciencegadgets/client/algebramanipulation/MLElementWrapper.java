@@ -28,6 +28,9 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -44,7 +47,7 @@ public class MLElementWrapper extends HTML {
 	private WrapDragController dragController = null;
 	private Element element = null;
 	private Boolean isDraggable;
-	private MLElementWrapper joinedWrapper;
+//	private MLElementWrapper joinedWrapper;
 	private MathMLBindingNode mathMLBindingNode;
 	private HTML dropDescriptor = new HTML();
 
@@ -76,16 +79,21 @@ public class MLElementWrapper extends HTML {
 		this.element = (Element) jNode.getMLNode();
 		this.mathMLBindingNode = jNode;
 		this.isDraggable = isDraggable;
+		
 		addMouseOverHandler();
 		addMouseOutHandler();
 		addClickHandler();
 		addTouchHandler();
 
-		if (isJoined == true) {
-			this.joinedWrapper = new MLElementWrapper(jNode, isDraggable, false);
-			this.joinedWrapper.setStyleName("var");
-			this.joinedWrapper.joinedWrapper = this;
-		}
+		setStyleName("wrap");
+//		setUrl("images/2660.png");
+		
+
+//		if (isJoined == true) {
+//			this.joinedWrapper = new MLElementWrapper(/*jNode,*/el, isDraggable, false);
+//			this.joinedWrapper.joinedWrapper = this;
+			//TODO
+//		}
 	}
 
 	public HTML getDropDescriptor() {
@@ -100,9 +108,9 @@ public class MLElementWrapper extends HTML {
 		element = el;
 	}
 
-	public MLElementWrapper getJoinedWrapper() {
-		return joinedWrapper;
-	}
+//	public MLElementWrapper getJoinedWrapper() {
+//		return joinedWrapper;
+//	}
 
 	public MathMLBindingTree.MathMLBindingNode getJohnNode() {
 		return mathMLBindingNode;
@@ -227,11 +235,11 @@ public class MLElementWrapper extends HTML {
 		if (select) {
 			// Highlights selected
 			wrapper.getElement().setId("selectedWrapper");
-			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
+//			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
 
 			// Save selected statically
 			selectedWrapper = this;
-			SelectedWrapperJoiner = this.getJoinedWrapper();
+//			SelectedWrapperJoiner = this.getJoinedWrapper();
 
 			String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
 			String changeDesc = "";
@@ -269,8 +277,8 @@ public class MLElementWrapper extends HTML {
 				MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
 						.getDropTarget());
 				dropC.getDropTarget().setStyleName("selectedDropWrapper");
-				dropCwrap.getJoinedWrapper()
-						.setStyleName("selectedDropWrapper");
+//				dropCwrap.getJoinedWrapper()
+//						.setStyleName("selectedDropWrapper");
 
 				// Descriptors
 				HTML dropDesc = dropCwrap.getDropDescriptor();
@@ -282,7 +290,7 @@ public class MLElementWrapper extends HTML {
 			
 			// Removes style - selectedWrapper
 			wrapper.getElement().removeAttribute("id");
-			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
+//			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
 
 			// Removes static reference to this as selected
 			selectedWrapper = null;
@@ -299,7 +307,7 @@ public class MLElementWrapper extends HTML {
 				for (String style : styles) {
 					if (style.startsWith("selectedDropWrapper")) {
 						dropCwrap.removeStyleName(style);
-						dropCwrap.getJoinedWrapper().removeStyleName(style);
+//						dropCwrap.getJoinedWrapper().removeStyleName(style);
 					}
 
 					HTML dropDesc = dropCwrap.getDropDescriptor();

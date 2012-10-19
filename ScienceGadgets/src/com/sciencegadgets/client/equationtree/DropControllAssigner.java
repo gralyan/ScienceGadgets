@@ -148,10 +148,10 @@ public class DropControllAssigner {
 			// e.printStackTrace();
 		}
 
-		if (hasJoiner) {
-			addDropTarget(source.getJoinedWrapper(), target.getJoinedWrapper(),
-					dropType, false);
-		}
+//		if (hasJoiner) {
+//			addDropTarget(source.getJoinedWrapper(), target.getJoinedWrapper(),
+//					dropType, false);
+//		}
 
 		return dropCtrl;
 	}

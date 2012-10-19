@@ -40,14 +40,14 @@ public class AlgebraManipulator extends AbsolutePanel {
 		parentPanel.clear();
 		parentPanel.add(draggableEquation);
 		JSNICalls.parseMathJax("scienceGadgetArea");
-
+//TODO
 		//Only make wrappers after the equation has been typeset by MathJax
-		timer = new Timer() {
-			public void run() {
-				checkIfWeCanDraw();
-			}
-		};
-		timer.scheduleRepeating(100);
+//		timer = new Timer() {
+//			public void run() {
+//				checkIfWeCanDraw();
+//			}
+//		};
+//		timer.scheduleRepeating(100);
 	}
 
 	//Repeatedly polls to see if MathJax is done typesetting
@@ -87,8 +87,8 @@ public class AlgebraManipulator extends AbsolutePanel {
 			int positionLeft = wrapLeft - algLeft;
 			int positionTop = wrapTop - algTop;
 
-			wrap.setWidth(JSNICalls.getWidth(el) + "px");
-			wrap.setHeight(JSNICalls.getHeight(el) + "px");
+			wrap.setWidth(JSNICalls.getElementWidth(el) + "px");
+			wrap.setHeight(JSNICalls.getElementHeight(el) + "px");
 			
 			parentPanel.add(wrap, positionLeft, positionTop);
 		}

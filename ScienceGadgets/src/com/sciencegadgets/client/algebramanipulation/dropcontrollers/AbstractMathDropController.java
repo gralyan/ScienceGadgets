@@ -79,7 +79,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		// Clean wrappers
 		for (MLElementWrapper wrap : tree.getWrappers()) {
 			wrap.removeStyleName("selectedDropWrapper");
-			wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
+//			wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
 		}
 
 		// Updates
