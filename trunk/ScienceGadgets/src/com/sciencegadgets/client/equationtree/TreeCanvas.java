@@ -291,7 +291,7 @@ public class TreeCanvas extends DrawingArea {
 			// this.add(nodePic);
 
 			if (child.getWrapper() != null) {
-				MLElementWrapper wrap = child.getWrapper().getJoinedWrapper();
+				MLElementWrapper wrap = child.getWrapper();
 				wrap.setHeight(boxHeight + 6 * pad + "px");
 				wrap.setWidth(boxWidth + 6 * pad + "px");
 				panel.add(wrap, childLeft - 3 * pad, childTop - 2 * pad);

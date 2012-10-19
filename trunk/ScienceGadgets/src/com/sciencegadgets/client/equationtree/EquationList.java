@@ -24,15 +24,18 @@ public class EquationList {
 
 	public EquationList(AbsolutePanel panel, final MathMLBindingTree jTree) {
 
-		this.panel = panel;
+		// this.panel = panel;
 		this.mathMLBindingTree = jTree;
-		
-		this.panel.add(eqGrid);
-		responseNotes.setSize(eqGrid.getOffsetWidth()+"px", "40px");
+
+		this.panel = panel;
+
+		panel.add(eqGrid);
+
+		responseNotes.setSize(eqGrid.getOffsetWidth() + "px", "40px");
 		eqGrid.setWidth(panel.getOffsetWidth() + "px");
 		eqGrid.setStyleName("textCenter");
 		eqGrid.setWidget(0, 0, responseNotes);
-		
+
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
 
@@ -56,7 +59,7 @@ public class EquationList {
 
 	public void draw(MathMLBindingTree jTree) {
 
-		for (int i = 1; i < nodeLayers.size() + 1; i++) {
+		for (int i = 1; i < nodeLayers.size(); i++) {
 			Node nextEq = mathMLBindingTree.getMathML().getElement()
 					.getFirstChild().cloneNode(true);
 
@@ -68,62 +71,85 @@ public class EquationList {
 			eqGrid.resizeRows(rowCount);
 			eqGrid.setWidget(rowCount - 1, 0, eq);
 		}
-		
 		placeNextEqWrappers(0);
 	}
-	
-	
-	///////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////
 	// Details
-	//////////////////////////////////////////////////////////////
-	
-	private void fillNextNodeLayer(MathMLBindingNode parent, int layer){
+	// ////////////////////////////////////////////////////////////
+
+	private void fillNextNodeLayer(MathMLBindingNode parent, int layer) {
 		LinkedList<MathMLBindingNode> children = parent.getChildren();
 
-		if(nodeLayers.size() < layer+1){
+		if (nodeLayers.size() < layer + 1) {
 			nodeLayers.add(new LinkedList<MathMLBindingNode>());
 		}
-		
+
 		nodeLayers.get(layer).addAll(children);
-		
-		for(int i=0 ; i<children.size() ; i++){
-			System.out.println("for layer: "+layer+"-"+i);
+
+		for (int i = 0; i < children.size(); i++) {
+			// System.out.println("for layer: "+layer+"-"+i);
 			MathMLBindingNode curChild = children.get(i);
-			
-			String curTag = curChild.getTag();
-//			if(curChild.getChildCount() > 0){
-			//TODO not the best implementation
-			if(!curTag.equalsIgnoreCase("mo") && !curTag.equalsIgnoreCase("mn") && !curTag.equalsIgnoreCase("mi") && !curTag.equalsIgnoreCase("msub")){
+
+			if (curChild.getChildCount() > 0) {
 				fillNextNodeLayer(curChild, layer + 1);
 			}
 		}
 	}
-	
-	private void placeNextEqWrappers(int layer){
+
+	private void placeNextEqWrappers(int layer) {
 		LinkedList<MathMLBindingNode> nodes = nodeLayers.get(layer);
-		
-		for(MathMLBindingNode node : nodes){
+
+		for (MathMLBindingNode node : nodes) {
 			String bareId = node.getId();
-			
-			Element el = DOM.getElementById(layer+1+"-svg"+bareId);
-			
-			el.setAttribute("style", "fill:red");
 
-			String height = JSNICalls.getHeight((com.google.gwt.user.client.Element) el)+"px";
-			String width = JSNICalls.getWidth((com.google.gwt.user.client.Element) el)+"px";
+			Element svg = DOM.getElementById(layer + 1 + "-svg" + bareId);
+			svg.setAttribute("style", "fill:red;stroke:red");
 
-			MLElementWrapper wrap = node.getWrapper().getJoinedWrapper();
+			String width = null, height = null;
+			int left = 0, top = 0;
+			
+//			if ("mfenced".equalsIgnoreCase(node.getParent().getTag())) {
+//				String parentBareId = node.getParent().getId();
+//				Element parentSvg = DOM.getElementById(layer + 1 + "-svg" + parentBareId);
+//				
+//				height = JSNICalls
+//						.getElementHeight((com.google.gwt.user.client.Element) parentSvg)
+//						+ "px";
+//				top = parentSvg.getAbsoluteTop();
+//
+//				width = JSNICalls
+//						.getElementWidth((com.google.gwt.user.client.Element) parentSvg)
+//						+ "px";
+//				left = parentSvg.getAbsoluteLeft();
+//			} else {
+				height = JSNICalls
+						.getElementHeight((com.google.gwt.user.client.Element) svg)
+						+ "px";
+				width = JSNICalls
+						.getElementWidth((com.google.gwt.user.client.Element) svg)
+						+ "px";
+				left = svg.getAbsoluteLeft();
+				top = svg.getAbsoluteTop();
+//			}
+			
+			MLElementWrapper wrap = node.getWrapper();
+
 			wrap.setHeight(height);
 			wrap.setWidth(width);
-			
-			panel.add(wrap, el.getAbsoluteLeft()-panel.getAbsoluteLeft(), el.getAbsoluteTop()-panel.getAbsoluteTop());
+
+			panel.add(wrap, left - panel.getAbsoluteLeft(),
+					top - panel.getAbsoluteTop());
 		}
-		if(nodeLayers.size() > layer+1){
-		placeNextEqWrappers(layer+1);
-	}}
-	
+		if (nodeLayers.size() > layer + 1) {
+			placeNextEqWrappers(layer + 1);
+		}
+	}
+
 	/**
-	 * Each equation must have a different set of ID's which only differ in the prefix. The prefix is the equations placement in the list
+	 * Each equation must have a different set of ID's which only differ in the
+	 * prefix. The prefix is the equations placement in the list
+	 * 
 	 * @param parent
 	 * @param eqRow
 	 */
@@ -142,7 +168,7 @@ public class EquationList {
 				}
 				String newId = oldId.replaceFirst("svg", eqRow + "-svg");
 				curEl.setAttribute("id", newId);
-				
+
 				// Each equation will have a different MathJax frame id
 				// MathJax-Element-[equation #]-Frame
 			} else if (oldId.contains("MathJax-Element")) {
@@ -155,10 +181,12 @@ public class EquationList {
 			}
 		}
 	}
-/**
- * Gives the top node of each equation a certain size
- * @param el
- */
+
+	/**
+	 * Gives the top node of each equation a certain size
+	 * 
+	 * @param el
+	 */
 	private void resizeEquations(Element el) {
 		String widthAnchor = "-widthAnchor-";
 		String heightAnchor = "-heightAnchor-";
@@ -191,8 +219,8 @@ public class EquationList {
 		}
 		newStyle = newStyle.replaceFirst("; ", "");
 
-		//Width will always be 1/2 the panel, height is calculated from width
-		double newWidth = panel.getOffsetWidth()/2;
+		// Width will always be 1/2 the panel, height is calculated from width
+		double newWidth = panel.getOffsetWidth() / 2;
 		double newHeight = height * (newWidth / width);
 
 		newStyle = newStyle.replaceFirst(widthAnchor, "" + (newWidth));

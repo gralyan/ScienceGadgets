@@ -8,13 +8,13 @@ public class JSNICalls {
 		$doc.prettify(areaId);
 	}-*/;
 
-	public static native double getWidth(Element elm) /*-{
+	public static native double getElementWidth(Element elm) /*-{
 
 		return elm.getBoundingClientRect().width;
 		//		return elm.getBBox().width;
 	}-*/;
 
-	public static native double getHeight(Element elm) /*-{
+	public static native double getElementHeight(Element elm) /*-{
 		return elm.getBoundingClientRect().height;
 		//		return elm.getBBox().height;
 	}-*/;
