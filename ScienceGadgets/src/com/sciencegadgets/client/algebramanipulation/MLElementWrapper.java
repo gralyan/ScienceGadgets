@@ -86,7 +86,6 @@ public class MLElementWrapper extends HTML {
 		addTouchHandler();
 
 		setStyleName("wrap");
-//		setUrl("images/2660.png");
 		
 
 //		if (isJoined == true) {

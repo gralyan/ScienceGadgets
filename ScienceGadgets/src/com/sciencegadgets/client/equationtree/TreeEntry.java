@@ -35,6 +35,7 @@ public class TreeEntry implements EntryPoint {
 		// Placements are relative to the AbsolutePanel
 //		apTree.getElement().getStyle().setPosition(Position.RELATIVE);
 			spTree.setStyleName("treeCanvas");
+			apTree.setStyleName("treeCanvas");
 			RootPanel.get("scienceGadgetArea").add(spTree);
 			
 			////////////////////////////

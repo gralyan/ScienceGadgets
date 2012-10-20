@@ -16,7 +16,10 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNod
 
 public class EquationList {
 	private MathMLBindingTree mathMLBindingTree;
-	private AbsolutePanel panel;
+	private AbsolutePanel mainPanel;
+	private AbsolutePanel wrapPanel = new AbsolutePanel();
+	private AbsolutePanel eqPanel = new AbsolutePanel();
+	private AbsolutePanel backPanel = new AbsolutePanel();
 	private Grid eqGrid = new Grid(1, 1);
 	private Timer timer;
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
@@ -24,17 +27,25 @@ public class EquationList {
 
 	public EquationList(AbsolutePanel panel, final MathMLBindingTree jTree) {
 
-		// this.panel = panel;
 		this.mathMLBindingTree = jTree;
+		this.mainPanel = panel;
 
-		this.panel = panel;
+		wrapPanel.setStyleName("treeCanvas");
+		eqPanel.setStyleName("treeCanvas");
+		backPanel.setStyleName("treeCanvas");
 
-		panel.add(eqGrid);
+		wrapPanel.getElement().getStyle().setZIndex(3);
+		eqPanel.getElement().getStyle().setZIndex(2);
+		backPanel.getElement().getStyle().setZIndex(1);
+		panel.add(wrapPanel);
+		panel.add(eqPanel, 0, 0);
+		panel.add(backPanel, 0, 0);
 
-		responseNotes.setSize(eqGrid.getOffsetWidth() + "px", "40px");
+		// responseNotes.setSize(eqGrid.getOffsetWidth() + "px", "40px");
 		eqGrid.setWidth(panel.getOffsetWidth() + "px");
 		eqGrid.setStyleName("textCenter");
 		eqGrid.setWidget(0, 0, responseNotes);
+		eqPanel.add(eqGrid);
 
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
@@ -67,10 +78,11 @@ public class EquationList {
 			HTML eq = new HTML();
 			eq.getElement().appendChild(nextEq);
 
-			int rowCount = eqGrid.getRowCount() + 1;
+			int rowCount = eqGrid.getRowCount() + 2;
 			eqGrid.resizeRows(rowCount);
 			eqGrid.setWidget(rowCount - 1, 0, eq);
 		}
+
 		placeNextEqWrappers(0);
 	}
 
@@ -103,43 +115,43 @@ public class EquationList {
 		for (MathMLBindingNode node : nodes) {
 			String bareId = node.getId();
 
-			Element svg = DOM.getElementById(layer + 1 + "-svg" + bareId);
+			com.google.gwt.user.client.Element svg = DOM.getElementById(layer
+					+ 1 + "-svg" + bareId);
 			svg.setAttribute("style", "fill:red;stroke:red");
 
 			String width = null, height = null;
 			int left = 0, top = 0;
-			
-//			if ("mfenced".equalsIgnoreCase(node.getParent().getTag())) {
-//				String parentBareId = node.getParent().getId();
-//				Element parentSvg = DOM.getElementById(layer + 1 + "-svg" + parentBareId);
-//				
-//				height = JSNICalls
-//						.getElementHeight((com.google.gwt.user.client.Element) parentSvg)
-//						+ "px";
-//				top = parentSvg.getAbsoluteTop();
-//
-//				width = JSNICalls
-//						.getElementWidth((com.google.gwt.user.client.Element) parentSvg)
-//						+ "px";
-//				left = parentSvg.getAbsoluteLeft();
-//			} else {
-				height = JSNICalls
-						.getElementHeight((com.google.gwt.user.client.Element) svg)
-						+ "px";
-				width = JSNICalls
-						.getElementWidth((com.google.gwt.user.client.Element) svg)
-						+ "px";
-				left = svg.getAbsoluteLeft();
-				top = svg.getAbsoluteTop();
-//			}
-			
-			MLElementWrapper wrap = node.getWrapper();
 
+			//Even out the heights of all children in a sum or term
+			if ("mfenced".equalsIgnoreCase(node.getParent().getTag())) {
+				String parentBareId = node.getParent().getId();
+				com.google.gwt.user.client.Element parentSvg = (com.google.gwt.user.client.Element) DOM
+						.getElementById(layer + 1 + "-svg" + parentBareId);
+
+				height = JSNICalls.getElementHeight(parentSvg) + "px";
+				top = parentSvg.getAbsoluteTop();
+
+			} else {
+				height = JSNICalls.getElementHeight(svg) + "px";
+				top = svg.getAbsoluteTop();
+			}
+
+			left = svg.getAbsoluteLeft();
+			width = JSNICalls.getElementWidth(svg) + "px";
+
+			//Drag handlers
+			MLElementWrapper wrap = node.getWrapper();
 			wrap.setHeight(height);
 			wrap.setWidth(width);
+			wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
+					- mainPanel.getAbsoluteTop());
 
-			panel.add(wrap, left - panel.getAbsoluteLeft(),
-					top - panel.getAbsoluteTop());
+			//background images
+			WrapperBackground wrapBackground = new WrapperBackground(width,
+					height);
+			backPanel.add(wrapBackground, left - mainPanel.getAbsoluteLeft(),
+					top - mainPanel.getAbsoluteTop());
+
 		}
 		if (nodeLayers.size() > layer + 1) {
 			placeNextEqWrappers(layer + 1);
@@ -220,7 +232,7 @@ public class EquationList {
 		newStyle = newStyle.replaceFirst("; ", "");
 
 		// Width will always be 1/2 the panel, height is calculated from width
-		double newWidth = panel.getOffsetWidth() / 2;
+		double newWidth = mainPanel.getOffsetWidth() / 2;
 		double newHeight = height * (newWidth / width);
 
 		newStyle = newStyle.replaceFirst(widthAnchor, "" + (newWidth));
