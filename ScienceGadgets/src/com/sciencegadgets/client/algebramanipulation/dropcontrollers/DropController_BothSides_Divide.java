@@ -64,12 +64,12 @@ public class DropController_BothSides_Divide extends AbstractMathDropController 
 			MathMLBindingNode denominator = targetNode.getChildAt(1);
 
 			if (Type.Term.equals(denominator.getType())) {
-				denominator.add("mo", null, new HTML("*"));
+				denominator.add("mo", null, "*");
 				denominator.add(sourceNode);
 			} else {
 				MathMLBindingNode encasedDenominator = denominator.encase("mrow",
 						Type.Term);
-				encasedDenominator.add("mo", null, new HTML("*"));
+				encasedDenominator.add("mo", null, "*");
 				encasedDenominator.add(sourceNode);
 			}
 

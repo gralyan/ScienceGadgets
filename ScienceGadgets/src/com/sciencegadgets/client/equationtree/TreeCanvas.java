@@ -228,7 +228,7 @@ public class TreeCanvas extends DrawingArea {
 			} else {
 				childSpace = (sideLengthRight) / rightLayerCounts[layer];
 			}
-			HTML childHTML = child.toMathML();
+			HTML childHTML = new HTML(child.toString());
 			panel.add(childHTML, 0, 0);
 
 			int childWidth = childHTML.getOffsetWidth();

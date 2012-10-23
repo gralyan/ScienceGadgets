@@ -17,6 +17,7 @@ package com.sciencegadgets.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -73,7 +74,7 @@ public class TextBoxEntry implements EntryPoint {
 			String equation = "";
 
 			equation = mlInput.getText();
-			EquationTransporter.transport(new HTML(equation));
+			EquationTransporter.transport(new HTML(equation).getElement().getFirstChildElement());
 		}
 
 	}

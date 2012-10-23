@@ -23,12 +23,15 @@ public class EquationList {
 	private Grid eqGrid = new Grid(1, 1);
 	private Timer timer;
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
-	private HTML responseNotes = new HTML("notes");
+	private HTML responseNotes = new HTML();
+	private boolean inEditMode;
 
-	public EquationList(AbsolutePanel panel, final MathMLBindingTree jTree) {
+	public EquationList(AbsolutePanel panel, final MathMLBindingTree jTree, Boolean inEditMode) {
 
 		this.mathMLBindingTree = jTree;
 		this.mainPanel = panel;
+		
+		this.inEditMode = inEditMode;
 
 		wrapPanel.setStyleName("treeCanvas");
 		eqPanel.setStyleName("treeCanvas");
@@ -44,15 +47,21 @@ public class EquationList {
 		// responseNotes.setSize(eqGrid.getOffsetWidth() + "px", "40px");
 		eqGrid.setWidth(panel.getOffsetWidth() + "px");
 		eqGrid.setStyleName("textCenter");
+		responseNotes.getElement().setAttribute("id", "responseNotes");
 		eqGrid.setWidget(0, 0, responseNotes);
 		eqPanel.add(eqGrid);
 
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
+		
+		//Pilot equation used to transform to mathJax
+		responseNotes.getElement().appendChild(mathMLBindingTree.getMathML());
+		JSNICalls.parseMathJax("responseNotes");
 
 		// Wait for mathjax to format first
 		timer = new Timer() {
 			public void run() {
+				System.out.println("checking");
 				checkIfWeCanDraw();
 			}
 		};
@@ -71,9 +80,11 @@ public class EquationList {
 	public void draw(MathMLBindingTree jTree) {
 
 		for (int i = 1; i < nodeLayers.size(); i++) {
-			Node nextEq = mathMLBindingTree.getMathML().getElement()
-					.getFirstChild().cloneNode(true);
+//			System.out.println("eq1 i-" +i);
+//			Node nextEq = mathMLBindingTree.getMathML();
 
+//			replaceChildsId(nextEq, i);
+			Node nextEq = responseNotes.getElement().getFirstChild().cloneNode(true);
 			replaceChildsId(nextEq, i);
 			HTML eq = new HTML();
 			eq.getElement().appendChild(nextEq);
@@ -82,7 +93,8 @@ public class EquationList {
 			eqGrid.resizeRows(rowCount);
 			eqGrid.setWidget(rowCount - 1, 0, eq);
 		}
-
+//		responseNotes.getElement().getFirstChild().removeFromParent();
+		responseNotes.setHTML("<span>notes</span>");
 		placeNextEqWrappers(0);
 	}
 
@@ -122,7 +134,7 @@ public class EquationList {
 			String width = null, height = null;
 			int left = 0, top = 0;
 
-			//Even out the heights of all children in a sum or term
+			// Even out the heights of all children in a sum or term
 			if ("mfenced".equalsIgnoreCase(node.getParent().getTag())) {
 				String parentBareId = node.getParent().getId();
 				com.google.gwt.user.client.Element parentSvg = (com.google.gwt.user.client.Element) DOM
@@ -139,14 +151,19 @@ public class EquationList {
 			left = svg.getAbsoluteLeft();
 			width = JSNICalls.getElementWidth(svg) + "px";
 
-			//Drag handlers
-			MLElementWrapper wrap = node.getWrapper();
-			wrap.setHeight(height);
-			wrap.setWidth(width);
-			wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
-					- mainPanel.getAbsoluteTop());
-
-			//background images
+			if (inEditMode) {
+				MLEditWrapper wrap = new MLEditWrapper(node, width, height);
+				wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
+						- mainPanel.getAbsoluteTop());
+			} else {
+				// Drag handlers
+				MLElementWrapper wrap = node.getWrapper();
+				wrap.setHeight(height);
+				wrap.setWidth(width);
+				wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
+						- mainPanel.getAbsoluteTop());
+			}
+			// background images
 			WrapperBackground wrapBackground = new WrapperBackground(width,
 					height);
 			backPanel.add(wrapBackground, left - mainPanel.getAbsoluteLeft(),

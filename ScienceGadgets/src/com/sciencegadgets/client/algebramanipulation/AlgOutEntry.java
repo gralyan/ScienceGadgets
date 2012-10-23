@@ -50,9 +50,14 @@ public class AlgOutEntry implements EntryPoint {
 
 		//TODO don't catch general exception
 		//		try {
-			createAlgebraPanel();
 			RootPanel.get("scienceGadgetArea").add(backButton);
 			RootPanel.get("scienceGadgetArea").add(spAlg);
+
+			spAlg.setStyleName("algOutScrollPanel");
+			algOut.setStyleName("algOutGrid");
+			
+//			createAlgebraPanel();
+			
 //		} catch (Exception e) {
 //			Window.alert("Please refresh");
 //			e.printStackTrace();
@@ -60,8 +65,8 @@ public class AlgOutEntry implements EntryPoint {
 
 	}
 
-	private void createAlgebraPanel() {
-
+//	private void createAlgebraPanel() {
+//
 //		// Assemble algebra menu panel
 //		HorizontalPanel algMenuPanel = new HorizontalPanel();
 //		algMenuPanel.setHeight("2em");
@@ -87,12 +92,13 @@ public class AlgOutEntry implements EntryPoint {
 //		toBothSides.setWidth("5em");
 //		algMenuPanel.setHeight("2em");
 //		algMenuPanel.add(toBothSides);
-
-		// Assemble Algebra panel
-		spAlg.setStyleName("algOutScrollPanel");
-		algOut.setStyleName("algOutGrid");
-
-	}
+//
+//		RootPanel.get("scienceGadgetArea").add(algMenuPanel);
+//		
+//		// Assemble Algebra panel
+//		
+//
+//	}
 
 	public static void updateAlgOut(HTML mathML,
 			LinkedList<MLElementWrapper> wrappers, String change) {

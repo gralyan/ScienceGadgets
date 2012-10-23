@@ -339,9 +339,9 @@ public class EquationBrowserEntry implements EntryPoint {
 			var.setInnerText(randomNumber + "");
 		}
 		
-		HTML eq = new HTML(randomizedEquation.toString());
-		randomizedEquation.removeFromParent();
-		EquationTransporter.transport(eq);
+//		HTML eq = new HTML(randomizedEquation.toString());
+//		randomizedEquation.removeFromParent();
+		EquationTransporter.transport(randomizedEquation.getElement().getFirstChildElement());
 	}
 
 	// //////////////////////////////////////////
@@ -555,7 +555,7 @@ public class EquationBrowserEntry implements EntryPoint {
 					}
 				}
 			}
-			EquationTransporter.transport(labelSumEq);
+			EquationTransporter.transport(labelSumEq.getElement().getFirstChildElement());
 		}
 
 	}
