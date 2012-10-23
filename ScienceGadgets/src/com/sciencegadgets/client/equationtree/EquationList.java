@@ -152,7 +152,7 @@ public class EquationList {
 			width = JSNICalls.getElementWidth(svg) + "px";
 
 			if (inEditMode) {
-				MLEditWrapper wrap = new MLEditWrapper(node, width, height);
+				EditWrapper wrap = new EditWrapper(node, width, height);
 				wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
 						- mainPanel.getAbsoluteTop());
 			} else {
