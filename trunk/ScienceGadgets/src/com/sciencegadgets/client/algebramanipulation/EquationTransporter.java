@@ -17,7 +17,7 @@ package com.sciencegadgets.client.algebramanipulation;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.JavaScriptException;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -49,23 +49,23 @@ public class EquationTransporter {
 	 *            - the equation as a jqmath String
 	 * @return - the Math ML as a String
 	 */
-	public static String transport(String jqMath) {
-
-		// jqMath to MathML to transport
-		HTML html = new HTML();
-		html.setHTML("$" + jqMath + "$");
-		parseJQMath(html.getElement());
-
-		transport(html);
-		return html.getHTML();
-	}
+//	public static String transport(String jqMath) {
+//
+//		// jqMath to MathML to transport
+//		HTML html = new HTML();
+//		html.setHTML("$" + jqMath + "$");
+//		parseJQMath(html.getElement());
+//
+//		transport(html);
+//		return html.getHTML();
+//	}
 
 	/**
 	 * Sends the given equation to the views of it
 	 * 
 	 * @param mathML
 	 */
-	public static void transport(HTML mathML) {
+	public static void transport(Element mathML) {
 
 		RootPanel.get("scienceGadgetArea").clear();
 		
@@ -92,30 +92,26 @@ public class EquationTransporter {
 	 * 
 	 * @param mathML
 	 */
-	public static void selectEquation(HTML mathML, String changeComment) {
+	public static void selectEquation(Element mathML, String changeComment) {
 		
 
-		Log.info("EqTrans: " + mathML.getHTML());
+//		Log.info("EqTrans: " + mathML.getHTML());
 
 		// Make equation tree and draw it to the canvas
 		treePanel.clear();
 		try {
 			jTree = new MathMLBindingTree(mathML);
-			//TODO uncomment
-			AlgOutEntry.updateAlgOut(jTree.getMathML(), jTree.getWrappers(),
-					changeComment);
-			new EquationList(treePanel, jTree);
-//			tCanvas = new TreeCanvas(treePanel, jTree);
+			System.out.println("transEl " + mathML.getString());
+//			AlgOutEntry.updateAlgOut(/*jTree.getMathML()*/mathML, jTree.getWrappers(),
+//					changeComment);
+			System.out.println("trans2");
+			new EquationList(treePanel, jTree, true);
+			System.out.println("trans3");
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
 		}
 
+		//TODO uncomment
 //		DropControllAssigner.assign(jTree.getWrappers(), true);
 	}
-
-	public static native void parseJQMath(Element element) /*-{
-															$wnd.M.parseMath(element);
-															}-*/;
-
-
 }
