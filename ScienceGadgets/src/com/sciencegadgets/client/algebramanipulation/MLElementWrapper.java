@@ -51,8 +51,8 @@ public class MLElementWrapper extends HTML {
 	private MathMLBindingNode mathMLBindingNode;
 	private HTML dropDescriptor = new HTML();
 
-	private static MLElementWrapper selectedWrapper;
-	private static MLElementWrapper SelectedWrapperJoiner;
+	private static HTML selectedWrapper;
+//	private static MLElementWrapper SelectedWrapperJoiner;
 
 	/**
 	 * Construct that can explicitly state weather default handlers will be
@@ -93,6 +93,10 @@ public class MLElementWrapper extends HTML {
 //			this.joinedWrapper.joinedWrapper = this;
 			//TODO
 //		}
+	}
+	
+	public void setSelectedWrapper(HTML selectedWrapper){
+		this.selectedWrapper = selectedWrapper;
 	}
 
 	public HTML getDropDescriptor() {
@@ -202,7 +206,7 @@ public class MLElementWrapper extends HTML {
 		@Override
 		public void onClick(ClickEvent event) {
 			if (selectedWrapper != null) {
-				selectedWrapper.select(false);
+				((MLElementWrapper)selectedWrapper).select(false);
 			}
 			select(true);
 		}
@@ -213,10 +217,9 @@ public class MLElementWrapper extends HTML {
 		@Override
 		public void onTouchStart(TouchStartEvent arg0) {
 			if (selectedWrapper != null) {
-				selectedWrapper.select(false);
+				((MLElementWrapper)selectedWrapper).select(false);
 			}
 			select(true);
-
 		}
 	}
 
@@ -293,7 +296,7 @@ public class MLElementWrapper extends HTML {
 
 			// Removes static reference to this as selected
 			selectedWrapper = null;
-			SelectedWrapperJoiner = null;
+//			SelectedWrapperJoiner = null;
 
 			for (DropController dropC : wrapper.dragController.getDropList()) {
 

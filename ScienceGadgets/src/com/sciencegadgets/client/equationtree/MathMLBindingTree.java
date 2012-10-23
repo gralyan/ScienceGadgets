@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class MathMLBindingTree {
 
@@ -54,23 +55,15 @@ public class MathMLBindingTree {
 	 */
 	public MathMLBindingTree(Node mathML) throws TopNodesNotFoundException {
 		this.mathML = mathML;
-		System.out.println("mathML constructor "+mathML);
-
+		
 		bindMLtoNodes(mathML);
-//		System.out.println(mathML);
 
 		this.wrapTree();
 	}
 
 	public Element getMathML() {
-//		return mathML;
-		
 		Element clone = (Element) mathML.cloneNode(true);
-//		HTML cloneHTML = new HTML();
-//		cloneHTML.getElement().appendChild(clone);
-		System.out.println("getMathML "+clone.getString());
 		return clone;
-		
 	}
 
 	public MathMLBindingNode getRoot() {
@@ -131,30 +124,20 @@ public class MathMLBindingTree {
 
 	public class MathMLBindingNode {
 		private Element mlNode;
-		private Type type;
+//		private Type type;
 //		private HTML symbol;
-		private String tag;
+//		private String tag;
 		private MLElementWrapper wrapper;
 		private MathMLBindingNode parent;
 		private Boolean isHidden = false;
-
-		/**
-		 * Construct node for existing domNode and appropriate info
-		 */
-		private MathMLBindingNode(Element mlNode, String tag, Type type) {
-			this.mlNode = mlNode;
-			this.tag = tag;
-			this.type = type;
-//			this.symbol = symbol;
-		}
 
 		/**
 		 * Wrap existing MathML node
 		 */
 		private MathMLBindingNode(Element mlNode) {
 			this.mlNode = mlNode;
-			tag = mlNode.getNodeName();
-			type = null;
+//			tag = mlNode.getNodeName();
+//			type = null;
 
 //			symbol = new HTML();
 //			Node clone = ((Element) mlNode).cloneNode(true);
@@ -173,11 +156,11 @@ public class MathMLBindingTree {
 		 * @param symbol
 		 *            - inner text
 		 */
-		private MathMLBindingNode(String tag, Type type) {
+		private MathMLBindingNode(String tag) {
 
 			this.mlNode = DOM.createElement(tag);
-			this.tag = tag;
-			this.type = type;
+//			this.tag = tag;
+//			this.type = type;
 //			this.symbol = symbol;
 
 		}
@@ -197,14 +180,14 @@ public class MathMLBindingTree {
 		 * @return - encasing node
 		 */
 		// TODO look at this again
-		public MathMLBindingNode encase(String tag, Type type) {
+		public MathMLBindingNode encase(String tag) {
 			System.out.println("parent: "+mlNode.getParentElement().getString());
 
 			//Make symbol (HTML node) for encasing
 //			Node elClone = ((Element) this.getMLNode()).cloneNode(true);
 //			HTML smbl = new HTML();
 //			smbl.getElement().appendChild(elClone);
-			MathMLBindingNode encasing = new MathMLBindingNode(tag, type);
+			MathMLBindingNode encasing = new MathMLBindingNode(tag);
 
 			//Move around nodes
 			this.getParent().add(this.getIndex(), encasing);
@@ -221,7 +204,7 @@ public class MathMLBindingTree {
 		 * 
 		 * @return - The newly create child
 		 */
-		public MathMLBindingNode add(int index, String tag, Type type,
+		public MathMLBindingNode add(int index, String tag,
 				String symbol) {
 
 			int randId = Random.nextInt();
@@ -267,8 +250,8 @@ public class MathMLBindingTree {
 			add(-1, newNode);
 		}
 
-		public MathMLBindingNode add(String tag, Type type, String symbol) {
-			return add(-1, tag, type, symbol);
+		public MathMLBindingNode add(String tag, String symbol) {
+			return add(-1, tag, symbol);
 		}
 
 		public LinkedList<MathMLBindingNode> getChildren() {
@@ -391,12 +374,8 @@ public class MathMLBindingTree {
 			return wrapper;
 		}
 
-		public Type getType() {
-			return type;
-		}
-
 		public String getTag() {
-			return tag;
+			return mlNode.getTagName();
 		}
 
 		public MathMLBindingTree getTree() {
@@ -406,7 +385,7 @@ public class MathMLBindingTree {
 		public String getId() {
 			return getMLNode().getAttribute("id");
 		}
-
+		
 		private Boolean checkIsHidden() {
 
 			// if ("(".equals(this.toString()) || ")".equals(this.toString())) {
@@ -444,10 +423,23 @@ public class MathMLBindingTree {
 				return false;
 			}
 		}
-	}
+		
+		public Type getType() {
+			String tag = getTag();
+			Type type = null;
 
+			if("mfenced".equalsIgnoreCase(tag)){
+				type = Type.Series;
+			}else{
+				type = Type.valueOf(tag);
+			}
+			
+			return type;
+		}
+	}
+	
 	public static enum Type {
-		Term, Series, Function, Exponent, Fraction, Variable, Number, None;
+		Term, Series, Function, msup, mfrac, mi, mn;
 	}
 
 	private void bindMLtoNodes(Node mathMLequation)
