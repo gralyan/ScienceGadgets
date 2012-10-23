@@ -63,7 +63,7 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 			targetNode.add(operatorToMove);
 			targetNode.add(sourceNode);
 		} else {
-			MathMLBindingNode encasingSeriese = targetNode.encase("mrow", Type.Series);
+			MathMLBindingNode encasingSeriese = targetNode.encase("mrow");
 
 			MathMLBindingTree tree = targetNode.getTree();
 

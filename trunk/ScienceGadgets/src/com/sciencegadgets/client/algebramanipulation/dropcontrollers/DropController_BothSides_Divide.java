@@ -59,23 +59,21 @@ public class DropController_BothSides_Divide extends AbstractMathDropController 
 		sourceNode.remove();
 
 		// Move nodes to other side
-		if (Type.Fraction.equals(targetNode.getType())) {
+		if (Type.mfrac.equals(targetNode.getType())) {
 
 			MathMLBindingNode denominator = targetNode.getChildAt(1);
 
 			if (Type.Term.equals(denominator.getType())) {
-				denominator.add("mo", null, "*");
+				denominator.add("mo", "*");
 				denominator.add(sourceNode);
 			} else {
-				MathMLBindingNode encasedDenominator = denominator.encase("mrow",
-						Type.Term);
-				encasedDenominator.add("mo", null, "*");
+				MathMLBindingNode encasedDenominator = denominator.encase("mrow");
+				encasedDenominator.add("mo", "*");
 				encasedDenominator.add(sourceNode);
 			}
 
 		} else {
-			MathMLBindingNode encasingFraction = targetNode.encase("mfrac",
-					Type.Fraction);
+			MathMLBindingNode encasingFraction = targetNode.encase("mfrac");
 
 			MathMLBindingTree tree = targetNode.getTree();
 

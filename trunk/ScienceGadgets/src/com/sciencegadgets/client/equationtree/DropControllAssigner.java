@@ -65,7 +65,7 @@ public class DropControllAssigner {
 
 			
 			assignments: switch (jNode.getType()) {
-			case Number:
+			case mn:
 //			case Variable:
 
 
@@ -78,7 +78,7 @@ public class DropControllAssigner {
 					dropType = DropType.Simplify_Multiply;
 					bothSideDropType = DropType.BothSides_Divide;
 					break sipmlifySiblings;
-				case Fraction:
+				case mfrac:
 					dropType = DropType.Simplify_Divide;
 					if(jNode.getIndex() == 1){
 						bothSideDropType = DropType.BothSides_Multiply;
@@ -91,7 +91,7 @@ public class DropControllAssigner {
 			
 			// Give "simplify" drop targets
 			for (MathMLBindingNode sib : siblings) {
-				if (Type.Number.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
+				if (Type.mn.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
 					
 					addDropTarget(wrap, sib.getWrapper(), dropType,
 							hasJoiner);

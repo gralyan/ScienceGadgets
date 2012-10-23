@@ -122,10 +122,10 @@ public class TreeCanvas extends DrawingArea {
 		palette.put(MathMLBindingTree.Type.Term, "#7FFFD4");
 		palette.put(MathMLBindingTree.Type.Series, "#87CEFA");
 		palette.put(MathMLBindingTree.Type.Function, "#FFD700");
-		palette.put(MathMLBindingTree.Type.Exponent, "#E6E6FA");
-		palette.put(MathMLBindingTree.Type.Fraction, "#FAEBD7");
-		palette.put(MathMLBindingTree.Type.Variable, "#F0F8FF");
-		palette.put(MathMLBindingTree.Type.Number, "#F0FFF0");
+		palette.put(MathMLBindingTree.Type.msup, "#E6E6FA");
+		palette.put(MathMLBindingTree.Type.mfrac, "#FAEBD7");
+		palette.put(MathMLBindingTree.Type.mi, "#F0F8FF");
+		palette.put(MathMLBindingTree.Type.mn, "#F0FFF0");
 	}
 
 	public void draw(MathMLBindingTree jTree) {
@@ -451,7 +451,7 @@ public class TreeCanvas extends DrawingArea {
 
 		switch (type) {
 
-		case Variable:
+		case mi:
 
 			// Starts at top left inner corner
 			Path star = new Path(x + pad, y);// ( 0, 50),
@@ -592,7 +592,7 @@ public class TreeCanvas extends DrawingArea {
 		// }
 		// break;
 
-		case Number:
+		case mn:
 
 			Ellipse ellipseNum = new Ellipse(x + width / 2, y + height / 2,
 					width * 2 / 3, height * 2 / 3);
@@ -601,7 +601,7 @@ public class TreeCanvas extends DrawingArea {
 			shape.add(ellipseNum);
 			break;
 
-		case Fraction:
+		case mfrac:
 
 			Ellipse pieTop = new Ellipse(x + width / 2, y + height / 2, width,
 					height / 2);
@@ -618,7 +618,7 @@ public class TreeCanvas extends DrawingArea {
 			shape.add(pieTop);
 			break;
 
-		case Exponent:
+		case msup:
 
 			// TODO
 			Rectangle exp = new Rectangle(x, y + height, width, height);

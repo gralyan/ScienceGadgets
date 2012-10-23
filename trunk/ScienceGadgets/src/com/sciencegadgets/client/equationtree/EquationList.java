@@ -25,6 +25,7 @@ public class EquationList {
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
 	private HTML responseNotes = new HTML();
 	private boolean inEditMode;
+	private static HTML selectedWrapper;
 
 	public EquationList(AbsolutePanel panel, final MathMLBindingTree jTree, Boolean inEditMode) {
 
@@ -61,7 +62,6 @@ public class EquationList {
 		// Wait for mathjax to format first
 		timer = new Timer() {
 			public void run() {
-				System.out.println("checking");
 				checkIfWeCanDraw();
 			}
 		};
@@ -93,8 +93,6 @@ public class EquationList {
 			eqGrid.resizeRows(rowCount);
 			eqGrid.setWidget(rowCount - 1, 0, eq);
 		}
-//		responseNotes.getElement().getFirstChild().removeFromParent();
-		responseNotes.setHTML("<span>notes</span>");
 		placeNextEqWrappers(0);
 	}
 
@@ -152,12 +150,15 @@ public class EquationList {
 			width = JSNICalls.getElementWidth(svg) + "px";
 
 			if (inEditMode) {
-				EditWrapper wrap = new EditWrapper(node, width, height);
+				responseNotes.setHTML("<span>Edit Mode</span>");
+				EditWrapper wrap = new EditWrapper(node, selectedWrapper, width, height);
 				wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
 						- mainPanel.getAbsoluteTop());
 			} else {
 				// Drag handlers
+				responseNotes.setHTML("<span>Solver Mode</span>");
 				MLElementWrapper wrap = node.getWrapper();
+				wrap.setSelectedWrapper(selectedWrapper);
 				wrap.setHeight(height);
 				wrap.setWidth(width);
 				wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top

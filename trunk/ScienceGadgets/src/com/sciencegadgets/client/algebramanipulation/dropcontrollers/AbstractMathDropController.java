@@ -23,7 +23,6 @@ import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public abstract class AbstractMathDropController extends AbstractDropController {
