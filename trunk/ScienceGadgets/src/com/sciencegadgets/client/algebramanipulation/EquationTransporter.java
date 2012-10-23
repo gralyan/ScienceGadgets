@@ -18,12 +18,9 @@ import java.util.LinkedList;
 
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.Log;
-import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.DropControllAssigner;
 import com.sciencegadgets.client.equationtree.EquationList;
@@ -37,28 +34,7 @@ public class EquationTransporter {
 	private static DropControllAssigner dropAssigner;
 	public static LinkedList<AbstractMathDropController> dropControllers;
 	private static MathMLBindingTree jTree;
-
-	public static TreeCanvas mltCanvas;
-	private static MathMLBindingTree mljTree;
 	private static AbsolutePanel treePanel;
-
-	/**
-	 * Only works in firefox, parses jqMath to MathML
-	 * 
-	 * @param equation
-	 *            - the equation as a jqmath String
-	 * @return - the Math ML as a String
-	 */
-//	public static String transport(String jqMath) {
-//
-//		// jqMath to MathML to transport
-//		HTML html = new HTML();
-//		html.setHTML("$" + jqMath + "$");
-//		parseJQMath(html.getElement());
-//
-//		transport(html);
-//		return html.getHTML();
-//	}
 
 	/**
 	 * Sends the given equation to the views of it
@@ -101,12 +77,9 @@ public class EquationTransporter {
 		treePanel.clear();
 		try {
 			jTree = new MathMLBindingTree(mathML);
-			System.out.println("transEl " + mathML.getString());
 //			AlgOutEntry.updateAlgOut(/*jTree.getMathML()*/mathML, jTree.getWrappers(),
 //					changeComment);
-			System.out.println("trans2");
 			new EquationList(treePanel, jTree, true);
-			System.out.println("trans3");
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
 		}
