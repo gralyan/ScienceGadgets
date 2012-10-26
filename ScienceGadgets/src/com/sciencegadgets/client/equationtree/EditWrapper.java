@@ -27,14 +27,14 @@ public class EditWrapper extends HTML {
 
 	public EditWrapper(MathMLBindingNode node, HTML selectedWrapper,
 			String width, String height) {
-		
+
 		setWidth(width);
 		setHeight(height);
-		
+
 		this.node = node;
 		this.selectedWrapper = (EditWrapper) selectedWrapper;
-		
-		editMenu = new EditMenu("",this);
+
+		editMenu = new EditMenu("", this);
 		editMenu.setVisible(false);
 
 		addClickHandler(new EditWrapperClickHandler());
@@ -46,7 +46,7 @@ public class EditWrapper extends HTML {
 	void select(Boolean select) {
 
 		if (select) {
-			
+
 			if (selectedWrapper != null) {
 				((EditWrapper) selectedWrapper).select(false);
 			}
@@ -54,24 +54,27 @@ public class EditWrapper extends HTML {
 			selectedWrapper = this;
 			this.getElement().setAttribute("id", "selectedWrapper");
 
-			editMenu.setVisible(true);
-			editMenu.setFocus();
-
+			if (!ChangeNodeMenu.BLANK.equals(node.getSymbol())) {
+				editMenu.setVisible(true);
+				editMenu.setFocus();
+			}
 		} else {// unselect
-			
+
 			editMenu.setVisible(false);
-			
+
 			selectedWrapper = null;
 			this.getElement().removeAttribute("id");
 		}
 	}
 
-	HTMLPanel getEditMenu(){
+	HTMLPanel getEditMenu() {
 		return editMenu;
 	}
-	MathMLBindingNode getNode(){
+
+	MathMLBindingNode getNode() {
 		return node;
 	}
+
 	// /////////////////////////////////////////////////////////////////////
 	// Inner Classes
 	// ////////////////////////////////////////////////////////////////////
@@ -92,19 +95,20 @@ public class EditWrapper extends HTML {
 			select(true);
 		}
 	}
-	
+
 	private class EditWrapperMouseOverHandler implements MouseOverHandler {
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
-			thisWrapper.setStyleName("hoveredWrapper", true);//setAttribute("id", "hoveredWrapper");
+			thisWrapper.setStyleName("hoveredWrapper", true);// setAttribute("id",
+																// "hoveredWrapper");
 		}
 	}
-	
+
 	private class EditWrapperMouseOutHandler implements MouseOutHandler {
 		@Override
 		public void onMouseOut(MouseOutEvent event) {
 			thisWrapper.setStyleName("hoveredWrapper", false);
-//			thisWrapper.getElement().removeAttribute("id");
+			// thisWrapper.getElement().removeAttribute("id");
 		}
 	}
 }

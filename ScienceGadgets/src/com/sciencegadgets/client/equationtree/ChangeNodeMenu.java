@@ -16,6 +16,7 @@ public class ChangeNodeMenu extends VerticalPanel {
 
 	// public static EditWrapper selectedWrapper;
 	public EquationList eqList;
+	public static final String BLANK = "[]";
 
 	public ChangeNodeMenu(EquationList eqList) {
 		this.eqList = eqList;
@@ -53,12 +54,28 @@ public class ChangeNodeMenu extends VerticalPanel {
 			if (selectedWrapper != null) {
 				MathMLBindingNode node = selectedWrapper.node;
 				MathMLBindingNode parent = node.getParent();
+				MathMLBindingTree tree = node.getTree();
 
 				System.out.println("b- "
 						+ node.getTree().getMathML().getString());
 
 				try {
-					parent.add(node.getIndex(), type, "???");
+					switch (type) {
+					case Number:
+						parent.add(node.getIndex(), type, "1");
+						break;
+					case Variable:
+						parent.add(node.getIndex(), type, "x");
+						break;
+					case Sum:
+					case Term:
+					case Exponential:
+					case Fraction:
+						MathMLBindingNode encasing = Moderator.jTree.NEW_NODE(type, "");
+						encasing.add(-1, Type.Variable, BLANK);
+						encasing.add(-1, Type.Variable, BLANK);
+						parent.add(node.getIndex(), encasing);
+					}
 					node.remove();
 
 					System.out.println("a- "

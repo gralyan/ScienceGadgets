@@ -36,8 +36,8 @@ public class Moderator implements EntryPoint {
 	private static ScrollPanel spTree = new ScrollPanel(eqListPanel);
 
 //	private static DropControllAssigner dropAssigner;
+	public static MathMLBindingTree jTree;
 	public static LinkedList<AbstractMathDropController> dropControllers;
-	private static MathMLBindingTree jTree;
 	static boolean inEditMode = true;
 	private Button backToBrowserButton = new Button("Back", new BackButtonHandler());
 	private Moderator moderator = this;
