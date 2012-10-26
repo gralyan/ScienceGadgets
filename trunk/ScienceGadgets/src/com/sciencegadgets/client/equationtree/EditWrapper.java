@@ -54,7 +54,7 @@ public class EditWrapper extends HTML {
 			selectedWrapper = this;
 			this.getElement().setAttribute("id", "selectedWrapper");
 
-			if (!ChangeNodeMenu.BLANK.equals(node.getSymbol())) {
+			if (!ChangeNodeMenu.NOT_SET.equals(node.getSymbol())) {
 				editMenu.setVisible(true);
 				editMenu.setFocus();
 			}

@@ -164,7 +164,6 @@ public class EquationList {
 				height = JSNICalls.getElementHeight(svg);
 				heightStr = height+"px";
 				top = svg.getAbsoluteTop();
-				System.out.println(top);
 			}
 
 			left = svg.getAbsoluteLeft();
