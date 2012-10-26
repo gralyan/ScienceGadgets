@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import org.datanucleus.store.exceptions.NoExtentException;
+
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -110,12 +113,19 @@ public class MathMLBindingTree {
 		return wrappers;
 	}
 
-	public MathMLBindingNode getNodeById(String id) {
+	public MathMLBindingNode getNodeById(String id) throws NoSuchElementException {
 		MathMLBindingNode node = idMap.get(id);
 		if (node == null) {
-			System.out.println("XXX CANT GET NODE BY ID: " + id + " XXX");
+			throw new NoSuchElementException("Can't get node by id: " + id);
 		}
 		return node;
+	}
+	
+	public MathMLBindingNode NEW_NODE(Element mlNode){
+		return new MathMLBindingNode(mlNode);
+	}
+	public MathMLBindingNode NEW_NODE(Type type, String symbol){
+		return new MathMLBindingNode(type, symbol);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +140,7 @@ public class MathMLBindingTree {
 		/**
 		 * Wrap existing MathML node
 		 */
-		private MathMLBindingNode(Element mlNode) {
+		public MathMLBindingNode(Element mlNode) {
 
 			if ("".equals(mlNode.getAttribute("id"))) {
 				mlNode.setAttribute("id", Math.random() + "");
@@ -152,7 +162,7 @@ public class MathMLBindingTree {
 		 * @param symbol
 		 *            - inner text
 		 */
-		private MathMLBindingNode(Type type, String symbol) {
+		public MathMLBindingNode(Type type, String symbol) {
 
 			String tag = getTagByType(type);
 
@@ -160,10 +170,10 @@ public class MathMLBindingTree {
 			newNode.setAttribute("id", Math.random() + "");
 
 			if (!"".equals(symbol)) {
-				this.mlNode.setInnerText(symbol);
+				newNode.setInnerText(symbol);
 			}
 
-			new MathMLBindingNode(newNode);
+			this.mlNode = newNode;
 		}
 
 		/**
@@ -175,8 +185,6 @@ public class MathMLBindingTree {
 		 * @return - encasing node
 		 */
 		public MathMLBindingNode encase(Type type) {
-			System.out.println("parent: "
-					+ mlNode.getParentElement().getString());
 
 			MathMLBindingNode encasing = new MathMLBindingNode(type, "");
 
@@ -207,30 +215,37 @@ public class MathMLBindingTree {
 		 * @param children
 		 *            - children of this added node
 		 */
-		public void add(int index, MathMLBindingNode newNode,
-				MathMLBindingNode... children) throws IllegalArgumentException {
+		public void add(int index, MathMLBindingNode newNode) throws IllegalArgumentException {
 
 			Type newNodeType = newNode.getType();
-			int childCount = children.length;
+			LinkedList<MathMLBindingNode> children = newNode.getChildren();
+			int childCount = children.size();
 
 			IllegalArgumentException illegalArgumentException = new IllegalArgumentException(
 					"Wrong number of children, type: " + newNodeType
-							+ " can't have " + childCount + " children");
+							+ " can't have (" + childCount + ") children");
 
 			switch (newNodeType) {
-			case Number:
-			case Variable:
+			case Number://Confirm that the symbol is a number, then fall into Variable
+				try{
+					Double.parseDouble(newNode.getSymbol());
+				}catch(NumberFormatException e){
+					throw new NumberFormatException("The number node "+newNode.toString()+" must have a number");
+				}
+			case Variable://Confirm that there are no children
 				if (childCount != 0)
 					throw illegalArgumentException;
 				break;
-			case Term:
-			case Sum:
-				if (childCount < 2)
-					throw illegalArgumentException;
-				break;
-			case Exponential:
+				
+			case Exponential://Confirm that there are 2 children
 			case Fraction:
 				if (childCount != 2)
+					throw illegalArgumentException;
+				break;
+				
+			case Term:
+			case Sum://Confirm that there are multiple children
+				if (childCount < 2)
 					throw illegalArgumentException;
 				break;
 				
@@ -259,30 +274,21 @@ public class MathMLBindingTree {
 		 * @return - The newly create child
 		 * @throws Exception
 		 */
-		public MathMLBindingNode add(int index, Type type, String symbol,
-				MathMLBindingNode... children) throws NoSuchElementException {
+		public MathMLBindingNode add(int index, Type type, String symbol) throws NoSuchElementException {
 
-			String tag = getTagByType(type);
-
-			Element elmnt = DOM.createElement(tag);
-			if (!"".equals("")) {
-				elmnt.setInnerText(symbol);
-			}
-			MathMLBindingNode newNode = new MathMLBindingNode(elmnt);
-
-			this.add(index, newNode, children);
-
+			MathMLBindingNode newNode = new MathMLBindingNode(type, symbol);
+			
+			this.add(index, newNode);
+			
 			return newNode;
 		}
 
-		public void add(MathMLBindingNode newNode,
-				MathMLBindingNode... children) {
-			add(-1, newNode, children);
+		public void add(MathMLBindingNode newNode) {
+			add(-1, newNode);
 		}
 
-		public MathMLBindingNode add(Type type, String symbol,
-				MathMLBindingNode... children) throws NoSuchElementException {
-			return add(-1, type, symbol, children);
+		public MathMLBindingNode add(Type type, String symbol) throws NoSuchElementException {
+			return add(-1, type, symbol);
 		}
 
 		public LinkedList<MathMLBindingNode> getChildren() {
