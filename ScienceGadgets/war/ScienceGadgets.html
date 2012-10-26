@@ -26,17 +26,7 @@ MathJax.Hub.Config({
 
 document.prettify = function (area) {
 	MathJax.Hub.Queue(["Typeset",MathJax.Hub, area]);
-// 	MathJax.Hub.Queue(["Typeset",MathJax.Hub, area], [window.makeWrappers()]);
 }
-
-//// All functions requiring typesetting should be queued after typsetting
-//// Difficulty getting Java functions queued, workaround is a timer for now
-//// See com.sciencegadgets.client.algebramanipulation.AlgebraManipulator
-//
-// document.queue = function (area){
-// 	MathJax.Hub.Queue(["Typeset",MathJax.Hub, area], [window.makeWrappers]);
-// }
-
  </script> 
 
 

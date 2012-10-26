@@ -88,6 +88,12 @@ body {
 	opacity: 0.5;
 }
 
+.hoveredWrapper{
+	background-color: #555555;
+	cursor: move;
+	opacity: 0.5;
+}
+
 .selectedDropWrapper {
 	border-style: solid;
 	border-color: fuchsia;
@@ -108,6 +114,11 @@ body {
 
 .varName {
 	background-color: #99CCFF;
+}
+.wrap{
+	opacity: 0;
+	background-color: #FFFFFF;
+/* 	border: green thin solid; */
 }
 
 .mouseOverlay {
