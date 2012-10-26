@@ -35,7 +35,7 @@ public class DropController_BothSides_Add extends AbstractMathDropController {
 
 		findChange(sourceNode);
 
-		sourceNode.setString(change);
+		sourceNode.setSymbol(change);
 
 		/*
 		 * Remove the (+) from this side, to be moved to the other side

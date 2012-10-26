@@ -39,7 +39,7 @@ public class DropController_Simplify_Multiply extends AbstractMathDropController
 		findChange(sourceNode);
 
 		// Main changes
-		targetNode.setString("" + answer);
+		targetNode.setSymbol("" + answer);
 		targetNode.getWrapper().getElementWrapped().setInnerText("" + answer);
 
 		// Peripheral changes

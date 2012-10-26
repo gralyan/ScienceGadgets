@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class TreeEntry implements EntryPoint {
 
-	public static final AbsolutePanel mlTree = new AbsolutePanel();
 	public static AbsolutePanel apTree = new AbsolutePanel();
 	public static ScrollPanel spTree = new ScrollPanel(apTree);
 	

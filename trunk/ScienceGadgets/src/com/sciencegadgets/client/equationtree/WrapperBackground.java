@@ -7,7 +7,7 @@ public class WrapperBackground extends Image {
 	public WrapperBackground(String width, String height){
 		this.setWidth(width);
 		this.setHeight(height);
-		this.setUrl("images/2660.png");
+		this.setUrl("images/images.jpeg");
 	}
 
 }

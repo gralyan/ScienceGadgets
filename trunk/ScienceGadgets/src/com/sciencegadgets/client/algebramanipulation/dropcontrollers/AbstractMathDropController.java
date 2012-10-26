@@ -17,10 +17,7 @@ package com.sciencegadgets.client.algebramanipulation.dropcontrollers;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.Log;
-import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -63,15 +60,12 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 					baseParent.add(sourceParent.getIndex(),
 							sourceParent.getFirstChild());
 					sourceParent.remove();
-					Log.info("removed obsolete parent: "
-							+ sourceParent.toString());
 
 				} catch (NullPointerException e) {
 					e.printStackTrace();
 				}
 			}
 		} catch (NullPointerException e) {
-			Log.severe("source has no parent: " + sourceNode.toString());
 			e.printStackTrace();
 		}
 
