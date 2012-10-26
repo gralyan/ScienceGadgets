@@ -42,7 +42,7 @@ public class DropController_BothSides_Multiply extends
 
 		// Move nodes to other side
 		if (Type.Term.equals(targetNode.getType())) {
-			targetNode.add("mo", "*");
+//			targetNode.add("mo", "*");
 			targetNode.add(sourceNode);
 
 			// Rearrange fraction the source was in
@@ -63,11 +63,11 @@ public class DropController_BothSides_Multiply extends
 				tree.setRightSide(encasingTerm);
 			}
 
-			encasingTerm.add(0, "mo", "*");
+//			encasingTerm.add(0, "mo", "*");
 			encasingTerm.add(0, sourceNode);
 
-			targetNode.add(0, "mo", "(");
-			targetNode.add("mo", ")");
+//			targetNode.add(0, "mo", "(");
+//			targetNode.add("mo", ")");
 		}
 	}
 

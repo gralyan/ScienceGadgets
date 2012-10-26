@@ -5,27 +5,35 @@ import java.util.LinkedList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class EquationList {
+	AbsolutePanel mainPanel;
+	AbsolutePanel wrapPanel = new AbsolutePanel();
+	AbsolutePanel eqPanel = new AbsolutePanel();
+	AbsolutePanel backPanel = new AbsolutePanel();
+
+	private Grid eqGrid = new Grid(0, 1);
 	private MathMLBindingTree mathMLBindingTree;
-	private AbsolutePanel mainPanel;
-	private AbsolutePanel wrapPanel = new AbsolutePanel();
-	private AbsolutePanel eqPanel = new AbsolutePanel();
-	private AbsolutePanel backPanel = new AbsolutePanel();
-	private Grid eqGrid = new Grid(1, 1);
 	private Timer timer;
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
-	private HTML responseNotes = new HTML();
+	private HTML pilot = new HTML();
 	private boolean inEditMode;
-	private static HTML selectedWrapper;
+	public static HTML selectedWrapper;
+	
+	//Width of equation compared to panel
+	private static final double EQUATION_FRACTION = 0.75;
 
 	public EquationList(AbsolutePanel panel, final MathMLBindingTree jTree, Boolean inEditMode) {
 
@@ -37,27 +45,34 @@ public class EquationList {
 		wrapPanel.setStyleName("treeCanvas");
 		eqPanel.setStyleName("treeCanvas");
 		backPanel.setStyleName("treeCanvas");
-
+		
 		wrapPanel.getElement().getStyle().setZIndex(3);
 		eqPanel.getElement().getStyle().setZIndex(2);
 		backPanel.getElement().getStyle().setZIndex(1);
-		panel.add(wrapPanel);
+		panel.add(backPanel);
 		panel.add(eqPanel, 0, 0);
-		panel.add(backPanel, 0, 0);
+		panel.add(wrapPanel,0,0);
 
-		// responseNotes.setSize(eqGrid.getOffsetWidth() + "px", "40px");
+		if(inEditMode){
+			ChangeNodeMenu changeNodeMenu = new ChangeNodeMenu(this);
+			changeNodeMenu.getElement().getStyle().setZIndex(3);
+			panel.add(changeNodeMenu,0,0);
+		}
+		
 		eqGrid.setWidth(panel.getOffsetWidth() + "px");
 		eqGrid.setStyleName("textCenter");
-		responseNotes.getElement().setAttribute("id", "responseNotes");
-		eqGrid.setWidget(0, 0, responseNotes);
 		eqPanel.add(eqGrid);
 
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
 		
 		//Pilot equation used to transform to mathJax
-		responseNotes.getElement().appendChild(mathMLBindingTree.getMathML());
-		JSNICalls.parseMathJax("responseNotes");
+		Element pilotEl = pilot.getElement();
+		pilotEl.appendChild(mathMLBindingTree.getMathML());
+		pilotEl.setAttribute("id", "pilotMathJax");
+		panel.add(pilot);
+		JSNICalls.parseMathJax("pilotMathJax");
+		
 
 		// Wait for mathjax to format first
 		timer = new Timer() {
@@ -80,19 +95,20 @@ public class EquationList {
 	public void draw(MathMLBindingTree jTree) {
 
 		for (int i = 1; i < nodeLayers.size(); i++) {
-//			System.out.println("eq1 i-" +i);
-//			Node nextEq = mathMLBindingTree.getMathML();
 
-//			replaceChildsId(nextEq, i);
-			Node nextEq = responseNotes.getElement().getFirstChild().cloneNode(true);
+			Node nextEq = pilot.getElement().cloneNode(true);
 			replaceChildsId(nextEq, i);
 			HTML eq = new HTML();
-			eq.getElement().appendChild(nextEq);
 
+			NodeList<Node> children = nextEq.getChildNodes();
+			for(int j=0 ; j<children.getLength() ; j++){
+				eq.getElement().appendChild(children.getItem(j));
+			}
 			int rowCount = eqGrid.getRowCount() + 2;
 			eqGrid.resizeRows(rowCount);
-			eqGrid.setWidget(rowCount - 1, 0, eq);
+			eqGrid.setWidget(rowCount - 2, 0, eq);
 		}
+		pilot.removeFromParent();
 		placeNextEqWrappers(0);
 	}
 
@@ -127,10 +143,12 @@ public class EquationList {
 
 			com.google.gwt.user.client.Element svg = DOM.getElementById(layer
 					+ 1 + "-svg" + bareId);
-			svg.setAttribute("style", "fill:red;stroke:red");
+			svg.setAttribute("fill", "black");
+			svg.setAttribute("stroke", "black");
 
-			String width = null, height = null;
 			int left = 0, top = 0;
+			double width = 0, height=0;
+			String widthStr=null, heightStr=null;
 
 			// Even out the heights of all children in a sum or term
 			if ("mfenced".equalsIgnoreCase(node.getParent().getTag())) {
@@ -138,35 +156,40 @@ public class EquationList {
 				com.google.gwt.user.client.Element parentSvg = (com.google.gwt.user.client.Element) DOM
 						.getElementById(layer + 1 + "-svg" + parentBareId);
 
-				height = JSNICalls.getElementHeight(parentSvg) + "px";
+				height = JSNICalls.getElementHeight(parentSvg);
+				heightStr = height+"px";
 				top = parentSvg.getAbsoluteTop();
 
 			} else {
-				height = JSNICalls.getElementHeight(svg) + "px";
+				height = JSNICalls.getElementHeight(svg);
+				heightStr = height+"px";
 				top = svg.getAbsoluteTop();
+				System.out.println(top);
 			}
 
 			left = svg.getAbsoluteLeft();
-			width = JSNICalls.getElementWidth(svg) + "px";
+			width = JSNICalls.getElementWidth(svg);
+			widthStr = width+"px";
 
-			if (inEditMode) {
-				responseNotes.setHTML("<span>Edit Mode</span>");
-				EditWrapper wrap = new EditWrapper(node, selectedWrapper, width, height);
-				wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
-						- mainPanel.getAbsoluteTop());
-			} else {
-				// Drag handlers
-				responseNotes.setHTML("<span>Solver Mode</span>");
-				MLElementWrapper wrap = node.getWrapper();
-				wrap.setSelectedWrapper(selectedWrapper);
-				wrap.setHeight(height);
-				wrap.setWidth(width);
-				wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
-						- mainPanel.getAbsoluteTop());
+			Widget wrap;
+			if (inEditMode) {//Edit Mode
+				wrap = new EditWrapper(node, selectedWrapper, widthStr, heightStr);
+				HTMLPanel editMenu = ((EditWrapper) wrap).getEditMenu();
+				wrapPanel.add(editMenu, left - mainPanel.getAbsoluteLeft(), top
+						- mainPanel.getAbsoluteTop() + (int)height);
+				
+			} else {//Solver Mode
+				wrap = node.getWrapper();
+				((MLElementWrapper) wrap).setSelectedWrapper(selectedWrapper);
+				wrap.setHeight(heightStr);
+				wrap.setWidth(widthStr);
 			}
+			wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
+					- mainPanel.getAbsoluteTop());
+
 			// background images
-			WrapperBackground wrapBackground = new WrapperBackground(width,
-					height);
+			WrapperBackground wrapBackground = new WrapperBackground(widthStr,
+					heightStr);
 			backPanel.add(wrapBackground, left - mainPanel.getAbsoluteLeft(),
 					top - mainPanel.getAbsoluteTop());
 
@@ -185,13 +208,12 @@ public class EquationList {
 	 */
 	private void replaceChildsId(Node parent, int eqRow) {
 		NodeList<Node> children = parent.getChildNodes();
-
 		for (int i = 0; i < children.getLength(); i++) {
 			Element curEl = ((Element) children.getItem(i));
 			String oldId = curEl.getAttribute("id");
 
 			// Each equation in the list will have a different prefix for id's
-			// [equation #]-svg... example 1-svg0
+			// [equation #]-svg[MathML node id] example 1-svg0
 			if (oldId.contains("svg")) {
 				if (oldId.equals("svg0")) {
 					resizeEquations(curEl);
@@ -201,8 +223,17 @@ public class EquationList {
 
 				// Each equation will have a different MathJax frame id
 				// MathJax-Element-[equation #]-Frame
-			} else if (oldId.contains("MathJax-Element")) {
+			} else if (oldId.equals("MathJax-Element-1-Frame")) {
 				String newId = "MathJax-Element-" + (eqRow + 1) + "-Frame";
+				curEl.setAttribute("id", newId);
+				
+//				TODO gray out the rest of the equation
+				Element svgEl = curEl.getFirstChildElement().getFirstChildElement();
+				svgEl.setAttribute("fill", "gray");
+				svgEl.setAttribute("stroke", "gray");
+				
+			}else if (oldId.equals("MathJax-Element-1")) {
+				String newId = "MathJax-Element-" + (eqRow + 1);
 				curEl.setAttribute("id", newId);
 			}
 
@@ -218,45 +249,22 @@ public class EquationList {
 	 * @param el
 	 */
 	private void resizeEquations(Element el) {
-		String widthAnchor = "-widthAnchor-";
-		String heightAnchor = "-heightAnchor-";
-		double width = 0;
-		double height = 0;
-
-		String entireStyle = el.getAttribute("style");
-		entireStyle = entireStyle.replaceAll(" ", "");
-		String[] styles = entireStyle.split(";");
-
-		// get old width and height
-		for (int i = 0; i < styles.length; i++) {
-			if (styles[i].startsWith("width")) {
-				styles[i] = styles[i].replaceFirst("width:", "").replaceFirst(
-						"ex", "");
-				width = Double.parseDouble(styles[i]);
-				styles[i] = "width: " + widthAnchor + "px";
-			} else if (styles[i].startsWith("height")) {
-				styles[i] = styles[i].replaceFirst("height:", "").replaceFirst(
-						"ex", "");
-				height = Double.parseDouble(styles[i]);
-				styles[i] = "height: " + heightAnchor + "px";
-			}
-		}
-
-		// replace width and height
-		String newStyle = "";
-		for (String style : styles) {
-			newStyle = newStyle + "; " + style;
-		}
-		newStyle = newStyle.replaceFirst("; ", "");
-
-		// Width will always be 1/2 the panel, height is calculated from width
-		double newWidth = mainPanel.getOffsetWidth() / 2;
-		double newHeight = height * (newWidth / width);
-
-		newStyle = newStyle.replaceFirst(widthAnchor, "" + (newWidth));
-		newStyle = newStyle.replaceFirst(heightAnchor, "" + (newHeight));
-
-		el.setAttribute("style", newStyle);
-
+		
+		Style style = el.getStyle();
+		
+		String oldWidthString = style.getWidth();
+		String oldHeightString = style.getHeight();
+		
+		oldWidthString = oldWidthString.replaceAll("[a-zA-Z ]", "");
+		oldHeightString = oldHeightString.replaceAll("[a-zA-Z ]", "");
+		
+		double oldWidth = Double.parseDouble(oldWidthString);
+		double oldHeight = Double.parseDouble(oldHeightString);
+		
+		double newWidth = mainPanel.getOffsetWidth() * EQUATION_FRACTION;
+		double newHeight = oldHeight * (newWidth / oldWidth);
+		
+		style.setWidth(newWidth, Unit.PX);
+		style.setHeight(newHeight, Unit.PX);
 	}
 }

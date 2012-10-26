@@ -16,53 +16,36 @@ package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.sciencegadgets.client.TextBoxEntry;
-import com.sciencegadgets.client.equationbrowser.EquationBrowserEntry;
 import com.sciencegadgets.client.equationbrowser.EquationDatabase;
 
-public class AlgOutEntry implements EntryPoint {
+public class AlgOut extends ScrollPanel{
 	public static Grid algOut = new Grid(0, 1);
 	public static AbsolutePanel wrapperPanel = new AbsolutePanel();
 	public static ListBox varBox;
 	public static ListBox funBox;
 	public static TextBox coefBox;
-	public static ScrollPanel spAlg = new ScrollPanel(algOut);
 	private static HTML prevEquation;
-	private Button backButton = new Button("Back", new BackButtonHandler());
 	EquationDatabase data;
 
-	public void onModuleLoad() {
+	public AlgOut() {
 
-		//TODO don't catch general exception
-		//		try {
-			RootPanel.get("scienceGadgetArea").add(backButton);
-			RootPanel.get("scienceGadgetArea").add(spAlg);
 
-			spAlg.setStyleName("algOutScrollPanel");
+			this.add(algOut);
+			this.setStyleName("algOutScrollPanel");
 			algOut.setStyleName("algOutGrid");
 			
 //			createAlgebraPanel();
 			
-//		} catch (Exception e) {
-//			Window.alert("Please refresh");
-//			e.printStackTrace();
-//		}
-
 	}
 
 //	private void createAlgebraPanel() {
@@ -100,7 +83,7 @@ public class AlgOutEntry implements EntryPoint {
 //
 //	}
 
-	public static void updateAlgOut(HTML mathML,
+	public void updateAlgOut(HTML mathML,
 			LinkedList<MLElementWrapper> wrappers, String change) {
 
 		int newRowCount = algOut.getRowCount();
@@ -126,22 +109,11 @@ public class AlgOutEntry implements EntryPoint {
 		// Make draggable algebra area
 		wrapperPanel.clear();
 		wrapperPanel
-				.add(new AlgebraManipulator(mathML, wrappers, wrapperPanel));
+				.add(mathML);
 
-		spAlg.scrollToBottom();
+		this.scrollToBottom();
 	}
 
-	class BackButtonHandler implements ClickHandler {
-
-		@Override
-		public void onClick(ClickEvent arg0) {
-			RootPanel.get("scienceGadgetArea").clear();
-
-			new EquationBrowserEntry().onModuleLoad();
-			new TextBoxEntry().onModuleLoad();
-		}
-
-	}
 
 	class ToBothSidesHandler implements ClickHandler {
 

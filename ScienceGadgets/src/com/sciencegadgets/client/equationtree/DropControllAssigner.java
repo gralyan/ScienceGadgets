@@ -17,13 +17,12 @@ package com.sciencegadgets.client.equationtree;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
+import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Add;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Divide;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Multiply;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Add;
-import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_BothSides_Add;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Divide;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_Simplify_Multiply;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -56,7 +55,6 @@ public class DropControllAssigner {
 			try {
 				parentType = jParent.getType();
 			} catch (NullPointerException e) {
-				Log.severe("No Type for: " + jParent.toString());
 				e.printStackTrace();
 			}
 			if (parentType == null) {
@@ -65,7 +63,7 @@ public class DropControllAssigner {
 
 			
 			assignments: switch (jNode.getType()) {
-			case mn:
+			case Number:
 //			case Variable:
 
 
@@ -78,7 +76,7 @@ public class DropControllAssigner {
 					dropType = DropType.Simplify_Multiply;
 					bothSideDropType = DropType.BothSides_Divide;
 					break sipmlifySiblings;
-				case mfrac:
+				case Fraction:
 					dropType = DropType.Simplify_Divide;
 					if(jNode.getIndex() == 1){
 						bothSideDropType = DropType.BothSides_Multiply;
@@ -91,7 +89,7 @@ public class DropControllAssigner {
 			
 			// Give "simplify" drop targets
 			for (MathMLBindingNode sib : siblings) {
-				if (Type.mn.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
+				if (Type.Number.equals(sib.getType()) && !jNode.equals(sib) && dropType != null) {
 					
 					addDropTarget(wrap, sib.getWrapper(), dropType,
 							hasJoiner);

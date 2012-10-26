@@ -40,7 +40,7 @@ public class DropController_Simplify_Add extends AbstractMathDropController {
 		/*
 		 * Main changes
 		 */
-		targetNode.setString("" + answer);
+		targetNode.setSymbol("" + answer);
 		targetNode.getWrapper().getElementWrapped().setInnerText("" + answer);
 
 		/*

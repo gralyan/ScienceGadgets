@@ -18,17 +18,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Random;
@@ -53,21 +47,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
-import com.sciencegadgets.client.algebramanipulation.AlgOutEntry;
-import com.sciencegadgets.client.algebramanipulation.EquationTransporter;
+import com.sciencegadgets.client.algebramanipulation.AlgOut;
+import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.TreeEntry;
-import com.sun.java.swing.plaf.windows.resources.windows;
 
 //Uncomment to use as gadget////////////////////////////////////
 //
-//@com.google.gwt.gadgets.client.Gadget.ModulePrefs(//
-//title = "ScienceGadgets", //
-//author = "John Gralyan", //
-//author_email = "john.gralyan@gmail.com")
-//@com.google.gwt.gadgets.client.Gadget.UseLongManifestName(false)
-//@com.google.gwt.gadgets.client.Gadget.AllowHtmlQuirksMode(false)
-//public class EquationBrowserEntry extends Gadget<UserPreferences> {
-public class EquationBrowserEntry implements EntryPoint {
+public class EquationBrowser extends VerticalPanel {
 
 	EquationDatabase data = new EquationDatabase();
 
@@ -84,40 +70,31 @@ public class EquationBrowserEntry implements EntryPoint {
 	private Button combineEqButton = new Button("Combine");
 	private HashMap<TextBox, Element> inputBinding = new HashMap<TextBox, Element>();
 	public static HTML labelSumEq = new HTML("");
+	private Moderator moderator;
 	
 	private final DatabaseHelperAsync dataBase = GWT
 			.create(DatabaseHelper.class);
 
-	// Uncomment to use as gadget////////////////////////
-	//
-	// @Override
-	// protected void init(UserPreferences preferences) {
-	@Override
-	public void onModuleLoad() {
 
-		//TODO dont catch general exception
-//		try {
-			browserPanel.setStylePrimaryName("browserPanel");
+	public EquationBrowser(Moderator moderator) {
+
+			this.moderator = moderator;
+			this.setStyleName("browserPanel");
 
 			Grid modes = new Grid(1, 2);
 			modes.setWidget(0, 0, modeSelectAlg);
 			modes.setWidget(0, 1, modeSelectSci);
 			modes.setStyleName("modes");
-
-			RootPanel.get("scienceGadgetArea").add(modes);
-			RootPanel.get("scienceGadgetArea").add(browserPanel);
+			this.add(modes);
+			
+			this.add(browserPanel);
 
 			modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
 			modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
 
 			modeSelectAlg.setValue(true, true);
-//			createDatabase();
 			createAlgBrowser();
 			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			Window.alert("Please refresh the page");
-//		}
 	}
 
 
@@ -341,7 +318,7 @@ public class EquationBrowserEntry implements EntryPoint {
 		
 //		HTML eq = new HTML(randomizedEquation.toString());
 //		randomizedEquation.removeFromParent();
-		EquationTransporter.transport(randomizedEquation.getElement().getFirstChildElement());
+		moderator.makeAgebraWorkspace(randomizedEquation.getElement().getFirstChildElement());
 	}
 
 	// //////////////////////////////////////////
@@ -447,7 +424,7 @@ public class EquationBrowserEntry implements EntryPoint {
 				sumGrid.clear(true);
 				labelSumEq.setText("");
 				sumButton.setVisible(false);
-				AlgOutEntry.algOut.clear(true);
+				AlgOut.algOut.clear(true);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
 //				onVarSelect(selectedVars);
@@ -491,8 +468,8 @@ public class EquationBrowserEntry implements EntryPoint {
 
 		public void onClick(ClickEvent event) {
 			browserPanel.clear();
-			AlgOutEntry.algOut.clear(true);
-			AlgOutEntry.algOut.resizeRows(0);
+			AlgOut.algOut.clear(true);
+			AlgOut.algOut.resizeRows(0);
 			TreeEntry.apTree.clear();
 
 			if ("algebra".equals(mode)) {
@@ -555,7 +532,7 @@ public class EquationBrowserEntry implements EntryPoint {
 					}
 				}
 			}
-			EquationTransporter.transport(labelSumEq.getElement().getFirstChildElement());
+			moderator.makeAgebraWorkspace(labelSumEq.getElement().getFirstChildElement());
 		}
 
 	}

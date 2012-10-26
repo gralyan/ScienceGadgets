@@ -31,7 +31,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.Log;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
@@ -132,35 +131,36 @@ public class TreeCanvas extends DrawingArea {
 
 		createPalette();
 
-//		leftLayerCounts = new byte[20];
-//		rightLayerCounts = new byte[20];
-//		leftCounters = new byte[20];
-//		rightCounters = new byte[20];
-//
-//		// The counting in each layer will allow for maximum spacing, index 0 is
-//		// each side
-//		leftLayerCounts[0]++;
-//		rightLayerCounts[0]++;
-//		// TODO took off layer counts
-//		// getNextLayerCounts(jTree.getLeftSide(), (byte) 0, true);
-//		// getNextLayerCounts(jTree.getRightSide(), (byte) 0, false);
-//
-//		// Resize side lengths depending on the ratio of side member density.
-//		// This keeps the tree from looking lopsided when there are many more
-//		// variables on one side
-//		int leftMemberCount = 0;
-//		int rightMemberCount = 0;
-//
-//		for (int i = 0; i < leftLayerCounts.length; i++) {
-//			// Count all the members in this side, giving more weight to the
-//			// higher layers by dividing by i. (*100 to aleviate truncation,
-//			// only the ratio matters anyway)
-//			leftMemberCount += (leftLayerCounts[i] * 100 / (i + 1));
-//		}
-//
-//		for (int i = 0; i < rightLayerCounts.length; i++) {
-//			rightMemberCount += rightLayerCounts[i] * 100 / (i + 1);
-//		}
+		// leftLayerCounts = new byte[20];
+		// rightLayerCounts = new byte[20];
+		// leftCounters = new byte[20];
+		// rightCounters = new byte[20];
+		//
+		// // The counting in each layer will allow for maximum spacing, index 0
+		// is
+		// // each side
+		// leftLayerCounts[0]++;
+		// rightLayerCounts[0]++;
+		// // TODO took off layer counts
+		// // getNextLayerCounts(jTree.getLeftSide(), (byte) 0, true);
+		// // getNextLayerCounts(jTree.getRightSide(), (byte) 0, false);
+		//
+		// // Resize side lengths depending on the ratio of side member density.
+		// // This keeps the tree from looking lopsided when there are many more
+		// // variables on one side
+		// int leftMemberCount = 0;
+		// int rightMemberCount = 0;
+		//
+		// for (int i = 0; i < leftLayerCounts.length; i++) {
+		// // Count all the members in this side, giving more weight to the
+		// // higher layers by dividing by i. (*100 to aleviate truncation,
+		// // only the ratio matters anyway)
+		// leftMemberCount += (leftLayerCounts[i] * 100 / (i + 1));
+		// }
+		//
+		// for (int i = 0; i < rightLayerCounts.length; i++) {
+		// rightMemberCount += rightLayerCounts[i] * 100 / (i + 1);
+		// }
 
 		// TODO get length till =
 		String eqId = "svg" + jTree.getEquals().getId();
@@ -196,13 +196,13 @@ public class TreeCanvas extends DrawingArea {
 		// int[] topLayerHeights = addFirstLayer(jTree);
 
 		// Recursively create the rest of the tree
-//		 if (jTree.getLeftSide().getChildCount() > 1)
-//		 drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2),
-//		 /*topLayerHeights[0]*/0, (byte) 0, true);
-//		 if (jTree.getRightSide().getChildCount() > 1)
-//		 drawChildren(jTree.getRightSide(),
-//		 (sideLengthLeft + sideLengthRight / 2), /*topLayerHeights[1]*/0,
-//		 (byte) 0, false);
+		// if (jTree.getLeftSide().getChildCount() > 1)
+		// drawChildren(jTree.getLeftSide(), (sideLengthLeft / 2),
+		// /*topLayerHeights[0]*/0, (byte) 0, true);
+		// if (jTree.getRightSide().getChildCount() > 1)
+		// drawChildren(jTree.getRightSide(),
+		// (sideLengthLeft + sideLengthRight / 2), /*topLayerHeights[1]*/0,
+		// (byte) 0, false);
 
 	}
 
@@ -215,12 +215,12 @@ public class TreeCanvas extends DrawingArea {
 		for (MathMLBindingNode child : children) {
 
 			// Don't show certain nodes meant only for MathML display
-			if (child.isHidden()) {
-				Log.info("Skip drawing isHidden: " + child);
-				continue;
-			} else {
-
-			}
+			// if (child.isHidden()) {
+			// Log.info("Skip drawing isHidden: " + child);
+			// continue;
+			// } else {
+			//
+			// }
 
 			// Find the maximum width any child can have in the layer
 			if (isLeft) {
@@ -307,96 +307,96 @@ public class TreeCanvas extends DrawingArea {
 		}
 	}
 
-//	/**
-//	 * Prepares the canvas spacing by recursively looking through the tree and
-//	 * counting the number of members in each layer
-//	 * 
-//	 * @param pNode
-//	 * @param layer
-//	 * @param isLeft
-//	 */
-//	private void getNextLayerCounts(MathMLBindingNode pNode, byte layer,
-//			Boolean isLeft) {
-//		List<MathMLBindingNode> children = pNode.getChildren();
-//
-//		for (MathMLBindingNode child : children) {
-//
-//			// Don't show certain nodes meant only for MathML display
-//			if (child.isHidden()) {
-//				continue;
-//			}
-//
-//			if (isLeft) {
-//				leftLayerCounts[layer]++;
-//			} else {
-//				rightLayerCounts[layer]++;
-//			}
-//			if (child.getChildCount() > 0) {
-//				getNextLayerCounts(child, (byte) (layer + 1), isLeft);
-//			}
-//		}
-//	}
-//
-//	private int[] addFirstLayer(MathMLBindingTree jTree) {
-//
-//		HTML lHTML = jTree.getLeftSide().toMathML();
-//		HTML rHTML = jTree.getRightSide().toMathML();
-//
-//		panel.add(lHTML, sideLengthLeft / 2, topPad);
-//		// panel.add(new HTML("="), sideLengthLeft, topPad);
-//		panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), topPad);
-//
-//		int lHeight = lHTML.getOffsetHeight();
-//		int lWidth = lHTML.getOffsetWidth();
-//		int lLeft = sideLengthLeft / 2;
-//		int rHeight = rHTML.getOffsetHeight();
-//		int rWidth = rHTML.getOffsetWidth();
-//		int rLeft = sideLengthLeft + sideLengthRight / 2;
-//
-//		// Left - Add top level wrappers
-//		int lboxLeft = lLeft - pad;
-//		int lboxTop = topPad;
-//		int lboxWidth = lWidth + 2 * pad;
-//		int lboxHeight = lHeight * 4 / 3;
-//
-//		VectorObject lNodeShape = createNodeShape(
-//				jTree.getLeftSide().getType(), lboxLeft, lboxTop, lboxWidth,
-//				lboxHeight);
-//		this.add(lNodeShape);
-//
-//		if (jTree.getLeftSide().getWrapper() != null) {
-//			MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
-//					.getJoinedWrapper();
-//			lWrap.setHeight(lboxHeight + 4 * pad + "px");
-//			lWrap.setWidth(lboxWidth + 4 * pad + "px");
-//			panel.add(lWrap, lLeft - 3 * pad, topPad - 2 * pad);
-//			panel.add(lWrap.getDropDescriptor(), lLeft - 3 * pad, topPad
-//					+ lboxHeight + 3 * pad);
-//		}
-//
-//		// Right - Add top level wrappers
-//		int rboxLeft = rLeft - pad;
-//		int rboxTop = topPad;
-//		int rboxWidth = rWidth + 2 * pad;
-//		int rboxHeight = rHeight * 4 / 3;
-//
-//		VectorObject rNodeShape = createNodeShape(jTree.getRightSide()
-//				.getType(), rboxLeft, rboxTop, rboxWidth, rboxHeight);
-//		this.add(rNodeShape);
-//
-//		if (jTree.getRightSide().getWrapper() != null) {
-//			MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
-//					.getJoinedWrapper();
-//			rWrap.setHeight(rboxHeight + 4 * pad + "px");
-//			rWrap.setWidth(rboxWidth + 4 * pad + "px");
-//			panel.add(rWrap, rLeft - 3 * pad, topPad - 2 * pad);
-//			panel.add(rWrap.getDropDescriptor(), rLeft - 3 * pad, topPad
-//					+ rboxHeight + 3 * pad);
-//		}
-//
-//		int[] a = { lboxHeight + topPad, rboxHeight + topPad };
-//		return a;
-//	}
+	// /**
+	// * Prepares the canvas spacing by recursively looking through the tree and
+	// * counting the number of members in each layer
+	// *
+	// * @param pNode
+	// * @param layer
+	// * @param isLeft
+	// */
+	// private void getNextLayerCounts(MathMLBindingNode pNode, byte layer,
+	// Boolean isLeft) {
+	// List<MathMLBindingNode> children = pNode.getChildren();
+	//
+	// for (MathMLBindingNode child : children) {
+	//
+	// // Don't show certain nodes meant only for MathML display
+	// if (child.isHidden()) {
+	// continue;
+	// }
+	//
+	// if (isLeft) {
+	// leftLayerCounts[layer]++;
+	// } else {
+	// rightLayerCounts[layer]++;
+	// }
+	// if (child.getChildCount() > 0) {
+	// getNextLayerCounts(child, (byte) (layer + 1), isLeft);
+	// }
+	// }
+	// }
+	//
+	// private int[] addFirstLayer(MathMLBindingTree jTree) {
+	//
+	// HTML lHTML = jTree.getLeftSide().toMathML();
+	// HTML rHTML = jTree.getRightSide().toMathML();
+	//
+	// panel.add(lHTML, sideLengthLeft / 2, topPad);
+	// // panel.add(new HTML("="), sideLengthLeft, topPad);
+	// panel.add(rHTML, (sideLengthLeft + sideLengthRight / 2), topPad);
+	//
+	// int lHeight = lHTML.getOffsetHeight();
+	// int lWidth = lHTML.getOffsetWidth();
+	// int lLeft = sideLengthLeft / 2;
+	// int rHeight = rHTML.getOffsetHeight();
+	// int rWidth = rHTML.getOffsetWidth();
+	// int rLeft = sideLengthLeft + sideLengthRight / 2;
+	//
+	// // Left - Add top level wrappers
+	// int lboxLeft = lLeft - pad;
+	// int lboxTop = topPad;
+	// int lboxWidth = lWidth + 2 * pad;
+	// int lboxHeight = lHeight * 4 / 3;
+	//
+	// VectorObject lNodeShape = createNodeShape(
+	// jTree.getLeftSide().getType(), lboxLeft, lboxTop, lboxWidth,
+	// lboxHeight);
+	// this.add(lNodeShape);
+	//
+	// if (jTree.getLeftSide().getWrapper() != null) {
+	// MLElementWrapper lWrap = jTree.getLeftSide().getWrapper()
+	// .getJoinedWrapper();
+	// lWrap.setHeight(lboxHeight + 4 * pad + "px");
+	// lWrap.setWidth(lboxWidth + 4 * pad + "px");
+	// panel.add(lWrap, lLeft - 3 * pad, topPad - 2 * pad);
+	// panel.add(lWrap.getDropDescriptor(), lLeft - 3 * pad, topPad
+	// + lboxHeight + 3 * pad);
+	// }
+	//
+	// // Right - Add top level wrappers
+	// int rboxLeft = rLeft - pad;
+	// int rboxTop = topPad;
+	// int rboxWidth = rWidth + 2 * pad;
+	// int rboxHeight = rHeight * 4 / 3;
+	//
+	// VectorObject rNodeShape = createNodeShape(jTree.getRightSide()
+	// .getType(), rboxLeft, rboxTop, rboxWidth, rboxHeight);
+	// this.add(rNodeShape);
+	//
+	// if (jTree.getRightSide().getWrapper() != null) {
+	// MLElementWrapper rWrap = jTree.getRightSide().getWrapper()
+	// .getJoinedWrapper();
+	// rWrap.setHeight(rboxHeight + 4 * pad + "px");
+	// rWrap.setWidth(rboxWidth + 4 * pad + "px");
+	// panel.add(rWrap, rLeft - 3 * pad, topPad - 2 * pad);
+	// panel.add(rWrap.getDropDescriptor(), rLeft - 3 * pad, topPad
+	// + rboxHeight + 3 * pad);
+	// }
+	//
+	// int[] a = { lboxHeight + topPad, rboxHeight + topPad };
+	// return a;
+	// }
 
 	private void splitSidesInMiddle() {
 

@@ -41,7 +41,7 @@ public class DropController_Simplify_Divide extends AbstractMathDropController {
 
 		MathMLBindingNode parentNode = targetNode.getParent();
 		MathMLBindingNode simplified = parentNode.encase("mn");
-		simplified.setString("" + answer);
+		simplified.setSymbol("" + answer);
 
 		parentNode.remove();
 		sourceNode.remove();
