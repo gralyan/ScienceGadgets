@@ -28,6 +28,7 @@ import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMat
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.equationtree.EquationList;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operators;
 
 public class Moderator implements EntryPoint {
 
