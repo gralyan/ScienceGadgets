@@ -20,7 +20,7 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class EditWrapper extends HTML {
 
-	MathMLBindingNode node;
+	private MathMLBindingNode node;
 	static EditWrapper selectedWrapper;
 	private EditWrapper thisWrapper = this;
 	private EditMenu editMenu;
@@ -64,10 +64,13 @@ public class EditWrapper extends HTML {
 
 			selectedWrapper = null;
 			this.getElement().removeAttribute("id");
+			
+			if(editMenu.getDisplay() != null)
+				editMenu.getDisplay().removeFromParent();
 		}
 	}
 
-	HTMLPanel getEditMenu() {
+	EditMenu getEditMenu() {
 		return editMenu;
 	}
 

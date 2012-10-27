@@ -187,7 +187,7 @@ public class EquationList {
 					- mainPanel.getAbsoluteTop());
 
 			// background images
-			WrapperBackground wrapBackground = new WrapperBackground(widthStr,
+			WrapperBackground wrapBackground = new WrapperBackground(node, widthStr,
 					heightStr);
 			backPanel.add(wrapBackground, left - mainPanel.getAbsoluteLeft(),
 					top - mainPanel.getAbsoluteTop());
