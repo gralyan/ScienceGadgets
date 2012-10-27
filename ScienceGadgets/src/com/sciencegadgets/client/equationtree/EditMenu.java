@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operators;
@@ -21,6 +22,7 @@ public class EditMenu extends HTMLPanel {
 	EditWrapper editWrapper;
 	MathMLBindingNode node;
 	Focusable focusable = null;
+	Widget display = null;
 
 	public EditMenu(String html, EditWrapper editWrapper) {
 		super(html);
@@ -65,7 +67,16 @@ public class EditMenu extends HTMLPanel {
 			focusable.setFocus(true);
 		}
 	}
+	
+	public void setDisplay(Widget display){
+		this.display= display;
+		this.add(display);
+		this.setFocus();
+	}
 
+	public Widget getDisplay(){
+		return display;
+	}
 	private class InputChangeHandler implements ChangeHandler {
 
 		FocusWidget input;

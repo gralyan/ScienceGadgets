@@ -14,6 +14,7 @@
  */
 package com.sciencegadgets.client.equationtree;
 
+import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -263,6 +264,7 @@ public class MathMLBindingTree {
 			}
 
 			String id = newNode.getId();
+			System.out.println("id"+id+"-");
 			if (id == "") {
 				id = Math.random() + "";
 			}
@@ -324,11 +326,11 @@ public class MathMLBindingTree {
 			return mlNode.getChildCount();
 		}
 
-		public MathMLBindingNode getNextSibling() {
+		public MathMLBindingNode getNextSibling() throws IndexOutOfBoundsException{
 			return getSibling(1);
 		}
 
-		public MathMLBindingNode getPrevSibling() {
+		public MathMLBindingNode getPrevSibling() throws IndexOutOfBoundsException{
 			return getSibling(-1);
 		}
 
@@ -344,7 +346,7 @@ public class MathMLBindingTree {
 		 *            </p>
 		 * @return
 		 */
-		private MathMLBindingNode getSibling(int indexesAway) {
+		private MathMLBindingNode getSibling(int indexesAway) throws IndexOutOfBoundsException {
 			MathMLBindingNode parent = this.getParent();
 			int siblingIndex = getIndex() + indexesAway;
 
@@ -547,6 +549,18 @@ public class MathMLBindingTree {
 	private void addChildren(Element mathMLNode) {
 		NodeList<Node> mathMLChildren = (mathMLNode).getChildNodes();
 
+		//TODO
+		//MathML validation, nodes must have a certain number of children
+//		String pTag = mathMLNode.getTagName();
+//		if("mi".equals(pTag) || "mn".equals(pTag) || "mo".equals(pTag))
+		
+//		throw new InvalidParameterException(
+//				"Exponent (msup tag) and fraction (mfrac) MathML nodes must have exactly 2 children, the following has: "
+//						+ parent.getChildCount()
+//						+ ":\n"
+//						+ parent.toString());
+			
+		//Recursive binding of elements to this class
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Element currentNode = (Element) mathMLChildren.getItem(i);
 

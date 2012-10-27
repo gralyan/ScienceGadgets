@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -24,20 +25,75 @@ public class ChangeNodeMenu extends VerticalPanel {
 		int height = eqList.mainPanel.getOffsetHeight();
 
 		Type[] types = MathMLBindingTree.Type.values();
+		int buttonHeight = height / (types.length);
 
+		// Change buttons
 		for (MathMLBindingTree.Type type : types) {
-			if(Type.Operation.equals(type))
+			if (Type.Operation.equals(type))
 				continue;
-			
-			ChangeNodeHandler handler = new ChangeNodeHandler(type);
-			Button button = new Button(type.toString(), handler);
 
-			int buttonHeight = height / (types.length - 1);
-			button.setHeight(buttonHeight + "px");
-			button.setWidth(width + "px");
-
-			this.add(button);
+			ChangeNodeHandler changeHandler = new ChangeNodeHandler(type);
+			Button changeButton = new Button(type.toString(), changeHandler);
+			changeButton.setHeight(buttonHeight + "px");
+			changeButton.setWidth(width + "px");
+			this.add(changeButton);
 		}
+
+		// Remove button
+		RemoveNodeHandler removeHandler = new RemoveNodeHandler();
+		Button removeButton = new Button("Remove", removeHandler);
+		removeButton.setHeight(buttonHeight + "px");
+		removeButton.setWidth(width + "px");
+		removeButton.setStyleName("removeNodeButton");
+		this.add(removeButton);
+	}
+
+	private class RemoveNodeHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+			EditWrapper selectedWrapper = EditWrapper.selectedWrapper;
+
+			if (selectedWrapper != null) {
+				MathMLBindingNode node = selectedWrapper.getNode();
+				MathMLBindingNode parent = node.getParent();
+
+				switch (parent.getType()) {
+				case Term:
+				case Sum:
+					if (parent.getChildCount() > 3) {
+						node.remove();
+						try {
+							MathMLBindingNode prevSib = node.getPrevSibling();
+							if (Type.Operation.equals(prevSib.getTag()))
+								prevSib.remove();
+						} catch (IndexOutOfBoundsException e) {
+						}
+						Moderator.reload("");
+					} else {
+						Label display = new Label(
+								"You should just change the parent");
+						selectedWrapper.getEditMenu().setDisplay(display);
+					}
+					break;
+				case Exponential:
+				case Fraction:
+					switch(node.getIndex()){
+					case 0:
+						node.getNextSibling().remove();
+					case 1:
+						node.getPrevSibling().remove();
+					}
+
+					MathMLBindingNode newParent = parent.getParent();
+					newParent.add(parent.getIndex(), node);
+					parent.remove();
+					Moderator.reload("");
+					break;
+				}
+			}
+		}
+
 	}
 
 	private class ChangeNodeHandler implements ClickHandler {
@@ -52,9 +108,8 @@ public class ChangeNodeMenu extends VerticalPanel {
 			EditWrapper selectedWrapper = EditWrapper.selectedWrapper;
 
 			if (selectedWrapper != null) {
-				MathMLBindingNode node = selectedWrapper.node;
+				MathMLBindingNode node = selectedWrapper.getNode();
 				MathMLBindingNode parent = node.getParent();
-				MathMLBindingTree tree = node.getTree();
 
 				Operators operator = null;
 				try {
@@ -65,20 +120,21 @@ public class ChangeNodeMenu extends VerticalPanel {
 					case Variable:
 						parent.add(node.getIndex(), type, "x");
 						break;
+
 					case Sum:
 						operator = Operators.PLUS;
 					case Term:
-						if(operator == null)
-						operator = Operators.getMultiply();
+						if (operator == null)
+							operator = Operators.getMultiply();
 					case Exponential:
 					case Fraction:
-						MathMLBindingNode encasing = Moderator.jTree.NEW_NODE(
+						MathMLBindingNode newNode = Moderator.jTree.NEW_NODE(
 								type, "");
-						encasing.add(-1, Type.Variable, NOT_SET);
+						newNode.add(-1, Type.Variable, node.getSymbol());
 						if (operator != null)
-							encasing.add(-1, Type.Operation, operator.getSign());
-						encasing.add(-1, Type.Variable, NOT_SET);
-						parent.add(node.getIndex(), encasing);
+							newNode.add(-1, Type.Operation, operator.getSign());
+						newNode.add(-1, Type.Variable, NOT_SET);
+						parent.add(node.getIndex(), newNode);
 					}
 					node.remove();
 
