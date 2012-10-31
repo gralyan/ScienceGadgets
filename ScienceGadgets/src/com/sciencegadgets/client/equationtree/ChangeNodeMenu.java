@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.equationtree;
 
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -9,13 +10,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operators;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class ChangeNodeMenu extends VerticalPanel {
 
-	public EquationList eqList;
 	public static final String NOT_SET = "???";
+	public EquationList eqList;
+	private HashMap<Type, Button> menuMap = new HashMap<Type, Button>();
+	private Button removeButton;
 
 	public ChangeNodeMenu(EquationList eqList) {
 		this.eqList = eqList;
@@ -36,6 +39,7 @@ public class ChangeNodeMenu extends VerticalPanel {
 			Button changeButton = new Button(type.toString(), changeHandler);
 			changeButton.setHeight(buttonHeight + "px");
 			changeButton.setWidth(width + "px");
+			menuMap.put(type, changeButton);
 			this.add(changeButton);
 		}
 
@@ -45,7 +49,29 @@ public class ChangeNodeMenu extends VerticalPanel {
 		removeButton.setHeight(buttonHeight + "px");
 		removeButton.setWidth(width + "px");
 		removeButton.setStyleName("removeNodeButton");
+		this.removeButton = removeButton;
 		this.add(removeButton);
+	}
+
+	public Button getButton(Type menuOption) {
+		Button button;
+
+		if (menuOption == null) {
+			button = removeButton;
+		} else {
+			button = menuMap.get(menuOption);
+		}
+		return button;
+	}
+
+	public void setEnable(Type menuOption, boolean isEnabled) {
+		Button button = getButton(menuOption);
+		button.setEnabled(isEnabled);
+	}
+
+	public boolean isEnabled(Type menuOption) {
+		Button button = getButton(menuOption);
+		return button.isEnabled();
 	}
 
 	private class RemoveNodeHandler implements ClickHandler {
@@ -78,7 +104,7 @@ public class ChangeNodeMenu extends VerticalPanel {
 					break;
 				case Exponential:
 				case Fraction:
-					switch(node.getIndex()){
+					switch (node.getIndex()) {
 					case 0:
 						node.getNextSibling().remove();
 					case 1:
@@ -93,7 +119,6 @@ public class ChangeNodeMenu extends VerticalPanel {
 				}
 			}
 		}
-
 	}
 
 	private class ChangeNodeHandler implements ClickHandler {
@@ -110,38 +135,51 @@ public class ChangeNodeMenu extends VerticalPanel {
 			if (selectedWrapper != null) {
 				MathMLBindingNode node = selectedWrapper.getNode();
 				MathMLBindingNode parent = node.getParent();
+				int index = node.getIndex();
 
-				Operators operator = null;
+				// TODO
+				System.out.println("1: "
+						+ node.getTree().getMathML().getString());
+
 				try {
+					Operator operator = null;
+
 					switch (type) {
 					case Number:
 						parent.add(node.getIndex(), type, "1");
+						node.remove();
 						break;
 					case Variable:
 						parent.add(node.getIndex(), type, "x");
+						node.remove();
 						break;
 
 					case Sum:
-						operator = Operators.PLUS;
+						operator = Operator.PLUS;
 					case Term:
 						if (operator == null)
-							operator = Operators.getMultiply();
+							operator = Operator.getMultiply();
 					case Exponential:
 					case Fraction:
 						MathMLBindingNode newNode = Moderator.jTree.NEW_NODE(
 								type, "");
-						newNode.add(-1, Type.Variable, node.getSymbol());
+
+						newNode.add(node);
 						if (operator != null)
 							newNode.add(-1, Type.Operation, operator.getSign());
 						newNode.add(-1, Type.Variable, NOT_SET);
-						parent.add(node.getIndex(), newNode);
+
+						parent.add(index, newNode);
 					}
-					node.remove();
+					// node.remove();
 
 					Moderator.reload("");
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();
 				}
+				// TODO
+				System.out.println("2: "
+						+ node.getTree().getMathML().getString());
 			}
 		}
 	}
