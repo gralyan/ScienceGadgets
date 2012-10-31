@@ -24,15 +24,17 @@ public class EditWrapper extends HTML {
 	static EditWrapper selectedWrapper;
 	private EditWrapper thisWrapper = this;
 	private EditMenu editMenu;
+	private EquationList eqList;
 
-	public EditWrapper(MathMLBindingNode node, HTML selectedWrapper,
+	public EditWrapper(MathMLBindingNode node, EquationList eqList,
 			String width, String height) {
 
 		setWidth(width);
 		setHeight(height);
 
 		this.node = node;
-		this.selectedWrapper = (EditWrapper) selectedWrapper;
+		this.eqList = eqList;
+		this.selectedWrapper = (EditWrapper) eqList.selectedWrapper;
 
 		editMenu = new EditMenu("", this);
 		editMenu.setVisible(false);
@@ -57,16 +59,28 @@ public class EditWrapper extends HTML {
 			if (!ChangeNodeMenu.NOT_SET.equals(node.getSymbol())) {
 				editMenu.setVisible(true);
 				editMenu.setFocus();
+				//Disable menu options of the selected type
+				eqList.changeNodeMenu.setEnable(node.getType(), false);
 			}
+
+			//Don't allow sums inside sums or terms in terms
+			Type parentType = node.getParent().getType();
+			if (Type.Sum.equals(parentType) || Type.Term.equals(parentType)) {
+				eqList.changeNodeMenu.setEnable(parentType, false);
+			}
+
 		} else {// unselect
 
 			editMenu.setVisible(false);
 
 			selectedWrapper = null;
 			this.getElement().removeAttribute("id");
-			
-			if(editMenu.getDisplay() != null)
+
+			if (editMenu.getDisplay() != null)
 				editMenu.getDisplay().removeFromParent();
+
+			eqList.changeNodeMenu.setEnable(node.getParent().getType(), true);
+			eqList.changeNodeMenu.setEnable(node.getType(), true);
 		}
 	}
 

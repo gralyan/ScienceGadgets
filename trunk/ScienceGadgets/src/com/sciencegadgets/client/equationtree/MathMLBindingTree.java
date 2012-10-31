@@ -193,7 +193,7 @@ public class MathMLBindingTree {
 
 		/**
 		 * Adds a child at the specified index.</br> Use index -1 to add end to
-		 * the end of the child list</br></br> Children of this node must
+		 * the end of the child list</br>If the node is already in the tree, it is just repositioned. There is no need to remove it first</br></br> Children of this node must
 		 * reflect it's type</br> <em>Requirements:</em></br> <b>Variable and
 		 * Number</b> must have <b>exactly 0</b> children</br> <b>Term and
 		 * Sum</b> must have <b>at least 2</b> children</br> <b>Fraction and
@@ -252,25 +252,26 @@ public class MathMLBindingTree {
 				if (!Type.Term.equals(getType())) {
 					node.setAttribute("open", "");
 					node.setAttribute("close", "");
-				} 
+				}
 				break;
 			}
 
-			if (index < 0) {
+			if (index < 0 || index >= mlNode.getChildCount()) {
 				mlNode.appendChild(node);
 			} else {
-				Node referenceChild = mlNode.getChild(index);
-				mlNode.insertBefore(node, referenceChild);
+					Node referenceChild = mlNode.getChild(index);
+					mlNode.insertBefore(node, referenceChild);
 			}
 
 			String id = newNode.getId();
-			System.out.println("id"+id+"-");
 			if (id == "") {
 				id = Math.random() + "";
 			}
 
-			idMap.put(id, newNode);
-			idMLMap.put(id, node);
+			if (!idMap.containsKey(id)) {
+				idMap.put(id, newNode);
+				idMLMap.put(id, node);
+			}
 		}
 
 		/**
@@ -326,11 +327,13 @@ public class MathMLBindingTree {
 			return mlNode.getChildCount();
 		}
 
-		public MathMLBindingNode getNextSibling() throws IndexOutOfBoundsException{
+		public MathMLBindingNode getNextSibling()
+				throws IndexOutOfBoundsException {
 			return getSibling(1);
 		}
 
-		public MathMLBindingNode getPrevSibling() throws IndexOutOfBoundsException{
+		public MathMLBindingNode getPrevSibling()
+				throws IndexOutOfBoundsException {
 			return getSibling(-1);
 		}
 
@@ -346,7 +349,8 @@ public class MathMLBindingTree {
 		 *            </p>
 		 * @return
 		 */
-		private MathMLBindingNode getSibling(int indexesAway) throws IndexOutOfBoundsException {
+		private MathMLBindingNode getSibling(int indexesAway)
+				throws IndexOutOfBoundsException {
 			MathMLBindingNode parent = this.getParent();
 			int siblingIndex = getIndex() + indexesAway;
 
@@ -387,6 +391,9 @@ public class MathMLBindingTree {
 
 		public MathMLBindingNode getParent() {
 			Element parentElement = getMLNode().getParentElement();
+			//
+			System.out.println("parentType "+parentElement);
+			
 			String parentId = parentElement.getAttribute("id");
 			MathMLBindingNode parentNode = getNodeById(parentId);
 			return parentNode;
@@ -449,6 +456,21 @@ public class MathMLBindingTree {
 		// }
 		// }
 
+		public Operator getOperation() {
+			if ("mo".equalsIgnoreCase(getTag())) {
+				String symbol = getSymbol();
+
+				for (Operator op : Operator.values()) {
+					if (op.getSign().equalsIgnoreCase(symbol)) {
+						return op;
+					}
+				}
+			}
+			// throw new
+			// InvalidParameterException("Can't getOperation for this node: "+toString());
+			return null;
+		}
+
 		public Type getType() throws NoSuchElementException {
 			String tag = getTag();
 			Type type = null;
@@ -492,12 +514,12 @@ public class MathMLBindingTree {
 		}
 	}
 
-	public static enum Operators {
+	public static enum Operator {
 		DOT("&middot"), SPACE("&nbsp;"), CROSS("&times;"), PLUS("+"), MINUS("-");
 
 		private String sign;
 
-		Operators(String sign) {
+		Operator(String sign) {
 			this.sign = sign;
 		}
 
@@ -505,7 +527,7 @@ public class MathMLBindingTree {
 			return sign;
 		}
 
-		public static Operators getMultiply() {
+		public static Operator getMultiply() {
 			return CROSS;
 		}
 	}
@@ -549,18 +571,18 @@ public class MathMLBindingTree {
 	private void addChildren(Element mathMLNode) {
 		NodeList<Node> mathMLChildren = (mathMLNode).getChildNodes();
 
-		//TODO
-		//MathML validation, nodes must have a certain number of children
-//		String pTag = mathMLNode.getTagName();
-//		if("mi".equals(pTag) || "mn".equals(pTag) || "mo".equals(pTag))
-		
-//		throw new InvalidParameterException(
-//				"Exponent (msup tag) and fraction (mfrac) MathML nodes must have exactly 2 children, the following has: "
-//						+ parent.getChildCount()
-//						+ ":\n"
-//						+ parent.toString());
-			
-		//Recursive binding of elements to this class
+		// TODO
+		// MathML validation, nodes must have a certain number of children
+		// String pTag = mathMLNode.getTagName();
+		// if("mi".equals(pTag) || "mn".equals(pTag) || "mo".equals(pTag))
+
+		// throw new InvalidParameterException(
+		// "Exponent (msup tag) and fraction (mfrac) MathML nodes must have exactly 2 children, the following has: "
+		// + parent.getChildCount()
+		// + ":\n"
+		// + parent.toString());
+
+		// Recursive binding of elements to this class
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Element currentNode = (Element) mathMLChildren.getItem(i);
 

@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.equationtree;
 
+import java.util.HashMap;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,7 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operators;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operator;
 
 public class EditMenu extends HTMLPanel {
 
@@ -55,9 +56,47 @@ public class EditMenu extends HTMLPanel {
 		case Exponential:
 			break;
 		case Operation:
-			String op = node.getSymbol();
-			Button signButton = new Button(op);
-			signButton.addClickHandler(new SignChangeHandler());
+			HashMap<Operator, Boolean> opMap = new HashMap<Operator, Boolean>();
+			Operator operation = node.getOperation();
+			if(operation == null){
+				break;
+			}
+
+			switch (operation) {
+			case CROSS:
+				opMap.put(Operator.CROSS, false);
+				opMap.put(Operator.DOT, true);
+				opMap.put(Operator.SPACE, true);
+				break;
+			case DOT:
+				opMap.put(Operator.CROSS, true);
+				opMap.put(Operator.DOT, false);
+				opMap.put(Operator.SPACE, true);
+				break;
+			case SPACE:
+				opMap.put(Operator.CROSS, true);
+				opMap.put(Operator.DOT, true);
+				opMap.put(Operator.SPACE, false);
+				break;
+			case MINUS:
+				opMap.put(Operator.PLUS, true);
+				opMap.put(Operator.MINUS, false);
+				break;
+			case PLUS:
+				opMap.put(Operator.PLUS, false);
+				opMap.put(Operator.MINUS, true);
+				break;
+			}
+			for (Operator op : opMap.keySet()) {
+				Button signButton = new Button(op.getSign());
+				if (opMap.get(op)) {
+					signButton.addClickHandler(new SignChangeHandler(
+							op));
+				} else {
+					signButton.setEnabled(false);
+				}
+				this.add(signButton);
+			}
 			break;
 		}
 	}
@@ -67,16 +106,17 @@ public class EditMenu extends HTMLPanel {
 			focusable.setFocus(true);
 		}
 	}
-	
-	public void setDisplay(Widget display){
-		this.display= display;
+
+	public void setDisplay(Widget display) {
+		this.display = display;
 		this.add(display);
 		this.setFocus();
 	}
 
-	public Widget getDisplay(){
+	public Widget getDisplay() {
 		return display;
 	}
+
 	private class InputChangeHandler implements ChangeHandler {
 
 		FocusWidget input;
@@ -128,18 +168,15 @@ public class EditMenu extends HTMLPanel {
 
 	private class SignChangeHandler implements ClickHandler {
 
+		Operator operator;
+
+		SignChangeHandler(Operator operator) {
+			this.operator = operator;
+		}
+
 		@Override
 		public void onClick(ClickEvent event) {
-			if ("+".equals(node.getSymbol()))
-				node.setSymbol("-");
-			else if ("-".equals(node.getSymbol()))
-				node.setSymbol("+");
-			else if (Operators.CROSS.toString().equals(node.getSymbol()))
-				node.setSymbol(Operators.DOT.toString());
-			else if (Operators.DOT.toString().equals(node.getSymbol()))
-				node.setSymbol(Operators.SPACE.toString());
-			else if (Operators.SPACE.toString().equals(node.getSymbol()))
-				node.setSymbol(Operators.CROSS.toString());
+			node.setSymbol(operator.getSign());
 
 			Moderator.reload("");
 		}
