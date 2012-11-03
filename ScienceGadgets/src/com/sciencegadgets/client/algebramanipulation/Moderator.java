@@ -22,13 +22,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.equationtree.EquationList;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operator;
+import com.sciencegadgets.client.equationtree.SymbolPalette;
 
 public class Moderator implements EntryPoint {
 
@@ -42,12 +43,14 @@ public class Moderator implements EntryPoint {
 	static boolean inEditMode = true;
 	private Button backToBrowserButton = new Button("Back", new BackButtonHandler());
 	private Moderator moderator = this;
+	private static final Panel scienceGadgetArea = RootPanel.get("scienceGadgetArea");
+	public static SymbolPalette symbolPopup;
 
 	@Override
 	public void onModuleLoad() {
 		
 		EquationBrowser browserPanel = new EquationBrowser(moderator);
-		RootPanel.get("scienceGadgetArea").add(browserPanel);
+		scienceGadgetArea.add(browserPanel);
 
 	}
 	
@@ -58,14 +61,14 @@ public class Moderator implements EntryPoint {
 	 */
 	public void makeAgebraWorkspace(Element mathML) {
 
-		RootPanel.get("scienceGadgetArea").clear();
-		RootPanel.get("scienceGadgetArea").add(backToBrowserButton);
+		scienceGadgetArea.clear();
+		scienceGadgetArea.add(backToBrowserButton);
 		
 		AlgOut algOut = new AlgOut();
-		RootPanel.get("scienceGadgetArea").add(algOut);
+		scienceGadgetArea.add(algOut);
 		
 		eqListPanel.setStyleName("treeCanvas");
-		RootPanel.get("scienceGadgetArea").add(spTree);
+		scienceGadgetArea.add(spTree);
 		
 		try {
 			jTree = new MathMLBindingTree(mathML);
@@ -93,16 +96,18 @@ public class Moderator implements EntryPoint {
 		//TODO uncomment
 //		DropControllAssigner.assign(jTree.getWrappers(), true);
 		
+		
 	}
 	
 	class BackButtonHandler implements ClickHandler {
 
 		@Override
 		public void onClick(ClickEvent arg0) {
-			RootPanel.get("scienceGadgetArea").clear();
+			scienceGadgetArea.clear();
+			symbolPopup.hide();
 
 			EquationBrowser browserPanel = new EquationBrowser(moderator);
-			RootPanel.get("scienceGadgetArea").add(browserPanel);
+			scienceGadgetArea.add(browserPanel);
 		}
 
 	}

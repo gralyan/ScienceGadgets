@@ -21,6 +21,7 @@ public class ChangeNodeMenu extends VerticalPanel {
 	private Button removeButton;
 
 	public ChangeNodeMenu(EquationList eqList) {
+		this.setVisible(false);
 		this.eqList = eqList;
 
 		// Make this menu a fraction of the screens width, same height
@@ -66,8 +67,9 @@ public class ChangeNodeMenu extends VerticalPanel {
 
 	public void setEnable(Type menuOption, boolean isEnabled) {
 		Button button = getButton(menuOption);
+		if(button != null){
 		button.setEnabled(isEnabled);
-	}
+	}}
 
 	public boolean isEnabled(Type menuOption) {
 		Button button = getButton(menuOption);
@@ -88,13 +90,13 @@ public class ChangeNodeMenu extends VerticalPanel {
 				case Term:
 				case Sum:
 					if (parent.getChildCount() > 3) {
-						node.remove();
 						try {
 							MathMLBindingNode prevSib = node.getPrevSibling();
 							if (Type.Operation.equals(prevSib.getTag()))
 								prevSib.remove();
 						} catch (IndexOutOfBoundsException e) {
 						}
+						node.remove();
 						Moderator.reload("");
 					} else {
 						Label display = new Label(

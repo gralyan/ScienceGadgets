@@ -1,22 +1,27 @@
 package com.sciencegadgets.client.equationtree;
 
 import java.util.HashMap;
+import java.math.BigDecimal;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operator;
+import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class EditMenu extends HTMLPanel {
 
@@ -25,26 +30,34 @@ public class EditMenu extends HTMLPanel {
 	Focusable focusable = null;
 	Widget display = null;
 
-	public EditMenu(String html, EditWrapper editWrapper) {
-		super(html);
+	public EditMenu(EditWrapper editWrapper, String width) {
+		super("");
 
 		this.editWrapper = editWrapper;
 		this.node = editWrapper.getNode();
 
 		switch (node.getType()) {
 		case Sum:
-			break;
 		case Term:
+			Button extendSumTerm = new Button("...",new ExtendSumTermHandler());
+			this.add(extendSumTerm);
 			break;
 		case Fraction:
+			break;
+		case Exponential:
 			break;
 		case Variable:
 			TextBox variableInput = new TextBox();
 			variableInput
 					.addChangeHandler(new InputChangeHandler(variableInput));
+			variableInput.setWidth(width);
 			variableInput.setText(node.getSymbol());
 			focusable = variableInput;
 			this.add(variableInput);
+
+			Button insertSymbolButton = new Button("α",
+					new InsertSymbolHandler());
+			this.add(insertSymbolButton);
 			break;
 		case Number:
 			DoubleBox numberInput = new DoubleBox();
@@ -53,45 +66,42 @@ public class EditMenu extends HTMLPanel {
 			focusable = numberInput;
 			this.add(numberInput);
 			break;
-		case Exponential:
-			break;
 		case Operation:
 			HashMap<Operator, Boolean> opMap = new HashMap<Operator, Boolean>();
 			Operator operation = node.getOperation();
-			if(operation == null){
+			if (operation == null) {
 				break;
 			}
 
-			switch (operation) {
+			operationMenu: switch (operation) {
 			case CROSS:
 				opMap.put(Operator.CROSS, false);
 				opMap.put(Operator.DOT, true);
 				opMap.put(Operator.SPACE, true);
-				break;
+				break operationMenu;
 			case DOT:
 				opMap.put(Operator.CROSS, true);
 				opMap.put(Operator.DOT, false);
 				opMap.put(Operator.SPACE, true);
-				break;
+				break operationMenu;
 			case SPACE:
 				opMap.put(Operator.CROSS, true);
 				opMap.put(Operator.DOT, true);
 				opMap.put(Operator.SPACE, false);
-				break;
+				break operationMenu;
 			case MINUS:
 				opMap.put(Operator.PLUS, true);
 				opMap.put(Operator.MINUS, false);
-				break;
+				break operationMenu;
 			case PLUS:
 				opMap.put(Operator.PLUS, false);
 				opMap.put(Operator.MINUS, true);
-				break;
+				break operationMenu;
 			}
 			for (Operator op : opMap.keySet()) {
 				Button signButton = new Button(op.getSign());
 				if (opMap.get(op)) {
-					signButton.addClickHandler(new SignChangeHandler(
-							op));
+					signButton.addClickHandler(new SignChangeHandler(op));
 				} else {
 					signButton.setEnabled(false);
 				}
@@ -145,13 +155,15 @@ public class EditMenu extends HTMLPanel {
 		}
 
 		private String extractNumber() {
-			Double inputValue = ((DoubleBox) input).getValue();
 			String inputString = null;
+			Double inputValue = ((DoubleBox) input).getValue();
 
 			if (inputValue == null) {
 				Window.alert("The input must be a number\nchange this to a variable node if you want a variable");
 			} else {
-				inputString = inputValue + "";
+				inputString = String.valueOf(inputValue).replaceAll(
+						(String) "\\.0$", "");
+				;
 			}
 			return inputString;
 		}
@@ -183,4 +195,47 @@ public class EditMenu extends HTMLPanel {
 
 	}
 
+	private class InsertSymbolHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+
+			SymbolPalette symbolPopup;
+			if (Moderator.symbolPopup == null) {
+				symbolPopup = new SymbolPalette(node);
+				AbsolutePanel mainPanel = editWrapper.eqList.mainPanel;
+
+				symbolPopup.setPixelSize(mainPanel.getOffsetWidth(),
+						mainPanel.getOffsetHeight());
+				symbolPopup.setPopupPosition(mainPanel.getAbsoluteLeft(),
+						mainPanel.getAbsoluteTop());
+				symbolPopup.getElement().getStyle().setZIndex(10);
+				
+				Moderator.symbolPopup = symbolPopup;
+			} else {
+				symbolPopup = Moderator.symbolPopup;
+				symbolPopup.setNode(node);
+			}
+
+			symbolPopup.show();
+		}
+	}
+
+	private class ExtendSumTermHandler implements ClickHandler{
+
+		@Override
+		public void onClick(ClickEvent event) {
+			switch(node.getType()){
+			case Sum:
+				node.add(Type.Operation, "+");
+				break;
+			case Term:
+				node.add(Type.Operation, Operator.getMultiply().getSign());
+				break;
+			}
+			node.add(Type.Variable, ChangeNodeMenu.NOT_SET);
+			Moderator.reload("");
+		}
+		
+	}
 }

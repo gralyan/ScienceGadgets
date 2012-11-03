@@ -249,7 +249,7 @@ public class MathMLBindingTree {
 				node.setAttribute("close", "");
 			case Sum:// Confirm that there are multiple children
 				node.setAttribute("separators", "");
-				if (!Type.Term.equals(getType())) {
+				if (!Type.Term.equals(getType()) && !Type.Exponential.equals(getType())) {
 					node.setAttribute("open", "");
 					node.setAttribute("close", "");
 				}
@@ -391,9 +391,6 @@ public class MathMLBindingTree {
 
 		public MathMLBindingNode getParent() {
 			Element parentElement = getMLNode().getParentElement();
-			//
-			System.out.println("parentType "+parentElement);
-			
 			String parentId = parentElement.getAttribute("id");
 			MathMLBindingNode parentNode = getNodeById(parentId);
 			return parentNode;
@@ -515,7 +512,7 @@ public class MathMLBindingTree {
 	}
 
 	public static enum Operator {
-		DOT("&middot"), SPACE("&nbsp;"), CROSS("&times;"), PLUS("+"), MINUS("-");
+		DOT("&middot;"), SPACE("&nbsp;"), CROSS("&times;"), PLUS("+"), MINUS("-");
 
 		private String sign;
 
@@ -528,7 +525,7 @@ public class MathMLBindingTree {
 		}
 
 		public static Operator getMultiply() {
-			return CROSS;
+			return DOT;
 		}
 	}
 

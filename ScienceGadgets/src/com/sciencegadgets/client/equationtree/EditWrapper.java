@@ -20,11 +20,11 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class EditWrapper extends HTML {
 
-	private MathMLBindingNode node;
+	MathMLBindingNode node;
 	static EditWrapper selectedWrapper;
 	private EditWrapper thisWrapper = this;
-	private EditMenu editMenu;
-	private EquationList eqList;
+	EditMenu editMenu;
+	EquationList eqList;
 
 	public EditWrapper(MathMLBindingNode node, EquationList eqList,
 			String width, String height) {
@@ -36,16 +36,19 @@ public class EditWrapper extends HTML {
 		this.eqList = eqList;
 		this.selectedWrapper = (EditWrapper) eqList.selectedWrapper;
 
-		editMenu = new EditMenu("", this);
+		editMenu = new EditMenu(this, width);
 		editMenu.setVisible(false);
 
 		addClickHandler(new EditWrapperClickHandler());
 		addMouseOverHandler(new EditWrapperMouseOverHandler());
 		addMouseOutHandler(new EditWrapperMouseOutHandler());
 		addTouchStartHandler(new EditWrapperTouchHandler());
+
 	}
 
 	void select(Boolean select) {
+		Type parentType = node.getParent().getType();
+		Type nodeType = node.getType();
 
 		if (select) {
 
@@ -56,20 +59,26 @@ public class EditWrapper extends HTML {
 			selectedWrapper = this;
 			this.getElement().setAttribute("id", "selectedWrapper");
 
-			if (!ChangeNodeMenu.NOT_SET.equals(node.getSymbol())) {
-				editMenu.setVisible(true);
-				editMenu.setFocus();
-				//Disable menu options of the selected type
-				eqList.changeNodeMenu.setEnable(node.getType(), false);
-			}
-
-			//Don't allow sums inside sums or terms in terms
-			Type parentType = node.getParent().getType();
+			// Don't allow sums inside sums or terms in terms
 			if (Type.Sum.equals(parentType) || Type.Term.equals(parentType)) {
 				eqList.changeNodeMenu.setEnable(parentType, false);
 			}
 
+			// Display editMenu if this wrapper has been set(not ???)
+			if (!ChangeNodeMenu.NOT_SET.equals(node.getSymbol())) {
+				editMenu.setVisible(true);
+				editMenu.setFocus();
+				// Disable menu options of the selected type
+				eqList.changeNodeMenu.setEnable(nodeType, false);
+			}
+
+			if (!Type.Operation.equals(nodeType)) {
+				eqList.changeNodeMenu.setVisible(true);
+			}
+
 		} else {// unselect
+
+			eqList.changeNodeMenu.setVisible(false);
 
 			editMenu.setVisible(false);
 
@@ -79,8 +88,8 @@ public class EditWrapper extends HTML {
 			if (editMenu.getDisplay() != null)
 				editMenu.getDisplay().removeFromParent();
 
-			eqList.changeNodeMenu.setEnable(node.getParent().getType(), true);
-			eqList.changeNodeMenu.setEnable(node.getType(), true);
+			eqList.changeNodeMenu.setEnable(parentType, true);
+			eqList.changeNodeMenu.setEnable(nodeType, true);
 		}
 	}
 
