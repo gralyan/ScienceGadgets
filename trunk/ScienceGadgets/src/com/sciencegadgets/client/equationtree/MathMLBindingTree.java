@@ -14,7 +14,6 @@
  */
 package com.sciencegadgets.client.equationtree;
 
-import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,7 +36,7 @@ public class MathMLBindingTree {
 	private MathMLBindingNode rightSide;
 	private LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
 	private HashMap<String, MathMLBindingNode> idMap = new HashMap<String, MathMLBindingNode>();
-	private HashMap<String, Node> idMLMap = new HashMap<String, Node>();
+	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private Node mathML;
 
 	/**
@@ -138,7 +137,7 @@ public class MathMLBindingTree {
 		public MathMLBindingNode(Element mlNode) {
 
 			if ("".equals(mlNode.getAttribute("id"))) {
-				mlNode.setAttribute("id", Math.random() + "");
+				mlNode.setAttribute("id", Random.nextInt(2147483647) + "");
 			}
 
 			this.mlNode = mlNode;
@@ -162,7 +161,7 @@ public class MathMLBindingTree {
 			String tag = type.getTag();
 
 			com.google.gwt.user.client.Element newNode = DOM.createElement(tag);
-			newNode.setAttribute("id", Math.random() + "");
+			newNode.setAttribute("id", Random.nextInt(2147483647) + "");
 
 			if (!"".equals(symbol)) {
 				newNode.setInnerText(symbol);
@@ -193,14 +192,15 @@ public class MathMLBindingTree {
 
 		/**
 		 * Adds a child at the specified index.</br> Use index -1 to add end to
-		 * the end of the child list</br>If the node is already in the tree, it is just repositioned. There is no need to remove it first</br></br> Children of this node must
-		 * reflect it's type</br> <em>Requirements:</em></br> <b>Variable and
-		 * Number</b> must have <b>exactly 0</b> children</br> <b>Term and
-		 * Sum</b> must have <b>at least 2</b> children</br> <b>Fraction and
-		 * Exponential</b> must have <b>exactly 2</b> children</br></br> The
-		 * order should be:</br> <b>Term and Sum</b> - same as the order
-		 * seen</br> <b>Fraction</b> - numerator then denominator</br>
-		 * <b>Exponent</b> - base then exponent
+		 * the end of the child list</br>If the node is already in the tree, it
+		 * is just repositioned. There is no need to remove it first</br></br>
+		 * Children of this node must reflect it's type</br>
+		 * <em>Requirements:</em></br> <b>Variable and Number</b> must have
+		 * <b>exactly 0</b> children</br> <b>Term and Sum</b> must have <b>at
+		 * least 2</b> children</br> <b>Fraction and Exponential</b> must have
+		 * <b>exactly 2</b> children</br></br> The order should be:</br> <b>Term
+		 * and Sum</b> - same as the order seen</br> <b>Fraction</b> - numerator
+		 * then denominator</br> <b>Exponent</b> - base then exponent
 		 * 
 		 * @param index
 		 *            - the placement of siblings
@@ -249,7 +249,8 @@ public class MathMLBindingTree {
 				node.setAttribute("close", "");
 			case Sum:// Confirm that there are multiple children
 				node.setAttribute("separators", "");
-				if (!Type.Term.equals(getType()) && !Type.Exponential.equals(getType())) {
+				if (!Type.Term.equals(getType())
+						&& !Type.Exponential.equals(getType())) {
 					node.setAttribute("open", "");
 					node.setAttribute("close", "");
 				}
@@ -259,13 +260,13 @@ public class MathMLBindingTree {
 			if (index < 0 || index >= mlNode.getChildCount()) {
 				mlNode.appendChild(node);
 			} else {
-					Node referenceChild = mlNode.getChild(index);
-					mlNode.insertBefore(node, referenceChild);
+				Node referenceChild = mlNode.getChild(index);
+				mlNode.insertBefore(node, referenceChild);
 			}
 
 			String id = newNode.getId();
 			if (id == "") {
-				id = Math.random() + "";
+				id = Random.nextInt(2147483647) + "";
 			}
 
 			if (!idMap.containsKey(id)) {
@@ -315,7 +316,7 @@ public class MathMLBindingTree {
 
 		public MathMLBindingNode getChildAt(int index) {
 			Node node = getMLNode().getChildNodes().getItem(index);
-			String id = ((Element) node).getId();
+			String id = ((Element) node).getAttribute("id");
 			return getNodeById(id);
 		}
 
@@ -330,11 +331,16 @@ public class MathMLBindingTree {
 		public MathMLBindingNode getNextSibling()
 				throws IndexOutOfBoundsException {
 			return getSibling(1);
+			// String id = mlNode.getNextSiblingElement().getAttribute("id");
+			// return getNodeById(id);
 		}
 
 		public MathMLBindingNode getPrevSibling()
 				throws IndexOutOfBoundsException {
 			return getSibling(-1);
+			// String id =
+			// ((Element)mlNode.getPreviousSibling()).getAttribute("id");
+			// return getNodeById(id);
 		}
 
 		/**
@@ -366,8 +372,7 @@ public class MathMLBindingTree {
 		}
 
 		public void remove() {
-
-			removeChildren(this);
+			removeChildren();
 
 			String id = getId();
 			idMap.remove(id);
@@ -375,13 +380,14 @@ public class MathMLBindingTree {
 			mlNode.removeFromParent();
 		}
 
-		private void removeChildren(MathMLBindingNode parent) {
-			LinkedList<MathMLBindingNode> children = parent.getChildren();
+		private void removeChildren() {
+			LinkedList<MathMLBindingNode> children = getChildren();
 
 			for (MathMLBindingNode child : children) {
 				String id = child.getId();
 				idMap.remove(id);
 				idMLMap.remove(id);
+				child.removeChildren();
 			}
 		}
 
@@ -512,7 +518,8 @@ public class MathMLBindingTree {
 	}
 
 	public static enum Operator {
-		DOT("&middot;"), SPACE("&nbsp;"), CROSS("&times;"), PLUS("+"), MINUS("-");
+		DOT("&middot;"), SPACE("&nbsp;"), CROSS("&times;"), PLUS("+"), MINUS(
+				"-");
 
 		private String sign;
 
@@ -563,6 +570,14 @@ public class MathMLBindingTree {
 		this.rightSide = new MathMLBindingNode((Element) sideEqSide.getItem(2));
 
 		addChildren(rootNode);
+		
+		System.out.println("idMLMap");
+		for (String key : idMLMap.keySet())
+			System.out.println(key + "\t" + idMLMap.get(key).getString());
+
+		System.out.println("idMap");
+		for (String key : idMap.keySet())
+			System.out.println(key + "\t" + idMap.get(key).toString());
 	}
 
 	private void addChildren(Element mathMLNode) {
@@ -586,10 +601,9 @@ public class MathMLBindingTree {
 			// Nodes with no children are either inner text or formatting only
 			if (currentNode.getChildCount() > 0) {
 
-				String id = Random.nextInt() + "";
+				String id = Random.nextInt(2147483647) + "";
 
 				currentNode.setAttribute("id", id);
-				// String id = currentNode.getAttribute("id");
 
 				idMLMap.put(id, currentNode);
 				idMap.put(id, new MathMLBindingNode(currentNode));

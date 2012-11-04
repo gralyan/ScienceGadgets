@@ -89,7 +89,7 @@ public class ChangeNodeMenu extends VerticalPanel {
 				switch (parent.getType()) {
 				case Term:
 				case Sum:
-					if (parent.getChildCount() > 3) {
+					if (parent.getChildCount() > 4) {
 						try {
 							MathMLBindingNode prevSib = node.getPrevSibling();
 							if (Type.Operation.equals(prevSib.getTag()))
@@ -106,15 +106,16 @@ public class ChangeNodeMenu extends VerticalPanel {
 					break;
 				case Exponential:
 				case Fraction:
+					MathMLBindingNode newParent = parent.getParent();
+					
 					switch (node.getIndex()) {
 					case 0:
-						node.getNextSibling().remove();
+						newParent.add(parent.getIndex(), node.getNextSibling());
+						break;
 					case 1:
-						node.getPrevSibling().remove();
+						newParent.add(parent.getIndex(), node.getPrevSibling());
+						break;
 					}
-
-					MathMLBindingNode newParent = parent.getParent();
-					newParent.add(parent.getIndex(), node);
 					parent.remove();
 					Moderator.reload("");
 					break;
