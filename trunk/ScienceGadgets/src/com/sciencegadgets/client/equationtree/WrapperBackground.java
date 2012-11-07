@@ -7,9 +7,10 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class WrapperBackground extends SimplePanel {
+	String id;
 	
 	public WrapperBackground(MathMLBindingNode node, String width, String height){
-//		super("");
+		this.id = "wrapBack-"+node.getId();
 		this.setWidth(width);
 		this.setHeight(height);
 		
