@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.equationtree;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -16,6 +17,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
+import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class EquationList {
@@ -23,6 +25,10 @@ public class EquationList {
 	AbsolutePanel wrapPanel = new AbsolutePanel();
 	AbsolutePanel eqPanel = new AbsolutePanel();
 	AbsolutePanel backPanel = new AbsolutePanel();
+//	LinkedList<AbsolutePanel> eqStack = new LinkedList<AbsolutePanel>();
+//	LinkedList<AbsolutePanel> wrapPanels = new LinkedList<AbsolutePanel>();
+//	LinkedList<AbsolutePanel> eqPanels = new LinkedList<AbsolutePanel>();
+//	LinkedList<AbsolutePanel> backPanels = new LinkedList<AbsolutePanel>();
 
 	private Grid eqGrid = new Grid(0, 1);
 	private MathMLBindingTree mathMLBindingTree;
@@ -42,23 +48,16 @@ public class EquationList {
 
 		this.mathMLBindingTree = jTree;
 		this.mainPanel = panel;
-
 		this.inEditMode = inEditMode;
 
 		wrapPanel.getElement().getStyle().setZIndex(3);
 		eqPanel.getElement().getStyle().setZIndex(2);
 		backPanel.getElement().getStyle().setZIndex(1);
 
-		// String panelHeight = mainPanel.getOffsetHeight()+"px";
 		String panelWidth = mainPanel.getOffsetWidth() + "px";
-
 		wrapPanel.setWidth(panelWidth);
 		eqPanel.setWidth(panelWidth);
 		backPanel.setWidth(panelWidth);
-
-		// wrapPanel.setSize(panelWidth, panelHeight);
-		// eqPanel.setSize(panelWidth, panelHeight);
-		// backPanel.setSize(panelWidth, panelHeight);
 
 		panel.add(backPanel);
 		panel.add(eqPanel, 0, 0);
@@ -67,7 +66,7 @@ public class EquationList {
 		eqGrid.setWidth(panel.getOffsetWidth() + "px");
 		eqGrid.setStyleName("textCenter");
 		eqPanel.add(eqGrid);
-
+		
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
 
@@ -115,10 +114,9 @@ public class EquationList {
 		pilot.removeFromParent();
 		placeNextEqWrappers(0);
 
-		mainPanel.getParent().setHeight(eqGrid.getOffsetHeight()/*
-																 * eqGrid.
-																 * getRowCount()
-																 */+ "px");
+		// Only show one equation at a time in the scroll panel
+		Moderator.eqHeight = eqGrid.getOffsetHeight() / eqGrid.getRowCount();
+		mainPanel.getParent().setHeight(Moderator.eqHeight + "px");
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -135,7 +133,6 @@ public class EquationList {
 		nodeLayers.get(layer).addAll(children);
 
 		for (int i = 0; i < children.size(); i++) {
-			// System.out.println("for layer: "+layer+"-"+i);
 			MathMLBindingNode curChild = children.get(i);
 
 			if (curChild.getChildCount() > 0) {
@@ -154,6 +151,7 @@ public class EquationList {
 		backPanel.setHeight(panelHeight + "px");
 
 		for (MathMLBindingNode node : nodes) {
+			//TODO overlay the parents wrapper behind the backround as wrll, maybe give the backWrappers id's and re-call them
 			String bareId = node.getId();
 
 			com.google.gwt.user.client.Element svg = DOM.getElementById(layer
@@ -172,7 +170,7 @@ public class EquationList {
 
 			top = svg.getAbsoluteTop();
 			left = svg.getAbsoluteLeft();
-			
+
 			height = JSNICalls.getElementHeight(svg);
 			heightStr = height + "px";
 			width = JSNICalls.getElementWidth(svg);

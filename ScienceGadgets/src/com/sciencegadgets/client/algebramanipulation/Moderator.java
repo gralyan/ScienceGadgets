@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -50,17 +51,20 @@ public class Moderator implements EntryPoint {
 	private Moderator moderator = this;
 	private int SGAWidth;
 	private int SGAHeight;
-	private static AbsolutePanel scienceGadgetArea = RootPanel.get("scienceGadgetArea");
+	private static AbsolutePanel scienceGadgetArea = RootPanel
+			.get("scienceGadgetArea");
 	public static SymbolPalette symbolPopup;
 	public static ChangeNodeMenu changeNodeMenu;
+	public static int eqHeight;
 
 	@Override
 	public void onModuleLoad() {
 
 		SGAHeight = Window.getClientHeight();
 		SGAWidth = Window.getClientWidth();
-		
-		scienceGadgetArea.getElement().getStyle().setPosition(Style.Position.RELATIVE);
+
+		scienceGadgetArea.getElement().getStyle()
+				.setPosition(Style.Position.RELATIVE);
 
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");
 		Window.scrollTo(scienceGadgetArea.getAbsoluteLeft(),
@@ -84,15 +88,19 @@ public class Moderator implements EntryPoint {
 		AlgOut algOut = new AlgOut();
 		scienceGadgetArea.add(algOut);
 
-		spTree.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
+		spTree.setSize(SGAWidth + "px", (SGAHeight / 30) + "px");
+		spTree.getElement().getStyle().setOverflow(Overflow.HIDDEN);
 		scienceGadgetArea.add(spTree);
+
+		scienceGadgetArea.add(new Button("up", new EqSlideHandler(true)));
+		scienceGadgetArea.add(new Button("down", new EqSlideHandler(false)));
 
 		if (inEditMode) {
 			if (changeNodeMenu == null) {
 				changeNodeMenu = new ChangeNodeMenu(scienceGadgetArea);
 			}
-//			scienceGadgetArea.add(changeNodeMenu);
-			scienceGadgetArea.add(changeNodeMenu, 0, SGAHeight*9/10);
+			// scienceGadgetArea.add(changeNodeMenu);
+			scienceGadgetArea.add(changeNodeMenu, 0, SGAHeight * 9 / 10);
 		}
 
 		try {
@@ -117,12 +125,12 @@ public class Moderator implements EntryPoint {
 		// AlgOutEntry.updateAlgOut(/*jTree.getMathML()*/mathML,
 		// jTree.getWrappers(),
 		// changeComment);
-		
+
 		eqListPanel.clear();
 		eqList = new EquationList(eqListPanel, jTree, inEditMode);
 
 		if (inEditMode) {
-		changeNodeMenu.setVisible(false);
+			changeNodeMenu.setVisible(false);
 		}
 		// TODO uncomment
 		// DropControllAssigner.assign(jTree.getWrappers(), true);
@@ -141,6 +149,22 @@ public class Moderator implements EntryPoint {
 			scienceGadgetArea.add(browserPanel);
 		}
 
+	}
+
+	private class EqSlideHandler implements ClickHandler {
+		boolean isUp;
+		public EqSlideHandler(boolean isUp) {
+			this.isUp = isUp;
+		}
+		@Override
+		public void onClick(ClickEvent event) {
+			int position = spTree.getVerticalScrollPosition();
+			if (isUp) {
+				spTree.setVerticalScrollPosition(position - eqHeight);
+			} else {
+				spTree.setVerticalScrollPosition(position + eqHeight);
+			}
+		}
 	}
 
 }
