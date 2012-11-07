@@ -30,9 +30,8 @@ public class EquationList {
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
 	private HTML pilot = new HTML();
 	private boolean inEditMode;
-	private double eqWidth=0;
-	private double eqHeight=0;
-	ChangeNodeMenu changeNodeMenu;
+	private double eqWidth = 0;
+	private double eqHeight = 0;
 	public static HTML selectedWrapper;
 
 	// Width of equation compared to panel
@@ -46,22 +45,24 @@ public class EquationList {
 
 		this.inEditMode = inEditMode;
 
-		wrapPanel.setStyleName("treeCanvas");
-		eqPanel.setStyleName("treeCanvas");
-		backPanel.setStyleName("treeCanvas");
-
 		wrapPanel.getElement().getStyle().setZIndex(3);
 		eqPanel.getElement().getStyle().setZIndex(2);
 		backPanel.getElement().getStyle().setZIndex(1);
+
+		// String panelHeight = mainPanel.getOffsetHeight()+"px";
+		String panelWidth = mainPanel.getOffsetWidth() + "px";
+
+		wrapPanel.setWidth(panelWidth);
+		eqPanel.setWidth(panelWidth);
+		backPanel.setWidth(panelWidth);
+
+		// wrapPanel.setSize(panelWidth, panelHeight);
+		// eqPanel.setSize(panelWidth, panelHeight);
+		// backPanel.setSize(panelWidth, panelHeight);
+
 		panel.add(backPanel);
 		panel.add(eqPanel, 0, 0);
 		panel.add(wrapPanel, 0, 0);
-
-		if (inEditMode) {
-			changeNodeMenu = new ChangeNodeMenu(this);
-			changeNodeMenu.getElement().getStyle().setZIndex(3);
-			panel.add(changeNodeMenu, 0, 0);
-		}
 
 		eqGrid.setWidth(panel.getOffsetWidth() + "px");
 		eqGrid.setStyleName("textCenter");
@@ -107,12 +108,17 @@ public class EquationList {
 			for (int j = 0; j < children.getLength(); j++) {
 				eq.getElement().appendChild(children.getItem(j));
 			}
-			int rowCount = eqGrid.getRowCount() + 2;
+			int rowCount = eqGrid.getRowCount() + 1;
 			eqGrid.resizeRows(rowCount);
-			eqGrid.setWidget(rowCount - 2, 0, eq);
+			eqGrid.setWidget(rowCount - 1, 0, eq);
 		}
 		pilot.removeFromParent();
 		placeNextEqWrappers(0);
+
+		mainPanel.getParent().setHeight(eqGrid.getOffsetHeight()/*
+																 * eqGrid.
+																 * getRowCount()
+																 */+ "px");
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -141,6 +147,12 @@ public class EquationList {
 	private void placeNextEqWrappers(int layer) {
 		LinkedList<MathMLBindingNode> nodes = nodeLayers.get(layer);
 
+		int panelHeight = eqGrid.getOffsetHeight();
+		mainPanel.setHeight(panelHeight + "px");
+		eqPanel.setHeight(panelHeight + "px");
+		wrapPanel.setHeight(panelHeight + "px");
+		backPanel.setHeight(panelHeight + "px");
+
 		for (MathMLBindingNode node : nodes) {
 			String bareId = node.getId();
 
@@ -153,30 +165,22 @@ public class EquationList {
 			double width = 0, height = 0;
 			String widthStr = null, heightStr = null;
 
-			// Even out the heights of all children in a sum or term
-			if ("mfenced".equalsIgnoreCase(node.getParent().getTag())) {
-				String parentBareId = node.getParent().getId();
-				com.google.gwt.user.client.Element parentSvg = (com.google.gwt.user.client.Element) DOM
-						.getElementById(layer + 1 + "-svg" + parentBareId);
+			// String parentBareId = node.getParent().getId();
+			// com.google.gwt.user.client.Element parentSvg =
+			// (com.google.gwt.user.client.Element) DOM
+			// .getElementById(layer + 1 + "-svg" + parentBareId);
 
-				height = JSNICalls.getElementHeight(parentSvg);
-				heightStr = height + "px";
-				top = parentSvg.getAbsoluteTop();
-
-			} else {
-				height = JSNICalls.getElementHeight(svg);
-				heightStr = height + "px";
-				top = svg.getAbsoluteTop();
-			}
-
+			top = svg.getAbsoluteTop();
 			left = svg.getAbsoluteLeft();
+			
+			height = JSNICalls.getElementHeight(svg);
+			heightStr = height + "px";
 			width = JSNICalls.getElementWidth(svg);
 			widthStr = width + "px";
 
 			Widget wrap;
 			if (inEditMode) {// Edit Mode
-				wrap = new EditWrapper(node, this, widthStr,
-						heightStr);
+				wrap = new EditWrapper(node, this, widthStr, heightStr);
 				HTMLPanel editMenu = ((EditWrapper) wrap).getEditMenu();
 				wrapPanel.add(editMenu, left - mainPanel.getAbsoluteLeft(), top
 						- mainPanel.getAbsoluteTop() + (int) height);
@@ -187,6 +191,7 @@ public class EquationList {
 				wrap.setHeight(heightStr);
 				wrap.setWidth(widthStr);
 			}
+
 			wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
 					- mainPanel.getAbsoluteTop());
 
@@ -200,6 +205,7 @@ public class EquationList {
 		if (nodeLayers.size() > layer + 1) {
 			placeNextEqWrappers(layer + 1);
 		}
+
 	}
 
 	/**
