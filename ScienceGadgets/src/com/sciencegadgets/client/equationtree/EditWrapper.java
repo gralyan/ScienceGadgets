@@ -25,6 +25,7 @@ public class EditWrapper extends HTML {
 	private EditWrapper thisWrapper = this;
 	EditMenu editMenu;
 	EquationList eqList;
+	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
 	public EditWrapper(MathMLBindingNode node, EquationList eqList,
 			String width, String height) {
@@ -61,7 +62,7 @@ public class EditWrapper extends HTML {
 
 			// Don't allow sums inside sums or terms in terms
 			if (Type.Sum.equals(parentType) || Type.Term.equals(parentType)) {
-				eqList.changeNodeMenu.setEnable(parentType, false);
+				changeNodeMenu.setEnable(parentType, false);
 			}
 
 			// Display editMenu if this wrapper has been set(not ???)
@@ -69,16 +70,16 @@ public class EditWrapper extends HTML {
 				editMenu.setVisible(true);
 				editMenu.setFocus();
 				// Disable menu options of the selected type
-				eqList.changeNodeMenu.setEnable(nodeType, false);
+				changeNodeMenu.setEnable(nodeType, false);
 			}
 
 			if (!Type.Operation.equals(nodeType)) {
-				eqList.changeNodeMenu.setVisible(true);
+				changeNodeMenu.setVisible(true);
 			}
 
 		} else {// unselect
 
-			eqList.changeNodeMenu.setVisible(false);
+			changeNodeMenu.setVisible(false);
 
 			editMenu.setVisible(false);
 
@@ -88,8 +89,8 @@ public class EditWrapper extends HTML {
 			if (editMenu.getDisplay() != null)
 				editMenu.getDisplay().removeFromParent();
 
-			eqList.changeNodeMenu.setEnable(parentType, true);
-			eqList.changeNodeMenu.setEnable(nodeType, true);
+			changeNodeMenu.setEnable(parentType, true);
+			changeNodeMenu.setEnable(nodeType, true);
 		}
 	}
 

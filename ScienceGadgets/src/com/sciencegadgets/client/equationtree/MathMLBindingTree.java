@@ -571,13 +571,14 @@ public class MathMLBindingTree {
 
 		addChildren(rootNode);
 		
-		System.out.println("idMLMap");
-		for (String key : idMLMap.keySet())
-			System.out.println(key + "\t" + idMLMap.get(key).getString());
-
-		System.out.println("idMap");
-		for (String key : idMap.keySet())
-			System.out.println(key + "\t" + idMap.get(key).toString());
+		//Prints both maps for debugging
+//		System.out.println("idMLMap");
+//		for (String key : idMLMap.keySet())
+//			System.out.println(key + "\t" + idMLMap.get(key).getString());
+//
+//		System.out.println("idMap");
+//		for (String key : idMap.keySet())
+//			System.out.println(key + "\t" + idMap.get(key).toString());
 	}
 
 	private void addChildren(Element mathMLNode) {

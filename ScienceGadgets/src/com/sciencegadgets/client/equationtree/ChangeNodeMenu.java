@@ -6,30 +6,29 @@ import java.util.NoSuchElementException;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
-public class ChangeNodeMenu extends VerticalPanel {
+public class ChangeNodeMenu extends HorizontalPanel {
 
 	public static final String NOT_SET = "???";
-	public EquationList eqList;
 	private HashMap<Type, Button> menuMap = new HashMap<Type, Button>();
 	private Button removeButton;
 
-	public ChangeNodeMenu(EquationList eqList) {
-		this.setVisible(false);
-		this.eqList = eqList;
+	public ChangeNodeMenu(Widget parent) {
 
 		// Make this menu a fraction of the screens width, same height
-		int width = eqList.mainPanel.getOffsetWidth() / 10;
-		int height = eqList.mainPanel.getOffsetHeight();
+		int width = parent.getOffsetWidth();
+		int height = parent.getOffsetHeight()/10;
 
 		Type[] types = MathMLBindingTree.Type.values();
-		int buttonHeight = height / (types.length);
+		int buttonWidth = width / (types.length);
 
 		// Change buttons
 		for (MathMLBindingTree.Type type : types) {
@@ -38,8 +37,8 @@ public class ChangeNodeMenu extends VerticalPanel {
 
 			ChangeNodeHandler changeHandler = new ChangeNodeHandler(type);
 			Button changeButton = new Button(type.toString(), changeHandler);
-			changeButton.setHeight(buttonHeight + "px");
-			changeButton.setWidth(width + "px");
+			changeButton.setHeight(height + "px");
+			changeButton.setWidth(buttonWidth + "px");
 			menuMap.put(type, changeButton);
 			this.add(changeButton);
 		}
@@ -47,12 +46,15 @@ public class ChangeNodeMenu extends VerticalPanel {
 		// Remove button
 		RemoveNodeHandler removeHandler = new RemoveNodeHandler();
 		Button removeButton = new Button("Remove", removeHandler);
-		removeButton.setHeight(buttonHeight + "px");
-		removeButton.setWidth(width + "px");
+		removeButton.setHeight(height + "px");
+		removeButton.setWidth(buttonWidth + "px");
 		removeButton.setStyleName("removeNodeButton");
 		this.removeButton = removeButton;
 		this.add(removeButton);
 	}
+
+		
+
 
 	public Button getButton(Type menuOption) {
 		Button button;
@@ -140,10 +142,6 @@ public class ChangeNodeMenu extends VerticalPanel {
 				MathMLBindingNode parent = node.getParent();
 				int index = node.getIndex();
 
-				// TODO
-				System.out.println("1: "
-						+ node.getTree().getMathML().getString());
-
 				try {
 					Operator operator = null;
 
@@ -180,9 +178,6 @@ public class ChangeNodeMenu extends VerticalPanel {
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();
 				}
-				// TODO
-				System.out.println("2: "
-						+ node.getTree().getMathML().getString());
 			}
 		}
 	}
