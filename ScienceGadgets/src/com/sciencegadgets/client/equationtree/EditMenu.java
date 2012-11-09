@@ -17,13 +17,14 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
-public class EditMenu extends HTMLPanel {
+public class EditMenu extends VerticalPanel {
 
 	EditWrapper editWrapper;
 	MathMLBindingNode node;
@@ -31,7 +32,6 @@ public class EditMenu extends HTMLPanel {
 	Widget display = null;
 
 	public EditMenu(EditWrapper editWrapper, String width) {
-		super("");
 
 		this.editWrapper = editWrapper;
 		this.node = editWrapper.getNode();
@@ -57,14 +57,21 @@ public class EditMenu extends HTMLPanel {
 
 			Button insertSymbolButton = new Button("α",
 					new InsertSymbolHandler());
+			insertSymbolButton.setWidth(width);
 			this.add(insertSymbolButton);
 			break;
 		case Number:
 			DoubleBox numberInput = new DoubleBox();
 			numberInput.addChangeHandler(new InputChangeHandler(numberInput));
+			numberInput.setWidth(width);
 			numberInput.setText(node.getSymbol());
 			focusable = numberInput;
 			this.add(numberInput);
+			
+			Button randomNumberButton = new Button("random",
+					new RandomNumberHandler());
+			randomNumberButton.setWidth(width);
+			this.add(randomNumberButton);
 			break;
 		case Operation:
 			HashMap<Operator, Boolean> opMap = new HashMap<Operator, Boolean>();
@@ -218,6 +225,31 @@ public class EditMenu extends HTMLPanel {
 			}
 
 			symbolPopup.show();
+		}
+	}
+	private class RandomNumberHandler implements ClickHandler {
+		
+		@Override
+		public void onClick(ClickEvent event) {
+			
+			RandomSpecification randomSpec;
+			if (Moderator.randomSpec == null) {
+				randomSpec = new RandomSpecification(node);
+				AbsolutePanel mainPanel = editWrapper.eqList.mainPanel;
+				
+				randomSpec.setPixelSize(mainPanel.getOffsetWidth(),
+						mainPanel.getOffsetHeight());
+				randomSpec.setPopupPosition(mainPanel.getAbsoluteLeft(),
+						mainPanel.getAbsoluteTop());
+				randomSpec.getElement().getStyle().setZIndex(10);
+				
+				Moderator.randomSpec = randomSpec;
+			} else {
+				randomSpec = Moderator.randomSpec;
+				randomSpec.setNode(node);
+			}
+			
+			randomSpec.show();
 		}
 	}
 

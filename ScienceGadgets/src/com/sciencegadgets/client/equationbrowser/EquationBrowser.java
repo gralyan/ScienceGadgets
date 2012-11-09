@@ -14,6 +14,7 @@
  */
 package com.sciencegadgets.client.equationbrowser;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +41,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -49,6 +49,7 @@ import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.algebramanipulation.AlgOut;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
+import com.sciencegadgets.client.equationtree.RandomSpecification;
 import com.sciencegadgets.client.equationtree.TreeEntry;
 
 //Uncomment to use as gadget////////////////////////////////////
@@ -71,39 +72,37 @@ public class EquationBrowser extends VerticalPanel {
 	private HashMap<TextBox, Element> inputBinding = new HashMap<TextBox, Element>();
 	public static HTML labelSumEq = new HTML("");
 	private Moderator moderator;
-	
+
 	private final DatabaseHelperAsync dataBase = GWT
 			.create(DatabaseHelper.class);
 
-
 	public EquationBrowser(Moderator moderator) {
 
-			this.moderator = moderator;
-			this.setStyleName("browserPanel");
+		this.moderator = moderator;
+		this.setStyleName("browserPanel");
 
-			Grid modes = new Grid(1, 2);
-			modes.setWidget(0, 0, modeSelectAlg);
-			modes.setWidget(0, 1, modeSelectSci);
-			modes.setStyleName("modes");
-			this.add(modes);
-			
-			this.add(browserPanel);
+		Grid modes = new Grid(1, 2);
+		modes.setWidget(0, 0, modeSelectAlg);
+		modes.setWidget(0, 1, modeSelectSci);
+		modes.setStyleName("modes");
+		this.add(modes);
 
-			modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
-			modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
+		this.add(browserPanel);
 
-			modeSelectAlg.setValue(true, true);
-			createAlgBrowser();
-			
+		modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
+		modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
+
+		modeSelectAlg.setValue(true, true);
+		createAlgBrowser();
+
 	}
-
 
 	private void createSciBrowser() {
 
 		// 111111111111111111111111
 		// First box, Variable list
 		VerticalPanel vpVar = new VerticalPanel();
-		Label labelVar = new Label("Variables");			
+		Label labelVar = new Label("Variables");
 		varGrid.setStyleName("selectable");
 		varGrid.getColumnFormatter().setWidth(0, "5em");
 		ScrollPanel spVar = new ScrollPanel(varGrid);
@@ -119,7 +118,7 @@ public class EquationBrowser extends VerticalPanel {
 		VerticalPanel vpEq = new VerticalPanel();
 		Label labelEq = new Label("Equations");
 		ScrollPanel spEq = new ScrollPanel(eqGrid);
-		eqGrid.addClickHandler(new EqClickHandler(eqGrid));			
+		eqGrid.addClickHandler(new EqClickHandler(eqGrid));
 		eqGrid.setStyleName("selectable");
 		eqGrid.setWidth("17em");
 		combineEqButton.setVisible(false);
@@ -169,35 +168,33 @@ public class EquationBrowser extends VerticalPanel {
 
 	}
 
-
-
 	private void createAlgBrowser() {
-		
+
 		dataBase.getAlgebraEquations(new AsyncCallback<String[]>() {
 			public void onFailure(Throwable caught) {
 				Window.alert("Can't find algebra equations :(");
 			}
-			
+
 			public void onSuccess(String[] eqList) {
 				VerticalPanel vpAlg = new VerticalPanel();
 				Label labelAlg = new Label("Algebra Practice");
 				ScrollPanel spAlg = new ScrollPanel(algGrid);
-				algGrid.addClickHandler(new EqClickHandler(algGrid));			
+				algGrid.addClickHandler(new EqClickHandler(algGrid));
 				algGrid.setStyleName("selectable");
 				vpAlg.add(labelAlg);
 				vpAlg.add(spAlg);
-				
+
 				vpAlg.setStylePrimaryName("gridBox");
 				spAlg.setStylePrimaryName("sp");
 				labelAlg.setStylePrimaryName("rowHeader");
-				
+
 				// Fill panel
 				algGrid.resizeRows(eqList.length);
 				for (int i = 0; i < eqList.length; i++) {
 					HTML cell = new HTML(eqList[i]);
 					algGrid.setWidget(i, 0, cell);
 				}
-				
+
 				browserPanel.add(vpAlg);
 			}
 		});
@@ -211,18 +208,19 @@ public class EquationBrowser extends VerticalPanel {
 			}
 
 			public void onSuccess(String[][] result) {
-				String [] varSymbols = result[0];
+				String[] varSymbols = result[0];
 				String[] varNames = result[1];
-				
+
 				varGrid.resizeRows(varSymbols.length);
-				
+
 				for (int i = 0; i < varSymbols.length; i++) {
-					varGrid.setHTML(i, 0, "<math><mi>"+varSymbols[i]+"</mi></math>"+" - "+varNames[i]);
+					varGrid.setHTML(i, 0, "<math><mi>" + varSymbols[i]
+							+ "</mi></math>" + " - " + varNames[i]);
 				}
 			}
 		});
-	}	
-	
+	}
+
 	/**
 	 * Finds all the equations with every variable in the given set, then fills
 	 * the equation list
@@ -231,17 +229,17 @@ public class EquationBrowser extends VerticalPanel {
 	 *            - set of variables
 	 */
 	private void onVarSelect(String[] vars) {
-		
+
 		dataBase.getEquationsByVariables(vars, new AsyncCallback<String[]>() {
 			public void onFailure(Throwable caught) {
 				Window.alert("Can't find variables :(");
 			}
-			
+
 			public void onSuccess(String[] eqList) {
 				eqGrid.resizeRows(eqList.length);
 				combineEqButton.setVisible(true);
 				sumGrid.clear();
-				
+
 				for (int i = 0; i < eqList.length; i++) {
 					HTML html = new HTML(eqList[i]);
 					eqGrid.setWidget(i, 0, html);
@@ -262,15 +260,15 @@ public class EquationBrowser extends VerticalPanel {
 		sumButton.setVisible(true);
 
 		// fill variable summary
-		NodeList<com.google.gwt.dom.client.Element> varNodes = labelSumEq.getElement().getElementsByTagName("mi");
-		String descHTML;
+		NodeList<com.google.gwt.dom.client.Element> varNodes = labelSumEq
+				.getElement().getElementsByTagName("mi");
 
 		sumGrid.clear(true);
 		sumGrid.resizeRows(varNodes.getLength());
 
 		inputBinding.clear();
 
-		for (int i=0 ; i<varNodes.getLength() ; i++) {
+		for (int i = 0; i < varNodes.getLength(); i++) {
 			Label varLabel = new Label(varNodes.getItem(i).getInnerText());
 
 			TextBox valueInput = new TextBox();
@@ -281,7 +279,7 @@ public class EquationBrowser extends VerticalPanel {
 			findButton.addClickHandler(new FindClickHandler(valueInput));
 
 			sumGrid.setWidget(i, 0, varLabel);
-//			sumGrid.setHTML(i, 1, descHTML);
+			// sumGrid.setHTML(i, 1, descHTML);
 			sumGrid.setWidget(i, 2, valueInput);
 			sumGrid.setWidget(i, 3, findButton);
 		}
@@ -294,8 +292,8 @@ public class EquationBrowser extends VerticalPanel {
 		 * parseJQMath(scienceGadgets.varBox.getElement());
 		 */
 
-	}		
-	
+	}
+
 	/**
 	 * Replaces all inner text of mn tags with random numbers before sending
 	 * 
@@ -303,22 +301,50 @@ public class EquationBrowser extends VerticalPanel {
 	 */
 	private void sendAlgebraEquation(String equation) {
 		HTML randomizedEquation = new HTML(equation);
-		
+
 		NodeList<com.google.gwt.dom.client.Element> variables = randomizedEquation
 				.getElement().getElementsByTagName("mn");
-		
-		for(int i=0 ; i<variables.getLength() ; i++){
+
+		for (int i = 0; i < variables.getLength(); i++) {
 			com.google.gwt.dom.client.Element var = variables.getItem(i);
-			
-			int posOrNeg = Random.nextBoolean() ? 1 : -1;
-			int randomNumber = posOrNeg * ((int) (Math.random() * 10) + 1);
-			
-			var.setInnerText(randomNumber + "");
+			// negative - lowerBound - upperBound - decimal place
+			String[] specs = var.getInnerText().split("-");
+
+			if (specs.length > 3) {
+				try {
+					String negativity = specs[0];
+					double lowerBound = Double.parseDouble(specs[1]);
+					double upperBound = Double.parseDouble(specs[2]);
+					int decPlace = Integer.parseInt(specs[3]);
+
+					// Randomize within bounds
+					double randomNumber = (Math.random() * (upperBound - lowerBound))
+							+ lowerBound;
+
+					// Make negative
+					if (RandomSpecification.ALWAYS.equals(negativity)
+							|| RandomSpecification.SOMETIMES.equals(negativity)
+							&& Random.nextBoolean()) {
+						randomNumber *= -1;
+					}
+
+					BigDecimal randomBigD = new BigDecimal(randomNumber);
+					randomBigD.setScale(decPlace);
+
+					var.setInnerText(randomBigD + "");
+
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+					var.setInnerText(((int) (Math.random() * 10) + 1) + "");
+				} catch (ArithmeticException e) {
+					e.printStackTrace();
+					var.setInnerText(((int) (Math.random() * 10) + 1) + "");
+				}
+			}
 		}
-		
-//		HTML eq = new HTML(randomizedEquation.toString());
-//		randomizedEquation.removeFromParent();
-		moderator.makeAgebraWorkspace(randomizedEquation.getElement().getFirstChildElement());
+
+		moderator.makeAgebraWorkspace(randomizedEquation.getElement()
+				.getFirstChildElement());
 	}
 
 	// //////////////////////////////////////////
@@ -359,20 +385,20 @@ public class EquationBrowser extends VerticalPanel {
 							clickedCell.getCellIndex());
 
 					equation = cell.getElement().getInnerHTML();
-					
+
 					if (table.equals(algGrid)) { // For Algebra practice mode
 						sendAlgebraEquation(equation);
 
 					} else if (table.equals(eqGrid)) { // For Science Mode
 						if (modeSelectSci.getValue()) {
-							fillSummary(clickedEl.getFirstChildElement().getInnerHTML());
+							fillSummary(clickedEl.getFirstChildElement()
+									.getInnerHTML());
 						}
 					}
 				}
 			}
 		}
 	}
-
 
 	/**
 	 * The multi-selection handler for variable list
@@ -388,12 +414,13 @@ public class EquationBrowser extends VerticalPanel {
 			Cell clickedCell = table.getCellForEvent(event);
 
 			if (clickedCell != null) {
-				
-				//The variable symbol and name should be in diferent columns but how do you get a cell element in a table?
-//				if(clickedCell.getCellIndex() != 0){
-//					table.getHTML(clickedCell.getRowIndex(), 0;)
-//				}
-				
+
+				// The variable symbol and name should be in diferent columns
+				// but how do you get a cell element in a table?
+				// if(clickedCell.getCellIndex() != 0){
+				// table.getHTML(clickedCell.getRowIndex(), 0;)
+				// }
+
 				Element clicked = clickedCell.getElement();
 				String varName = clicked.getInnerText().split(" ")[0];
 
@@ -427,9 +454,9 @@ public class EquationBrowser extends VerticalPanel {
 				AlgOut.algOut.clear(true);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
-//				onVarSelect(selectedVars);
+				// onVarSelect(selectedVars);
 				onVarSelect(selectedVars.toArray(new String[0]));
-				
+
 				if (prevSel != null) {
 					prevSel.setId("");
 				}
@@ -515,61 +542,61 @@ public class EquationBrowser extends VerticalPanel {
 		@Override
 		public void onClick(ClickEvent arg0) {
 
-//Replace known variables with given values inputed
+			// Replace known variables with given values inputed
 			for (TextBox box : inputBinding.keySet()) {
 				if (box.isEnabled()) {
 					try {
 						float value = Float.parseFloat(box.getText());
-						
+
 						Element oldElement = inputBinding.get(box);
 						Element newElement = DOM.createElement("mi");
-						oldElement.getParentElement().replaceChild(newElement, oldElement);
-//						oldElement.setInnerText(value+"");
-						newElement.setInnerText(value+"");
+						oldElement.getParentElement().replaceChild(newElement,
+								oldElement);
+						// oldElement.setInnerText(value+"");
+						newElement.setInnerText(value + "");
 					} catch (NumberFormatException e) {
 						Window.alert("All values should be numbers (except for unknown variable to find)");
 						return;
 					}
 				}
 			}
-			moderator.makeAgebraWorkspace(labelSumEq.getElement().getFirstChildElement());
+			moderator.makeAgebraWorkspace(labelSumEq.getElement()
+					.getFirstChildElement());
 		}
 
 	}
-	////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
-	//Database methods
-	///////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////
+	// //////////////////////////////////////////////////////////////////////////////
+	// //////////////////////////////////////////////////////////////////////////////
+	// Database methods
+	// /////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////////
 
-	
-	
-//	private void createDatabase(){
-//		try {
-//			new RequestBuilder(RequestBuilder.GET, "Equations.xml")
-//					.sendRequest("", new RequestCallback() {
-//
-//						@Override
-//						public void onResponseReceived(Request request,
-//								Response response) {
-//							//Gets the Equations.xml as a string
-//							String text = response.getText();
-//							//Parses Equation.xml to be queried as needed
-//							dataXML = new EquationXMLDatabase(text);
-//							createAlgBrowser();
-//						}
-//
-//						@Override
-//						public void onError(Request request, Throwable exception) {
-//							System.out.println("error");
-//
-//						}
-//
-//					});
-//		} catch (RequestException e) {
-//			System.out.println("couldn't get equations");
-//			e.printStackTrace();
-//
-//		}
-//	}
+	// private void createDatabase(){
+	// try {
+	// new RequestBuilder(RequestBuilder.GET, "Equations.xml")
+	// .sendRequest("", new RequestCallback() {
+	//
+	// @Override
+	// public void onResponseReceived(Request request,
+	// Response response) {
+	// //Gets the Equations.xml as a string
+	// String text = response.getText();
+	// //Parses Equation.xml to be queried as needed
+	// dataXML = new EquationXMLDatabase(text);
+	// createAlgBrowser();
+	// }
+	//
+	// @Override
+	// public void onError(Request request, Throwable exception) {
+	// System.out.println("error");
+	//
+	// }
+	//
+	// });
+	// } catch (RequestException e) {
+	// System.out.println("couldn't get equations");
+	// e.printStackTrace();
+	//
+	// }
+	// }
 }
