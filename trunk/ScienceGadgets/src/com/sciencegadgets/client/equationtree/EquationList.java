@@ -3,6 +3,8 @@ package com.sciencegadgets.client.equationtree;
 import java.util.LinkedList;
 import java.util.Stack;
 
+import com.google.gwt.animation.client.Animation;
+import com.google.gwt.core.client.Duration;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -22,15 +24,12 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNod
 
 public class EquationList {
 	AbsolutePanel mainPanel;
-	AbsolutePanel wrapPanel = new AbsolutePanel();
-	AbsolutePanel eqPanel = new AbsolutePanel();
-	AbsolutePanel backPanel = new AbsolutePanel();
-//	LinkedList<AbsolutePanel> eqStack = new LinkedList<AbsolutePanel>();
-//	LinkedList<AbsolutePanel> wrapPanels = new LinkedList<AbsolutePanel>();
-//	LinkedList<AbsolutePanel> eqPanels = new LinkedList<AbsolutePanel>();
-//	LinkedList<AbsolutePanel> backPanels = new LinkedList<AbsolutePanel>();
+	// AbsolutePanel wrapPanel = new AbsolutePanel();
+	// AbsolutePanel eqPanel = new AbsolutePanel();
+	// AbsolutePanel backPanel = new AbsolutePanel();
+	LinkedList<EquationLayer> eqLayers = new LinkedList<EquationLayer>();
 
-	private Grid eqGrid = new Grid(0, 1);
+	// private Grid eqGrid = new Grid(0, 1);
 	private MathMLBindingTree mathMLBindingTree;
 	private Timer timer;
 	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
@@ -38,6 +37,7 @@ public class EquationList {
 	private boolean inEditMode;
 	private double eqWidth = 0;
 	private double eqHeight = 0;
+	private EquationLayer focusLayer;
 	public static HTML selectedWrapper;
 
 	// Width of equation compared to panel
@@ -50,23 +50,23 @@ public class EquationList {
 		this.mainPanel = panel;
 		this.inEditMode = inEditMode;
 
-		wrapPanel.getElement().getStyle().setZIndex(3);
-		eqPanel.getElement().getStyle().setZIndex(2);
-		backPanel.getElement().getStyle().setZIndex(1);
+		// wrapPanel.getElement().getStyle().setZIndex(3);
+		// eqPanel.getElement().getStyle().setZIndex(2);
+		// backPanel.getElement().getStyle().setZIndex(1);
+		//
+		// String panelWidth = mainPanel.getOffsetWidth() + "px";
+		// wrapPanel.setWidth(panelWidth);
+		// eqPanel.setWidth(panelWidth);
+		// backPanel.setWidth(panelWidth);
+		//
+		// panel.add(backPanel);
+		// panel.add(eqPanel, 0, 0);
+		// panel.add(wrapPanel, 0, 0);
+		//
+		// eqGrid.setWidth(panel.getOffsetWidth() + "px");
+		// eqGrid.setStyleName("textCenter");
+		// eqPanel.add(eqGrid);
 
-		String panelWidth = mainPanel.getOffsetWidth() + "px";
-		wrapPanel.setWidth(panelWidth);
-		eqPanel.setWidth(panelWidth);
-		backPanel.setWidth(panelWidth);
-
-		panel.add(backPanel);
-		panel.add(eqPanel, 0, 0);
-		panel.add(wrapPanel, 0, 0);
-
-		eqGrid.setWidth(panel.getOffsetWidth() + "px");
-		eqGrid.setStyleName("textCenter");
-		eqPanel.add(eqGrid);
-		
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
 
@@ -83,7 +83,7 @@ public class EquationList {
 				checkIfWeCanDraw();
 			}
 		};
-		timer.scheduleRepeating(100);
+		timer.scheduleRepeating(50);
 	}
 
 	private void checkIfWeCanDraw() {
@@ -107,16 +107,75 @@ public class EquationList {
 			for (int j = 0; j < children.getLength(); j++) {
 				eq.getElement().appendChild(children.getItem(j));
 			}
-			int rowCount = eqGrid.getRowCount() + 1;
-			eqGrid.resizeRows(rowCount);
-			eqGrid.setWidget(rowCount - 1, 0, eq);
+			// int rowCount = eqGrid.getRowCount() + 1;
+			// eqGrid.resizeRows(rowCount);
+			// eqGrid.setWidget(rowCount - 1, 0, eq);
+
+			EquationLayer eqLayer = new EquationLayer();
+			eqLayer.setSize(mainPanel.getOffsetWidth() + "px",
+					mainPanel.getOffsetHeight() + "px");
+
+			eqLayer.eqPanel.add(eq);
+
+			eqLayers.add(eqLayer);
+			mainPanel.add(eqLayer, 0, 0);
+
+			// if (i != 1) {
+			// eqLayer.setOpacity(0, 0);
+			// } else {
+			// focusLayer = eqLayer;
+			// }
 		}
 		pilot.removeFromParent();
 		placeNextEqWrappers(0);
 
+		for (EquationLayer eqLayer : eqLayers) {
+			eqLayer.setVisible(false);
+		}
+		focusLayer = eqLayers.get(0);
+		focusLayer.setVisible(true);
+
 		// Only show one equation at a time in the scroll panel
-		Moderator.eqHeight = eqGrid.getOffsetHeight() / eqGrid.getRowCount();
-		mainPanel.getParent().setHeight(Moderator.eqHeight + "px");
+		// Moderator.eqHeight = eqGrid.getOffsetHeight() / eqGrid.getRowCount();
+		// mainPanel.getParent().setHeight(Moderator.eqHeight + "px");
+	}
+
+	public void setFocusUp() {
+		setFocus(1);
+	}
+
+	public void setFocusDown() {
+		setFocus(-1);
+	}
+
+	public void setFocus(int layersAway) {
+		try {
+			final EquationLayer prevFocus = focusLayer;
+			int newFocusIndex = eqLayers.indexOf(focusLayer) + layersAway;
+			final EquationLayer newFocus = eqLayers.get(newFocusIndex);
+			
+			newFocus.setOpacity(0);
+			newFocus.setVisible(true);
+
+			Animation fade = new Animation() {
+				@Override
+				protected void onUpdate(double progress) {
+					newFocus.setOpacity(progress);
+					prevFocus.setOpacity(1-progress);
+				}
+
+				@Override
+				protected void onComplete() {
+					super.onComplete();
+					prevFocus.setVisible(false);
+				}
+			};
+			fade.run(300, Duration.currentTimeMillis()-100);
+			
+
+			focusLayer = newFocus;
+		} catch (IndexOutOfBoundsException e) {
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -144,14 +203,15 @@ public class EquationList {
 	private void placeNextEqWrappers(int layer) {
 		LinkedList<MathMLBindingNode> nodes = nodeLayers.get(layer);
 
-		int panelHeight = eqGrid.getOffsetHeight();
-		mainPanel.setHeight(panelHeight + "px");
-		eqPanel.setHeight(panelHeight + "px");
-		wrapPanel.setHeight(panelHeight + "px");
-		backPanel.setHeight(panelHeight + "px");
+		EquationLayer eqLayer = eqLayers.get(layer);
+
+		// int panelHeight = eqGrid.getOffsetHeight();
+		// mainPanel.setHeight(panelHeight + "px");
+		// eqPanel.setHeight(panelHeight + "px");
+		// wrapPanel.setHeight(panelHeight + "px");
+		// backPanel.setHeight(panelHeight + "px");
 
 		for (MathMLBindingNode node : nodes) {
-			//TODO overlay the parents wrapper behind the backround as wrll, maybe give the backWrappers id's and re-call them
 			String bareId = node.getId();
 
 			com.google.gwt.user.client.Element svg = DOM.getElementById(layer
@@ -159,48 +219,52 @@ public class EquationList {
 			svg.setAttribute("fill", "black");
 			svg.setAttribute("stroke", "black");
 
-			int left = 0, top = 0;
-			double width = 0, height = 0;
-			String widthStr = null, heightStr = null;
+			int top = svg.getAbsoluteTop();
+			int left = svg.getAbsoluteLeft();
 
-			// String parentBareId = node.getParent().getId();
-			// com.google.gwt.user.client.Element parentSvg =
-			// (com.google.gwt.user.client.Element) DOM
-			// .getElementById(layer + 1 + "-svg" + parentBareId);
-
-			top = svg.getAbsoluteTop();
-			left = svg.getAbsoluteLeft();
-
-			height = JSNICalls.getElementHeight(svg);
-			heightStr = height + "px";
-			width = JSNICalls.getElementWidth(svg);
-			widthStr = width + "px";
+			double height = JSNICalls.getElementHeight(svg);
+			String heightStr = height + "px";
+			String widthStr = JSNICalls.getElementWidth(svg) + "px";
 
 			Widget wrap;
-			if (inEditMode) {// Edit Mode
+			if (inEditMode) {// Edit Mode////////////////////////////
 				wrap = new EditWrapper(node, this, widthStr, heightStr);
-				HTMLPanel editMenu = ((EditWrapper) wrap).getEditMenu();
-				wrapPanel.add(editMenu, left - mainPanel.getAbsoluteLeft(), top
-						- mainPanel.getAbsoluteTop() + (int) height);
+				EditMenu editMenu = ((EditWrapper) wrap).getEditMenu();
+				eqLayer.wrapPanel.add(editMenu,
+						left - mainPanel.getAbsoluteLeft(),
+						top - mainPanel.getAbsoluteTop() + (int) height);
 
-			} else {// Solver Mode
+			} else {// Solver Mode////////////////////////////////////
 				wrap = node.getWrapper();
 				((MLElementWrapper) wrap).setSelectedWrapper(selectedWrapper);
 				wrap.setHeight(heightStr);
 				wrap.setWidth(widthStr);
 			}
 
-			wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
+			eqLayer.wrapPanel.add(wrap, left - mainPanel.getAbsoluteLeft(), top
 					- mainPanel.getAbsoluteTop());
 
+			// Parent background
+			String parentBareId = node.getParent().getId();
+			com.google.gwt.user.client.Element parentSvg = (com.google.gwt.user.client.Element) DOM
+					.getElementById(layer + 1 + "-svg" + parentBareId);
+
+			WrapperBackground pWrapBack = new WrapperBackground(
+					node.getParent(),//
+					JSNICalls.getElementWidth(parentSvg) + "px",
+					JSNICalls.getElementHeight(parentSvg) + "px");
+			eqLayer.parentBackPanel.add(pWrapBack, //
+					parentSvg.getAbsoluteLeft() - mainPanel.getAbsoluteLeft(),//
+					parentSvg.getAbsoluteTop() - mainPanel.getAbsoluteTop());
+
 			// background images
-			WrapperBackground wrapBackground = new WrapperBackground(node,
-					widthStr, heightStr);
-			backPanel.add(wrapBackground, left - mainPanel.getAbsoluteLeft(),
+			WrapperBackground wrapBack = new WrapperBackground(node, widthStr,
+					heightStr);
+			eqLayer.backPanel.add(wrapBack, left - mainPanel.getAbsoluteLeft(),
 					top - mainPanel.getAbsoluteTop());
 
 		}
-		if (nodeLayers.size() > layer + 1) {
+		if (eqLayers.size() > layer + 1) {
 			placeNextEqWrappers(layer + 1);
 		}
 

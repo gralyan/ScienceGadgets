@@ -34,6 +34,7 @@ import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.equationtree.ChangeNodeMenu;
 import com.sciencegadgets.client.equationtree.EquationList;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
+import com.sciencegadgets.client.equationtree.RandomSpecification;
 import com.sciencegadgets.client.equationtree.SymbolPalette;
 
 public class Moderator implements EntryPoint {
@@ -54,6 +55,7 @@ public class Moderator implements EntryPoint {
 	private static AbsolutePanel scienceGadgetArea = RootPanel
 			.get("scienceGadgetArea");
 	public static SymbolPalette symbolPopup;
+	public static RandomSpecification randomSpec;
 	public static ChangeNodeMenu changeNodeMenu;
 	public static int eqHeight;
 
@@ -88,7 +90,8 @@ public class Moderator implements EntryPoint {
 		AlgOut algOut = new AlgOut();
 		scienceGadgetArea.add(algOut);
 
-		spTree.setSize(SGAWidth + "px", (SGAHeight / 30) + "px");
+		eqListPanel.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
+		spTree.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
 		spTree.getElement().getStyle().setOverflow(Overflow.HIDDEN);
 		scienceGadgetArea.add(spTree);
 
@@ -145,6 +148,9 @@ public class Moderator implements EntryPoint {
 			if (symbolPopup != null && symbolPopup.isShowing()) {
 				symbolPopup.hide();
 			}
+			if (randomSpec != null && randomSpec.isShowing()) {
+				randomSpec.hide();
+			}
 			EquationBrowser browserPanel = new EquationBrowser(moderator);
 			scienceGadgetArea.add(browserPanel);
 		}
@@ -153,17 +159,24 @@ public class Moderator implements EntryPoint {
 
 	private class EqSlideHandler implements ClickHandler {
 		boolean isUp;
+
 		public EqSlideHandler(boolean isUp) {
 			this.isUp = isUp;
 		}
+
 		@Override
 		public void onClick(ClickEvent event) {
-			int position = spTree.getVerticalScrollPosition();
 			if (isUp) {
-				spTree.setVerticalScrollPosition(position - eqHeight);
+				eqList.setFocusUp();
 			} else {
-				spTree.setVerticalScrollPosition(position + eqHeight);
+				eqList.setFocusDown();
 			}
+			// int position = spTree.getVerticalScrollPosition();
+			// if (isUp) {
+			// spTree.setVerticalScrollPosition(position - eqHeight);
+			// } else {
+			// spTree.setVerticalScrollPosition(position + eqHeight);
+			// }
 		}
 	}
 
