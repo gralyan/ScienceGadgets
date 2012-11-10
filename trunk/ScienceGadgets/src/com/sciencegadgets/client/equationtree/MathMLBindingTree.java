@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -222,13 +223,16 @@ public class MathMLBindingTree {
 							+ " can't have (" + childCount + ") children");
 
 			switch (newNodeType) {
-			case Number:// Confirm that the symbol is a number, then fall into
-						// Variable
-				try {
-					Double.parseDouble(newNode.getSymbol());
-				} catch (NumberFormatException e) {
-					throw new NumberFormatException("The number node "
-							+ newNode.toString() + " must have a number");
+			case Number:
+				// Confirm that the symbol is a number or random number spec
+				// then fall into Variable
+				if (!newNode.getSymbol().contains("-")) {//specs have "-"
+					try {
+						Double.parseDouble(newNode.getSymbol());
+					} catch (NumberFormatException e) {
+						throw new NumberFormatException("The number node "
+								+ newNode.toString() + " must have a number");
+					}
 				}
 			case Variable:// Confirm that there are no children
 			case Operation:
@@ -331,16 +335,11 @@ public class MathMLBindingTree {
 		public MathMLBindingNode getNextSibling()
 				throws IndexOutOfBoundsException {
 			return getSibling(1);
-			// String id = mlNode.getNextSiblingElement().getAttribute("id");
-			// return getNodeById(id);
 		}
 
 		public MathMLBindingNode getPrevSibling()
 				throws IndexOutOfBoundsException {
 			return getSibling(-1);
-			// String id =
-			// ((Element)mlNode.getPreviousSibling()).getAttribute("id");
-			// return getNodeById(id);
 		}
 
 		/**
@@ -363,7 +362,7 @@ public class MathMLBindingTree {
 			try {
 				MathMLBindingNode sibling = parent.getChildAt(siblingIndex);
 				return sibling;
-			} catch (IndexOutOfBoundsException e) {
+			} catch (JavaScriptException e) {
 				throw new IndexOutOfBoundsException(
 						"there is no child at index " + siblingIndex + ", "
 								+ indexesAway + "indexes away from sibling: \n"
@@ -570,15 +569,15 @@ public class MathMLBindingTree {
 		this.rightSide = new MathMLBindingNode((Element) sideEqSide.getItem(2));
 
 		addChildren(rootNode);
-		
-		//Prints both maps for debugging
-//		System.out.println("idMLMap");
-//		for (String key : idMLMap.keySet())
-//			System.out.println(key + "\t" + idMLMap.get(key).getString());
-//
-//		System.out.println("idMap");
-//		for (String key : idMap.keySet())
-//			System.out.println(key + "\t" + idMap.get(key).toString());
+
+		// Prints both maps for debugging
+		// System.out.println("idMLMap");
+		// for (String key : idMLMap.keySet())
+		// System.out.println(key + "\t" + idMLMap.get(key).getString());
+		//
+		// System.out.println("idMap");
+		// for (String key : idMap.keySet())
+		// System.out.println(key + "\t" + idMap.get(key).toString());
 	}
 
 	private void addChildren(Element mathMLNode) {

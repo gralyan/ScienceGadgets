@@ -16,6 +16,7 @@ package com.sciencegadgets.client.algebramanipulation;
 
 import java.util.LinkedList;
 
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -84,7 +85,9 @@ public class Moderator implements EntryPoint {
 	 */
 	public void makeAgebraWorkspace(Element mathML) {
 
+		
 		scienceGadgetArea.clear();
+
 		scienceGadgetArea.add(backToBrowserButton);
 
 		AlgOut algOut = new AlgOut();
@@ -171,13 +174,30 @@ public class Moderator implements EntryPoint {
 			} else {
 				eqList.setFocusDown();
 			}
-			// int position = spTree.getVerticalScrollPosition();
-			// if (isUp) {
-			// spTree.setVerticalScrollPosition(position - eqHeight);
-			// } else {
-			// spTree.setVerticalScrollPosition(position + eqHeight);
-			// }
 		}
+	}
+
+	private class Fade extends Animation {
+
+		boolean isFadeOut;
+		Element element;
+		double opacity;
+
+		/**
+		 * Fading transition
+		 * @param out - if true: fade out</br>if false: fade in
+		 */
+		@SuppressWarnings("unused")
+		Fade(Element element, boolean isFadeOut) {
+			this.isFadeOut = isFadeOut;
+			this.element = element;
+		}
+		@Override
+		protected void onUpdate(double progress) {
+			opacity = isFadeOut ? 1-progress  : progress;
+			element.getStyle().setOpacity(opacity);
+		}
+
 	}
 
 }
