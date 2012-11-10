@@ -307,10 +307,13 @@ public class EquationBrowser extends VerticalPanel {
 
 		for (int i = 0; i < variables.getLength(); i++) {
 			com.google.gwt.dom.client.Element var = variables.getItem(i);
-			// negative - lowerBound - upperBound - decimal place
-			String[] specs = var.getInnerText().split("-");
+			String varText = var.getInnerText();
 
-			if (specs.length > 3) {
+			if (varText.contains("-")) {
+				
+				// negative - lowerBound - upperBound - decimal place
+				String[] specs = varText.split("-");
+
 				try {
 					String negativity = specs[0];
 					double lowerBound = Double.parseDouble(specs[1]);
