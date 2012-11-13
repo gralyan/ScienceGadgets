@@ -30,33 +30,30 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.equationtree.ChangeNodeMenu;
-import com.sciencegadgets.client.equationtree.EquationList;
+import com.sciencegadgets.client.equationtree.EquationPanel;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.RandomSpecification;
 import com.sciencegadgets.client.equationtree.SymbolPalette;
 
 public class Moderator implements EntryPoint {
 
-	static EquationList eqList;
-	private static AbsolutePanel eqPanelExchange = new AbsolutePanel();
-	private static ScrollPanel spTree = new ScrollPanel(eqPanelExchange);
+	static EquationPanel eqPanel;
+	private static ScrollPanel spTree = new ScrollPanel();
 
-	// private static DropControllAssigner dropAssigner;
 	public static MathMLBindingTree jTree;
 	public static LinkedList<AbstractMathDropController> dropControllers;
 	static boolean inEditMode = true;
-	private Button backToBrowserButton = new Button("Back",
-			new BackButtonHandler());
 	private Moderator moderator = this;
 	private int SGAWidth;
 	private int SGAHeight;
-	private static AbsolutePanel scienceGadgetArea = RootPanel
-			.get("scienceGadgetArea");
 	public static SymbolPalette symbolPopup;
 	public static RandomSpecification randomSpec;
 	public static ChangeNodeMenu changeNodeMenu;
-	public static int eqHeight;
-	private static EquationList newEqList;
+	private Button backToBrowserButton = new Button("Back",
+			new BackButtonHandler());
+	private static AbsolutePanel scienceGadgetArea = RootPanel
+			.get("scienceGadgetArea");
+	// private static DropControllAssigner dropAssigner;
 
 	@Override
 	public void onModuleLoad() {
@@ -91,7 +88,6 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.add(algOut);
 
 		spTree.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
-		eqPanelExchange.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
 		scienceGadgetArea.add(spTree);
 
 		scienceGadgetArea.add(new Button("up", new EqSlideHandler(true)));
@@ -127,35 +123,26 @@ public class Moderator implements EntryPoint {
 		// jTree.getWrappers(),
 		// changeComment);
 
-		if (eqList != null) {
-			Fade fade = new Fade(eqList.getElement(), true);
-			fade.run(700);
-		}
+//		if (eqList != null) {
+//			Fade fade = new Fade(eqList.getElement(), true);
+//			fade.run(700);
+//		}
+		if (eqPanel != null)
+			spTree.remove(eqPanel);
 
-		newEqList = new EquationList(jTree, inEditMode);
-
-		if (eqPanelExchange.getWidgetCount() == 0)
-			eqPanelExchange.add(newEqList);
-		else
-			eqPanelExchange.add(newEqList, 0, 0);
-
-		newEqList.getElement().getStyle().setOpacity(0);
+		eqPanel = new EquationPanel(jTree, inEditMode);
+		 spTree.add(eqPanel);
 
 		if (inEditMode) {
 			changeNodeMenu.setVisible(false);
 		}
+		
 		// TODO uncomment
 		// DropControllAssigner.assign(jTree.getWrappers(), true);
-
 	}
 
 	public static void onEqReady() {
-		if (eqList != null) 
-			eqPanelExchange.remove(eqList);
-		
-		eqList = newEqList;
-		newEqList.getElement().getStyle().setOpacity(1);
-
+		eqPanel.getElement().getStyle().setOpacity(1);
 	}
 
 	class BackButtonHandler implements ClickHandler {
@@ -185,9 +172,9 @@ public class Moderator implements EntryPoint {
 		@Override
 		public void onClick(ClickEvent event) {
 			if (isUp) {
-				eqList.setFocusUp();
+				eqPanel.setFocusUp();
 			} else {
-				eqList.setFocusDown();
+				eqPanel.setFocusDown();
 			}
 		}
 	}
@@ -215,11 +202,4 @@ class Fade extends Animation {
 		opacity = isFadeOut ? 1 - progress : progress;
 		element.getStyle().setOpacity(opacity);
 	}
-
-	@Override
-	protected void onComplete() {
-		// TODO Auto-generated method stub
-		super.onComplete();
-	}
-
 }

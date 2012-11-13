@@ -1,11 +1,16 @@
 package com.sciencegadgets.client;
 
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
+
 
 public class JSNICalls {
 
 	public static native void parseMathJax(String areaId) /*-{
 		$doc.prettify(areaId);
+	}-*/;
+	
+	public static native void parseMathJax(Element element) /*-{
+		$doc.prettify(element);
 	}-*/;
 
 	public static native double getElementWidth(Element elm) /*-{

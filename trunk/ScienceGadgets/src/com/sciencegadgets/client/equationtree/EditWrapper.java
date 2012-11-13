@@ -20,10 +20,10 @@ public class EditWrapper extends HTML {
 	static EditWrapper selectedWrapper;
 	private EditWrapper thisWrapper = this;
 	EditMenu editMenu;
-	EquationList eqList;
+	EquationPanel eqList;
 	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
-	public EditWrapper(MathMLBindingNode node, EquationList eqList,
+	public EditWrapper(MathMLBindingNode node, EquationPanel eqList,
 			String width, String height) {
 
 		setWidth(width);

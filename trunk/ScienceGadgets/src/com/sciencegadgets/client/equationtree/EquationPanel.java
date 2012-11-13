@@ -13,6 +13,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -24,7 +25,7 @@ import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
-public class EquationList extends AbsolutePanel {
+public class EquationPanel extends AbsolutePanel {
 	AbsolutePanel mainPanel = this;
 	public LinkedList<EquationLayer> eqLayers = new LinkedList<EquationLayer>();
 
@@ -40,11 +41,11 @@ public class EquationList extends AbsolutePanel {
 	// Width of equation compared to panel
 	private static final double EQUATION_FRACTION = 0.75;
 
-	public EquationList(final MathMLBindingTree jTree, Boolean inEditMode) {
+	public EquationPanel(final MathMLBindingTree jTree, Boolean inEditMode) {
 
 		this.mathMLBindingTree = jTree;
 		this.inEditMode = inEditMode;
-
+		
 		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
 		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
 	}
@@ -56,11 +57,12 @@ public class EquationList extends AbsolutePanel {
 				.getOffsetHeight());
 
 		// Pilot equation used to transform to mathJax
+		//maybe enclose in: <script type="math/mml">
 		Element pilotEl = pilot.getElement();
 		pilotEl.appendChild(mathMLBindingTree.getMathML());
 		pilotEl.setAttribute("id", "pilotMathJax");
 		this.add(pilot);
-		JSNICalls.parseMathJax("pilotMathJax");
+		JSNICalls.parseMathJax(pilotEl);
 
 		// Wait for mathjax to format first
 		timer = new Timer() {
