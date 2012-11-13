@@ -20,14 +20,11 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
@@ -41,8 +38,8 @@ import com.sciencegadgets.client.equationtree.SymbolPalette;
 public class Moderator implements EntryPoint {
 
 	static EquationList eqList;
-	static AbsolutePanel eqListPanel = new AbsolutePanel();
-	private static ScrollPanel spTree = new ScrollPanel(eqListPanel);
+	private static AbsolutePanel eqPanelExchange = new AbsolutePanel();
+	private static ScrollPanel spTree = new ScrollPanel(eqPanelExchange);
 
 	// private static DropControllAssigner dropAssigner;
 	public static MathMLBindingTree jTree;
@@ -59,6 +56,7 @@ public class Moderator implements EntryPoint {
 	public static RandomSpecification randomSpec;
 	public static ChangeNodeMenu changeNodeMenu;
 	public static int eqHeight;
+	private static EquationList newEqList;
 
 	@Override
 	public void onModuleLoad() {
@@ -85,7 +83,6 @@ public class Moderator implements EntryPoint {
 	 */
 	public void makeAgebraWorkspace(Element mathML) {
 
-		
 		scienceGadgetArea.clear();
 
 		scienceGadgetArea.add(backToBrowserButton);
@@ -93,9 +90,8 @@ public class Moderator implements EntryPoint {
 		AlgOut algOut = new AlgOut();
 		scienceGadgetArea.add(algOut);
 
-		eqListPanel.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
 		spTree.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
-		spTree.getElement().getStyle().setOverflow(Overflow.HIDDEN);
+		eqPanelExchange.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
 		scienceGadgetArea.add(spTree);
 
 		scienceGadgetArea.add(new Button("up", new EqSlideHandler(true)));
@@ -105,7 +101,6 @@ public class Moderator implements EntryPoint {
 			if (changeNodeMenu == null) {
 				changeNodeMenu = new ChangeNodeMenu(scienceGadgetArea);
 			}
-			// scienceGadgetArea.add(changeNodeMenu);
 			scienceGadgetArea.add(changeNodeMenu, 0, SGAHeight * 9 / 10);
 		}
 
@@ -132,14 +127,34 @@ public class Moderator implements EntryPoint {
 		// jTree.getWrappers(),
 		// changeComment);
 
-		eqListPanel.clear();
-		eqList = new EquationList(eqListPanel, jTree, inEditMode);
+		if (eqList != null) {
+			Fade fade = new Fade(eqList.getElement(), true);
+			fade.run(700);
+		}
+
+		newEqList = new EquationList(jTree, inEditMode);
+
+		if (eqPanelExchange.getWidgetCount() == 0)
+			eqPanelExchange.add(newEqList);
+		else
+			eqPanelExchange.add(newEqList, 0, 0);
+
+		newEqList.getElement().getStyle().setOpacity(0);
 
 		if (inEditMode) {
 			changeNodeMenu.setVisible(false);
 		}
 		// TODO uncomment
 		// DropControllAssigner.assign(jTree.getWrappers(), true);
+
+	}
+
+	public static void onEqReady() {
+		if (eqList != null) 
+			eqPanelExchange.remove(eqList);
+		
+		eqList = newEqList;
+		newEqList.getElement().getStyle().setOpacity(1);
 
 	}
 
@@ -176,28 +191,35 @@ public class Moderator implements EntryPoint {
 			}
 		}
 	}
+}
 
-	private class Fade extends Animation {
+class Fade extends Animation {
 
-		boolean isFadeOut;
-		Element element;
-		double opacity;
+	public boolean isFadeOut;
+	public Element element;
+	public double opacity;
 
-		/**
-		 * Fading transition
-		 * @param out - if true: fade out</br>if false: fade in
-		 */
-		@SuppressWarnings("unused")
-		Fade(Element element, boolean isFadeOut) {
-			this.isFadeOut = isFadeOut;
-			this.element = element;
-		}
-		@Override
-		protected void onUpdate(double progress) {
-			opacity = isFadeOut ? 1-progress  : progress;
-			element.getStyle().setOpacity(opacity);
-		}
+	/**
+	 * Fading transition
+	 * 
+	 * @param out
+	 *            - if true: fade out</br>if false: fade in
+	 */
+	Fade(Element element, boolean isFadeOut) {
+		this.isFadeOut = isFadeOut;
+		this.element = element;
+	}
 
+	@Override
+	protected void onUpdate(double progress) {
+		opacity = isFadeOut ? 1 - progress : progress;
+		element.getStyle().setOpacity(opacity);
+	}
+
+	@Override
+	protected void onComplete() {
+		// TODO Auto-generated method stub
+		super.onComplete();
 	}
 
 }

@@ -8,12 +8,8 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
@@ -54,7 +50,11 @@ public class EditWrapper extends HTML {
 		if (select) {
 
 			if (selectedWrapper != null) {
-				((EditWrapper) selectedWrapper).select(false);
+				if(this.equals(selectedWrapper)){
+					Window.alert("double");
+				}else{
+					((EditWrapper) selectedWrapper).select(false);
+				}
 			}
 
 			selectedWrapper = this;
@@ -89,8 +89,9 @@ public class EditWrapper extends HTML {
 			if (editMenu.getDisplay() != null)
 				editMenu.getDisplay().removeFromParent();
 
-			changeNodeMenu.setEnable(parentType, true);
-			changeNodeMenu.setEnable(nodeType, true);
+			for (Type type : Type.values()) {
+				changeNodeMenu.setEnable(type, true);
+			}
 		}
 	}
 
@@ -110,8 +111,6 @@ public class EditWrapper extends HTML {
 		@Override
 		public void onClick(ClickEvent event) {
 			select(true);
-			// EquationTransporter.selectEquation(node.getTree().getMathML(),
-			// "");
 		}
 	}
 
