@@ -47,6 +47,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebramanipulation.AlgOut;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.RandomSpecification;
