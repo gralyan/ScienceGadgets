@@ -94,7 +94,7 @@ public class ChangeNodeMenu extends HorizontalPanel {
 					if (parent.getChildCount() > 4) {
 						try {
 							MathMLBindingNode prevSib = node.getPrevSibling();
-							if (Type.Operation.equals(prevSib.getTag()))
+							if (Type.Operation.equals(prevSib.getType()))
 								prevSib.remove();
 						} catch (IndexOutOfBoundsException e) {
 						}

@@ -21,16 +21,18 @@ public class EditWrapper extends HTML {
 	private EditWrapper thisWrapper = this;
 	EditMenu editMenu;
 	EquationPanel eqList;
+	EquationLayer eqLayer;
 	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
 	public EditWrapper(MathMLBindingNode node, EquationPanel eqList,
-			String width, String height) {
+			EquationLayer eqLayer, String width, String height) {
 
 		setWidth(width);
 		setHeight(height);
 
 		this.node = node;
 		this.eqList = eqList;
+		this.eqLayer = eqLayer;
 		this.selectedWrapper = (EditWrapper) eqList.selectedWrapper;
 
 		editMenu = new EditMenu(this, width);
@@ -44,14 +46,17 @@ public class EditWrapper extends HTML {
 	}
 
 	void select(Boolean select) {
-		Type parentType = node.getParent().getType();
+		Type parentType = null;
+		if(!"math".equalsIgnoreCase(node.getParent().getTag())){
+			parentType = node.getParent().getType();
+		}
 		Type nodeType = node.getType();
 
 		if (select) {
 
 			if (selectedWrapper != null) {
-				if(this.equals(selectedWrapper)){
-					Window.alert("double");
+				if(this.equals(selectedWrapper) && node.getType().hasChildren()){
+					eqList.setFocus(eqLayer);
 				}else{
 					((EditWrapper) selectedWrapper).select(false);
 				}

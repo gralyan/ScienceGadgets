@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.equationtree;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.animation.client.Animation;
@@ -15,6 +16,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.algebramanipulation.Fade;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -22,16 +24,19 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.Type;
 
 public class EquationPanel extends AbsolutePanel {
 	AbsolutePanel mainPanel = this;
-	public LinkedList<EquationLayer> eqLayers = new LinkedList<EquationLayer>();
+	// public LinkedList<EquationLayer> eqLayers = new
+	// LinkedList<EquationLayer>();
+	HashMap<MathMLBindingNode, EquationLayer> eqLayerMap = new HashMap<MathMLBindingNode, EquationLayer>();
 
 	private MathMLBindingTree mathMLBindingTree;
 	private Timer timer;
-	private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new LinkedList<LinkedList<MathMLBindingNode>>();
+	// private LinkedList<LinkedList<MathMLBindingNode>> nodeLayers = new
+	// LinkedList<LinkedList<MathMLBindingNode>>();
 	private HTML pilot = new HTML();
 	private boolean inEditMode;
 	private double eqWidth = 0;
 	private double eqHeight = 0;
-	public EquationLayer focusLayer;
+	private static EquationLayer focusLayer = Moderator.focusLayer;
 	public static HTML selectedWrapper;
 	// Width of equation compared to panel
 	private static final double EQUATION_FRACTION = 0.75;
@@ -40,9 +45,9 @@ public class EquationPanel extends AbsolutePanel {
 
 		this.mathMLBindingTree = jTree;
 		this.inEditMode = inEditMode;
-		
-		fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
-		fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
+
+		// fillNextNodeLayer(mathMLBindingTree.getLeftSide(), 0);
+		// fillNextNodeLayer(mathMLBindingTree.getRightSide(), 0);
 	}
 
 	@Override
@@ -52,7 +57,6 @@ public class EquationPanel extends AbsolutePanel {
 				.getOffsetHeight());
 
 		// Pilot equation used to transform to mathJax
-		//maybe enclose in: <script type="math/mml">
 		Element pilotEl = pilot.getElement();
 		pilotEl.appendChild(mathMLBindingTree.getMathML());
 		pilotEl.setAttribute("id", "pilotMathJax");
@@ -62,69 +66,96 @@ public class EquationPanel extends AbsolutePanel {
 		// Wait for mathjax to format first
 		timer = new Timer() {
 			public void run() {
-				checkIfWeCanDraw();
+				tryToDraw();
 			}
 		};
 		timer.scheduleRepeating(50);
 	}
 
-	private void checkIfWeCanDraw() {
+	private void tryToDraw() {
 		if (this.getElement().getElementsByTagName("g").getLength() > 0) {
 			timer.cancel();
-			Moderator.onEqReady();
-			draw(mathMLBindingTree);
-		}
-	}
+			MathMLBindingNode root = mathMLBindingTree.getRoot();
 
-	public void draw(MathMLBindingTree jTree) {
+			draw(root, null);
 
-		for (int i = 1; i < nodeLayers.size(); i++) {
+			pilot.removeFromParent();
+			placeNextEqWrappers(root);
 
-			Node pilotClone = pilot.getElement().cloneNode(true);
-			replaceChildsId(pilotClone, i);
-			HTML eq = new HTML();
-
-			// Transfer the children (side)(=)(side) from pilotClone
-			NodeList<Node> children = pilotClone.getChildNodes();
-			for (int j = 0; j < children.getLength(); j++) {
-				eq.getElement().appendChild(children.getItem(j));
+			for (EquationLayer eqLayer : eqLayerMap.values()) {
+				eqLayer.setVisible(false);
 			}
 
-			EquationLayer eqLayer = new EquationLayer();
-			eqLayer.getElement().setAttribute("id", "eqLayer-" + i);
-			eqLayer.setSize(mainPanel.getOffsetWidth() + "px",
-					mainPanel.getOffsetHeight() + "px");
+			try{
+				focusLayer = setFocus(focusLayer.getElement()
+						.getAttribute("id"));
+			}catch(NullPointerException e){
+				focusLayer = eqLayerMap.get(root);
+			}
+			focusLayer.setVisible(true);
 
-			eqLayer.eqPanel.add(eq);
-
-			eqLayers.add(eqLayer);
-			mainPanel.add(eqLayer, 0, 0);
+			Moderator.onEqReady();
 		}
-		
-		pilot.removeFromParent();
-		placeNextEqWrappers(0);
+	}
 
-		for (EquationLayer eqLayer : eqLayers) {
-			eqLayer.setVisible(false);
+	public void draw(MathMLBindingNode node, EquationLayer parentLayer) {
+
+		// for (int i = 1; i < nodeLayers.size(); i++) {
+
+		Node pilotClone = pilot.getElement().cloneNode(true);
+		replaceChildsId(pilotClone, node.getId());
+		HTML eq = new HTML();
+
+		// Transfer the children (side)(=)(side) from pilotClone
+		NodeList<Node> children = pilotClone.getChildNodes();
+		for (int j = 0; j < children.getLength(); j++) {
+			eq.getElement().appendChild(children.getItem(j));
 		}
 
-		focusLayer = eqLayers.get(0);
-		focusLayer.setVisible(true);
+		EquationLayer eqLayer = new EquationLayer();
+		eqLayer.setParentLayer(parentLayer);
+		eqLayerMap.put(node, eqLayer);
+		eqLayer.getElement().setAttribute("id", "eqLayer-" + node.getId());
+		eqLayer.setSize(mainPanel.getOffsetWidth() + "px",
+				mainPanel.getOffsetHeight() + "px");
+
+		eqLayer.eqPanel.add(eq);
+
+		mainPanel.add(eqLayer, 0, 0);
+
+		for (MathMLBindingNode childNode : node.getChildren()) {
+			if (childNode.getType().hasChildren())
+				draw(childNode, eqLayer);
+		}
 
 	}
 
-	public void setFocusUp() {
-		setFocus(eqLayers.indexOf(focusLayer) + 1);
+	public EquationLayer getFocus() {
+		return focusLayer;
 	}
 
-	public void setFocusDown() {
-		setFocus(eqLayers.indexOf(focusLayer) - 1);
+	public void setFocusOut() {
+		EquationLayer parentLayer = focusLayer.getParentLayer();
+		if (parentLayer != null)
+			setFocus(parentLayer);
 	}
 
-	public void setFocus(int newFocusIndex) {
+	public EquationLayer setFocus(String layerId) {
+		if (layerId != null) {
+			for (EquationLayer eqLayer : eqLayerMap.values()) {
+				if (layerId.equals(eqLayer.getElement().getAttribute("id"))) {
+					setFocus(eqLayer);
+					return eqLayer;
+				}
+			}
+		}
+		return null;
+	}
+
+	public void setFocus(EquationLayer eqLayer) {
 		try {
 			final EquationLayer prevFocus = focusLayer;
-			final EquationLayer newFocus = eqLayers.get(newFocusIndex);
+			final EquationLayer newFocus = eqLayer;
 
 			newFocus.setOpacity(0);
 			newFocus.setVisible(true);
@@ -142,9 +173,11 @@ public class EquationPanel extends AbsolutePanel {
 					prevFocus.setVisible(false);
 				}
 			};
+
 			fade.run(300, Duration.currentTimeMillis() - 100);
 
-			focusLayer = newFocus;
+			focusLayer = eqLayer;
+
 		} catch (IndexOutOfBoundsException e) {
 		}
 	}
@@ -153,35 +186,34 @@ public class EquationPanel extends AbsolutePanel {
 	// Details
 	// ////////////////////////////////////////////////////////////
 
-	private void fillNextNodeLayer(MathMLBindingNode parent, int layer) {
-		LinkedList<MathMLBindingNode> children = parent.getChildren();
+	// private void fillNextNodeLayer(MathMLBindingNode parent, int layer) {
+	// LinkedList<MathMLBindingNode> children = parent.getChildren();
+	//
+	// if (nodeLayers.size() < layer + 1) {
+	// nodeLayers.add(new LinkedList<MathMLBindingNode>());
+	// }
+	//
+	// nodeLayers.get(layer).addAll(children);
+	//
+	// for (int i = 0; i < children.size(); i++) {
+	// MathMLBindingNode curChild = children.get(i);
+	//
+	// if (curChild.getChildCount() > 0) {
+	// fillNextNodeLayer(curChild, layer + 1);
+	// }
+	// }
+	// }
 
-		if (nodeLayers.size() < layer + 1) {
-			nodeLayers.add(new LinkedList<MathMLBindingNode>());
-		}
+	private void placeNextEqWrappers(MathMLBindingNode parentNode) {
+		LinkedList<MathMLBindingNode> childNodes = parentNode.getChildren();
+		EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
-		nodeLayers.get(layer).addAll(children);
-
-		for (int i = 0; i < children.size(); i++) {
-			MathMLBindingNode curChild = children.get(i);
-
-			if (curChild.getChildCount() > 0) {
-				fillNextNodeLayer(curChild, layer + 1);
-			}
-		}
-	}
-
-	private void placeNextEqWrappers(int layer) {
-		LinkedList<MathMLBindingNode> nodes = nodeLayers.get(layer);
-		EquationLayer eqLayer = eqLayers.get(layer);
-
-		for (MathMLBindingNode node : nodes) {
+		childLoop: for (MathMLBindingNode node : childNodes) {
 			com.google.gwt.user.client.Element svg, parentSvg, prevSibSvg = null, nextSibSvg = null;
-			String prefixIdSvg = (layer + 1) + "-svg";
+			String prefixIdSvg = parentNode.getId() + "svg";
 
 			svg = DOM.getElementById(prefixIdSvg + node.getId());
-			parentSvg = DOM.getElementById(prefixIdSvg
-					+ node.getParent().getId());
+			parentSvg = DOM.getElementById(prefixIdSvg + parentNode.getId());
 			try {
 				prevSibSvg = DOM.getElementById(prefixIdSvg
 						+ node.getPrevSibling().getId());
@@ -200,48 +232,62 @@ public class EquationPanel extends AbsolutePanel {
 			double height = 0;
 			String heightStr = null, widthStr = null;
 
-			// Wrappers span the parent
-			switch (node.getParent().getType()) {
-			case Term:
-			case Sum:
-				if (Type.Operation.equals(node.getType())) {
-					widthStr = JSNICalls.getElementWidth(svg) + "px";
-					left = svg.getAbsoluteLeft();
-				} else {
-					// Fill from previous to next operator if exists
-					left = prevSibSvg != null ? prevSibSvg.getAbsoluteLeft()
-							+ (int) JSNICalls.getElementWidth(prevSibSvg) : svg
-							.getAbsoluteLeft();
-					double right = nextSibSvg != null ? nextSibSvg
-							.getAbsoluteLeft() : svg.getAbsoluteLeft()
-							+ (int) JSNICalls.getElementWidth(svg);
-
-					widthStr = (right - left) + "px";
-				}
-				top = parentSvg.getAbsoluteTop();
-				height = JSNICalls.getElementHeight(parentSvg);
-				heightStr = height + "px";
-				break;
-			case Fraction:
-				top = svg.getAbsoluteTop();
-				height = JSNICalls.getElementHeight(svg);
-				heightStr = height + "px";
-				left = parentSvg.getAbsoluteLeft();
-				widthStr = JSNICalls.getElementWidth(parentSvg) + "px";
-				break;
-			case Exponential:
+			// Top layer of equation is different
+			if ("math".equalsIgnoreCase(parentNode.getTag())) {
+				if ("=".equalsIgnoreCase(node.getSymbol()))
+					continue childLoop;
 				top = svg.getAbsoluteTop();
 				left = svg.getAbsoluteLeft();
 				height = JSNICalls.getElementHeight(svg);
 				heightStr = height + "px";
 				widthStr = JSNICalls.getElementWidth(svg) + "px";
-				break;
+			} else {
+				// Wrapper size is based on its parent type and size
+				switch (parentNode.getType()) {
+				case Term:
+				case Sum:
+					if (Type.Operation.equals(node.getType())) {
+						widthStr = JSNICalls.getElementWidth(svg) + "px";
+						left = svg.getAbsoluteLeft();
+					} else {
+						// Fill from previous to next operator if exists
+						left = prevSibSvg != null ? prevSibSvg
+								.getAbsoluteLeft()
+								+ (int) JSNICalls.getElementWidth(prevSibSvg)
+								: svg.getAbsoluteLeft();
+						double right = nextSibSvg != null ? nextSibSvg
+								.getAbsoluteLeft() : svg.getAbsoluteLeft()
+								+ (int) JSNICalls.getElementWidth(svg);
+
+						widthStr = (right - left) + "px";
+					}
+					top = parentSvg.getAbsoluteTop();
+					height = JSNICalls.getElementHeight(parentSvg);
+					heightStr = height + "px";
+					break;
+				case Fraction:
+					top = svg.getAbsoluteTop();
+					height = JSNICalls.getElementHeight(svg);
+					heightStr = height + "px";
+					left = parentSvg.getAbsoluteLeft();
+					widthStr = JSNICalls.getElementWidth(parentSvg) + "px";
+					break;
+				case Exponential:
+					top = svg.getAbsoluteTop();
+					left = svg.getAbsoluteLeft();
+					height = JSNICalls.getElementHeight(svg);
+					heightStr = height + "px";
+					widthStr = JSNICalls.getElementWidth(svg) + "px";
+					break;
+				}
 			}
 
 			Widget wrap;
 			if (inEditMode) {// Edit Mode////////////////////////////
-				wrap = new EditWrapper(node, this, widthStr, heightStr);
+				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
+						widthStr, heightStr);
 				EditMenu editMenu = ((EditWrapper) wrap).getEditMenu();
+
 				eqLayer.wrapPanel.add(editMenu,
 						left - mainPanel.getAbsoluteLeft(),
 						top - mainPanel.getAbsoluteTop() + (int) height);
@@ -270,11 +316,10 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayer.backPanel.add(wrapBack, left - mainPanel.getAbsoluteLeft(),
 					top - mainPanel.getAbsoluteTop());
 
+			if (node.getType().hasChildren()) {
+				placeNextEqWrappers(node);
+			}
 		}
-		if (eqLayers.size() > layer + 1) {
-			placeNextEqWrappers(layer + 1);
-		}
-
 	}
 
 	/**
@@ -284,7 +329,7 @@ public class EquationPanel extends AbsolutePanel {
 	 * @param parent
 	 * @param eqRow
 	 */
-	private void replaceChildsId(Node parent, int eqRow) {
+	private void replaceChildsId(Node parent, String layerId) {
 		NodeList<Node> children = parent.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -299,12 +344,12 @@ public class EquationPanel extends AbsolutePanel {
 				if ("mjx-svg-math".equalsIgnoreCase(curClass)) {
 					resizeEquations(curEl);
 				}
-				newId = oldId.replaceFirst("svg", eqRow + "-svg");
+				newId = oldId.replaceFirst("svg", layerId + "svg");
 
 				// Each equation will have a different MathJax frame id
 				// MathJax-Element-[equation #]-Frame
 			} else if (oldId.equals("MathJax-Element-1-Frame")) {
-				newId = "MathJax-Element-" + (eqRow + 1) + "-Frame";
+				newId = "MathJax-Element-" + (layerId) + "-Frame";
 
 				// gray out the rest of the equation
 				Element svgEl = curEl.getFirstChildElement()
@@ -312,14 +357,14 @@ public class EquationPanel extends AbsolutePanel {
 				setColor(svgEl, "gray");
 
 			} else if (oldId.equals("MathJax-Element-1")) {
-				newId = "MathJax-Element-" + (eqRow + 1);
+				newId = "MathJax-Element-" + (layerId);
 			}
 
 			if (newId != null)
 				curEl.setAttribute("id", newId);
 
-			if (!children.getItem(i).getNodeName().equalsIgnoreCase("script")) 
-				replaceChildsId(children.getItem(i), eqRow);
+			if (!children.getItem(i).getNodeName().equalsIgnoreCase("script"))
+				replaceChildsId(children.getItem(i), layerId);
 		}
 	}
 
