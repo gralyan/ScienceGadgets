@@ -38,9 +38,12 @@ public class EditMenu extends VerticalPanel {
 
 		switch (node.getType()) {
 		case Sum:
+			Button extendSum = new Button("+"+ChangeNodeMenu.NOT_SET,new ExtendSumTermHandler());
+			this.add(extendSum);
+			break;
 		case Term:
-			Button extendSumTerm = new Button("...",new ExtendSumTermHandler());
-			this.add(extendSumTerm);
+			Button extendTerm = new Button("x"+ChangeNodeMenu.NOT_SET,new ExtendSumTermHandler());
+			this.add(extendTerm);
 			break;
 		case Fraction:
 			break;

@@ -27,9 +27,11 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.equationtree.ChangeNodeMenu;
+import com.sciencegadgets.client.equationtree.EquationLayer;
 import com.sciencegadgets.client.equationtree.EquationPanel;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.RandomSpecification;
@@ -38,7 +40,7 @@ import com.sciencegadgets.client.equationtree.SymbolPalette;
 public class Moderator implements EntryPoint {
 
 	static EquationPanel eqPanel;
-	private static ScrollPanel spTree = new ScrollPanel();
+	private static AbsolutePanel eqPanelHolder = new AbsolutePanel();
 
 	public static MathMLBindingTree jTree;
 	public static LinkedList<AbstractMathDropController> dropControllers;
@@ -49,6 +51,7 @@ public class Moderator implements EntryPoint {
 	public static SymbolPalette symbolPopup;
 	public static RandomSpecification randomSpec;
 	public static ChangeNodeMenu changeNodeMenu;
+	public static EquationLayer focusLayer;
 	private Button backToBrowserButton = new Button("Back",
 			new BackButtonHandler());
 	private static AbsolutePanel scienceGadgetArea = RootPanel
@@ -88,12 +91,20 @@ public class Moderator implements EntryPoint {
 		AlgOut algOut = new AlgOut();
 		scienceGadgetArea.add(algOut);
 
-		spTree.setSize(SGAWidth + "px", (SGAHeight / 3) + "px");
-		scienceGadgetArea.add(spTree);
+		eqPanelHolder.setSize(SGAWidth + "px", (SGAHeight / 2) + "px");
+		eqPanelHolder.setStyleName("varName");
+		scienceGadgetArea.add(eqPanelHolder,0,SGAHeight/4);
+		
+//		scienceGadgetArea.add(new Button("out", new EqSlideHandler(true)));
+		Button focusOutButton = new Button("Focus Out", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				eqPanel.setFocusOut();
+			}
+		});
 
-		scienceGadgetArea.add(new Button("up", new EqSlideHandler(true)));
-		scienceGadgetArea.add(new Button("down", new EqSlideHandler(false)));
-
+		scienceGadgetArea.add(focusOutButton);
+		
 		if (inEditMode) {
 			if (changeNodeMenu == null) {
 				changeNodeMenu = new ChangeNodeMenu(scienceGadgetArea);
@@ -124,12 +135,12 @@ public class Moderator implements EntryPoint {
 		// jTree.getWrappers(),
 		// changeComment);
 
-		if (eqPanel != null)
-			spTree.remove(eqPanel);
-
+		if (eqPanel != null) {
+			eqPanelHolder.remove(eqPanel);
+		}
 		eqPanel = new EquationPanel(jTree, inEditMode);
 		eqPanel.getElement().getStyle().setOpacity(0);
-		spTree.add(eqPanel);
+		eqPanelHolder.add(eqPanel ,0,0);
 
 		if (inEditMode) {
 			changeNodeMenu.setVisible(false);
@@ -154,50 +165,10 @@ public class Moderator implements EntryPoint {
 			if (randomSpec != null && randomSpec.isShowing()) {
 				randomSpec.hide();
 			}
+			focusLayer = null;
+			
 			EquationBrowser browserPanel = new EquationBrowser(moderator);
 			scienceGadgetArea.add(browserPanel);
 		}
-
-	}
-
-	private class EqSlideHandler implements ClickHandler {
-		boolean isUp;
-
-		public EqSlideHandler(boolean isUp) {
-			this.isUp = isUp;
-		}
-
-		@Override
-		public void onClick(ClickEvent event) {
-			if (isUp) {
-				eqPanel.setFocusUp();
-			} else {
-				eqPanel.setFocusDown();
-			}
-		}
-	}
-}
-
-class Fade extends Animation {
-
-	public boolean isFadeOut;
-	public Element element;
-	public double opacity;
-
-	/**
-	 * Fading transition
-	 * 
-	 * @param out
-	 *            - if true: fade out</br>if false: fade in
-	 */
-	Fade(Element element, boolean isFadeOut) {
-		this.isFadeOut = isFadeOut;
-		this.element = element;
-	}
-
-	@Override
-	protected void onUpdate(double progress) {
-		opacity = isFadeOut ? 1 - progress : progress;
-		element.getStyle().setOpacity(opacity);
 	}
 }

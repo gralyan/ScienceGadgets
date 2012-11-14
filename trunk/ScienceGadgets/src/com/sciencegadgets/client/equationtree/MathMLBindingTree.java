@@ -502,18 +502,26 @@ public class MathMLBindingTree {
 	}
 
 	public static enum Type {
-		Term("mrow"), Sum("mfenced"), Exponential("msup"), Fraction("mfrac"), Variable(
-				"mi"), Number("mn"), Operation("mo");
+		Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction("mfrac", true), Variable(
+				"mi", false), Number("mn", false), Operation("mo", false);
 
 		private String tag;
+		private boolean hasChildren;
 
-		Type(String tag) {
+		Type(String tag, boolean hasChildren) {
 			this.tag = tag;
+			this.hasChildren = hasChildren;
 		}
 
 		public String getTag() {
 			return tag;
 		}
+		
+		public boolean hasChildren(){
+			return hasChildren;
+			
+			}
+			
 	}
 
 	public static enum Operator {
@@ -568,47 +576,34 @@ public class MathMLBindingTree {
 		this.equals = new MathMLBindingNode((Element) sideEqSide.getItem(1));
 		this.rightSide = new MathMLBindingNode((Element) sideEqSide.getItem(2));
 
-		addChildren(rootNode);
+		addRecursively(rootNode);
 
-		// Prints both maps for debugging
-		// System.out.println("idMLMap");
-		// for (String key : idMLMap.keySet())
-		// System.out.println(key + "\t" + idMLMap.get(key).getString());
-		//
-		// System.out.println("idMap");
-		// for (String key : idMap.keySet())
-		// System.out.println(key + "\t" + idMap.get(key).toString());
+////		 Prints both maps for debugging
+//		 System.out.println("idMLMap");
+//		 for (String key : idMLMap.keySet())
+//		 System.out.println(key + "\t" + idMLMap.get(key).getString());
+//		
+//		 System.out.println("idMap");
+//		 for (String key : idMap.keySet())
+//		 System.out.println(key + "\t" + idMap.get(key).toString());
 	}
 
-	private void addChildren(Element mathMLNode) {
+	private void addRecursively(Element mathMLNode) {
+		
+		String id = Random.nextInt(2147483647) + "";
+		
+		mathMLNode.setAttribute("id", id);
+		
+		idMLMap.put(id, mathMLNode);
+		idMap.put(id, new MathMLBindingNode(mathMLNode));
+
 		NodeList<Node> mathMLChildren = (mathMLNode).getChildNodes();
-
-		// TODO
-		// MathML validation, nodes must have a certain number of children
-		// String pTag = mathMLNode.getTagName();
-		// if("mi".equals(pTag) || "mn".equals(pTag) || "mo".equals(pTag))
-
-		// throw new InvalidParameterException(
-		// "Exponent (msup tag) and fraction (mfrac) MathML nodes must have exactly 2 children, the following has: "
-		// + parent.getChildCount()
-		// + ":\n"
-		// + parent.toString());
-
-		// Recursive binding of elements to this class
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Element currentNode = (Element) mathMLChildren.getItem(i);
 
 			// Nodes with no children are either inner text or formatting only
 			if (currentNode.getChildCount() > 0) {
-
-				String id = Random.nextInt(2147483647) + "";
-
-				currentNode.setAttribute("id", id);
-
-				idMLMap.put(id, currentNode);
-				idMap.put(id, new MathMLBindingNode(currentNode));
-
-				addChildren((Element) currentNode);
+				addRecursively((Element) currentNode);
 			}
 		}
 	}
