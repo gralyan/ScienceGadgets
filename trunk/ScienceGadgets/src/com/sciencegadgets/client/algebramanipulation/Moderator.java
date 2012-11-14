@@ -53,6 +53,7 @@ public class Moderator implements EntryPoint {
 			new BackButtonHandler());
 	private static AbsolutePanel scienceGadgetArea = RootPanel
 			.get("scienceGadgetArea");
+
 	// private static DropControllAssigner dropAssigner;
 
 	@Override
@@ -123,20 +124,17 @@ public class Moderator implements EntryPoint {
 		// jTree.getWrappers(),
 		// changeComment);
 
-//		if (eqList != null) {
-//			Fade fade = new Fade(eqList.getElement(), true);
-//			fade.run(700);
-//		}
 		if (eqPanel != null)
 			spTree.remove(eqPanel);
 
 		eqPanel = new EquationPanel(jTree, inEditMode);
-		 spTree.add(eqPanel);
+		eqPanel.getElement().getStyle().setOpacity(0);
+		spTree.add(eqPanel);
 
 		if (inEditMode) {
 			changeNodeMenu.setVisible(false);
 		}
-		
+
 		// TODO uncomment
 		// DropControllAssigner.assign(jTree.getWrappers(), true);
 	}

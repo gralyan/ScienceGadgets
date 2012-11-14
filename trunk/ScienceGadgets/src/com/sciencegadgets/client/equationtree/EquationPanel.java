@@ -1,6 +1,5 @@
 package com.sciencegadgets.client.equationtree;
 
-import java.security.DomainCombiner;
 import java.util.LinkedList;
 
 import com.google.gwt.animation.client.Animation;
@@ -10,14 +9,10 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.AttachEvent.Handler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
@@ -105,6 +100,7 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayers.add(eqLayer);
 			mainPanel.add(eqLayer, 0, 0);
 		}
+		
 		pilot.removeFromParent();
 		placeNextEqWrappers(0);
 
