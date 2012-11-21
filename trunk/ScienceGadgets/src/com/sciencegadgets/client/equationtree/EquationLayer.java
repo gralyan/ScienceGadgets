@@ -11,7 +11,6 @@ public class EquationLayer extends AbsolutePanel {
 	AbsolutePanel wrapPanel = new AbsolutePanel();
 
 	EquationLayer parentLayer;
-	LinkedList<EquationLayer> children = new LinkedList<EquationLayer>();
 
 	EquationLayer() {
 		super();

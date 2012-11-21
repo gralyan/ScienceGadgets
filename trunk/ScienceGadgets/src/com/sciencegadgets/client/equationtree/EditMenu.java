@@ -1,11 +1,15 @@
 package com.sciencegadgets.client.equationtree;
 
 import java.util.HashMap;
-import java.math.BigDecimal;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -13,10 +17,7 @@ import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
@@ -29,7 +30,7 @@ public class EditMenu extends VerticalPanel {
 	EditWrapper editWrapper;
 	MathMLBindingNode node;
 	Focusable focusable = null;
-	Widget display = null;
+	Widget responseNotes = null;
 
 	public EditMenu(EditWrapper editWrapper, String width) {
 
@@ -54,6 +55,8 @@ public class EditMenu extends VerticalPanel {
 			variableInput
 					.addChangeHandler(new InputChangeHandler(variableInput));
 			variableInput.setWidth(width);
+			variableInput.addClickHandler(new FocusOnlyClickHandler());
+			variableInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			variableInput.setText(node.getSymbol());
 			focusable = variableInput;
 			this.add(variableInput);
@@ -67,6 +70,8 @@ public class EditMenu extends VerticalPanel {
 			DoubleBox numberInput = new DoubleBox();
 			numberInput.addChangeHandler(new InputChangeHandler(numberInput));
 			numberInput.setWidth(width);
+			numberInput.addClickHandler(new FocusOnlyClickHandler());
+			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			numberInput.setText(node.getSymbol());
 			focusable = numberInput;
 			this.add(numberInput);
@@ -127,14 +132,14 @@ public class EditMenu extends VerticalPanel {
 		}
 	}
 
-	public void setDisplay(Widget display) {
-		this.display = display;
-		this.add(display);
+	public void setResponse(Widget responseNotes) {
+		this.responseNotes = responseNotes;
+		this.add(responseNotes);
 		this.setFocus();
 	}
 
-	public Widget getDisplay() {
-		return display;
+	public Widget getResponse() {
+		return responseNotes;
 	}
 
 	private class InputChangeHandler implements ChangeHandler {
@@ -157,10 +162,10 @@ public class EditMenu extends VerticalPanel {
 
 			if (extraction != null) {
 				node.setSymbol(extraction);
-				HTML mathML = new HTML();
-				mathML.getElement().appendChild(node.getTree().getMathML());
+//				HTML mathML = new HTML();
+//				mathML.getElement().appendChild(node.getTree().getMathML(true));
 
-				Moderator.reload("");
+				Moderator.reloadEquationPanel("");
 			}
 		}
 
@@ -187,6 +192,21 @@ public class EditMenu extends VerticalPanel {
 			return inputString;
 		}
 	}
+	
+	private class FocusOnlyClickHandler implements ClickHandler{
+		@Override
+		public void onClick(ClickEvent event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	}
+	private class FocusOnlyTouchHandler implements TouchStartHandler{
+		@Override
+		public void onTouchStart(TouchStartEvent event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	}
 
 	private class SignChangeHandler implements ClickHandler {
 
@@ -200,7 +220,7 @@ public class EditMenu extends VerticalPanel {
 		public void onClick(ClickEvent event) {
 			node.setSymbol(operator.getSign());
 
-			Moderator.reload("");
+			Moderator.reloadEquationPanel("");
 		}
 
 	}
@@ -213,7 +233,7 @@ public class EditMenu extends VerticalPanel {
 			SymbolPalette symbolPopup;
 			if (Moderator.symbolPopup == null) {
 				symbolPopup = new SymbolPalette(node);
-				AbsolutePanel mainPanel = editWrapper.eqList.mainPanel;
+				AbsolutePanel mainPanel = editWrapper.getEqPanel();
 
 				symbolPopup.setPixelSize(mainPanel.getOffsetWidth(),
 						mainPanel.getOffsetHeight());
@@ -238,7 +258,7 @@ public class EditMenu extends VerticalPanel {
 			RandomSpecification randomSpec;
 			if (Moderator.randomSpec == null) {
 				randomSpec = new RandomSpecification(node);
-				AbsolutePanel mainPanel = editWrapper.eqList.mainPanel;
+				AbsolutePanel mainPanel = editWrapper.getEqPanel();
 				
 				randomSpec.setPixelSize(mainPanel.getOffsetWidth(),
 						mainPanel.getOffsetHeight());
@@ -269,7 +289,7 @@ public class EditMenu extends VerticalPanel {
 				break;
 			}
 			node.add(Type.Variable, ChangeNodeMenu.NOT_SET);
-			Moderator.reload("");
+			Moderator.reloadEquationPanel("");
 		}
 		
 	}
