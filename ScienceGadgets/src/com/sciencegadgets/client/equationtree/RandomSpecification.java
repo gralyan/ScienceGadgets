@@ -24,6 +24,7 @@ public class RandomSpecification extends PopupPanel {
 	public static final String ALWAYS = "A";
 	public static final String SOMETIMES = "S";
 	public static final String NEVER = "N";
+	public static final String RANDOM_SYMBOL = "?";
 
 	private RadioButton neverNeg;
 	private RadioButton sometimesNeg;
@@ -117,10 +118,11 @@ public class RandomSpecification extends PopupPanel {
 				response.setText("The bounds shouldn't be negative");
 				return;
 			} else {
+				response.setText("");
 				randSpec.hide();
-				mlNode.setSymbol(neg + "-" + lowerB + "-" + upperB + "-" + decP);
-				System.out.println(mlNode.getTree().getMathML().getString());
-				Moderator.reload("");
+				mlNode.setSymbol(RANDOM_SYMBOL);
+				mlNode.getMLNode().setAttribute("data-randomness", neg + "-" + lowerB + "-" + upperB + "-" + decP);
+				Moderator.reloadEquationPanel("");
 			}
 		}
 

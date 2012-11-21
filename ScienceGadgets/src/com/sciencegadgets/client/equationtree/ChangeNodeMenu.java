@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.Wrapper;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.Operator;
@@ -82,7 +83,7 @@ public class ChangeNodeMenu extends HorizontalPanel {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			EditWrapper selectedWrapper = EditWrapper.selectedWrapper;
+			EditWrapper selectedWrapper = (EditWrapper) Wrapper.selectedWrapper;
 
 			if (selectedWrapper != null) {
 				MathMLBindingNode node = selectedWrapper.getNode();
@@ -99,11 +100,11 @@ public class ChangeNodeMenu extends HorizontalPanel {
 						} catch (IndexOutOfBoundsException e) {
 						}
 						node.remove();
-						Moderator.reload("");
+						Moderator.reloadEquationPanel("");
 					} else {
-						Label display = new Label(
+						Label responseNotes = new Label(
 								"You should just change the parent");
-						selectedWrapper.getEditMenu().setDisplay(display);
+						selectedWrapper.getEditMenu().setResponse(responseNotes);
 					}
 					break;
 				case Exponential:
@@ -119,7 +120,7 @@ public class ChangeNodeMenu extends HorizontalPanel {
 						break;
 					}
 					parent.remove();
-					Moderator.reload("");
+					Moderator.reloadEquationPanel("");
 					break;
 				}
 			}
@@ -135,7 +136,7 @@ public class ChangeNodeMenu extends HorizontalPanel {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			EditWrapper selectedWrapper = EditWrapper.selectedWrapper;
+			EditWrapper selectedWrapper = (EditWrapper) Wrapper.selectedWrapper;
 
 			if (selectedWrapper != null) {
 				MathMLBindingNode node = selectedWrapper.getNode();
@@ -172,9 +173,8 @@ public class ChangeNodeMenu extends HorizontalPanel {
 
 						parent.add(index, newNode);
 					}
-					// node.remove();
-
-					Moderator.reload("");
+					Moderator.reloadEquationPanel("");
+					
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();
 				}

@@ -17,21 +17,13 @@ package com.sciencegadgets.client.algebramanipulation;
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.Wrapper;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
+import com.sciencegadgets.client.equationtree.EquationLayer;
+import com.sciencegadgets.client.equationtree.EquationPanel;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
@@ -42,22 +34,16 @@ import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNod
  * @author John Gralyan
  * 
  */
-public class MLElementWrapper extends HTML {
+public class MLElementWrapper extends Wrapper {
 
 	private WrapDragController dragController = null;
-	private Element element = null;
-	private Boolean isDraggable;
-//	private MLElementWrapper joinedWrapper;
 	private MathMLBindingNode mathMLBindingNode;
 	private HTML dropDescriptor = new HTML();
-
-	private static HTML selectedWrapper;
-//	private static MLElementWrapper SelectedWrapperJoiner;
+	private VerticalPanel contextMenu = new VerticalPanel();
 
 	/**
-	 * Construct that can explicitly state weather default handlers will be
-	 * available. Use the static method {@link MLElementWrapper.wrapperFactory}
-	 * to automate this process
+	 * Wrapper for symbols which allow for user interaction
+	 * 
 	 * <p>
 	 * <b>Note - this widget can only be draggable if it's attached to an
 	 * {@link AbsolutePanel}</b>
@@ -65,62 +51,11 @@ public class MLElementWrapper extends HTML {
 	 * 
 	 * @param theElement
 	 *            - the element to wrap in widget
-	 * @param isDraggable
-	 *            - if true, adds a default drag {@link ElementDragController}
-	 *            for the parent {@link AbsolutePanel} it is currently in
-	 * @param isJoined
-	 *            - If true, there will be two wrappers made which point to one
-	 *            another by the joinedWrapper field. This allows for multiple
-	 *            instances of the same wrapper that communicate in different
-	 *            views
 	 */
-	public MLElementWrapper(MathMLBindingNode jNode, Boolean isDraggable,
-			Boolean isJoined) {
-		this.element = (Element) jNode.getMLNode();
-		this.mathMLBindingNode = jNode;
-		this.isDraggable = isDraggable;
-		
-		addMouseOverHandler();
-		addMouseOutHandler();
-		addClickHandler();
-		addTouchHandler();
-
-		setStyleName("wrap");
-		
-
-//		if (isJoined == true) {
-//			this.joinedWrapper = new MLElementWrapper(/*jNode,*/el, isDraggable, false);
-//			this.joinedWrapper.joinedWrapper = this;
-			//TODO
-//		}
-	}
+	public MLElementWrapper(MathMLBindingNode node, EquationPanel eqPanel,
+			EquationLayer eqLayer, String width, String height) {
+		super(node, eqPanel, eqLayer, width, height);
 	
-	public void setSelectedWrapper(HTML selectedWrapper){
-		this.selectedWrapper = selectedWrapper;
-	}
-
-	public HTML getDropDescriptor() {
-		return dropDescriptor;
-	}
-
-	public Element getElementWrapped() {
-		return element;
-	}
-
-	public void setElementWrapped(Element el) {
-		element = el;
-	}
-
-//	public MLElementWrapper getJoinedWrapper() {
-//		return joinedWrapper;
-//	}
-
-	public MathMLBindingTree.MathMLBindingNode getJohnNode() {
-		return mathMLBindingNode;
-	}
-
-	public WrapDragController getDragControl() {
-		return dragController;
 	}
 
 	/**
@@ -131,24 +66,23 @@ public class MLElementWrapper extends HTML {
 		super.onAttach();
 		addDragController();
 	}
-
-	// /////////////////////////////
-	// add handler methods
-	// /////////////////////////////
-	public HandlerRegistration addMouseOverHandler() {
-		return addDomHandler(new ElementOverHandler(), MouseOverEvent.getType());
+	
+	public void setSelectedWrapper(MLElementWrapper selectedWrapper) {
+		this.selectedWrapper = selectedWrapper;
+	}
+	
+	public VerticalPanel getContextMenu(){
+		return contextMenu;
 	}
 
-	public HandlerRegistration addMouseOutHandler() {
-		return addDomHandler(new ElementOutHandler(), MouseOutEvent.getType());
+	public HTML getDropDescriptor() {
+		return dropDescriptor;
 	}
 
-	public HandlerRegistration addClickHandler() {
-		return addDomHandler(new ElementClickHandler(), ClickEvent.getType());
+	public WrapDragController getDragControl() {
+		return dragController;
 	}
-	public HandlerRegistration addTouchHandler() {
-		return addTouchStartHandler(new ElementTouchHandler());
-	}
+
 
 	/**
 	 * Add a drag controller to this widget, can be a subclass of
@@ -161,13 +95,11 @@ public class MLElementWrapper extends HTML {
 	 */
 	public WrapDragController addDragController() {
 
-		if (isDraggable) {
 			WrapDragController dragC = new WrapDragController(
 					(AbsolutePanel) this.getParent(), false);
 
 			dragController = dragC;
 			dragController.makeDraggable(this);
-		}
 		return dragController;
 	}
 
@@ -187,41 +119,6 @@ public class MLElementWrapper extends HTML {
 		dragController.getDropList().clear();
 	}
 
-	// ////////////////////////////////////////////////////////////////////////////////////
-	// Inner Class Handlers
-	// /////////////////////////////////////////////////////////////////////////////////////
-	class ElementOverHandler implements MouseOverHandler {
-		public void onMouseOver(MouseOverEvent event) {
-			select(true);
-		}
-	}
-
-	class ElementOutHandler implements MouseOutHandler {
-		public void onMouseOut(MouseOutEvent event) {
-			select(false);
-		}
-	}
-
-	class ElementClickHandler implements ClickHandler {
-		@Override
-		public void onClick(ClickEvent event) {
-			if (selectedWrapper != null) {
-				((MLElementWrapper)selectedWrapper).select(false);
-			}
-			select(true);
-		}
-	}
-
-	class ElementTouchHandler implements TouchStartHandler {
-
-		@Override
-		public void onTouchStart(TouchStartEvent arg0) {
-			if (selectedWrapper != null) {
-				((MLElementWrapper)selectedWrapper).select(false);
-			}
-			select(true);
-		}
-	}
 
 	/**
 	 * Highlights the selected wrapper and joiner as well as all the drop
@@ -231,91 +128,77 @@ public class MLElementWrapper extends HTML {
 	 * @param select
 	 *            - selects if true, unselects if false
 	 */
-	void select(Boolean select) {
+	public void select() {
+		super.select();
 		MLElementWrapper wrapper = this;
 
-		if (select) {
-			// Highlights selected
-			wrapper.getElement().setId("selectedWrapper");
-//			wrapper.getJoinedWrapper().getElement().setId("selectedWrapper");
+		String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
+		String changeDesc = "";
 
-			// Save selected statically
-			selectedWrapper = this;
-//			SelectedWrapperJoiner = this.getJoinedWrapper();
+		for (DropController dropC : wrapper.dragController.getDropList()) {
 
-			String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
-			String changeDesc = "";
+			String className = dropC.getClass().getName();
+			String change = ((AbstractMathDropController) dropC)
+					.findChange(getNode());
 
-			for (DropController dropC : wrapper.dragController.getDropList()) {
-				
-				String className = dropC.getClass().getName();
-				String change = ((AbstractMathDropController) dropC)
-						.findChange(getJohnNode());
+			// Style of highlight on potential targets
+			if ((path + "Simplify_Add").equals(className)) {
+				changeDesc = "<b>Simplify</b> <br/>" + change;
 
-				// Style of highlight on potential targets
-				if ((path + "Simplify_Add").equals(className)) {
-					changeDesc = "<b>Simplify</b> <br/>" + change;
+			} else if ((path + "Simplify_Multiply").equals(className)) {
+				changeDesc = "<b>Simplify</b> <br/>" + change;
 
-				} else if ((path + "Simplify_Multiply").equals(className)) {
-					changeDesc = "<b>Simplify</b> <br/>" + change;
+			} else if ((path + "Simplify_Divide").equals(className)) {
+				changeDesc = "<b>Simplify</b> <br/>" + change;
 
-				} else if ((path + "Simplify_Divide").equals(className)) {
-					changeDesc = "<b>Simplify</b> <br/>" + change;
+			} else if ((path + "BothSides_Add").equals(className)) {
+				changeDesc = "<b>Add &nbsp; " + change
+						+ "</b><br/>to both sides";
 
-				} else if ((path + "BothSides_Add").equals(className)) {
-					changeDesc = "<b>Add &nbsp; " + change
-							+ "</b><br/>to both sides";
+			} else if ((path + "BothSides_Multiply").equals(className)) {
+				changeDesc = "<b>Multiply &nbsp; " + change
+						+ "</b><br/>with both sides";
 
-				} else if ((path + "BothSides_Multiply").equals(className)) {
-					changeDesc = "<b>Multiply &nbsp; " + change
-							+ "</b><br/>with both sides";
-
-				} else if ((path + "BothSides_Divide").equals(className)) {
-					changeDesc = "<b>Divide by &nbsp; " + change
-							+ "</b><br/>on both sides";
-				}
-
-				// Highlights drop targets
-				MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
-						.getDropTarget());
-				dropC.getDropTarget().setStyleName("selectedDropWrapper");
-//				dropCwrap.getJoinedWrapper()
-//						.setStyleName("selectedDropWrapper");
-
-				// Descriptors
-				HTML dropDesc = dropCwrap.getDropDescriptor();
-				dropDesc.setHTML(changeDesc);
-				dropDesc.setStyleName("dropDescriptor");
+			} else if ((path + "BothSides_Divide").equals(className)) {
+				changeDesc = "<b>Divide by &nbsp; " + change
+						+ "</b><br/>on both sides";
 			}
 
-		} else { // Deselect
-			
-			// Removes style - selectedWrapper
-			wrapper.getElement().removeAttribute("id");
-//			wrapper.getJoinedWrapper().getElement().removeAttribute("id");
+			// Highlights drop targets
+			MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
+					.getDropTarget());
+			dropC.getDropTarget().setStyleName("selectedDropWrapper");
+			// dropCwrap.getJoinedWrapper()
+			// .setStyleName("selectedDropWrapper");
 
-			// Removes static reference to this as selected
-			selectedWrapper = null;
-//			SelectedWrapperJoiner = null;
+			// Descriptors
+			HTML dropDesc = dropCwrap.getDropDescriptor();
+			dropDesc.setHTML(changeDesc);
+			dropDesc.setStyleName("dropDescriptor");
+		}
 
-			for (DropController dropC : wrapper.dragController.getDropList()) {
+	}
 
-				String[] styles = dropC.getDropTarget().getStyleName()
-						.split(" ");
+	public void unselect() {
+		super.unselect();
+		MLElementWrapper wrapper = this;
 
-				MLElementWrapper dropCwrap = (MLElementWrapper) dropC
-						.getDropTarget();
+		for (DropController dropC : wrapper.dragController.getDropList()) {
 
-				for (String style : styles) {
-					if (style.startsWith("selectedDropWrapper")) {
-						dropCwrap.removeStyleName(style);
-//						dropCwrap.getJoinedWrapper().removeStyleName(style);
-					}
+			String[] styles = dropC.getDropTarget().getStyleName().split(" ");
 
-					HTML dropDesc = dropCwrap.getDropDescriptor();
-					dropDesc.setText("");
-					dropDesc.removeStyleName("dropDescriptor");
+			MLElementWrapper dropCwrap = (MLElementWrapper) dropC
+					.getDropTarget();
+
+			for (String style : styles) {
+				if (style.startsWith("selectedDropWrapper")) {
+					dropCwrap.removeStyleName(style);
+					// dropCwrap.getJoinedWrapper().removeStyleName(style);
 				}
+
+				HTML dropDesc = dropCwrap.getDropDescriptor();
+				dropDesc.setText("");
+				dropDesc.removeStyleName("dropDescriptor");
 			}
 		}
 	}

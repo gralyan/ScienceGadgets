@@ -18,6 +18,7 @@ import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.Wrapper;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -32,7 +33,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 	public AbstractMathDropController(Widget dropTarget) {
 		super(dropTarget);
 		target = (MLElementWrapper) dropTarget;
-		targetNode = target.getJohnNode();
+		targetNode = target.getNode();
 
 	}
 
@@ -40,7 +41,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 	public void onDrop(DragContext context) {
 
 		source = ((MLElementWrapper) context.draggable);
-		sourceNode = source.getJohnNode();
+		sourceNode = source.getNode();
 		MathMLBindingNode sourceParent = sourceNode.getParent();
 		MathMLBindingTree tree = targetNode.getTree();
 
@@ -70,7 +71,7 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 		}
 
 		// Clean wrappers
-		for (MLElementWrapper wrap : tree.getWrappers()) {
+		for (Wrapper wrap : tree.getWrappers()) {
 			wrap.removeStyleName("selectedDropWrapper");
 //			wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
 		}

@@ -14,6 +14,7 @@
  */
 package com.sciencegadgets.client.equationtree;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,7 +26,9 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.TopNodesNotFoundException;
+import com.sciencegadgets.client.Wrapper;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 
 public class MathMLBindingTree {
@@ -35,10 +38,11 @@ public class MathMLBindingTree {
 	private MathMLBindingNode leftSide;
 	private MathMLBindingNode equals;
 	private MathMLBindingNode rightSide;
-	private LinkedList<MLElementWrapper> wrappers = new LinkedList<MLElementWrapper>();
+	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
 	private HashMap<String, MathMLBindingNode> idMap = new HashMap<String, MathMLBindingNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
-	private Node mathML;
+	private Element mathML;
+	private boolean inEditMode;
 
 	/**
 	 * A tree representation of an equation.
@@ -51,17 +55,24 @@ public class MathMLBindingTree {
 	 *            from XML
 	 * @throws TopNodesNotFoundException
 	 */
-	public MathMLBindingTree(Node mathML) throws TopNodesNotFoundException {
+	public MathMLBindingTree(Element mathML, boolean inEditMode)
+			throws TopNodesNotFoundException {
+		if (!inEditMode) {
+			mathML = EquationRandomizer.randomizeNumbers(mathML);
+		}
+
 		this.mathML = mathML;
+		this.inEditMode = inEditMode;
 
 		bindMLtoNodes(mathML);
 
-		this.wrapTree();
 	}
 
 	public Element getMathML() {
 		Element clone = (Element) mathML.cloneNode(true);
+
 		return clone;
+
 	}
 
 	public MathMLBindingNode getRoot() {
@@ -88,22 +99,7 @@ public class MathMLBindingTree {
 		return equals;
 	}
 
-	public LinkedList<MLElementWrapper> getWrappers() {
-		return wrappers;
-	}
-
-	public LinkedList<MLElementWrapper> wrapTree() {
-
-		Collection<MathMLBindingNode> children = idMap.values();
-		MLElementWrapper wrap;
-		wrappers.clear();
-
-		for (MathMLBindingNode child : children) {
-
-			wrap = new MLElementWrapper(child, true, true);
-			child.setWrapper(wrap);
-			wrappers.add(wrap);
-		}
+	public LinkedList<Wrapper> getWrappers() {
 		return wrappers;
 	}
 
@@ -130,7 +126,7 @@ public class MathMLBindingTree {
 
 	public class MathMLBindingNode {
 		private Element mlNode;
-		private MLElementWrapper wrapper;
+		private Wrapper wrapper;
 
 		/**
 		 * Wrap existing MathML node
@@ -226,7 +222,8 @@ public class MathMLBindingTree {
 			case Number:
 				// Confirm that the symbol is a number or random number spec
 				// then fall into Variable
-				if (!newNode.getSymbol().contains("-")) {//specs have "-"
+				if (!newNode.getSymbol().equals(
+						RandomSpecification.RANDOM_SYMBOL)) {
 					try {
 						Double.parseDouble(newNode.getSymbol());
 					} catch (NumberFormatException e) {
@@ -417,11 +414,14 @@ public class MathMLBindingTree {
 			return mlNode.getInnerText();
 		}
 
-		public void setWrapper(MLElementWrapper wrap) {
+		
+		public Wrapper wrap(Wrapper wrap) {
 			wrapper = wrap;
+			wrappers.add(wrapper);
+			return wrapper;
 		}
 
-		public MLElementWrapper getWrapper() {
+		public Wrapper getWrapper() {
 			return wrapper;
 		}
 
@@ -502,8 +502,9 @@ public class MathMLBindingTree {
 	}
 
 	public static enum Type {
-		Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction("mfrac", true), Variable(
-				"mi", false), Number("mn", false), Operation("mo", false);
+		Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
+				"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
+				"mo", false);
 
 		private String tag;
 		private boolean hasChildren;
@@ -516,12 +517,12 @@ public class MathMLBindingTree {
 		public String getTag() {
 			return tag;
 		}
-		
-		public boolean hasChildren(){
+
+		public boolean hasChildren() {
 			return hasChildren;
-			
-			}
-			
+
+		}
+
 	}
 
 	public static enum Operator {
@@ -546,28 +547,29 @@ public class MathMLBindingTree {
 	private void bindMLtoNodes(Node mathMLequation)
 			throws TopNodesNotFoundException {
 
-		// Find the top tree nodes: left side <mo>=<mo> right side
+		// Find the top tree nodes: [left side] <mo>=<mo> [right side]
 		Element rootNode = (Element) mathMLequation;
 		String middleString = "";
 
-		while (!"=".equals(middleString)) {
-			switch (rootNode.getChildCount()) {
-			case 0: // prevent infinite loop
-				throw new TopNodesNotFoundException(
-						"The MathML is invalid, It must contain the following pattern for the top layer of the equation:"
-								+ "\n<mrow>[left side of eqation]</mrow>"
-								+ "\n\t<mo>=<mo>"
-								+ "\n<mrow>[right side of eqation]</mrow>\n");
-			case 1:
-				rootNode = rootNode.getFirstChildElement();
-				break;
-			default:
-				middleString = ((Element) rootNode.getChild(1)).getInnerText();
-				if (!"=".equals(middleString)) {
-					rootNode = rootNode.getFirstChildElement();
-				}
-			}
-		}
+//		//Climb DOM tree to find equals sign
+//		while (!"=".equals(middleString)) {
+//			switch (rootNode.getChildCount()) {
+//			case 0: // prevent infinite loop
+//				throw new TopNodesNotFoundException(
+//						"The MathML is invalid, It must contain the following pattern for the top layer of the equation:"
+//								+ "\n<mrow>[left side of eqation]</mrow>"
+//								+ "\n\t<mo>=<mo>"
+//								+ "\n<mrow>[right side of eqation]</mrow>\n");
+//			case 1:
+//				rootNode = rootNode.getFirstChildElement();
+//				break;
+//			default:
+//				middleString = ((Element) rootNode.getChild(1)).getInnerText();
+//				if (!"=".equals(middleString)) {
+//					rootNode = rootNode.getFirstChildElement();
+//				}
+//			}
+//		}
 
 		NodeList<Node> sideEqSide = rootNode.getChildNodes();
 
@@ -578,22 +580,22 @@ public class MathMLBindingTree {
 
 		addRecursively(rootNode);
 
-////		 Prints both maps for debugging
-//		 System.out.println("idMLMap");
-//		 for (String key : idMLMap.keySet())
-//		 System.out.println(key + "\t" + idMLMap.get(key).getString());
-//		
-//		 System.out.println("idMap");
-//		 for (String key : idMap.keySet())
-//		 System.out.println(key + "\t" + idMap.get(key).toString());
+		// // Prints both maps for debugging
+//		System.out.println("idMLMap");
+//		for (String key : idMLMap.keySet())
+//			System.out.println(key + "\t" + idMLMap.get(key).getString());
+//
+//		System.out.println("idMap");
+//		for (String key : idMap.keySet())
+//			System.out.println(key + "\t" + idMap.get(key).toString());
 	}
 
 	private void addRecursively(Element mathMLNode) {
-		
+
 		String id = Random.nextInt(2147483647) + "";
-		
+
 		mathMLNode.setAttribute("id", id);
-		
+
 		idMLMap.put(id, mathMLNode);
 		idMap.put(id, new MathMLBindingNode(mathMLNode));
 
@@ -607,4 +609,5 @@ public class MathMLBindingTree {
 			}
 		}
 	}
+
 }

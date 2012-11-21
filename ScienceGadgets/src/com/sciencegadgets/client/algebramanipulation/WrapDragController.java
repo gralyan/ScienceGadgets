@@ -42,7 +42,7 @@ public class WrapDragController extends PickupDragController {
 	public void dragStart() {
 		super.dragStart();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-		wrap.setHTML("<math>"+wrap.getJohnNode().toString()+"</math>");
+		wrap.setHTML("<math>"+wrap.getNode().toString()+"</math>");
 //		wrap.setHTML("svg"+DOM.getElementById(wrap.getJohnNode().getId()).toString());
 	}
 
@@ -54,7 +54,7 @@ public class WrapDragController extends PickupDragController {
 		
 		// TODO This should clear the drop target highlights as well as the
 		// wrapper being dragged. The drop targets aren't being cleared.
-		wrap.select(false);
+		wrap.unselect();
 		
 	}
 

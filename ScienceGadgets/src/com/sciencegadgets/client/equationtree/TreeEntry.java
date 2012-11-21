@@ -28,24 +28,11 @@ public class TreeEntry implements EntryPoint {
 	
 	public void onModuleLoad() {
 		
-		//TODO don't catch general exception
-//		try {
-
 		// Placements are relative to the AbsolutePanel
 //		apTree.getElement().getStyle().setPosition(Position.RELATIVE);
 			spTree.setStyleName("treeCanvas");
 			apTree.setStyleName("treeCanvas");
 			RootPanel.get("scienceGadgetArea").add(spTree);
 			
-			////////////////////////////
-			//Just to visualize ml
-			//////////////////////////
-//		mlTree.setStyleName("apTree");
-//		RootPanel.get("scienceGadgetArea").add(mlTree);
-			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			Window.alert("Please refresh this page");
-//		}
 	}
 }

@@ -71,7 +71,7 @@ public class SymbolPalette extends PopupPanel {
 			palette.hide();
 			String symbol = useButton.getElement().getInnerText();
 			node.setSymbol(symbol);
-			Moderator.reload("");
+			Moderator.reloadEquationPanel("");
 		}
 
 	}

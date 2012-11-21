@@ -14,7 +14,6 @@
  */
 package com.sciencegadgets.client.equationbrowser;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +25,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -47,10 +45,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebramanipulation.AlgOut;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
-import com.sciencegadgets.client.equationtree.RandomSpecification;
 import com.sciencegadgets.client.equationtree.TreeEntry;
 
 //Uncomment to use as gadget////////////////////////////////////
@@ -66,8 +62,10 @@ public class EquationBrowser extends VerticalPanel {
 	private Grid algGrid = new Grid(1, 1);
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
-	private RadioButton modeSelectAlg = new RadioButton("mode", "Algebra");
-	private RadioButton modeSelectSci = new RadioButton("mode", "Science");
+	private RadioButton modeAlg = new RadioButton("mode", "Algebra");
+	private RadioButton modeSci = new RadioButton("mode", "Science");
+	private RadioButton modeEdit = new RadioButton("mode2", "Edit");
+	private RadioButton modeSolve = new RadioButton("mode2", "Solve");
 	private Button sumButton = new Button("Use");
 	private Button combineEqButton = new Button("Combine");
 	private HashMap<TextBox, Element> inputBinding = new HashMap<TextBox, Element>();
@@ -83,19 +81,27 @@ public class EquationBrowser extends VerticalPanel {
 		this.setStyleName("browserPanel");
 
 		Grid modes = new Grid(1, 2);
-		modes.setWidget(0, 0, modeSelectAlg);
-		modes.setWidget(0, 1, modeSelectSci);
+		modes.setWidget(0, 0, modeAlg);
+		modes.setWidget(0, 1, modeSci);
 		modes.setStyleName("modes");
 		this.add(modes);
 
+		Grid modes2 = new Grid(1, 2);
+		modes2.setWidget(0, 0, modeSolve);
+		modes2.setWidget(0, 1, modeEdit);
+		modes2.setStyleName("modes");
+		this.add(modes2);
+
 		this.add(browserPanel);
 
-		modeSelectAlg.addClickHandler(new ModeSelectHandler("algebra"));
-		modeSelectSci.addClickHandler(new ModeSelectHandler("science"));
+		modeAlg.addClickHandler(new ModeSelectHandler(Mode.algebra));
+		modeSci.addClickHandler(new ModeSelectHandler(Mode.science));
+		modeEdit.addClickHandler(new ModeSelectHandler(Mode.edit));
+		modeSolve.addClickHandler(new ModeSelectHandler(Mode.solve));
 
-		modeSelectAlg.setValue(true, true);
+		modeAlg.setValue(true, true);
+		modeSolve.setValue(true, true);
 		createAlgBrowser();
-
 	}
 
 	private void createSciBrowser() {
@@ -285,70 +291,6 @@ public class EquationBrowser extends VerticalPanel {
 			sumGrid.setWidget(i, 3, findButton);
 		}
 
-		// Fill varBox (algebra menu)
-		/*
-		 * scienceGadgets.varBox.clear(); scienceGadgets.varBox.addItem(""); for
-		 * (int i = 0; i < sumGrid.getRowCount(); i++) {
-		 * scienceGadgets.varBox.addItem(variables[i]); }
-		 * parseJQMath(scienceGadgets.varBox.getElement());
-		 */
-
-	}
-
-	/**
-	 * Replaces all inner text of mn tags with random numbers before sending
-	 * 
-	 * @param equation
-	 */
-	private void sendAlgebraEquation(String equation) {
-		HTML randomizedEquation = new HTML(equation);
-
-		NodeList<com.google.gwt.dom.client.Element> variables = randomizedEquation
-				.getElement().getElementsByTagName("mn");
-
-		for (int i = 0; i < variables.getLength(); i++) {
-			com.google.gwt.dom.client.Element var = variables.getItem(i);
-			String varText = var.getInnerText();
-
-			if (varText.contains("-")) {
-				
-				// negative - lowerBound - upperBound - decimal place
-				String[] specs = varText.split("-");
-
-				try {
-					String negativity = specs[0];
-					double lowerBound = Double.parseDouble(specs[1]);
-					double upperBound = Double.parseDouble(specs[2]);
-					int decPlace = Integer.parseInt(specs[3]);
-
-					// Randomize within bounds
-					double randomNumber = (Math.random() * (upperBound - lowerBound))
-							+ lowerBound;
-
-					// Make negative
-					if (RandomSpecification.ALWAYS.equals(negativity)
-							|| RandomSpecification.SOMETIMES.equals(negativity)
-							&& Random.nextBoolean()) {
-						randomNumber *= -1;
-					}
-
-					BigDecimal randomBigD = new BigDecimal(randomNumber);
-					randomBigD.setScale(decPlace);
-
-					var.setInnerText(randomBigD + "");
-
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-					var.setInnerText(((int) (Math.random() * 10) + 1) + "");
-				} catch (ArithmeticException e) {
-					e.printStackTrace();
-					var.setInnerText(((int) (Math.random() * 10) + 1) + "");
-				}
-			}
-		}
-
-		moderator.makeAgebraWorkspace(randomizedEquation.getElement()
-				.getFirstChildElement());
 	}
 
 	// //////////////////////////////////////////
@@ -382,23 +324,19 @@ public class EquationBrowser extends VerticalPanel {
 					clickedEl.setId("selectedEq");
 				}
 
-				String equation = null;
-
 				if (table != null) {
 					Widget cell = table.getWidget(clickedCell.getRowIndex(),
 							clickedCell.getCellIndex());
 
-					equation = cell.getElement().getInnerHTML();
+					if (table.equals(algGrid) && modeAlg.getValue()) { // For Algebra practice mode
+						Element root = (Element) cell.getElement()
+								.getFirstChildElement();
+						moderator.makeAgebraWorkspace(root);
 
-					if (table.equals(algGrid)) { // For Algebra practice mode
-						sendAlgebraEquation(equation);
-
-					} else if (table.equals(eqGrid)) { // For Science Mode
-						if (modeSelectSci.getValue()) {
+					} else if (table.equals(eqGrid) && modeSci.getValue()) { // For Science Mode
 							fillSummary(clickedEl.getFirstChildElement()
 									.getInnerHTML());
 						}
-					}
 				}
 			}
 		}
@@ -490,25 +428,37 @@ public class EquationBrowser extends VerticalPanel {
 		}
 	}
 
-	class ModeSelectHandler implements ClickHandler {
-		String mode = "algebra";
+	private enum Mode {
+		science, algebra, edit, solve;
+	}
 
-		private ModeSelectHandler(String mode) {
+	class ModeSelectHandler implements ClickHandler {
+		Mode mode;
+
+		private ModeSelectHandler(Mode mode) {
 			this.mode = mode;
 		}
 
 		public void onClick(ClickEvent event) {
-			browserPanel.clear();
 			AlgOut.algOut.clear(true);
 			AlgOut.algOut.resizeRows(0);
-			TreeEntry.apTree.clear();
 
-			if ("algebra".equals(mode)) {
+			switch (mode) {
+			case algebra:
+				browserPanel.clear();
 				createAlgBrowser();
-
-			} else if ("science".equals(mode)) {
+				break;
+			case science:
+				browserPanel.clear();
 				createSciBrowser();
 				sumGrid.clear(true);
+				break;
+			case edit:
+				Moderator.inEditMode = true;
+				break;
+			case solve:
+				Moderator.inEditMode = false;
+				break;
 
 			}
 		}
