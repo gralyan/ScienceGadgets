@@ -100,7 +100,8 @@ public class Moderator implements EntryPoint {
 			if (changeNodeMenu == null) {
 				changeNodeMenu = new ChangeNodeMenu(scienceGadgetArea);
 			}
-			scienceGadgetArea.add(changeNodeMenu, 0, SGAHeight * 9 / 10);
+//			scienceGadgetArea.add(changeNodeMenu, 0, SGAHeight * 9 / 10);
+			scienceGadgetArea.add(changeNodeMenu,0,SGAHeight*3/4);
 		}
 
 		try {
@@ -143,7 +144,7 @@ public class Moderator implements EntryPoint {
 	public static void onEqReady() {
 		eqPanel.getElement().getStyle().setOpacity(1);
 		
-		System.out.println("r "+inEditMode+" "+jTree.getMathML().getString());
+//		System.out.println("r "+inEditMode+" "+jTree.getMathML().getString());
 	}
 
 	public void switchToBrowser() {
@@ -178,7 +179,13 @@ public class Moderator implements EntryPoint {
 		Timer resizeTimer = new Timer() {
 			@Override
 			public void run() {
-				fitWindow();
+//				fitWindow();
+				SGAHeight = Window.getClientHeight();
+				
+				scienceGadgetArea.setHeight(SGAHeight + "px");
+				Window.scrollTo(scienceGadgetArea.getAbsoluteLeft(),
+						scienceGadgetArea.getAbsoluteTop());
+				
 			}
 		};
 

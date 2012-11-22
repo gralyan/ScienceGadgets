@@ -21,60 +21,82 @@ import java.util.Set;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class WrapDragController extends PickupDragController {
 
-	// private ArrayList<DropController> dropList;
-	// private ArrayList<MLElementWrapper> dropWrapperList;
 	private Map<DropController, MLElementWrapper> dropMap;
+	private String startTransform;
+	private int startTranslate;
+	private int startMouseX;
 
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
 		super(boundaryPanel, allowDroppingOnBoundaryPanel);
-		// dropList = new ArrayList<DropController>();
-		// dropWrapperList = new ArrayList<MLElementWrapper>();
+
 		dropMap = new HashMap<DropController, MLElementWrapper>();
 		this.setBehaviorDragStartSensitivity(5);
+	}
+
+	@Override
+	public void dragMove() {
+		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
+		Element svg = wrap.getSVG();
+
+		String oldTrans = svg.getAttribute("transform");
+		int start = oldTrans.indexOf("translate") + 10;
+		int end = oldTrans.indexOf(")", start);
+		String oldTransValue = oldTrans.substring(start, end);
+		
+		//TODO scale it accordingly
+		int newTrans = startTranslate + 4*(context.mouseX - startMouseX);
+
+		String newAttr = oldTrans.replaceFirst(oldTransValue,
+				newTrans+"");
+
+		svg.setAttribute("transform", newAttr);
+		
+		super.dragMove();
 	}
 
 	@Override
 	public void dragStart() {
 		super.dragStart();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-		wrap.setHTML("<math>"+wrap.getNode().toString()+"</math>");
-//		wrap.setHTML("svg"+DOM.getElementById(wrap.getJohnNode().getId()).toString());
+		Element svg = wrap.getSVG();
+		
+		startTransform = svg.getAttribute("transform");
+		startMouseX = context.mouseX;
+
+		String transform = svg.getAttribute("transform");
+		int start = transform.indexOf("translate") + 10;
+		int end = transform.indexOf(")", start);
+		String oldTransValue = transform.substring(start, end);
+		startTranslate = Integer.parseInt(oldTransValue);
 	}
 
 	@Override
 	public void dragEnd() {
 		super.dragEnd();
 		MLElementWrapper wrap = (MLElementWrapper) context.draggable;
-		wrap.setHTML("");
-		
-		// TODO This should clear the drop target highlights as well as the
-		// wrapper being dragged. The drop targets aren't being cleared.
+		Element svg = wrap.getSVG();
+
 		wrap.unselect();
-		
+
+		svg.setAttribute("transform", startTransform);
 	}
 
-	Set<DropController> getDropList() {
-		// return dropList;
+	Set<DropController> getDropControllers() {
 		return dropMap.keySet();
 	}
-
-	Collection<MLElementWrapper> getDropWrapList() {
-		// return dropWrapperList;
+	Collection<MLElementWrapper> getDropTargets() {
 		return dropMap.values();
 	}
-
 	@Override
 	public void registerDropController(DropController dropController) {
 		super.registerDropController(dropController);
 		if (dropController.getDropTarget() instanceof MLElementWrapper) {
-			// dropWrapperList.add((MLElementWrapper) dropController
-			// .getDropTarget());
-			// dropList.add(dropController);
 			dropMap.put(dropController,
 					(MLElementWrapper) dropController.getDropTarget());
 		} else if (!(dropController.getDropTarget() instanceof AbsolutePanel)) {
@@ -82,22 +104,14 @@ public class WrapDragController extends PickupDragController {
 					"The Drop controller must have an MLElementWrapper as a target");
 		}
 	}
-
 	@Override
 	public void unregisterDropController(DropController dropController) {
 		super.unregisterDropController(dropController);
-		// dropWrapperList.remove((MLElementWrapper) dropController
-		// .getDropTarget());
-		// dropList.remove(dropController);
 		dropMap.remove(dropController);
 	}
-
 	@Override
 	public void unregisterDropControllers() {
 		super.unregisterDropControllers();
-		// dropWrapperList.clear();
-		// dropList.clear();
 		dropMap.clear();
 	}
-
 }
