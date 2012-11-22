@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.equationtree;
 
+import com.google.gwt.user.client.Element;
 import com.sciencegadgets.client.Wrapper;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -11,8 +12,8 @@ public class EditWrapper extends Wrapper {
 	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
 	public EditWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, String width, String height) {
-		super(node, eqPanel, eqLayer, width, height);
+			EquationLayer eqLayer, String width, String height, Element svg) {
+		super(node, eqPanel, eqLayer, width, height, svg);
 
 		editMenu = new EditMenu(this, width);
 		editMenu.setVisible(false);

@@ -48,13 +48,14 @@ public class MLElementWrapper extends Wrapper {
 	 * <b>Note - this widget can only be draggable if it's attached to an
 	 * {@link AbsolutePanel}</b>
 	 * </p>
+	 * @param svg 
 	 * 
 	 * @param theElement
 	 *            - the element to wrap in widget
 	 */
 	public MLElementWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, String width, String height) {
-		super(node, eqPanel, eqLayer, width, height);
+			EquationLayer eqLayer, String width, String height, com.google.gwt.user.client.Element svg) {
+		super(node, eqPanel, eqLayer, width, height, svg);
 	
 	}
 
@@ -116,7 +117,7 @@ public class MLElementWrapper extends Wrapper {
 
 	public void removeDropTargets() {
 		dragController.unregisterDropControllers();
-		dragController.getDropList().clear();
+		dragController.getDropControllers().clear();
 	}
 
 
@@ -135,7 +136,7 @@ public class MLElementWrapper extends Wrapper {
 		String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
 		String changeDesc = "";
 
-		for (DropController dropC : wrapper.dragController.getDropList()) {
+		for (DropController dropC : wrapper.dragController.getDropControllers()) {
 
 			String className = dropC.getClass().getName();
 			String change = ((AbstractMathDropController) dropC)
@@ -183,7 +184,7 @@ public class MLElementWrapper extends Wrapper {
 		super.unselect();
 		MLElementWrapper wrapper = this;
 
-		for (DropController dropC : wrapper.dragController.getDropList()) {
+		for (DropController dropC : wrapper.dragController.getDropControllers()) {
 
 			String[] styles = dropC.getDropTarget().getStyleName().split(" ");
 
