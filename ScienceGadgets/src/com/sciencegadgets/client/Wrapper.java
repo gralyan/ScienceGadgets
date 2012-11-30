@@ -1,5 +1,6 @@
 package com.sciencegadgets.client;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -9,15 +10,8 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.sciencegadgets.client.equationtree.EditWrapper;
 import com.sciencegadgets.client.equationtree.EquationLayer;
 import com.sciencegadgets.client.equationtree.EquationPanel;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -29,14 +23,14 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	protected MathMLBindingNode node;
 	protected EquationPanel eqPanel;
 	protected EquationLayer eqLayer;
-	protected Element svg;
+	public int paddingLeft = 0;
+	public int paddingRight = 0;
 
 	public Wrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, String width, String height, Element svg) {
+			EquationLayer eqLayer, String width, String height) {
 		setWidth(width);
 		setHeight(height);
 
-		this.svg = svg;
 		this.node = node;
 		this.eqPanel = eqPanel;
 		this.eqLayer = eqLayer;
@@ -48,7 +42,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	}
 	
 	public Element getSVG(){
-		return svg;
+		return node.getSVG();
 	}
 	
 	public MathMLBindingNode getNode() {
@@ -61,6 +55,18 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	public EquationPanel getEqPanel() {
 		return eqPanel;
+	}
+	
+	public Wrapper getNextSiblingWrapper() throws IndexOutOfBoundsException{
+		return node.getNextSibling().getWrapper();
+	}
+	
+	public Wrapper getPrevSiblingWrapper() throws IndexOutOfBoundsException{
+		return node.getPrevSibling().getWrapper();
+	}
+	
+	public Wrapper getParentWrapper(){
+		return node.getParent().getWrapper();
 	}
 
 	public void select() {
@@ -83,6 +89,11 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		selectedWrapper = null;
 
 		this.getElement().removeAttribute("id");
+	}
+	
+	@Override
+	public int getOffsetWidth() {
+		return super.getOffsetWidth();//+paddingLeft+paddingRight;
 	}
 
 	// /////////////////////////////////////////////////////////////////////

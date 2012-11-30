@@ -127,6 +127,7 @@ public class MathMLBindingTree {
 	public class MathMLBindingNode {
 		private Element mlNode;
 		private Wrapper wrapper;
+		private Element SVGElement;
 
 		/**
 		 * Wrap existing MathML node
@@ -392,6 +393,9 @@ public class MathMLBindingTree {
 		}
 
 		public MathMLBindingNode getParent() {
+			if("math".equalsIgnoreCase(getTag())){
+				throw new NoSuchElementException("Can't get the parent of a math tag because it's the root:\n"+toString());
+			}
 			Element parentElement = getMLNode().getParentElement();
 			String parentId = parentElement.getAttribute("id");
 			MathMLBindingNode parentNode = getNodeById(parentId);
@@ -423,6 +427,14 @@ public class MathMLBindingTree {
 
 		public Wrapper getWrapper() {
 			return wrapper;
+		}
+		
+		public void setSVG(Element element){
+			SVGElement = element;
+		}
+		
+		public Element getSVG(){
+			return SVGElement;
 		}
 
 		/**

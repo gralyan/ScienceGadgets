@@ -23,4 +23,15 @@ public class JSNICalls {
 		return elm.getBoundingClientRect().height;
 		//		return elm.getBBox().height;
 	}-*/;
+	
+	public static native void setAttributeNS(Element element,
+			String nameSpace, String attribute, String value)/*-{
+		element.setAttributeNS(nameSpace, attribute, value)
+	}-*/;
+
+	public static native Element createElementNS(final String ns,
+			final String name)/*-{
+		return document.createElementNS(ns, name);
+	}-*/;
+
 }
