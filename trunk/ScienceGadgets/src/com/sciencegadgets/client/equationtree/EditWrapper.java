@@ -12,8 +12,8 @@ public class EditWrapper extends Wrapper {
 	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
 	public EditWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, String width, String height, Element svg) {
-		super(node, eqPanel, eqLayer, width, height, svg);
+			EquationLayer eqLayer, String width, String height) {
+		super(node, eqPanel, eqLayer, width, height);
 
 		editMenu = new EditMenu(this, width);
 		editMenu.setVisible(false);

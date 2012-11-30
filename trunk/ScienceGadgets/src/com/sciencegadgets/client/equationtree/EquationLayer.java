@@ -3,12 +3,15 @@ package com.sciencegadgets.client.equationtree;
 import java.util.LinkedList;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.sciencegadgets.client.Wrapper;
 
 public class EquationLayer extends AbsolutePanel {
 	AbsolutePanel parentBackPanel = new AbsolutePanel();
 	AbsolutePanel backPanel = new AbsolutePanel();
 	AbsolutePanel eqPanel = new AbsolutePanel();
 	AbsolutePanel wrapPanel = new AbsolutePanel();
+	
+	LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
 
 	EquationLayer parentLayer;
 
@@ -27,7 +30,7 @@ public class EquationLayer extends AbsolutePanel {
 
 		eqPanel.setStyleName("textCenter");
 	}
-
+	
 	@Override
 	public void setSize(String width, String height) {
 		super.setSize(width, height);
@@ -48,5 +51,13 @@ public class EquationLayer extends AbsolutePanel {
 
 	public EquationLayer getParentLayer() {
 		return parentLayer;
+	}
+	
+	public LinkedList<Wrapper> getWrappers() {
+		return wrappers;
+	}
+	
+	public void addWrapper(Wrapper wrap) {
+		wrappers.add(wrap);
 	}
 }

@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,6 +23,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
@@ -42,9 +44,11 @@ public class EquationPanel extends AbsolutePanel {
 	private double eqWidth = 0;
 	private double eqHeight = 0;
 	private EquationLayer rootLayer;
-	private Element svgContainer;
+	public Element svgContainer;
+	private CoordinateConverter coordinateConverter;
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
+	private Backgrounds backgrounds;
 	// Width of equation compared to panel
 	private static final double EQUATION_FRACTION = 0.9;
 
@@ -104,8 +108,11 @@ public class EquationPanel extends AbsolutePanel {
 			draw(root, null);
 
 			pilot.removeFromParent();
+			
+			this.backgrounds = new Backgrounds(DOM.getElementById("scienceGadgetArea"));
 
 			placeNextEqWrappers(root);
+			// migrateSVG();
 
 			for (EquationLayer eqLayer : eqLayerMap.values()) {
 				eqLayer.setVisible(false);
@@ -215,6 +222,9 @@ public class EquationPanel extends AbsolutePanel {
 
 			svg = DOM.getElementById(prefixIdSvg + node.getId());
 			parentSvg = DOM.getElementById(prefixIdSvg + parentNode.getId());
+
+			node.setSVG(svg);
+
 			try {
 				prevSibSvg = DOM.getElementById(prefixIdSvg
 						+ node.getPrevSibling().getId());
@@ -232,6 +242,7 @@ public class EquationPanel extends AbsolutePanel {
 			int top = 0, left = 0;
 			double height = 0;
 			String heightStr = null, widthStr = null;
+			int padLeft = 0, padRight = 0;
 
 			// Top layer of equation is different
 			if ("math".equalsIgnoreCase(parentNode.getTag())) {
@@ -254,13 +265,17 @@ public class EquationPanel extends AbsolutePanel {
 						// Fill from previous to next operator if exists
 						left = prevSibSvg != null ? prevSibSvg
 								.getAbsoluteLeft()
-								+ (int) JSNICalls.getElementWidth(prevSibSvg)
+								+ (int)JSNICalls.getElementWidth(prevSibSvg)
 								: svg.getAbsoluteLeft();
-						double right = nextSibSvg != null ? nextSibSvg
+						int right = nextSibSvg != null ? nextSibSvg
 								.getAbsoluteLeft() : svg.getAbsoluteLeft()
-								+ (int) JSNICalls.getElementWidth(svg);
+								+ (int)JSNICalls.getElementWidth(svg);
 
 						widthStr = (right - left) + "px";
+						
+						padLeft = svg.getAbsoluteLeft() - left;
+						padRight = right - svg.getAbsoluteLeft()
+								+ (int) JSNICalls.getElementWidth(svg);
 					}
 					top = parentSvg.getAbsoluteTop();
 					height = JSNICalls.getElementHeight(parentSvg);
@@ -287,16 +302,19 @@ public class EquationPanel extends AbsolutePanel {
 			VerticalPanel menu = null;
 			if (inEditMode) {// Edit Mode////////////////////////////
 				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
-						widthStr, heightStr, svg);
+						widthStr, heightStr);
 				menu = ((EditWrapper) wrap).getEditMenu();
 
 			} else {// Solver Mode////////////////////////////////////
 				wrap = new MLElementWrapper(node, this, eqLayerMap.get(node),
-						widthStr, heightStr, svg);
+						widthStr, heightStr);
 				menu = ((MLElementWrapper) wrap).getContextMenu();
 			}
 
 			node.wrap(wrap);
+			eqLayer.addWrapper(wrap);
+			wrap.paddingLeft = padLeft;
+			wrap.paddingRight = padRight;
 
 			// Wrapper
 			eqLayer.wrapPanel.add(wrap, left - this.getAbsoluteLeft(), top
@@ -305,18 +323,47 @@ public class EquationPanel extends AbsolutePanel {
 			// Wrapper Menu
 			eqLayer.wrapPanel.add(menu, left - this.getAbsoluteLeft(), top
 					- this.getAbsoluteTop() + (int) height);
-
+			
+			backgrounds.addBackground(svg);
+			
 			// background image
-			WrapperBackground wrapBack = new WrapperBackground(node, widthStr,
-					heightStr);
-			eqLayer.backPanel.add(wrapBack, left - this.getAbsoluteLeft(), top
-					- this.getAbsoluteTop());
+//			WrapperBackground wrapBack = new WrapperBackground(node, widthStr,
+//					heightStr);
+//			eqLayer.backPanel.add(wrapBack, left - this.getAbsoluteLeft(), top
+//					- this.getAbsoluteTop());
 
 			if (node.getType().hasChildren()) {
 				placeNextEqWrappers(node);
 			}
 		}
 	}
+
+	// private void migrateSVG() {
+	// for (EquationLayer eqLayer : eqLayerMap.values()) {
+	// for (Wrapper wrap : eqLayer.getWrappers()) {
+	//
+	// Element svg = (Element) svgContainer.cloneNode(false);
+	//
+	// // Element svg = DOM.createElement("svg");
+	// // svg.setAttribute("id", svgContainer.getAttribute("id"));
+	// // svg.setAttribute("class", "mjx-svg-math");
+	// // svg.setAttribute("xmlns:xlink",
+	// // "http://www.w3.org/1999/xlink");
+	// // svg.setAttribute("style", "width: " + wrap.getOffsetWidth()
+	// // + "; height: " + wrap.getOffsetHeight() + ";");
+	// // svg.setAttribute("viewBox", "0 0 1000 1000");//
+	// +wrap.getOffsetWidth()+" "+wrap.getOffsetHeight());
+	//
+	// svg.getStyle().setLeft(0, Unit.PX);
+	// svg.getStyle().setTop(0, Unit.PX);
+	//
+	// Element svgGroup = wrap.getSVG();
+	// svgGroup.setAttribute("transform", "scale(1, -1)");
+	// svg.appendChild(svgGroup);
+	// wrap.getElement().appendChild(svg);
+	// }
+	// }
+	// }
 
 	/**
 	 * Each equation must have a different set of ID's which only differ in the
@@ -394,6 +441,16 @@ public class EquationPanel extends AbsolutePanel {
 
 			style.setWidth(newWidth, Unit.PX);
 			style.setHeight(newHeight, Unit.PX);
+
+			// Global/SVG coordinate converter
+			String[] svgSizes = svgContainer.getAttribute("viewBox").split(" ");
+			coordinateConverter = new CoordinateConverter(
+					(Double.parseDouble(svgSizes[2])) / eqWidth,
+					(Double.parseDouble(svgSizes[3])) / eqHeight, //
+					this.getAbsoluteLeft()
+					//gap made by centering equation
+							+ (getOffsetWidth() * (1 - EQUATION_FRACTION)) / 2,
+					this.getAbsoluteTop());
 		} else {
 			style.setWidth(eqWidth, Unit.PX);
 			style.setHeight(eqHeight, Unit.PX);
@@ -403,6 +460,9 @@ public class EquationPanel extends AbsolutePanel {
 	private void setColor(Element element, String color) {
 		element.setAttribute("fill", color);
 		element.setAttribute("stroke", color);
+	}
 
+	public CoordinateConverter getCoordinateConverter() {
+		return coordinateConverter;
 	}
 }
