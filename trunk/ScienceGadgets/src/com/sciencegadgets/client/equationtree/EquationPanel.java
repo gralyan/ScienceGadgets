@@ -9,7 +9,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -18,17 +17,12 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Wrapper;
-import com.sciencegadgets.client.algebramanipulation.Fade;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
@@ -108,8 +102,10 @@ public class EquationPanel extends AbsolutePanel {
 			draw(root, null);
 
 			pilot.removeFromParent();
-			
-			this.backgrounds = new Backgrounds(DOM.getElementById("scienceGadgetArea"));
+
+			this.backgrounds = new Backgrounds(
+					DOM.getElementById("scienceGadgetArea"),
+					coordinateConverter);
 
 			placeNextEqWrappers(root);
 			// migrateSVG();
@@ -216,13 +212,13 @@ public class EquationPanel extends AbsolutePanel {
 		LinkedList<MathMLBindingNode> childNodes = parentNode.getChildren();
 		EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
+		com.google.gwt.user.client.Element svg, parentSvg, prevSibSvg = null, nextSibSvg = null;
+		String prefixIdSvg = parentNode.getId() + "svg";
+		parentSvg = DOM.getElementById(prefixIdSvg + parentNode.getId());
+
 		childLoop: for (MathMLBindingNode node : childNodes) {
-			com.google.gwt.user.client.Element svg, parentSvg, prevSibSvg = null, nextSibSvg = null;
-			String prefixIdSvg = parentNode.getId() + "svg";
 
 			svg = DOM.getElementById(prefixIdSvg + node.getId());
-			parentSvg = DOM.getElementById(prefixIdSvg + parentNode.getId());
-
 			node.setSVG(svg);
 
 			try {
@@ -240,8 +236,7 @@ public class EquationPanel extends AbsolutePanel {
 			setColor(svg, "black");
 
 			int top = 0, left = 0;
-			double height = 0;
-			String heightStr = null, widthStr = null;
+			double height = 0, width = 0;
 			int padLeft = 0, padRight = 0;
 
 			// Top layer of equation is different
@@ -251,52 +246,50 @@ public class EquationPanel extends AbsolutePanel {
 				top = svg.getAbsoluteTop();
 				left = svg.getAbsoluteLeft();
 				height = JSNICalls.getElementHeight(svg);
-				heightStr = height + "px";
-				widthStr = JSNICalls.getElementWidth(svg) + "px";
+				width = JSNICalls.getElementWidth(svg);
 			} else {
 				// Wrapper size is based on its parent type and size
 				switch (parentNode.getType()) {
 				case Term:
 				case Sum:
 					if (Type.Operation.equals(node.getType())) {
-						widthStr = JSNICalls.getElementWidth(svg) + "px";
+						width = JSNICalls.getElementWidth(svg);
 						left = svg.getAbsoluteLeft();
 					} else {
 						// Fill from previous to next operator if exists
 						left = prevSibSvg != null ? prevSibSvg
 								.getAbsoluteLeft()
-								+ (int)JSNICalls.getElementWidth(prevSibSvg)
+								+ (int) JSNICalls.getElementWidth(prevSibSvg)
 								: svg.getAbsoluteLeft();
 						int right = nextSibSvg != null ? nextSibSvg
 								.getAbsoluteLeft() : svg.getAbsoluteLeft()
-								+ (int)JSNICalls.getElementWidth(svg);
+								+ (int) JSNICalls.getElementWidth(svg);
 
-						widthStr = (right - left) + "px";
-						
+						width = right - left;
+
 						padLeft = svg.getAbsoluteLeft() - left;
 						padRight = right - svg.getAbsoluteLeft()
 								+ (int) JSNICalls.getElementWidth(svg);
 					}
 					top = parentSvg.getAbsoluteTop();
 					height = JSNICalls.getElementHeight(parentSvg);
-					heightStr = height + "px";
 					break;
 				case Fraction:
 					top = svg.getAbsoluteTop();
 					height = JSNICalls.getElementHeight(svg);
-					heightStr = height + "px";
 					left = parentSvg.getAbsoluteLeft();
-					widthStr = JSNICalls.getElementWidth(parentSvg) + "px";
+					width = JSNICalls.getElementWidth(parentSvg);
 					break;
 				case Exponential:
 					top = svg.getAbsoluteTop();
 					left = svg.getAbsoluteLeft();
 					height = JSNICalls.getElementHeight(svg);
-					heightStr = height + "px";
-					widthStr = JSNICalls.getElementWidth(svg) + "px";
+					width = JSNICalls.getElementWidth(svg);
 					break;
 				}
 			}
+
+			String heightStr = height + "px", widthStr = width + "px";
 
 			Wrapper wrap;
 			VerticalPanel menu = null;
@@ -323,14 +316,18 @@ public class EquationPanel extends AbsolutePanel {
 			// Wrapper Menu
 			eqLayer.wrapPanel.add(menu, left - this.getAbsoluteLeft(), top
 					- this.getAbsoluteTop() + (int) height);
-			
-			backgrounds.addBackground(svg);
-			
-			// background image
-//			WrapperBackground wrapBack = new WrapperBackground(node, widthStr,
-//					heightStr);
-//			eqLayer.backPanel.add(wrapBack, left - this.getAbsoluteLeft(), top
-//					- this.getAbsoluteTop());
+
+//			System.out.println(height);
+//			backgrounds.addBackground(svg, width, height);
+
+//			 background image
+			 SimplePanel wrapBack = new SimplePanel();
+					 //node, widthStr, heightStr);
+			 wrapBack.setSize(widthStr, heightStr);
+			 wrapBack.setStyleName(node.getType().toString());
+			 eqLayer.backPanel.add(wrapBack, left - this.getAbsoluteLeft(),
+			 top
+			 - this.getAbsoluteTop());
 
 			if (node.getType().hasChildren()) {
 				placeNextEqWrappers(node);
@@ -448,7 +445,7 @@ public class EquationPanel extends AbsolutePanel {
 					(Double.parseDouble(svgSizes[2])) / eqWidth,
 					(Double.parseDouble(svgSizes[3])) / eqHeight, //
 					this.getAbsoluteLeft()
-					//gap made by centering equation
+					// gap made by centering equation
 							+ (getOffsetWidth() * (1 - EQUATION_FRACTION)) / 2,
 					this.getAbsoluteTop());
 		} else {

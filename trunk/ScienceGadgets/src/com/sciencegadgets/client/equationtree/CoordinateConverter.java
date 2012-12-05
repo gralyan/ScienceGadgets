@@ -35,7 +35,13 @@ public class CoordinateConverter {
 	}
 
 	public double YtoSVG(double Yglobal){
-		return (Yglobal - Yoffset) * YsvgPerGlobal;
+		System.out.println("Yglobal       "+Yglobal);
+		System.out.println("Yoffset       "+Yoffset);
+		System.out.println("YsvgPerGlobal "+YsvgPerGlobal);
+		System.out.println("all           "+(Yglobal - Yoffset) * YsvgPerGlobal);
+		System.out.println("");
+		
+		return (Yglobal - Yoffset) * YsvgPerGlobal * -1;
 	}
 	
 	public double XtoGlobal(double Xsvg){
@@ -43,7 +49,7 @@ public class CoordinateConverter {
 	}
 	
 	public double YtoGlobal(double Ysvg){
-		return Ysvg / YsvgPerGlobal + Yoffset;
+		return -1*Ysvg / YsvgPerGlobal + Yoffset;
 	}
 	
 }

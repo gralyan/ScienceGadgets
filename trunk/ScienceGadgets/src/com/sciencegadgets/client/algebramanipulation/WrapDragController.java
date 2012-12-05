@@ -54,6 +54,7 @@ public class WrapDragController extends PickupDragController {
 		super.dragMove();
 
 		double wrapTrans = coordinateConverter.XtoSVG(wrap.getAbsoluteLeft());
+		double wrapTransY = coordinateConverter.YtoSVG(wrap.getAbsoluteTop());
 
 		// Switch wrapper with the next if dragged far enough
 		if (wrapTrans > nextWrapsTrans && nextNode != null) {
@@ -94,7 +95,7 @@ public class WrapDragController extends PickupDragController {
 		}
 
 		// Incrementally move svg with mouse
-		setTranslate(svg, wrapTrans, 0);
+		setTranslate(svg, wrapTrans, wrapTransY);
 	}
 
 	@Override
