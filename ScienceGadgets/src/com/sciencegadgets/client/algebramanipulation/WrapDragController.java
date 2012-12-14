@@ -103,8 +103,8 @@ public class WrapDragController extends PickupDragController {
 		super.dragStart();
 
 		wrap = (MLElementWrapper) context.draggable;
-		coordinateConverter = wrap.getEqPanel().getCoordinateConverter();
-		svg = wrap.getSVG();
+//		coordinateConverter = wrap.getEqPanel().getCoordinateConverter();
+//		svg = wrap.getSVG();
 
 		// Save initial state as fields for later use
 		// startMouseX = context.mouseX;

@@ -45,6 +45,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebramanipulation.AlgOut;
 import com.sciencegadgets.client.algebramanipulation.Moderator;
 import com.sciencegadgets.client.equationtree.TreeEntry;
@@ -203,6 +204,8 @@ public class EquationBrowser extends VerticalPanel {
 				}
 
 				browserPanel.add(vpAlg);
+				
+				JSNICalls.parseMathJax(algGrid.getElement());
 			}
 		});
 	}
@@ -224,6 +227,7 @@ public class EquationBrowser extends VerticalPanel {
 					varGrid.setHTML(i, 0, "<math><mi>" + varSymbols[i]
 							+ "</mi></math>" + " - " + varNames[i]);
 				}
+//				JSNICalls.parseMathJax(varGrid.getElement());
 			}
 		});
 	}
@@ -254,6 +258,7 @@ public class EquationBrowser extends VerticalPanel {
 							HasHorizontalAlignment.ALIGN_CENTER,
 							HasVerticalAlignment.ALIGN_MIDDLE);
 				}
+				JSNICalls.parseMathJax(eqGrid.getElement());
 			}
 		});
 	}
@@ -329,13 +334,12 @@ public class EquationBrowser extends VerticalPanel {
 							clickedCell.getCellIndex());
 
 					if (table.equals(algGrid) && modeAlg.getValue()) { // For Algebra practice mode
-						Element root = (Element) cell.getElement()
-								.getFirstChildElement();
-						moderator.makeAgebraWorkspace(root);
+//						Element root = (Element) cell.getElement()
+//								.getFirstChildElement();
+						moderator.makeAlgebraWorkspace(cell.getElement().getElementsByTagName("script").getItem(0).getInnerText());
 
 					} else if (table.equals(eqGrid) && modeSci.getValue()) { // For Science Mode
-							fillSummary(clickedEl.getFirstChildElement()
-									.getInnerHTML());
+							fillSummary(clickedEl.getElementsByTagName("script").getItem(0).getInnerText());
 						}
 				}
 			}
@@ -514,7 +518,7 @@ public class EquationBrowser extends VerticalPanel {
 					}
 				}
 			}
-			moderator.makeAgebraWorkspace(labelSumEq.getElement()
+			moderator.makeAlgebraWorkspace(labelSumEq.getElement()
 					.getFirstChildElement());
 		}
 

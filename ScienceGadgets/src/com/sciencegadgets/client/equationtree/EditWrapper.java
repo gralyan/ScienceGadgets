@@ -11,13 +11,21 @@ public class EditWrapper extends Wrapper {
 	EditMenu editMenu;
 	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
+//	public EditWrapper(MathMLBindingNode node, EquationPanel eqPanel,
+//			EquationLayer eqLayer, String width, String height) {
+//		super(node, eqPanel, eqLayer, width, height);
+//
+//		editMenu = new EditMenu(this, width);
+//		editMenu.setVisible(false);
+//
+//	}
 	public EditWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, String width, String height) {
-		super(node, eqPanel, eqLayer, width, height);
-
-		editMenu = new EditMenu(this, width);
+			EquationLayer eqLayer, Element element) {
+		super(node, eqPanel, eqLayer, element);
+		
+		editMenu = new EditMenu(this, element.getOffsetWidth()+"px");
 		editMenu.setVisible(false);
-
+		
 	}
 
 	public void select() {

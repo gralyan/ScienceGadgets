@@ -55,10 +55,13 @@ public class MLElementWrapper extends Wrapper {
 	 * @param theElement
 	 *            - the element to wrap in widget
 	 */
+//	public MLElementWrapper(MathMLBindingNode node, EquationPanel eqPanel,
+//			EquationLayer eqLayer, String width, String height) {
+//		super(node, eqPanel, eqLayer, width, height);
+//	}
 	public MLElementWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, String width, String height) {
-		super(node, eqPanel, eqLayer, width, height);
-
+			EquationLayer eqLayer, Element element) {
+		super(node, eqPanel, eqLayer, element);
 	}
 
 	/**

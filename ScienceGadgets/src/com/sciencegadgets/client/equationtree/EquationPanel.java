@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
@@ -18,6 +19,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -35,11 +37,8 @@ public class EquationPanel extends AbsolutePanel {
 	private Timer timer = null;
 	private HTML pilot = new HTML();
 	private boolean inEditMode;
-	private double eqWidth = 0;
-	private double eqHeight = 0;
+	private double newFontSize = 0;
 	private EquationLayer rootLayer;
-	public Element svgContainer;
-	private CoordinateConverter coordinateConverter;
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
 	private Backgrounds backgrounds;
@@ -55,8 +54,6 @@ public class EquationPanel extends AbsolutePanel {
 		this.addHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				// event.stopPropagation();
-				// event.preventDefault();
 				setFocusOut();
 			}
 		}, ClickEvent.getType());
@@ -94,21 +91,39 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	private void tryToDraw() {
-		if (this.getElement().getElementsByTagName("g").getLength() > 0) {
+		NodeList<Element> list = this.getElement().getElementsByTagName("span");
+
+		if (list.getLength() > 1) {
+
 			timer.cancel();
 			timer = null;
+
 			MathMLBindingNode root = mathMLBindingTree.getRoot();
+
+			NodeList<Element> nobrList = pilot.getElement()
+					.getElementsByTagName("nobr");
+			for (int j = 0; j < nobrList.getLength(); j++) {
+				Element nobr = nobrList.getItem(j);
+				Element nobrParent = nobr.getParentElement();
+				NodeList<Node> nobrChildren = nobr.getChildNodes();
+				for (int k = 0; k < nobrChildren.getLength(); k++) {
+					nobrParent.appendChild(nobrChildren.getItem(k));
+				}
+				nobr.removeFromParent();
+			}
+
+			pilot.getElement().getElementsByTagName("script").getItem(0)
+					.removeFromParent();
 
 			draw(root, null);
 
 			pilot.removeFromParent();
 
-			this.backgrounds = new Backgrounds(
-					DOM.getElementById("scienceGadgetArea"),
-					coordinateConverter);
+			// this.backgrounds = new Backgrounds(
+			// DOM.getElementById("scienceGadgetArea"),
+			// coordinateConverter);
 
-			placeNextEqWrappers(root);
-			// migrateSVG();
+			 placeNextEqWrappers(root);
 
 			for (EquationLayer eqLayer : eqLayerMap.values()) {
 				eqLayer.setVisible(false);
@@ -125,27 +140,27 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
+	/**
+	 * Replicates the equation graphic for each equation layer (node) to be
+	 * displayed when this layer is in focus
+	 */
 	public void draw(MathMLBindingNode node, EquationLayer parentLayer) {
 
 		Node pilotClone = pilot.getElement().cloneNode(true);
 		replaceChildsId(pilotClone, node.getId());
-		HTML eq = new HTML();
+		EquationLayer eqLayer = new EquationLayer();
 
 		// Transfer the children (side)(=)(side) from pilotClone
 		NodeList<Node> children = pilotClone.getChildNodes();
 		for (int j = 0; j < children.getLength(); j++) {
-			eq.getElement().appendChild(children.getItem(j));
+			eqLayer.getElement().appendChild(children.getItem(j));
 		}
 
-		EquationLayer eqLayer = new EquationLayer();
 		eqLayer.setParentLayer(parentLayer);
 		eqLayerMap.put(node, eqLayer);
 		eqLayer.getElement().setAttribute("id", "eqLayer-" + node.getId());
-		// eqLayer.setSize(this.getOffsetWidth() + "px",
-		// this.getOffsetHeight() + "px");
-		eqLayer.setSize("inherit", "inherit");
-		eqLayer.eqPanel.add(eq);
-		this.add(eqLayer, 0, 0);
+		eqLayer.setStyleName("textCenter");
+		this.add(eqLayer,0,this.getOffsetHeight()/2);
 
 		if (parentLayer == null) {
 			rootLayer = parentLayer;
@@ -213,121 +228,128 @@ public class EquationPanel extends AbsolutePanel {
 		EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
 		com.google.gwt.user.client.Element svg, parentSvg, prevSibSvg = null, nextSibSvg = null;
-		String prefixIdSvg = parentNode.getId() + "svg";
-		parentSvg = DOM.getElementById(prefixIdSvg + parentNode.getId());
-
+		String prefixIdSvg = parentNode.getId() + "Wrapper-";
+//		parentSvg = DOM.getElementById(prefixIdSvg + parentNode.getId());
+		
 		childLoop: for (MathMLBindingNode node : childNodes) {
 
-			svg = DOM.getElementById(prefixIdSvg + node.getId());
+//			svg = DOM.getElementById(prefixIdSvg + node.getId());
+			svg = DOM.getElementById("Wrapper-" + node.getId()+"-ofLayer-"+parentNode.getId());
 			node.setSVG(svg);
 
-			try {
-				prevSibSvg = DOM.getElementById(prefixIdSvg
-						+ node.getPrevSibling().getId());
-			} catch (IndexOutOfBoundsException e) {
-			}
-			try {
-				nextSibSvg = DOM.getElementById(prefixIdSvg
-						+ node.getNextSibling().getId());
-			} catch (IndexOutOfBoundsException e) {
-			}
+//			try {
+//				prevSibSvg = DOM.getElementById(prefixIdSvg
+//						+ node.getPrevSibling().getId());
+//			} catch (IndexOutOfBoundsException e) {
+//			}
+//			try {
+//				nextSibSvg = DOM.getElementById(prefixIdSvg
+//						+ node.getNextSibling().getId());
+//			} catch (IndexOutOfBoundsException e) {
+//			}
 
 			// Only the focused svg in the current layer
-			setColor(svg, "black");
+			//TODO
+//			setColor(svg, "black");
 
-			int top = 0, left = 0;
-			double height = 0, width = 0;
-			int padLeft = 0, padRight = 0;
-
-			// Top layer of equation is different
-			if ("math".equalsIgnoreCase(parentNode.getTag())) {
-				if ("=".equalsIgnoreCase(node.getSymbol()))
-					continue childLoop;
-				top = svg.getAbsoluteTop();
-				left = svg.getAbsoluteLeft();
-				height = JSNICalls.getElementHeight(svg);
-				width = JSNICalls.getElementWidth(svg);
-			} else {
-				// Wrapper size is based on its parent type and size
-				switch (parentNode.getType()) {
-				case Term:
-				case Sum:
-					if (Type.Operation.equals(node.getType())) {
-						width = JSNICalls.getElementWidth(svg);
-						left = svg.getAbsoluteLeft();
-					} else {
-						// Fill from previous to next operator if exists
-						left = prevSibSvg != null ? prevSibSvg
-								.getAbsoluteLeft()
-								+ (int) JSNICalls.getElementWidth(prevSibSvg)
-								: svg.getAbsoluteLeft();
-						int right = nextSibSvg != null ? nextSibSvg
-								.getAbsoluteLeft() : svg.getAbsoluteLeft()
-								+ (int) JSNICalls.getElementWidth(svg);
-
-						width = right - left;
-
-						padLeft = svg.getAbsoluteLeft() - left;
-						padRight = right - svg.getAbsoluteLeft()
-								+ (int) JSNICalls.getElementWidth(svg);
-					}
-					top = parentSvg.getAbsoluteTop();
-					height = JSNICalls.getElementHeight(parentSvg);
-					break;
-				case Fraction:
-					top = svg.getAbsoluteTop();
-					height = JSNICalls.getElementHeight(svg);
-					left = parentSvg.getAbsoluteLeft();
-					width = JSNICalls.getElementWidth(parentSvg);
-					break;
-				case Exponential:
-					top = svg.getAbsoluteTop();
-					left = svg.getAbsoluteLeft();
-					height = JSNICalls.getElementHeight(svg);
-					width = JSNICalls.getElementWidth(svg);
-					break;
-				}
-			}
-
-			String heightStr = height + "px", widthStr = width + "px";
+//			int top = 0, left = 0;
+//			double height = 0, width = 0;
+//			int padLeft = 0, padRight = 0;
+//
+//			// Top layer of equation is different
+//			if ("math".equalsIgnoreCase(parentNode.getTag())) {
+//				if ("=".equalsIgnoreCase(node.getSymbol()))
+//					continue childLoop;
+//				top = svg.getAbsoluteTop();
+//				left = svg.getAbsoluteLeft();
+//				height = JSNICalls.getElementHeight(svg);
+//				width = JSNICalls.getElementWidth(svg);
+//			} else {
+//				// Wrapper size is based on its parent type and size
+//				switch (parentNode.getType()) {
+//				case Term:
+//				case Sum:
+//					if (Type.Operation.equals(node.getType())) {
+//						width = JSNICalls.getElementWidth(svg);
+//						left = svg.getAbsoluteLeft();
+//					} else {
+//						// Fill from previous to next operator if exists
+//						left = prevSibSvg != null ? prevSibSvg
+//								.getAbsoluteLeft()
+//								+ (int) JSNICalls.getElementWidth(prevSibSvg)
+//								: svg.getAbsoluteLeft();
+//						int right = nextSibSvg != null ? nextSibSvg
+//								.getAbsoluteLeft() : svg.getAbsoluteLeft()
+//								+ (int) JSNICalls.getElementWidth(svg);
+//
+//						width = right - left;
+//
+//						padLeft = svg.getAbsoluteLeft() - left;
+//						padRight = right - svg.getAbsoluteLeft()
+//								+ (int) JSNICalls.getElementWidth(svg);
+//					}
+//					top = parentSvg.getAbsoluteTop();
+//					height = JSNICalls.getElementHeight(parentSvg);
+//					break;
+//				case Fraction:
+//					top = svg.getAbsoluteTop();
+//					height = JSNICalls.getElementHeight(svg);
+//					left = parentSvg.getAbsoluteLeft();
+//					width = JSNICalls.getElementWidth(parentSvg);
+//					break;
+//				case Exponential:
+//					top = svg.getAbsoluteTop();
+//					left = svg.getAbsoluteLeft();
+//					height = JSNICalls.getElementHeight(svg);
+//					width = JSNICalls.getElementWidth(svg);
+//					break;
+//				}
+//			}
+//
+//			String heightStr = height + "px", widthStr = width + "px";
 
 			Wrapper wrap;
 			VerticalPanel menu = null;
 			if (inEditMode) {// Edit Mode////////////////////////////
+//				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
+//						widthStr, heightStr);
 				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
-						widthStr, heightStr);
+						svg);
 				menu = ((EditWrapper) wrap).getEditMenu();
 
 			} else {// Solver Mode////////////////////////////////////
+//				wrap = new MLElementWrapper(node, this, eqLayerMap.get(node),
+//						widthStr, heightStr);
 				wrap = new MLElementWrapper(node, this, eqLayerMap.get(node),
-						widthStr, heightStr);
+						svg);
 				menu = ((MLElementWrapper) wrap).getContextMenu();
 			}
+			
+//			wrap.onAttach();
 
 			node.wrap(wrap);
 			eqLayer.addWrapper(wrap);
-			wrap.paddingLeft = padLeft;
-			wrap.paddingRight = padRight;
+//			wrap.paddingLeft = padLeft;
+//			wrap.paddingRight = padRight;
 
 			// Wrapper
-			eqLayer.wrapPanel.add(wrap, left - this.getAbsoluteLeft(), top
-					- this.getAbsoluteTop());
+//			eqLayer.wrapPanel.add(wrap, left - this.getAbsoluteLeft(), top
+//					- this.getAbsoluteTop());
 
 			// Wrapper Menu
-			eqLayer.wrapPanel.add(menu, left - this.getAbsoluteLeft(), top
-					- this.getAbsoluteTop() + (int) height);
+//			eqLayer.wrapPanel.add(menu, left - this.getAbsoluteLeft(), top
+//					- this.getAbsoluteTop() + (int) height);
 
-//			System.out.println(height);
-//			backgrounds.addBackground(svg, width, height);
+			// System.out.println(height);
+			// backgrounds.addBackground(svg, width, height);
 
-//			 background image
-			 SimplePanel wrapBack = new SimplePanel();
-					 //node, widthStr, heightStr);
-			 wrapBack.setSize(widthStr, heightStr);
-			 wrapBack.setStyleName(node.getType().toString());
-			 eqLayer.backPanel.add(wrapBack, left - this.getAbsoluteLeft(),
-			 top
-			 - this.getAbsoluteTop());
+			// background image
+			// SimplePanel wrapBack = new SimplePanel();
+			// wrapBack.setSize(widthStr, heightStr);
+			// wrapBack.setStyleName(node.getType().toString());
+			// eqLayer.backPanel.add(wrapBack, left - this.getAbsoluteLeft(),
+			// top
+			// - this.getAbsoluteTop());
 
 			if (node.getType().hasChildren()) {
 				placeNextEqWrappers(node);
@@ -335,79 +357,48 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
-	// private void migrateSVG() {
-	// for (EquationLayer eqLayer : eqLayerMap.values()) {
-	// for (Wrapper wrap : eqLayer.getWrappers()) {
-	//
-	// Element svg = (Element) svgContainer.cloneNode(false);
-	//
-	// // Element svg = DOM.createElement("svg");
-	// // svg.setAttribute("id", svgContainer.getAttribute("id"));
-	// // svg.setAttribute("class", "mjx-svg-math");
-	// // svg.setAttribute("xmlns:xlink",
-	// // "http://www.w3.org/1999/xlink");
-	// // svg.setAttribute("style", "width: " + wrap.getOffsetWidth()
-	// // + "; height: " + wrap.getOffsetHeight() + ";");
-	// // svg.setAttribute("viewBox", "0 0 1000 1000");//
-	// +wrap.getOffsetWidth()+" "+wrap.getOffsetHeight());
-	//
-	// svg.getStyle().setLeft(0, Unit.PX);
-	// svg.getStyle().setTop(0, Unit.PX);
-	//
-	// Element svgGroup = wrap.getSVG();
-	// svgGroup.setAttribute("transform", "scale(1, -1)");
-	// svg.appendChild(svgGroup);
-	// wrap.getElement().appendChild(svg);
-	// }
-	// }
-	// }
-
 	/**
 	 * Each equation must have a different set of ID's which only differ in the
 	 * prefix. The prefix is the equations placement in the list
 	 * 
 	 * @param parent
-	 * @param eqRow
+	 * @param layerId
 	 */
 	private void replaceChildsId(Node parent, String layerId) {
-		NodeList<Node> children = parent.getChildNodes();
+		// NodeList<Node> children = parent.getChildNodes();
 
-		for (int i = 0; i < children.getLength(); i++) {
-			Element curEl = ((Element) children.getItem(i));
-			String oldId = curEl.getAttribute("id");
+		for (int i = 0; i < parent.getChildCount(); i++) {
+			Element curEl = ((Element) parent.getChild(i));
+			String oldId = curEl.getId();
 			String newId = null;
 
-			// Each equation in the list will have a different prefix for id's
-			// [equation #]-svg[MathML node id] example 1-svg0
-			if (oldId.contains("svg")) {
-				String curClass = curEl.getAttribute("class");
-				if ("mjx-svg-math".equalsIgnoreCase(curClass)) {
-					if (svgContainer == null) {
-						svgContainer = curEl;
-					}
-					resizeEquations(curEl);
-				}
-				newId = oldId.replaceFirst("svg", layerId + "svg");
+			if (!"".equals(oldId) && oldId != null) {
 
-				// Each equation will have a different MathJax frame id
-				// MathJax-Element-[equation #]-Frame
-			} else if (oldId.equals("MathJax-Element-1-Frame")) {
-				newId = "MathJax-Element-" + (layerId) + "-Frame";
+				// Each wrapper has a reference to its MathNode and Layer
+				// Wrapper-[equation id]-ofLayer-[MathML node id]
+				// example: Wrapper-1-ofLayer-ML1
+				if (oldId.contains("ML")) {
+					newId = "Wrapper-"+oldId +"-ofLayer-"+layerId;
 
-				// gray out the rest of the equation
-				Element svgEl = curEl.getFirstChildElement()
-						.getFirstChildElement();
-				setColor(svgEl, "gray");
+					// Each equation will have a different MathJax frame id
+					// MathJax-Element-[equation #]-Frame
+				} else if (oldId.contains("MathJax-Element-") && oldId.contains("-Frame")) {
+					newId = "MathJax-Element-" + (layerId) + "-Frame";
 
-			} else if (oldId.equals("MathJax-Element-1")) {
-				newId = "MathJax-Element-" + (layerId);
+					resizeEquations(curEl.getFirstChildElement().getFirstChildElement());
+
+					// gray out the rest of the equation
+					// TODO
+//					 Element svgEl = curEl.getFirstChildElement().getFirstChildElement();
+//					 setColor(curEl, "gray");
+
+				} 
+
+				if (newId != null)
+					curEl.setAttribute("id", newId);
 			}
-
-			if (newId != null)
-				curEl.setAttribute("id", newId);
-
-			if (!children.getItem(i).getNodeName().equalsIgnoreCase("script"))
-				replaceChildsId(children.getItem(i), layerId);
+			 if (curEl.getChildCount() > 0)
+			replaceChildsId(curEl, layerId);
 		}
 	}
 
@@ -417,49 +408,28 @@ public class EquationPanel extends AbsolutePanel {
 	 * @param el
 	 */
 	private void resizeEquations(Element el) {
-
 		Style style = el.getStyle();
-
-		if (eqWidth == 0) {
-			String oldWidthString = style.getWidth();
-			String oldHeightString = style.getHeight();
-
-			oldWidthString = oldWidthString.replaceAll("[a-zA-Z ]", "");
-			oldHeightString = oldHeightString.replaceAll("[a-zA-Z ]", "");
-
+		
+		if (newFontSize == 0) {
+			String oldWidthString = style.getWidth().replaceAll("[a-zA-Z ]", "");
 			double oldWidth = Double.parseDouble(oldWidthString);
-			double oldHeight = Double.parseDouble(oldHeightString);
 
-			double newWidth = this.getOffsetWidth() * EQUATION_FRACTION;
-			double newHeight = oldHeight * (newWidth / oldWidth);
+			double ratio = this.getOffsetWidth()/oldWidth;
 
-			eqWidth = newWidth;
-			eqHeight = newHeight;
-
-			style.setWidth(newWidth, Unit.PX);
-			style.setHeight(newHeight, Unit.PX);
-
-			// Global/SVG coordinate converter
-			String[] svgSizes = svgContainer.getAttribute("viewBox").split(" ");
-			coordinateConverter = new CoordinateConverter(
-					(Double.parseDouble(svgSizes[2])) / eqWidth,
-					(Double.parseDouble(svgSizes[3])) / eqHeight, //
-					this.getAbsoluteLeft()
-					// gap made by centering equation
-							+ (getOffsetWidth() * (1 - EQUATION_FRACTION)) / 2,
-					this.getAbsoluteTop());
-		} else {
-			style.setWidth(eqWidth, Unit.PX);
-			style.setHeight(eqHeight, Unit.PX);
+			String oldFontString = style.getFontSize().replaceAll("%", "");
+			double oldFontValue = Double.parseDouble(oldFontString);
+		
+			newFontSize = ratio * oldFontValue; 
 		}
+
+		style.setFontSize(newFontSize, Unit.PCT);
+		style.setWidth(this.getOffsetWidth(), Unit.PX)	;
 	}
 
 	private void setColor(Element element, String color) {
-		element.setAttribute("fill", color);
-		element.setAttribute("stroke", color);
+		element.setAttribute("color", color);
+//		element.setAttribute("fill", color);
+//		element.setAttribute("stroke", color);
 	}
 
-	public CoordinateConverter getCoordinateConverter() {
-		return coordinateConverter;
-	}
 }
