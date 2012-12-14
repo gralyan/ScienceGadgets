@@ -3,21 +3,17 @@ package com.sciencegadgets.client;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.HasMouseOverHandlers;
-import com.google.gwt.event.dom.client.HasTouchStartHandlers;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.equationtree.EquationLayer;
 import com.sciencegadgets.client.equationtree.EquationPanel;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
-public class Wrapper extends HTML implements HasClickHandlers,
-		HasMouseOverHandlers, HasTouchStartHandlers {
+public class Wrapper extends HTML /*implements HasClickHandlers,
+		HasMouseOverHandlers, HasTouchStartHandlers*/ {
 
 	public static Wrapper selectedWrapper;
 	protected MathMLBindingNode node;
@@ -25,24 +21,26 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	protected EquationLayer eqLayer;
 	public int paddingLeft = 0;
 	public int paddingRight = 0;
+	public Element element;
 
 	public Wrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, String width, String height) {
-		setWidth(width);
-		setHeight(height);
+			EquationLayer eqLayer, Element element) {
 
+		super(element);
+		onAttach();
+		
+		this.setStyleName(node.getType().toString());
+		
 		this.node = node;
 		this.eqPanel = eqPanel;
 		this.eqLayer = eqLayer;
+		this.element=element;
 		Wrapper.selectedWrapper = EquationPanel.selectedWrapper;
-
-		addClickHandler(new EditWrapperClickHandler());
-		addMouseOverHandler(new EditWrapperMouseOverHandler());
-		addTouchStartHandler(new EditWrapperTouchHandler());
-	}
-	
-	public Element getSVG(){
-		return node.getSVG();
+		
+		addClickHandler(new WrapperClickHandler());
+		addMouseOverHandler(new WrapperMouseOverHandler());
+		addTouchStartHandler(new WrapperTouchHandler());
+		
 	}
 	
 	public MathMLBindingNode getNode() {
@@ -70,7 +68,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	}
 
 	public void select() {
-
+		
 		if (selectedWrapper != null) {
 			if (this.equals(selectedWrapper) && node.getType().hasChildren()) {
 				eqPanel.setFocus(eqLayer);
@@ -99,7 +97,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	// /////////////////////////////////////////////////////////////////////
 	// Inner Classes
 	// ////////////////////////////////////////////////////////////////////
-	class EditWrapperClickHandler implements ClickHandler {
+	public class WrapperClickHandler implements ClickHandler {
 
 		@Override
 		public void onClick(ClickEvent event) {
@@ -109,7 +107,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		}
 	}
 
-	class EditWrapperTouchHandler implements TouchStartHandler {
+	class WrapperTouchHandler implements TouchStartHandler {
 
 		@Override
 		public void onTouchStart(TouchStartEvent event) {
@@ -119,7 +117,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		}
 	}
 
-	class EditWrapperMouseOverHandler implements MouseOverHandler {
+	class WrapperMouseOverHandler implements MouseOverHandler {
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
 			// thisWrapper.setStyleName("hoveredWrapper", true);
@@ -128,19 +126,19 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		}
 	}
 
-	@Override
-	public HandlerRegistration addTouchStartHandler(TouchStartHandler handler) {
-		return addDomHandler(handler, TouchStartEvent.getType());
-	}
-
-	@Override
-	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
-		return addDomHandler(handler, MouseOverEvent.getType());
-	}
-
-	@Override
-	public HandlerRegistration addClickHandler(ClickHandler handler) {
-		return addDomHandler(handler, ClickEvent.getType());
-	}
+//	@Override
+//	public HandlerRegistration addTouchStartHandler(TouchStartHandler handler) {
+//		return addDomHandler(handler, TouchStartEvent.getType());
+//	}
+//
+//	@Override
+//	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+//		return addDomHandler(handler, MouseOverEvent.getType());
+//	}
+//
+//	@Override
+//	public HandlerRegistration addClickHandler(ClickHandler handler) {
+//		return addDomHandler(handler, ClickEvent.getType());
+//	}
 
 }

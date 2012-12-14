@@ -27,6 +27,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
@@ -43,7 +44,7 @@ public class Moderator implements EntryPoint {
 
 	public static MathMLBindingTree jTree;
 	public static LinkedList<AbstractMathDropController> dropControllers;
-	public static boolean inEditMode = false;
+	public static boolean inEditMode = true;
 	private int SGAWidth;
 	private int SGAHeight;
 	public static SymbolPalette symbolPopup;
@@ -78,11 +79,18 @@ public class Moderator implements EntryPoint {
 	}
 
 	/**
-	 * Sends the given equation to the views of it
-	 * 
-	 * @param mathML
+	 * Creates the view of the equation
+	 * @param mathML - the equation as a string
 	 */
-	public void makeAgebraWorkspace(Element mathML) {
+	public void makeAlgebraWorkspace(String mathMl){
+		HTML html = new HTML(mathMl);
+		makeAlgebraWorkspace(html.getElement().getFirstChildElement());
+	}
+	/**
+	 * Creates the view of the equation
+	 * @param mathML - the equation as an element
+	 */
+	public void makeAlgebraWorkspace(Element mathML) {
 
 		currentActivity = Activity.Algebra;
 		scienceGadgetArea.clear();
@@ -131,7 +139,8 @@ public class Moderator implements EntryPoint {
 			eqPanelHolder.remove(eqPanel);
 		}
 		eqPanel = new EquationPanel(jTree, inEditMode);
-		eqPanel.getElement().getStyle().setOpacity(0);
+		//TODO
+//		eqPanel.getElement().getStyle().setOpacity(0);
 		eqPanelHolder.add(eqPanel, 0, 0);
 
 		if (inEditMode) {

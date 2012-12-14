@@ -14,8 +14,6 @@
  */
 package com.sciencegadgets.client.equationtree;
 
-import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -26,10 +24,8 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Random;
-import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.Wrapper;
-import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 
 public class MathMLBindingTree {
 
@@ -43,6 +39,7 @@ public class MathMLBindingTree {
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private Element mathML;
 	private boolean inEditMode;
+	private int idCounter = 0;
 
 	/**
 	 * A tree representation of an equation.
@@ -119,6 +116,10 @@ public class MathMLBindingTree {
 	public MathMLBindingNode NEW_NODE(Type type, String symbol) {
 		return new MathMLBindingNode(type, symbol);
 	}
+	
+	private String createId(){
+		return "ML"+ idCounter++;//Random.nextInt(2147483647);
+	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Node Class
@@ -135,7 +136,7 @@ public class MathMLBindingTree {
 		public MathMLBindingNode(Element mlNode) {
 
 			if ("".equals(mlNode.getAttribute("id"))) {
-				mlNode.setAttribute("id", Random.nextInt(2147483647) + "");
+				mlNode.setAttribute("id", createId());
 			}
 
 			this.mlNode = mlNode;
@@ -159,7 +160,7 @@ public class MathMLBindingTree {
 			String tag = type.getTag();
 
 			com.google.gwt.user.client.Element newNode = DOM.createElement(tag);
-			newNode.setAttribute("id", Random.nextInt(2147483647) + "");
+			newNode.setAttribute("id", createId());
 
 			if (!"".equals(symbol)) {
 				newNode.setInnerText(symbol);
@@ -268,7 +269,7 @@ public class MathMLBindingTree {
 
 			String id = newNode.getId();
 			if (id == "") {
-				id = Random.nextInt(2147483647) + "";
+				id = createId();
 			}
 
 			if (!idMap.containsKey(id)) {
@@ -561,7 +562,7 @@ public class MathMLBindingTree {
 
 		// Find the top tree nodes: [left side] <mo>=<mo> [right side]
 		Element rootNode = (Element) mathMLequation;
-		String middleString = "";
+//		String middleString = "";
 
 //		//Climb DOM tree to find equals sign
 //		while (!"=".equals(middleString)) {
@@ -584,7 +585,7 @@ public class MathMLBindingTree {
 //		}
 
 		NodeList<Node> sideEqSide = rootNode.getChildNodes();
-
+		
 		this.root = new MathMLBindingNode(rootNode);
 		this.leftSide = new MathMLBindingNode((Element) sideEqSide.getItem(0));
 		this.equals = new MathMLBindingNode((Element) sideEqSide.getItem(1));
@@ -604,7 +605,7 @@ public class MathMLBindingTree {
 
 	private void addRecursively(Element mathMLNode) {
 
-		String id = Random.nextInt(2147483647) + "";
+		String id = createId();
 
 		mathMLNode.setAttribute("id", id);
 
