@@ -6,13 +6,14 @@ body {
 }
 .textCenter{
 	text-align: center;
+	vertical-align: middle;
 }
 .selectable{
 	cursor: pointer;
 }
 #scienceGadgetArea {
 	background-color: #ADD850;
-	margin: auto;
+/* 	margin: auto; */
 }
 
 .gridBox {
@@ -44,18 +45,11 @@ body {
 .algOutScrollPanel {
 	border-bottom: 1px solid gray;
 	height: 6em;
-	width: 60em;
 }
 
 .algOutGrid {
 	height: 6em;
-	width: 58em;
 	text-align: center;
-}
-
-.treeCanvas {
-	height: 40em;
-	width: 60em;
 }
 
 .inputGrid {
@@ -88,12 +82,6 @@ body {
 	opacity: 0.5;
 }
 
-.hoveredWrapper{
-	background-color: #555555;
-	cursor: move;
-	opacity: 0.5;
-}
-
 .selectedDropWrapper {
 	border-style: solid;
 	border-color: fuchsia;
@@ -113,10 +101,10 @@ body {
 }
 
 .varName {
-	background-color: #99CCFF;
+	background-color: #0000FF;
 }
 .wrap{
-	opacity: 0;
+	opacity: 1;
 	background-color: #FFFFFF;
 /* 	border: green thin solid; */
 }
@@ -125,5 +113,31 @@ body {
 	background-color: gray;
 	cursor: move;
 	opacity: 0.4;
+}
+
+.removeNodeButton{
+	background-color: red;
+	
+}
+.Sum{
+	background-color: purple;
+}
+.Term{
+	background-color: orange;
+}
+.Exponential{
+	background-color: olive;
+}
+.Fraction{
+	background-color: navy;
+}
+.Number{
+	background-color: silver;
+}
+.Variable{
+	background-color: aqua;
+}
+.Operation{
+	background-color: teal;
 }
 
