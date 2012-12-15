@@ -102,7 +102,7 @@ public class MLElementWrapper extends Wrapper {
 	public WrapDragController addDragController() {
 
 		WrapDragController dragC = new WrapDragController(
-				(AbsolutePanel) this.getParent(), false);
+				eqPanel/*(AbsolutePanel) this.getParent()*/, false);
 
 		dragController = dragC;
 		dragController.makeDraggable(this);

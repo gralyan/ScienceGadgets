@@ -25,16 +25,18 @@ public class Wrapper extends HTML /*implements HasClickHandlers,
 
 	public Wrapper(MathMLBindingNode node, EquationPanel eqPanel,
 			EquationLayer eqLayer, Element element) {
-
-		super(element);
-		onAttach();
 		
-		this.setStyleName(node.getType().toString());
+		super(element);
 		
 		this.node = node;
 		this.eqPanel = eqPanel;
 		this.eqLayer = eqLayer;
 		this.element=element;
+
+		onAttach();
+		
+		this.setStyleName(node.getType().toString());
+		
 		Wrapper.selectedWrapper = EquationPanel.selectedWrapper;
 		
 		addClickHandler(new WrapperClickHandler());
