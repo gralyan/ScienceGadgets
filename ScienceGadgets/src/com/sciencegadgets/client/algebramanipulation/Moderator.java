@@ -44,7 +44,7 @@ public class Moderator implements EntryPoint {
 
 	public static MathMLBindingTree jTree;
 	public static LinkedList<AbstractMathDropController> dropControllers;
-	public static boolean inEditMode = true;
+	public static boolean inEditMode = false;
 	private int SGAWidth;
 	private int SGAHeight;
 	public static SymbolPalette symbolPopup;
