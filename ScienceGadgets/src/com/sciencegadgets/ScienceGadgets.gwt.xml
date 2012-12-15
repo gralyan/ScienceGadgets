@@ -19,7 +19,7 @@
 
 	<entry-point
 		class='com.sciencegadgets.client.algebramanipulation.Moderator' />
-	<entry-point class='com.sciencegadgets.client.NavigationPanelEntry' />
+<!-- 	<entry-point class='com.sciencegadgets.client.NavigationPanelEntry' /> -->
 
 	<source path='client' />
 	<source path='shared'/>

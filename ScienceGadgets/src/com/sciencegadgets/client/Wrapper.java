@@ -71,8 +71,10 @@ public class Wrapper extends HTML /*implements HasClickHandlers,
 		
 		if (selectedWrapper != null) {
 			if (this.equals(selectedWrapper) && node.getType().hasChildren()) {
+				//If this was already selected, focus in on it
 				eqPanel.setFocus(eqLayer);
 			} else {
+				//If there is another selection, unselect it
 				selectedWrapper.unselect();
 			}
 		}
@@ -120,9 +122,10 @@ public class Wrapper extends HTML /*implements HasClickHandlers,
 	class WrapperMouseOverHandler implements MouseOverHandler {
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
-			// thisWrapper.setStyleName("hoveredWrapper", true);
-			select();
-
+			//Select if it wasn't selected before
+			if(!((Wrapper)event.getSource()).equals(selectedWrapper)){
+				select();
+			}
 		}
 	}
 
