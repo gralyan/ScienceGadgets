@@ -23,94 +23,97 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Wrapper;
-import com.sciencegadgets.client.equationtree.CoordinateConverter;
 import com.sciencegadgets.client.equationtree.EquationPanel;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
 
 public class WrapDragController extends PickupDragController {
 
 	private Map<DropController, MLElementWrapper> dropMap = new HashMap<DropController, MLElementWrapper>();
-	private String startTransform;
-	private double startTranslate;
 	private double startMouseX;
-	private double nextWrapsTrans;
-	private double prevWrapsTrans;
+	private double nextWrapsX;
+	private double prevWrapsX;
 	private MathMLBindingNode nextNode;
 	private MathMLBindingNode prevNode;
 	private MLElementWrapper wrap;
 	private Element svg;
-	private CoordinateConverter coordinateConverter;
-
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
 		super(boundaryPanel, allowDroppingOnBoundaryPanel);
 
 		this.setBehaviorDragStartSensitivity(5);
+		this.setBehaviorDragProxy(true);
 	}
 
 	@Override
 	public void dragMove() {
 		super.dragMove();
-
-		double wrapTrans = coordinateConverter.XtoSVG(wrap.getAbsoluteLeft());
-		double wrapTransY = coordinateConverter.YtoSVG(wrap.getAbsoluteTop());
-
-		// Switch wrapper with the next if dragged far enough
-		if (wrapTrans > nextWrapsTrans && nextNode != null) {
-
-			//The "next" wrapper replaces the dragging wrapper
-			setTranslate(nextNode.getSVG(), startTranslate, 0);
-			
-			//The wrapper is placed to the right of the "next" Wrapper
-			double wrapPlacement = (wrap.getNextSiblingWrapper().getOffsetWidth()+wrap.paddingLeft)
-					* coordinateConverter.getXsvgPerGlobal();
-			startTranslate += wrapPlacement;
-			setTranslate(svg, startTranslate, 0);
-
-			// switch nodes
-			MathMLBindingNode wrapNode = wrap.getNode();
-			wrapNode.getParent().getMLNode()
-					.insertBefore(nextNode.getMLNode(), wrapNode.getMLNode());
-
-			initializeFeilds();
-			return;
-		}
-		// Switch wrapper with the previous if dragged far enough
-		if (wrapTrans < prevWrapsTrans && prevNode != null) {
-			
-			startTranslate = prevWrapsTrans;
-			setTranslate(svg, prevWrapsTrans, 0);
-			double wrapWidth = wrap.getOffsetWidth()
-					* coordinateConverter.getXsvgPerGlobal();
-			setTranslate(prevNode.getSVG(), prevWrapsTrans + wrapWidth, 0);
-
-			// switch nodes
-			MathMLBindingNode wrapNode = wrap.getNode();
-			wrapNode.getParent().getMLNode()
-					.insertAfter(prevNode.getMLNode(), wrapNode.getMLNode());
-
-			initializeFeilds();
-			return;
-		}
-
-		// Incrementally move svg with mouse
-		setTranslate(svg, wrapTrans, wrapTransY);
+//		
+//		int mouseX = context.mouseX;
+//
+////		 Switch wrapper with the next if dragged far enough
+//		if (mouseX > nextWrapsX && nextNode != null) {
+//
+//			//The "next" wrapper replaces the dragging wrapper
+//			setTranslate(nextNode.getSVG(), startTranslate, 0);
+//			
+//			//The wrapper is placed to the right of the "next" Wrapper
+//			double wrapPlacement = (wrap.getNextSiblingWrapper().getOffsetWidth()+wrap.paddingLeft)
+//					* coordinateConverter.getXsvgPerGlobal();
+//			startTranslate += wrapPlacement;
+//			setTranslate(svg, startTranslate, 0);
+//
+//			com.google.gwt.user.client.Element selectNode = wrap.getElement();
+//			System.out.println("selectNode: "+selectNode.getString());
+//			com.google.gwt.user.client.Element nextEl = nextNode.getWrapper().getElement();
+//			System.out.println("nextEl: "+nextEl.getString());
+//			com.google.gwt.user.client.Element parentEl = wrap.getParentWrapper().getElement();
+//					System.out.println("parentEl: "+parentEl.getString());
+//					
+//			
+//			parentEl.insertAfter(selectNode, nextEl);
+//			
+//			// switch nodes
+//			MathMLBindingNode wrapNode = wrap.getNode();
+//			wrapNode.getParent().getMLNode()
+//					.insertBefore(nextNode.getMLNode(), wrapNode.getMLNode());
+//
+//			initializeFeilds();
+//			return;
+//		}
+//		// Switch wrapper with the previous if dragged far enough
+//		if (wrapTrans < prevWrapsTrans && prevNode != null) {
+//			
+//			startTranslate = prevWrapsTrans;
+//			setTranslate(svg, prevWrapsTrans, 0);
+//			double wrapWidth = wrap.getOffsetWidth()
+//					* coordinateConverter.getXsvgPerGlobal();
+//			setTranslate(prevNode.getSVG(), prevWrapsTrans + wrapWidth, 0);
+//
+//			// switch nodes
+//			MathMLBindingNode wrapNode = wrap.getNode();
+//			wrapNode.getParent().getMLNode()
+//					.insertAfter(prevNode.getMLNode(), wrapNode.getMLNode());
+//
+//			initializeFeilds();
+//			return;
+//		}
+//
+//		// Incrementally move svg with mouse
+//		setTranslate(svg, wrapTrans, wrapTransY);
 	}
 
 	@Override
 	public void dragStart() {
 		super.dragStart();
 
-		wrap = (MLElementWrapper) context.draggable;
-//		coordinateConverter = wrap.getEqPanel().getCoordinateConverter();
-//		svg = wrap.getSVG();
-
+//		wrap = (MLElementWrapper) context.draggable;
+//
 		// Save initial state as fields for later use
-		// startMouseX = context.mouseX;
-		startTranslate = getTranslate(svg, true);
-
-		initializeFeilds();
+//		 startMouseX = context.mouseX;
+//		 
+//		initializeFeilds();
 	}
 
 	@Override
@@ -118,8 +121,8 @@ public class WrapDragController extends PickupDragController {
 		super.dragEnd();
 
 		// Revert back to initial state
-		wrap.unselect();
-		svg.setAttribute("transform", startTransform);
+//		wrap.unselect();
+//		svg.setAttribute("transform", startTransform);
 
 	}
 
@@ -161,111 +164,20 @@ public class WrapDragController extends PickupDragController {
 		dropMap.clear();
 	}
 
-	private void initializeFeilds() {
-
-		startMouseX = coordinateConverter.XtoGlobal(startTranslate);
-
-		// Save initial transform attribute
-		startTransform = svg.getAttribute("transform");
-
-		// Save immediate siblings for switching
-		try {
-			Wrapper nextWrap = wrap.getNextSiblingWrapper();
-			nextNode = nextWrap.getNode();
-			nextWrapsTrans = getTranslate(nextNode.getSVG(), true);
-		} catch (IndexOutOfBoundsException e) {
-		}
-		try {
-			Wrapper prevWrap = wrap.getPrevSiblingWrapper();
-			prevNode = prevWrap.getNode();
-			prevWrapsTrans = getTranslate(prevNode.getSVG(), true);
-		} catch (IndexOutOfBoundsException e) {
-		}
-	}
-
-	private static native double getTranslate(Element element, boolean isX)/*-{
-		var xforms = element.transform.baseVal; // An SVGTransformList
-		for ( var i = 0; i < xforms.numberOfItems; i++) {
-			var curXForm = xforms.getItem(0); // An SVGTransform
-			if (curXForm.type == SVGTransform.SVG_TRANSFORM_TRANSLATE) {
-				if (isX) {
-					return curXForm.matrix.e;
-				} else {
-					return curXForm.matrix.f
-				}
-			}
-		}
-	}-*/;
-
-	private static native void setTranslate(Element element, double transX,
-			double transY)/*-{
-		var xforms = element.transform.baseVal; // An SVGTransformList
-		for ( var i = 0; i < xforms.numberOfItems; i++) {
-			var curXForm = xforms.getItem(0); // An SVGTransform
-			if (curXForm.type == SVGTransform.SVG_TRANSFORM_TRANSLATE) {
-				curXForm.setTranslate(transX, transY);
-			}
-		}
-	}-*/;
-	//
-	// /**
-	// * Sets the translate portion of the transform attribute to the given
-	// value <br/>
-	// * If there was no translate attribute, it is made
-	// *
-	// * @param element
-	// * - the element with the attribute to replace
-	// * @param newTranslate
-	// * - the new translate value
-	// * @return the old translate value
-	// */
-	// private double setTranslate(Element element, double newTranslate) {
-	//
-	// // Get the old transform attribute
-	// String oldAttribute = element.getAttribute("transform");
-	// String oldTranslate = getTranslateString(element);
-	//
-	// String newAttribute;
-	// if ("".equals(oldTranslate)) {
-	// newAttribute = oldAttribute + " translate(" + newTranslate + ")";
-	// } else {
-	// // Replace transform attribute
-	// newAttribute = oldAttribute.replaceFirst(oldTranslate, newTranslate
-	// + "");
-	// }
-	// element.setAttribute("transform", newAttribute);
-	//
-	// return Double.parseDouble(oldTranslate);
-	// }
-	//
-	// /**
-	// * @return The <b>double value</b> of the translate portion of the
-	// transform
-	// * attribute in the given element
-	// */
-	// private double getTranslateValue(Element element) {
-	// String translate = getTranslateString(element);
-	// if ("".equals(translate)) {
-	// return 0;
-	// }
-	// return Double.parseDouble(translate);
-	// }
-	//
-	// /**
-	// * @return The <b>exact string</b> of the translate portion of the
-	// transform
-	// * attribute in the given element
-	// */
-	// private String getTranslateString(Element element) {
-	// String transform = element.getAttribute("transform");
-	//
-	// if ("".equalsIgnoreCase(transform)) {
-	// return "";
-	// }
-	//
-	// int start = transform.indexOf("translate") + 10;
-	// int end = transform.indexOf(")", start);
-	// return transform.substring(start, end);
-	// }
-
+//	private void initializeFeilds() {
+//
+//		// Save immediate siblings for switching
+//		try {
+//			Wrapper nextWrap = wrap.getNextSiblingWrapper();
+//			nextNode = nextWrap.getNode();
+//			nextWrapsX = nextWrap.getAbsoluteLeft();
+//		} catch (IndexOutOfBoundsException e) {
+//		}
+//		try {
+//			Wrapper prevWrap = wrap.getPrevSiblingWrapper();
+//			prevNode = prevWrap.getNode();
+//			prevWrapsX = prevWrap.getAbsoluteLeft()+ prevWrap.getOffsetWidth();
+//		} catch (IndexOutOfBoundsException e) {
+//		}
+//	}
 }

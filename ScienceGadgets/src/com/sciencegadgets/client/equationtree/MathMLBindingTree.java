@@ -29,7 +29,7 @@ import com.sciencegadgets.client.Wrapper;
 
 public class MathMLBindingTree {
 
-	private MathMLBindingTree tree = this;
+//	private MathMLBindingTree tree = this;
 	private MathMLBindingNode root;
 	private MathMLBindingNode leftSide;
 	private MathMLBindingNode equals;
@@ -446,7 +446,7 @@ public class MathMLBindingTree {
 		}
 
 		public MathMLBindingTree getTree() {
-			return tree;
+			return MathMLBindingTree.this;
 		}
 
 		public String getId() {
