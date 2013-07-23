@@ -233,7 +233,6 @@ public class EquationPanel extends AbsolutePanel {
 		
 		childLoop: for (MathMLBindingNode node : childNodes) {
 
-//			svg = DOM.getElementById(prefixIdSvg + node.getId());
 			svg = DOM.getElementById("Wrapper-" + node.getId()+"-ofLayer-"+parentNode.getId());
 			node.setSVG(svg);
 
@@ -311,15 +310,11 @@ public class EquationPanel extends AbsolutePanel {
 			Wrapper wrap;
 			VerticalPanel menu = null;
 			if (inEditMode) {// Edit Mode////////////////////////////
-//				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
-//						widthStr, heightStr);
 				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
 						svg);
 				menu = ((EditWrapper) wrap).getEditMenu();
 
 			} else {// Solver Mode////////////////////////////////////
-//				wrap = new MLElementWrapper(node, this, eqLayerMap.get(node),
-//						widthStr, heightStr);
 				wrap = new MLElementWrapper(node, this, eqLayerMap.get(node),
 						svg);
 				menu = ((MLElementWrapper) wrap).getContextMenu();
@@ -365,12 +360,13 @@ public class EquationPanel extends AbsolutePanel {
 	 * @param layerId
 	 */
 	private void replaceChildsId(Node parent, String layerId) {
-		// NodeList<Node> children = parent.getChildNodes();
 
 		for (int i = 0; i < parent.getChildCount(); i++) {
 			Element curEl = ((Element) parent.getChild(i));
 			String oldId = curEl.getId();
 			String newId = null;
+
+			evenPadding(curEl);
 
 			if (!"".equals(oldId) && oldId != null) {
 
@@ -424,6 +420,22 @@ public class EquationPanel extends AbsolutePanel {
 
 		style.setFontSize(newFontSize, Unit.PCT);
 		style.setWidth(this.getOffsetWidth(), Unit.PX)	;
+	}
+
+	/**
+	 * Mathjax originally only places padding on left. This method cuts the left padding in half and adds padding to the right to center the content
+	 */
+	private void evenPadding(Element el){
+		Style style = el.getStyle();
+		String leftP = style.getPaddingLeft();
+		
+		if(leftP != null && leftP.contains("em")){
+			leftP = leftP.replaceFirst("em", "");
+			double newPad = Double.parseDouble(leftP);
+			newPad = newPad / 2;
+			style.setPaddingLeft(newPad, Unit.EM);
+			style.setPaddingRight(newPad, Unit.EM);
+		}
 	}
 
 	private void setColor(Element element, String color) {

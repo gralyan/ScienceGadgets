@@ -63,9 +63,6 @@ public class Moderator implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 
-		scienceGadgetArea.getElement().getStyle()
-				.setPosition(Style.Position.RELATIVE);
-
 		// Resize area when window resizes
 		fitWindow();
 		Window.addResizeHandler(new ResizeAreaHandler());
@@ -83,6 +80,8 @@ public class Moderator implements EntryPoint {
 	 * @param mathML - the equation as a string
 	 */
 	public void makeAlgebraWorkspace(String mathMl){
+		//TODO
+		System.out.println("moving: "+mathMl);
 		HTML html = new HTML(mathMl);
 		makeAlgebraWorkspace(html.getElement().getFirstChildElement());
 	}
@@ -93,12 +92,11 @@ public class Moderator implements EntryPoint {
 	public void makeAlgebraWorkspace(Element mathML) {
 
 		currentActivity = Activity.Algebra;
+		
 		scienceGadgetArea.clear();
-
 		scienceGadgetArea.add(backToBrowserButton);
 
-		AlgOut algOut = new AlgOut();
-		scienceGadgetArea.add(algOut);
+		scienceGadgetArea.add(new AlgOut());
 
 		eqPanelHolder.setSize("inherit", (SGAHeight / 2) + "px");
 		eqPanelHolder.setStyleName("varName");
@@ -108,7 +106,6 @@ public class Moderator implements EntryPoint {
 			if (changeNodeMenu == null) {
 				changeNodeMenu = new ChangeNodeMenu(scienceGadgetArea);
 			}
-//			scienceGadgetArea.add(changeNodeMenu, 0, SGAHeight * 9 / 10);
 			scienceGadgetArea.add(changeNodeMenu,0,SGAHeight*3/4);
 		}
 
@@ -139,7 +136,7 @@ public class Moderator implements EntryPoint {
 			eqPanelHolder.remove(eqPanel);
 		}
 		eqPanel = new EquationPanel(jTree, inEditMode);
-		//TODO
+		//TODO uncomment for live
 //		eqPanel.getElement().getStyle().setOpacity(0);
 		eqPanelHolder.add(eqPanel, 0, 0);
 

@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Wrapper;
+import com.sciencegadgets.client.Wrapper.WrapperMouseOutHandler;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
 import com.sciencegadgets.client.equationtree.EquationLayer;
 import com.sciencegadgets.client.equationtree.EquationPanel;
@@ -62,6 +63,8 @@ public class MLElementWrapper extends Wrapper {
 	public MLElementWrapper(MathMLBindingNode node, EquationPanel eqPanel,
 			EquationLayer eqLayer, Element element) {
 		super(node, eqPanel, eqLayer, element);
+		
+		addMouseOutHandler(new Wrapper.WrapperMouseOutHandler());
 	}
 
 	/**
