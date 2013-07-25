@@ -61,7 +61,6 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		int listSize = eqList.size();
 		String[] eqArray = new String[listSize];
 		for (int i = 0; i < listSize; i++) {
-			System.out.println(i+"; "+eqList.get(i).getXML());
 			eqArray[i] = eqList.get(i).getXML();
 		}
 		

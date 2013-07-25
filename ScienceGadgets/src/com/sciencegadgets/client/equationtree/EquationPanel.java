@@ -43,7 +43,7 @@ public class EquationPanel extends AbsolutePanel {
 	public static Wrapper selectedWrapper;
 	private Backgrounds backgrounds;
 	// Width of equation compared to panel
-	private static final double EQUATION_FRACTION = 0.9;
+	private static final double EQUATION_FRACTION = 0.8;
 
 	public EquationPanel(final MathMLBindingTree jTree, Boolean inEditMode) {
 
@@ -54,6 +54,8 @@ public class EquationPanel extends AbsolutePanel {
 		this.addHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				event.preventDefault();
+				event.stopPropagation();
 				setFocusOut();
 			}
 		}, ClickEvent.getType());
@@ -62,6 +64,8 @@ public class EquationPanel extends AbsolutePanel {
 		this.addHandler(new TouchStartHandler() {
 			@Override
 			public void onTouchStart(TouchStartEvent event) {
+				event.preventDefault();
+				event.stopPropagation();
 				setFocusOut();
 			}
 		}, TouchStartEvent.getType());
@@ -155,6 +159,11 @@ public class EquationPanel extends AbsolutePanel {
 		for (int j = 0; j < children.getLength(); j++) {
 			eqLayer.getElement().appendChild(children.getItem(j));
 		}
+		
+		AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
+		menuPanel.getElement().setAttribute("id", "menuLayer-" + node.getId());
+		menuPanel.setSize(this.getOffsetWidth()+"px", this.getOffsetHeight()+"px");
+		this.add(menuPanel,0,0);
 
 		eqLayer.setParentLayer(parentLayer);
 		eqLayerMap.put(node, eqLayer);
@@ -324,6 +333,8 @@ public class EquationPanel extends AbsolutePanel {
 
 			node.wrap(wrap);
 			eqLayer.addWrapper(wrap);
+			eqLayer.ContextMenuPanel.add(menu, wrap.getAbsoluteLeft() - this.getAbsoluteLeft(), wrap.getAbsoluteTop()
+					- this.getAbsoluteTop() + wrap.getOffsetHeight());
 //			wrap.paddingLeft = padLeft;
 //			wrap.paddingRight = padRight;
 
@@ -332,8 +343,8 @@ public class EquationPanel extends AbsolutePanel {
 //					- this.getAbsoluteTop());
 
 			// Wrapper Menu
-//			eqLayer.wrapPanel.add(menu, left - this.getAbsoluteLeft(), top
-//					- this.getAbsoluteTop() + (int) height);
+//			eqLayer.add(menu, wrap.getAbsoluteLeft() - this.getAbsoluteLeft(), wrap.getAbsoluteTop()
+//					- this.getAbsoluteTop() + wrap.getOffsetHeight());
 
 			// System.out.println(height);
 			// backgrounds.addBackground(svg, width, height);
@@ -366,8 +377,12 @@ public class EquationPanel extends AbsolutePanel {
 			String oldId = curEl.getId();
 			String newId = null;
 
+			try{
 			evenPadding(curEl);
-
+			}catch(Exception e){
+				JSNICalls.consoleLog(e.getCause().toString());
+				e.printStackTrace();
+			}
 			if (!"".equals(oldId) && oldId != null) {
 
 				// Each wrapper has a reference to its MathNode and Layer
@@ -409,17 +424,23 @@ public class EquationPanel extends AbsolutePanel {
 		if (newFontSize == 0) {
 			String oldWidthString = style.getWidth().replaceAll("[a-zA-Z ]", "");
 			double oldWidth = Double.parseDouble(oldWidthString);
-
-			double ratio = this.getOffsetWidth()/oldWidth;
+			double widthRatio = this.getOffsetWidth()/oldWidth;
+			
+			String oldHeightString = style.getHeight().replaceAll("[a-zA-Z ]", "");
+			double oldHeight = Double.parseDouble(oldHeightString);
+			double heightRatio = this.getOffsetHeight()/oldHeight;
 
 			String oldFontString = style.getFontSize().replaceAll("%", "");
 			double oldFontValue = Double.parseDouble(oldFontString);
 		
-			newFontSize = ratio * oldFontValue; 
+			double smallerRatio = (widthRatio>heightRatio) ? heightRatio:widthRatio;
+			
+			newFontSize = smallerRatio * oldFontValue; 
 		}
 
 		style.setFontSize(newFontSize, Unit.PCT);
-		style.setWidth(this.getOffsetWidth(), Unit.PX)	;
+		style.setWidth(this.getOffsetWidth(), Unit.PX);
+//		style.setHeight(this.getOffsetHeight(), Unit.PX);
 	}
 
 	/**
