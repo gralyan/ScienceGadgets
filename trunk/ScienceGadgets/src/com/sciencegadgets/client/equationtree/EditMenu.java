@@ -55,8 +55,8 @@ public class EditMenu extends VerticalPanel {
 			variableInput
 					.addChangeHandler(new InputChangeHandler(variableInput));
 			variableInput.setWidth(width);
-			variableInput.addClickHandler(new FocusOnlyClickHandler());
-			variableInput.addTouchStartHandler(new FocusOnlyTouchHandler());
+//			variableInput.addClickHandler(new FocusOnlyClickHandler());
+//			variableInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			variableInput.setText(node.getSymbol());
 			focusable = variableInput;
 			this.add(variableInput);
@@ -70,8 +70,8 @@ public class EditMenu extends VerticalPanel {
 			DoubleBox numberInput = new DoubleBox();
 			numberInput.addChangeHandler(new InputChangeHandler(numberInput));
 			numberInput.setWidth(width);
-			numberInput.addClickHandler(new FocusOnlyClickHandler());
-			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
+//			numberInput.addClickHandler(new FocusOnlyClickHandler());
+//			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			numberInput.setText(node.getSymbol());
 			focusable = numberInput;
 			this.add(numberInput);

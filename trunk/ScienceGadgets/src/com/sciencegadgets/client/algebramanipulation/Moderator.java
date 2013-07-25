@@ -80,8 +80,6 @@ public class Moderator implements EntryPoint {
 	 * @param mathML - the equation as a string
 	 */
 	public void makeAlgebraWorkspace(String mathMl){
-		//TODO
-		System.out.println("moving: "+mathMl);
 		HTML html = new HTML(mathMl);
 		makeAlgebraWorkspace(html.getElement().getFirstChildElement());
 	}
@@ -98,9 +96,9 @@ public class Moderator implements EntryPoint {
 
 		scienceGadgetArea.add(new AlgOut());
 
-		eqPanelHolder.setSize("inherit", (SGAHeight / 2) + "px");
+		eqPanelHolder.setSize("inherit", (SGAHeight *3/ 4) + "px");
 		eqPanelHolder.setStyleName("varName");
-		scienceGadgetArea.add(eqPanelHolder, 0, SGAHeight / 4);
+		scienceGadgetArea.add(eqPanelHolder, 0, SGAHeight / 8);
 
 		if (inEditMode) {
 			if (changeNodeMenu == null) {

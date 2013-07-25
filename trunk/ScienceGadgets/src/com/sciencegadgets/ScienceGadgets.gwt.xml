@@ -4,13 +4,13 @@
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 
 	<!-- <inherits name='com.google.gwt.gadgets.Gadgets' /> -->
+<!-- 	<inherits name='org.vaadin.gwtgraphics.GWTGraphics' /> -->
 	<inherits name='com.allen_sauer.gwt.dnd.gwt-dnd' />
-	<inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
 	<inherits name="com.google.gwt.xml.XML" />
 	<inherits name="com.googlecode.objectify.Objectify" />
 
 	<!-- Logger just for debugging -->
-	<!-- <inherits name="com.google.gwt.logging.Logging"/> -->
+<!-- 	<inherits name="com.google.gwt.logging.Logging"/> -->
 
 
 	<!-- Uncomment this for faster compile time <set-property name="user.agent" 

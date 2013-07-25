@@ -33,5 +33,9 @@ public class JSNICalls {
 			final String name)/*-{
 		return document.createElementNS(ns, name);
 	}-*/;
+	
+	public static native void consoleLog( String message) /*-{
+      console.log( "me: " + message );
+  }-*/;
 
 }
