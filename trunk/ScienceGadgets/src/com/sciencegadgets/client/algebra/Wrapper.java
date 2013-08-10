@@ -1,4 +1,4 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,9 +12,7 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.equationtree.EquationLayer;
-import com.sciencegadgets.client.equationtree.EquationPanel;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 
 public class Wrapper extends HTML {
 
