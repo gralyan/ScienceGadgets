@@ -34,9 +34,19 @@ import com.sciencegadgets.client.entities.Equation;
 @SuppressWarnings("serial")
 public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		DatabaseHelper {
+	
+	static { 
+		ObjectifyService.register( Equation.class );
+	}
 
-	static {
-		ObjectifyService.register(Equation.class);
+	@Override
+	public String saveEquation(String name) throws IllegalArgumentException {
+		Equation e = new Equation();
+		e.setXML(name);
+		
+		ObjectifyService.ofy().save().entity(e).now();
+
+		return e.getXML();
 	}
 
 	@Override

@@ -46,9 +46,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.algebramanipulation.AlgOut;
-import com.sciencegadgets.client.algebramanipulation.Moderator;
-import com.sciencegadgets.client.equationtree.TreeEntry;
+import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgOut;
 
 //Uncomment to use as gadget////////////////////////////////////
 //
@@ -81,11 +80,12 @@ public class EquationBrowser extends VerticalPanel {
 		this.moderator = moderator;
 		this.setStyleName("browserPanel");
 
-		Grid modes = new Grid(1, 2);
-		modes.setWidget(0, 0, modeAlg);
-		modes.setWidget(0, 1, modeSci);
-		modes.setStyleName("modes");
-		this.add(modes);
+		//TODO Science Mode
+//		Grid modes = new Grid(1, 2);
+//		modes.setWidget(0, 0, modeAlg);
+//		modes.setWidget(0, 1, modeSci);
+//		modes.setStyleName("modes");
+//		this.add(modes);
 
 		Grid modes2 = new Grid(1, 2);
 		modes2.setWidget(0, 0, modeSolve);
