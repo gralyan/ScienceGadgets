@@ -13,9 +13,8 @@ import com.google.gwt.user.client.ui.TextBox;
 public class Admin implements EntryPoint {
 
 	TextBox inputBox = new TextBox();
+	AppEngineData data = new AppEngineData();
 
-	private final AdminServiceAsync adminService = GWT
-			.create(AdminService.class);
 
 	@Override
 	public void onModuleLoad() {
@@ -27,23 +26,7 @@ public class Admin implements EntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				String newEquation = inputBox.getText().toLowerCase()
-						.replaceAll("\r|\n|\r\n|\t| {2,}", "")
-						.replaceAll("> <", "><");
-
-				adminService.saveEquation(newEquation,
-						new AsyncCallback<String>() {
-
-							@Override
-							public void onSuccess(String result) {
-								Window.alert("Saved as: " + result);
-							}
-							@Override
-							public void onFailure(Throwable caught) {
-								Window.alert("FAILED save!!!");
-							}
-						});
-
+				data.saveEquation(inputBox.getText());
 			}
 		});
 
