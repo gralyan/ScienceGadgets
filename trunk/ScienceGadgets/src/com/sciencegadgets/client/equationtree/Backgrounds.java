@@ -6,7 +6,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.equationtree.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 
 public class Backgrounds {
 
