@@ -36,7 +36,6 @@ public class MLElementWrapper extends Wrapper {
 	private WrapDragController dragController = null;
 	private MathMLBindingNode mathMLBindingNode;
 	private HTML dropDescriptor = new HTML();
-	private VerticalPanel contextMenu = new VerticalPanel();
 
 	/**
 	 * Wrapper for symbols which allow for user interaction
@@ -59,6 +58,7 @@ public class MLElementWrapper extends Wrapper {
 			EquationLayer eqLayer, Element element) {
 		super(node, eqPanel, eqLayer, element);
 		
+		menu = new NodeMenu(this, element.getOffsetWidth()+"px");
 		addMouseOutHandler(new Wrapper.WrapperMouseOutHandler());
 	}
 
@@ -76,8 +76,8 @@ public class MLElementWrapper extends Wrapper {
 		this.selectedWrapper = selectedWrapper;
 	}
 
-	public VerticalPanel getContextMenu() {
-		return contextMenu;
+	public NodeMenu getContextMenu() {
+		return (NodeMenu) menu;
 	}
 
 	public HTML getDropDescriptor() {

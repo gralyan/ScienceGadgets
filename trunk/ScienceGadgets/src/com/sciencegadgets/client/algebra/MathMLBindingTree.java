@@ -24,6 +24,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Random;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 
@@ -104,6 +105,7 @@ public class MathMLBindingTree {
 			throws NoSuchElementException {
 		MathMLBindingNode node = idMap.get(id);
 		if (node == null) {
+			JSNICalls.consoleError("Can't get node by id: " + id);
 			throw new NoSuchElementException("Can't get node by id: " + id);
 		}
 		return node;
@@ -129,6 +131,8 @@ public class MathMLBindingTree {
 		private Element mlNode;
 		private Wrapper wrapper;
 		private Element SVGElement;
+		private boolean isLeftSide = false;
+		private boolean isRightSide = false;
 
 		/**
 		 * Wrap existing MathML node
@@ -145,15 +149,10 @@ public class MathMLBindingTree {
 		/**
 		 * Creates a new MathML DOM node which should be added into the MathML
 		 * </br>get the DOM node with:
-		 * <p>
-		 * getMlNode()
-		 * </p>
-		 * ;
+		 * <p>getMlNode()</p>
 		 * 
-		 * @param tag
-		 *            - MathML tag
-		 * @param symbol
-		 *            - inner text
+		 * @param tag - MathML tag
+		 * @param symbol - inner text
 		 */
 		public MathMLBindingNode(Type type, String symbol) {
 
@@ -173,8 +172,7 @@ public class MathMLBindingTree {
 		 * Adds a node between this node and its parent, encasing this branch of
 		 * the tree in a new node. <br/>
 		 * 
-		 * @param tag
-		 *            - the tag of the new node
+		 * @param tag - the tag of the new node
 		 * @return - encasing node
 		 */
 		public MathMLBindingNode encase(Type type) {
@@ -184,7 +182,7 @@ public class MathMLBindingTree {
 			// Move around nodes
 			this.getParent().add(this.getIndex(), encasing);
 			this.remove();
-			encasing.add(this);
+			encasing.add(-1, this);
 
 			return encasing;
 		}
@@ -203,18 +201,18 @@ public class MathMLBindingTree {
 		 * 
 		 * @param index
 		 *            - the placement of siblings
-		 * @param newNode
+		 * @param node
 		 *            - the node to be added
 		 * @param children
 		 *            - children of this added node
 		 */
-		public void add(int index, MathMLBindingNode newNode)
+		public void add(int index, MathMLBindingNode node)
 				throws IllegalArgumentException {
 
-			Type newNodeType = newNode.getType();
-			LinkedList<MathMLBindingNode> children = newNode.getChildren();
+			Type newNodeType = node.getType();
+			LinkedList<MathMLBindingNode> children = node.getChildren();
 			int childCount = children.size();
-			Element node = newNode.getMLNode();
+			Element elementNode = node.getMLNode();
 
 			IllegalArgumentException illegalArgumentException = new IllegalArgumentException(
 					"Wrong number of children, type: " + newNodeType
@@ -224,13 +222,14 @@ public class MathMLBindingTree {
 			case Number:
 				// Confirm that the symbol is a number or random number spec
 				// then fall into Variable
-				if (!newNode.getSymbol().equals(
+				if (!node.getSymbol().equals(
 						RandomSpecification.RANDOM_SYMBOL)) {
 					try {
-						Double.parseDouble(newNode.getSymbol());
+						Double.parseDouble(node.getSymbol());
 					} catch (NumberFormatException e) {
-						throw new NumberFormatException("The number node "
-								+ newNode.toString() + " must have a number");
+//						throw new NumberFormatException("The number node "
+//								+ node.toString() + " must have a number");
+						JSNICalls.consoleWarn("The number node "+ node.toString() + " must have a number");
 					}
 				}
 			case Variable:// Confirm that there are no children
@@ -248,33 +247,33 @@ public class MathMLBindingTree {
 			case Term:
 				if (childCount < 2)
 					throw illegalArgumentException;
-				node.setAttribute("open", "");
-				node.setAttribute("close", "");
+				elementNode.setAttribute("open", "");
+				elementNode.setAttribute("close", "");
 			case Sum:// Confirm that there are multiple children
-				node.setAttribute("separators", "");
+				elementNode.setAttribute("separators", "");
 				if (!Type.Term.equals(getType())
 						&& !Type.Exponential.equals(getType())) {
-					node.setAttribute("open", "");
-					node.setAttribute("close", "");
+					elementNode.setAttribute("open", "");
+					elementNode.setAttribute("close", "");
 				}
 				break;
 			}
 
 			if (index < 0 || index >= mlNode.getChildCount()) {
-				mlNode.appendChild(node);
+				mlNode.appendChild(elementNode);
 			} else {
 				Node referenceChild = mlNode.getChild(index);
-				mlNode.insertBefore(node, referenceChild);
+				mlNode.insertBefore(elementNode, referenceChild);
 			}
 
-			String id = newNode.getId();
+			String id = node.getId();
 			if (id == "") {
 				id = createId();
 			}
 
 			if (!idMap.containsKey(id)) {
-				idMap.put(id, newNode);
-				idMLMap.put(id, node);
+				idMap.put(id, node);
+				idMLMap.put(id, elementNode);
 			}
 		}
 
@@ -452,24 +451,13 @@ public class MathMLBindingTree {
 		public String getId() {
 			return getMLNode().getAttribute("id");
 		}
-
-		// private Boolean isFunction() {
-		// String nodeString = this.toString();
-		// if ("cos".equals(nodeString) || "sin".equals(nodeString)
-		// || "tan".equalsIgnoreCase(nodeString)
-		// || "sec".equalsIgnoreCase(nodeString)
-		// || "csc".equalsIgnoreCase(nodeString)
-		// || "cot".equalsIgnoreCase(nodeString)
-		// || "sinh".equalsIgnoreCase(nodeString)
-		// || "cosh".equalsIgnoreCase(nodeString)
-		// || "tanh".equalsIgnoreCase(nodeString)
-		// || "log".equalsIgnoreCase(nodeString)
-		// || "ln".equalsIgnoreCase(nodeString)) {
-		// return true;
-		// } else {
-		// return false;
-		// }
-		// }
+		
+		public boolean isLeftSide(){
+			return isLeftSide;
+		}
+		public boolean isRightSide(){
+			return isRightSide;
+		}
 
 		public Operator getOperation() {
 			if ("mo".equalsIgnoreCase(getTag())) {
@@ -504,6 +492,8 @@ public class MathMLBindingTree {
 				type = Type.Fraction;
 			} else if ("mo".equals(tag)) {
 				type = Type.Operation;
+			}else if ("math".equals(tag)) {
+				type = Type.Equation;
 			}
 
 			if (type == null) {
@@ -517,7 +507,7 @@ public class MathMLBindingTree {
 	public static enum Type {
 		Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
 				"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
-				"mo", false);
+				"mo", false), Equation("math", true);
 
 		private String tag;
 		private boolean hasChildren;
@@ -562,36 +552,19 @@ public class MathMLBindingTree {
 
 		// Find the top tree nodes: [left side] <mo>=<mo> [right side]
 		Element rootNode = (Element) mathMLequation;
-//		String middleString = "";
-
-//		//Climb DOM tree to find equals sign
-//		while (!"=".equals(middleString)) {
-//			switch (rootNode.getChildCount()) {
-//			case 0: // prevent infinite loop
-//				throw new TopNodesNotFoundException(
-//						"The MathML is invalid, It must contain the following pattern for the top layer of the equation:"
-//								+ "\n<mrow>[left side of eqation]</mrow>"
-//								+ "\n\t<mo>=<mo>"
-//								+ "\n<mrow>[right side of eqation]</mrow>\n");
-//			case 1:
-//				rootNode = rootNode.getFirstChildElement();
-//				break;
-//			default:
-//				middleString = ((Element) rootNode.getChild(1)).getInnerText();
-//				if (!"=".equals(middleString)) {
-//					rootNode = rootNode.getFirstChildElement();
-//				}
-//			}
-//		}
-
 		NodeList<Node> sideEqSide = rootNode.getChildNodes();
 		
-		this.root = new MathMLBindingNode(rootNode);
-		this.leftSide = new MathMLBindingNode((Element) sideEqSide.getItem(0));
-		this.equals = new MathMLBindingNode((Element) sideEqSide.getItem(1));
-		this.rightSide = new MathMLBindingNode((Element) sideEqSide.getItem(2));
-
+		root = new MathMLBindingNode(rootNode);
+		
 		addRecursively(rootNode);
+		
+		leftSide = getNodeById(((Element)sideEqSide.getItem(0)).getAttribute("id"));
+		equals = getNodeById(((Element)sideEqSide.getItem(1)).getAttribute("id"));
+		rightSide = getNodeById(((Element)sideEqSide.getItem(2)).getAttribute("id"));
+		
+		leftSide.isLeftSide = true;
+		rightSide.isRightSide = true;
+
 
 		// // Prints both maps for debugging
 //		System.out.println("idMLMap");

@@ -169,8 +169,9 @@ public class ChangeNodeMenu extends HorizontalPanel {
 								type, "");
 
 						newNode.add(node);
-						if (operator != null)
+						if (operator != null){
 							newNode.add(-1, Type.Operation, operator.getSign());
+						}
 						newNode.add(-1, Type.Variable, NOT_SET);
 
 						parent.add(index, newNode);

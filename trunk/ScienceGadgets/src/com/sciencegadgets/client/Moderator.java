@@ -196,19 +196,18 @@ public class Moderator implements EntryPoint {
 					Window.alert("All new entities ("+ChangeNodeMenu.NOT_SET+") must be set or removed before saving");
 					return;
 				}
-				JSNICalls.consoleLog(equation);
 				
 				dataBase.saveEquation(equation, new AsyncCallback<String>() {
 					
 					@Override
 					public void onSuccess(String result) {
-						Window.alert("Saved: "+result);
+						JSNICalls.consoleLog("Saved: "+result);
 					}
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Save FAILED!!!: ");
-						JSNICalls.consoleLog("Save Failed: " +caught.getCause().toString());
+						Window.alert("Save failed");
+						JSNICalls.consoleError("Save Failed: " +caught.getCause().toString());
 					}
 				});
 			}catch(Exception e){

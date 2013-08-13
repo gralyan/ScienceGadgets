@@ -232,85 +232,12 @@ public class EquationPanel extends AbsolutePanel {
 		LinkedList<MathMLBindingNode> childNodes = parentNode.getChildren();
 		EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
-		com.google.gwt.user.client.Element svg, parentSvg, prevSibSvg = null, nextSibSvg = null;
-		String prefixIdSvg = parentNode.getId() + "Wrapper-";
-//		parentSvg = DOM.getElementById(prefixIdSvg + parentNode.getId());
+		com.google.gwt.user.client.Element svg;
 		
 		childLoop: for (MathMLBindingNode node : childNodes) {
 
 			svg = DOM.getElementById("Wrapper-" + node.getId()+"-ofLayer-"+parentNode.getId());
 			node.setSVG(svg);
-
-//			try {
-//				prevSibSvg = DOM.getElementById(prefixIdSvg
-//						+ node.getPrevSibling().getId());
-//			} catch (IndexOutOfBoundsException e) {
-//			}
-//			try {
-//				nextSibSvg = DOM.getElementById(prefixIdSvg
-//						+ node.getNextSibling().getId());
-//			} catch (IndexOutOfBoundsException e) {
-//			}
-
-			// Only the focused svg in the current layer
-			//TODO
-//			setColor(svg, "black");
-
-//			int top = 0, left = 0;
-//			double height = 0, width = 0;
-//			int padLeft = 0, padRight = 0;
-//
-//			// Top layer of equation is different
-//			if ("math".equalsIgnoreCase(parentNode.getTag())) {
-//				if ("=".equalsIgnoreCase(node.getSymbol()))
-//					continue childLoop;
-//				top = svg.getAbsoluteTop();
-//				left = svg.getAbsoluteLeft();
-//				height = JSNICalls.getElementHeight(svg);
-//				width = JSNICalls.getElementWidth(svg);
-//			} else {
-//				// Wrapper size is based on its parent type and size
-//				switch (parentNode.getType()) {
-//				case Term:
-//				case Sum:
-//					if (Type.Operation.equals(node.getType())) {
-//						width = JSNICalls.getElementWidth(svg);
-//						left = svg.getAbsoluteLeft();
-//					} else {
-//						// Fill from previous to next operator if exists
-//						left = prevSibSvg != null ? prevSibSvg
-//								.getAbsoluteLeft()
-//								+ (int) JSNICalls.getElementWidth(prevSibSvg)
-//								: svg.getAbsoluteLeft();
-//						int right = nextSibSvg != null ? nextSibSvg
-//								.getAbsoluteLeft() : svg.getAbsoluteLeft()
-//								+ (int) JSNICalls.getElementWidth(svg);
-//
-//						width = right - left;
-//
-//						padLeft = svg.getAbsoluteLeft() - left;
-//						padRight = right - svg.getAbsoluteLeft()
-//								+ (int) JSNICalls.getElementWidth(svg);
-//					}
-//					top = parentSvg.getAbsoluteTop();
-//					height = JSNICalls.getElementHeight(parentSvg);
-//					break;
-//				case Fraction:
-//					top = svg.getAbsoluteTop();
-//					height = JSNICalls.getElementHeight(svg);
-//					left = parentSvg.getAbsoluteLeft();
-//					width = JSNICalls.getElementWidth(parentSvg);
-//					break;
-//				case Exponential:
-//					top = svg.getAbsoluteTop();
-//					left = svg.getAbsoluteLeft();
-//					height = JSNICalls.getElementHeight(svg);
-//					width = JSNICalls.getElementWidth(svg);
-//					break;
-//				}
-//			}
-//
-//			String heightStr = height + "px", widthStr = width + "px";
 
 			Wrapper wrap;
 			VerticalPanel menu = null;
@@ -327,32 +254,10 @@ public class EquationPanel extends AbsolutePanel {
 			
 //			wrap.onAttach();
 
-			node.wrap(wrap);
 			eqLayer.addWrapper(wrap);
 
 			eqLayer.ContextMenuPanel.add(menu, wrap.getAbsoluteLeft() - this.getAbsoluteLeft(), wrap.getAbsoluteTop()
 					- this.getAbsoluteTop() + wrap.getOffsetHeight());
-//			wrap.paddingLeft = padLeft;
-//			wrap.paddingRight = padRight;
-
-			// Wrapper
-//			eqLayer.wrapPanel.add(wrap, left - this.getAbsoluteLeft(), top
-//					- this.getAbsoluteTop());
-
-			// Wrapper Menu
-//			eqLayer.add(menu, wrap.getAbsoluteLeft() - this.getAbsoluteLeft(), wrap.getAbsoluteTop()
-//					- this.getAbsoluteTop() + wrap.getOffsetHeight());
-
-			// System.out.println(height);
-			// backgrounds.addBackground(svg, width, height);
-
-			// background image
-			// SimplePanel wrapBack = new SimplePanel();
-			// wrapBack.setSize(widthStr, heightStr);
-			// wrapBack.setStyleName(node.getType().toString());
-			// eqLayer.backPanel.add(wrapBack, left - this.getAbsoluteLeft(),
-			// top
-			// - this.getAbsoluteTop());
 
 			if (node.getType().hasChildren()) {
 				placeNextEqWrappers(node);
@@ -449,7 +354,7 @@ public class EquationPanel extends AbsolutePanel {
 	 * Mathjax originally only places padding on left. This method cuts the left padding in half and adds padding to the right to center the content
 	 */
 	private void evenPadding(Element el){//TODO
-		try{
+//		try{
 			Style style = el.getStyle();
 			String leftP = style.getPaddingLeft();
 			
@@ -478,12 +383,11 @@ public class EquationPanel extends AbsolutePanel {
 			style.setPaddingLeft(newPad, unitProper);
 			style.setPaddingRight(newPad, unitProper);
 		
-		}catch(Exception e){
-			e.printStackTrace();
-			Window.alert(e.getCause().toString());
-			JSNICalls.consoleLog("e.getCause.str: "+e.getCause().toString());
-			JSNICalls.consoleLog("e.str: "+e.toString());
-		}
+//		}catch(Exception e){
+//			e.printStackTrace();
+//			JSNICalls.consoleLog("e.getCause.str: "+e.getCause().toString());
+//			JSNICalls.consoleLog("e.str: "+e.toString());
+//		}
 	}
 
 	private void setColor(Element element, String color) {

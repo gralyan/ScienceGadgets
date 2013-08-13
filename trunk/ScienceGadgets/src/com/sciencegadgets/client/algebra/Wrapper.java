@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 
@@ -23,6 +24,7 @@ public class Wrapper extends HTML {
 	public int paddingLeft = 0;
 	public int paddingRight = 0;
 	public Element element;
+	protected VerticalPanel menu;
 
 	public Wrapper(MathMLBindingNode node, EquationPanel eqPanel,
 			EquationLayer eqLayer, Element element) {
@@ -35,6 +37,9 @@ public class Wrapper extends HTML {
 		this.element = element;
 
 		onAttach();
+		
+		node.wrap(this);
+		node.getWrapper();
 
 		this.setStyleName(node.getType().toString());
 
@@ -57,7 +62,12 @@ public class Wrapper extends HTML {
 	public EquationPanel getEqPanel() {
 		return eqPanel;
 	}
+	
+	public VerticalPanel getMenu(){
+		return menu;
+	}
 
+	
 	public Wrapper getNextSiblingWrapper() throws IndexOutOfBoundsException {
 		return node.getNextSibling().getWrapper();
 	}
