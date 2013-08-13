@@ -11,7 +11,6 @@ import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
 
 public class EditWrapper extends Wrapper {
 
-	EditMenu editMenu;
 	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
 //	public EditWrapper(MathMLBindingNode node, EquationPanel eqPanel,
@@ -26,8 +25,8 @@ public class EditWrapper extends Wrapper {
 			EquationLayer eqLayer, Element element) {
 		super(node, eqPanel, eqLayer, element);
 		
-		editMenu = new EditMenu(this, element.getOffsetWidth()+"px");
-		editMenu.setVisible(false);
+		menu = new EditMenu(this, element.getOffsetWidth()+"px");
+		menu.setVisible(false);
 		
 	}
 
@@ -46,7 +45,7 @@ public class EditWrapper extends Wrapper {
 
 		// Display editMenu if this wrapper has been set(not ???)
 		if (!ChangeNodeMenu.NOT_SET.equals(node.getSymbol())) {
-			editMenu.setVisible(true);
+			menu.setVisible(true);
 			// editMenu.setFocus();
 			// Disable menu options of the selected type
 			changeNodeMenu.setEnable(nodeType, false);
@@ -61,10 +60,10 @@ public class EditWrapper extends Wrapper {
 		super.unselect();
 		changeNodeMenu.setVisible(false);
 
-		editMenu.setVisible(false);
+		menu.setVisible(false);
 
-		if (editMenu.getResponse() != null)
-			editMenu.getResponse().removeFromParent();
+		if (((EditMenu) menu).getResponse() != null)
+			((EditMenu) menu).getResponse().removeFromParent();
 
 		for (Type type : Type.values()) {
 			changeNodeMenu.setEnable(type, true);
@@ -72,7 +71,7 @@ public class EditWrapper extends Wrapper {
 	}
 
 	public EditMenu getEditMenu() {
-		return editMenu;
+		return (EditMenu) menu;
 	}
 
 }

@@ -35,7 +35,16 @@ public class JSNICalls {
 	}-*/;
 	
 	public static native void consoleLog( String message) /*-{
-      console.log( "me: " + message );
+      console.log( "jg: " + message );
+  }-*/;
+	public static native void consoleDebug( String message) /*-{
+      console.debug( "jg: " + message );
+  }-*/;
+	public static native void consoleWarn( String message) /*-{
+      console.warn( "jg: " + message );
+  }-*/;
+	public static native void consoleError( String message) /*-{
+      console.error( "jg: " + message );
   }-*/;
 
 }
