@@ -234,22 +234,31 @@ public class MathMLBindingTree {
 				}
 			case Variable:// Confirm that there are no children
 			case Operation:
-				if (childCount != 0)
+				if (childCount != 0){
+					JSNICalls.consoleError("Wrong number of children, type: " + newNodeType
+						+ " can't have (" + childCount + ") children");
 					throw illegalArgumentException;
+				}
 				break;
 
 			case Exponential:// Confirm that there are 2 children
 			case Fraction:
-				if (childCount != 2)
+				if (childCount != 2){
+					JSNICalls.consoleError("Wrong number of children, type: " + newNodeType
+							+ " can't have (" + childCount + ") children");
 					throw illegalArgumentException;
+					}
 				break;
 
 			case Term:
-				if (childCount < 2)
-					throw illegalArgumentException;
 				elementNode.setAttribute("open", "");
 				elementNode.setAttribute("close", "");
 			case Sum:// Confirm that there are multiple children
+				if (childCount < 2){
+					JSNICalls.consoleError("Wrong number of children, type: " + newNodeType
+							+ " can't have (" + childCount + ") children");
+					throw illegalArgumentException;
+				}
 				elementNode.setAttribute("separators", "");
 				if (!Type.Term.equals(getType())
 						&& !Type.Exponential.equals(getType())) {
