@@ -29,7 +29,7 @@ public class NodeMenu extends VerticalPanel {
 	private final String SUB_BOTH = "Subtract both sides by this";
 	private final String MULTIPLY_BOTH = "Multiply both sides by this";
 	private final String DIVIDE_BOTH = "Divide Both sides by this";
-	
+
 	private final String PLUS = Operator.PLUS.getSign();
 	private final String MINUS = Operator.MINUS.getSign();
 	private final String CROSS = Operator.CROSS.getSign();
@@ -133,9 +133,10 @@ public class NodeMenu extends VerticalPanel {
 			}
 		}
 	}
-	//////////////////////////////////////////////////////////
-	//Both Sides Handlers
-	/////////////////////////////////////////////////////////
+
+	// ////////////////////////////////////////////////////////
+	// Both Sides Handlers
+	// ///////////////////////////////////////////////////////
 
 	abstract class BothSidesHandler implements ClickHandler {
 
@@ -190,43 +191,49 @@ public class NodeMenu extends VerticalPanel {
 			} else {
 				targetSide.add(-1, Type.Operation, "-");
 			}
-			
-			//move node to other side
+
+			// move node to other side
 			targetSide.add(-1, node);
 
 			// clean source side
 			MathMLBindingNode oldFirstSib = oldParent.getFirstChild();
-			if(oldFirstSib != null && PLUS.equals(oldFirstSib.getSymbol())){
+			if (oldFirstSib != null && PLUS.equals(oldFirstSib.getSymbol())) {
 				oldFirstSib.remove();
-			}				
-			
+			}
+
 			switch (oldParent.getChildCount()) {
 			case 0:
-				JSNICalls.consoleWarn("There shouldn't be zero children in a sum");
+				JSNICalls
+						.consoleWarn("There shouldn't be zero children in a sum");
 				oldParent.remove();
 				break;
 			case 2:
-				if(MINUS.equals(oldParent.getFirstChild().getSymbol())){
-					//Merge 
+				if (MINUS.equals(oldParent.getFirstChild().getSymbol())) {
+					// Merge
 					MathMLBindingNode secondChild = oldParent.getChildAt(1);
 					String secondChildSymbol = secondChild.getSymbol();
-					if(secondChildSymbol.startsWith(MINUS)){
-						secondChild.setSymbol(secondChildSymbol.replaceFirst(MINUS, ""));
-					}else{
+					if (secondChildSymbol.startsWith(MINUS)) {
+						secondChild.setSymbol(secondChildSymbol.replaceFirst(
+								MINUS, ""));
+					} else {
 						secondChild.setSymbol(MINUS + secondChildSymbol);
 					}
 					oldParent.getFirstChild().remove();
-				}else{
-					JSNICalls.consoleWarn("There Shouldn't be two children in a sum: "+oldParent.getMLNode().getInnerHTML());
+				} else {
+					JSNICalls
+							.consoleWarn("There Shouldn't be two children in a sum: "
+									+ oldParent.getMLNode().getInnerHTML());
 				}
-				//no break, go on to case 1
+				// no break, go on to case 1
 			case 1:
-				//No need to be encased in sum anymore
-				oldParent.getParent().add(oldParent.getIndex(), oldParent.getFirstChild());
+				// No need to be encased in sum anymore
+				oldParent.getParent().add(oldParent.getIndex(),
+						oldParent.getFirstChild());
 				oldParent.remove();
 				break;
 			}
 
+			tree.validateTree();
 			Moderator.reloadEquationPanel("");
 		}
 	}
@@ -242,8 +249,8 @@ public class NodeMenu extends VerticalPanel {
 			// Prepare Target side
 			if (!Type.Fraction.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(Type.Fraction);
-				if(operator != null)
-				operator.remove();
+				if (operator != null)
+					operator.remove();
 			} else {
 				targetSide = targetSide.getChildAt(1);
 				if (!Type.Term.equals(targetSide.getType())) {
@@ -256,32 +263,37 @@ public class NodeMenu extends VerticalPanel {
 				}
 			}
 
-			//move node to other side
+			// move node to other side
 			targetSide.add(-1, node);
-			
+
 			// clean source side
 			MathMLBindingNode oldFirstSib = oldParent.getFirstChild();
-			if(oldFirstSib != null){
+			if (oldFirstSib != null) {
 				String OldFirstSymbol = oldFirstSib.getSymbol();
-				if(CROSS.equals(OldFirstSymbol) || DOT.equals(OldFirstSymbol) || SPACE.equals(OldFirstSymbol))
+				if (CROSS.equals(OldFirstSymbol) || DOT.equals(OldFirstSymbol)
+						|| SPACE.equals(OldFirstSymbol))
 					oldFirstSib.remove();
-			}	
-			
-			if (Type.Fraction.equals(oldParent.getType())) {
-				//leave 1 in numerator
-				oldParent.add(0, Type.Number, "1");
-			}else if(Type.Term.equals(oldParent.getType())){
-				if (oldParent.getChildCount() == 1) {
-					//No need to be encased in term anymore
-						oldParent.getParent().add(oldParent.getIndex(), oldParent.getFirstChild());
-						oldParent.remove();
-				}else if(oldParent.getChildCount() == 2){
-					JSNICalls.consoleWarn("There shouldn't be two children in a term");
-				}
-			}else{
-				JSNICalls.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
+			if (Type.Fraction.equals(oldParent.getType())) {
+				// leave 1 in numerator
+				oldParent.add(0, Type.Number, "1");
+			} else if (Type.Term.equals(oldParent.getType())) {
+				if (oldParent.getChildCount() == 1) {
+					// No need to be encased in term anymore
+					oldParent.getParent().add(oldParent.getIndex(),
+							oldParent.getFirstChild());
+					oldParent.remove();
+				} else if (oldParent.getChildCount() == 2) {
+					JSNICalls
+							.consoleWarn("There shouldn't be two children in a term");
+				}
+			} else {
+				JSNICalls
+						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
+			}
+
+			tree.validateTree();
 			Moderator.reloadEquationPanel("");
 		}
 	}
@@ -294,32 +306,50 @@ public class NodeMenu extends VerticalPanel {
 			if (!Type.Term.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(Type.Term);
 			}
-			if (!isNestedInFraction) {
+			if (isNestedInFraction) {
+				if (node.getIndex() > 0) {
+					targetSide.add(-1, node.getPrevSibling());
+				} else {
+					targetSide.add(-1, node.getNextSibling());
+				}
+			} else if (isTopLevel) {
 				targetSide.add(-1, Type.Operation, DOT);
 			} else {
-				targetSide.add(-1, node.getPrevSibling());
+				JSNICalls
+						.consoleWarn("Multiplying somethimg that's not top level or nested in a top level fraction: "
+								+ node.toString());
 			}
-			targetSide.add(-1, node);
-
-			// clean source side
-			
-			if (Type.Fraction.equals(oldParent.getType())) {
-				//remove unnecessary intermediate fraction
-				oldParent.getParent().add(oldParent.getIndex(), oldParent.getFirstChild());
-				oldParent.remove();
-			}else if(Type.Term.equals(oldParent.getType())){
-				if (oldParent.getChildCount() == 1) {
-					//No need to be encased in term anymore
-					oldParent.getParent().add(oldParent.getIndex(), oldParent.getFirstChild());
-					oldParent.remove();
-				}else if(oldParent.getChildCount() == 2){
-					JSNICalls.consoleWarn("There shouldn't be two children in a term");
+			if(Type.Term.equals(node.getType())){//Termception
+				for(MathMLBindingNode transplants : node.getChildren()){
+					targetSide.add(-1, transplants);
 				}
+				node.remove();
 			}else{
-				JSNICalls.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
+				targetSide.add(-1, node);
 			}
-			
+			// clean source side
 
+			if (Type.Fraction.equals(oldParent.getType())) {
+				// remove unnecessary intermediate fraction
+				oldParent.getParent().add(oldParent.getIndex(),
+						oldParent.getFirstChild());
+				oldParent.remove();
+			} else if (Type.Term.equals(oldParent.getType())) {
+				if (oldParent.getChildCount() == 1) {
+					// No need to be encased in term anymore
+					oldParent.getParent().add(oldParent.getIndex(),
+							oldParent.getFirstChild());
+					oldParent.remove();
+				} else if (oldParent.getChildCount() == 2) {
+					JSNICalls
+							.consoleWarn("There shouldn't be two children in a term");
+				}
+			} else {
+				JSNICalls
+						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
+			}
+
+			tree.validateTree();
 			Moderator.reloadEquationPanel("");
 		}
 	}
