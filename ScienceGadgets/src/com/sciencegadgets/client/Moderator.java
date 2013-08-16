@@ -141,6 +141,7 @@ public class Moderator implements EntryPoint {
 	 * @param mathML
 	 */
 	public static void reloadEquationPanel(String changeComment) {
+		JSNICalls.consoleLog("Loading: "+jTree.getMathML().getString());
 		// AlgOutEntry.updateAlgOut(/*jTree.getMathML()*/mathML,
 		// jTree.getWrappers(),
 		// changeComment);
