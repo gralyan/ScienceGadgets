@@ -18,13 +18,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.lang.math.Fraction;
+
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.TopNodesNotFoundException;
+import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 
 public class MathMLBindingTree {
@@ -35,6 +40,7 @@ public class MathMLBindingTree {
 	private HashMap<String, MathMLBindingNode> idMap = new HashMap<String, MathMLBindingNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private Element mathML;
+	private Element displayTree;
 	private boolean inEditMode;
 	private int idCounter = 0;
 
@@ -60,13 +66,16 @@ public class MathMLBindingTree {
 
 		bindMLtoNodes(mathML);
 
+		makeDisplayTree(mathML);
+
 	}
 
 	public Element getMathML() {
-		Element clone = (Element) mathML.cloneNode(true);
+		return (Element) mathML.cloneNode(true);
+	}
 
-		return clone;
-
+	public Element getDisplayTree() {
+		return (Element) displayTree.cloneNode(true);
 	}
 
 	public MathMLBindingNode getRoot() {
@@ -141,7 +150,7 @@ public class MathMLBindingTree {
 	public class MathMLBindingNode {
 		private Element mlNode;
 		private Wrapper wrapper;
-		private Element SVGElement;
+		public Element displayElement;
 
 		/**
 		 * Wrap existing MathML node
@@ -336,7 +345,7 @@ public class MathMLBindingTree {
 		}
 
 		public void remove() {
-				removeChildren();
+			removeChildren();
 
 			String id = getId();
 			idMap.remove(id);
@@ -348,7 +357,8 @@ public class MathMLBindingTree {
 			LinkedList<MathMLBindingNode> children = getChildren();
 
 			for (MathMLBindingNode child : children) {
-				JSNICalls.consoleLog("Removing Nested child: "+child.toString());
+				JSNICalls.consoleLog("Removing Nested child: "
+						+ child.toString());
 				String id = child.getId();
 				idMap.remove(id);
 				idMLMap.remove(id);
@@ -377,7 +387,7 @@ public class MathMLBindingTree {
 		 * sums within sums or terms within terms, and adds parentheses where
 		 * needed
 		 */
-		void validate() {
+		public void validate() {
 
 			int childCount = getChildCount();
 
@@ -386,14 +396,12 @@ public class MathMLBindingTree {
 			switch (getType()) {
 			case Number:
 				// Confirm that the symbol is a number or random number spec
-				if (!getSymbol().equals(RandomSpecification.RANDOM_SYMBOL)) {
+				if (!inEditMode) {
 					try {
 						Double.parseDouble(getSymbol());
 					} catch (NumberFormatException e) {
 						isBadNumber = true;
 					}
-				} else if (!inEditMode) {
-					isBadNumber = true;
 				}
 				// no break
 			case Variable:// Confirm that there are no children
@@ -500,14 +508,6 @@ public class MathMLBindingTree {
 			return wrapper;
 		}
 
-		public void setSVG(Element element) {
-			SVGElement = element;
-		}
-
-		public Element getSVG() {
-			return SVGElement;
-		}
-
 		/**
 		 * @return Tag of MathML DOM node in <b>Lower Case</b>
 		 */
@@ -542,7 +542,8 @@ public class MathMLBindingTree {
 				String symbol = getSymbol();
 
 				for (Operator op : Operator.values()) {
-					if (op.getSign().equalsIgnoreCase(symbol)) {
+					if (op.getSign().equalsIgnoreCase(symbol)
+							|| op.getHTML().equalsIgnoreCase(symbol)) {
 						return op;
 					}
 				}
@@ -607,17 +608,23 @@ public class MathMLBindingTree {
 	}
 
 	public static enum Operator {
-		DOT("&middot;"), SPACE("&nbsp;"), CROSS("&times;"), PLUS("+"), MINUS(
-				"-");
+		DOT("\u00B7", "&middot;"), SPACE("\u00A0", "&nbsp;"), CROSS("\u00D7",
+				"&times;"), PLUS("+", "+"), MINUS("-", "-");
 
 		private String sign;
+		private String html;
 
-		Operator(String sign) {
+		Operator(String sign, String html) {
 			this.sign = sign;
+			this.html = html;
 		}
 
 		public String getSign() {
 			return sign;
+		}
+
+		public String getHTML() {
+			return html;
 		}
 
 		public static Operator getMultiply() {
@@ -666,4 +673,73 @@ public class MathMLBindingTree {
 		}
 	}
 
+	private void makeDisplayTree(Element mlTree) {
+		displayTree = DOM.createDiv();
+		displayTree.setClassName("interactive_equation");
+		displayTree.setAttribute("id", mlTree.getId());
+
+		for (int i = 0; i < mlTree.getChildCount(); i++) {
+			toDisplayNode((Element) mlTree.getChild(i), displayTree);
+		}
+	}
+
+	/**
+	 * Recursive creation of the display tree. Makes a display node equivalent
+	 * of
+	 * 
+	 * @param mlNode
+	 * <br/>
+	 *            and adds it to<br/>
+	 * @param displayParentEl
+	 */
+	private void toDisplayNode(Element mlNode, Element displayParentEl) {
+
+		String id = mlNode.getAttribute("id");
+		MathMLBindingNode node = getNodeById(id);
+		Type type = node.getType();
+		MathMLBindingNode parentNode = node.getParent();
+		Type parentType = parentNode.getType();
+
+		// make new display node with appropriate properties
+		Element displayElement = DOM.createDiv();
+		node.displayElement = displayElement;
+		displayElement.setId(id);
+		displayElement.addClassName(type.toString());
+
+		switch (parentType) {
+		case Fraction:
+			if (node.getIndex() == 0) {
+				displayElement.addClassName("in-Fraction-numerator");
+			} else if (node.getIndex() == 1) {
+				displayElement.addClassName("in-Fraction-denominator");
+			}
+			break;
+		case Exponential:
+			if (node.getIndex() == 0) {
+				displayElement.addClassName("in-Exponential-base");
+			} else if (node.getIndex() == 1) {
+				displayElement.addClassName("in-Exponential-exponent");
+			}
+			break;
+		case Equation:
+		case Sum:
+		case Term:
+			displayElement.addClassName("in-" + parentType);
+		}
+
+		displayParentEl.appendChild(displayElement);
+
+		for (int i = 0; i < mlNode.getChildCount(); i++) {
+			Node child = mlNode.getChild(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				toDisplayNode((Element) child, displayElement);
+			} else if (child.getNodeType() == Node.TEXT_NODE) {
+				String text = mlNode.getInnerText();
+				if (text.startsWith("&")) { // must insert as js code
+					text = node.getOperation().sign;
+				}
+				displayElement.setInnerText(text);
+			}
+		}
+	}
 }

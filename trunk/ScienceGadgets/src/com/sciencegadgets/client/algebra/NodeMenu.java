@@ -37,7 +37,7 @@ public class NodeMenu extends VerticalPanel {
 	private final String SPACE = Operator.SPACE.getSign();
 
 	public NodeMenu(MLElementWrapper mlWrapper, String width) {
-
+		
 		this.mlWrapper = mlWrapper;
 		this.node = mlWrapper.getNode();
 		tree = node.getTree();

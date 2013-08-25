@@ -41,7 +41,7 @@ public class Wrapper extends HTML {
 		node.wrap(this);
 		node.getWrapper();
 
-		this.setStyleName(node.getType().toString());
+		this.setStylePrimaryName(node.getType().toString());
 
 		Wrapper.selectedWrapper = EquationPanel.selectedWrapper;
 

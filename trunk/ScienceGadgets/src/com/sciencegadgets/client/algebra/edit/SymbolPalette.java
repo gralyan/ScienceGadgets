@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.MathMLBindingTree;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 
@@ -40,6 +41,7 @@ public class SymbolPalette extends PopupPanel {
 		}
 
 		grid.setWidget(0, 0, useButton);
+		useButton.setWidth(this.getOffsetWidth()+"px");
 		useButton.setEnabled(false);
 		useButton.setWidth("50px");
 		grid.addClickHandler(new SymbolClickHandler());
@@ -74,6 +76,7 @@ public class SymbolPalette extends PopupPanel {
 			String symbol = useButton.getElement().getInnerText();
 			node.setSymbol(symbol);
 			Moderator.reloadEquationPanel("");
+			Moderator.setActivity(Activity.algebra);
 		}
 
 	}

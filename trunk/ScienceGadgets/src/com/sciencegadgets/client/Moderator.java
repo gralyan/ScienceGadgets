@@ -14,13 +14,13 @@
  */
 package com.sciencegadgets.client;
 
-import java.util.LinkedList;
-
-import com.admin.client.AppEngineData;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -33,8 +33,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.UIObject;
 import com.sciencegadgets.client.algebra.AlgOut;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathMLBindingTree;
@@ -45,14 +48,14 @@ import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
 public class Moderator implements EntryPoint {
 
-	static EquationPanel eqPanel;
-	private static AbsolutePanel eqPanelHolder = new AbsolutePanel();
+	static EquationPanel eqPanel = null;
+	private static SimplePanel eqPanelHolder = new SimplePanel();
 
 	public static MathMLBindingTree jTree;
-//	public static LinkedList<AbstractMathDropController> dropControllers;
+	// public static LinkedList<AbstractMathDropController> dropControllers;
 	public static boolean inEditMode = false;
 	private int SGAWidth;
-	private int SGAHeight;
+	private static int SGAHeight;
 	public static SymbolPalette symbolPopup;
 	public static RandomSpecification randomSpec;
 	public static ChangeNodeMenu changeNodeMenu;
@@ -77,53 +80,78 @@ public class Moderator implements EntryPoint {
 		Window.addResizeHandler(new ResizeAreaHandler());
 
 		switchToBrowser();
-		
-		History.addValueChangeHandler(new HistoryChange<String>());
 
+		History.addValueChangeHandler(new HistoryChange<String>());
 	}
 
+	public enum Activity {
+		equation_browser, algebra, random_spec, insert_symbol, conversion;
+	}
 
-	public static enum Activity {
-		equation_browser, algebra, random_spec, conversion;
+	public static void setActivity(Activity activity) {
+		if (!activity.equals(currentActivity)) {
+			currentActivity = activity;
+			History.newItem(activity.toString());
+		}
 	}
 
 	/**
 	 * Creates the view of the equation
-	 * @param mathML - the equation as a string
+	 * 
+	 * @param mathML
+	 *            - the equation as a string
 	 */
-	public void makeAlgebraWorkspace(String mathMl){
+	public void makeAlgebraWorkspace(String mathMl) {
 		HTML html = new HTML(mathMl);
 		makeAlgebraWorkspace(html.getElement().getFirstChildElement());
 	}
+
 	/**
 	 * Creates the view of the equation
-	 * @param mathML - the equation as an element
+	 * 
+	 * @param mathML
+	 *            - the equation as an element
 	 */
 	public void makeAlgebraWorkspace(Element mathML) {
-
-		currentActivity = Activity.algebra;
-		History.newItem("algebra");
+		setActivity(Activity.algebra);
 		
 		scienceGadgetArea.clear();
-		if(inEditMode){
-			scienceGadgetArea.add(saveEquationButton);
-		}else{
-			scienceGadgetArea.add(new AlgOut());
+		
+		//Upper Area - 15%
+		FlowPanel upperArea = new FlowPanel();
+		upperArea.setSize("100%", "15%");		
+		
+		if (inEditMode) {
+			saveEquationButton.setSize("100%", "100%");
+			upperArea.add(saveEquationButton);
+		} else {
+			AlgOut algOut = new AlgOut();
+			algOut.setSize("100%", "100%");
+			upperArea.add(algOut);
 		}
-		eqPanelHolder.setSize("inherit", (SGAHeight *3/ 4) + "px");
-		eqPanelHolder.setStyleName("varName");
-		scienceGadgetArea.add(eqPanelHolder, 0, SGAHeight / 8);
+		scienceGadgetArea.add(upperArea);
 
+		//Equation Area - 70%
+		eqPanelHolder.setSize("100%", "70%");
+		scienceGadgetArea.add(eqPanelHolder);
+
+		//Lower Area - 15%
+		FlowPanel lowerArea = new FlowPanel();
+		lowerArea.setSize("100%", "15%");
+		
 		if (inEditMode) {
 			if (changeNodeMenu == null) {
-				changeNodeMenu = new ChangeNodeMenu(scienceGadgetArea);
+				changeNodeMenu = new ChangeNodeMenu();
 			}
-			scienceGadgetArea.add(changeNodeMenu,0,SGAHeight*7/8);
+			lowerArea.add(changeNodeMenu);
 		}
+		scienceGadgetArea.add(lowerArea);
 
 		try {
-			if (mathML != null)// fitWindow calls this method with mathML==null
+			if (mathML != null) {// fitWindow calls this method with
+									// mathML==null
 				jTree = new MathMLBindingTree(mathML, inEditMode);
+			}
 			reloadEquationPanel("");
 
 			if (inEditMode) {
@@ -141,7 +169,9 @@ public class Moderator implements EntryPoint {
 	 * @param mathML
 	 */
 	public static void reloadEquationPanel(String changeComment) {
-		JSNICalls.consoleLog("Loading: "+jTree.getMathML().getString());
+		// setActivity(Activity.algebra);
+
+		JSNICalls.consoleLog("Loading: " + jTree.getMathML().getString());
 		// AlgOutEntry.updateAlgOut(/*jTree.getMathML()*/mathML,
 		// jTree.getWrappers(),
 		// changeComment);
@@ -149,30 +179,23 @@ public class Moderator implements EntryPoint {
 			eqPanelHolder.remove(eqPanel);
 		}
 		eqPanel = new EquationPanel(jTree, inEditMode);
-		//TODO uncomment for live
-		eqPanel.getElement().getStyle().setOpacity(0);
-		eqPanelHolder.add(eqPanel, 0, 0);
+		eqPanelHolder.add(eqPanel);
 
 		if (inEditMode) {
 			changeNodeMenu.setVisible(false);
 		}
-		History.newItem("algebra");
 		// TODO uncomment
 		// DropControllAssigner.assign(jTree.getWrappers(), true);
 	}
 
-	public static void onEqReady() {
-		eqPanel.getElement().getStyle().setOpacity(1);
-		
-//		System.out.println("r "+inEditMode+" "+jTree.getMathML().getString());
-	}
-
 	public void switchToBrowser() {
+		setActivity(Activity.equation_browser);
 
-		currentActivity = Activity.equation_browser;
 		scienceGadgetArea.clear();
 
-		eqPanelHolder.clear();
+//		eqPanelHolder.clear();
+//		eqPanel = null;
+
 		focusLayerId = null;
 
 		if (symbolPopup != null && symbolPopup.isShowing()) {
@@ -191,27 +214,29 @@ public class Moderator implements EntryPoint {
 
 		@Override
 		public void onClick(ClickEvent arg0) {
-			try{
+			try {
 				String equation = jTree.getMathML().getString();
-				if(equation.contains(ChangeNodeMenu.NOT_SET)){
-					Window.alert("All new entities ("+ChangeNodeMenu.NOT_SET+") must be set or removed before saving");
+				if (equation.contains(ChangeNodeMenu.NOT_SET)) {
+					Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
+							+ ") must be set or removed before saving");
 					return;
 				}
-				
+
 				dataBase.saveEquation(equation, new AsyncCallback<String>() {
-					
+
 					@Override
 					public void onSuccess(String result) {
-						JSNICalls.consoleLog("Saved: "+result);
+						JSNICalls.consoleLog("Saved: " + result);
 					}
-					
+
 					@Override
 					public void onFailure(Throwable caught) {
 						Window.alert("Save failed");
-						JSNICalls.consoleError("Save Failed: " +caught.getCause().toString());
+						JSNICalls.consoleError("Save Failed: "
+								+ caught.getCause().toString());
 					}
 				});
-			}catch(Exception e){
+			} catch (Exception e) {
 				Window.alert("Could not save equation, see log");
 				JSNICalls.consoleLog(e.toString());
 			}
@@ -222,13 +247,7 @@ public class Moderator implements EntryPoint {
 		Timer resizeTimer = new Timer() {
 			@Override
 			public void run() {
-//				fitWindow();
-				SGAHeight = Window.getClientHeight();
-				
-				scienceGadgetArea.setHeight(SGAHeight + "px");
-				Window.scrollTo(scienceGadgetArea.getAbsoluteLeft(),
-						scienceGadgetArea.getAbsoluteTop());
-				
+				 fitWindow();
 			}
 		};
 
@@ -247,33 +266,42 @@ public class Moderator implements EntryPoint {
 		Window.scrollTo(scienceGadgetArea.getAbsoluteLeft(),
 				scienceGadgetArea.getAbsoluteTop());
 
-		if (currentActivity != null) {
-			switch (currentActivity) {
-			case algebra:
-//				makeAgebraWorkspace(null);
-				break;
-			}
-		}
 	}
 
 	class HistoryChange<String> implements ValueChangeHandler<String> {
-		
-         @Override
-         public void onValueChange(ValueChangeEvent<String> event) {
-        	 String change = event.getValue();
-        	 if("".equals(change)){
-        		 switchToBrowser();
-        	 }else if("algebra".equals(change)){
-        			if (symbolPopup != null && symbolPopup.isShowing()) {
-        				symbolPopup.hide();
-        			}
-        			if (randomSpec != null && randomSpec.isShowing()) {
-        				randomSpec.hide();
-        			}
-        	 }
-         }
-	      
-		
+
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			
+			switch (Activity.valueOf((java.lang.String) event.getValue())) {
+			case equation_browser:
+				switchToBrowser();
+				break;
+			case algebra:
+				if (symbolPopup != null && symbolPopup.isShowing()) {
+					symbolPopup.hide();
+				}
+				if (randomSpec != null && randomSpec.isShowing()) {
+					randomSpec.hide();
+				}
+				break;
+			case insert_symbol:
+				if (symbolPopup != null && !symbolPopup.isShowing()) {
+					symbolPopup.show();
+				}
+				break;
+			case random_spec:
+				if (randomSpec != null && !randomSpec.isShowing()) {
+					randomSpec.show();
+				}
+				break;
+			case conversion:
+
+				break;
+
+			}
+		}
+
 	}
 
 }
