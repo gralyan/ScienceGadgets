@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.MathMLBindingTree;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.Operator;
@@ -246,6 +247,8 @@ public class EditMenu extends VerticalPanel {
 
 		@Override
 		public void onClick(ClickEvent event) {
+			event.preventDefault();
+			event.stopPropagation();
 
 			SymbolPalette symbolPopup;
 			if (Moderator.symbolPopup == null) {
@@ -264,7 +267,7 @@ public class EditMenu extends VerticalPanel {
 				symbolPopup.setNode(node);
 			}
 
-			History.newItem("insert_symbol");
+			Moderator.setActivity(Activity.insert_symbol);
 			symbolPopup.show();
 		}
 	}
@@ -290,7 +293,7 @@ public class EditMenu extends VerticalPanel {
 				randomSpec.setNode(node);
 			}
 
-			History.newItem("random_spec");
+			Moderator.setActivity(Activity.random_spec);
 			randomSpec.show();
 		}
 	}

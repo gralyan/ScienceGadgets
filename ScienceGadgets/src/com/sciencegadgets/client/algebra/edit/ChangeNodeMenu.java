@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -18,20 +19,19 @@ import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.Operator;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
 
-public class ChangeNodeMenu extends HorizontalPanel {
+public class ChangeNodeMenu extends FlowPanel {
 
 	public static final String NOT_SET = "???";
 	private HashMap<Type, Button> menuMap = new HashMap<Type, Button>();
 	private Button removeButton;
 
-	public ChangeNodeMenu(Widget parent) {
+	public ChangeNodeMenu() {
 
-		// Make this menu a fraction of the screens width, same height
-		int width = parent.getOffsetWidth();
-		int height = parent.getOffsetHeight()/10;
+		setSize("100%", "100%");
 
 		Type[] types = MathMLBindingTree.Type.values();
-		int buttonWidth = width / (types.length);
+		
+		double buttonWidthPercent = 100.0 / types.length;
 
 		// Change buttons
 		for (MathMLBindingTree.Type type : types) {
@@ -40,8 +40,7 @@ public class ChangeNodeMenu extends HorizontalPanel {
 
 			ChangeNodeHandler changeHandler = new ChangeNodeHandler(type);
 			Button changeButton = new Button(type.toString(), changeHandler);
-			changeButton.setHeight(height + "px");
-			changeButton.setWidth(buttonWidth + "px");
+			changeButton.setSize(buttonWidthPercent+"%", "100%");
 			menuMap.put(type, changeButton);
 			this.add(changeButton);
 		}
@@ -49,9 +48,8 @@ public class ChangeNodeMenu extends HorizontalPanel {
 		// Remove button
 		RemoveNodeHandler removeHandler = new RemoveNodeHandler();
 		Button removeButton = new Button("Remove", removeHandler);
-		removeButton.setHeight(height + "px");
-		removeButton.setWidth(buttonWidth + "px");
-		removeButton.setStyleName("removeNodeButton");
+		removeButton.setSize(buttonWidthPercent+"%", "100%");
+		removeButton.getElement().getStyle().setColor("red");
 		this.removeButton = removeButton;
 		this.add(removeButton);
 	}
@@ -173,6 +171,7 @@ public class ChangeNodeMenu extends HorizontalPanel {
 							newNode.add(-1, Type.Operation, operator.getSign());
 						}
 						newNode.add(-1, Type.Variable, NOT_SET);
+						newNode.validate();
 
 						parent.add(index, newNode);
 					}

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.MathMLBindingTree;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 
@@ -124,6 +125,7 @@ public class RandomSpecification extends PopupPanel {
 				mlNode.setSymbol(RANDOM_SYMBOL);
 				mlNode.getMLNode().setAttribute("data-randomness", neg + "-" + lowerB + "-" + upperB + "-" + decP);
 				Moderator.reloadEquationPanel("");
+				Moderator.setActivity(Activity.algebra);
 			}
 		}
 

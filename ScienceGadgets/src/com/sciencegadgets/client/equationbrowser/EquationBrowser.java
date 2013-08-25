@@ -193,7 +193,7 @@ public class EquationBrowser extends VerticalPanel {
 				vpAlg.add(spAlg);
 
 				vpAlg.setStylePrimaryName("gridBox");
-				spAlg.setStylePrimaryName("sp");
+				spAlg.setStylePrimaryName("scrollPanel");
 				labelAlg.setStylePrimaryName("rowHeader");
 
 				// Fill panel
@@ -205,7 +205,7 @@ public class EquationBrowser extends VerticalPanel {
 
 				browserPanel.add(vpAlg);
 				
-				JSNICalls.parseMathJax(algGrid.getElement());
+//				JSNICalls.parseMathJax(algGrid.getElement());
 			}
 		});
 	}
@@ -334,9 +334,10 @@ public class EquationBrowser extends VerticalPanel {
 							clickedCell.getCellIndex());
 
 					if (table.equals(algGrid) && modeAlg.getValue()) { // For Algebra practice mode
-//						Element root = (Element) cell.getElement()
-//								.getFirstChildElement();
-						moderator.makeAlgebraWorkspace(cell.getElement().getElementsByTagName("script").getItem(0).getInnerText());
+						Element root = (Element) cell.getElement()
+								.getFirstChildElement();
+						moderator.makeAlgebraWorkspace(root.getString());
+//						moderator.makeAlgebraWorkspace(cell.getElement().getElementsByTagName("script").getItem(0).getInnerText());
 
 					} else if (table.equals(eqGrid) && modeSci.getValue()) { // For Science Mode
 							fillSummary(clickedEl.getElementsByTagName("script").getItem(0).getInnerText());

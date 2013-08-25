@@ -31,7 +31,6 @@ public class EquationPanel extends AbsolutePanel {
 	private HashMap<MathMLBindingNode, EquationLayer> eqLayerMap = new HashMap<MathMLBindingNode, EquationLayer>();
 
 	MathMLBindingTree mathMLBindingTree;
-	private Timer timer = null;
 	private HTML pilot = new HTML();
 	private boolean inEditMode;
 	private double newFontSize = 0;
@@ -41,17 +40,16 @@ public class EquationPanel extends AbsolutePanel {
 	// Width of equation compared to panel
 	private static final double EQUATION_FRACTION = 0.8;
 
-	public EquationPanel(final MathMLBindingTree jTree, Boolean inEditMode) {
+	
+	public EquationPanel(MathMLBindingTree mathTree, boolean inEditMode) {
 
-		this.mathMLBindingTree = jTree;
-		this.inEditMode = inEditMode;
+		
+		setStyleName("eqPanel");
 
 		this.sinkEvents(Event.ONCLICK);
 		this.addHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				event.preventDefault();
-				event.stopPropagation();
 				setFocusOut();
 			}
 		}, ClickEvent.getType());
@@ -60,68 +58,28 @@ public class EquationPanel extends AbsolutePanel {
 		this.addHandler(new TouchStartHandler() {
 			@Override
 			public void onTouchStart(TouchStartEvent event) {
-				event.preventDefault();
-				event.stopPropagation();
 				setFocusOut();
 			}
 		}, TouchStartEvent.getType());
 
+		this.mathMLBindingTree = mathTree;
+		this.inEditMode = inEditMode;
 	}
+
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		this.setPixelSize(getParent().getOffsetWidth(), getParent()
-				.getOffsetHeight());
-
-		// Pilot equation used to transform to mathJax
+		
 		Element pilotEl = pilot.getElement();
-		pilotEl.appendChild(mathMLBindingTree.getMathML());
+		pilotEl.appendChild(mathMLBindingTree.getDisplayTree());
 		pilotEl.setAttribute("id", "pilotMathJax");
 		this.add(pilot);
-		JSNICalls.parseMathJax(pilotEl);
-
-		// Wait for mathjax to format first
-		timer = new Timer() {
-			public void run() {
-				tryToDraw();
-			}
-		};
-		timer.scheduleRepeating(50);
-	}
-
-	private void tryToDraw() {
-		NodeList<Element> list = this.getElement().getElementsByTagName("span");
-
-		if (list.getLength() > 1) {
-
-			timer.cancel();
-			timer = null;
-
 			MathMLBindingNode root = mathMLBindingTree.getRoot();
-
-			NodeList<Element> nobrList = pilot.getElement()
-					.getElementsByTagName("nobr");
-			for (int j = 0; j < nobrList.getLength(); j++) {
-				Element nobr = nobrList.getItem(j);
-				Element nobrParent = nobr.getParentElement();
-				NodeList<Node> nobrChildren = nobr.getChildNodes();
-				for (int k = 0; k < nobrChildren.getLength(); k++) {
-					nobrParent.appendChild(nobrChildren.getItem(k));
-				}
-				nobr.removeFromParent();
-			}
-
-			pilot.getElement().getElementsByTagName("script").getItem(0)
-					.removeFromParent();
 
 			draw(root, null);
 
 			pilot.removeFromParent();
-
-			// this.backgrounds = new Backgrounds(
-			// DOM.getElementById("scienceGadgetArea"),
-			// coordinateConverter);
 
 			 placeNextEqWrappers(root);
 
@@ -136,8 +94,6 @@ public class EquationPanel extends AbsolutePanel {
 			}
 			focusLayer.setVisible(true);
 
-			Moderator.onEqReady();
-		}
 	}
 
 	/**
@@ -164,8 +120,8 @@ public class EquationPanel extends AbsolutePanel {
 		eqLayer.setParentLayer(parentLayer);
 		eqLayerMap.put(node, eqLayer);
 		eqLayer.getElement().setAttribute("id", "eqLayer-" + node.getId());
-		eqLayer.setStyleName("textCenter");
-		this.add(eqLayer,0,this.getOffsetHeight()/2);
+		eqLayer.addStyleName("fillParent");
+		this.add(eqLayer,0,0);
 
 		if (parentLayer == null) {
 			rootLayer = parentLayer;
@@ -232,28 +188,25 @@ public class EquationPanel extends AbsolutePanel {
 		LinkedList<MathMLBindingNode> childNodes = parentNode.getChildren();
 		EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
-		com.google.gwt.user.client.Element svg;
+		com.google.gwt.user.client.Element layerNode;
 		
 		childLoop: for (MathMLBindingNode node : childNodes) {
 
-			svg = DOM.getElementById("Wrapper-" + node.getId()+"-ofLayer-"+parentNode.getId());
-			node.setSVG(svg);
+			layerNode = DOM.getElementById("Wrapper-" + node.getId()+"-ofLayer-"+parentNode.getId());
 
 			Wrapper wrap;
 			VerticalPanel menu = null;
 			if (inEditMode) {// Edit Mode////////////////////////////
 				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
-						svg);
+						layerNode);
 				menu = ((EditWrapper) wrap).getEditMenu();
 
 			} else {// Solver Mode////////////////////////////////////
 				wrap = new MLElementWrapper(node, this, eqLayerMap.get(node),
-						svg);
+						layerNode);
 				menu = ((MLElementWrapper) wrap).getContextMenu();
 			}
 			
-//			wrap.onAttach();
-
 			eqLayer.addWrapper(wrap);
 
 			eqLayer.ContextMenuPanel.add(menu, wrap.getAbsoluteLeft() - this.getAbsoluteLeft(), wrap.getAbsoluteTop()
@@ -282,7 +235,7 @@ public class EquationPanel extends AbsolutePanel {
 			String oldId = curEl.getId();
 			String newId = null;
 			
-			evenPadding(curEl);
+//			evenPadding(curEl);
 			
 			if (!"".equals(oldId) && oldId != null) {
 
@@ -299,7 +252,7 @@ public class EquationPanel extends AbsolutePanel {
 
 					Element fontElement = curEl.getFirstChildElement().getFirstChildElement();
 					resizeEquations(fontElement);
-					removeClip(fontElement.getFirstChildElement());
+//					removeClip(fontElement.getFirstChildElement());
 
 					// gray out the rest of the equation
 					// TODO
@@ -346,54 +299,54 @@ public class EquationPanel extends AbsolutePanel {
 //		style.setHeight(this.getOffsetHeight(), Unit.PX);
 	}
 
-	private void removeClip(Element el){
-		el.getStyle().setProperty("clip", "auto");
-	}
+//	private void removeClip(Element el){
+//		el.getStyle().setProperty("clip", "auto");
+//	}
 	
 	/**
 	 * Mathjax originally only places padding on left. This method cuts the left padding in half and adds padding to the right to center the content
 	 */
-	private void evenPadding(Element el){//TODO
-//		try{
-			Style style = el.getStyle();
-			String leftP = style.getPaddingLeft();
-			
-			if(leftP == null || "".equals(leftP)){
-				return;
-			}
-			
-			leftP = leftP.toLowerCase();
-			
-			String unitLetters = null;
-			Unit unitProper = null;
-			
-			for(Unit c : Unit.values()){
-				if(leftP.contains(c.getType())){
-					unitLetters = c.getType();
-					unitProper = c;
-				}
-			}
-			if(unitLetters==null || unitProper==null){
-				return;
-			}
-			
-			leftP = leftP.replaceFirst(unitLetters, "");
-			double newPad = Double.parseDouble(leftP);
-			newPad = newPad / 2;
-			style.setPaddingLeft(newPad, unitProper);
-			style.setPaddingRight(newPad, unitProper);
-		
-//		}catch(Exception e){
-//			e.printStackTrace();
-//			JSNICalls.consoleLog("e.getCause.str: "+e.getCause().toString());
-//			JSNICalls.consoleLog("e.str: "+e.toString());
-//		}
-	}
-
-	private void setColor(Element element, String color) {
-		element.setAttribute("color", color);
-//		element.setAttribute("fill", color);
-//		element.setAttribute("stroke", color);
-	}
+//	private void evenPadding(Element el){//TODO
+////		try{
+//			Style style = el.getStyle();
+//			String leftP = style.getPaddingLeft();
+//			
+//			if(leftP == null || "".equals(leftP)){
+//				return;
+//			}
+//			
+//			leftP = leftP.toLowerCase();
+//			
+//			String unitLetters = null;
+//			Unit unitProper = null;
+//			
+//			for(Unit c : Unit.values()){
+//				if(leftP.contains(c.getType())){
+//					unitLetters = c.getType();
+//					unitProper = c;
+//				}
+//			}
+//			if(unitLetters==null || unitProper==null){
+//				return;
+//			}
+//			
+//			leftP = leftP.replaceFirst(unitLetters, "");
+//			double newPad = Double.parseDouble(leftP);
+//			newPad = newPad / 2;
+//			style.setPaddingLeft(newPad, unitProper);
+//			style.setPaddingRight(newPad, unitProper);
+//		
+////		}catch(Exception e){
+////			e.printStackTrace();
+////			JSNICalls.consoleLog("e.getCause.str: "+e.getCause().toString());
+////			JSNICalls.consoleLog("e.str: "+e.toString());
+////		}
+//	}
+//
+//	private void setColor(Element element, String color) {
+//		element.setAttribute("color", color);
+////		element.setAttribute("fill", color);
+////		element.setAttribute("stroke", color);
+//	}
 
 }
