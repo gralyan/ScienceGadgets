@@ -42,6 +42,9 @@ public class NodeMenu extends VerticalPanel {
 		this.node = mlWrapper.getNode();
 		tree = node.getTree();
 		parentNode = node.getParent();
+		
+		//zIndex eqPanel=1 wrapper=2 menu=3
+		this.getElement().getStyle().setZIndex(3);
 
 		if (parentNode.isLeftSide() || parentNode.isRightSide()) {
 			if (!Type.Operation.equals(node.getType())) {
