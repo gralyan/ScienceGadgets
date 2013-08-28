@@ -151,8 +151,8 @@ public class Moderator implements EntryPoint {
 			if (mathML != null) {// fitWindow calls this method with
 									// mathML==null
 				jTree = new MathMLBindingTree(mathML, inEditMode);
+				reloadEquationPanel("");
 			}
-			reloadEquationPanel("");
 
 			if (inEditMode) {
 				// AlgOutEntry.algOut.add(new HTML("aaaa")/*new
@@ -169,15 +169,13 @@ public class Moderator implements EntryPoint {
 	 * @param mathML
 	 */
 	public static void reloadEquationPanel(String changeComment) {
-		// setActivity(Activity.algebra);
 
-		JSNICalls.consoleLog("Loading: " + jTree.getMathML().getString());
+		JSNICalls.consoleLog("Loading: " + jTree.getMathMLClone().getString());
 		// AlgOutEntry.updateAlgOut(/*jTree.getMathML()*/mathML,
 		// jTree.getWrappers(),
 		// changeComment);
-		if (eqPanel != null) {
-			eqPanelHolder.remove(eqPanel);
-		}
+		eqPanelHolder.clear();
+		jTree.reloadEqHTML();
 		eqPanel = new EquationPanel(jTree, inEditMode);
 		eqPanelHolder.add(eqPanel);
 
@@ -191,10 +189,8 @@ public class Moderator implements EntryPoint {
 	public void switchToBrowser() {
 		setActivity(Activity.equation_browser);
 
+		eqPanelHolder.clear();
 		scienceGadgetArea.clear();
-
-//		eqPanelHolder.clear();
-//		eqPanel = null;
 
 		focusLayerId = null;
 
@@ -215,7 +211,7 @@ public class Moderator implements EntryPoint {
 		@Override
 		public void onClick(ClickEvent arg0) {
 			try {
-				String equation = jTree.getMathML().getString();
+				String equation = jTree.getMathMLClone().getString();
 				if (equation.contains(ChangeNodeMenu.NOT_SET)) {
 					Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 							+ ") must be set or removed before saving");
@@ -259,11 +255,11 @@ public class Moderator implements EntryPoint {
 
 	private void fitWindow() {
 		SGAHeight = Window.getClientHeight();
-		SGAWidth = Window.getClientWidth();
+		SGAWidth = Window.getClientWidth()*97/100;
 
 		// Take up the window
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");
-		Window.scrollTo(scienceGadgetArea.getAbsoluteLeft(),
+		Window.scrollTo(0,
 				scienceGadgetArea.getAbsoluteTop());
 
 	}

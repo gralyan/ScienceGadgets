@@ -47,6 +47,10 @@ public class EditMenu extends VerticalPanel {
 
 		this.editWrapper = editWrapper;
 		this.node = editWrapper.getNode();
+		
+
+		//zIndex eqPanel=1 wrapper=2 menu=3
+		this.getElement().getStyle().setZIndex(3);
 
 		switch (node.getType()) {
 		case Sum:

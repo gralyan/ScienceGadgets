@@ -29,6 +29,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -51,11 +52,11 @@ import com.sciencegadgets.client.algebra.AlgOut;
 
 //Uncomment to use as gadget////////////////////////////////////
 //
-public class EquationBrowser extends VerticalPanel {
+public class EquationBrowser extends FlowPanel {
 
 	EquationDatabase data = new EquationDatabase();
 
-	HorizontalPanel browserPanel = new HorizontalPanel();
+	FlowPanel browserPanel = new FlowPanel();
 	private Grid eqGrid = new Grid(1, 1);
 	private Grid varGrid = new Grid(1, 1);
 	private Grid sumGrid = new Grid(1, 4);
@@ -78,7 +79,7 @@ public class EquationBrowser extends VerticalPanel {
 	public EquationBrowser(Moderator moderator) {
 
 		this.moderator = moderator;
-		this.setStyleName("browserPanel");
+		this.setStyleName("equationBrowser");
 
 		//TODO Science Mode
 //		Grid modes = new Grid(1, 2);
@@ -93,6 +94,7 @@ public class EquationBrowser extends VerticalPanel {
 		modes2.setStyleName("modes");
 		this.add(modes2);
 
+		browserPanel.setStyleName("browserPanel");
 		this.add(browserPanel);
 
 		modeAlg.addClickHandler(new ModeSelectHandler(Mode.algebra));
@@ -111,7 +113,7 @@ public class EquationBrowser extends VerticalPanel {
 		// First box, Variable list
 		VerticalPanel vpVar = new VerticalPanel();
 		Label labelVar = new Label("Variables");
-		varGrid.setStyleName("selectable");
+		varGrid.setStyleName("selection");
 		varGrid.getColumnFormatter().setWidth(0, "5em");
 		ScrollPanel spVar = new ScrollPanel(varGrid);
 		varGrid.addClickHandler(new VarClickHandler(varGrid));
@@ -127,7 +129,7 @@ public class EquationBrowser extends VerticalPanel {
 		Label labelEq = new Label("Equations");
 		ScrollPanel spEq = new ScrollPanel(eqGrid);
 		eqGrid.addClickHandler(new EqClickHandler(eqGrid));
-		eqGrid.setStyleName("selectable");
+		eqGrid.setStyleName("selection");
 		eqGrid.setWidth("17em");
 		combineEqButton.setVisible(false);
 		vpEq.add(labelEq);
@@ -184,16 +186,16 @@ public class EquationBrowser extends VerticalPanel {
 			}
 
 			public void onSuccess(String[] eqList) {
-				VerticalPanel vpAlg = new VerticalPanel();
+				FlowPanel gridBox = new FlowPanel();
 				Label labelAlg = new Label("Algebra Practice");
 				ScrollPanel spAlg = new ScrollPanel(algGrid);
 				algGrid.addClickHandler(new EqClickHandler(algGrid));
-				algGrid.setStyleName("selectable");
-				vpAlg.add(labelAlg);
-				vpAlg.add(spAlg);
+				spAlg.setStyleName("selection");
+				gridBox.add(labelAlg);
+				gridBox.add(spAlg);
 
-				vpAlg.setStylePrimaryName("gridBox");
-				spAlg.setStylePrimaryName("scrollPanel");
+				gridBox.setStylePrimaryName("gridBox");
+//				spAlg.setStylePrimaryName("scrollPanel");
 				labelAlg.setStylePrimaryName("rowHeader");
 
 				// Fill panel
@@ -203,7 +205,7 @@ public class EquationBrowser extends VerticalPanel {
 					algGrid.setWidget(i, 0, cell);
 				}
 
-				browserPanel.add(vpAlg);
+				browserPanel.add(gridBox);
 				
 //				JSNICalls.parseMathJax(algGrid.getElement());
 			}
@@ -258,7 +260,7 @@ public class EquationBrowser extends VerticalPanel {
 							HasHorizontalAlignment.ALIGN_CENTER,
 							HasVerticalAlignment.ALIGN_MIDDLE);
 				}
-				JSNICalls.parseMathJax(eqGrid.getElement());
+//				JSNICalls.parseMathJax(eqGrid.getElement());
 			}
 		});
 	}
@@ -266,9 +268,9 @@ public class EquationBrowser extends VerticalPanel {
 	/**
 	 * fills the summary box
 	 */
-	void fillSummary(String equation) {
+	void fillSummary(Element mathml) {
 
-		labelSumEq.setHTML(equation);
+		labelSumEq.getElement().appendChild(mathml);
 		sumButton.setVisible(true);
 
 		// fill variable summary
@@ -316,7 +318,6 @@ public class EquationBrowser extends VerticalPanel {
 
 		public void onClick(ClickEvent event) {
 			Cell clickedCell = table.getCellForEvent(event);
-
 			if (clickedCell != null) {
 				Element clickedEl = clickedCell.getElement();
 
@@ -324,24 +325,18 @@ public class EquationBrowser extends VerticalPanel {
 					com.google.gwt.dom.client.Element prevSel = Document.get()
 							.getElementById("selectedEq");
 					if (prevSel != null) {
-						prevSel.setId("");
+						prevSel.removeAttribute("id");
 					}
 					clickedEl.setId("selectedEq");
 				}
+				
+				Element mathml = ((Element)clickedCell.getElement().getElementsByTagName("math").getItem(0));
+				
+				if (algGrid.equals(table) && modeAlg.getValue()) { // For Algebra practice mode
+					moderator.makeAlgebraWorkspace(mathml);
 
-				if (table != null) {
-					Widget cell = table.getWidget(clickedCell.getRowIndex(),
-							clickedCell.getCellIndex());
-
-					if (table.equals(algGrid) && modeAlg.getValue()) { // For Algebra practice mode
-						Element root = (Element) cell.getElement()
-								.getFirstChildElement();
-						moderator.makeAlgebraWorkspace(root.getString());
-//						moderator.makeAlgebraWorkspace(cell.getElement().getElementsByTagName("script").getItem(0).getInnerText());
-
-					} else if (table.equals(eqGrid) && modeSci.getValue()) { // For Science Mode
-							fillSummary(clickedEl.getElementsByTagName("script").getItem(0).getInnerText());
-						}
+				} else if (eqGrid.equals(table) && modeSci.getValue()) { // For Science Mode
+						fillSummary(mathml);
 				}
 			}
 		}

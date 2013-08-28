@@ -41,7 +41,11 @@ public class Wrapper extends HTML {
 		node.wrap(this);
 		node.getWrapper();
 
-		this.setStylePrimaryName(node.getType().toString());
+//		this.setStylePrimaryName(node.getType().toString());
+		this.addStyleName("displayWrapper");
+		
+		//zIndex eqPanel=1 wrapper=2 menu=3
+		this.getElement().getStyle().setZIndex(2);
 
 		Wrapper.selectedWrapper = EquationPanel.selectedWrapper;
 

@@ -40,7 +40,7 @@ public class MathMLBindingTree {
 	private HashMap<String, MathMLBindingNode> idMap = new HashMap<String, MathMLBindingNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private Element mathML;
-	private Element displayTree;
+	private Element eqHTML;
 	private boolean inEditMode;
 	private int idCounter = 0;
 
@@ -66,16 +66,16 @@ public class MathMLBindingTree {
 
 		bindMLtoNodes(mathML);
 
-		makeDisplayTree(mathML);
+		eqHTML = EquationHTML.makeEquationHTML(this);
 
 	}
 
-	public Element getMathML() {
+	public Element getMathMLClone() {
 		return (Element) mathML.cloneNode(true);
 	}
 
-	public Element getDisplayTree() {
-		return (Element) displayTree.cloneNode(true);
+	public Element getEqHTMLClone() {
+		return (Element) eqHTML.cloneNode(true);
 	}
 
 	public MathMLBindingNode getRoot() {
@@ -101,13 +101,17 @@ public class MathMLBindingTree {
 		if (root.getChildCount() != 3) {
 			JSNICalls
 					.consoleError("root has too many children, not side=side: "
-							+ getMathML().getString());
+							+ getMathMLClone().getString());
 		}
 		if (!"=".equals(root.getChildAt(1).getSymbol())) {
 			JSNICalls
 					.consoleError("<mo>=</mo> isn't the root's second child, not side=side "
-							+ getMathML().getString());
+							+ getMathMLClone().getString());
 		}
+	}
+	
+	public void reloadEqHTML(){
+		eqHTML = EquationHTML.makeEquationHTML(this);
 	}
 
 	public LinkedList<Wrapper> getWrappers() {
@@ -119,7 +123,7 @@ public class MathMLBindingTree {
 		MathMLBindingNode node = idMap.get(id);
 		if (node == null) {
 			JSNICalls.consoleError("Can't get node by id: " + id + "\n"
-					+ getMathML().getString());
+					+ getMathMLClone().getString());
 			throw new NoSuchElementException("Can't get node by id: " + id);
 		}
 		return node;
@@ -150,7 +154,7 @@ public class MathMLBindingTree {
 	public class MathMLBindingNode {
 		private Element mlNode;
 		private Wrapper wrapper;
-		public Element displayElement;
+		private Element nodeHTML;
 
 		/**
 		 * Wrap existing MathML node
@@ -581,6 +585,14 @@ public class MathMLBindingTree {
 			}
 			return type;
 		}
+
+		public Element getNodeHTML() {
+			return nodeHTML;
+		}
+
+		public void setNodeHTML(Element nodeHTML) {
+			this.nodeHTML = nodeHTML;
+		}
 	}
 
 	public static enum Type {
@@ -590,10 +602,15 @@ public class MathMLBindingTree {
 
 		private String tag;
 		private boolean hasChildren;
+		public final String IN_PREFIX = "in-";
 
 		Type(String tag, boolean hasChildren) {
 			this.tag = tag;
 			this.hasChildren = hasChildren;
+		}
+		
+		public String asChild(){
+			return (IN_PREFIX+toString().toLowerCase());
 		}
 
 		public String getTag() {
@@ -602,7 +619,6 @@ public class MathMLBindingTree {
 
 		public boolean hasChildren() {
 			return hasChildren;
-
 		}
 
 	}
@@ -673,73 +689,4 @@ public class MathMLBindingTree {
 		}
 	}
 
-	private void makeDisplayTree(Element mlTree) {
-		displayTree = DOM.createDiv();
-		displayTree.setClassName("interactive_equation");
-		displayTree.setAttribute("id", mlTree.getId());
-
-		for (int i = 0; i < mlTree.getChildCount(); i++) {
-			toDisplayNode((Element) mlTree.getChild(i), displayTree);
-		}
-	}
-
-	/**
-	 * Recursive creation of the display tree. Makes a display node equivalent
-	 * of
-	 * 
-	 * @param mlNode
-	 * <br/>
-	 *            and adds it to<br/>
-	 * @param displayParentEl
-	 */
-	private void toDisplayNode(Element mlNode, Element displayParentEl) {
-
-		String id = mlNode.getAttribute("id");
-		MathMLBindingNode node = getNodeById(id);
-		Type type = node.getType();
-		MathMLBindingNode parentNode = node.getParent();
-		Type parentType = parentNode.getType();
-
-		// make new display node with appropriate properties
-		Element displayElement = DOM.createDiv();
-		node.displayElement = displayElement;
-		displayElement.setId(id);
-		displayElement.addClassName(type.toString());
-
-		switch (parentType) {
-		case Fraction:
-			if (node.getIndex() == 0) {
-				displayElement.addClassName("in-Fraction-numerator");
-			} else if (node.getIndex() == 1) {
-				displayElement.addClassName("in-Fraction-denominator");
-			}
-			break;
-		case Exponential:
-			if (node.getIndex() == 0) {
-				displayElement.addClassName("in-Exponential-base");
-			} else if (node.getIndex() == 1) {
-				displayElement.addClassName("in-Exponential-exponent");
-			}
-			break;
-		case Equation:
-		case Sum:
-		case Term:
-			displayElement.addClassName("in-" + parentType);
-		}
-
-		displayParentEl.appendChild(displayElement);
-
-		for (int i = 0; i < mlNode.getChildCount(); i++) {
-			Node child = mlNode.getChild(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				toDisplayNode((Element) child, displayElement);
-			} else if (child.getNodeType() == Node.TEXT_NODE) {
-				String text = mlNode.getInnerText();
-				if (text.startsWith("&")) { // must insert as js code
-					text = node.getOperation().sign;
-				}
-				displayElement.setInnerText(text);
-			}
-		}
-	}
 }
