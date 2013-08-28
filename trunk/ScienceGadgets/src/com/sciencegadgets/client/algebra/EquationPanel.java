@@ -231,8 +231,7 @@ public class EquationPanel extends AbsolutePanel {
 		// example: Wrapper-ML1-ofLayer-ML1
 		if (oldId != null) {
 			if (oldId.contains("ML")) {
-				curEl.setAttribute("id", oldId + "-ofLayer-"
-						+ layerId);
+				curEl.setAttribute("id", oldId + "-ofLayer-" + layerId);
 			} else if (oldId.contains("Root")) {
 				curEl.setAttribute("id", "Root-ofLayer-" + layerId);
 			}
@@ -266,30 +265,82 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	/**
-	 * Matches the heights of all the children of an {@link Type.Equation}
+	 * Matches the heights of all the children of an {@link Type.Equation},
+	 * {@link Type.Term} or {@link Type.Sum} by:<br/>
+	 * 1.Lifting centers to the tallest denominator using padding-bottom<br/>
+	 * 2.Matching tops to tallest height with padding-top<br/>
+	 * <b>Note:</b> All children of these nodes are initially aligned at their
+	 * baseline
 	 */
 	private void matchChildHeights(Element curEl) {
-		if (curEl.getClassName().contains(Type.Equation.toString())
-				|| curEl.getClassName().contains(Type.Term.toString())
-				|| curEl.getClassName().contains(Type.Sum.toString())) {
-			
-			int largestHeight = 0;
-			
-			NodeList<Node> children = curEl.getChildNodes();
-			for(int i=0 ; i<children.getLength() ; i++){
-				int childHeight = ((Element)children.getItem(i)).getOffsetHeight();
-				largestHeight = (childHeight > largestHeight) ? childHeight : largestHeight;
-			}
-			for(int i=0 ; i<children.getLength() ; i++){
-				((Element)children.getItem(i)).getStyle().setHeight(largestHeight, Unit.PX);
-			}
-		}
-		
+
 		if (curEl.getChildCount() > 0) {
 			for (int i = 0; i < curEl.getChildCount(); i++) {
 				if (Node.ELEMENT_NODE == curEl.getChild(i).getNodeType()) {
 					matchChildHeights((Element) curEl.getChild(i));
 				}
+			}
+		}
+		if (curEl.getClassName().contains(Type.Equation.toString())
+				|| curEl.getClassName().contains(Type.Term.toString())
+				|| curEl.getClassName().contains(Type.Sum.toString())) {
+
+			NodeList<Node> children = curEl.getChildNodes();
+
+			int tallestDenom = 0;
+			int shortestChild = 999999999;
+			for (int i = 0; i < children.getLength(); i++) {
+				Element child = ((Element) children.getItem(i));
+				// Find the tallest denominator to match centers
+				if (child.getClassName().contains(Type.Fraction.toString())) {
+					int denomHeight = ((Element) child.getChild(1))
+							.getOffsetHeight();
+					if (denomHeight > tallestDenom) {
+						tallestDenom = denomHeight;
+					}
+				} else {
+					// Find the tallest non-fraction to center lift
+					int childHeight = child.getOffsetHeight();
+					if (childHeight < shortestChild) {
+						shortestChild = childHeight;
+					}
+				}
+
+			}
+
+			// Lift every child to the center of the tallest denominator
+			if (tallestDenom != 0) {
+				for (int i = 0; i < children.getLength(); i++) {
+					Element child = ((Element) children.getItem(i));
+					int lift = tallestDenom;
+					if (child.getClassName().contains(Type.Fraction.toString())) {
+						lift -= (((Element) child.getChild(1))
+								.getOffsetHeight());
+					} else {
+						lift -= (shortestChild / 2);
+					}
+					child.getStyle().setBottom(lift, Unit.PX);
+					child.getStyle().setPaddingBottom(lift, Unit.PX);
+				}
+			}
+
+			// Find highest top to match heights to
+			int highestTop = 999999999;
+			for (int i = 0; i < children.getLength(); i++) {
+				Element child = ((Element) children.getItem(i));
+				int childTop = child.getAbsoluteTop();
+				if (childTop < highestTop) {
+					highestTop = childTop;
+				}
+			}
+
+			// Set all children padding to match height
+			for (int i = 0; i < children.getLength(); i++) {
+				Element child = ((Element) children.getItem(i));
+				int childTop = child.getAbsoluteTop();
+				child.getStyle()
+						.setPaddingTop((childTop - highestTop), Unit.PX);
+
 			}
 		}
 	}
