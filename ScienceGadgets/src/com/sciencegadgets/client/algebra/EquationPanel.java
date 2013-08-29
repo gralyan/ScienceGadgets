@@ -36,6 +36,8 @@ public class EquationPanel extends AbsolutePanel {
 	private boolean inEditMode;
 	private double newFontSize = 0;
 	private EquationLayer rootLayer;
+
+	private double fontSize;
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
 	// Width of equation compared to panel
@@ -261,7 +263,9 @@ public class EquationPanel extends AbsolutePanel {
 		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
 				: widthRatio;
 
-		el.getStyle().setFontSize((smallerRatio * 100), Unit.PCT);
+		fontSize = smallerRatio*95;// *.95 for looser fit, *100 for percent
+		el.getStyle().setFontSize((fontSize), Unit.PCT);
+//		el.getStyle().setFontSize(smallerRatio, Unit.PCT);
 	}
 
 	/**
@@ -281,66 +285,121 @@ public class EquationPanel extends AbsolutePanel {
 				}
 			}
 		}
-		if (curEl.getClassName().contains(Type.Equation.toString())
-				|| curEl.getClassName().contains(Type.Term.toString())
-				|| curEl.getClassName().contains(Type.Sum.toString())) {
+		// This method is only appropriate for type Equation, Term, or Sum
+		String curClass = curEl.getClassName();
+		if (curClass.contains(Type.Equation.toString())
+				|| curClass.contains(Type.Term.toString())
+				|| curClass.contains(Type.Sum.toString())) {
+			// Child of another Equation, Term or Sum is done with parent
+			if (!curClass.contains(Type.Equation.toString())) {
+				String parentClass = curEl.getParentElement().getClassName();
+				if (parentClass.contains(Type.Equation.toString())
+						|| parentClass.contains(Type.Term.toString())
+						|| parentClass.contains(Type.Sum.toString())) {
+					return;
+				}
+			}
+			LinkedList<Element> childrenInline = new LinkedList<Element>();
+			LinkedList<Element> parentsInline = new LinkedList<Element>();
+			parentsInline.add(curEl);
 
-			NodeList<Node> children = curEl.getChildNodes();
+			addChildrenIfInline(curEl, childrenInline, parentsInline);
 
-			int tallestDenom = 0;
-			int shortestChild = 999999999;
-			for (int i = 0; i < children.getLength(); i++) {
-				Element child = ((Element) children.getItem(i));
+			// NodeList<Node> children = curEl.getChildNodes();
+
+			int tallestNumerator = 0;
+			int tallestDenominator = 0;
+			int liftCenter = 999999999;// shortest child
+			// for (int i = 0; i < children.getLength(); i++) {
+			// Element child = ((Element) children.getItem(i));
+			for (Element child : childrenInline) {
 				// Find the tallest denominator to match centers
 				if (child.getClassName().contains(Type.Fraction.toString())) {
-					int denomHeight = ((Element) child.getChild(1))
+					int numeratorHeight = ((Element) child.getChild(0))
 							.getOffsetHeight();
-					if (denomHeight > tallestDenom) {
-						tallestDenom = denomHeight;
+					int denominatorHeight = ((Element) child.getChild(1))
+							.getOffsetHeight();
+					if (numeratorHeight > tallestNumerator) {
+						tallestNumerator = numeratorHeight;
+					}
+					if (denominatorHeight > tallestDenominator) {
+						tallestDenominator = denominatorHeight;
 					}
 				} else {
-					// Find the tallest non-fraction to center lift
+					// Find the shortest non-fraction to center lift
 					int childHeight = child.getOffsetHeight();
-					if (childHeight < shortestChild) {
-						shortestChild = childHeight;
+					if (childHeight < liftCenter) {
+						liftCenter = childHeight;
 					}
 				}
-
 			}
 
 			// Lift every child to the center of the tallest denominator
-			if (tallestDenom != 0) {
-				for (int i = 0; i < children.getLength(); i++) {
-					Element child = ((Element) children.getItem(i));
-					int lift = tallestDenom;
+			if (tallestDenominator != 0) {
+				for (Element parent : parentsInline) {
+					parent.getStyle().setHeight((
+							tallestDenominator + tallestNumerator), Unit.PX);
+				} // for (int i = 0; i < children.getLength(); i++) {
+					// Element child = ((Element) children.getItem(i));
+				for (Element child : childrenInline) {
+					int lift = tallestDenominator;
 					if (child.getClassName().contains(Type.Fraction.toString())) {
 						lift -= (((Element) child.getChild(1))
 								.getOffsetHeight());
 					} else {
-						lift -= (shortestChild / 2);
+						lift -= (liftCenter / 2);
 					}
+					// Lift Text to center of tallest denominator
 					child.getStyle().setBottom(lift, Unit.PX);
+					// Match bottoms of all inline siblings with padding
 					child.getStyle().setPaddingBottom(lift, Unit.PX);
 				}
 			}
 
 			// Find highest top to match heights to
 			int highestTop = 999999999;
-			for (int i = 0; i < children.getLength(); i++) {
-				Element child = ((Element) children.getItem(i));
+			// for (int i = 0; i < children.getLength(); i++) {
+			// Element child = ((Element) children.getItem(i));
+			for (Element child : childrenInline) {
 				int childTop = child.getAbsoluteTop();
 				if (childTop < highestTop) {
 					highestTop = childTop;
 				}
 			}
 
-			// Set all children padding to match height
-			for (int i = 0; i < children.getLength(); i++) {
-				Element child = ((Element) children.getItem(i));
-				int childTop = child.getAbsoluteTop();
-				child.getStyle()
-						.setPaddingTop((childTop - highestTop), Unit.PX);
+			// Match tops of all inline siblings with padding
+			// for (int i = 0; i < children.getLength(); i++) {
+			// Element child = ((Element) children.getItem(i));
+			for (Element child : childrenInline) {
+				int childTopPad = child.getAbsoluteTop() - highestTop;
+				child.getStyle().setPaddingTop(childTopPad, Unit.PX);
 
+			}
+		}
+	}
+
+	private double toEm(int px){
+		System.out.println("px: \t"+px);
+		System.out.println("fontSize/100: \t"+fontSize/100);
+		System.out.println("em: "+px/16*fontSize/100);
+		System.out.println(" ");
+		
+		return px/16*fontSize/100;
+	}
+	private void addChildrenIfInline(Element curEl,
+			LinkedList<Element> childrenInline,
+			LinkedList<Element> parentsInline) {
+		NodeList<Node> children = curEl.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Element child = (Element) children.getItem(i);
+
+			String childClass = child.getClassName();
+			if (childClass.contains(Type.Term.toString())
+					|| childClass.contains(Type.Sum.toString())) {
+				addChildrenIfInline(child, childrenInline, parentsInline);
+				parentsInline.add(child);
+			} else {
+				childrenInline.add(child);
 			}
 		}
 	}
