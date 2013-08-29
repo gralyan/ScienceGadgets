@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='sciencegadgets'>
 	<inherits name='com.google.gwt.user.User' />
-	<inherits name='com.google.gwt.user.theme.clean.Clean' />
+<!-- 	<inherits name='com.google.gwt.user.theme.clean.Clean' /> -->
 
 	<!-- <inherits name='com.google.gwt.gadgets.Gadgets' /> -->
 <!-- 	<inherits name='org.vaadin.gwtgraphics.GWTGraphics' /> -->
