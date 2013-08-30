@@ -222,6 +222,7 @@ public class Moderator implements EntryPoint {
 
 					@Override
 					public void onSuccess(String result) {
+						Window.alert("Saved!");
 						JSNICalls.consoleLog("Saved: " + result);
 					}
 

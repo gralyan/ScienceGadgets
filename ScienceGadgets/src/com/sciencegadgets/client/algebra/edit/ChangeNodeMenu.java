@@ -98,6 +98,9 @@ public class ChangeNodeMenu extends FlowPanel {
 							if (Type.Operation.equals(prevSib.getType()))
 								prevSib.remove();
 						} catch (IndexOutOfBoundsException e) {
+							MathMLBindingNode nextSib = node.getNextSibling();
+							if (Type.Operation.equals(nextSib.getType()))
+								nextSib.remove();
 						}
 						node.remove();
 						Moderator.reloadEquationPanel("");
@@ -171,9 +174,9 @@ public class ChangeNodeMenu extends FlowPanel {
 							newNode.add(-1, Type.Operation, operator.getSign());
 						}
 						newNode.add(-1, Type.Variable, NOT_SET);
-						newNode.validate();
-
 						parent.add(index, newNode);
+
+						newNode.validate();
 					}
 					Moderator.reloadEquationPanel("");
 					

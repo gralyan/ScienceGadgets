@@ -36,8 +36,7 @@ public class EquationHTML {
 		
 		String id = mlNode.getAttribute("id");
 		Type type = node.getType();
-		MathMLBindingNode parentNode = node.getParent();
-		Type parentType = parentNode.getType();
+		Type parentType = node.getParentType();
 
 		// make new display node with appropriate properties
 		Element nodeHTML = DOM.createDiv();

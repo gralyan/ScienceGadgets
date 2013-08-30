@@ -32,10 +32,7 @@ public class EditWrapper extends Wrapper {
 
 	public void select() {
 		super.select();
-		Type parentType = null;
-		if (!"math".equalsIgnoreCase(node.getParent().getTag())) {
-			parentType = node.getParent().getType();
-		}
+		Type parentType = node.getParentType();
 		Type nodeType = node.getType();
 
 		// Don't allow sums inside sums or terms in terms

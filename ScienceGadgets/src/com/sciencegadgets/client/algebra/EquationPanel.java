@@ -263,9 +263,9 @@ public class EquationPanel extends AbsolutePanel {
 		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
 				: widthRatio;
 
-		fontSize = smallerRatio*95;// *.95 for looser fit, *100 for percent
+		fontSize = smallerRatio * 95;// *.95 for looser fit, *100 for percent
 		el.getStyle().setFontSize((fontSize), Unit.PCT);
-//		el.getStyle().setFontSize(smallerRatio, Unit.PCT);
+		// el.getStyle().setFontSize(smallerRatio, Unit.PCT);
 	}
 
 	/**
@@ -301,6 +301,9 @@ public class EquationPanel extends AbsolutePanel {
 			}
 			LinkedList<Element> childrenInline = new LinkedList<Element>();
 			LinkedList<Element> parentsInline = new LinkedList<Element>();
+			LinkedList<Element> fractionsInline = new LinkedList<Element>();
+			LinkedList<Element> fracContainerSibs = new LinkedList<Element>();
+			LinkedList<Element> fracContainers = new LinkedList<Element>();
 			parentsInline.add(curEl);
 
 			addChildrenIfInline(curEl, childrenInline, parentsInline);
@@ -310,11 +313,10 @@ public class EquationPanel extends AbsolutePanel {
 			int tallestNumerator = 0;
 			int tallestDenominator = 0;
 			int liftCenter = 999999999;// shortest child
-			// for (int i = 0; i < children.getLength(); i++) {
-			// Element child = ((Element) children.getItem(i));
 			for (Element child : childrenInline) {
 				// Find the tallest denominator to match centers
 				if (child.getClassName().contains(Type.Fraction.toString())) {
+					fractionsInline.add(child);
 					int numeratorHeight = ((Element) child.getChild(0))
 							.getOffsetHeight();
 					int denominatorHeight = ((Element) child.getChild(1))
@@ -334,20 +336,26 @@ public class EquationPanel extends AbsolutePanel {
 				}
 			}
 
-			// Lift every child to the center of the tallest denominator
-			if (tallestDenominator != 0) {
+			if (fractionsInline.size() != 0) {
+				// Set parent heights to match fractions
 				for (Element parent : parentsInline) {
-					parent.getStyle().setHeight((
-							tallestDenominator + tallestNumerator), Unit.PX);
-				} // for (int i = 0; i < children.getLength(); i++) {
-					// Element child = ((Element) children.getItem(i));
+					parent.getStyle().setHeight(
+							(tallestDenominator + tallestNumerator), Unit.PX);
+				}
+				// Find fraction containers and siblings
+				for (Element fraction : fractionsInline) {
+					analizeFractionRelationships(fraction, curEl,
+							fracContainers, fracContainerSibs);
+				}
+				// Lift every child to the center of the tallest denominator
 				for (Element child : childrenInline) {
 					int lift = tallestDenominator;
 					if (child.getClassName().contains(Type.Fraction.toString())) {
-						lift -= (((Element) child.getChild(1))
-								.getOffsetHeight());
-					} else {
-						lift -= (liftCenter / 2);
+						lift -= ((Element) child.getChild(1)).getOffsetHeight();
+					} else if (fracContainerSibs.contains(child)) {
+						if (!fracContainers.contains(child))
+							lift -= (liftCenter / 2);
+						// child.getStyle().clearHeight();
 					}
 					// Lift Text to center of tallest denominator
 					child.getStyle().setBottom(lift, Unit.PX);
@@ -358,8 +366,6 @@ public class EquationPanel extends AbsolutePanel {
 
 			// Find highest top to match heights to
 			int highestTop = 999999999;
-			// for (int i = 0; i < children.getLength(); i++) {
-			// Element child = ((Element) children.getItem(i));
 			for (Element child : childrenInline) {
 				int childTop = child.getAbsoluteTop();
 				if (childTop < highestTop) {
@@ -368,8 +374,6 @@ public class EquationPanel extends AbsolutePanel {
 			}
 
 			// Match tops of all inline siblings with padding
-			// for (int i = 0; i < children.getLength(); i++) {
-			// Element child = ((Element) children.getItem(i));
 			for (Element child : childrenInline) {
 				int childTopPad = child.getAbsoluteTop() - highestTop;
 				child.getStyle().setPaddingTop(childTopPad, Unit.PX);
@@ -378,14 +382,15 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
-	private double toEm(int px){
-		System.out.println("px: \t"+px);
-		System.out.println("fontSize/100: \t"+fontSize/100);
-		System.out.println("em: "+px/16*fontSize/100);
+	private double toEm(int px) {
+		System.out.println("px: \t" + px);
+		System.out.println("fontSize/100: \t" + fontSize / 100);
+		System.out.println("em: " + px / 16 * fontSize / 100);
 		System.out.println(" ");
-		
-		return px/16*fontSize/100;
+
+		return px / 16 * fontSize / 100;
 	}
+
 	private void addChildrenIfInline(Element curEl,
 			LinkedList<Element> childrenInline,
 			LinkedList<Element> parentsInline) {
@@ -398,9 +403,28 @@ public class EquationPanel extends AbsolutePanel {
 					|| childClass.contains(Type.Sum.toString())) {
 				addChildrenIfInline(child, childrenInline, parentsInline);
 				parentsInline.add(child);
+				childrenInline.add(child);
 			} else {
 				childrenInline.add(child);
 			}
+		}
+	}
+
+	private void analizeFractionRelationships(Element fraction, Element curEl,
+			LinkedList<Element> fracContainers,
+			LinkedList<Element> fracContainerSibs) {
+		Element fracContain = fraction;
+		while (!curEl.equals(fracContain)) {
+			fracContainers.add(fracContain);
+			NodeList<Node> fracContSibs = fracContain.getParentElement()
+					.getChildNodes();
+			for (int i = 0; i < fracContSibs.getLength(); i++) {
+				Element fracContSib = (Element) fracContSibs.getItem(i);
+				if (!fracContain.equals(fracContSib)) {
+					fracContainerSibs.add(fracContSib);
+				}
+			}
+			fracContain = fracContain.getParentElement();
 		}
 	}
 }
