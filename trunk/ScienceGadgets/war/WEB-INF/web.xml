@@ -16,6 +16,25 @@
     <url-pattern>/sciencegadgets/greet</url-pattern>
   </servlet-mapping>
   
+   <servlet>
+    <servlet-name>adminServlet</servlet-name>
+    <servlet-class>com.admin.server.AminServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>adminServlet</servlet-name>
+    <url-pattern>admin/admin</url-pattern>
+  </servlet-mapping>
+  
+  <filter>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+</filter>
+<filter-mapping>
+        <filter-name>ObjectifyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+</filter-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>ScienceGadgets.html</welcome-file>

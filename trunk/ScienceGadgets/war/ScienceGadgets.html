@@ -13,34 +13,41 @@
 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"></meta>
 
-<script type="text/x-mathjax-config">
- 	MathJax.Hub.Config({
- 		config: ["MMLorHTML.js"],
- 		jax: ["input/MathML","output/HTML-CSS"],
- 		extensions: ["mml2jax.js"],
-		showMathMenu: false,
-		imageFont:null
- 	});
-</script>
+<!-- <script type="text/x-mathjax-config"> -->
+<!--  	MathJax.Hub.Config({ -->
+<!--  		config: ["MMLorHTML.js"], -->
+<!--  		jax: ["input/MathML","output/HTML-CSS"], -->
+<!--  		extensions: ["mml2jax.js"], -->
+<!-- 		showMathMenu: false, -->
+<!-- 		showMathMenuMSIE: false, -->
+<!-- 		zoom: "None", -->
+<!-- 		imageFont:null -->
+<!--  	}); -->
 
-<script type="text/javascript" src="mathjax/MathJax.js">
-	document.prettify = function(area) {
-		MathJax.Hub.Queue([ "Typeset", MathJax.Hub, area ]);
-	}
-</script>
+<!-- 	MathJax.Hub.Startup.MenuZoom = function () {}; -->
+<!-- </script> -->
+
+<!-- <script type="text/javascript" src="mathjax/MathJax.js"> -->
+<!-- // 	document.prettify = function(area) { -->
+<!-- // 		MathJax.Hub.Queue([ "Typeset", MathJax.Hub, area ]); -->
+<!-- // 	} -->
+<!-- </script> -->
 
 </head>
 
 <body>
 
-	<!-- 	<div id="division"></div> -->
-
 	<h1 style="text-align: center;">Science Gadgets demo</h1>
 
-	<div id="scienceGadgetArea"></div>
+	<div id="scienceGadgetArea" style="width:100%; height:100%"></div>
 
 	<table class="center">
 		<tr id="navigationArea"></tr>
 	</table>
+
+	<!-- 	Back Button managment -->
+	<iframe src="javascript:''" id="__gwt_historyFrame"
+		style="width: 0; height: 0; border: 0"></iframe>
+
 </body>
 </html>

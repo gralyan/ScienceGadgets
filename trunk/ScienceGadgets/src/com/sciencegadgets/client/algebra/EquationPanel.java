@@ -2,30 +2,19 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Locale;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Duration;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 
 public class EquationPanel extends AbsolutePanel {
@@ -34,14 +23,10 @@ public class EquationPanel extends AbsolutePanel {
 	MathMLBindingTree mathMLBindingTree;
 	// private HTML pilot = new HTML();
 	private boolean inEditMode;
-	private double newFontSize = 0;
 	private EquationLayer rootLayer;
-
-	private double fontSize;
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
 	// Width of equation compared to panel
-	private static final double EQUATION_FRACTION = 0.8;
 
 	public EquationPanel(MathMLBindingTree mathTree, boolean inEditMode) {
 
@@ -98,10 +83,7 @@ public class EquationPanel extends AbsolutePanel {
 	 */
 	public void draw(MathMLBindingNode node, EquationLayer parentLayer) {
 
-		EquationLayer eqLayer = new EquationLayer();
-
-		Element rootClone = mathMLBindingTree.getEqHTMLClone();
-		eqLayer.getElement().appendChild(rootClone);
+		EquationLayer eqLayer = new EquationLayer(node);
 
 		AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
 		menuPanel.getElement().setAttribute("id", "menuLayer-" + node.getId());
@@ -114,9 +96,11 @@ public class EquationPanel extends AbsolutePanel {
 		eqLayer.addStyleName("fillParent");
 		this.add(eqLayer, 0, 0);
 
-		replaceChildsId(rootClone, node.getId());
-		resizeEquation(rootClone);
-		matchChildHeights(rootClone);
+//		Element rootClone = mathMLBindingTree.getEqHTMLClone();
+//		eqLayer.getElement().appendChild(rootClone);
+//		replaceChildsId(rootClone, node.getId());
+//		resizeEquation(rootClone);
+//		matchChildHeights(rootClone);
 
 		if (parentLayer == null) {
 			rootLayer = parentLayer;
@@ -216,215 +200,4 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
-	/**
-	 * Each equation must have a different set of ID's which only differ in the
-	 * prefix. The prefix is the equations placement in the list
-	 * 
-	 * @param parent
-	 * @param layerId
-	 */
-	private void replaceChildsId(Element curEl, String layerId) {
-
-		// Element curEl = (Element) (parent.getChild(i));
-		String oldId = curEl.getId();
-
-		// Each wrapper has a reference to its MathNode and Layer
-		// Wrapper-[equation id]-ofLayer-[MathML node id]
-		// example: Wrapper-ML1-ofLayer-ML1
-		if (oldId != null) {
-			if (oldId.contains("ML")) {
-				curEl.setAttribute("id", oldId + "-ofLayer-" + layerId);
-			} else if (oldId.contains("Root")) {
-				curEl.setAttribute("id", "Root-ofLayer-" + layerId);
-			}
-		}
-
-		if (curEl.getChildCount() > 0) {
-			for (int i = 0; i < curEl.getChildCount(); i++) {
-				if (Node.ELEMENT_NODE == curEl.getChild(i).getNodeType()) {
-					replaceChildsId((Element) curEl.getChild(i), layerId);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Resizes the equation to fill the panel
-	 * 
-	 * @param el
-	 */
-	private void resizeEquation(Element el) {
-
-		double widthRatio = (double) this.getOffsetWidth()
-				/ el.getOffsetWidth();
-		double heightRatio = (double) this.getOffsetHeight()
-				/ el.getOffsetHeight();
-
-		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
-				: widthRatio;
-
-		fontSize = smallerRatio * 95;// *.95 for looser fit, *100 for percent
-		el.getStyle().setFontSize((fontSize), Unit.PCT);
-		// el.getStyle().setFontSize(smallerRatio, Unit.PCT);
-	}
-
-	/**
-	 * Matches the heights of all the children of an {@link Type.Equation},
-	 * {@link Type.Term} or {@link Type.Sum} by:<br/>
-	 * 1.Lifting centers to the tallest denominator using padding-bottom<br/>
-	 * 2.Matching tops to tallest height with padding-top<br/>
-	 * <b>Note:</b> All children of these nodes are initially aligned at their
-	 * baseline
-	 */
-	private void matchChildHeights(Element curEl) {
-
-		if (curEl.getChildCount() > 0) {
-			for (int i = 0; i < curEl.getChildCount(); i++) {
-				if (Node.ELEMENT_NODE == curEl.getChild(i).getNodeType()) {
-					matchChildHeights((Element) curEl.getChild(i));
-				}
-			}
-		}
-		// This method is only appropriate for type Equation, Term, or Sum
-		String curClass = curEl.getClassName();
-		if (curClass.contains(Type.Equation.toString())
-				|| curClass.contains(Type.Term.toString())
-				|| curClass.contains(Type.Sum.toString())) {
-			// Child of another Equation, Term or Sum is done with parent
-			if (!curClass.contains(Type.Equation.toString())) {
-				String parentClass = curEl.getParentElement().getClassName();
-				if (parentClass.contains(Type.Equation.toString())
-						|| parentClass.contains(Type.Term.toString())
-						|| parentClass.contains(Type.Sum.toString())) {
-					return;
-				}
-			}
-			LinkedList<Element> childrenInline = new LinkedList<Element>();
-			LinkedList<Element> parentsInline = new LinkedList<Element>();
-			LinkedList<Element> fractionsInline = new LinkedList<Element>();
-			LinkedList<Element> fracContainerSibs = new LinkedList<Element>();
-			LinkedList<Element> fracContainers = new LinkedList<Element>();
-			parentsInline.add(curEl);
-
-			addChildrenIfInline(curEl, childrenInline, parentsInline);
-
-			// NodeList<Node> children = curEl.getChildNodes();
-
-			int tallestNumerator = 0;
-			int tallestDenominator = 0;
-			int liftCenter = 999999999;// shortest child
-			for (Element child : childrenInline) {
-				// Find the tallest denominator to match centers
-				if (child.getClassName().contains(Type.Fraction.toString())) {
-					fractionsInline.add(child);
-					int numeratorHeight = ((Element) child.getChild(0))
-							.getOffsetHeight();
-					int denominatorHeight = ((Element) child.getChild(1))
-							.getOffsetHeight();
-					if (numeratorHeight > tallestNumerator) {
-						tallestNumerator = numeratorHeight;
-					}
-					if (denominatorHeight > tallestDenominator) {
-						tallestDenominator = denominatorHeight;
-					}
-				} else {
-					// Find the shortest non-fraction to center lift
-					int childHeight = child.getOffsetHeight();
-					if (childHeight < liftCenter) {
-						liftCenter = childHeight;
-					}
-				}
-			}
-
-			if (fractionsInline.size() != 0) {
-				// Set parent heights to match fractions
-				for (Element parent : parentsInline) {
-					parent.getStyle().setHeight(
-							(tallestDenominator + tallestNumerator), Unit.PX);
-				}
-				// Find fraction containers and siblings
-				for (Element fraction : fractionsInline) {
-					analizeFractionRelationships(fraction, curEl,
-							fracContainers, fracContainerSibs);
-				}
-				// Lift every child to the center of the tallest denominator
-				for (Element child : childrenInline) {
-					int lift = tallestDenominator;
-					if (child.getClassName().contains(Type.Fraction.toString())) {
-						lift -= ((Element) child.getChild(1)).getOffsetHeight();
-					} else if (fracContainerSibs.contains(child)) {
-						if (!fracContainers.contains(child))
-							lift -= (liftCenter / 2);
-						// child.getStyle().clearHeight();
-					}
-					// Lift Text to center of tallest denominator
-					child.getStyle().setBottom(lift, Unit.PX);
-					// Match bottoms of all inline siblings with padding
-					child.getStyle().setPaddingBottom(lift, Unit.PX);
-				}
-			}
-
-			// Find highest top to match heights to
-			int highestTop = 999999999;
-			for (Element child : childrenInline) {
-				int childTop = child.getAbsoluteTop();
-				if (childTop < highestTop) {
-					highestTop = childTop;
-				}
-			}
-
-			// Match tops of all inline siblings with padding
-			for (Element child : childrenInline) {
-				int childTopPad = child.getAbsoluteTop() - highestTop;
-				child.getStyle().setPaddingTop(childTopPad, Unit.PX);
-
-			}
-		}
-	}
-
-	private double toEm(int px) {
-		System.out.println("px: \t" + px);
-		System.out.println("fontSize/100: \t" + fontSize / 100);
-		System.out.println("em: " + px / 16 * fontSize / 100);
-		System.out.println(" ");
-
-		return px / 16 * fontSize / 100;
-	}
-
-	private void addChildrenIfInline(Element curEl,
-			LinkedList<Element> childrenInline,
-			LinkedList<Element> parentsInline) {
-		NodeList<Node> children = curEl.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			Element child = (Element) children.getItem(i);
-
-			String childClass = child.getClassName();
-			if (childClass.contains(Type.Term.toString())
-					|| childClass.contains(Type.Sum.toString())) {
-				addChildrenIfInline(child, childrenInline, parentsInline);
-				parentsInline.add(child);
-				childrenInline.add(child);
-			} else {
-				childrenInline.add(child);
-			}
-		}
-	}
-
-	private void analizeFractionRelationships(Element fraction, Element curEl,
-			LinkedList<Element> fracContainers,
-			LinkedList<Element> fracContainerSibs) {
-		Element fracContain = fraction;
-		while (!curEl.equals(fracContain)) {
-			fracContainers.add(fracContain);
-			NodeList<Node> fracContSibs = fracContain.getParentElement()
-					.getChildNodes();
-			for (int i = 0; i < fracContSibs.getLength(); i++) {
-				Element fracContSib = (Element) fracContSibs.getItem(i);
-				if (!fracContain.equals(fracContSib)) {
-					fracContainerSibs.add(fracContSib);
-				}
-			}
-			fracContain = fracContain.getParentElement();
-		}
-	}
 }

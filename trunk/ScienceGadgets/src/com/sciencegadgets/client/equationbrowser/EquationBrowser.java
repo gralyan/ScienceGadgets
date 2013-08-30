@@ -49,6 +49,7 @@ import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgOut;
+import com.sciencegadgets.client.algebra.EquationHTML;
 
 //Uncomment to use as gadget////////////////////////////////////
 //
@@ -61,6 +62,7 @@ public class EquationBrowser extends FlowPanel {
 	private Grid varGrid = new Grid(1, 1);
 	private Grid sumGrid = new Grid(1, 4);
 	private Grid algGrid = new Grid(1, 1);
+	private Element[] algElements;
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
 	private Set<String> selectedVars = new HashSet<String>();
 	private RadioButton modeAlg = new RadioButton("mode", "Algebra");
@@ -200,8 +202,12 @@ public class EquationBrowser extends FlowPanel {
 
 				// Fill panel
 				algGrid.resizeRows(eqList.length);
+				algElements = new Element[eqList.length];
 				for (int i = 0; i < eqList.length; i++) {
-					HTML cell = new HTML(eqList[i]);
+					Element mathElement = (Element) new HTML(eqList[i]).getElement().getFirstChildElement();
+					EquationHTML cell = new EquationHTML(mathElement);
+					cell.autoFillParent = false;//Keep small in list
+					algElements[i] = mathElement;
 					algGrid.setWidget(i, 0, cell);
 				}
 
@@ -330,7 +336,9 @@ public class EquationBrowser extends FlowPanel {
 					clickedEl.setId("selectedEq");
 				}
 				
-				Element mathml = ((Element)clickedCell.getElement().getElementsByTagName("math").getItem(0));
+//				Element mathml = ((Element)clickedCell.getElement().getElementsByTagName("math").getItem(0));
+				
+				Element mathml =algElements[clickedCell.getRowIndex()];
 				
 				if (algGrid.equals(table) && modeAlg.getValue()) { // For Algebra practice mode
 					moderator.makeAlgebraWorkspace(mathml);
