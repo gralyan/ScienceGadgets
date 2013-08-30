@@ -1,45 +1,64 @@
 body {
+	
 }
 
 .center {
 	margin: auto;
 }
-.textCenter{
+
+.textCenter {
 	text-align: center;
 	vertical-align: middle;
 }
-.selectable{
-	cursor: pointer;
+
+.fillParent {
+	width: 100%;
+	height: 100%;
 }
+
 #scienceGadgetArea {
 	background-color: #ADD850;
-/* 	margin: auto; */
-}
-
-.gridBox {
-	border: 1px solid silver;
-	background-color: white;
-	padding: 2px;
-	margin: 4px;
-	height: 20em;
-	width: 19em;
-	cursor: default;
-}
-.modes{
 	margin: auto;
-	padding: 4px;
-	background-color: silver;
 }
 
-.scrollPanel {
-	height: 15em;
-	width: 19em;
+.equationBrowser {
+	margin: auto;
+	height: 100%;
+}
+
+.modes {
+	margin: auto;
+	background-color: silver;
+	height: 10%;
 }
 
 .browserPanel {
-	height: 40em;
+	height: 80%;
+}
+
+.gridBox {
 	margin: auto;
-/* 	width: 60em; */
+	border: 1px solid silver;
+	background-color: white;
+	padding: 2px;
+	width: 30%;
+	cursor: default;
+	height: 100%;
+}
+
+.rowHeader {
+	border-bottom-color: silver;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	background-color: #eeeeee;
+	text-align: center;
+	height: 10%;
+}
+
+.selection {
+	cursor: pointer;
+	overflow: scroll;
+	height: 90%;
 }
 
 .algOutScrollPanel {
@@ -54,14 +73,6 @@ body {
 
 .inputGrid {
 	width: 60em;
-}
-
-.rowHeader {
-	border-bottom-color: silver;
-	border-bottom-style: solid;
-	border-bottom-width: thin;
-	background-color: #eeeeee;
-	text-align: center;
 }
 
 .selectedVar {
@@ -94,7 +105,6 @@ body {
 }
 
 .var {
-	
 	opacity: .3;
 	background-color: #FFFFFF;
 	text-align: center;
@@ -103,10 +113,11 @@ body {
 .varName {
 	background-color: #0000FF;
 }
-.wrap{
+
+.wrap {
 	opacity: 1;
 	background-color: #FFFFFF;
-/* 	border: green thin solid; */
+	/* 	border: green thin solid; */
 }
 
 .mouseOverlay {
@@ -115,29 +126,93 @@ body {
 	opacity: 0.4;
 }
 
-.removeNodeButton{
-	background-color: red;
-	
+.eqPanel {
+	width: 100%;
+	height: 100%;
+	text-align: center;
 }
-.Sum{
+
+.interactiveEquation{
+/* 	gray out the background of the equation to make wrappers stand out */
+	color: #A0A0A0;
+}
+.Equation {
+	font-family: MathJax_Main;
+	display: inline-block;
+}
+
+.displayWrapper {
+	color: black;
+}
+
+.Fraction {	
+}
+
+.Sum.displayWrapper {
 	background-color: purple;
 }
-.Term{
-	background-color: orange;
+
+.Term.displayWrapper {
+	background-color: red;
 }
-.Exponential{
+
+.Exponential.displayWrapper {
 	background-color: olive;
 }
-.Fraction{
+
+.Fraction.displayWrapper {
 	background-color: navy;
 }
-.Number{
+
+.Number.displayWrapper {
 	background-color: silver;
 }
-.Variable{
+
+.Variable.displayWrapper {
 	background-color: aqua;
 }
-.Operation{
+
+.Operation.displayWrapper {
 	background-color: teal;
 }
 
+.in-equation {
+	display: inline-block;
+	position: relative;
+}
+
+.in-sum {
+	display: inline-block;
+	position: relative;
+}
+
+.in-term {
+	display: inline-block;
+	position: relative;
+}
+
+.in-exponential-base {
+	display: inline-block;
+}
+
+.in-exponential-exponent {
+	font-size: 70%;
+	display: inline-block;
+	vertical-align: super;
+}
+
+.in-fraction-numerator {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	text-align: center;
+	border-bottom: thin solid;
+}
+
+.in-fraction-denominator {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	text-align: center;
+/* 	border-top: medium solid; */
+}

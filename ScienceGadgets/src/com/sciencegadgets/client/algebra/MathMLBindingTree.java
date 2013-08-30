@@ -40,7 +40,7 @@ public class MathMLBindingTree {
 	private HashMap<String, MathMLBindingNode> idMap = new HashMap<String, MathMLBindingNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private Element mathML;
-	private Element eqHTML;
+	private EquationHTML eqHTML;
 	private boolean inEditMode;
 	private int idCounter = 0;
 
@@ -66,16 +66,16 @@ public class MathMLBindingTree {
 
 		bindMLtoNodes(mathML);
 
-		eqHTML = EquationHTML.makeEquationHTML(this);
-
+		reloadEqHTML();
 	}
 
 	public Element getMathMLClone() {
 		return (Element) mathML.cloneNode(true);
 	}
 
-	public Element getEqHTMLClone() {
-		return (Element) eqHTML.cloneNode(true);
+	public EquationHTML getEqHTMLClone() {
+//		return (Element) eqHTML.cloneNode(true);
+		return new EquationHTML(mathML);
 	}
 
 	public MathMLBindingNode getRoot() {
@@ -111,7 +111,8 @@ public class MathMLBindingTree {
 	}
 	
 	public void reloadEqHTML(){
-		eqHTML = EquationHTML.makeEquationHTML(this);
+//		eqHTML = EquationHTML.makeEquationHTML(this);
+		eqHTML = new EquationHTML(mathML);
 	}
 
 	public LinkedList<Wrapper> getWrappers() {
@@ -154,7 +155,6 @@ public class MathMLBindingTree {
 	public class MathMLBindingNode {
 		private Element mlNode;
 		private Wrapper wrapper;
-		private Element nodeHTML;
 
 		/**
 		 * Wrap existing MathML node
@@ -566,14 +566,6 @@ public class MathMLBindingTree {
 			return Type.getType(parentTag);
 		}
 
-
-		public Element getNodeHTML() {
-			return nodeHTML;
-		}
-
-		public void setNodeHTML(Element nodeHTML) {
-			this.nodeHTML = nodeHTML;
-		}
 	}
 
 	public static enum Type {
