@@ -429,7 +429,7 @@ public class MathMLBindingTree {
 				String open = "",
 				close = "";
 
-				switch (getParent().getType()) {
+				switch (getParentType()) {
 				case Sum:
 					isSumception = true;
 					break;
@@ -557,34 +557,15 @@ public class MathMLBindingTree {
 			return null;
 		}
 
-		public Type getType() throws NoSuchElementException {
-			String tag = getTag();
-			Type type = null;
-
-			if ("mfenced".equals(tag)) {
-				type = Type.Sum;
-			} else if ("mrow".equals(tag)) {
-				type = Type.Term;
-			} else if ("mi".equals(tag)) {
-				type = Type.Variable;
-			} else if ("mn".equals(tag)) {
-				type = Type.Number;
-			} else if ("msup".equals(tag)) {
-				type = Type.Exponential;
-			} else if ("mfrac".equals(tag)) {
-				type = Type.Fraction;
-			} else if ("mo".equals(tag)) {
-				type = Type.Operation;
-			} else if ("math".equals(tag)) {
-				type = Type.Equation;
-			}
-
-			if (type == null) {
-				throw new NoSuchElementException(
-						"There is no type for the tag: " + tag);
-			}
-			return type;
+		public Type getType() {
+			return Type.getType(getTag());
 		}
+		
+		public Type getParentType(){
+			String parentTag = getMLNode().getParentElement().getTagName();
+			return Type.getType(parentTag);
+		}
+
 
 		public Element getNodeHTML() {
 			return nodeHTML;
@@ -620,7 +601,33 @@ public class MathMLBindingTree {
 		public boolean hasChildren() {
 			return hasChildren;
 		}
-
+		
+		static Type getType(String tag) throws NoSuchElementException{
+			tag = tag.toLowerCase();
+			Type type = null;
+			if ("mfenced".equals(tag)) {
+				type = Type.Sum;
+			} else if ("mrow".equals(tag)) {
+				type = Type.Term;
+			} else if ("mi".equals(tag)) {
+				type = Type.Variable;
+			} else if ("mn".equals(tag)) {
+				type = Type.Number;
+			} else if ("msup".equals(tag)) {
+				type = Type.Exponential;
+			} else if ("mfrac".equals(tag)) {
+				type = Type.Fraction;
+			} else if ("mo".equals(tag)) {
+				type = Type.Operation;
+			} else if ("math".equals(tag)) {
+				type = Type.Equation;
+			}
+			if (type == null) {
+				throw new NoSuchElementException(
+						"There is no type for the tag: " + tag);
+			}
+			return type;
+		}
 	}
 
 	public static enum Operator {
