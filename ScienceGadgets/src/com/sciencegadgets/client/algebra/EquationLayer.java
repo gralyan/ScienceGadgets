@@ -16,6 +16,7 @@ public class EquationLayer extends SimplePanel {
 	EquationLayer parentLayer;
 	AbsolutePanel ContextMenuPanel = new AbsolutePanel();
 	MathMLBindingNode mathNode;
+	EquationHTML eqHTML;
 
 	EquationLayer(MathMLBindingNode mathNode) {
 		super();
@@ -25,9 +26,10 @@ public class EquationLayer extends SimplePanel {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		EquationHTML eqHTML = mathNode.getTree().getEqHTMLClone();
+		eqHTML = mathNode.getTree().getEqHTMLClone();
 		replaceChildsId(eqHTML.getElement(), mathNode.getId());
 		eqHTML.addStyleName("interactiveEquation");
+		eqHTML.autoFillParent = true;
 		this.add(eqHTML);
 	}
 

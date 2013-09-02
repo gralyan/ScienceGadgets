@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
@@ -15,7 +16,7 @@ import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.Operator;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
 
-public class NodeMenu extends VerticalPanel {
+public class NodeMenu extends SimplePanel {
 	private MLElementWrapper mlWrapper;
 	private MathMLBindingNode node;
 	private MathMLBindingNode parentNode;
@@ -24,11 +25,6 @@ public class NodeMenu extends VerticalPanel {
 	Widget responseNotes = null;
 	boolean isTopLevel = false;
 	boolean isNestedInFraction = false;
-
-	private final String ADD_BOTH = "Add this to both sides";
-	private final String SUB_BOTH = "Subtract both sides by this";
-	private final String MULTIPLY_BOTH = "Multiply both sides by this";
-	private final String DIVIDE_BOTH = "Divide Both sides by this";
 
 	private final String PLUS = Operator.PLUS.getSign();
 	private final String MINUS = Operator.MINUS.getSign();
@@ -45,6 +41,7 @@ public class NodeMenu extends VerticalPanel {
 		
 		//zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(3);
+		this.addStyleName("fillParent");
 
 		if (parentNode.isLeftSide() || parentNode.isRightSide()) {
 			if (!Type.Operation.equals(node.getType())) {
@@ -111,25 +108,26 @@ public class NodeMenu extends VerticalPanel {
 	class BothSidesButton extends Button {
 
 		BothSidesButton(Math operation) {
+			this.addStyleName("bothSidesButton");
 			switch (operation) {
 			case ADD:
-				setText(PLUS);
-				setTitle("Add " + node.getSymbol() + " to both sides");
+//				setText(PLUS);
+				setText("Add " + node.getSymbol() + " to both sides");
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case SUBTRACT:
-				setText(MINUS);
-				setTitle("Subtract both sides by " + node.getSymbol());
+//				setText(MINUS);
+				setText("Subtract both sides by " + node.getSymbol());
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case MULTIPLY:
-				setText(CROSS);
-				setTitle("Multiply both sides by " + node.getSymbol());
+//				setText(CROSS);
+				setText("Multiply both sides by " + node.getSymbol());
 				addClickHandler(new MultiplyBothHandler());
 				break;
 			case DIVIDE:
-				setText("divide");
-				setTitle("Divide both sides by " + node.getSymbol());
+//				setText("divide");
+				setText("Divide both sides by " + node.getSymbol());
 				addClickHandler(new DivideBothHandler());
 				break;
 

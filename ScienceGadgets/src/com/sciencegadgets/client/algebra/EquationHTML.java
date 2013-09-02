@@ -15,7 +15,7 @@ public class EquationHTML extends HTML {
 
 	Element mlTree;
 	private double fontPercent = 0;
-	public boolean autoFillParent = true;
+	public boolean autoFillParent = false;
 
 	public EquationHTML(Element mlTree) {
 		this.mlTree = mlTree;

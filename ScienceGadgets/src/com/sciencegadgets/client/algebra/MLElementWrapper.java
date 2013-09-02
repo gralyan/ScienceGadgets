@@ -20,6 +20,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
 import com.sciencegadgets.client.algebra.Wrapper.WrapperMouseOutHandler;
@@ -36,6 +37,7 @@ public class MLElementWrapper extends Wrapper {
 	private WrapDragController dragController = null;
 	private MathMLBindingNode mathMLBindingNode;
 	private HTML dropDescriptor = new HTML();
+	private NodeMenu bothSidesMenu;
 
 	/**
 	 * Wrapper for symbols which allow for user interaction
@@ -54,7 +56,7 @@ public class MLElementWrapper extends Wrapper {
 			EquationLayer eqLayer, Element element) {
 		super(node, eqPanel, eqLayer, element);
 		
-		menu = new NodeMenu(this, element.getOffsetWidth()+"px");
+		bothSidesMenu = new NodeMenu(this, element.getOffsetWidth()+"px");
 		addMouseOutHandler(new Wrapper.WrapperMouseOutHandler());
 	}
 
@@ -72,9 +74,9 @@ public class MLElementWrapper extends Wrapper {
 		this.selectedWrapper = selectedWrapper;
 	}
 
-	public NodeMenu getContextMenu() {
-		return (NodeMenu) menu;
-	}
+//	public NodeMenu getContextMenu() {
+//		return (NodeMenu) menu;
+//	}
 
 	public HTML getDropDescriptor() {
 		return dropDescriptor;
@@ -130,6 +132,8 @@ public class MLElementWrapper extends Wrapper {
 	public void select() {
 		super.select();
 		MLElementWrapper wrapper = this;
+		
+		Moderator.lowerEqArea.add(bothSidesMenu);
 
 //		String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
 //		String changeDesc = "";
@@ -180,6 +184,8 @@ public class MLElementWrapper extends Wrapper {
 		super.unselect();
 		MLElementWrapper wrapper = this;
 
+		Moderator.lowerEqArea.remove(bothSidesMenu);
+		
 //		for (DropController dropC : wrapper.dragController.getDropControllers()) {
 //
 //			String[] styles = dropC.getDropTarget().getStyleName().split(" ");

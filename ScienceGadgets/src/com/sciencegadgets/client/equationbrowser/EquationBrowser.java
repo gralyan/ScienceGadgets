@@ -204,10 +204,11 @@ public class EquationBrowser extends FlowPanel {
 				algGrid.resizeRows(eqList.length);
 				algElements = new Element[eqList.length];
 				for (int i = 0; i < eqList.length; i++) {
-					Element mathElement = (Element) new HTML(eqList[i]).getElement().getFirstChildElement();
-					EquationHTML cell = new EquationHTML(mathElement);
-					cell.autoFillParent = false;//Keep small in list
-					algElements[i] = mathElement;
+					//TODO switch comment for deployment
+					HTML cell = new HTML(eqList[i]);
+//					Element mathElement = (Element) new HTML(eqList[i]).getElement().getFirstChildElement();
+//					EquationHTML cell = new EquationHTML(mathElement);
+//					algElements[i] = mathElement;
 					algGrid.setWidget(i, 0, cell);
 				}
 
@@ -336,9 +337,9 @@ public class EquationBrowser extends FlowPanel {
 					clickedEl.setId("selectedEq");
 				}
 				
-//				Element mathml = ((Element)clickedCell.getElement().getElementsByTagName("math").getItem(0));
-				
-				Element mathml =algElements[clickedCell.getRowIndex()];
+//TODO switch comment for deployment
+				Element mathml = ((Element)clickedCell.getElement().getElementsByTagName("math").getItem(0));
+//				Element mathml =algElements[clickedCell.getRowIndex()];
 				
 				if (algGrid.equals(table) && modeAlg.getValue()) { // For Algebra practice mode
 					moderator.makeAlgebraWorkspace(mathml);
@@ -401,7 +402,7 @@ public class EquationBrowser extends FlowPanel {
 				sumGrid.clear(true);
 				labelSumEq.setText("");
 				sumButton.setVisible(false);
-				AlgOut.algOut.clear(true);
+//				AlgOut.algOut.clear(true);
 				com.google.gwt.dom.client.Element prevSel = Document.get()
 						.getElementById("selectedEq");
 				// onVarSelect(selectedVars);
@@ -448,8 +449,8 @@ public class EquationBrowser extends FlowPanel {
 		}
 
 		public void onClick(ClickEvent event) {
-			AlgOut.algOut.clear(true);
-			AlgOut.algOut.resizeRows(0);
+//			AlgOut.algOut.clear(true);
+//			AlgOut.algOut.resizeRows(0);
 
 			switch (mode) {
 			case algebra:
