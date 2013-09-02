@@ -67,9 +67,9 @@ public class Wrapper extends HTML {
 		return eqPanel;
 	}
 	
-	public VerticalPanel getMenu(){
-		return menu;
-	}
+//	public VerticalPanel getMenu(){
+//		return menu;
+//	}
 
 	
 	public Wrapper getNextSiblingWrapper() throws IndexOutOfBoundsException {

@@ -45,13 +45,13 @@ public class EquationPanel extends AbsolutePanel {
 			}
 		}, ClickEvent.getType());
 
-		this.sinkEvents(Event.ONTOUCHSTART);
-		this.addHandler(new TouchStartHandler() {
-			@Override
-			public void onTouchStart(TouchStartEvent event) {
-				setFocusOut();
-			}
-		}, TouchStartEvent.getType());
+//		this.sinkEvents(Event.ONTOUCHSTART);
+//		this.addHandler(new TouchStartHandler() {
+//			@Override
+//			public void onTouchStart(TouchStartEvent event) {
+//				setFocusOut();
+//			}
+//		}, TouchStartEvent.getType());
 
 	}
 
@@ -143,23 +143,29 @@ public class EquationPanel extends AbsolutePanel {
 		newFocus.setOpacity(0);
 		newFocus.setVisible(true);
 
-		Animation fade = new Animation() {
-			@Override
+		Animation fade = new LayerFade(newFocus, prevFocus);
+		fade.run(300, Duration.currentTimeMillis() - 100);
+
+		focusLayer = newFocus;
+		Moderator.focusLayerId = focusLayer.getElement().getAttribute("id");
+	}
+	class LayerFade extends Animation{
+		EquationLayer newFocus, prevFocus;
+		
+		LayerFade(EquationLayer newFocus, EquationLayer prevFocus){
+			this.newFocus = newFocus;
+			this.prevFocus = prevFocus;
+		}
+		@Override
 			protected void onUpdate(double progress) {
 				newFocus.setOpacity(progress);
 				prevFocus.setOpacity(1 - progress);
 			}
-
 			@Override
 			protected void onComplete() {
 				super.onComplete();
 				prevFocus.setVisible(false);
 			}
-		};
-		fade.run(300, Duration.currentTimeMillis() - 100);
-
-		focusLayer = newFocus;
-		Moderator.focusLayerId = focusLayer.getElement().getAttribute("id");
 	}
 
 	private void placeNextEqWrappers(MathMLBindingNode parentNode) {
@@ -174,25 +180,25 @@ public class EquationPanel extends AbsolutePanel {
 							+ parentNode.getId());
 
 			Wrapper wrap;
-			VerticalPanel menu = null;
+//			VerticalPanel menu = null;
 			if (inEditMode) {// Edit Mode////////////////////////////
 				wrap = new EditWrapper(node, this, eqLayerMap.get(node),
 						layerNode);
-				menu = ((EditWrapper) wrap).getEditMenu();
+//				menu = ((EditWrapper) wrap).getEditMenu();
 
 			} else {// Solver Mode////////////////////////////////////
 				wrap = new MLElementWrapper(node, this, eqLayerMap.get(node),
 						layerNode);
-				menu = ((MLElementWrapper) wrap).getContextMenu();
+//				menu = ((MLElementWrapper) wrap).getContextMenu();
 			}
 
 			eqLayer.addWrapper(wrap);
 
-			eqLayer.ContextMenuPanel.add(
-					menu,
-					wrap.getAbsoluteLeft() - this.getAbsoluteLeft(),
-					wrap.getAbsoluteTop() - this.getAbsoluteTop()
-							+ wrap.getOffsetHeight());
+//			eqLayer.ContextMenuPanel.add(
+//					menu,
+//					wrap.getAbsoluteLeft() - this.getAbsoluteLeft(),
+//					wrap.getAbsoluteTop() - this.getAbsoluteTop()
+//							+ wrap.getOffsetHeight());
 
 			if (node.getType().hasChildren()) {
 				placeNextEqWrappers(node);
