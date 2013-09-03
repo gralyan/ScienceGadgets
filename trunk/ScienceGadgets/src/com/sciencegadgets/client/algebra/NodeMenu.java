@@ -234,7 +234,6 @@ public class NodeMenu extends SimplePanel {
 				break;
 			}
 
-			tree.validateTree();
 			Moderator.reloadEquationPanel("");
 		}
 	}
@@ -294,7 +293,6 @@ public class NodeMenu extends SimplePanel {
 						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			tree.validateTree();
 			Moderator.reloadEquationPanel("");
 		}
 	}
@@ -350,7 +348,6 @@ public class NodeMenu extends SimplePanel {
 						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			tree.validateTree();
 			Moderator.reloadEquationPanel("");
 		}
 	}

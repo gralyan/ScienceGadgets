@@ -14,32 +14,15 @@
  */
 package com.sciencegadgets.client.algebra;
 
-import java.util.LinkedList;
-
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgOut.AlgOutSlide;
-import com.sciencegadgets.client.equationbrowser.EquationDatabase;
 
 public class AlgOut extends FlowPanel{
 
@@ -57,8 +40,6 @@ public class AlgOut extends FlowPanel{
 				slide.run(300);
 				}
 			}, ClickEvent.getType());
-			
-			
 	}
 
 
@@ -66,7 +47,6 @@ public class AlgOut extends FlowPanel{
 		
 		getElement().appendChild(change.cloneNode(true));
 		add(eqHTML);
-
 	}
 	
 	class AlgOutSlide extends Animation{
@@ -92,14 +72,12 @@ public class AlgOut extends FlowPanel{
 			growerHeightStyle = grower.getElement().getStyle().getHeight();
 			shrinkerHeightStyle = shrinker.getElement().getStyle().getHeight();
 		}
-
 		@Override
 		protected void onUpdate(double progress) {
 			double diff = ((shrinkerHeight-growerHeight)*progress);
 			grower.setHeight((growerHeight+diff)+"px");
 			shrinker.setHeight((shrinkerHeight-diff)+"px");
 		}
-
 		@Override
 		protected void onComplete() {
 			super.onComplete();

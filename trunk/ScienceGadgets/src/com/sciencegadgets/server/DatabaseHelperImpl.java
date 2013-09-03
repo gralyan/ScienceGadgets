@@ -66,7 +66,8 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	public String[] getAlgebraEquations() throws IllegalArgumentException {
 		
 		List<Equation> eqList = ObjectifyService.ofy().load()
-				.type(Equation.class).limit(20).list();
+				.type(Equation.class).list();
+//		.type(Equation.class).limit(20).list();
 		
 		int listSize = eqList.size();
 		String[] eqArray = new String[listSize];

@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.AlgOut;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathMLBindingTree;
@@ -56,20 +57,19 @@ public class Moderator implements EntryPoint {
 	private static int SGAHeight;
 	public static SymbolPalette symbolPopup;
 	public static RandomSpecification randomSpec;
-	public static ChangeNodeMenu changeNodeMenu;
 	public static String focusLayerId;
+	private final DatabaseHelperAsync dataBase = GWT
+			.create(DatabaseHelper.class);
+	private static AbsolutePanel scienceGadgetArea = RootPanel
+			.get("scienceGadgetArea");
 	private Button saveEquationButton = new Button("Save Equation",
 			new SaveButtonHandler());
 	private EquationBrowser browserPanel = null;
-	private static AbsolutePanel scienceGadgetArea = RootPanel
-			.get("scienceGadgetArea");
 	private static Activity currentActivity = null;
-
-	private final DatabaseHelperAsync dataBase = GWT
-			.create(DatabaseHelper.class);
 	private static AlgOut algOut;
 	public static FlowPanel upperEqArea;
 	public static FlowPanel lowerEqArea;
+	public static ChangeNodeMenu changeNodeMenu;
 
 	// private static DropControllAssigner dropAssigner;
 
@@ -86,7 +86,7 @@ public class Moderator implements EntryPoint {
 	}
 
 	public enum Activity {
-		equation_browser, algebra, random_spec, insert_symbol, conversion;
+		equation_browser, algebra, random_spec, insert_symbol, conversion, ;
 	}
 
 	public static void setActivity(Activity activity) {
@@ -94,17 +94,6 @@ public class Moderator implements EntryPoint {
 			currentActivity = activity;
 			History.newItem(activity.toString());
 		}
-	}
-
-	/**
-	 * Creates the view of the equation
-	 * 
-	 * @param mathML
-	 *            - the equation as a string
-	 */
-	public void makeAlgebraWorkspace(String mathMl) {
-		HTML html = new HTML(mathMl);
-		makeAlgebraWorkspace(html.getElement().getFirstChildElement());
 	}
 
 	/**
@@ -149,15 +138,9 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.add(lowerEqArea);
 
 		try {
-			if (mathML != null) {// fitWindow calls this method with
-									// mathML==null
+			if (mathML != null) {
 				jTree = new MathMLBindingTree(mathML, inEditMode);
 				reloadEquationPanel(null);
-			}
-
-			if (inEditMode) {
-				// AlgOutEntry.algOut.add(new HTML("aaaa")/*new
-				// ChangeNodeMenu(eqList.selectedWrapper)*/);
 			}
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
@@ -178,6 +161,7 @@ public class Moderator implements EntryPoint {
 		}
 		eqPanelHolder.clear();
 		jTree.reloadEqHTML();
+		jTree.validateTree();
 		eqPanel = new EquationPanel(jTree, inEditMode);
 		eqPanelHolder.add(eqPanel);
 
@@ -190,6 +174,7 @@ public class Moderator implements EntryPoint {
 
 	public void switchToBrowser() {
 		// DOM.getElementById("algebraWorkspace").getStyle().setDisplay(Display.NONE);
+		scienceGadgetArea.clear();
 
 		if (browserPanel == null) {
 			browserPanel = new EquationBrowser(this);
@@ -236,7 +221,7 @@ public class Moderator implements EntryPoint {
 			@Override
 			public void run() {
 				fitWindow();
-				if(Activity.algebra.equals(currentActivity)){
+				if (Activity.algebra.equals(currentActivity)) {
 					reloadEquationPanel(null);
 				}
 			}
@@ -262,8 +247,15 @@ public class Moderator implements EntryPoint {
 
 		@Override
 		public void onValueChange(ValueChangeEvent<String> event) {
-
-			switch (Activity.valueOf((java.lang.String) event.getValue())) {
+			Activity newActivity;
+			try {
+				newActivity = Activity.valueOf((java.lang.String) event
+						.getValue());
+			} catch (IllegalArgumentException e) {
+				newActivity = Activity.equation_browser;
+				currentActivity = Activity.equation_browser;
+			}
+			switch (newActivity) {
 			case equation_browser:
 
 				eqPanelHolder.clear();
@@ -303,7 +295,6 @@ public class Moderator implements EntryPoint {
 
 			}
 		}
-
 	}
 
 }
