@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathMLBindingTree;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
@@ -83,10 +84,10 @@ public class ChangeNodeMenu extends FlowPanel {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			EditWrapper selectedWrapper = (EditWrapper) Wrapper.selectedWrapper;
+//			EditWrapper selectedWrapper = (EditWrapper) Wrapper.selectedWrapper;
 			
-			if (selectedWrapper != null) {
-				MathMLBindingNode node = selectedWrapper.getNode();
+			if (EquationPanel.selectedWrapper != null) {
+				MathMLBindingNode node = EquationPanel.selectedWrapper.getNode();
 				MathMLBindingNode parent = node.getParent();
 
 				switch (parent.getType()) {
@@ -107,7 +108,7 @@ public class ChangeNodeMenu extends FlowPanel {
 					} else {
 						Label responseNotes = new Label(
 								"You should just change the parent");
-						selectedWrapper.getEditMenu().setResponse(responseNotes);
+						((EditWrapper) EquationPanel.selectedWrapper).getEditMenu().setResponse(responseNotes);
 					}
 					break;
 				case Exponential:
@@ -139,10 +140,10 @@ public class ChangeNodeMenu extends FlowPanel {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			EditWrapper selectedWrapper = (EditWrapper) Wrapper.selectedWrapper;
+//			EditWrapper selectedWrapper = (EditWrapper) EquationPanel.selectedWrapper;
 
-			if (selectedWrapper != null) {
-				MathMLBindingNode node = selectedWrapper.getNode();
+			if (EquationPanel.selectedWrapper != null) {
+				MathMLBindingNode node = EquationPanel.selectedWrapper.getNode();
 				MathMLBindingNode parent = node.getParent();
 				int index = node.getIndex();
 
@@ -176,7 +177,6 @@ public class ChangeNodeMenu extends FlowPanel {
 						newNode.add(-1, Type.Variable, NOT_SET);
 						parent.add(index, newNode);
 
-						newNode.validate();
 					}
 					Moderator.reloadEquationPanel("");
 					

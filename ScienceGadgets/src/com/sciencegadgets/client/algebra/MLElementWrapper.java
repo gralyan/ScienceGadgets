@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
-import com.sciencegadgets.client.algebra.Wrapper.WrapperMouseOutHandler;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -55,9 +54,9 @@ public class MLElementWrapper extends Wrapper {
 	public MLElementWrapper(MathMLBindingNode node, EquationPanel eqPanel,
 			EquationLayer eqLayer, Element element) {
 		super(node, eqPanel, eqLayer, element);
-		
-		bothSidesMenu = new NodeMenu(this, element.getOffsetWidth()+"px");
-		addMouseOutHandler(new Wrapper.WrapperMouseOutHandler());
+
+		bothSidesMenu = new NodeMenu(this, element.getOffsetWidth() + "px");
+		// addMouseOutHandler(new Wrapper.WrapperMouseOutHandler());
 	}
 
 	/**
@@ -70,13 +69,9 @@ public class MLElementWrapper extends Wrapper {
 			addDragController();
 	}
 
-	public void setSelectedWrapper(MLElementWrapper selectedWrapper) {
-		this.selectedWrapper = selectedWrapper;
-	}
-
-//	public NodeMenu getContextMenu() {
-//		return (NodeMenu) menu;
-//	}
+	// public NodeMenu getContextMenu() {
+	// return (NodeMenu) menu;
+	// }
 
 	public HTML getDropDescriptor() {
 		return dropDescriptor;
@@ -97,8 +92,7 @@ public class MLElementWrapper extends Wrapper {
 	 */
 	public WrapDragController addDragController() {
 
-		WrapDragController dragC = new WrapDragController(
-				eqPanel/*(AbsolutePanel) this.getParent()*/, false);
+		WrapDragController dragC = new WrapDragController(eqPanel, false);
 
 		dragController = dragC;
 		dragController.makeDraggable(this);
@@ -130,79 +124,11 @@ public class MLElementWrapper extends Wrapper {
 	 *            - selects if true, unselects if false
 	 */
 	public void select() {
-		super.select();
-		MLElementWrapper wrapper = this;
-		
 		Moderator.lowerEqArea.add(bothSidesMenu);
-
-//		String path = "com.sciencegadgets.client.algebramanipulation.dropcontrollers.DropController_";
-//		String changeDesc = "";
-//
-//		for (DropController dropC : wrapper.dragController.getDropControllers()) {
-//
-//			String className = dropC.getClass().getName();
-//			String change = ((AbstractMathDropController) dropC)
-//					.findChange(getNode());
-//
-//			// Style of highlight on potential targets
-//			if ((path + "Simplify_Add").equals(className)) {
-//				changeDesc = "<b>Simplify</b> <br/>" + change;
-//
-//			} else if ((path + "Simplify_Multiply").equals(className)) {
-//				changeDesc = "<b>Simplify</b> <br/>" + change;
-//
-//			} else if ((path + "Simplify_Divide").equals(className)) {
-//				changeDesc = "<b>Simplify</b> <br/>" + change;
-//
-//			} else if ((path + "BothSides_Add").equals(className)) {
-//				changeDesc = "<b>Add &nbsp; " + change
-//						+ "</b><br/>to both sides";
-//
-//			} else if ((path + "BothSides_Multiply").equals(className)) {
-//				changeDesc = "<b>Multiply &nbsp; " + change
-//						+ "</b><br/>with both sides";
-//
-//			} else if ((path + "BothSides_Divide").equals(className)) {
-//				changeDesc = "<b>Divide by &nbsp; " + change
-//						+ "</b><br/>on both sides";
-//			}
-//
-//			// Highlights drop targets
-//			MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
-//					.getDropTarget());
-//			dropC.getDropTarget().setStyleName("selectedDropWrapper");
-//
-//			// Descriptors
-//			HTML dropDesc = dropCwrap.getDropDescriptor();
-//			dropDesc.setHTML(changeDesc);
-//			dropDesc.setStyleName("dropDescriptor");
-//		}
-
+		super.select();
 	}
-
 	public void unselect() {
+		Moderator.lowerEqArea.clear();
 		super.unselect();
-		MLElementWrapper wrapper = this;
-
-		Moderator.lowerEqArea.remove(bothSidesMenu);
-		
-//		for (DropController dropC : wrapper.dragController.getDropControllers()) {
-//
-//			String[] styles = dropC.getDropTarget().getStyleName().split(" ");
-//
-//			MLElementWrapper dropCwrap = (MLElementWrapper) dropC
-//					.getDropTarget();
-//
-//			for (String style : styles) {
-//				if (style.startsWith("selectedDropWrapper")) {
-//					dropCwrap.removeStyleName(style);
-//					// dropCwrap.getJoinedWrapper().removeStyleName(style);
-//				}
-//
-//				HTML dropDesc = dropCwrap.getDropDescriptor();
-//				dropDesc.setText("");
-//				dropDesc.removeStyleName("dropDescriptor");
-//			}
-//		}
 	}
 }

@@ -13,11 +13,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.algebra.edit.EditWrapper;
 
 public class Wrapper extends HTML {
 
-	public static Wrapper selectedWrapper;
 	protected MathMLBindingNode node;
 	protected EquationPanel eqPanel;
 	protected EquationLayer eqLayer;
@@ -47,11 +48,9 @@ public class Wrapper extends HTML {
 		//zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(2);
 
-		Wrapper.selectedWrapper = EquationPanel.selectedWrapper;
-
 		addClickHandler(new WrapperClickHandler());
-		addMouseOverHandler(new WrapperMouseOverHandler());
-		addTouchStartHandler(new WrapperTouchHandler());
+//		addMouseOverHandler(new WrapperMouseOverHandler());
+//		addTouchStartHandler(new WrapperTouchHandler());
 
 	}
 
@@ -83,32 +82,45 @@ public class Wrapper extends HTML {
 	public Wrapper getParentWrapper() {
 		return node.getParent().getWrapper();
 	}
+	
+	//Public selection methods, calls subclasses appropriately
+	public void select(boolean inEditMode){
+		if(inEditMode){
+						((EditWrapper)this).select();
+					}else{
+						((MLElementWrapper)this).select();
+					}
+	}
+	public void unselect(boolean inEditMode){
+		if(inEditMode){
+			((EditWrapper)this).unselect();
+		}else{
+			((MLElementWrapper)this).unselect();
+		}
+	}
 
-	public void select() {
+	protected void select() {
 
-		if (selectedWrapper != null) {
-			if (this.equals(selectedWrapper)) {
+			if (this.equals(EquationPanel.selectedWrapper)) {
+				System.out.println("going in");
 				// If this was already selected, focus in on it
 				if(node.getType().hasChildren()){
 					eqPanel.setFocus(eqLayer);
 				}
 			} else {
 				// If there is another selection, unselect it
-				selectedWrapper.unselect();
+				if(EquationPanel.selectedWrapper != null){
+					
+					EquationPanel.selectedWrapper.unselect(Moderator.inEditMode);
+				}
+				EquationPanel.selectedWrapper = this;
+				this.getElement().addClassName("selectedWrapper");
 			}
-		}
-		selectedWrapper = this;
-		this.getElement().setAttribute("id", "selectedWrapper");
 	}
 
-	public void unselect() {
-		selectedWrapper = null;
-		this.getElement().removeAttribute("id");
-	}
-
-	@Override
-	public int getOffsetWidth() {
-		return super.getOffsetWidth();// +paddingLeft+paddingRight;
+	protected void unselect() {
+		EquationPanel.selectedWrapper = null;
+		this.getElement().removeClassName("selectedWrapper");
 	}
 
 	// /////////////////////////////////////////////////////////////////////
@@ -120,55 +132,38 @@ public class Wrapper extends HTML {
 		public void onClick(ClickEvent event) {
 			event.preventDefault();
 			event.stopPropagation();
-			select();
+			select(Moderator.inEditMode);
 		}
 	}
 
-	class WrapperTouchHandler implements TouchStartHandler {
+//	class WrapperTouchHandler implements TouchStartHandler {
+//
+//		@Override
+//		public void onTouchStart(TouchStartEvent event) {
+//			event.preventDefault();
+//			event.stopPropagation();
+//			select();
+//		}
+//	}
 
-		@Override
-		public void onTouchStart(TouchStartEvent event) {
-			event.preventDefault();
-			event.stopPropagation();
-			select();
-		}
-	}
-
-	class WrapperMouseOverHandler implements MouseOverHandler {
-		@Override
-		public void onMouseOver(MouseOverEvent event) {
-			// Select if it wasn't selected before
-			if (!((Wrapper) event.getSource()).equals(selectedWrapper)) {
-				select();
-			}
-		}
-	}
+//	class WrapperMouseOverHandler implements MouseOverHandler {
+//		@Override
+//		public void onMouseOver(MouseOverEvent event) {
+//			// Select if it wasn't selected before
+//			if (!((Wrapper) event.getSource()).equals(selectedWrapper)) {
+//				select();
+//			}
+//		}
+//	}
 	
-	public class WrapperMouseOutHandler implements MouseOutHandler {
-		@Override
-		public void onMouseOut(MouseOutEvent event) {
-			// Unselect when mouse moves out
-			if (((Wrapper) event.getSource()).equals(selectedWrapper)) {
-				unselect();
-			}
-		}
-	}
-
-	// @Override
-	// public HandlerRegistration addTouchStartHandler(TouchStartHandler
-	// handler) {
-	// return addDomHandler(handler, TouchStartEvent.getType());
-	// }
-	//
-	// @Override
-	// public HandlerRegistration addMouseOverHandler(MouseOverHandler handler)
-	// {
-	// return addDomHandler(handler, MouseOverEvent.getType());
-	// }
-	//
-	// @Override
-	// public HandlerRegistration addClickHandler(ClickHandler handler) {
-	// return addDomHandler(handler, ClickEvent.getType());
-	// }
+//	public class WrapperMouseOutHandler implements MouseOutHandler {
+//		@Override
+//		public void onMouseOut(MouseOutEvent event) {
+//			// Unselect when mouse moves out
+//			if (((Wrapper) event.getSource()).equals(selectedWrapper)) {
+//				unselect();
+//			}
+//		}
+//	}
 
 }

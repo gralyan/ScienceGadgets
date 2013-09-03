@@ -31,7 +31,6 @@ public class EditWrapper extends Wrapper {
 	}
 
 	public void select() {
-		super.select();
 		Type parentType = node.getParentType();
 		Type nodeType = node.getType();
 
@@ -51,10 +50,10 @@ public class EditWrapper extends Wrapper {
 		if (!Type.Operation.equals(nodeType)) {
 			changeNodeMenu.setVisible(true);
 		}
+		super.select();
 	}
 
 	public void unselect() {
-		super.unselect();
 		changeNodeMenu.setVisible(false);
 
 		menu.setVisible(false);
@@ -65,6 +64,7 @@ public class EditWrapper extends Wrapper {
 		for (Type type : Type.values()) {
 			changeNodeMenu.setEnable(type, true);
 		}
+		super.unselect();
 	}
 
 	public EditMenu getEditMenu() {

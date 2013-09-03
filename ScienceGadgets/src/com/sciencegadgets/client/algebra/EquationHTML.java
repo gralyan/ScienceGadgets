@@ -212,17 +212,28 @@ public class EquationHTML extends HTML {
 					int lift = tallestDenominator;
 					if (child.getClassName().contains(Type.Fraction.toString())) {
 						lift -= ((Element) child.getChild(1)).getOffsetHeight();
+						if (lift != tallestDenominator) {// if changed
+							// Lift frac to match horizontal lines
+							child.getStyle().setBottom(lift, Unit.PX);
+						}
 					} else if (fracContainerSibs.contains(child)) {
 						if (!fracContainers.contains(child)) {
-							lift -= (liftCenter / 2);
+							
 							child.getStyle().clearHeight();
+							
+							lift -= (liftCenter / 2);
+							// Lift Text to center of tallest denominator
+							//Lift only parents, propagates down
+							child.getStyle().setBottom(lift, Unit.PX);
+							
+							//Pad only terminal nodes, propagates up
+							LinkedList<Element> terminals = new LinkedList<Element>();
+							findTerminalChildren(child, terminals);
+							for(Element terminal : terminals){
+								// Match bottoms of all inline terminals with padding
+								terminal.getStyle().setPaddingBottom(lift, Unit.PX);
+							}
 						}
-					}
-					if (lift != tallestDenominator) {// if changed
-						// Lift Text to center of tallest denominator
-						child.getStyle().setBottom(lift, Unit.PX);
-						// Match bottoms of all inline siblings with padding
-						child.getStyle().setPaddingBottom(lift, Unit.PX);
 					}
 				}
 			}
@@ -291,6 +302,18 @@ public class EquationHTML extends HTML {
 				}
 			}
 			fracContain = fracContain.getParentElement();
+		}
+	}
+	
+	private void findTerminalChildren(Element el, LinkedList<Element> terminals){
+		NodeList<Node> children = el.getChildNodes();
+		for(int i=0 ; i<children.getLength() ; i++){
+			Node child = children.getItem(i);
+			if(Node.ELEMENT_NODE == child.getNodeType()){
+				findTerminalChildren((Element) child, terminals);
+			}else{
+				terminals.add(el);
+			}
 		}
 	}
 }
