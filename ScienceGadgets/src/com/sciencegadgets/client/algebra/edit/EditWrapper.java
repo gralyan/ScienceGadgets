@@ -4,29 +4,21 @@ import com.google.gwt.user.client.Element;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationLayer;
 import com.sciencegadgets.client.algebra.EquationPanel;
-import com.sciencegadgets.client.algebra.MathMLBindingTree;
+import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class EditWrapper extends Wrapper {
 
 	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
-//	public EditWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-//			EquationLayer eqLayer, String width, String height) {
-//		super(node, eqPanel, eqLayer, width, height);
-//
-//		editMenu = new EditMenu(this, width);
-//		editMenu.setVisible(false);
-//
-//	}
-	public EditWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, Element element) {
-		super(node, eqPanel, eqLayer, element);
+	public EditWrapper(MathNode node, EquationPanel eqPanel,
+			 Element element) {
+		super(node, eqPanel,  element);
 		
 		menu = new EditMenu(this, element.getOffsetWidth()+"px");
-		menu.setVisible(false);
+//		menu.setVisible(false);
 		
 	}
 
@@ -41,7 +33,7 @@ public class EditWrapper extends Wrapper {
 
 		// Display editMenu if this wrapper has been set(not ???)
 		if (!ChangeNodeMenu.NOT_SET.equals(node.getSymbol())) {
-			menu.setVisible(true);
+//			menu.setVisible(true);
 			// editMenu.setFocus();
 			// Disable menu options of the selected type
 			changeNodeMenu.setEnable(nodeType, false);
@@ -56,7 +48,7 @@ public class EditWrapper extends Wrapper {
 	public void unselect() {
 		changeNodeMenu.setVisible(false);
 
-		menu.setVisible(false);
+//		menu.setVisible(false);
 
 		if (((EditMenu) menu).getResponse() != null)
 			((EditMenu) menu).getResponse().removeFromParent();

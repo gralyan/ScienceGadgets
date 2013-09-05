@@ -18,27 +18,23 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang.math.Fraction;
-
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.TopNodesNotFoundException;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.algebra.edit.RandomSpecification;
+import com.sciencegadgets.client.algebra.Type.Operator;
 
-public class MathMLBindingTree {
+public class MathTree {
 
-	// private MathMLBindingTree tree = this;
-	private MathMLBindingNode root;
+	private MathNode root;
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	private HashMap<String, MathMLBindingNode> idMap = new HashMap<String, MathMLBindingNode>();
+	private HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
+	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private Element mathML;
 	private EquationHTML eqHTML;
 	private boolean inEditMode;
@@ -55,7 +51,7 @@ public class MathMLBindingTree {
 	 *            from XML
 	 * @throws TopNodesNotFoundException
 	 */
-	public MathMLBindingTree(Element mathML, boolean inEditMode)
+	public MathTree(Element mathML, boolean inEditMode)
 			throws TopNodesNotFoundException {
 		if (!inEditMode) {
 			mathML = EquationRandomizer.randomizeNumbers(mathML);
@@ -74,25 +70,25 @@ public class MathMLBindingTree {
 	}
 
 	public EquationHTML getEqHTMLClone() {
-//		return (Element) eqHTML.cloneNode(true);
+		// return (Element) eqHTML.cloneNode(true);
 		return new EquationHTML(mathML);
 	}
 
-	public MathMLBindingNode getRoot() {
+	public MathNode getRoot() {
 		return root;
 	}
 
-	public MathMLBindingNode getLeftSide() {
+	public MathNode getLeftSide() {
 		checkSideForm();
 		return root.getChildAt(0);
 	}
 
-	public MathMLBindingNode getRightSide() {
+	public MathNode getRightSide() {
 		checkSideForm();
 		return root.getChildAt(2);
 	}
 
-	public MathMLBindingNode getEquals() {
+	public MathNode getEquals() {
 		checkSideForm();
 		return root.getChildAt(1);
 	}
@@ -109,19 +105,29 @@ public class MathMLBindingTree {
 							+ getMathMLClone().getString());
 		}
 	}
-	
-	public void reloadEqHTML(){
-//		eqHTML = EquationHTML.makeEquationHTML(this);
+
+	public void reloadEqHTML() {
 		eqHTML = new EquationHTML(mathML);
+
+		idHTMLMap.clear();
+
+		NodeList<Element> allElements = eqHTML.getElement()
+				.getElementsByTagName("*");
+		for (int i = 0; i < allElements.getLength(); i++) {
+			Element el = (Element) allElements.getItem(i).cloneNode(true);
+			idHTMLMap.put(el.getAttribute("id"), el);
+			el.removeAttribute("class");
+			el.removeAttribute("id");
+			el.getStyle().setDisplay(Display.INLINE_BLOCK);
+		}
 	}
 
 	public LinkedList<Wrapper> getWrappers() {
 		return wrappers;
 	}
 
-	public MathMLBindingNode getNodeById(String id)
-			throws NoSuchElementException {
-		MathMLBindingNode node = idMap.get(id);
+	public MathNode getNodeById(String id) throws NoSuchElementException {
+		MathNode node = idMap.get(id);
 		if (node == null) {
 			JSNICalls.consoleError("Can't get node by id: " + id + "\n"
 					+ getMathMLClone().getString());
@@ -130,12 +136,12 @@ public class MathMLBindingTree {
 		return node;
 	}
 
-	public MathMLBindingNode NEW_NODE(Element mlNode) {
-		return new MathMLBindingNode(mlNode);
+	public MathNode NEW_NODE(Element mlNode) {
+		return new MathNode(mlNode);
 	}
 
-	public MathMLBindingNode NEW_NODE(Type type, String symbol) {
-		return new MathMLBindingNode(type, symbol);
+	public MathNode NEW_NODE(Type type, String symbol) {
+		return new MathNode(type, symbol);
 	}
 
 	private String createId() {
@@ -143,7 +149,8 @@ public class MathMLBindingTree {
 	}
 
 	public void validateTree() {
-		for (MathMLBindingNode node : idMap.values()) {
+
+		for (MathNode node : idMap.values()) {
 			node.validate();
 		}
 	}
@@ -152,14 +159,14 @@ public class MathMLBindingTree {
 	// Node Class
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class MathMLBindingNode {
+	public class MathNode {
 		private Element mlNode;
 		private Wrapper wrapper;
 
 		/**
 		 * Wrap existing MathML node
 		 */
-		public MathMLBindingNode(Element mlNode) {
+		public MathNode(Element mlNode) {
 
 			if ("".equals(mlNode.getAttribute("id"))) {
 				mlNode.setAttribute("id", createId());
@@ -180,7 +187,7 @@ public class MathMLBindingTree {
 		 * @param symbol
 		 *            - inner text
 		 */
-		public MathMLBindingNode(Type type, String symbol) {
+		public MathNode(Type type, String symbol) {
 
 			String tag = type.getTag();
 
@@ -202,9 +209,9 @@ public class MathMLBindingTree {
 		 *            - the tag of the new node
 		 * @return - encasing node
 		 */
-		public MathMLBindingNode encase(Type type) {
+		public MathNode encase(Type type) {
 
-			MathMLBindingNode encasing = new MathMLBindingNode(type, "");
+			MathNode encasing = new MathNode(type, "");
 
 			// Move around nodes
 			this.getParent().add(this.getIndex(), encasing);
@@ -232,7 +239,7 @@ public class MathMLBindingTree {
 		 * @param children
 		 *            - children of this added node
 		 */
-		public void add(int index, MathMLBindingNode node)
+		public void add(int index, MathNode node)
 				throws IllegalArgumentException {
 
 			Element elementNode = node.getMLNode();
@@ -264,25 +271,25 @@ public class MathMLBindingTree {
 		 * @return - The newly create child
 		 * @throws Exception
 		 */
-		public MathMLBindingNode add(int index, Type type, String symbol)
+		public MathNode add(int index, Type type, String symbol)
 				throws NoSuchElementException {
-			MathMLBindingNode newNode = new MathMLBindingNode(type, symbol);
+			MathNode newNode = new MathNode(type, symbol);
 			this.add(index, newNode);
 			return newNode;
 		}
 
-		public void add(MathMLBindingNode newNode) {
+		public void add(MathNode newNode) {
 			add(-1, newNode);
 		}
 
-		public MathMLBindingNode add(Type type, String symbol)
+		public MathNode add(Type type, String symbol)
 				throws NoSuchElementException {
 			return add(-1, type, symbol);
 		}
 
-		public LinkedList<MathMLBindingNode> getChildren() {
+		public LinkedList<MathNode> getChildren() {
 			NodeList<Node> childrenNodesList = getMLNode().getChildNodes();
-			LinkedList<MathMLBindingNode> childrenNodes = new LinkedList<MathMLBindingNode>();
+			LinkedList<MathNode> childrenNodes = new LinkedList<MathNode>();
 
 			for (int i = 0; i < childrenNodesList.getLength(); i++) {
 				Node curNode = childrenNodesList.getItem(i);
@@ -296,13 +303,13 @@ public class MathMLBindingTree {
 			return childrenNodes;
 		}
 
-		public MathMLBindingNode getChildAt(int index) {
+		public MathNode getChildAt(int index) {
 			Node node = getMLNode().getChildNodes().getItem(index);
 			String id = ((Element) node).getAttribute("id");
 			return getNodeById(id);
 		}
 
-		public MathMLBindingNode getFirstChild() {
+		public MathNode getFirstChild() {
 			return getChildAt(0);
 		}
 
@@ -310,13 +317,11 @@ public class MathMLBindingTree {
 			return mlNode.getChildCount();
 		}
 
-		public MathMLBindingNode getNextSibling()
-				throws IndexOutOfBoundsException {
+		public MathNode getNextSibling() throws IndexOutOfBoundsException {
 			return getSibling(1);
 		}
 
-		public MathMLBindingNode getPrevSibling()
-				throws IndexOutOfBoundsException {
+		public MathNode getPrevSibling() throws IndexOutOfBoundsException {
 			return getSibling(-1);
 		}
 
@@ -332,13 +337,13 @@ public class MathMLBindingTree {
 		 *            </p>
 		 * @return
 		 */
-		private MathMLBindingNode getSibling(int indexesAway)
+		private MathNode getSibling(int indexesAway)
 				throws IndexOutOfBoundsException {
-			MathMLBindingNode parent = this.getParent();
+			MathNode parent = this.getParent();
 			int siblingIndex = getIndex() + indexesAway;
 
 			try {
-				MathMLBindingNode sibling = parent.getChildAt(siblingIndex);
+				MathNode sibling = parent.getChildAt(siblingIndex);
 				return sibling;
 			} catch (JavaScriptException e) {
 				throw new IndexOutOfBoundsException(
@@ -358,9 +363,9 @@ public class MathMLBindingTree {
 		}
 
 		private void removeChildren() {
-			LinkedList<MathMLBindingNode> children = getChildren();
+			LinkedList<MathNode> children = getChildren();
 
-			for (MathMLBindingNode child : children) {
+			for (MathNode child : children) {
 				JSNICalls.consoleLog("Removing Nested child: "
 						+ child.toString());
 				String id = child.getId();
@@ -374,7 +379,7 @@ public class MathMLBindingTree {
 			return this.getParent().getChildren().indexOf(this);
 		}
 
-		public MathMLBindingNode getParent() {
+		public MathNode getParent() {
 			if ("math".equalsIgnoreCase(getTag())) {
 				throw new NoSuchElementException(
 						"Can't get the parent of a math tag because it's the root:\n"
@@ -382,16 +387,111 @@ public class MathMLBindingTree {
 			}
 			Element parentElement = getMLNode().getParentElement();
 			String parentId = parentElement.getAttribute("id");
-			MathMLBindingNode parentNode = getNodeById(parentId);
+			MathNode parentNode = getNodeById(parentId);
 			return parentNode;
 		}
 
+		public Element getMLNode() {
+			return mlNode;
+		}
+
+		public String toString() {
+			return mlNode.getString();
+		}
+
+		public void setSymbol(String symbol) {
+			mlNode.setInnerText(symbol);
+		}
+
+		public String getSymbol() {
+			return mlNode.getInnerText();
+		}
+
+		public Wrapper wrap(Wrapper wrap) {
+			wrapper = wrap;
+			wrappers.add(wrapper);
+			return wrapper;
+		}
+
+		public Wrapper getWrapper() {
+			return wrapper;
+		}
+
 		/**
-		 * validates the proper number of children, numbers can be parsed, no
-		 * sums within sums or terms within terms, and adds parentheses where
-		 * needed
+		 * @return Tag of MathML DOM node in <b>Lower Case</b>
 		 */
-		public void validate() {
+		public String getTag() {
+			return mlNode.getTagName().toLowerCase();
+		}
+
+		public MathTree getTree() {
+			return MathTree.this;
+		}
+
+		public String getId() {
+			return getMLNode().getAttribute("id");
+		}
+
+		public boolean isLeftSide() {
+			if (this.equals(root.getChildAt(0)))
+				return true;
+			else
+				return false;
+		}
+
+		public boolean isRightSide() {
+			if (this.equals(root.getChildAt(2)))
+				return true;
+			else
+				return false;
+		}
+
+		public Type.Operator getOperation() {
+			if ("mo".equalsIgnoreCase(getTag())) {
+				String symbol = getSymbol();
+
+				for (Type.Operator op : Type.Operator.values()) {
+					if (op.getSign().equalsIgnoreCase(symbol)
+							|| op.getHTML().equalsIgnoreCase(symbol)) {
+						return op;
+					}
+				}
+			}
+			// throw new
+			// InvalidParameterException("Can't getOperation for this node: "+toString());
+			return null;
+		}
+
+		public Type getType() {
+			return Type.getType(getTag());
+		}
+
+		public Type getParentType() {
+			String parentTag = getMLNode().getParentElement().getTagName();
+			return Type.getType(parentTag);
+		}
+
+		public Element getHTMLElement() {
+			Element el = idHTMLMap.get(getId());
+			if (el == null) {
+				JSNICalls.consoleWarn("No HTML for node: " + toString());
+			}
+			return (Element) el.cloneNode(true);
+		}
+
+		public String getHTMLString() {
+			Element el = idHTMLMap.get(getId());
+			if (el == null) {
+				JSNICalls.consoleWarn("No HTML for node: " + toString());
+			}
+			return el.getString();
+		}
+		/**
+		 * Validates the proper number of children, numbers can be parsed, no
+		 * sums within sums or terms within terms, and collects nodes to
+		 * decorate with {@link #decorateWithAesthetics()}
+		 */
+		private void validate() {
 
 			int childCount = getChildCount();
 
@@ -399,7 +499,7 @@ public class MathMLBindingTree {
 
 			switch (getType()) {
 			case Number:
-				// Confirm that the symbol is a number or random number spec
+				// Confirm that the symbol is a number in solve mode
 				if (!inEditMode) {
 					try {
 						Double.parseDouble(getSymbol());
@@ -408,47 +508,28 @@ public class MathMLBindingTree {
 					}
 				}
 				// no break
-			case Variable:// Confirm that there are no children
+			case Variable:
+				// no break
 			case Operation:
+				// Confirm that there are no children
 				if (childCount != 1) {
 					isWrongChildren = true;
 				}
 				break;
-
 			case Exponential:// Confirm that there are 2 children
 			case Fraction:
 				if (childCount != 2) {
 					isWrongChildren = true;
 				}
 				break;
-
 			case Sum:
-				Element elementNode = getMLNode();
-
-				elementNode.setAttribute("separators", "");
-				String open = "",
-				close = "";
-
-				switch (getParentType()) {
-				case Sum:
-					isSumception = true;
-					break;
-				case Term:
-				case Exponential:
-					open = "(";
-					close = ")";
-					break;
-				}
-				elementNode.setAttribute("open", open);
-				elementNode.setAttribute("close", close);
-				if (childCount < 3) {
-					isWrongChildren = true;
-				}
-				break;
-
 			case Term:// Confirm that there are < 3 children
-				if (Type.Term.equals(getParent().getType())) {
-					isTermception = true;
+				if (getType().equals(getParent().getType())) {
+					if (Type.Term.equals(getType())) {
+						isTermception = true;
+					} else if (Type.Sum.equals(getType())) {
+						isSumception = true;
+					}
 				}
 				if (childCount < 3) {
 					isWrongChildren = true;
@@ -486,165 +567,7 @@ public class MathMLBindingTree {
 			}
 		}
 
-		public Element getMLNode() {
-			return mlNode;
-		}
 
-		public String toString() {
-			return mlNode.getString();
-		}
-
-		public void setSymbol(String symbol) {
-			mlNode.setInnerText(symbol);
-		}
-
-		public String getSymbol() {
-			return mlNode.getInnerText();
-		}
-
-		public Wrapper wrap(Wrapper wrap) {
-			wrapper = wrap;
-			wrappers.add(wrapper);
-			return wrapper;
-		}
-
-		public Wrapper getWrapper() {
-			return wrapper;
-		}
-
-		/**
-		 * @return Tag of MathML DOM node in <b>Lower Case</b>
-		 */
-		public String getTag() {
-			return mlNode.getTagName().toLowerCase();
-		}
-
-		public MathMLBindingTree getTree() {
-			return MathMLBindingTree.this;
-		}
-
-		public String getId() {
-			return getMLNode().getAttribute("id");
-		}
-
-		public boolean isLeftSide() {
-			if (this.equals(root.getChildAt(0)))
-				return true;
-			else
-				return false;
-		}
-
-		public boolean isRightSide() {
-			if (this.equals(root.getChildAt(2)))
-				return true;
-			else
-				return false;
-		}
-
-		public Operator getOperation() {
-			if ("mo".equalsIgnoreCase(getTag())) {
-				String symbol = getSymbol();
-
-				for (Operator op : Operator.values()) {
-					if (op.getSign().equalsIgnoreCase(symbol)
-							|| op.getHTML().equalsIgnoreCase(symbol)) {
-						return op;
-					}
-				}
-			}
-			// throw new
-			// InvalidParameterException("Can't getOperation for this node: "+toString());
-			return null;
-		}
-
-		public Type getType() {
-			return Type.getType(getTag());
-		}
-		
-		public Type getParentType(){
-			String parentTag = getMLNode().getParentElement().getTagName();
-			return Type.getType(parentTag);
-		}
-
-	}
-
-	public static enum Type {
-		Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
-				"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
-				"mo", false), Equation("math", true);
-
-		private String tag;
-		private boolean hasChildren;
-		public final String IN_PREFIX = "in-";
-
-		Type(String tag, boolean hasChildren) {
-			this.tag = tag;
-			this.hasChildren = hasChildren;
-		}
-		
-		public String asChild(){
-			return (IN_PREFIX+toString().toLowerCase());
-		}
-
-		public String getTag() {
-			return tag;
-		}
-
-		public boolean hasChildren() {
-			return hasChildren;
-		}
-		
-		static Type getType(String tag) throws NoSuchElementException{
-			tag = tag.toLowerCase();
-			Type type = null;
-			if ("mfenced".equals(tag)) {
-				type = Type.Sum;
-			} else if ("mrow".equals(tag)) {
-				type = Type.Term;
-			} else if ("mi".equals(tag)) {
-				type = Type.Variable;
-			} else if ("mn".equals(tag)) {
-				type = Type.Number;
-			} else if ("msup".equals(tag)) {
-				type = Type.Exponential;
-			} else if ("mfrac".equals(tag)) {
-				type = Type.Fraction;
-			} else if ("mo".equals(tag)) {
-				type = Type.Operation;
-			} else if ("math".equals(tag)) {
-				type = Type.Equation;
-			}
-			if (type == null) {
-				throw new NoSuchElementException(
-						"There is no type for the tag: " + tag);
-			}
-			return type;
-		}
-	}
-
-	public static enum Operator {
-		DOT("\u00B7", "&middot;"), SPACE("\u00A0", "&nbsp;"), CROSS("\u00D7",
-				"&times;"), PLUS("+", "+"), MINUS("-", "-");
-
-		private String sign;
-		private String html;
-
-		Operator(String sign, String html) {
-			this.sign = sign;
-			this.html = html;
-		}
-
-		public String getSign() {
-			return sign;
-		}
-
-		public String getHTML() {
-			return html;
-		}
-
-		public static Operator getMultiply() {
-			return DOT;
-		}
 	}
 
 	private void bindMLtoNodes(Node mathMLequation)
@@ -652,7 +575,7 @@ public class MathMLBindingTree {
 
 		// Find the top tree nodes: [left side] <mo>=<mo> [right side]
 		Element rootNode = (Element) mathMLequation;
-		root = new MathMLBindingNode(rootNode);
+		root = new MathNode(rootNode);
 
 		addRecursively(rootNode);
 
@@ -675,7 +598,7 @@ public class MathMLBindingTree {
 		mathMLNode.setAttribute("id", id);
 
 		idMLMap.put(id, mathMLNode);
-		idMap.put(id, new MathMLBindingNode(mathMLNode));
+		idMap.put(id, new MathNode(mathMLNode));
 
 		NodeList<Node> mathMLChildren = (mathMLNode).getChildNodes();
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {

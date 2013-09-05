@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
@@ -12,39 +13,44 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Operator;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Type.Operator;
 
-public class NodeMenu extends SimplePanel {
-	private MLElementWrapper mlWrapper;
-	private MathMLBindingNode node;
-	private MathMLBindingNode parentNode;
-	private MathMLBindingTree tree;
+public class BothSidesMenu extends SimplePanel {
+	private MathWrapper mlWrapper;
+	private MathNode node;
+	private MathNode parentNode;
+	private MathTree tree;
 	Focusable focusable = null;
 	Widget responseNotes = null;
 	boolean isTopLevel = false;
 	boolean isNestedInFraction = false;
 
-	private final String PLUS = Operator.PLUS.getSign();
-	private final String MINUS = Operator.MINUS.getSign();
-	private final String CROSS = Operator.CROSS.getSign();
-	private final String DOT = Operator.DOT.getSign();
-	private final String SPACE = Operator.SPACE.getSign();
+	private final String PLUS = Type.Operator.PLUS.getSign();
+	private final String MINUS = Type.Operator.MINUS.getSign();
+	private final String CROSS = Type.Operator.CROSS.getSign();
+	private final String DOT = Type.Operator.DOT.getSign();
+	private final String SPACE = Type.Operator.SPACE.getSign();
 
-	public NodeMenu(MLElementWrapper mlWrapper, String width) {
-		
+	public BothSidesMenu(MathWrapper mlWrapper, String width) {
+
 		this.mlWrapper = mlWrapper;
 		this.node = mlWrapper.getNode();
 		tree = node.getTree();
 		parentNode = node.getParent();
-		
-		//zIndex eqPanel=1 wrapper=2 menu=3
+
+		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(3);
 		this.addStyleName("fillParent");
 
 		if (parentNode.isLeftSide() || parentNode.isRightSide()) {
-			if (!Type.Operation.equals(node.getType())) {
+			switch (node.getType()) {
+			case Sum:
+			case Term:
+			case Exponential:
+			case Fraction:
+			case Variable:
+			case Number:
 				isTopLevel = true;
 			}
 		}
@@ -111,23 +117,19 @@ public class NodeMenu extends SimplePanel {
 			this.addStyleName("bothSidesButton");
 			switch (operation) {
 			case ADD:
-//				setText(PLUS);
-				setText("Add " + node.getSymbol() + " to both sides");
+				setHTML("Add " + node.getHTMLString() + " to both sides");
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case SUBTRACT:
-//				setText(MINUS);
-				setText("Subtract both sides by " + node.getSymbol());
+				setHTML("Subtract both sides by " + node.getHTMLString());
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case MULTIPLY:
-//				setText(CROSS);
-				setText("Multiply both sides by " + node.getSymbol());
+				setHTML("Multiply both sides by " + node.getHTMLString());
 				addClickHandler(new MultiplyBothHandler());
 				break;
 			case DIVIDE:
-//				setText("divide");
-				setText("Divide both sides by " + node.getSymbol());
+				setHTML("Divide both sides by " + node.getHTMLString());
 				addClickHandler(new DivideBothHandler());
 				break;
 
@@ -143,14 +145,15 @@ public class NodeMenu extends SimplePanel {
 
 		protected boolean isOnTopLeft;
 		protected boolean isOnTopRight;
-		protected MathMLBindingNode targetSide = null;
+		protected MathNode targetSide = null;
 		// renamed for clarity
-		protected MathMLBindingNode oldParent = parentNode;
-		protected MathMLBindingNode oldNextSib;
+		protected MathNode oldParent = parentNode;
+		protected MathNode oldNextSib;
+		protected String changeComment = "";
 
 		BothSidesHandler() {
 
-			MathMLBindingNode topParent = null;
+			MathNode topParent = null;
 			if (isTopLevel) {
 				topParent = oldParent;
 			} else if (isNestedInFraction) {
@@ -168,6 +171,11 @@ public class NodeMenu extends SimplePanel {
 				JSNICalls.consoleWarn("Added bothSidesHandler to wrong node");
 			}
 		}
+
+		protected String doubleChangeComment() {
+			return changeComment = changeComment
+					+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + changeComment;
+		}
 	}
 
 	class AddOrSubBothHandler extends BothSidesHandler {
@@ -179,25 +187,28 @@ public class NodeMenu extends SimplePanel {
 			}
 			// take operation
 			if (node.getIndex() > 0) {
-				MathMLBindingNode operator = node.getPrevSibling();
+				MathNode operator = node.getPrevSibling();
 				// Flip sign
 				if (MINUS.equals(operator.getSymbol())) {
 					operator.setSymbol(PLUS);
+					changeComment += PLUS;
 				} else if (PLUS.equals(operator.getSymbol())) {
 					operator.setSymbol(MINUS);
+					changeComment += MINUS;
 				} else {
 					JSNICalls.consoleWarn("Unknown operation, can't flip");
 				}
 				targetSide.add(-1, operator);
 			} else {
-				targetSide.add(-1, Type.Operation, "-");
+				targetSide.add(-1, Type.Operation, MINUS);
+				changeComment += MINUS;
 			}
 
 			// move node to other side
 			targetSide.add(-1, node);
 
 			// clean source side
-			MathMLBindingNode oldFirstSib = oldParent.getFirstChild();
+			MathNode oldFirstSib = oldParent.getFirstChild();
 			if (oldFirstSib != null && PLUS.equals(oldFirstSib.getSymbol())) {
 				oldFirstSib.remove();
 			}
@@ -211,7 +222,7 @@ public class NodeMenu extends SimplePanel {
 			case 2:
 				if (MINUS.equals(oldParent.getFirstChild().getSymbol())) {
 					// Merge
-					MathMLBindingNode secondChild = oldParent.getChildAt(1);
+					MathNode secondChild = oldParent.getChildAt(1);
 					String secondChildSymbol = secondChild.getSymbol();
 					if (secondChildSymbol.startsWith(MINUS)) {
 						secondChild.setSymbol(secondChildSymbol.replaceFirst(
@@ -234,7 +245,8 @@ public class NodeMenu extends SimplePanel {
 				break;
 			}
 
-			Moderator.reloadEquationPanel("");
+			changeComment += node.toString();
+			Moderator.reloadEquationPanel(doubleChangeComment());
 		}
 	}
 
@@ -242,7 +254,7 @@ public class NodeMenu extends SimplePanel {
 		@Override
 		public void onClick(ClickEvent event) {
 			// take operation
-			MathMLBindingNode operator = null;
+			MathNode operator = null;
 			if (node.getIndex() > 0) {
 				operator = node.getPrevSibling();
 			}
@@ -257,7 +269,8 @@ public class NodeMenu extends SimplePanel {
 					targetSide = targetSide.encase(Type.Term);
 				}
 				if (operator == null) {
-					targetSide.add(-1, Type.Operation, DOT);
+					targetSide.add(-1, Type.Operation, Type.Operator.getMultiply()
+							.getSign());
 				} else {
 					targetSide.add(-1, operator);
 				}
@@ -267,7 +280,7 @@ public class NodeMenu extends SimplePanel {
 			targetSide.add(-1, node);
 
 			// clean source side
-			MathMLBindingNode oldFirstSib = oldParent.getFirstChild();
+			MathNode oldFirstSib = oldParent.getFirstChild();
 			if (oldFirstSib != null) {
 				String OldFirstSymbol = oldFirstSib.getSymbol();
 				if (CROSS.equals(OldFirstSymbol) || DOT.equals(OldFirstSymbol)
@@ -293,7 +306,8 @@ public class NodeMenu extends SimplePanel {
 						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			Moderator.reloadEquationPanel("");
+			changeComment += "/" + node.toString();
+			Moderator.reloadEquationPanel(doubleChangeComment());
 		}
 	}
 
@@ -312,22 +326,23 @@ public class NodeMenu extends SimplePanel {
 					targetSide.add(-1, node.getNextSibling());
 				}
 			} else if (isTopLevel) {
-				targetSide.add(-1, Type.Operation, DOT);
+				targetSide.add(-1, Type.Operation, Type.Operator.getMultiply()
+						.getSign());
 			} else {
 				JSNICalls
 						.consoleWarn("Multiplying somethimg that's not top level or nested in a top level fraction: "
 								+ node.toString());
 			}
-			if(Type.Term.equals(node.getType())){//Termception
-				for(MathMLBindingNode transplants : node.getChildren()){
+			if (Type.Term.equals(node.getType())) {// Termception
+				for (MathNode transplants : node.getChildren()) {
 					targetSide.add(-1, transplants);
 				}
 				node.remove();
-			}else{
+			} else {
 				targetSide.add(-1, node);
 			}
-			// clean source side
 
+			// clean source side
 			if (Type.Fraction.equals(oldParent.getType())) {
 				// remove unnecessary intermediate fraction
 				oldParent.getParent().add(oldParent.getIndex(),
@@ -348,7 +363,8 @@ public class NodeMenu extends SimplePanel {
 						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			Moderator.reloadEquationPanel("");
+			changeComment += Type.Operator.getMultiply().getSign() + node.toString();
+			Moderator.reloadEquationPanel(doubleChangeComment());
 		}
 	}
 }

@@ -23,15 +23,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
-import com.sciencegadgets.client.algebra.MathMLBindingTree;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Operator;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
+import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Type;
+import com.sciencegadgets.client.algebra.Type.Operator;
 
 public class EditMenu extends VerticalPanel {
 
 	EditWrapper editWrapper;
-	MathMLBindingNode node;
+	MathNode node;
 	Focusable focusable = null;
 	Widget responseNotes = null;
 	
@@ -103,38 +103,38 @@ public class EditMenu extends VerticalPanel {
 			this.add(randomNumberButton);
 			break;
 		case Operation:
-			HashMap<Operator, Boolean> opMap = new HashMap<Operator, Boolean>();
-			Operator operation = node.getOperation();
+			HashMap<Type.Operator, Boolean> opMap = new HashMap<Type.Operator, Boolean>();
+			Type.Operator operation = node.getOperation();
 			if (operation == null) {
 				break;
 			}
 
 			operationMenu: switch (operation) {
 			case CROSS:
-				opMap.put(Operator.CROSS, false);
-				opMap.put(Operator.DOT, true);
-				opMap.put(Operator.SPACE, true);
+				opMap.put(Type.Operator.CROSS, false);
+				opMap.put(Type.Operator.DOT, true);
+				opMap.put(Type.Operator.SPACE, true);
 				break operationMenu;
 			case DOT:
-				opMap.put(Operator.CROSS, true);
-				opMap.put(Operator.DOT, false);
-				opMap.put(Operator.SPACE, true);
+				opMap.put(Type.Operator.CROSS, true);
+				opMap.put(Type.Operator.DOT, false);
+				opMap.put(Type.Operator.SPACE, true);
 				break operationMenu;
 			case SPACE:
-				opMap.put(Operator.CROSS, true);
-				opMap.put(Operator.DOT, true);
-				opMap.put(Operator.SPACE, false);
+				opMap.put(Type.Operator.CROSS, true);
+				opMap.put(Type.Operator.DOT, true);
+				opMap.put(Type.Operator.SPACE, false);
 				break operationMenu;
 			case MINUS:
-				opMap.put(Operator.PLUS, true);
-				opMap.put(Operator.MINUS, false);
+				opMap.put(Type.Operator.PLUS, true);
+				opMap.put(Type.Operator.MINUS, false);
 				break operationMenu;
 			case PLUS:
-				opMap.put(Operator.PLUS, false);
-				opMap.put(Operator.MINUS, true);
+				opMap.put(Type.Operator.PLUS, false);
+				opMap.put(Type.Operator.MINUS, true);
 				break operationMenu;
 			}
-			for (Operator op : opMap.keySet()) {
+			for (Type.Operator op : opMap.keySet()) {
 				Button signButton = new Button(op.getSign());
 				if (opMap.get(op)) {
 					signButton.addClickHandler(new SignChangeHandler(op));
@@ -187,7 +187,7 @@ public class EditMenu extends VerticalPanel {
 //				HTML mathML = new HTML();
 //				mathML.getElement().appendChild(node.getTree().getMathML(true));
 
-				Moderator.reloadEquationPanel("");
+				Moderator.reloadEquationPanel(null);
 			}
 		}
 
@@ -232,9 +232,9 @@ public class EditMenu extends VerticalPanel {
 
 	private class SignChangeHandler implements ClickHandler {
 
-		Operator operator;
+		Type.Operator operator;
 
-		SignChangeHandler(Operator operator) {
+		SignChangeHandler(Type.Operator operator) {
 			this.operator = operator;
 		}
 
@@ -242,7 +242,7 @@ public class EditMenu extends VerticalPanel {
 		public void onClick(ClickEvent event) {
 			node.setSymbol(operator.getSign());
 
-			Moderator.reloadEquationPanel("");
+			Moderator.reloadEquationPanel(null);
 		}
 
 	}
@@ -311,11 +311,11 @@ public class EditMenu extends VerticalPanel {
 				node.add(Type.Operation, "+");
 				break;
 			case Term:
-				node.add(Type.Operation, Operator.getMultiply().getSign());
+				node.add(Type.Operation, Type.Operator.getMultiply().getSign());
 				break;
 			}
 			node.add(Type.Variable, ChangeNodeMenu.NOT_SET);
-			Moderator.reloadEquationPanel("");
+			Moderator.reloadEquationPanel(null);
 		}
 		
 	}

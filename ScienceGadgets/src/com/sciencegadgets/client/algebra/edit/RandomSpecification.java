@@ -15,12 +15,12 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
-import com.sciencegadgets.client.algebra.MathMLBindingTree;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class RandomSpecification extends PopupPanel {
 
-	MathMLBindingNode mlNode;
+	MathNode mlNode;
 	RandomSpecification randSpec = this;
 
 	public static final String ALWAYS = "A";
@@ -37,7 +37,7 @@ public class RandomSpecification extends PopupPanel {
 	private IntegerBox decPlace;
 	private Label response;
 
-	RandomSpecification(MathMLBindingNode mlNode) {
+	RandomSpecification(MathNode mlNode) {
 		this.mlNode = mlNode;
 
 		VerticalPanel mainPanel = new VerticalPanel();
@@ -87,7 +87,7 @@ public class RandomSpecification extends PopupPanel {
 
 	}
 
-	public void setNode(MathMLBindingNode mlNode) {
+	public void setNode(MathNode mlNode) {
 		this.mlNode = mlNode;
 	}
 
@@ -124,7 +124,7 @@ public class RandomSpecification extends PopupPanel {
 				randSpec.hide();
 				mlNode.setSymbol(RANDOM_SYMBOL);
 				mlNode.getMLNode().setAttribute("data-randomness", neg + "-" + lowerB + "-" + upperB + "-" + decP);
-				Moderator.reloadEquationPanel("");
+				Moderator.reloadEquationPanel(null);
 				Moderator.setActivity(Activity.algebra);
 			}
 		}

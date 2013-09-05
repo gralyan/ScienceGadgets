@@ -21,8 +21,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Type.Operator;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -31,12 +31,10 @@ import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
  * @author John Gralyan
  * 
  */
-public class MLElementWrapper extends Wrapper {
+public class MathWrapper extends Wrapper {
 
 	private WrapDragController dragController = null;
-	private MathMLBindingNode mathMLBindingNode;
-	private HTML dropDescriptor = new HTML();
-	private NodeMenu bothSidesMenu;
+	private BothSidesMenu bothSidesMenu;
 
 	/**
 	 * Wrapper for symbols which allow for user interaction
@@ -51,12 +49,12 @@ public class MLElementWrapper extends Wrapper {
 	 * @param theElement
 	 *            - the element to wrap in widget
 	 */
-	public MLElementWrapper(MathMLBindingNode node, EquationPanel eqPanel,
-			EquationLayer eqLayer, Element element) {
-		super(node, eqPanel, eqLayer, element);
+	public MathWrapper(MathNode node, EquationPanel eqPanel,
+			Element element) {
+		super(node, eqPanel, element);
 
-		bothSidesMenu = new NodeMenu(this, element.getOffsetWidth() + "px");
-		// addMouseOutHandler(new Wrapper.WrapperMouseOutHandler());
+		bothSidesMenu = new BothSidesMenu(this, element.getOffsetWidth() + "px");
+		menu = new VerticalPanel();
 	}
 
 	/**
@@ -65,17 +63,20 @@ public class MLElementWrapper extends Wrapper {
 	 */
 	public void onAttach() {
 		super.onAttach();
-		if (!Type.Operation.equals(node.getType()))
-			addDragController();
+			switch (node.getType()) {
+			case Sum:
+			case Term:
+			case Exponential:
+			case Fraction:
+			case Variable:
+			case Number:
+				addDragController();
+			}
 	}
 
 	// public NodeMenu getContextMenu() {
 	// return (NodeMenu) menu;
 	// }
-
-	public HTML getDropDescriptor() {
-		return dropDescriptor;
-	}
 
 	public WrapDragController getDragControl() {
 		return dragController;
@@ -124,11 +125,43 @@ public class MLElementWrapper extends Wrapper {
 	 *            - selects if true, unselects if false
 	 */
 	public void select() {
+
+		Moderator.lowerEqArea.clear();
 		Moderator.lowerEqArea.add(bothSidesMenu);
 		super.select();
+			
+		switch (node.getType()) {
+		case Equation:
+		case Exponential:
+		case Fraction:
+		case Sum:
+		case Term:
+			break;
+		case Operation:
+			break;
+		case Number:
+		case Variable:
+			if (node.getSymbol().startsWith(Type.Operator.MINUS.getSign()) && !node.getSymbol().equals("-1")) {
+				MathNode parent = node.getParent();
+				node.setSymbol(node.getSymbol().replaceFirst(
+						Type.Operator.MINUS.getSign(), ""));
+				if (!Type.Term.equals(parent.getType())) {
+					parent = node.encase(Type.Term);
+				}
+				int nodeIndex = node.getIndex();
+				parent.add(nodeIndex, Type.Operation, Type.Operator.getMultiply()
+						.getSign());
+				parent.add(nodeIndex, Type.Number, "-1");
+				Moderator.reloadEquationPanel(null);
+			}
+			break;
+		}
 	}
+
 	public void unselect() {
-		Moderator.lowerEqArea.clear();
-		super.unselect();
+		if (node.getType().hasChildren()) {
+			Moderator.lowerEqArea.clear();
+			super.unselect();
+		}
 	}
 }
