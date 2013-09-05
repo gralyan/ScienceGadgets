@@ -9,15 +9,15 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
-import com.sciencegadgets.client.algebra.MathMLBindingTree;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class SymbolPalette extends PopupPanel {
 
 	Grid grid = new Grid(5, 13);
 	Button useButton = new Button("Select Symbol", new UseHandler());
 	SymbolPalette palette = this;
-	MathMLBindingNode node;
+	MathNode node;
 
 	// lower, upper, name
 	private String[][] greekLetters = { { "α", "Α", "alpha" },
@@ -30,7 +30,7 @@ public class SymbolPalette extends PopupPanel {
 			{ "υ", "Υ", "upsilon" }, { "φ", "Φ", "phi" }, { "χ", "Χ", "chi" },
 			{ "ψ", "Ψ", "psi" }, { "ω", "Ω", "omega" } };
 
-	public SymbolPalette(MathMLBindingNode node) {
+	public SymbolPalette(MathNode node) {
 		this.node = node;
 
 		for (int j = 1; j < 12; j++) {
@@ -51,7 +51,7 @@ public class SymbolPalette extends PopupPanel {
 //		this.setModal(true);
 	}
 	
-	public void setNode(MathMLBindingNode mlNode){
+	public void setNode(MathNode mlNode){
 		this.node = mlNode;
 	}
 
@@ -75,7 +75,7 @@ public class SymbolPalette extends PopupPanel {
 			palette.hide();
 			String symbol = useButton.getElement().getInnerText();
 			node.setSymbol(symbol);
-			Moderator.reloadEquationPanel("");
+			Moderator.reloadEquationPanel(null);
 			Moderator.setActivity(Activity.algebra);
 		}
 

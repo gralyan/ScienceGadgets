@@ -8,17 +8,17 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class EquationLayer extends SimplePanel {
 	
 	LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
 	EquationLayer parentLayer;
 	AbsolutePanel ContextMenuPanel = new AbsolutePanel();
-	MathMLBindingNode mathNode;
+	MathNode mathNode;
 	EquationHTML eqHTML;
 
-	EquationLayer(MathMLBindingNode mathNode) {
+	EquationLayer(MathNode mathNode) {
 		super();
 		this.mathNode = mathNode;
 	}

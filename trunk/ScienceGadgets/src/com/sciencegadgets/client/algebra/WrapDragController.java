@@ -24,17 +24,17 @@ import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class WrapDragController extends PickupDragController {
 
-	private Map<DropController, MLElementWrapper> dropMap = new HashMap<DropController, MLElementWrapper>();
+	private Map<DropController, MathWrapper> dropMap = new HashMap<DropController, MathWrapper>();
 	private double startMouseX;
 	private double nextWrapsX;
 	private double prevWrapsX;
-	private MathMLBindingNode nextNode;
-	private MathMLBindingNode prevNode;
-	private MLElementWrapper wrap;
+	private MathNode nextNode;
+	private MathNode prevNode;
+	private MathWrapper wrap;
 	private Element svg;
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
@@ -134,16 +134,16 @@ public class WrapDragController extends PickupDragController {
 	/**
 	 * @return - The drop targets for this drag controller
 	 */
-	Collection<MLElementWrapper> getDropTargets() {
+	Collection<MathWrapper> getDropTargets() {
 		return dropMap.values();
 	}
 
 	@Override
 	public void registerDropController(DropController dropController) {
 		super.registerDropController(dropController);
-		if (dropController.getDropTarget() instanceof MLElementWrapper) {
+		if (dropController.getDropTarget() instanceof MathWrapper) {
 			dropMap.put(dropController,
-					(MLElementWrapper) dropController.getDropTarget());
+					(MathWrapper) dropController.getDropTarget());
 		} else if (!(dropController.getDropTarget() instanceof AbsolutePanel)) {
 			throw new ClassCastException(
 					"The Drop controller must have an MLElementWrapper as a target");

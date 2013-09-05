@@ -38,8 +38,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.AlgOut;
+import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.EquationPanel;
-import com.sciencegadgets.client.algebra.MathMLBindingTree;
+import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 import com.sciencegadgets.client.algebra.edit.SymbolPalette;
@@ -50,7 +51,7 @@ public class Moderator implements EntryPoint {
 	static EquationPanel eqPanel = null;
 	public static SimplePanel eqPanelHolder = new SimplePanel();
 
-	public static MathMLBindingTree jTree;
+	public static MathTree mathTree;
 	// public static LinkedList<AbstractMathDropController> dropControllers;
 	public static boolean inEditMode = false;
 	private int SGAWidth;
@@ -68,8 +69,10 @@ public class Moderator implements EntryPoint {
 	private static Activity currentActivity = null;
 	private static AlgOut algOut;
 	public static FlowPanel upperEqArea;
+	public static FlowPanel contextMenuArea;
 	public static FlowPanel lowerEqArea;
 	public static ChangeNodeMenu changeNodeMenu;
+	private static EquationHTML prevEqHTML;
 
 	// private static DropControllAssigner dropAssigner;
 
@@ -120,9 +123,16 @@ public class Moderator implements EntryPoint {
 			upperEqArea.add(algOut);
 		}
 		scienceGadgetArea.add(upperEqArea);
+		
+		//Context Menu Area
+		contextMenuArea = new FlowPanel();
+		contextMenuArea.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		contextMenuArea.setSize("15%", "70%");
+		scienceGadgetArea.add(contextMenuArea);
 
 		// Equation Area - 70%
-		eqPanelHolder.setSize("100%", "70%");
+		eqPanelHolder.setSize("85%", "70%");
+		eqPanelHolder.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		scienceGadgetArea.add(eqPanelHolder);
 
 		// Lower Area - 15%
@@ -139,8 +149,9 @@ public class Moderator implements EntryPoint {
 
 		try {
 			if (mathML != null) {
-				jTree = new MathMLBindingTree(mathML, inEditMode);
+				mathTree = new MathTree(mathML, inEditMode);
 				reloadEquationPanel(null);
+				prevEqHTML = mathTree.getEqHTMLClone();
 			}
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
@@ -150,19 +161,25 @@ public class Moderator implements EntryPoint {
 	/**
 	 * Updates the equation in all places when a change is made
 	 * 
-	 * @param mathML
+	 * @param changeComment - use null for simple reload, specify change to add to AlgOut
 	 */
 	public static void reloadEquationPanel(String changeComment) {
 
-		JSNICalls.consoleLog("Loading: " + jTree.getMathMLClone().getString());
 		if (changeComment != null) {
-			algOut.updateAlgOut(new HTML("change").getElement(),
-					jTree.getEqHTMLClone());
+			algOut.updateAlgOut(changeComment,
+					prevEqHTML);
+			prevEqHTML = mathTree.getEqHTMLClone();
 		}
+		
+		if(!inEditMode){
+			lowerEqArea.clear();
+		}
+		contextMenuArea.clear();
 		eqPanelHolder.clear();
-		jTree.reloadEqHTML();
-		jTree.validateTree();
-		eqPanel = new EquationPanel(jTree, inEditMode);
+		
+		mathTree.validateTree();
+		mathTree.reloadEqHTML();
+		eqPanel = new EquationPanel(mathTree, inEditMode);
 		eqPanelHolder.add(eqPanel);
 
 		if (inEditMode) {
@@ -187,7 +204,7 @@ public class Moderator implements EntryPoint {
 		@Override
 		public void onClick(ClickEvent arg0) {
 			try {
-				String equation = jTree.getMathMLClone().getString();
+				String equation = mathTree.getMathMLClone().getString();
 				if (equation.contains(ChangeNodeMenu.NOT_SET)) {
 					Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 							+ ") must be set or removed before saving");

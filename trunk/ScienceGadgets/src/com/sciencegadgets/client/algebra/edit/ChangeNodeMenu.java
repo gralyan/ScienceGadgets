@@ -14,11 +14,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationPanel;
-import com.sciencegadgets.client.algebra.MathMLBindingTree;
+import com.sciencegadgets.client.algebra.Type;
+import com.sciencegadgets.client.algebra.Type.Operator;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.MathMLBindingNode;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Operator;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class ChangeNodeMenu extends FlowPanel {
 
@@ -30,12 +29,12 @@ public class ChangeNodeMenu extends FlowPanel {
 
 		setSize("100%", "100%");
 
-		Type[] types = MathMLBindingTree.Type.values();
+		Type[] types = Type.values();
 		
 		double buttonWidthPercent = 100.0 / types.length;
 
 		// Change buttons
-		for (MathMLBindingTree.Type type : types) {
+		for (Type type : types) {
 			if (Type.Operation.equals(type))
 				continue;
 
@@ -87,24 +86,24 @@ public class ChangeNodeMenu extends FlowPanel {
 //			EditWrapper selectedWrapper = (EditWrapper) Wrapper.selectedWrapper;
 			
 			if (EquationPanel.selectedWrapper != null) {
-				MathMLBindingNode node = EquationPanel.selectedWrapper.getNode();
-				MathMLBindingNode parent = node.getParent();
+				MathNode node = EquationPanel.selectedWrapper.getNode();
+				MathNode parent = node.getParent();
 
 				switch (parent.getType()) {
 				case Term:
 				case Sum:
 					if (parent.getChildCount() > 4) {
 						try {
-							MathMLBindingNode prevSib = node.getPrevSibling();
+							MathNode prevSib = node.getPrevSibling();
 							if (Type.Operation.equals(prevSib.getType()))
 								prevSib.remove();
 						} catch (IndexOutOfBoundsException e) {
-							MathMLBindingNode nextSib = node.getNextSibling();
+							MathNode nextSib = node.getNextSibling();
 							if (Type.Operation.equals(nextSib.getType()))
 								nextSib.remove();
 						}
 						node.remove();
-						Moderator.reloadEquationPanel("");
+						Moderator.reloadEquationPanel(null);
 					} else {
 						Label responseNotes = new Label(
 								"You should just change the parent");
@@ -113,7 +112,7 @@ public class ChangeNodeMenu extends FlowPanel {
 					break;
 				case Exponential:
 				case Fraction:
-					MathMLBindingNode newParent = parent.getParent();
+					MathNode newParent = parent.getParent();
 					
 					switch (node.getIndex()) {
 					case 0:
@@ -132,9 +131,9 @@ public class ChangeNodeMenu extends FlowPanel {
 	}
 
 	private class ChangeNodeHandler implements ClickHandler {
-		MathMLBindingTree.Type type;
+		Type type;
 
-		ChangeNodeHandler(MathMLBindingTree.Type type) {
+		ChangeNodeHandler(Type type) {
 			this.type = type;
 		}
 
@@ -143,12 +142,12 @@ public class ChangeNodeMenu extends FlowPanel {
 //			EditWrapper selectedWrapper = (EditWrapper) EquationPanel.selectedWrapper;
 
 			if (EquationPanel.selectedWrapper != null) {
-				MathMLBindingNode node = EquationPanel.selectedWrapper.getNode();
-				MathMLBindingNode parent = node.getParent();
+				MathNode node = EquationPanel.selectedWrapper.getNode();
+				MathNode parent = node.getParent();
 				int index = node.getIndex();
 
 				try {
-					Operator operator = null;
+					Type.Operator operator = null;
 
 					switch (type) {
 					case Number:
@@ -161,13 +160,13 @@ public class ChangeNodeMenu extends FlowPanel {
 						break;
 
 					case Sum:
-						operator = Operator.PLUS;
+						operator = Type.Operator.PLUS;
 					case Term:
 						if (operator == null)
-							operator = Operator.getMultiply();
+							operator = Type.Operator.getMultiply();
 					case Exponential:
 					case Fraction:
-						MathMLBindingNode newNode = Moderator.jTree.NEW_NODE(
+						MathNode newNode = Moderator.mathTree.NEW_NODE(
 								type, "");
 
 						newNode.add(node);
@@ -178,7 +177,7 @@ public class ChangeNodeMenu extends FlowPanel {
 						parent.add(index, newNode);
 
 					}
-					Moderator.reloadEquationPanel("");
+					Moderator.reloadEquationPanel(null);
 					
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();

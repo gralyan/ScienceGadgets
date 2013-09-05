@@ -8,8 +8,7 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Operator;
-import com.sciencegadgets.client.algebra.MathMLBindingTree.Type;
+import com.sciencegadgets.client.algebra.Type.Operator;
 
 public class EquationHTML extends HTML {
 
@@ -84,8 +83,23 @@ public class EquationHTML extends HTML {
 		case Term:
 			nodeHTML.addClassName(parentType.asChild());
 		}
-
-		displayParentEl.appendChild(nodeHTML);
+//TODO
+//		if (Type.Sum.equals(type)
+//				&& (Type.Term.equals(parentType) || Type.Exponential
+//						.equals(parentType))) {
+//			// Surround some sums in parentheses
+//			Element parOpen = DOM.createDiv();
+//			nodeHTML.addClassName("parenthesis");
+//			Element parClose = (Element) parOpen.cloneNode(true);
+//			parOpen.setInnerText("(");
+//			parClose.setInnerText(")");
+//
+//			displayParentEl.appendChild(parOpen);
+//			displayParentEl.appendChild(nodeHTML);
+//			displayParentEl.appendChild(parClose);
+//		} else {
+			displayParentEl.appendChild(nodeHTML);
+//		}
 
 		for (int i = 0; i < mlNode.getChildCount(); i++) {
 			Node child = mlNode.getChild(i);
@@ -97,11 +111,14 @@ public class EquationHTML extends HTML {
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
 				String text = mlNode.getInnerText();
 				if (text.startsWith("&")) { // must insert as js code
-					for (Operator op : Operator.values()) {
+					for (Type.Operator op : Type.Operator.values()) {
 						if (op.getHTML().equals(text)) {
 							text = op.getSign();
 						}
 					}
+				} else if (Type.Number.equals(Type.getType(mlNode.getTagName())) && text.startsWith(Operator.MINUS.getSign())) {
+					// All negative numbers in parentheses
+					text = "(" + text + ")";
 				}
 				nodeHTML.setInnerText(text);
 			}
@@ -218,20 +235,22 @@ public class EquationHTML extends HTML {
 						}
 					} else if (fracContainerSibs.contains(child)) {
 						if (!fracContainers.contains(child)) {
-							
+
 							child.getStyle().clearHeight();
-							
+
 							lift -= (liftCenter / 2);
 							// Lift Text to center of tallest denominator
-							//Lift only parents, propagates down
+							// Lift only parents, propagates down
 							child.getStyle().setBottom(lift, Unit.PX);
-							
-							//Pad only terminal nodes, propagates up
+
+							// Pad only terminal nodes, propagates up
 							LinkedList<Element> terminals = new LinkedList<Element>();
 							findTerminalChildren(child, terminals);
-							for(Element terminal : terminals){
-								// Match bottoms of all inline terminals with padding
-								terminal.getStyle().setPaddingBottom(lift, Unit.PX);
+							for (Element terminal : terminals) {
+								// Match bottoms of all inline terminals with
+								// padding
+								terminal.getStyle().setPaddingBottom(lift,
+										Unit.PX);
 							}
 						}
 					}
@@ -304,14 +323,14 @@ public class EquationHTML extends HTML {
 			fracContain = fracContain.getParentElement();
 		}
 	}
-	
-	private void findTerminalChildren(Element el, LinkedList<Element> terminals){
+
+	private void findTerminalChildren(Element el, LinkedList<Element> terminals) {
 		NodeList<Node> children = el.getChildNodes();
-		for(int i=0 ; i<children.getLength() ; i++){
+		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.getItem(i);
-			if(Node.ELEMENT_NODE == child.getNodeType()){
+			if (Node.ELEMENT_NODE == child.getNodeType()) {
 				findTerminalChildren((Element) child, terminals);
-			}else{
+			} else {
 				terminals.add(el);
 			}
 		}
