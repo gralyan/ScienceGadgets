@@ -126,10 +126,6 @@ public class MathWrapper extends Wrapper {
 	 */
 	public void select() {
 
-		Moderator.lowerEqArea.clear();
-		Moderator.lowerEqArea.add(bothSidesMenu);
-		super.select();
-			
 		switch (node.getType()) {
 		case Equation:
 		case Exponential:
@@ -153,15 +149,19 @@ public class MathWrapper extends Wrapper {
 						.getSign());
 				parent.add(nodeIndex, Type.Number, "-1");
 				Moderator.reloadEquationPanel(null);
+				return;
 			}
 			break;
 		}
+		
+			Moderator.lowerEqArea.clear();
+			Moderator.lowerEqArea.add(bothSidesMenu);
+			super.select();
+		
 	}
 
 	public void unselect() {
-		if (node.getType().hasChildren()) {
 			Moderator.lowerEqArea.clear();
 			super.unselect();
-		}
 	}
 }

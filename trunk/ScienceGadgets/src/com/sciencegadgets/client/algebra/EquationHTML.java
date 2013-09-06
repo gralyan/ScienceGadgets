@@ -15,6 +15,7 @@ public class EquationHTML extends HTML {
 	Element mlTree;
 	private double fontPercent = 0;
 	public boolean autoFillParent = false;
+	private LinkedList<Element> fenced = new LinkedList<Element>();
 
 	public EquationHTML(Element mlTree) {
 		this.mlTree = mlTree;
@@ -24,6 +25,7 @@ public class EquationHTML extends HTML {
 		for (int i = 0; i < children.getLength(); i++) {
 			makeHTMLNode((Element) children.getItem(i), this.getElement());
 		}
+		addParenthesis();
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class EquationHTML extends HTML {
 	 *            and adds it to<br/>
 	 * @param displayParentEl
 	 */
-	private static void makeHTMLNode(Element mlNode, Element displayParentEl) {
+	private void makeHTMLNode(Element mlNode, Element displayParentEl) {
 		Element mlParent = mlNode.getParentElement();
 
 		String id = mlNode.getAttribute("id");
@@ -83,23 +85,16 @@ public class EquationHTML extends HTML {
 		case Term:
 			nodeHTML.addClassName(parentType.asChild());
 		}
-//TODO
-//		if (Type.Sum.equals(type)
-//				&& (Type.Term.equals(parentType) || Type.Exponential
-//						.equals(parentType))) {
-//			// Surround some sums in parentheses
-//			Element parOpen = DOM.createDiv();
-//			nodeHTML.addClassName("parenthesis");
-//			Element parClose = (Element) parOpen.cloneNode(true);
-//			parOpen.setInnerText("(");
-//			parClose.setInnerText(")");
-//
-//			displayParentEl.appendChild(parOpen);
-//			displayParentEl.appendChild(nodeHTML);
-//			displayParentEl.appendChild(parClose);
-//		} else {
-			displayParentEl.appendChild(nodeHTML);
-//		}
+
+		// Add parenthesis to some sums
+		if (Type.Sum.equals(type)
+				&& (Type.Term.equals(parentType) || Type.Exponential
+						.equals(parentType))) {
+			fenced.add(nodeHTML);
+		}
+
+		// Addition to tree
+		displayParentEl.appendChild(nodeHTML);
 
 		for (int i = 0; i < mlNode.getChildCount(); i++) {
 			Node child = mlNode.getChild(i);
@@ -116,12 +111,31 @@ public class EquationHTML extends HTML {
 							text = op.getSign();
 						}
 					}
-				} else if (Type.Number.equals(Type.getType(mlNode.getTagName())) && text.startsWith(Operator.MINUS.getSign())) {
+				} else if (Type.Number
+						.equals(Type.getType(mlNode.getTagName()))
+						&& text.startsWith(Operator.MINUS.getSign())) {
 					// All negative numbers in parentheses
 					text = "(" + text + ")";
 				}
 				nodeHTML.setInnerText(text);
 			}
+		}
+	}
+
+	/** Surround marked sums in parentheses */
+	private void addParenthesis() {
+
+		for (Element sum : fenced) {
+
+			Element parOpen = DOM.createDiv();
+			parOpen.addClassName(Type.Aesthetic.toString());
+			parOpen.addClassName(Type.Sum.asChild());
+			Element parClose = (Element) parOpen.cloneNode(true);
+			parOpen.setInnerText("(");
+			parClose.setInnerText(")");
+
+			sum.insertFirst(parOpen);
+			sum.appendChild(parClose);
 		}
 	}
 
@@ -227,6 +241,7 @@ public class EquationHTML extends HTML {
 				// Lift every child to the center of the tallest denominator
 				for (Element child : childrenInline) {
 					int lift = tallestDenominator;
+					
 					if (child.getClassName().contains(Type.Fraction.toString())) {
 						lift -= ((Element) child.getChild(1)).getOffsetHeight();
 						if (lift != tallestDenominator) {// if changed
@@ -234,7 +249,23 @@ public class EquationHTML extends HTML {
 							child.getStyle().setBottom(lift, Unit.PX);
 						}
 					} else if (fracContainerSibs.contains(child)) {
-						if (!fracContainers.contains(child)) {
+						
+						if (child.getClassName().contains(
+								Type.Aesthetic.toString())) {
+							// Don't raise or pad, stretch aesthetics
+							int childHeight = child.getOffsetHeight();
+							double ratio = child.getParentElement()
+									.getOffsetHeight() / childHeight;
+							child.getStyle().setProperty("MozTransform",
+									"scaleY(" + ratio + ")");
+							
+							//Lift aesthetics 
+							if (!fracContainers.contains(child)) {
+								lift -= (liftCenter / 2);
+								child.getStyle().setBottom(lift, Unit.PX);
+							}
+							
+						} else if (!fracContainers.contains(child)) {
 
 							child.getStyle().clearHeight();
 
@@ -243,12 +274,11 @@ public class EquationHTML extends HTML {
 							// Lift only parents, propagates down
 							child.getStyle().setBottom(lift, Unit.PX);
 
-							// Pad only terminal nodes, propagates up
+							// Pad only terminal child nodes, propagates up
 							LinkedList<Element> terminals = new LinkedList<Element>();
 							findTerminalChildren(child, terminals);
 							for (Element terminal : terminals) {
-								// Match bottoms of all inline terminals with
-								// padding
+								// Match bottoms of inline terminals
 								terminal.getStyle().setPaddingBottom(lift,
 										Unit.PX);
 							}
@@ -268,9 +298,10 @@ public class EquationHTML extends HTML {
 
 			// Match tops of all inline siblings with padding
 			for (Element child : childrenInline) {
-				int childTopPad = child.getAbsoluteTop() - highestTop;
-				child.getStyle().setPaddingTop(childTopPad, Unit.PX);
-
+				if (!child.getClassName().contains(Type.Aesthetic.toString())) {
+					int childTopPad = child.getAbsoluteTop() - highestTop;
+					child.getStyle().setPaddingTop(childTopPad, Unit.PX);
+				}
 			}
 		}
 	}

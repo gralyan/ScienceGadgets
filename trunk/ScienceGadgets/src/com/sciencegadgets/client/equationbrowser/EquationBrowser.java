@@ -204,11 +204,14 @@ public class EquationBrowser extends FlowPanel {
 				algGrid.resizeRows(eqList.length);
 				algElements = new Element[eqList.length];
 				for (int i = 0; i < eqList.length; i++) {
-					//TODO switch comment for deployment
-					HTML cell = new HTML(eqList[i]);
-//					Element mathElement = (Element) new HTML(eqList[i]).getElement().getFirstChildElement();
-//					EquationHTML cell = new EquationHTML(mathElement);
-//					algElements[i] = mathElement;
+					
+					//TODO for deployment
+					Element mathElement = (Element) new HTML(eqList[i]).getElement().getFirstChildElement();
+					EquationHTML cell = new EquationHTML(mathElement);
+					algElements[i] = mathElement;
+					//TODO for development
+//					HTML cell = new HTML(eqList[i]);
+					
 					algGrid.setWidget(i, 0, cell);
 				}
 
@@ -336,10 +339,10 @@ public class EquationBrowser extends FlowPanel {
 					}
 					clickedEl.setId("selectedEq");
 				}
-				
-//TODO switch comment for deployment
-				Element mathml = ((Element)clickedCell.getElement().getElementsByTagName("math").getItem(0));
-//				Element mathml =algElements[clickedCell.getRowIndex()];
+//TODO for development				
+//				Element mathml = (Element) ((Element)clickedCell.getElement().getElementsByTagName("math").getItem(0)).cloneNode(true);
+//TODO  for deployment
+				Element mathml =(Element) algElements[clickedCell.getRowIndex()].cloneNode(true);
 				
 				if (algGrid.equals(table) && modeAlg.getValue()) { // For Algebra practice mode
 					moderator.makeAlgebraWorkspace(mathml);

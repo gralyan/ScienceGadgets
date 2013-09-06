@@ -84,8 +84,8 @@ public class Wrapper extends HTML {
 
 			// If this was already selected, focus in on it
 			if (node.getType().hasChildren()) {
-				eqPanel.setFocus(getEqLayer());
 				this.unselect(Moderator.inEditMode);
+				eqPanel.setFocus(getEqLayer());
 			}
 		} else {
 
