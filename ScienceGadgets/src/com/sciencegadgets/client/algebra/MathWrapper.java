@@ -134,6 +134,7 @@ public class MathWrapper extends Wrapper {
 		case Term:
 			break;
 		case Operation:
+			
 			break;
 		case Number:
 		case Variable:
