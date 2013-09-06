@@ -49,8 +49,7 @@ public class MathWrapper extends Wrapper {
 	 * @param theElement
 	 *            - the element to wrap in widget
 	 */
-	public MathWrapper(MathNode node, EquationPanel eqPanel,
-			Element element) {
+	public MathWrapper(MathNode node, EquationPanel eqPanel, Element element) {
 		super(node, eqPanel, element);
 
 		bothSidesMenu = new BothSidesMenu(this, element.getOffsetWidth() + "px");
@@ -63,15 +62,15 @@ public class MathWrapper extends Wrapper {
 	 */
 	public void onAttach() {
 		super.onAttach();
-			switch (node.getType()) {
-			case Sum:
-			case Term:
-			case Exponential:
-			case Fraction:
-			case Variable:
-			case Number:
-				addDragController();
-			}
+		switch (node.getType()) {
+		case Sum:
+		case Term:
+		case Exponential:
+		case Fraction:
+		case Variable:
+		case Number:
+			addDragController();
+		}
 	}
 
 	// public NodeMenu getContextMenu() {
@@ -134,35 +133,26 @@ public class MathWrapper extends Wrapper {
 		case Term:
 			break;
 		case Operation:
-			
-			break;
+			AlgebraicTransformations.operation(node);
+			return;
 		case Number:
 		case Variable:
-			if (node.getSymbol().startsWith(Type.Operator.MINUS.getSign()) && !node.getSymbol().equals("-1")) {
-				MathNode parent = node.getParent();
-				node.setSymbol(node.getSymbol().replaceFirst(
-						Type.Operator.MINUS.getSign(), ""));
-				if (!Type.Term.equals(parent.getType())) {
-					parent = node.encase(Type.Term);
-				}
-				int nodeIndex = node.getIndex();
-				parent.add(nodeIndex, Type.Operation, Type.Operator.getMultiply()
-						.getSign());
-				parent.add(nodeIndex, Type.Number, "-1");
-				Moderator.reloadEquationPanel(null);
+			if (node.getSymbol().startsWith(Type.Operator.MINUS.getSign())
+					&& !node.getSymbol().equals("-1")) {
+				AlgebraicTransformations.separateNegative(node);
 				return;
 			}
 			break;
 		}
-		
-			Moderator.lowerEqArea.clear();
-			Moderator.lowerEqArea.add(bothSidesMenu);
-			super.select();
-		
+
+		Moderator.lowerEqArea.clear();
+		Moderator.lowerEqArea.add(bothSidesMenu);
+		super.select();
+
 	}
 
 	public void unselect() {
-			Moderator.lowerEqArea.clear();
-			super.unselect();
+		Moderator.lowerEqArea.clear();
+		super.unselect();
 	}
 }
