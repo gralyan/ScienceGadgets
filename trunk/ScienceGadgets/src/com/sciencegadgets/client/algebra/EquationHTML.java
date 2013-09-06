@@ -256,7 +256,15 @@ public class EquationHTML extends HTML {
 							int childHeight = child.getOffsetHeight();
 							double ratio = child.getParentElement()
 									.getOffsetHeight() / childHeight;
+							child.getStyle().setProperty("transform",
+									"scaleY(" + ratio + ")");
+							child.getStyle().setProperty("WebkitTransform",
+									"scaleY(" + ratio + ")");
 							child.getStyle().setProperty("MozTransform",
+									"scaleY(" + ratio + ")");
+							child.getStyle().setProperty("MsTransform",
+									"scaleY(" + ratio + ")");
+							child.getStyle().setProperty("OTransform",
 									"scaleY(" + ratio + ")");
 							
 							//Lift aesthetics 

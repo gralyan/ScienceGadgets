@@ -14,6 +14,8 @@
  */
 package com.sciencegadgets.client;
 
+import java.util.LinkedList;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -38,9 +40,12 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.AlgOut;
+import com.sciencegadgets.client.algebra.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 import com.sciencegadgets.client.algebra.edit.SymbolPalette;
@@ -86,6 +91,24 @@ public class Moderator implements EntryPoint {
 		History.addValueChangeHandler(new HistoryChange<String>());
 
 		switchToBrowser();
+
+		LinkedList<MathNode> nodeList = new LinkedList<MathNode>();
+		try {
+			mathTree = new MathTree(new HTML().getElement(), false);
+		} catch (TopNodesNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for (Type t : Type.values()) {
+			MathNode ma = mathTree.NEW_NODE(t, "");
+			nodeList.add(ma);
+
+		}
+		for (MathNode n : nodeList) {
+			for (MathNode m : nodeList) {
+				AlgebraicTransformations.multiply(n, null, m);
+			}
+		}
 	}
 
 	public enum Activity {
@@ -123,10 +146,11 @@ public class Moderator implements EntryPoint {
 			upperEqArea.add(algOut);
 		}
 		scienceGadgetArea.add(upperEqArea);
-		
-		//Context Menu Area
+
+		// Context Menu Area
 		contextMenuArea = new FlowPanel();
-		contextMenuArea.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		contextMenuArea.getElement().getStyle()
+				.setDisplay(Display.INLINE_BLOCK);
 		contextMenuArea.setSize("15%", "70%");
 		scienceGadgetArea.add(contextMenuArea);
 
@@ -161,22 +185,22 @@ public class Moderator implements EntryPoint {
 	/**
 	 * Updates the equation in all places when a change is made
 	 * 
-	 * @param changeComment - use null for simple reload, specify change to add to AlgOut
+	 * @param changeComment
+	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
 	public static void reloadEquationPanel(String changeComment) {
 
 		if (changeComment != null) {
-			algOut.updateAlgOut(changeComment,
-					prevEqHTML);
+			algOut.updateAlgOut(changeComment, prevEqHTML);
 			prevEqHTML = mathTree.getEqHTMLClone();
 		}
-		
-		if(!inEditMode){
+
+		if (!inEditMode) {
 			lowerEqArea.clear();
 		}
 		contextMenuArea.clear();
 		eqPanelHolder.clear();
-		
+
 		mathTree.validateTree();
 		mathTree.reloadEqHTML();
 		eqPanel = new EquationPanel(mathTree, inEditMode);

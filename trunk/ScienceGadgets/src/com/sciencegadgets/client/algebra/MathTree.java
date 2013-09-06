@@ -53,16 +53,16 @@ public class MathTree {
 	 */
 	public MathTree(Element mathML, boolean inEditMode)
 			throws TopNodesNotFoundException {
-		if (!inEditMode) {
-			mathML = EquationRandomizer.randomizeNumbers(mathML);
-		}
-
-		this.mathML = mathML;
-		this.inEditMode = inEditMode;
-
-		bindMLtoNodes(mathML);
-
-		reloadEqHTML();
+//		if (!inEditMode) {
+//			mathML = EquationRandomizer.randomizeNumbers(mathML);
+//		}
+//
+//		this.mathML = mathML;
+//		this.inEditMode = inEditMode;
+//
+//		bindMLtoNodes(mathML);
+//
+//		reloadEqHTML();
 	}
 
 	public Element getMathMLClone() {
