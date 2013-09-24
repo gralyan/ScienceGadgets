@@ -34,16 +34,16 @@ public class JSNICalls {
 		return document.createElementNS(ns, name);
 	}-*/;
 	
-	public static native void consoleLog( String message) /*-{
+	public static native void log( String message) /*-{
       console.log( "jg: " + message );
   }-*/;
-	public static native void consoleDebug( String message) /*-{
+	public static native void debug( String message) /*-{
       console.debug( "jg: " + message );
   }-*/;
-	public static native void consoleWarn( String message) /*-{
+	public static native void warn( String message) /*-{
       console.warn( "jg: " + message );
   }-*/;
-	public static native void consoleError( String message) /*-{
+	public static native void error( String message) /*-{
       console.error( "jg: " + message );
   }-*/;
 

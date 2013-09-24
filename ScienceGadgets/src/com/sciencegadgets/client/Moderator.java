@@ -40,7 +40,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.AlgOut;
-import com.sciencegadgets.client.algebra.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree;
@@ -49,6 +48,9 @@ import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 import com.sciencegadgets.client.algebra.edit.SymbolPalette;
+import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
+import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
+import com.sciencegadgets.client.algebra.transformations.MultiplyTransformations;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
 public class Moderator implements EntryPoint {
@@ -78,6 +80,7 @@ public class Moderator implements EntryPoint {
 	public static FlowPanel lowerEqArea;
 	public static ChangeNodeMenu changeNodeMenu;
 	private static EquationHTML prevEqHTML;
+	public static boolean isInEasyMode = true;
 
 	// private static DropControllAssigner dropAssigner;
 
@@ -89,26 +92,18 @@ public class Moderator implements EntryPoint {
 		Window.addResizeHandler(new ResizeAreaHandler());
 
 		History.addValueChangeHandler(new HistoryChange<String>());
-
+		
 		switchToBrowser();
 
-		LinkedList<MathNode> nodeList = new LinkedList<MathNode>();
-		try {
-			mathTree = new MathTree(new HTML().getElement(), false);
-		} catch (TopNodesNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for (Type t : Type.values()) {
-			MathNode ma = mathTree.NEW_NODE(t, "");
-			nodeList.add(ma);
+		//
+//		try {
+//			AdditionTransformations.deployTestBot();
+//		} catch (TopNodesNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
-		}
-		for (MathNode n : nodeList) {
-			for (MathNode m : nodeList) {
-				AlgebraicTransformations.multiply(n, null, m);
-			}
-		}
 	}
 
 	public enum Activity {
@@ -189,6 +184,8 @@ public class Moderator implements EntryPoint {
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
 	public static void reloadEquationPanel(String changeComment) {
+		
+		System.out.println(mathTree.getRoot().toString());
 
 		if (changeComment != null) {
 			algOut.updateAlgOut(changeComment, prevEqHTML);
@@ -240,19 +237,19 @@ public class Moderator implements EntryPoint {
 					@Override
 					public void onSuccess(String result) {
 						Window.alert("Saved!");
-						JSNICalls.consoleLog("Saved: " + result);
+						JSNICalls.log("Saved: " + result);
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
 						Window.alert("Save failed");
-						JSNICalls.consoleError("Save Failed: "
+						JSNICalls.error("Save Failed: "
 								+ caught.getCause().toString());
 					}
 				});
 			} catch (Exception e) {
 				Window.alert("Could not save equation, see log");
-				JSNICalls.consoleLog(e.toString());
+				JSNICalls.log(e.toString());
 			}
 		}
 	}
