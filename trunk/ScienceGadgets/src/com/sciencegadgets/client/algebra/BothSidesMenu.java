@@ -1,22 +1,16 @@
 package com.sciencegadgets.client.algebra;
 
-import java.util.LinkedList;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type.Operator;
 
-public class BothSidesMenu extends SimplePanel {
+public class BothSidesMenu extends FlowPanel {
 	private MathWrapper mlWrapper;
 	private MathNode node;
 	private MathNode parentNode;
@@ -25,6 +19,7 @@ public class BothSidesMenu extends SimplePanel {
 	Widget responseNotes = null;
 	boolean isTopLevel = false;
 	boolean isNestedInFraction = false;
+	boolean isSide = false;
 
 	private final String PLUS = Type.Operator.PLUS.getSign();
 	private final String MINUS = Type.Operator.MINUS.getSign();
@@ -38,6 +33,10 @@ public class BothSidesMenu extends SimplePanel {
 		this.node = mlWrapper.getNode();
 		tree = node.getTree();
 		parentNode = node.getParent();
+
+		if (Type.Operation.equals(node.getType())) {
+			return;
+		}
 
 		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(3);
@@ -65,7 +64,7 @@ public class BothSidesMenu extends SimplePanel {
 					} else if (PLUS.equals(opNode)) {
 						this.add(new BothSidesButton(Math.SUBTRACT));
 					} else {
-						JSNICalls.consoleWarn("The opperator should be + or -");
+						JSNICalls.warn("The opperator should be + or -");
 					}
 				} else {
 					this.add(new BothSidesButton(Math.SUBTRACT));
@@ -99,9 +98,18 @@ public class BothSidesMenu extends SimplePanel {
 				}
 			}
 			break;
-		case Exponential:
-			break;
 		case Equation:
+			isSide = true;
+			BothSidesButton sub = new BothSidesButton(Math.SUBTRACT);
+			sub.removeStyleName("bothSidesButton");
+			sub.addStyleName("bothSidesButtonHalf");
+			BothSidesButton div = new BothSidesButton(Math.DIVIDE);
+			div.removeStyleName("bothSidesButton");
+			div.addStyleName("bothSidesButtonHalf");
+			this.add(sub);
+			this.add(div);
+			break;
+		case Exponential:
 			break;
 		}
 
@@ -158,8 +166,10 @@ public class BothSidesMenu extends SimplePanel {
 				topParent = oldParent;
 			} else if (isNestedInFraction) {
 				topParent = oldParent.getParent();
+			} else if (isSide) {
+				topParent = node;
 			} else {
-				JSNICalls.consoleWarn("Added bothSidesHandler to wrong node");
+				JSNICalls.warn("Added bothSidesHandler to wrong node");
 			}
 			if (topParent.isLeftSide()) {
 				isOnTopLeft = true;
@@ -168,7 +178,7 @@ public class BothSidesMenu extends SimplePanel {
 				isOnTopRight = true;
 				targetSide = tree.getLeftSide();
 			} else {
-				JSNICalls.consoleWarn("Added bothSidesHandler to wrong node");
+				JSNICalls.warn("bothSidesHandler on wrong node");
 			}
 		}
 
@@ -185,8 +195,12 @@ public class BothSidesMenu extends SimplePanel {
 			if (!Type.Sum.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(Type.Sum);
 			}
+			// Leave 0 in old side if top node
+			if (isSide) {
+				node.getParent().add(node.getIndex(), Type.Number, "0");
+			}
 			// take operation
-			if (node.getIndex() > 0) {
+			if (node.getIndex() > 0 && !isSide) {
 				MathNode operator = node.getPrevSibling();
 				// Flip sign
 				if (MINUS.equals(operator.getSymbol())) {
@@ -196,7 +210,7 @@ public class BothSidesMenu extends SimplePanel {
 					operator.setSymbol(MINUS);
 					changeComment += MINUS;
 				} else {
-					JSNICalls.consoleWarn("Unknown operation, can't flip");
+					JSNICalls.warn("Unknown operation, can't flip");
 				}
 				targetSide.add(-1, operator);
 			} else {
@@ -213,37 +227,7 @@ public class BothSidesMenu extends SimplePanel {
 				oldFirstSib.remove();
 			}
 
-			switch (oldParent.getChildCount()) {
-			case 0:
-				JSNICalls
-						.consoleWarn("There shouldn't be zero children in a sum");
-				oldParent.remove();
-				break;
-			case 2:
-				if (MINUS.equals(oldParent.getFirstChild().getSymbol())) {
-					// Merge
-					MathNode secondChild = oldParent.getChildAt(1);
-					String secondChildSymbol = secondChild.getSymbol();
-					if (secondChildSymbol.startsWith(MINUS)) {
-						secondChild.setSymbol(secondChildSymbol.replaceFirst(
-								MINUS, ""));
-					} else {
-						secondChild.setSymbol(MINUS + secondChildSymbol);
-					}
-					oldParent.getFirstChild().remove();
-				} else {
-					JSNICalls
-							.consoleWarn("There Shouldn't be two children in a sum: "
-									+ oldParent.getMLNode().getInnerHTML());
-				}
-				// no break, go on to case 1
-			case 1:
-				// No need to be encased in sum anymore
-				oldParent.getParent().add(oldParent.getIndex(),
-						oldParent.getFirstChild());
-				oldParent.remove();
-				break;
-			}
+			oldParent.decase();
 
 			changeComment += node.toString();
 			Moderator.reloadEquationPanel(doubleChangeComment());
@@ -253,10 +237,16 @@ public class BothSidesMenu extends SimplePanel {
 	class DivideBothHandler extends BothSidesHandler {
 		@Override
 		public void onClick(ClickEvent event) {
-			// take operation
 			MathNode operator = null;
-			if (node.getIndex() > 0) {
-				operator = node.getPrevSibling();
+
+			// Leave 1 in old side if top node
+			if (isSide) {
+				oldParent.add(node.getIndex(), Type.Number, "1");
+			} else {
+				// take operation
+				if (node.getIndex() > 0) {
+					operator = node.getPrevSibling();
+				}
 			}
 			// Prepare Target side
 			if (!Type.Fraction.equals(targetSide.getType())) {
@@ -269,8 +259,8 @@ public class BothSidesMenu extends SimplePanel {
 					targetSide = targetSide.encase(Type.Term);
 				}
 				if (operator == null) {
-					targetSide.add(-1, Type.Operation, Type.Operator.getMultiply()
-							.getSign());
+					targetSide.add(-1, Type.Operation, Type.Operator
+							.getMultiply().getSign());
 				} else {
 					targetSide.add(-1, operator);
 				}
@@ -298,12 +288,11 @@ public class BothSidesMenu extends SimplePanel {
 							oldParent.getFirstChild());
 					oldParent.remove();
 				} else if (oldParent.getChildCount() == 2) {
-					JSNICalls
-							.consoleWarn("There shouldn't be two children in a term");
+					JSNICalls.warn("There shouldn't be two children in a term");
 				}
 			} else {
 				JSNICalls
-						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
+						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
 			changeComment += "/" + node.toString();
@@ -330,7 +319,7 @@ public class BothSidesMenu extends SimplePanel {
 						.getSign());
 			} else {
 				JSNICalls
-						.consoleWarn("Multiplying somethimg that's not top level or nested in a top level fraction: "
+						.warn("Multiplying somethimg that's not top level or nested in a top level fraction: "
 								+ node.toString());
 			}
 			if (Type.Term.equals(node.getType())) {// Termception
@@ -355,15 +344,15 @@ public class BothSidesMenu extends SimplePanel {
 							oldParent.getFirstChild());
 					oldParent.remove();
 				} else if (oldParent.getChildCount() == 2) {
-					JSNICalls
-							.consoleWarn("There shouldn't be two children in a term");
+					JSNICalls.warn("There shouldn't be two children in a term");
 				}
 			} else {
 				JSNICalls
-						.consoleWarn("The parent of the divideBothSides must either be a term or fraction with index=0");
+						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			changeComment += Type.Operator.getMultiply().getSign() + node.toString();
+			changeComment += Type.Operator.getMultiply().getSign()
+					+ node.toString();
 			Moderator.reloadEquationPanel(doubleChangeComment());
 		}
 	}

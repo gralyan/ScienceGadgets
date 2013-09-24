@@ -59,7 +59,8 @@ public enum Type {
 
 	public static enum Operator {
 		DOT("\u00B7", "&middot;"), SPACE("\u00A0", "&nbsp;"), CROSS("\u00D7",
-				"&times;"), PLUS("+", "+"), MINUS("-", "-");
+//				"&times;"), PLUS("+", "&#43;"), MINUS("\u002D", "&#45;");
+	"&times;"), PLUS("\u002B", "&#43;"), MINUS("\u002D", "&#45;");
 
 		private String sign;
 		private String html;

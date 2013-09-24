@@ -14,15 +14,15 @@
  */
 package com.sciencegadgets.client.algebra;
 
+import java.math.BigDecimal;
+
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
-import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached

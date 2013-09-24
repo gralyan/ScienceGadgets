@@ -26,13 +26,15 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.TopNodesNotFoundException;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 
 public class MathTree {
 
 	private MathNode root;
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	private HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
+	public HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private Element mathML;
@@ -44,25 +46,23 @@ public class MathTree {
 	 * A tree representation of an equation.
 	 * 
 	 * @param mathML
-	 *            - The equation written in MathML XML
-	 * @param isParsedForMath
-	 *            - If true, the tree is an abstract syntax tree that can be
-	 *            manipulated as math. If false it is a tree of MathML as taken
-	 *            from XML
+	 *            - The equation element in MathML XML
+	 * @param inEditMode
+	 *            - true if intended for edit mode, false if for solving mode
 	 * @throws TopNodesNotFoundException
 	 */
 	public MathTree(Element mathML, boolean inEditMode)
 			throws TopNodesNotFoundException {
-//		if (!inEditMode) {
-//			mathML = EquationRandomizer.randomizeNumbers(mathML);
-//		}
-//
-//		this.mathML = mathML;
-//		this.inEditMode = inEditMode;
-//
-//		bindMLtoNodes(mathML);
-//
-//		reloadEqHTML();
+		if (!inEditMode) {
+			mathML = EquationRandomizer.randomizeNumbers(mathML);
+		}
+
+		this.mathML = mathML;
+		this.inEditMode = inEditMode;
+
+		bindMLtoNodes(mathML);
+
+		reloadEqHTML();
 	}
 
 	public Element getMathMLClone() {
@@ -70,7 +70,6 @@ public class MathTree {
 	}
 
 	public EquationHTML getEqHTMLClone() {
-		// return (Element) eqHTML.cloneNode(true);
 		return new EquationHTML(mathML);
 	}
 
@@ -95,13 +94,12 @@ public class MathTree {
 
 	private void checkSideForm() {
 		if (root.getChildCount() != 3) {
-			JSNICalls
-					.consoleError("root has too many children, not side=side: "
-							+ getMathMLClone().getString());
+			JSNICalls.error("root has too many children, not side=side: "
+					+ getMathMLClone().getString());
 		}
 		if (!"=".equals(root.getChildAt(1).getSymbol())) {
 			JSNICalls
-					.consoleError("<mo>=</mo> isn't the root's second child, not side=side "
+					.error("<mo>=</mo> isn't the root's second child, not side=side "
 							+ getMathMLClone().getString());
 		}
 	}
@@ -129,7 +127,7 @@ public class MathTree {
 	public MathNode getNodeById(String id) throws NoSuchElementException {
 		MathNode node = idMap.get(id);
 		if (node == null) {
-			JSNICalls.consoleError("Can't get node by id: " + id + "\n"
+			JSNICalls.error("Can't get node by id: " + id + "\n"
 					+ getMathMLClone().getString());
 			throw new NoSuchElementException("Can't get node by id: " + id);
 		}
@@ -145,13 +143,26 @@ public class MathTree {
 	}
 
 	private String createId() {
-		return "ML" + idCounter++;// Random.nextInt(2147483647);
+		return "ML" + idCounter++;
 	}
 
 	public void validateTree() {
 
 		for (MathNode node : idMap.values()) {
 			node.validate();
+		}
+	}
+
+	private void AddToMaps(MathNode node) {
+		String id = node.getId();
+		if (id == "") {
+			id = createId();
+		}
+
+		// add node to binding map
+		if (!idMap.containsKey(id)) {
+			idMap.put(id, node);
+			idMLMap.put(id, node.getMLNode());
 		}
 	}
 
@@ -201,6 +212,22 @@ public class MathTree {
 			this.mlNode = newNode;
 		}
 
+		public MathNode clone() {
+			Element newEl = (Element) mlNode.cloneNode(true);
+			newEl.removeAttribute("id");
+			MathNode top = new MathNode(newEl);
+			AddToMaps(top);
+
+			NodeList<Element> descendants = newEl.getElementsByTagName("*");
+			for (int i = 0; i < descendants.getLength(); i++) {
+				Element descendantEl = descendants.getItem(i);
+				descendantEl.removeAttribute("id");
+				AddToMaps(new MathNode(descendantEl));
+			}
+
+			return top;
+		}
+
 		/**
 		 * Adds a node between this node and its parent, encasing this branch of
 		 * the tree in a new node. <br/>
@@ -211,13 +238,102 @@ public class MathTree {
 		 */
 		public MathNode encase(Type type) {
 
-			MathNode encasing = new MathNode(type, "");
+			// Don't encase sum in sum or term in term
+			if (getType().equals(type)
+					&& (Type.Sum.equals(type) || Type.Term.equals(type))) {
+				return this;
 
-			// Move around nodes
-			this.getParent().add(this.getIndex(), encasing);
-			encasing.add(-1, this);
+			} else {
+				MathNode encasing = new MathNode(type, "");
+				// Move around nodes
+				this.getParent().add(this.getIndex(), encasing);
+				encasing.add(this);
 
-			return encasing;
+				return encasing;
+			}
+		}
+
+		/**
+		 * <b>This method must always be called after removing children from a
+		 * sum or term</b> <br/>
+		 * Moves child into parent and removes this node if there is only one
+		 * child. <br/>
+		 * If the child and parent are the same type, the grandchildren are
+		 * moved and both this and the child are removed. <br/>
+		 */
+		public void decase() {
+
+			/*
+			 * if the first node is a minus operation, the minus is removed and
+			 * the next node is encased in a term and multiplied by -1
+			 */
+			if (getChildCount() != 0) {
+				MathNode possibleMinus = getChildAt(0);
+				if (Type.Operation.equals(possibleMinus.getType())) {
+					if (Operator.MINUS.getSign().equals(
+							possibleMinus.getSymbol())) {
+						if (getChildCount() > 1) {
+//							System.out.println("decase negative prop");
+//							MathNode casing = getChildAt(1).encase(Type.Term);
+//							casing.add(0, Type.Operation, Operator
+//									.getMultiply().getSign());
+//							casing.add(0, Type.Number,
+//									(Operator.MINUS.getSign() + "1"));
+							AlgebraicTransformations.propagateNegative(getChildAt(1));
+							possibleMinus.remove();
+						} else {
+							JSNICalls.error("Operation with no siblings: "
+									+ toString());
+						}
+					} else {
+						JSNICalls.error("Operation as a first child: "
+								+ toString());
+					}
+				}
+			}
+
+			switch (this.getChildCount()) {
+			case 0:
+				System.out.println("decase 0");
+				this.remove();
+				break;
+			case 1:
+				System.out.println("decase 1");
+				Type childType = getFirstChild().getType();
+				if (childType.equals(getParentType())
+						&& (Type.Sum.equals(childType) || Type.Term
+								.equals(childType))) {
+					LinkedList<MathNode> grandChildren = this.getFirstChild()
+							.getChildren();
+					for (int i = grandChildren.size(); i > 0; i--) {
+						getParent().add(this.getIndex(),
+								grandChildren.get(i - 1));
+					}
+					this.getFirstChild().remove();
+					this.remove();
+				} else {
+					getParent().add(this.getIndex(), this.getFirstChild());
+					this.remove();
+				}
+				break;
+			case 2:// Should only be sums with a negative in front
+				System.out.println("decase 2");
+				JSNICalls
+						.error("There should not be two children in a Sum or Term: "
+								+ toString());
+				break;
+			}
+		}
+
+		public void replace(MathNode replacement) {
+			this.getParent().add(this.getIndex(), replacement);
+			this.remove();
+		}
+
+		public MathNode replace(Type type, String symbol) {
+			MathNode replacement = new MathNode(type, symbol);
+			replace(replacement);
+			return replacement;
 		}
 
 		/**
@@ -242,25 +358,27 @@ public class MathTree {
 		public void add(int index, MathNode node)
 				throws IllegalArgumentException {
 
-			Element elementNode = node.getMLNode();
+			// Don't add sum to sum or term to term, just add it's children
+			if (getType().equals(node.getType())
+					&& (Type.Sum.equals(node.getType()) || Type.Term
+							.equals(node.getType()))) {
+				LinkedList<MathNode> children = node.getChildren();
+				for (int i = children.size(); i > 0; i--) {
+					add(index, children.get(i - 1));
+				}
 
-			// Add node to DOM tree
-			if (index < 0 || index >= mlNode.getChildCount()) {
-				mlNode.appendChild(elementNode);
 			} else {
-				Node referenceChild = mlNode.getChild(index);
-				mlNode.insertBefore(elementNode, referenceChild);
-			}
+				Element elementNode = node.getMLNode();
 
-			String id = node.getId();
-			if (id == "") {
-				id = createId();
-			}
+				// Add node to DOM tree
+				if (index < 0 || index >= mlNode.getChildCount()) {
+					mlNode.appendChild(elementNode);
+				} else {
+					Node referenceChild = mlNode.getChild(index);
+					mlNode.insertBefore(elementNode, referenceChild);
+				}
 
-			// add node to binding map
-			if (!idMap.containsKey(id)) {
-				idMap.put(id, node);
-				idMLMap.put(id, elementNode);
+				AddToMaps(node);
 			}
 		}
 
@@ -366,8 +484,7 @@ public class MathTree {
 			LinkedList<MathNode> children = getChildren();
 
 			for (MathNode child : children) {
-				JSNICalls.consoleLog("Removing Nested child: "
-						+ child.toString());
+				JSNICalls.log("Removing Nested child: " + child.toString());
 				String id = child.getId();
 				idMap.remove(id);
 				idMLMap.remove(id);
@@ -474,7 +591,7 @@ public class MathTree {
 		public Element getHTMLElement() {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
-				JSNICalls.consoleWarn("No HTML for node: " + toString());
+				JSNICalls.warn("No HTML for node: " + toString());
 			}
 			return (Element) el.cloneNode(true);
 		}
@@ -482,10 +599,68 @@ public class MathTree {
 		public String getHTMLString() {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
-				JSNICalls.consoleWarn("No HTML for node: " + toString());
+				JSNICalls.warn("No HTML for node: " + toString());
 			}
 			return el.getString();
 		}
+
+		public boolean isLike(MathNode another) {
+
+			if (!getType().equals(another.getType())) {
+				return false;
+			}
+
+			// breaks not needed, returns at each step
+			switch (getType()) {
+			case Term:
+			case Sum:
+				LinkedList<MathNode> assignedOtherChildren = new LinkedList<MathNode>();
+				a: for (MathNode child : getChildren()) {
+					b: for (MathNode otherChild : another.getChildren()) {
+						if (assignedOtherChildren.contains(otherChild)) {
+							continue b;
+						}
+						if (child.isLike(otherChild)) {
+							assignedOtherChildren.add(otherChild);
+							continue a;
+						}
+					}
+				}
+				if (assignedOtherChildren.size() == getChildCount()
+						&& assignedOtherChildren.size() == another
+								.getChildCount()) {
+					return true;
+				} else {
+					return false;
+				}
+			case Exponential:
+			case Fraction:
+				if (getChildAt(0).isLike(another.getChildAt(0))
+						&& getChildAt(1).isLike(another.getChildAt(1))) {
+					return true;
+				} else {
+					return false;
+				}
+			case Operation:
+				if (Operator.PLUS.equals(getSymbol())
+						|| Operator.MINUS.equals(getSymbol())) {
+					if (!getSymbol().equals(another.getSymbol())) {
+						return false;
+					}
+				} else {
+					return true;
+				}
+				// case Number:
+				// case Variable:
+			default:
+				if (getSymbol().equals(another.getSymbol())) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
 		/**
 		 * Validates the proper number of children, numbers can be parsed, no
 		 * sums within sums or terms within terms, and collects nodes to
@@ -540,33 +715,32 @@ public class MathTree {
 			}
 
 			if (isBadNumber) {
-				JSNICalls.consoleWarn("The number node " + toString()
+				JSNICalls.warn("The number node " + toString()
 						+ " must have a number");
 			}
 			if (isWrongChildren) {
 				String errorMerrage = "Wrong number of children, type: "
 						+ getType() + " can't have (" + childCount
 						+ ") children: " + toString();
-				JSNICalls.consoleError(errorMerrage);
+				JSNICalls.error(errorMerrage);
 				throw new IllegalArgumentException(errorMerrage);
 			}
 			if (isSumception) {
-				JSNICalls.consoleError("There shouldn't be a sum in a sum: "
+				JSNICalls.error("There shouldn't be a sum in a sum: "
 						+ getParent().toString());
 			}
 			if (isTermception) {
-				JSNICalls.consoleError("There shouldn't be a term in a term"
+				JSNICalls.error("There shouldn't be a term in a term"
 						+ getParent().toString());
 			}
 			if (idMap.size() != idMLMap.size()) {
 				JSNICalls
-						.consoleError("The binding maps must have the same size: idMap.size()="
+						.error("The binding maps must have the same size: idMap.size()="
 								+ idMap.size()
 								+ " idMLMap.size()="
 								+ idMLMap.size());
 			}
 		}
-
 
 	}
 
