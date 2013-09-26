@@ -18,8 +18,7 @@
 		value="gecko1_8" /> -->
 
 
-	<entry-point
-		class='com.sciencegadgets.client.Moderator' />
+	<entry-point class='com.sciencegadgets.client.Moderator' />
 <!-- 	<entry-point class='com.sciencegadgets.client.NavigationPanelEntry' /> -->
 
 	<source path='client' />

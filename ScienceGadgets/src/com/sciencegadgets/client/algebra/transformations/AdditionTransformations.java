@@ -8,8 +8,14 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.TopNodesNotFoundException;
@@ -20,32 +26,32 @@ import com.sciencegadgets.client.algebra.Type.Operator;
 
 public class AdditionTransformations {
 
-	private static MathNode operation;
-	private static MathNode parent;
-	private static MathNode grandParent;
-	private static boolean isPlus;
+	protected static MathNode operation;
+	protected static MathNode parent;
+	protected static MathNode grandParent;
+	protected static boolean isPlus;
 	private static final int same = 0;
 	private static boolean isInEasyMode = Moderator.isInEasyMode;
 
-	public static void assign(MathNode left, MathNode sign, MathNode right, boolean isPlusSign) {
+	public static void assign(MathNode left, MathNode sign, MathNode right,
+			boolean isPlusSign) {
 		operation = sign;
 		parent = operation.getParent();
 		grandParent = parent.getParent();
-		isPlus = isPlusSign;//Operator.PLUS.getSign().equals(sign.getSymbol());
+		isPlus = isPlusSign;// Operator.PLUS.getSign().equals(sign.getSymbol());
 		boolean assigned = false;
 
-//		if (!isPlus && !Operator.MINUS.getSign().equals(sign.getSymbol())) {
-//			throw new Exception(
-//					"Sign is neither Operator.MINUS or Operator.PLUS: "
-//							+ operation.toString());
-//		}
+		// if (!isPlus && !Operator.MINUS.getSign().equals(sign.getSymbol())) {
+		// throw new Exception(
+		// "Sign is neither Operator.MINUS or Operator.PLUS: "
+		// + operation.toString());
+		// }
 
 		Type leftType = left.getType();
 		Type rightType = right.getType();
 
 		// Check for improper types for left and right
 		switch (rightType) {
-		case Aesthetic:
 		case Equation:
 		case Sum:
 			JSNICalls.error("Illegal node within Sum: " + rightType);
@@ -63,7 +69,6 @@ public class AdditionTransformations {
 			break;
 		}
 		switch (leftType) {
-		case Aesthetic:
 		case Equation:
 		case Sum:
 			JSNICalls.error("Illegal node within Sum: " + leftType);
@@ -190,7 +195,7 @@ public class AdditionTransformations {
 				factorWithTermChild_check(left, right);
 				break second;
 			case Number:
-				addNumbers(left, right);
+				addNumbers_prompt(left, right);
 				break second;
 			}
 			break first;
@@ -221,7 +226,7 @@ public class AdditionTransformations {
 		binomialCasing.add(operation);
 		binomialCasing.add(inBinomialSecond);
 
-		// parent.decase();
+		 parent.decase();
 	}
 
 	private static boolean factorLikeTerms_check(MathNode left, MathNode right) {
@@ -268,6 +273,8 @@ public class AdditionTransformations {
 
 		if (isInEasyMode) {
 			factorLikeTerms(left, right, likeTerms);
+		} else {
+			Moderator.selectedMenu.add(new FLTButton(left, right, likeTerms));
 		}
 
 		return true;
@@ -281,7 +288,7 @@ public class AdditionTransformations {
 	 * @param right
 	 *            - term, fraction
 	 */
-	private static void factorLikeTerms(MathNode left, MathNode right,
+	static void factorLikeTerms(MathNode left, MathNode right,
 			LinkedHashMap<MathNode, MathNode> likeTerms) {
 		RootPanel.get().add(new HTML("factor like terms"));
 
@@ -291,10 +298,8 @@ public class AdditionTransformations {
 		}
 
 		// Remove operation on like term
-		System.out.println("likeTerms.size() " + likeTerms.size());
-		System.out.println("left.getChildCount() " + left.getChildCount());
 		if (likeTerms.size() * 2 - 1 == left.getChildCount()) {
-			left = left.replace(Type.Term, "");// TODO do this another way
+			left = left.replace(Type.Term, "");// will be MathNode.decase[d]
 			left.add(Type.Number, "1");
 		} else {
 			for (MathNode extraFactor : likeTerms.keySet()) {
@@ -317,7 +322,6 @@ public class AdditionTransformations {
 			}
 		}
 
-		System.out.println("right.getChildCount() " + right.getChildCount());
 		if (likeTerms.size() * 2 - 1 == right.getChildCount()) {
 			right = right.replace(Type.Term, "");
 			right.add(Type.Number, "1");
@@ -346,7 +350,7 @@ public class AdditionTransformations {
 
 		left.decase();
 		right.decase();
-		
+
 		Moderator.reloadEquationPanel("Factor Like Terms");
 	}
 
@@ -359,6 +363,8 @@ public class AdditionTransformations {
 
 		if (isInEasyMode) {
 			factorWithBase(other, exponential);
+		} else {
+			Moderator.selectedMenu.add(new FWBButton(other, exponential));
 		}
 
 		return true;
@@ -371,7 +377,7 @@ public class AdditionTransformations {
 	 *            - term, exponential, fraction, variable, number
 	 * @param exponential
 	 */
-	private static void factorWithBase(MathNode other, MathNode exponential) {
+	static void factorWithBase(MathNode other, MathNode exponential) {
 		RootPanel.get().add(new HTML("factor with base"));
 
 		MathNode inBinomialB = exponential;
@@ -386,7 +392,6 @@ public class AdditionTransformations {
 		exp.add(Type.Operation, Operator.MINUS.getSign());
 		exp.add(Type.Number, "1");
 
-		
 		Moderator.reloadEquationPanel("Factor with Base");
 	}
 
@@ -407,6 +412,9 @@ public class AdditionTransformations {
 			if (termChild.isLike(other)) {
 				if (isInEasyMode) {
 					factorWithTermChild(other, termContainer, termChild);
+				} else {
+					Moderator.selectedMenu.add(new FWTCButton(other,
+							termContainer, termChild));
 				}
 				return true;
 			}
@@ -422,7 +430,7 @@ public class AdditionTransformations {
 	 * @param term
 	 *            - term, fraction
 	 */
-	private static void factorWithTermChild(MathNode other, MathNode term,
+	static void factorWithTermChild(MathNode other, MathNode term,
 			MathNode termChild) {
 		RootPanel.get().add(new HTML("factor with term child"));
 
@@ -452,7 +460,7 @@ public class AdditionTransformations {
 		factor(factors, inBinomialA, inBinomialB);
 
 		term.decase();
-		
+
 		Moderator.reloadEquationPanel("Factor with TermChild");
 	}
 
@@ -464,13 +472,15 @@ public class AdditionTransformations {
 
 		if (isInEasyMode) {
 			addFractions(left, right);
+		} else {
+			Moderator.selectedMenu.add(new AddFractionsButton(left, right));
 		}
 
 		return true;
 
 	}
 
-	private static void addFractions(MathNode left, MathNode right) {
+	static void addFractions(MathNode left, MathNode right) {
 
 		MathNode numeratorCasing = right.getChildAt(0).encase(Type.Sum);
 		numeratorCasing.add(0, operation);
@@ -478,7 +488,7 @@ public class AdditionTransformations {
 
 		left.remove();
 		parent.decase();
-		
+
 		Moderator.reloadEquationPanel("Add Fractions");
 	}
 
@@ -494,7 +504,7 @@ public class AdditionTransformations {
 		return true;
 	}
 
-	private static void addSimilar(MathNode left, MathNode right) {
+	static void addSimilar(MathNode left, MathNode right) {
 
 		if (isPlus) {
 			MathNode casing = right.encase(Type.Term);
@@ -507,148 +517,141 @@ public class AdditionTransformations {
 		left.remove();
 		operation.remove();
 		parent.decase();
-		
+
 		Moderator.reloadEquationPanel("Add similar");
 	}
 
-	private static void addNumbers(MathNode left, MathNode right) {
+	private static void addNumbers_prompt(final MathNode left,
+			final MathNode right) {
 
 		BigDecimal leftValue = new BigDecimal(left.getSymbol());
 		BigDecimal rightValue = new BigDecimal(right.getSymbol());
+		BigDecimal total;
 
 		if (isPlus) {
-			rightValue = leftValue.add(rightValue);
+			total = leftValue.add(rightValue);
 		} else {
-			rightValue = leftValue.subtract(rightValue);
+			total = leftValue.subtract(rightValue);
 		}
-		right.setSymbol(rightValue.stripTrailingZeros().toString());
+		final BigDecimal totalValue = total;
+
+		if (isInEasyMode) {
+			addNumbers(left, right, totalValue);
+		} else {//prompt
+			Moderator.selectedMenu.add(new HTML(leftValue.toString() + " "
+					+ operation.getSymbol() + " " + rightValue.toString() +" ="));
+			TextBox inp = new TextBox();
+			inp.setFocus(true);
+			inp.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					BigDecimal inputValue = new BigDecimal(event.getValue());
+					if (inputValue.compareTo(totalValue) == same) {
+						addNumbers(left, right, totalValue);
+					}
+				}
+			});
+			Moderator.selectedMenu.add(inp);
+		}
+
+	}
+
+	static void addNumbers(MathNode left, MathNode right, BigDecimal totalValue) {
+
+		right.setSymbol(totalValue.stripTrailingZeros().toString());
 
 		left.remove();
 		operation.remove();
 		parent.decase();
-		
+
 		Moderator.reloadEquationPanel("Add Numbers");
 	}
 
-	private static void addZero(MathNode other, MathNode zero) {
-			
-		try {
-			MathNode zeroOperation = zero.getPrevSibling();
-			if (Type.Operation.equals(zeroOperation.getType())) {
-				zero.getPrevSibling().remove();
+	static void addZero(MathNode other, MathNode zero) {
+
+		if (zero.getIndex() > other.getIndex()) {
+			MathNode zeroOp = zero.getPrevSibling();
+			if (Type.Operation.equals(zeroOp.getType())) {
+				zeroOp.remove();
 			}
-		} catch (IndexOutOfBoundsException e) {
+		} else {
+			MathNode zeroOp = zero.getNextSibling();
+			if (Type.Operation.equals(zeroOp.getType())) {
+				zeroOp.remove();
+			}
 		}
 
 		zero.remove();
 
 		parent.decase();
-		
+
 		Moderator.reloadEquationPanel("Add zero");
 	}
+}
 
-	// private static void termClean(MathNode term) {
-	// if (term.getChildCount() == 1) {
-	// term.getParent().add(term.getIndex(), term.getFirstChild());
-	// term.remove();
-	// }
-	// }
+class FLTButton extends Button {
 
-	// private static void parentClean() {
-	//
-	// if (parent.getChildCount() == 1) {
-	// grandParent.add(parent.getIndex(), parent.getFirstChild());
-	// parent.remove();
-	// }
-	// }
+	FLTButton(final MathNode left, final MathNode right,
+			final LinkedHashMap<MathNode, MathNode> likeTerms) {
 
-	public static void deployTestBot() throws Exception {
-		String sum = "<mfenced separators=\"\" open=\"\" close=\"\"><mi>s</mi><mo>+</mo><mi>u</mi><mo>+</mo><mrow><mi>m</mi><mo>\u00B7</mo><mi>m</mi></mrow></mfenced>";
-		String term = "<mrow><mi>a</mi><mo>\u00B7</mo><msup><mi>a</mi><mi>a</mi></msup><mo>\u00B7</mo><mi>a</mi></mrow>";
-		String exp = "<msup><mi>a</mi><mi>a</mi></msup>";
-		String frac = "<mfrac><mrow><mi>a</mi><mo>\u00B7</mo><mi>a</mi><mo>\u00B7</mo><mi>a</mi></mrow><mrow><mi>d</mi><mo>\u00B7</mo><mi>e</mi><mo>\u00B7</mo><mi>n</mi></mrow></mfrac>";
-		String var = "<mi>a</mi>";
-		String num = "<mn>7</mn>";
-
-		String a = "<mn>0</mn>";
-		String b = "<mn>7.333</mn>";
-		String c = "<mn>-7</mn>";
-		String d = "<mn>-7.33</mn>";
-
-		String fracA = "<mfrac><mrow><mi>a</mi><mo>\u00B7</mo><mi>n</mi><mo>\u00B7</mo><mi>a</mi></mrow><mrow><mi>d</mi><mo>\u00B7</mo><mi>e</mi><mo>\u00B7</mo><mi>n</mi></mrow></mfrac>";
-		String fracB = "<mfrac><mrow><mi>a</mi><mo>\u00B7</mo><mi>a</mi><mo>\u00B7</mo><mi>a</mi></mrow><mrow><mi>d</mi><mo>\u00B7</mo><mi>n</mi><mo>\u00B7</mo><mi>e</mi></mrow></mfrac>";
-
-		String allTerm = "<mrow>" + exp + "<mo>\u00B7</mo>" + frac
-				+ "<mo>\u00B7</mo>" + var + "<mo>\u00B7</mo>" + num + "</mrow>";
-		String allTermm = "<mrow>" + exp + "<mo>\u00B7</mo>" + frac
-				+ "<mo>\u00B7</mo>" + var + "<mo>\u00B7</mo>" + var + "</mrow>";
-		// String baseTest = "<msup>" + type + "<mn>2</mn></msup>";
-
-		// String[] types = { a, b, c, d };
-		// String[] types = { term, exp, frac, var, num };
-		String[] types = {term, exp, frac, var, num };
-		 for (String type : types) {
-//		 for (String tipe : types) {
-
-		String leftTest = a;
-		String rightTest = type;
-
-		botCase(leftTest, rightTest);
-		 }
-//		 }
-
-	}
-	
-	private static void botCase(String leftTest, String rightTest) throws Exception{
-
-		Element leftElement = (Element) new HTML(leftTest).getElement()
-				.getFirstChildElement().cloneNode(true);
-		Element multiplyElement = (Element) new HTML("<mo>+</mo>").getElement()
-				.getFirstChildElement().cloneNode(true);
-		Element rightElement = (Element) new HTML(rightTest).getElement()
-				.getFirstChildElement().cloneNode(true);
-
-		HTML disp = new HTML(
-				"<math><mpadded class=\"parentDummy\"></mpadded><mo>=</mo><mi>inEquation</mi></math>");
-		Element mathElement = disp.getElement().getFirstChildElement();
-		Element parentElement = new HTML(
-				"<mfenced separators=\"\" open=\"\" close=\"\"><mi>L</mi><mo>( </mo><mo> )</mo><mi>R</mi></mfenced>")
-				.getElement().getFirstChildElement();
-		Element parentdummy = mathElement.getElementsByTagName("mpadded")
-				.getItem(0);
-		Element grandParentElement = parentdummy.getParentElement();
-		grandParentElement.insertBefore(parentElement, parentdummy);
-		parentdummy.removeFromParent();
-
-		parentElement.insertAfter(leftElement, parentElement
-				.getElementsByTagName("mo").getItem(0));
-		parentElement.insertAfter(multiplyElement, leftElement);
-		parentElement.insertAfter(rightElement, multiplyElement);
-
-		MathTree mathTree = new MathTree(mathElement, false);
-		MathNode leftNode = mathTree.idMap.get(leftElement.getAttribute("id"));
-		MathNode rightNode = mathTree.idMap
-				.get(rightElement.getAttribute("id"));
-		operation = mathTree.idMap.get(multiplyElement.getAttribute("id"));
-		parent = operation.getParent();
-		grandParent = parent.getParent();
-
-		isPlus = Operator.PLUS.getSign().equals(operation.getSymbol());
-
-		if (!isPlus && !Operator.MINUS.getSign().equals(operation.getSymbol())) {
-			throw new Exception(
-					"Sign is neither Operator.MINUS or Operator.PLUS: "
-							+ operation.toString());
+		String factorString = "";
+		for (MathNode fact : likeTerms.keySet()) {
+			factorString.concat(fact.getHTMLString());
 		}
+		setHTML("Factor " + factorString);
 
-		HTML dispBefore = new HTML(disp.getElement().getFirstChildElement()
-				.getString());
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AdditionTransformations.factorLikeTerms(left, right, likeTerms);
+			}
+		});
+	}
+}
 
-		RootPanel.get().add(dispBefore);
-		 assign(leftNode, operation, rightNode, isPlus);
-//		factorLikeTerms_check(leftNode, rightNobotCasebotCasebotCasebotCasede);
-		RootPanel.get().add(
-				new HTML(disp.getElement().getFirstChildElement().getString()));
-		RootPanel.get().add(new HTML("&nbsp;"));
+class FWBButton extends Button {
+
+	FWBButton(final MathNode other, final MathNode exponential) {
+
+		setHTML("Factor " + other.getHTMLString());
+
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AdditionTransformations.factorWithBase(other, exponential);
+			}
+		});
+	}
+}
+
+class FWTCButton extends Button {
+
+	FWTCButton(final MathNode other, final MathNode termContainer,
+			final MathNode termChild) {
+
+		setHTML("Factor " + other.getHTMLString());
+
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AdditionTransformations.factorWithTermChild(other,
+						termContainer, termChild);
+			}
+		});
+	}
+}
+
+class AddFractionsButton extends Button {
+
+	AddFractionsButton(final MathNode left, final MathNode right) {
+
+		setHTML("Add Fractions");
+
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AdditionTransformations.addFractions(left, right);
+			}
+		});
 	}
 }

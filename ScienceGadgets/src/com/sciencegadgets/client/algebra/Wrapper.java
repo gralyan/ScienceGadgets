@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,7 +26,7 @@ public class Wrapper extends HTML {
 	public int paddingLeft = 0;
 	public int paddingRight = 0;
 	public Element element;
-	protected VerticalPanel menu;
+	protected FlowPanel menu;
 
 	public Wrapper(MathNode node, EquationPanel eqPanel, Element element) {
 		super(element);
