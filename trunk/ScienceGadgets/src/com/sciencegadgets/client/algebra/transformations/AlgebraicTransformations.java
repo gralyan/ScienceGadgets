@@ -43,6 +43,8 @@ public class AlgebraicTransformations {
 	public static void operation(MathNode opNode) {
 		MathNode left, right = null;
 
+		Moderator.selectedMenu.clear();
+
 		try {
 			left = opNode.getPrevSibling();
 			right = opNode.getNextSibling();

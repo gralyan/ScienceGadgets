@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
@@ -53,7 +54,7 @@ public class MathWrapper extends Wrapper {
 		super(node, eqPanel, element);
 
 		bothSidesMenu = new BothSidesMenu(this, element.getOffsetWidth() + "px");
-		menu = new VerticalPanel();
+		menu = new FlowPanel();
 	}
 
 	/**
@@ -124,6 +125,9 @@ public class MathWrapper extends Wrapper {
 	 *            - selects if true, unselects if false
 	 */
 	public void select() {
+		
+		Moderator.selectedMenu.clear();
+		Moderator.selectedMenu.add(bothSidesMenu);
 
 		switch (node.getType()) {
 		case Equation:
@@ -145,14 +149,12 @@ public class MathWrapper extends Wrapper {
 			break;
 		}
 
-		Moderator.lowerEqArea.clear();
-		Moderator.lowerEqArea.add(bothSidesMenu);
 		super.select();
 
 	}
 
 	public void unselect() {
-		Moderator.lowerEqArea.clear();
+		Moderator.selectedMenu.clear();
 		super.unselect();
 	}
 }

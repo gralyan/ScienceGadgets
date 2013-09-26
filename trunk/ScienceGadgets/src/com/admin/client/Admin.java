@@ -18,17 +18,24 @@ public class Admin implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		Button saveButton = new Button("Save");
-		RootPanel.get().add(inputBox);
-		RootPanel.get().add(saveButton);
-
-		saveButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				data.saveEquation(inputBox.getText());
-			}
-		});
+		
+		try {
+			TestBot_Addition.deployTestBot();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+//		Button saveButton = new Button("Save");
+//		RootPanel.get().add(inputBox);
+//		RootPanel.get().add(saveButton);
+//
+//		saveButton.addClickHandler(new ClickHandler() {
+//
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				data.saveEquation(inputBox.getText());
+//			}
+//		});
 
 	}
 

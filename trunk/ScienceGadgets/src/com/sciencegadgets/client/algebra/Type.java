@@ -5,8 +5,8 @@ import java.util.NoSuchElementException;
 public enum Type {
 	Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
 			"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
-			"mo", false), Equation("math", true), Aesthetic("mglyph", false);
-
+			"mo", false), Equation("math", true);
+//, Aesthetic("mglyph", false)
 	private String tag;
 	private boolean hasChildren;
 	public final String IN_PREFIX = "in-";
@@ -47,9 +47,10 @@ public enum Type {
 			type = Type.Operation;
 		} else if ("math".equals(tag)) {
 			type = Type.Equation;
-		} else if ("mglyph".equals(tag)) {
-			type = Type.Aesthetic;
 		}
+//		else if ("mglyph".equals(tag)) {
+//			type = Type.Aesthetic;
+//		}
 		if (type == null) {
 			throw new NoSuchElementException("There is no type for the tag: "
 					+ tag);

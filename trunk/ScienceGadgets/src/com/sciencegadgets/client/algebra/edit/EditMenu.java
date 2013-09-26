@@ -15,6 +15,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
@@ -28,7 +29,7 @@ import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Type.Operator;
 
-public class EditMenu extends VerticalPanel {
+public class EditMenu extends FlowPanel {
 
 	EditWrapper editWrapper;
 	MathNode node;
@@ -56,12 +57,12 @@ public class EditMenu extends VerticalPanel {
 		case Sum:
 			Button extendSum = new Button("+"+ChangeNodeMenu.NOT_SET,new ExtendSumTermHandler());
 			extendSum.setTitle(SUM_EXTEND);
-			this.add(extendSum);
+			this.place(extendSum);
 			break;
 		case Term:
 			Button extendTerm = new Button("x"+ChangeNodeMenu.NOT_SET,new ExtendSumTermHandler());
 			extendTerm.setTitle(TERM_EXTEND);
-			this.add(extendTerm);
+			this.place(extendTerm);
 			break;
 		case Fraction:
 			break;
@@ -77,13 +78,13 @@ public class EditMenu extends VerticalPanel {
 			variableInput.setText(node.getSymbol());
 			variableInput.setTitle(VARIABLE_INPUT);
 			focusable = variableInput;
-			this.add(variableInput);
+			this.place(variableInput);
 
 			Button insertSymbolButton = new Button("α",
 					new InsertSymbolHandler());
 			insertSymbolButton.setWidth(width);
 			insertSymbolButton.setTitle(VARIABLE_INSERT);
-			this.add(insertSymbolButton);
+			this.place(insertSymbolButton);
 			break;
 		case Number:
 			DoubleBox numberInput = new DoubleBox();
@@ -94,13 +95,13 @@ public class EditMenu extends VerticalPanel {
 			numberInput.setText(node.getSymbol());
 			numberInput.setTitle(NUMBER_INPUT);
 			focusable = numberInput;
-			this.add(numberInput);
+			this.place(numberInput);
 			
 			Button randomNumberButton = new Button("random",
 					new RandomNumberHandler());
 			randomNumberButton.setWidth(width);
 			randomNumberButton.setTitle(NUMBER_RANDOM_SPEC);
-			this.add(randomNumberButton);
+			this.place(randomNumberButton);
 			break;
 		case Operation:
 			HashMap<Type.Operator, Boolean> opMap = new HashMap<Type.Operator, Boolean>();
@@ -141,7 +142,7 @@ public class EditMenu extends VerticalPanel {
 				} else {
 					signButton.setVisible(false);
 				}
-				this.add(signButton);
+				this.place(signButton);
 				signButton.setTitle(OPERATION_CHANGE);
 			}
 			break;
@@ -154,9 +155,24 @@ public class EditMenu extends VerticalPanel {
 		}
 	}
 
+	public void place(Widget w) {
+		w.setHeight("100%");
+		w.setWidth("100%");
+		FlowPanel container = new FlowPanel();
+		this.add(container);
+		container.add(w);
+		
+		int count = this.getWidgetCount();
+		int height = 100 / count;
+		for(int i=0 ; i<count; i++){
+			getWidget(i).setHeight(height+"%");
+			getWidget(i).setWidth("100%");
+		}
+	}
+
 	public void setResponse(Widget responseNotes) {
 		this.responseNotes = responseNotes;
-		this.add(responseNotes);
+		this.place(responseNotes);
 		this.setFocus();
 	}
 
@@ -184,8 +200,6 @@ public class EditMenu extends VerticalPanel {
 
 			if (extraction != null) {
 				node.setSymbol(extraction);
-//				HTML mathML = new HTML();
-//				mathML.getElement().appendChild(node.getTree().getMathML(true));
 
 				Moderator.reloadEquationPanel(null);
 			}

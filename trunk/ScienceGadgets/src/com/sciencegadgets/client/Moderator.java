@@ -76,8 +76,9 @@ public class Moderator implements EntryPoint {
 	private static Activity currentActivity = null;
 	private static AlgOut algOut;
 	public static FlowPanel upperEqArea;
-	public static FlowPanel contextMenuArea;
 	public static FlowPanel lowerEqArea;
+	public static FlowPanel contextMenuArea;
+	public static FlowPanel selectedMenu;
 	public static ChangeNodeMenu changeNodeMenu;
 	private static EquationHTML prevEqHTML;
 	public static boolean isInEasyMode = true;
@@ -95,7 +96,7 @@ public class Moderator implements EntryPoint {
 		
 		switchToBrowser();
 
-		//
+		
 //		try {
 //			AdditionTransformations.deployTestBot();
 //		} catch (TopNodesNotFoundException e) {
@@ -142,29 +143,33 @@ public class Moderator implements EntryPoint {
 		}
 		scienceGadgetArea.add(upperEqArea);
 
-		// Context Menu Area
-		contextMenuArea = new FlowPanel();
-		contextMenuArea.getElement().getStyle()
-				.setDisplay(Display.INLINE_BLOCK);
-		contextMenuArea.setSize("15%", "70%");
-		scienceGadgetArea.add(contextMenuArea);
-
 		// Equation Area - 70%
-		eqPanelHolder.setSize("85%", "70%");
-		eqPanelHolder.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		eqPanelHolder.setSize("100%", "70%");
+//		eqPanelHolder.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		scienceGadgetArea.add(eqPanelHolder);
 
 		// Lower Area - 15%
 		lowerEqArea = new FlowPanel();
 		lowerEqArea.setSize("100%", "15%");
+		scienceGadgetArea.add(lowerEqArea);
+		// Context Menu Area
+		contextMenuArea = new FlowPanel();
+		contextMenuArea.getElement().getStyle()
+		.setDisplay(Display.INLINE_BLOCK);
+		contextMenuArea.setSize("10%", "100%");
+		lowerEqArea.add(contextMenuArea);
+		// SelectedMenuArea
+		selectedMenu = new FlowPanel();
+		selectedMenu.setSize("80%", "100%");
+		selectedMenu.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 
 		if (inEditMode) {
 			if (changeNodeMenu == null) {
 				changeNodeMenu = new ChangeNodeMenu();
 			}
-			lowerEqArea.add(changeNodeMenu);
+			selectedMenu.add(changeNodeMenu);
 		}
-		scienceGadgetArea.add(lowerEqArea);
+		lowerEqArea.add(selectedMenu);
 
 		try {
 			if (mathML != null) {
@@ -185,15 +190,13 @@ public class Moderator implements EntryPoint {
 	 */
 	public static void reloadEquationPanel(String changeComment) {
 		
-		System.out.println(mathTree.getRoot().toString());
-
 		if (changeComment != null) {
 			algOut.updateAlgOut(changeComment, prevEqHTML);
 			prevEqHTML = mathTree.getEqHTMLClone();
 		}
 
 		if (!inEditMode) {
-			lowerEqArea.clear();
+			selectedMenu.clear();
 		}
 		contextMenuArea.clear();
 		eqPanelHolder.clear();

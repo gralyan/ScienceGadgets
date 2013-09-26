@@ -16,6 +16,7 @@ public class EquationHTML extends HTML {
 	private double fontPercent = 0;
 	public boolean autoFillParent = false;
 	private LinkedList<Element> fenced = new LinkedList<Element>();
+	public final String Aesthetic = "Aesthetic";
 
 	public EquationHTML(Element mlTree) {
 		this.mlTree = mlTree;
@@ -128,7 +129,7 @@ public class EquationHTML extends HTML {
 		for (Element sum : fenced) {
 
 			Element parOpen = DOM.createDiv();
-			parOpen.addClassName(Type.Aesthetic.toString());
+			parOpen.addClassName(Aesthetic);
 			parOpen.addClassName(Type.Sum.asChild());
 			Element parClose = (Element) parOpen.cloneNode(true);
 			parOpen.setInnerText("(");
@@ -251,7 +252,7 @@ public class EquationHTML extends HTML {
 					} else if (fracContainerSibs.contains(child)) {
 						
 						if (child.getClassName().contains(
-								Type.Aesthetic.toString())) {
+								Aesthetic)) {
 							// Don't raise or pad, stretch aesthetics
 							int childHeight = child.getOffsetHeight();
 							double ratio = child.getParentElement()
@@ -306,7 +307,7 @@ public class EquationHTML extends HTML {
 
 			// Match tops of all inline siblings with padding
 			for (Element child : childrenInline) {
-				if (!child.getClassName().contains(Type.Aesthetic.toString())) {
+				if (!child.getClassName().contains(Aesthetic)) {
 					int childTopPad = child.getAbsoluteTop() - highestTop;
 					child.getStyle().setPaddingTop(childTopPad, Unit.PX);
 				}
