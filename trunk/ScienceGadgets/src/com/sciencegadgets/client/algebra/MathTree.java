@@ -273,13 +273,15 @@ public class MathTree {
 					if (Operator.MINUS.getSign().equals(
 							possibleMinus.getSymbol())) {
 						if (getChildCount() > 1) {
-//							System.out.println("decase negative prop");
-//							MathNode casing = getChildAt(1).encase(Type.Term);
-//							casing.add(0, Type.Operation, Operator
-//									.getMultiply().getSign());
-//							casing.add(0, Type.Number,
-//									(Operator.MINUS.getSign() + "1"));
-							AlgebraicTransformations.propagateNegative(getChildAt(1));
+							// System.out.println("decase negative prop");
+							// MathNode casing =
+							// getChildAt(1).encase(Type.Term);
+							// casing.add(0, Type.Operation, Operator
+							// .getMultiply().getSign());
+							// casing.add(0, Type.Number,
+							// (Operator.MINUS.getSign() + "1"));
+							AlgebraicTransformations
+									.propagateNegative(getChildAt(1));
 							possibleMinus.remove();
 						} else {
 							JSNICalls.error("Operation with no siblings: "
@@ -513,7 +515,12 @@ public class MathTree {
 		}
 
 		public String toString() {
-			return mlNode.getString();
+			JSNICalls.log("GETSTRING: " + mlNode.getString());
+			if (mlNode.getString() != null) {
+				return mlNode.getString();
+			} else {
+				return JSNICalls.elementToString(mlNode);
+			}
 		}
 
 		public void setSymbol(String symbol) {
