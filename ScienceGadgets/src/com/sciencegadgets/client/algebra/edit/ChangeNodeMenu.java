@@ -41,6 +41,7 @@ public class ChangeNodeMenu extends FlowPanel {
 			ChangeNodeHandler changeHandler = new ChangeNodeHandler(type);
 			Button changeButton = new Button(type.toString(), changeHandler);
 			changeButton.setSize(buttonWidthPercent+"%", "100%");
+			changeButton.setStyleName("changeNodeButton");
 			menuMap.put(type, changeButton);
 			this.add(changeButton);
 		}
@@ -49,6 +50,7 @@ public class ChangeNodeMenu extends FlowPanel {
 		RemoveNodeHandler removeHandler = new RemoveNodeHandler();
 		Button removeButton = new Button("Remove", removeHandler);
 		removeButton.setSize(buttonWidthPercent+"%", "100%");
+		removeButton.setStyleName("changeNodeButton");
 		removeButton.getElement().getStyle().setColor("red");
 		this.removeButton = removeButton;
 		this.add(removeButton);

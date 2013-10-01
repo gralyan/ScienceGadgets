@@ -21,6 +21,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -52,6 +53,7 @@ import com.sciencegadgets.client.algebra.transformations.AdditionTransformations
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.transformations.MultiplyTransformations;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
+import com.sun.java.swing.plaf.windows.resources.windows;
 
 public class Moderator implements EntryPoint {
 
@@ -93,17 +95,16 @@ public class Moderator implements EntryPoint {
 		Window.addResizeHandler(new ResizeAreaHandler());
 
 		History.addValueChangeHandler(new HistoryChange<String>());
-		
+
 		switchToBrowser();
 
-		
-//		try {
-//			AdditionTransformations.deployTestBot();
-//		} catch (TopNodesNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		// AdditionTransformations.deployTestBot();
+		// } catch (TopNodesNotFoundException e) {
+		// e.printStackTrace();
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 
 	}
 
@@ -135,6 +136,7 @@ public class Moderator implements EntryPoint {
 
 		if (inEditMode) {
 			saveEquationButton.setSize("100%", "100%");
+			saveEquationButton.setStyleName("saveEquationButton");
 			upperEqArea.add(saveEquationButton);
 		} else {
 			algOut = new AlgOut();
@@ -145,7 +147,7 @@ public class Moderator implements EntryPoint {
 
 		// Equation Area - 70%
 		eqPanelHolder.setSize("100%", "70%");
-//		eqPanelHolder.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		// eqPanelHolder.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		scienceGadgetArea.add(eqPanelHolder);
 
 		// Lower Area - 15%
@@ -154,14 +156,17 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.add(lowerEqArea);
 		// Context Menu Area
 		contextMenuArea = new FlowPanel();
-		contextMenuArea.getElement().getStyle()
-		.setDisplay(Display.INLINE_BLOCK);
+		Style style = contextMenuArea.getElement().getStyle();
+		style.setDisplay(Display.INLINE_BLOCK);
+		style.setVerticalAlign(VerticalAlign.TOP);
 		contextMenuArea.setSize("10%", "100%");
 		lowerEqArea.add(contextMenuArea);
 		// SelectedMenuArea
 		selectedMenu = new FlowPanel();
 		selectedMenu.setSize("80%", "100%");
-		selectedMenu.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		style = selectedMenu.getElement().getStyle();
+		style.setDisplay(Display.INLINE_BLOCK);
+		style.setVerticalAlign(VerticalAlign.TOP);
 
 		if (inEditMode) {
 			if (changeNodeMenu == null) {
@@ -189,7 +194,7 @@ public class Moderator implements EntryPoint {
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
 	public static void reloadEquationPanel(String changeComment) {
-		
+
 		if (changeComment != null) {
 			algOut.updateAlgOut(changeComment, prevEqHTML);
 			prevEqHTML = mathTree.getEqHTMLClone();
@@ -228,13 +233,13 @@ public class Moderator implements EntryPoint {
 		@Override
 		public void onClick(ClickEvent arg0) {
 			try {
-				String equation = mathTree.getMathMLClone().getString();
+				String equation = mathTree.getRoot().toString();
 				if (equation.contains(ChangeNodeMenu.NOT_SET)) {
+					JSNICalls.log("Not set: " + equation);
 					Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 							+ ") must be set or removed before saving");
 					return;
 				}
-
 				dataBase.saveEquation(equation, new AsyncCallback<String>() {
 
 					@Override
@@ -245,14 +250,15 @@ public class Moderator implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Save failed");
+						Window.alert("Save failed "
+								+ caught.getCause().toString());
 						JSNICalls.error("Save Failed: "
 								+ caught.getCause().toString());
 					}
 				});
 			} catch (Exception e) {
-				Window.alert("Could not save equation, see log");
-				JSNICalls.log(e.toString());
+				Window.alert("Could not save equation");
+				JSNICalls.log("Save Fail: " + e.toString());
 			}
 		}
 	}

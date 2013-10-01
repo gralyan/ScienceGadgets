@@ -13,5 +13,8 @@ public interface DatabaseHelper extends RemoteService {
 	String[] getEquationsByVariables(String[] name) throws IllegalArgumentException;
 	String[] getAlgebraEquations() throws IllegalArgumentException;
 	String saveEquation(String name) throws IllegalArgumentException;
+	String saveTestA() throws IllegalArgumentException;
+	String saveTestB(String name) throws IllegalArgumentException;
+	void saveTestC() throws IllegalArgumentException;
 	
 }
