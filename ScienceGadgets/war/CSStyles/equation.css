@@ -1,0 +1,95 @@
+@CHARSET "UTF-8";
+
+
+.interactiveEquation {
+	/* 	gray out the background of the equation to make wrappers stand out */
+	color: #A0A0A0;
+}
+
+.Equation {
+	font-family: MathJax_Main;
+	display: inline-block;
+}
+
+.displayWrapper {
+	color: black;
+	cursor: move;
+}
+
+.displayWrapper.in-sum.Operation {
+	background-image: url('images/tile_sumOp.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.displayWrapper.in-sum:not(.Operation) {
+	background-image: url('images/tile_sumChild.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.displayWrapper.in-term.Operation {
+	background-image: url('images/tile_termOp.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.displayWrapper.in-term:not(.Operation) {
+	background-image: url('images/tile_termChild.png');
+	background-repeat: repeat;
+}
+
+.displayWrapper.in-equation:not(.Operation) {
+	background-color: teal;
+}
+
+.displayWrapper.in-exponential-base,.displayWrapper.in-exponential-exponent
+	{
+	background-color: maroon;
+}
+
+.displayWrapper.in-fraction-numerator,.displayWrapper.in-fraction-denominator
+	{
+	background-color: navy;
+}
+
+.in-equation {
+	display: inline-block;
+	position: relative;
+}
+
+.in-sum {
+	display: inline-block;
+	position: relative;
+}
+
+.in-term {
+	display: inline-block;
+	position: relative;
+}
+
+.in-exponential-base {
+	display: inline-block;
+}
+
+.in-exponential-exponent {
+	font-size: 70%;
+	display: inline-block;
+	vertical-align: super;
+}
+
+.in-fraction-numerator {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	text-align: center;
+	border-bottom: thin solid;
+}
+
+.in-fraction-denominator {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	text-align: center;
+	/* 	border-top: medium solid; */
+}
