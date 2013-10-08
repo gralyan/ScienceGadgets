@@ -15,18 +15,6 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		ObjectifyService.register( Equation.class );
 	}
 
-	@Override
-	public String saveTestA() throws IllegalArgumentException {
-		return "SaveTestA sucess";
-	}
-	@Override
-	public String saveTestB(String name) throws IllegalArgumentException {
-		return "SaveTestB sucess";
-	}
-	@Override
-	public void saveTestC() throws IllegalArgumentException {
-		return;
-	}
 	
 	@Override
 	public String saveEquation(String name) throws IllegalArgumentException {

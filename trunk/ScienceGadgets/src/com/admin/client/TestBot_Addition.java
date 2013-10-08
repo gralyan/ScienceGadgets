@@ -38,7 +38,7 @@ public class TestBot_Addition extends AdditionTransformations{
 		for (String type : types) {
 			// for (String tipe : types) {
 
-			String leftTest = allTerm;
+			String leftTest = a;
 			String rightTest = type;
 
 			botCase(leftTest, rightTest);
@@ -75,10 +75,9 @@ public class TestBot_Addition extends AdditionTransformations{
 		parentElement.insertAfter(rightElement, multiplyElement);
 
 		MathTree mathTree = new MathTree(mathElement, false);
-		MathNode leftNode = mathTree.idMap.get(leftElement.getAttribute("id"));
-		MathNode rightNode = mathTree.idMap
-				.get(rightElement.getAttribute("id"));
-		operation = mathTree.idMap.get(multiplyElement.getAttribute("id"));
+		MathNode leftNode = mathTree.getMathNode(leftElement.getAttribute("id"));
+		MathNode rightNode = mathTree.getMathNode(rightElement.getAttribute("id"));
+		operation = mathTree.getMathNode(multiplyElement.getAttribute("id"));
 		parent = operation.getParent();
 		grandParent = parent.getParent();
 

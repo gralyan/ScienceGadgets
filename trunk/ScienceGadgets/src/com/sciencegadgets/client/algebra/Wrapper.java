@@ -3,17 +3,15 @@ package com.sciencegadgets.client.algebra;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.UIObject;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -28,7 +26,7 @@ public class Wrapper extends HTML {
 	public Element element;
 	protected FlowPanel menu;
 
-	public Wrapper(MathNode node, EquationPanel eqPanel, Element element) {
+	public Wrapper(MathNode node, final EquationPanel eqPanel, Element element) {
 		super(element);
 
 		this.node = node;
@@ -46,7 +44,9 @@ public class Wrapper extends HTML {
 		this.getElement().getStyle().setZIndex(2);
 
 		addClickHandler(new WrapperClickHandler());
-		addTouchStartHandler(new WrapperTouchHandler());
+		addTouchEndHandler(new WrapperTouchHandler());
+		addTouchStartHandler(new WrapperTouchStartHandler());
+		
 
 	}
 
@@ -141,14 +141,23 @@ public class Wrapper extends HTML {
 		}
 	}
 
-	class WrapperTouchHandler implements TouchStartHandler {
+	class WrapperTouchHandler implements TouchEndHandler {
 
 		@Override
-		public void onTouchStart(TouchStartEvent event) {
+		public void onTouchEnd(TouchEndEvent event) {
 			event.preventDefault();
 			event.stopPropagation();
 			select(Moderator.inEditMode);
 		}
 	}
+	
+	// Sole purpose is to detect touchability, then unsink click and itself
+	class WrapperTouchStartHandler implements TouchStartHandler {
+		@Override
+		public void onTouchStart(TouchStartEvent event) {
+			eqPanel.unsinkClicks();
+		}
+	}
+	
 
 }

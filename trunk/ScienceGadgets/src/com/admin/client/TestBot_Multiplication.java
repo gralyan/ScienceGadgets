@@ -61,11 +61,11 @@ public class TestBot_Multiplication extends MultiplyTransformations {
 	
 	 MathTree mathTree = new MathTree(mathElement, false);
 	
-	 MathNode leftNode = mathTree.idMap.get(leftElement
+	 MathNode leftNode = mathTree.getMathNode(leftElement
 	 .getAttribute("id"));
-	 MathNode rightNode = mathTree.idMap.get(rightElement
+	 MathNode rightNode = mathTree.getMathNode(rightElement
 	 .getAttribute("id"));
-	 operation = mathTree.idMap.get(multiplyElement
+	 operation = mathTree.getMathNode(multiplyElement
 	 .getAttribute("id"));
 	 parent = operation.getParent();
 	 grandParent = parent.getParent();

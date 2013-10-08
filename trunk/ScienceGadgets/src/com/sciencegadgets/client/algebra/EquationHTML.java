@@ -58,6 +58,8 @@ public class EquationHTML extends HTML {
 		Element nodeHTML = DOM.createDiv();
 		nodeHTML.setId(id);
 		nodeHTML.addClassName(type.toString());
+		
+		boolean isRadical = false;
 
 		switch (parentType) {
 		case Fraction:
@@ -79,6 +81,13 @@ public class EquationHTML extends HTML {
 				nodeHTML.addClassName(Type.Exponential.asChild() + "-base");
 			} else if (isExponential) {
 				nodeHTML.addClassName(Type.Exponential.asChild() + "-exponent");
+				if("mfrac".equalsIgnoreCase(mlNode.getTagName()) && "1".equals(mlNode.getFirstChildElement().getInnerText())){
+					Element radical = DOM.createDiv();
+					radical.addClassName("radical");
+					radical.addClassName(Aesthetic);
+					displayParentEl.insertFirst(radical);
+					displayParentEl.insertFirst(nodeHTML);
+				}
 			}
 			break;
 		case Equation:
@@ -88,21 +97,25 @@ public class EquationHTML extends HTML {
 		}
 
 		// Add parenthesis to some sums
-		if (Type.Sum.equals(type)
-				&& (Type.Term.equals(parentType) || Type.Exponential
-						.equals(parentType))) {
+		if ((Type.Sum.equals(type) && Type.Term.equals(parentType)) || 
+				(Type.Exponential.equals(parentType) && !Type.Number.equals(type) && !Type.Variable.equals(type))) {
 			fenced.add(nodeHTML);
 		}
 
 		// Addition to tree
-		displayParentEl.appendChild(nodeHTML);
+		if(!isRadical){
+		displayParentEl.appendChild(nodeHTML);}
 
 		for (int i = 0; i < mlNode.getChildCount(); i++) {
 			Node child = mlNode.getChild(i);
 
 			// Recursive creation
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				makeHTMLNode((Element) child, nodeHTML);
+				if(!isRadical){
+					makeHTMLNode((Element) child, nodeHTML);
+				}else{
+					makeHTMLNode((Element) child.getChild(1), nodeHTML);
+				}
 				// Inner text operation adjustment
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
 				String text = mlNode.getInnerText();

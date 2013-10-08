@@ -35,7 +35,7 @@ public class EditMenu extends FlowPanel {
 	MathNode node;
 	Focusable focusable = null;
 	Widget responseNotes = null;
-	
+
 	private final String SUM_EXTEND = "Add another term";
 	private final String TERM_EXTEND = "Multiply by another term";
 	private final String NUMBER_INPUT = "Set Constant";
@@ -43,24 +43,25 @@ public class EditMenu extends FlowPanel {
 	private final String VARIABLE_INPUT = "Set Variable Symbol";
 	private final String VARIABLE_INSERT = "Special Symbols";
 	private final String OPERATION_CHANGE = "Change Sign";
-	
+
 	public EditMenu(EditWrapper editWrapper, String width) {
 
 		this.editWrapper = editWrapper;
 		this.node = editWrapper.getNode();
-		
 
-		//zIndex eqPanel=1 wrapper=2 menu=3
+		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(3);
 
 		switch (node.getType()) {
 		case Sum:
-			Button extendSum = new Button("+"+ChangeNodeMenu.NOT_SET,new ExtendSumTermHandler());
+			Button extendSum = new Button("+" + ChangeNodeMenu.NOT_SET,
+					new ExtendSumTermHandler());
 			extendSum.setTitle(SUM_EXTEND);
 			this.place(extendSum);
 			break;
 		case Term:
-			Button extendTerm = new Button("x"+ChangeNodeMenu.NOT_SET,new ExtendSumTermHandler());
+			Button extendTerm = new Button("x" + ChangeNodeMenu.NOT_SET,
+					new ExtendSumTermHandler());
 			extendTerm.setTitle(TERM_EXTEND);
 			this.place(extendTerm);
 			break;
@@ -96,7 +97,7 @@ public class EditMenu extends FlowPanel {
 			numberInput.setTitle(NUMBER_INPUT);
 			focusable = numberInput;
 			this.place(numberInput);
-			
+
 			Button randomNumberButton = new Button("random",
 					new RandomNumberHandler());
 			randomNumberButton.setWidth(width);
@@ -161,11 +162,11 @@ public class EditMenu extends FlowPanel {
 		FlowPanel container = new FlowPanel();
 		this.add(container);
 		container.add(w);
-		
+
 		int count = this.getWidgetCount();
 		int height = 100 / count;
-		for(int i=0 ; i<count; i++){
-			getWidget(i).setHeight(height+"%");
+		for (int i = 0; i < count; i++) {
+			getWidget(i).setHeight(height + "%");
 			getWidget(i).setWidth("100%");
 		}
 	}
@@ -200,6 +201,7 @@ public class EditMenu extends FlowPanel {
 
 			if (extraction != null) {
 				node.setSymbol(extraction);
+				node.getMLNode().removeAttribute("data-randomness");
 
 				Moderator.reloadEquationPanel(null);
 			}
@@ -228,15 +230,16 @@ public class EditMenu extends FlowPanel {
 			return inputString;
 		}
 	}
-	
-	private class FocusOnlyClickHandler implements ClickHandler{
+
+	private class FocusOnlyClickHandler implements ClickHandler {
 		@Override
 		public void onClick(ClickEvent event) {
 			event.preventDefault();
 			event.stopPropagation();
 		}
 	}
-	private class FocusOnlyTouchHandler implements TouchStartHandler{
+
+	private class FocusOnlyTouchHandler implements TouchStartHandler {
 		@Override
 		public void onTouchStart(TouchStartEvent event) {
 			event.preventDefault();
@@ -271,14 +274,15 @@ public class EditMenu extends FlowPanel {
 			SymbolPalette symbolPopup;
 			if (Moderator.symbolPopup == null) {
 				symbolPopup = new SymbolPalette(node);
-				AbsolutePanel mainPanel = editWrapper.getEqPanel();
+//				AbsolutePanel mainPanel = editWrapper.getEqPanel();
+				AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
 
 				symbolPopup.setPixelSize(mainPanel.getOffsetWidth(),
 						mainPanel.getOffsetHeight());
 				symbolPopup.setPopupPosition(mainPanel.getAbsoluteLeft(),
 						mainPanel.getAbsoluteTop());
 				symbolPopup.getElement().getStyle().setZIndex(10);
-				
+
 				Moderator.symbolPopup = symbolPopup;
 			} else {
 				symbolPopup = Moderator.symbolPopup;
@@ -289,22 +293,24 @@ public class EditMenu extends FlowPanel {
 			symbolPopup.show();
 		}
 	}
+
 	private class RandomNumberHandler implements ClickHandler {
-		
+
 		@Override
 		public void onClick(ClickEvent event) {
-			
+
 			RandomSpecification randomSpec;
 			if (Moderator.randomSpec == null) {
 				randomSpec = new RandomSpecification(node);
-				AbsolutePanel mainPanel = editWrapper.getEqPanel();
-				
+//				AbsolutePanel mainPanel = editWrapper.getEqPanel();
+				AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
+
 				randomSpec.setPixelSize(mainPanel.getOffsetWidth(),
 						mainPanel.getOffsetHeight());
 				randomSpec.setPopupPosition(mainPanel.getAbsoluteLeft(),
 						mainPanel.getAbsoluteTop());
 				randomSpec.getElement().getStyle().setZIndex(10);
-				
+
 				Moderator.randomSpec = randomSpec;
 			} else {
 				randomSpec = Moderator.randomSpec;
@@ -316,21 +322,21 @@ public class EditMenu extends FlowPanel {
 		}
 	}
 
-	private class ExtendSumTermHandler implements ClickHandler{
+	private class ExtendSumTermHandler implements ClickHandler {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			switch(node.getType()){
+			switch (node.getType()) {
 			case Sum:
-				node.add(Type.Operation, "+");
+				node.append(Type.Operation, "+");
 				break;
 			case Term:
-				node.add(Type.Operation, Type.Operator.getMultiply().getSign());
+				node.append(Type.Operation, Type.Operator.getMultiply().getSign());
 				break;
 			}
-			node.add(Type.Variable, ChangeNodeMenu.NOT_SET);
+			node.append(Type.Variable, ChangeNodeMenu.NOT_SET);
 			Moderator.reloadEquationPanel(null);
 		}
-		
+
 	}
 }
