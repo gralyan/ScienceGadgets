@@ -14,21 +14,20 @@
  */
 package com.sciencegadgets.client.algebra;
 
-import org.datanucleus.query.evaluator.memory.UpperFunctionEvaluator;
-
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.TouchEvent;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
+import com.google.gwt.event.dom.client.TouchMoveEvent;
+import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.UIObject;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 
 public class AlgOut extends ScrollPanel {
@@ -36,43 +35,40 @@ public class AlgOut extends ScrollPanel {
 	boolean expanded = false;
 	FlowPanel algOutFlow = new FlowPanel();
 	public String origionalHeightStr;
+	public boolean scrolled = false;
 
 	public AlgOut() {
 		add(algOutFlow);
 		algOutFlow.getElement().setId("algOut");
 		getScrollableElement().setId("algOutScroll");
+		getScrollableElement().getStyle().clearOverflow();
 
 		origionalHeightStr = Moderator.upperEqArea.getElement().getStyle()
 				.getHeight();
 
 		this.sinkEvents(Event.ONCLICK);
-		this.addHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AlgOutSlide slide = new AlgOutSlide();
-				slide.run(300);
-			}
-		}, ClickEvent.getType());
-		
-		this.sinkEvents(Event.ONTOUCHSTART);
-		this.addHandler(new TouchStartHandler() {
-			@Override
-			public void onTouchStart(TouchStartEvent event) {
-				event.stopPropagation();
-				event.preventDefault();
-				AlgOutSlide slide = new AlgOutSlide();
-				slide.run(300);
-			}
-		}, TouchStartEvent.getType());
+		this.addHandler(new AlgOutClickHandler(), ClickEvent.getType());
+
+		this.sinkEvents(Event.ONTOUCHEND);
+		this.addHandler(new AlgOutTouchEndHandler(), TouchEndEvent.getType());
+
+		this.sinkEvents(Event.ONSCROLL);
+		this.addHandler(new AlgOutTouchMoveHandler(), TouchMoveEvent.getType());
 	}
 
 	public void updateAlgOut(String changeComment, EquationHTML eqHTML) {
 
-		algOutFlow.add(eqHTML);
+		FlowPanel row = new FlowPanel();
+		row.addStyleName("algOutRow");
+		
+		eqHTML.addStyleName("algOutEquationRow");
+		row.add(eqHTML);
 
 		HTML changeRow = new HTML(changeComment);
-		changeRow.setStyleName("algOutChangeRow");
-		algOutFlow.add(changeRow);
+		changeRow.addStyleName("algOutChangeRow");
+		row.add(changeRow);
+		
+		algOutFlow.add(row);
 
 		scrollToBottom();
 	}
@@ -93,20 +89,56 @@ public class AlgOut extends ScrollPanel {
 				dir = 1;
 			}
 		}
+
 		@Override
 		protected void onUpdate(double progress) {
 			alg.setHeight((startingHeight + (dir * progress * startingHeight))
 					+ "px");
 		}
+
 		@Override
 		protected void onComplete() {
 			super.onComplete();
 			if (expanded) {
 				alg.setHeight(origionalHeightStr);
 				expanded = false;
+				scrollToBottom();
 			} else {
 				alg.setHeight((startingHeight * 2) + "px");
 				expanded = true;
+				scrollToBottom();
+			}
+		}
+	}
+
+	class AlgOutClickHandler implements ClickHandler {
+		@Override
+		public void onClick(ClickEvent event) {
+				AlgOutSlide slide = new AlgOutSlide();
+				slide.run(300);
+		}
+	}
+
+	class AlgOutTouchMoveHandler implements TouchMoveHandler {
+		@Override
+		public void onTouchMove(TouchMoveEvent event) {
+			scrolled = true;
+		}
+	}
+
+	class AlgOutTouchEndHandler implements TouchEndHandler {
+		@Override
+		public void onTouchEnd(TouchEndEvent event) {
+			((UIObject) event.getSource()).unsinkEvents(Event.ONCLICK);
+			
+			event.stopPropagation();
+			event.preventDefault();
+			
+			if (!scrolled) {
+				AlgOutSlide slide = new AlgOutSlide();
+				slide.run(300);
+			} else {
+				scrolled = false;//restore field
 			}
 		}
 	}

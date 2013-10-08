@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Type.Operator;
 
 public class BothSidesMenu extends FlowPanel {
 	private MathWrapper mlWrapper;
@@ -98,6 +99,11 @@ public class BothSidesMenu extends FlowPanel {
 				}
 			}
 			break;
+		case Exponential:
+			if (isTopLevel && node.getIndex() == 1) {
+				this.add(new BothSidesButton(Math.ROOT));
+			}
+			break;
 		case Equation:
 			isSide = true;
 			BothSidesButton sub = new BothSidesButton(Math.SUBTRACT);
@@ -109,14 +115,12 @@ public class BothSidesMenu extends FlowPanel {
 			this.add(sub);
 			this.add(div);
 			break;
-		case Exponential:
-			break;
 		}
 
 	}
 
 	enum Math {
-		ADD, SUBTRACT, MULTIPLY, DIVIDE
+		ADD, SUBTRACT, MULTIPLY, DIVIDE, ROOT
 	}
 
 	class BothSidesButton extends Button {
@@ -140,7 +144,10 @@ public class BothSidesMenu extends FlowPanel {
 				setHTML("Divide both sides by " + node.getHTMLString());
 				addClickHandler(new DivideBothHandler());
 				break;
-
+			case ROOT:
+				setHTML("Root both sides by " + node.getHTMLString());
+				addClickHandler(new RootBothHandler());
+				break;
 			}
 		}
 	}
@@ -197,7 +204,7 @@ public class BothSidesMenu extends FlowPanel {
 			}
 			// Leave 0 in old side if top node
 			if (isSide) {
-				node.getParent().add(node.getIndex(), Type.Number, "0");
+				node.getParent().addBefore(node.getIndex(), Type.Number, "0");
 			}
 			// take operation
 			if (node.getIndex() > 0 && !isSide) {
@@ -212,14 +219,14 @@ public class BothSidesMenu extends FlowPanel {
 				} else {
 					JSNICalls.warn("Unknown operation, can't flip");
 				}
-				targetSide.add(-1, operator);
+				targetSide.append(operator);
 			} else {
-				targetSide.add(-1, Type.Operation, MINUS);
+				targetSide.append(Type.Operation, MINUS);
 				changeComment += MINUS;
 			}
 
 			// move node to other side
-			targetSide.add(-1, node);
+			targetSide.append(node);
 
 			// clean source side
 			MathNode oldFirstSib = oldParent.getFirstChild();
@@ -241,7 +248,7 @@ public class BothSidesMenu extends FlowPanel {
 
 			// Leave 1 in old side if top node
 			if (isSide) {
-				oldParent.add(node.getIndex(), Type.Number, "1");
+				oldParent.addBefore(node.getIndex(), Type.Number, "1");
 			} else {
 				// take operation
 				if (node.getIndex() > 0) {
@@ -259,15 +266,15 @@ public class BothSidesMenu extends FlowPanel {
 					targetSide = targetSide.encase(Type.Term);
 				}
 				if (operator == null) {
-					targetSide.add(-1, Type.Operation, Type.Operator
+					targetSide.append(Type.Operation, Type.Operator
 							.getMultiply().getSign());
 				} else {
-					targetSide.add(-1, operator);
+					targetSide.append(operator);
 				}
 			}
 
 			// move node to other side
-			targetSide.add(-1, node);
+			targetSide.append(node);
 
 			// clean source side
 			MathNode oldFirstSib = oldParent.getFirstChild();
@@ -280,11 +287,11 @@ public class BothSidesMenu extends FlowPanel {
 
 			if (Type.Fraction.equals(oldParent.getType())) {
 				// leave 1 in numerator
-				oldParent.add(0, Type.Number, "1");
+				oldParent.addBefore(0, Type.Number, "1");
 			} else if (Type.Term.equals(oldParent.getType())) {
 				if (oldParent.getChildCount() == 1) {
 					// No need to be encased in term anymore
-					oldParent.getParent().add(oldParent.getIndex(),
+					oldParent.getParent().addBefore(oldParent.getIndex(),
 							oldParent.getFirstChild());
 					oldParent.remove();
 				} else if (oldParent.getChildCount() == 2) {
@@ -309,13 +316,20 @@ public class BothSidesMenu extends FlowPanel {
 				targetSide = targetSide.encase(Type.Term);
 			}
 			if (isNestedInFraction) {
-				if (node.getIndex() > 0) {
-					targetSide.add(-1, node.getPrevSibling());
+				if (node.getIndex() == 0) {
+					MathNode nextOp = node.getNextSibling();
+					if (nextOp != null
+							&& Type.Operation.equals(nextOp.getType())) {
+						targetSide.append(nextOp);
+					}
 				} else {
-					targetSide.add(-1, node.getNextSibling());
+					MathNode PrevOp = node.getPrevSibling();
+					if (Type.Operation.equals(PrevOp.getType())) {
+						targetSide.append(PrevOp);
+					}
 				}
 			} else if (isTopLevel) {
-				targetSide.add(-1, Type.Operation, Type.Operator.getMultiply()
+				targetSide.append(Type.Operation, Type.Operator.getMultiply()
 						.getSign());
 			} else {
 				JSNICalls
@@ -324,23 +338,23 @@ public class BothSidesMenu extends FlowPanel {
 			}
 			if (Type.Term.equals(node.getType())) {// Termception
 				for (MathNode transplants : node.getChildren()) {
-					targetSide.add(-1, transplants);
+					targetSide.append(transplants);
 				}
 				node.remove();
 			} else {
-				targetSide.add(-1, node);
+				targetSide.append(node);
 			}
 
 			// clean source side
 			if (Type.Fraction.equals(oldParent.getType())) {
 				// remove unnecessary intermediate fraction
-				oldParent.getParent().add(oldParent.getIndex(),
+				oldParent.getParent().addBefore(oldParent.getIndex(),
 						oldParent.getFirstChild());
 				oldParent.remove();
 			} else if (Type.Term.equals(oldParent.getType())) {
 				if (oldParent.getChildCount() == 1) {
 					// No need to be encased in term anymore
-					oldParent.getParent().add(oldParent.getIndex(),
+					oldParent.getParent().addBefore(oldParent.getIndex(),
 							oldParent.getFirstChild());
 					oldParent.remove();
 				} else if (oldParent.getChildCount() == 2) {
@@ -352,6 +366,38 @@ public class BothSidesMenu extends FlowPanel {
 			}
 
 			changeComment += Type.Operator.getMultiply().getSign()
+					+ node.toString();
+			Moderator.reloadEquationPanel(doubleChangeComment());
+		}
+	}
+	
+	class RootBothHandler extends BothSidesHandler {
+		
+		@Override
+		public void onClick(ClickEvent event) {
+			// Prepare Target side
+			
+			if (!Type.Exponential.equals(targetSide.getType())) {
+				targetSide = targetSide.encase(Type.Exponential);
+				MathNode frac = targetSide.append(Type.Fraction, "");
+				frac.append(Type.Number, "1");
+				frac.append(node);
+			}else{
+				MathNode targetExp = targetSide.getChildAt(1);
+				if(!Type.Term.equals(targetExp.getType())){
+					targetExp = targetExp.encase(Type.Term);
+				}
+				targetExp.append(Type.Operation, Operator.getMultiply().getSign());
+				MathNode frac = targetExp.append(Type.Fraction, "");
+				frac.append(Type.Number, "1");
+				frac.append(node);
+			}
+			
+			// clean source side
+			oldParent.getParent().addBefore(oldParent.getIndex(), oldParent.getFirstChild());
+			oldParent.remove();
+			
+			changeComment += "\u221A"
 					+ node.toString();
 			Moderator.reloadEquationPanel(doubleChangeComment());
 		}

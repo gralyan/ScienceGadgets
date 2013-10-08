@@ -2,6 +2,14 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.NoSuchElementException;
 
+/**
+ * tag - attributes
+ * mn - data-randomness
+ * function - 
+ * 
+ *
+ */
+
 public enum Type {
 	Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
 			"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
@@ -83,4 +91,5 @@ public enum Type {
 			return DOT;
 		}
 	}
+	
 }

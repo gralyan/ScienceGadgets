@@ -95,14 +95,15 @@ public class ChangeNodeMenu extends FlowPanel {
 				case Term:
 				case Sum:
 					if (parent.getChildCount() > 4) {
-						try {
-							MathNode prevSib = node.getPrevSibling();
-							if (Type.Operation.equals(prevSib.getType()))
-								prevSib.remove();
-						} catch (IndexOutOfBoundsException e) {
-							MathNode nextSib = node.getNextSibling();
-							if (Type.Operation.equals(nextSib.getType()))
-								nextSib.remove();
+						if (node.getIndex() == 0) {
+							MathNode nextOp = node.getNextSibling();
+							if (nextOp != null
+									&& Type.Operation.equals(nextOp.getType()))
+								nextOp.remove();
+						} else {
+							MathNode prevOp = node.getPrevSibling();
+							if (Type.Operation.equals(prevOp.getType()))
+								prevOp.remove();
 						}
 						node.remove();
 						Moderator.reloadEquationPanel(null);
@@ -118,10 +119,10 @@ public class ChangeNodeMenu extends FlowPanel {
 					
 					switch (node.getIndex()) {
 					case 0:
-						newParent.add(parent.getIndex(), node.getNextSibling());
+						newParent.addBefore(parent.getIndex(), node.getNextSibling());
 						break;
 					case 1:
-						newParent.add(parent.getIndex(), node.getPrevSibling());
+						newParent.addBefore(parent.getIndex(), node.getPrevSibling());
 						break;
 					}
 					parent.remove();
@@ -153,11 +154,11 @@ public class ChangeNodeMenu extends FlowPanel {
 
 					switch (type) {
 					case Number:
-						parent.add(node.getIndex(), type, "1");
+						parent.addBefore(node.getIndex(), type, "1");
 						node.remove();
 						break;
 					case Variable:
-						parent.add(node.getIndex(), type, "x");
+						parent.addBefore(node.getIndex(), type, "x");
 						node.remove();
 						break;
 
@@ -171,12 +172,12 @@ public class ChangeNodeMenu extends FlowPanel {
 						MathNode newNode = Moderator.mathTree.NEW_NODE(
 								type, "");
 
-						newNode.add(node);
+						newNode.append(node);
 						if (operator != null){
-							newNode.add(-1, Type.Operation, operator.getSign());
+							newNode.addBefore(-1, Type.Operation, operator.getSign());
 						}
-						newNode.add(-1, Type.Variable, NOT_SET);
-						parent.add(index, newNode);
+						newNode.addBefore(-1, Type.Variable, NOT_SET);
+						parent.addBefore(index, newNode);
 
 					}
 					Moderator.reloadEquationPanel(null);

@@ -7,12 +7,16 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Duration;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -26,6 +30,7 @@ public class EquationPanel extends AbsolutePanel {
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
 	private LinkedList<MathNode> mergeRootNodes = new LinkedList<MathNode>();
+	private LinkedList<MathWrapper> mathWrappers = new LinkedList<MathWrapper>();
 
 	private MathNode rootNode;
 
@@ -48,6 +53,34 @@ public class EquationPanel extends AbsolutePanel {
 			}
 		}, ClickEvent.getType());
 
+		this.sinkEvents(Event.ONTOUCHEND);
+		this.addHandler(new TouchEndHandler() {
+			@Override
+			public void onTouchEnd(TouchEndEvent event) {
+				event.stopPropagation();
+				event.preventDefault();
+				setFocusOut();
+			}
+		}, TouchEndEvent.getType());
+
+		// Sole purpose is to detect touchability, then unsink click and itself
+		this.sinkEvents(Event.ONTOUCHSTART);
+		this.addHandler(new TouchStartHandler() {
+			@Override
+			public void onTouchStart(TouchStartEvent event) {
+				unsinkClicks();
+			}
+		}, TouchStartEvent.getType());
+
+	}
+
+	public void unsinkClicks() {
+		unsinkEvents(Event.ONCLICK);
+		unsinkEvents(Event.ONTOUCHSTART);
+		for (MathWrapper wrap : mathWrappers) {
+			wrap.unsinkEvents(Event.ONCLICK);
+			wrap.unsinkEvents(Event.ONTOUCHSTART);
+		}
 	}
 
 	@Override
@@ -64,6 +97,10 @@ public class EquationPanel extends AbsolutePanel {
 			for (MathNode merge : mergeRootNodes) {
 				placeNextEqWrappers(merge, rootLayer);
 			}
+
+			 for (MathWrapper wrap : mathWrappers) {
+			 wrap.addAssociativeDragDrop();
+			 }
 		}
 
 		for (EquationLayer eqLayer : eqLayerMap.values()) {
@@ -145,36 +182,26 @@ public class EquationPanel extends AbsolutePanel {
 		// EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
 		for (MathNode node : childNodes) {
-			if(!inEditMode){
-			if (mergeRootNodes.contains(node)) {
-				continue;
+			if (!inEditMode) {
+				if (mergeRootNodes.contains(node)) {
+					continue;
+				}
+				if (mergeRootNodes.contains(parentNode)) {
+					parentNode = rootNode;
+				}
 			}
-			if (mergeRootNodes.contains(parentNode)) {
-				parentNode = rootNode;
-			}}
 			com.google.gwt.user.client.Element layerNode = DOM
 					.getElementById(node.getId() + "-ofLayer-"
 							+ parentNode.getId());
 
-			Wrapper wrap;
-			// VerticalPanel menu = null;
-			if (inEditMode) {// Edit Mode////////////////////////////
-				wrap = new EditWrapper(node, this, layerNode);
-				// menu = ((EditWrapper) wrap).getEditMenu();
-
-			} else {// Solver Mode////////////////////////////////////
-				wrap = new MathWrapper(node, this, layerNode);
-				// menu = ((MLElementWrapper) wrap).getContextMenu();
+			if (inEditMode) {// Edit Mode
+				EditWrapper wrap = new EditWrapper(node, this, layerNode);
+				eqLayer.addWrapper(wrap);
+			} else {// Solver Mode
+				MathWrapper wrap = new MathWrapper(node, this, layerNode);
+				eqLayer.addWrapper(wrap);
+				mathWrappers.add(wrap);
 			}
-
-			eqLayer.addWrapper(wrap);
-
-			// eqLayer.ContextMenuPanel.add(
-			// menu,
-			// wrap.getAbsoluteLeft() - this.getAbsoluteLeft(),
-			// wrap.getAbsoluteTop() - this.getAbsoluteTop()
-			// + wrap.getOffsetHeight());
-
 		}
 	}
 

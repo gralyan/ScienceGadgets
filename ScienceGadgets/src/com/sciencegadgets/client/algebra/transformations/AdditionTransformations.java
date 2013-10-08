@@ -31,7 +31,6 @@ public class AdditionTransformations {
 	protected static MathNode grandParent;
 	protected static boolean isPlus;
 	private static final int same = 0;
-	private static boolean isInEasyMode = Moderator.isInEasyMode;
 
 	public static void assign(MathNode left, MathNode sign, MathNode right,
 			boolean isPlusSign) {
@@ -92,17 +91,17 @@ public class AdditionTransformations {
 			second: switch (rightType) {
 			case Term:
 				assigned = addSimilar_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Exponential:
 				assigned = factorWithBase_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorWithTermChild_check(right, left);
 				break second;
 			case Fraction:
 				assigned = factorWithTermChild_check(right, left);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Variable:
@@ -117,19 +116,19 @@ public class AdditionTransformations {
 			second: switch (rightType) {
 			case Term:
 				assigned = factorWithBase_check(right, left);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorWithTermChild_check(left, right);
 				break second;
 			case Exponential:
 				assigned = addSimilar_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					assigned = factorWithBase_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorWithBase_check(right, left);
 				break second;
 			case Fraction:
 				assigned = factorWithTermChild_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorWithBase_check(right, left);
 				break second;
 			case Variable:
@@ -144,19 +143,19 @@ public class AdditionTransformations {
 			second: switch (rightType) {
 			case Term:
 				assigned = factorWithTermChild_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Exponential:
 				assigned = factorWithTermChild_check(right, left);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorWithBase_check(right, left);
 				break second;
 			case Fraction:
 				assigned = addSimilar_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					assigned = addFractions_check(left, right);
-				if (!isInEasyMode || !assigned)
+				if (!Moderator.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Variable:
@@ -213,18 +212,18 @@ public class AdditionTransformations {
 			inBinomialSecond = inBinomialA;
 		}
 
-		MathNode termCasing = operation.getParent().add(operation.getIndex(),
+		MathNode termCasing = operation.getParent().addBefore(operation.getIndex(),
 				Type.Term, "");
 
 		for (MathNode factor : factors) {
-			termCasing.add(factor);
-			termCasing.add(Type.Operation, Operator.getMultiply().getSign());
+			termCasing.append(factor);
+			termCasing.append(Type.Operation, Operator.getMultiply().getSign());
 		}
 
-		MathNode binomialCasing = termCasing.add(Type.Sum, "");
-		binomialCasing.add(inBinomialFirst);
-		binomialCasing.add(operation);
-		binomialCasing.add(inBinomialSecond);
+		MathNode binomialCasing = termCasing.append(Type.Sum, "");
+		binomialCasing.append(inBinomialFirst);
+		binomialCasing.append(operation);
+		binomialCasing.append(inBinomialSecond);
 
 		 parent.decase();
 	}
@@ -271,7 +270,7 @@ public class AdditionTransformations {
 			return false;
 		}
 
-		if (isInEasyMode) {
+		if (Moderator.isInEasyMode) {
 			factorLikeTerms(left, right, likeTerms);
 		} else {
 			Moderator.selectedMenu.add(new FLTButton(left, right, likeTerms));
@@ -291,7 +290,14 @@ public class AdditionTransformations {
 	static void factorLikeTerms(MathNode left, MathNode right,
 			LinkedHashMap<MathNode, MathNode> likeTerms) {
 		RootPanel.get().add(new HTML("factor like terms"));
+		
+		//Highlight terms in AlgOut
+		for(MathNode key : likeTerms.keySet()){
+			likeTerms.get(key).highlight();
+			key.highlight();
+		}
 
+		//Like terms are cloned to simplify cleanup
 		LinkedList<MathNode> factors = new LinkedList<MathNode>();
 		for (MathNode factor : likeTerms.values()) {
 			factors.add(factor.clone());
@@ -300,17 +306,15 @@ public class AdditionTransformations {
 		// Remove operation on like term
 		if (likeTerms.size() * 2 - 1 == left.getChildCount()) {
 			left = left.replace(Type.Term, "");// will be MathNode.decase[d]
-			left.add(Type.Number, "1");
+			left.append(Type.Number, "1");
 		} else {
 			for (MathNode extraFactor : likeTerms.keySet()) {
 
 				if (extraFactor.getIndex() == 0) {
-					try {
-						MathNode nextOp = extraFactor.getNextSibling();
-						if (Type.Operation.equals(nextOp.getType())) {
-							nextOp.remove();
-						}
-					} catch (IndexOutOfBoundsException e) {
+					MathNode nextOp = extraFactor.getNextSibling();
+					if (nextOp != null
+							&& Type.Operation.equals(nextOp.getType())) {
+						nextOp.remove();
 					}
 				} else {
 					MathNode prevOp = extraFactor.getPrevSibling();
@@ -324,16 +328,14 @@ public class AdditionTransformations {
 
 		if (likeTerms.size() * 2 - 1 == right.getChildCount()) {
 			right = right.replace(Type.Term, "");
-			right.add(Type.Number, "1");
+			right.append(Type.Number, "1");
 		} else {
 			for (MathNode fact : likeTerms.values()) {
 				if (fact.getIndex() == 0) {
-					try {
-						MathNode nextOp = fact.getNextSibling();
-						if (Type.Operation.equals(nextOp.getType())) {
-							nextOp.remove();
-						}
-					} catch (IndexOutOfBoundsException e) {
+					MathNode nextOp = fact.getNextSibling();
+					if (nextOp != null
+							&& Type.Operation.equals(nextOp.getType())) {
+						nextOp.remove();
 					}
 				} else {
 					MathNode prevOp = fact.getPrevSibling();
@@ -345,7 +347,6 @@ public class AdditionTransformations {
 			}
 		}
 
-		// Collection<MathNode> factors = likeTerms.values();
 		factor(factors, left, right);
 
 		left.decase();
@@ -361,7 +362,7 @@ public class AdditionTransformations {
 			return false;
 		}
 
-		if (isInEasyMode) {
+		if (Moderator.isInEasyMode) {
 			factorWithBase(other, exponential);
 		} else {
 			Moderator.selectedMenu.add(new FWBButton(other, exponential));
@@ -379,9 +380,13 @@ public class AdditionTransformations {
 	 */
 	static void factorWithBase(MathNode other, MathNode exponential) {
 		RootPanel.get().add(new HTML("factor with base"));
+		
+		other.highlight();
+		operation.highlight();
+		exponential.getChildAt(0).highlight();
 
 		MathNode inBinomialB = exponential;
-		MathNode inBinomialA = other.getParent().add(other.getIndex(),
+		MathNode inBinomialA = other.getParent().addBefore(other.getIndex(),
 				Type.Number, "1");
 
 		LinkedList<MathNode> factors = new LinkedList<MathNode>();
@@ -389,8 +394,8 @@ public class AdditionTransformations {
 		factor(factors, inBinomialA, inBinomialB);
 
 		MathNode exp = exponential.getChildAt(1).encase(Type.Sum);
-		exp.add(Type.Operation, Operator.MINUS.getSign());
-		exp.add(Type.Number, "1");
+		exp.append(Type.Operation, Operator.MINUS.getSign());
+		exp.append(Type.Number, "1");
 
 		Moderator.reloadEquationPanel("Factor with Base");
 	}
@@ -410,7 +415,7 @@ public class AdditionTransformations {
 
 		for (MathNode termChild : term.getChildren()) {
 			if (termChild.isLike(other)) {
-				if (isInEasyMode) {
+				if (Moderator.isInEasyMode) {
 					factorWithTermChild(other, termContainer, termChild);
 				} else {
 					Moderator.selectedMenu.add(new FWTCButton(other,
@@ -433,14 +438,24 @@ public class AdditionTransformations {
 	static void factorWithTermChild(MathNode other, MathNode term,
 			MathNode termChild) {
 		RootPanel.get().add(new HTML("factor with term child"));
+		
+		other.highlight();
+		operation.highlight();
+		termChild.highlight();
 
 		MathNode inBinomialA = other;
 		MathNode inBinomialB = term;
 
 		if (termChild.getIndex() == 0) {
-			termChild.getNextSibling().remove();
+			MathNode nextOp = termChild.getNextSibling();
+			if (nextOp != null && Type.Operation.equals(nextOp.getType())) {
+				nextOp.remove();
+			}
 		} else {
-			termChild.getPrevSibling().remove();
+			MathNode prevOp = termChild.getPrevSibling();
+			if (Type.Operation.equals(prevOp.getType())) {
+				prevOp.remove();
+			}
 		}
 
 		// Idea: factor a single multiple of a base, other must be base
@@ -451,7 +466,7 @@ public class AdditionTransformations {
 		// exp.add(Type.Operation, Operator.MINUS.getSign());
 		// exp.add(Type.Number, "1");
 		// } else {
-		inBinomialA = other.getParent().add(other.getIndex(), Type.Number, "1");
+		inBinomialA = other.getParent().addBefore(other.getIndex(), Type.Number, "1");
 		other.remove();
 		// }
 
@@ -470,7 +485,7 @@ public class AdditionTransformations {
 			return false;
 		}
 
-		if (isInEasyMode) {
+		if (Moderator.isInEasyMode) {
 			addFractions(left, right);
 		} else {
 			Moderator.selectedMenu.add(new AddFractionsButton(left, right));
@@ -481,10 +496,14 @@ public class AdditionTransformations {
 	}
 
 	static void addFractions(MathNode left, MathNode right) {
+		
+		right.highlight();
+		operation.highlight();
+		left.highlight();
 
 		MathNode numeratorCasing = right.getChildAt(0).encase(Type.Sum);
-		numeratorCasing.add(0, operation);
-		numeratorCasing.add(0, left.getChildAt(0));
+		numeratorCasing.addBefore(0, operation);
+		numeratorCasing.addBefore(0, left.getChildAt(0));
 
 		left.remove();
 		parent.decase();
@@ -498,18 +517,22 @@ public class AdditionTransformations {
 			return false;
 		}
 
-		if (isInEasyMode) {
+		if (Moderator.isInEasyMode) {
 			addSimilar(left, right);
 		}
 		return true;
 	}
 
 	static void addSimilar(MathNode left, MathNode right) {
+		
+		right.highlight();
+		operation.highlight();
+		left.highlight();
 
 		if (isPlus) {
 			MathNode casing = right.encase(Type.Term);
-			casing.add(0, Type.Operation, Operator.getMultiply().getSign());
-			casing.add(0, Type.Number, "2");
+			casing.addBefore(0, Type.Operation, Operator.getMultiply().getSign());
+			casing.addBefore(0, Type.Number, "2");
 		} else {
 			right.remove();
 		}
@@ -524,8 +547,8 @@ public class AdditionTransformations {
 	private static void addNumbers_prompt(final MathNode left,
 			final MathNode right) {
 
-		BigDecimal leftValue = new BigDecimal(left.getSymbol());
-		BigDecimal rightValue = new BigDecimal(right.getSymbol());
+		final BigDecimal leftValue = new BigDecimal(left.getSymbol());
+		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		BigDecimal total;
 
 		if (isPlus) {
@@ -535,51 +558,58 @@ public class AdditionTransformations {
 		}
 		final BigDecimal totalValue = total;
 
-		if (isInEasyMode) {
-			addNumbers(left, right, totalValue);
+		if (Moderator.isInEasyMode) {
+			addNumbers(left, right, totalValue, leftValue, rightValue);
 		} else {//prompt
 			Moderator.selectedMenu.add(new HTML(leftValue.toString() + " "
 					+ operation.getSymbol() + " " + rightValue.toString() +" ="));
 			TextBox inp = new TextBox();
-			inp.setFocus(true);
 			inp.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
 					BigDecimal inputValue = new BigDecimal(event.getValue());
 					if (inputValue.compareTo(totalValue) == same) {
-						addNumbers(left, right, totalValue);
+						addNumbers(left, right, totalValue, leftValue, rightValue);
 					}
 				}
 			});
 			Moderator.selectedMenu.add(inp);
+			inp.setFocus(true);
 		}
 
 	}
 
-	static void addNumbers(MathNode left, MathNode right, BigDecimal totalValue) {
+	static void addNumbers(MathNode left, MathNode right, BigDecimal totalValue, BigDecimal leftValue, BigDecimal rightValue) {
+		
+		right.highlight();
+		operation.highlight();
+		left.highlight();
 
 		right.setSymbol(totalValue.stripTrailingZeros().toString());
-
+		
 		left.remove();
 		operation.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Add Numbers");
+		Moderator.reloadEquationPanel(leftValue.toString()+operation.toString()+rightValue.toString()+" = "+totalValue.toString());
 	}
 
 	static void addZero(MathNode other, MathNode zero) {
 
-		if (zero.getIndex() > other.getIndex()) {
-			MathNode zeroOp = zero.getPrevSibling();
-			if (Type.Operation.equals(zeroOp.getType())) {
-				zeroOp.remove();
-			}
-		} else {
-			MathNode zeroOp = zero.getNextSibling();
-			if (Type.Operation.equals(zeroOp.getType())) {
-				zeroOp.remove();
-			}
-		}
+		zero.highlight();
+
+//		if (zero.getIndex() > other.getIndex()) {
+//			MathNode zeroOp = zero.getPrevSibling();
+//			if (Type.Operation.equals(zeroOp.getType())) {
+//				zeroOp.remove();
+//			}
+//		} else {
+//			MathNode zeroOp = zero.getNextSibling();
+//			if (Type.Operation.equals(zeroOp.getType())) {
+//				zeroOp.remove();
+//			}
+//		}
+		operation.remove();
 
 		zero.remove();
 

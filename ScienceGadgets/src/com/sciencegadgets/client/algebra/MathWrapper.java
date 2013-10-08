@@ -15,15 +15,21 @@
 package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 
 import com.allen_sauer.gwt.dnd.client.AbstractDragController;
+import com.allen_sauer.gwt.dnd.client.DragContext;
+import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Type.Operator;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
+import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -57,21 +63,33 @@ public class MathWrapper extends Wrapper {
 		menu = new FlowPanel();
 	}
 
+	public void addAssociativeDragDrop() {
+
+		// Add associative drag and drop
+		if ((Type.Sum.equals(node.getParentType()) || Type.Term.equals(node
+				.getParentType())) && !Type.Operation.equals(node.getType())) {
+
+			addDragController();
+
+			LinkedList<MathNode> siblings = node.getParent().getChildren();
+			siblings.remove(node);
+			for (MathNode dropNode : siblings) {
+				if (!Type.Operation.equals(dropNode.getType()))
+					dragController
+							.registerDropController(new AssociativeDropController(
+									(MathWrapper) dropNode.getWrapper()));
+
+			}
+		}
+	}
+
 	/**
 	 * Called when attaching Widget. If it is draggable, it can only be attached
 	 * to an {@link AbsolutePanel}
 	 */
 	public void onAttach() {
 		super.onAttach();
-		switch (node.getType()) {
-		case Sum:
-		case Term:
-		case Exponential:
-		case Fraction:
-		case Variable:
-		case Number:
-			addDragController();
-		}
+
 	}
 
 	// public NodeMenu getContextMenu() {
@@ -125,7 +143,7 @@ public class MathWrapper extends Wrapper {
 	 *            - selects if true, unselects if false
 	 */
 	public void select() {
-		
+
 		Moderator.selectedMenu.clear();
 		Moderator.selectedMenu.add(bothSidesMenu);
 
@@ -157,4 +175,7 @@ public class MathWrapper extends Wrapper {
 		Moderator.selectedMenu.clear();
 		super.unselect();
 	}
+
 }
+
+

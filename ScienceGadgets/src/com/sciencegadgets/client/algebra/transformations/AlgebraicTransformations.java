@@ -2,6 +2,9 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.util.LinkedList;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
@@ -21,6 +24,16 @@ public class AlgebraicTransformations {
 	 *            - node of negative number
 	 */
 	public static void separateNegative(MathNode negNode) {
+
+		if(Moderator.isInEasyMode){
+			separateNegative_perform(negNode);
+		}else{
+			Moderator.selectedMenu.add(new SeperateNegButton(negNode));
+		}
+		
+	}
+
+	public static void separateNegative_perform(MathNode negNode) {
 		MathNode parent = negNode.getParent();
 		negNode.setSymbol(negNode.getSymbol().replaceFirst(
 				Type.Operator.MINUS.getSign(), ""));
@@ -28,9 +41,9 @@ public class AlgebraicTransformations {
 			parent = negNode.encase(Type.Term);
 		}
 		int nodeIndex = negNode.getIndex();
-		parent.add(nodeIndex, Type.Operation, Type.Operator.getMultiply()
+		parent.addBefore(nodeIndex, Type.Operation, Type.Operator.getMultiply()
 				.getSign());
-		parent.add(nodeIndex, Type.Number, "-1");
+		parent.addBefore(nodeIndex, Type.Number, "-1");
 		Moderator.reloadEquationPanel(null);
 	}
 
@@ -45,10 +58,10 @@ public class AlgebraicTransformations {
 
 		Moderator.selectedMenu.clear();
 
-		try {
-			left = opNode.getPrevSibling();
-			right = opNode.getNextSibling();
+		left = opNode.getPrevSibling();
+		right = opNode.getNextSibling();
 
+		if (left != null && left != null) {
 			switch (opNode.getOperation()) {
 			case CROSS:
 			case DOT:
@@ -62,7 +75,6 @@ public class AlgebraicTransformations {
 				AdditionTransformations.assign(left, opNode, right, true);
 				break;
 			}
-		} catch (IndexOutOfBoundsException e) {
 		}
 	}
 
@@ -92,10 +104,25 @@ public class AlgebraicTransformations {
 			break;
 		default:
 			MathNode casing = toNegate.encase(Type.Term);
-			casing.add(0, Type.Operation, Operator.getMultiply().getSign());
-			casing.add(0, Type.Number, "-1");
+			casing.addBefore(0, Type.Operation, Operator.getMultiply().getSign());
+			casing.addBefore(0, Type.Number, "-1");
 
 		}
 	}
+	
 
+}
+
+class SeperateNegButton extends Button{
+	SeperateNegButton(final MathNode negNode) {
+		
+		setHTML("Seperate (-)");
+		
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AlgebraicTransformations.separateNegative_perform(negNode);
+			}
+		});
+	}
 }

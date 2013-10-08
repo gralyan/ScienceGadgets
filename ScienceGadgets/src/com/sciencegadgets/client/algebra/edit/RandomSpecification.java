@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.edit;
 
 import java.awt.ScrollPane;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -40,12 +41,14 @@ public class RandomSpecification extends PopupPanel {
 	RandomSpecification(MathNode mlNode) {
 		this.mlNode = mlNode;
 
+		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
+		
 		VerticalPanel mainPanel = new VerticalPanel();
 		ScrollPanel scrollPanel = new ScrollPanel(mainPanel);
 
-		Label l1 = new Label("Negative:");
-		l1.setStyleName("rowHeader");
-		mainPanel.add(l1);
+		Label label1 = new Label("Negativity");
+		label1.setStyleName("rowHeader");
+		mainPanel.add(label1);
 
 		neverNeg = new RadioButton("neg", "Never");
 		sometimesNeg = new RadioButton("neg", "Sometimes");
@@ -56,9 +59,10 @@ public class RandomSpecification extends PopupPanel {
 		negativeSelection.add(alwaysNeg);
 		mainPanel.add(negativeSelection);
 
-		Label l2 = new Label("Range:");
-		l2.setStyleName("rowHeader");
-		mainPanel.add(l2);
+		Label label2 = new Label("Range");
+		label2.setStyleName("rowHeader");
+		label2.getElement().getStyle().setMarginTop(5, Unit.PX);
+		mainPanel.add(label2);
 
 		HorizontalPanel rangeSelection = new HorizontalPanel();
 		lowerBound = new DoubleBox();
@@ -69,8 +73,9 @@ public class RandomSpecification extends PopupPanel {
 		mainPanel.add(rangeSelection);
 
 		Label label3 = new Label(
-				"Decimal places (0-integers, 1-tenths place...):");
+				"Decimal places (0-integers, 1-tenths place...)");
 		label3.setStyleName("rowHeader");
+		label3.getElement().getStyle().setMarginTop(5, Unit.PX);
 		mainPanel.add(label3);
 
 		decPlace = new IntegerBox();

@@ -24,7 +24,9 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type.Operator;
@@ -34,11 +36,12 @@ public class MathTree {
 
 	private MathNode root;
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	public HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
+	private HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private Element mathML;
-	private EquationHTML eqHTML;
+//	private EquationHTML eqHTML;
+	private EquationHTML eqHTMLAlgOut;
 	private boolean inEditMode;
 	private int idCounter = 0;
 
@@ -63,6 +66,10 @@ public class MathTree {
 		bindMLtoNodes(mathML);
 
 		reloadEqHTML();
+	}
+
+	public MathNode getMathNode(String id) {
+		return idMap.get(id);
 	}
 
 	public Element getMathMLClone() {
@@ -105,19 +112,32 @@ public class MathTree {
 	}
 
 	public void reloadEqHTML() {
-		eqHTML = new EquationHTML(mathML);
+		eqHTMLAlgOut = new EquationHTML(mathML);
+		
+		NodeList<Element> allElements = eqHTMLAlgOut.getElement()
+				.getElementsByTagName("*");
+//		for (int i = 0; i < allElementOut.getLength(); i++) {
+//			Element el = (Element) allElementOut.getItem(i);
+//			el.removeAttribute("id");
+//		}
+
+//		eqHTML = new EquationHTML(mathML);
 
 		idHTMLMap.clear();
 
-		NodeList<Element> allElements = eqHTML.getElement()
-				.getElementsByTagName("*");
+//		NodeList<Element> allElements = eqHTML.getElement()
+//				.getElementsByTagName("*");
 		for (int i = 0; i < allElements.getLength(); i++) {
-			Element el = (Element) allElements.getItem(i).cloneNode(true);
+			Element el = (Element) allElements.getItem(i);
 			idHTMLMap.put(el.getAttribute("id"), el);
-			el.removeAttribute("class");
+//			el.removeAttribute("class");
 			el.removeAttribute("id");
-			el.getStyle().setDisplay(Display.INLINE_BLOCK);
+//			el.getStyle().setDisplay(Display.INLINE_BLOCK);
 		}
+	}
+
+	public EquationHTML getHTMLAlgOut() {
+		return eqHTMLAlgOut;
 	}
 
 	public LinkedList<Wrapper> getWrappers() {
@@ -246,8 +266,8 @@ public class MathTree {
 			} else {
 				MathNode encasing = new MathNode(type, "");
 				// Move around nodes
-				this.getParent().add(this.getIndex(), encasing);
-				encasing.add(this);
+				this.getParent().addBefore(this.getIndex(), encasing);
+				encasing.append(this);
 
 				return encasing;
 			}
@@ -296,8 +316,7 @@ public class MathTree {
 
 			switch (this.getChildCount()) {
 			case 0:
-				System.out.println("decase 0");
-				this.remove();
+				this.replace(Type.Number, "0");
 				break;
 			case 1:
 				System.out.println("decase 1");
@@ -308,13 +327,14 @@ public class MathTree {
 					LinkedList<MathNode> grandChildren = this.getFirstChild()
 							.getChildren();
 					for (int i = grandChildren.size(); i > 0; i--) {
-						getParent().add(this.getIndex(),
+						getParent().addBefore(this.getIndex(),
 								grandChildren.get(i - 1));
 					}
 					this.getFirstChild().remove();
 					this.remove();
 				} else {
-					getParent().add(this.getIndex(), this.getFirstChild());
+					getParent()
+							.addBefore(this.getIndex(), this.getFirstChild());
 					this.remove();
 				}
 				break;
@@ -328,7 +348,7 @@ public class MathTree {
 		}
 
 		public void replace(MathNode replacement) {
-			this.getParent().add(this.getIndex(), replacement);
+			this.getParent().addBefore(this.getIndex(), replacement);
 			this.remove();
 		}
 
@@ -338,11 +358,50 @@ public class MathTree {
 			return replacement;
 		}
 
+		private void add(int index, MathNode node, boolean after)
+				throws IllegalArgumentException {
+
+			// Don't add sum to sum or term to term, just add it's children
+			if (getType().equals(node.getType())
+					&& (Type.Sum.equals(node.getType()) || Type.Term
+							.equals(node.getType()))) {
+				LinkedList<MathNode> children = node.getChildren();
+				for (int i = children.size(); i > 0; i--) {
+					addBefore(index, children.get(i - 1));
+				}
+
+			} else {
+				Element elementNode = node.getMLNode();
+
+				// Add node to DOM tree
+				if (index < 0 || index >= mlNode.getChildCount()) {
+					mlNode.appendChild(elementNode);
+				} else if (after) {
+					Node referenceChild = mlNode.getChild(index);
+					mlNode.insertAfter(elementNode, referenceChild);
+				} else {
+					Node referenceChild = mlNode.getChild(index);
+					mlNode.insertBefore(elementNode, referenceChild);
+				}
+
+				AddToMaps(node);
+			}
+		}
+
+		public void addAfter(int index, MathNode node) {
+			add(index, node, true);
+		}
+
+		public MathNode addAfter(int index, Type type, String symbol) {
+			MathNode newNode = new MathNode(type, symbol);
+			this.addAfter(index, newNode);
+			return newNode;
+		}
+
 		/**
-		 * Adds a child at the specified index.</br> Use index -1 to add end to
-		 * the end of the child list</br>If the node is already in the tree, it
-		 * is just repositioned. There is no need to remove it first</br></br>
-		 * Children of this node must reflect it's type</br>
+		 * Adds a child at the specified index.</br></br>If the node is already
+		 * in the tree, it is just repositioned. There is no need to remove it
+		 * first</br></br> Children of this node must reflect it's type</br>
 		 * <em>Requirements:</em></br> <b>Variable and Number</b> must have
 		 * <b>exactly 0</b> children</br> <b>Term and Sum</b> must have <b>at
 		 * least 2</b> children</br> <b>Fraction and Exponential</b> must have
@@ -354,57 +413,31 @@ public class MathTree {
 		 *            - the placement of siblings
 		 * @param node
 		 *            - the node to be added
-		 * @param children
-		 *            - children of this added node
 		 */
-		public void add(int index, MathNode node)
-				throws IllegalArgumentException {
-
-			// Don't add sum to sum or term to term, just add it's children
-			if (getType().equals(node.getType())
-					&& (Type.Sum.equals(node.getType()) || Type.Term
-							.equals(node.getType()))) {
-				LinkedList<MathNode> children = node.getChildren();
-				for (int i = children.size(); i > 0; i--) {
-					add(index, children.get(i - 1));
-				}
-
-			} else {
-				Element elementNode = node.getMLNode();
-
-				// Add node to DOM tree
-				if (index < 0 || index >= mlNode.getChildCount()) {
-					mlNode.appendChild(elementNode);
-				} else {
-					Node referenceChild = mlNode.getChild(index);
-					mlNode.insertBefore(elementNode, referenceChild);
-				}
-
-				AddToMaps(node);
-			}
+		public void addBefore(int index, MathNode node) {
+			add(index, node, false);
 		}
 
 		/**
-		 * Creates a node to add as a child at the specified index. Use index -1
-		 * to append to the end of the child list
+		 * Creates a node to add as a child at the specified index.
 		 * 
 		 * @return - The newly create child
 		 * @throws Exception
 		 */
-		public MathNode add(int index, Type type, String symbol)
+		public MathNode addBefore(int index, Type type, String symbol)
 				throws NoSuchElementException {
 			MathNode newNode = new MathNode(type, symbol);
-			this.add(index, newNode);
+			this.addBefore(index, newNode);
 			return newNode;
 		}
 
-		public void add(MathNode newNode) {
-			add(-1, newNode);
+		public void append(MathNode newNode) {
+			addBefore(-1, newNode);
 		}
 
-		public MathNode add(Type type, String symbol)
+		public MathNode append(Type type, String symbol)
 				throws NoSuchElementException {
-			return add(-1, type, symbol);
+			return addBefore(-1, type, symbol);
 		}
 
 		public LinkedList<MathNode> getChildren() {
@@ -466,10 +499,11 @@ public class MathTree {
 				MathNode sibling = parent.getChildAt(siblingIndex);
 				return sibling;
 			} catch (JavaScriptException e) {
-				throw new IndexOutOfBoundsException(
-						"there is no child at index " + siblingIndex + ", "
-								+ indexesAway + "indexes away from sibling: \n"
-								+ this.toString() + "\n" + this);
+				return null;
+				// throw new IndexOutOfBoundsException(
+				// "there is no child at index " + siblingIndex + ", "
+				// + indexesAway + "indexes away from sibling: \n"
+				// + this.toString() + "\n" + this);
 			}
 		}
 
@@ -515,7 +549,6 @@ public class MathTree {
 		}
 
 		public String toString() {
-			JSNICalls.log("GETSTRING: " + mlNode.getString());
 			if (mlNode.getString() != null) {
 				return mlNode.getString();
 			} else {
@@ -595,20 +628,28 @@ public class MathTree {
 			return Type.getType(parentTag);
 		}
 
-		public Element getHTMLElement() {
-			Element el = idHTMLMap.get(getId());
-			if (el == null) {
-				JSNICalls.warn("No HTML for node: " + toString());
-			}
-			return (Element) el.cloneNode(true);
+		public Element getHTMLClone() {
+			Element html = (Element) getHTMLAlgOut().cloneNode(true);
+			
+			html.removeAttribute("class");
+			html.getStyle().setDisplay(Display.INLINE_BLOCK);
+			return html;
 		}
 
 		public String getHTMLString() {
+			return getHTMLClone().getString();
+		}
+
+		public Element getHTMLAlgOut() {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
 				JSNICalls.warn("No HTML for node: " + toString());
 			}
-			return el.getString();
+			return (Element) el;
+		}
+
+		public void highlight() {
+			getHTMLAlgOut().getStyle().setColor("red");
 		}
 
 		public boolean isLike(MathNode another) {

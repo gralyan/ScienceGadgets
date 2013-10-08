@@ -13,10 +13,5 @@ public interface DatabaseHelperAsync {
 	void getAlgebraEquations(AsyncCallback<String[]> asyncCallback);
 	void saveEquation(String input, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
-	void saveTestA(AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-	void saveTestB(String input, AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-	void saveTestC( AsyncCallback callback)
-			throws IllegalArgumentException;
+
 }
