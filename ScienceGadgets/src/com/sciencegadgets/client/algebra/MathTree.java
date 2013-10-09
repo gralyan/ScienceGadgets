@@ -255,21 +255,14 @@ public class MathTree {
 		 * @return - encasing node
 		 */
 		public MathNode encase(Type type) {
-			System.out.println("encasing 1 " + getRoot());
 			// Don't encase sum in sum or term in term
-			if (getType().equals(type) && (Type.Sum.equals(type)
-					|| Type.Term.equals(type))) {
-				System.out.println("encasing 2 " + getRoot());
+			boolean sumOrTerm = Type.Sum.equals(type) || Type.Term.equals(type);
+			if (getType().equals(type) && sumOrTerm) {
 				return this;
-
-			} else if (getParentType().equals(type) && (Type.Sum.equals(type)
-					|| Type.Term.equals(type))) {
-				System.out.println("encasing 3 " + getRoot());
-
+			} else if (getParentType().equals(type) && sumOrTerm) {
 				return getParent();
 			} else {
 				MathNode encasing = new MathNode(type, "");
-				// Move around nodes
 				this.getParent().addBefore(this.getIndex(), encasing);
 				encasing.append(this);
 
