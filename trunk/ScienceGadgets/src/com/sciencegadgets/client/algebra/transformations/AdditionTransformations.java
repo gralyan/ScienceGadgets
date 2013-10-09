@@ -2,24 +2,19 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Set;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.TopNodesNotFoundException;
-import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Type.Operator;
@@ -91,17 +86,17 @@ public class AdditionTransformations {
 			second: switch (rightType) {
 			case Term:
 				assigned = addSimilar_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Exponential:
 				assigned = factorWithBase_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorWithTermChild_check(right, left);
 				break second;
 			case Fraction:
 				assigned = factorWithTermChild_check(right, left);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Variable:
@@ -116,19 +111,19 @@ public class AdditionTransformations {
 			second: switch (rightType) {
 			case Term:
 				assigned = factorWithBase_check(right, left);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorWithTermChild_check(left, right);
 				break second;
 			case Exponential:
 				assigned = addSimilar_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					assigned = factorWithBase_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorWithBase_check(right, left);
 				break second;
 			case Fraction:
 				assigned = factorWithTermChild_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorWithBase_check(right, left);
 				break second;
 			case Variable:
@@ -143,19 +138,19 @@ public class AdditionTransformations {
 			second: switch (rightType) {
 			case Term:
 				assigned = factorWithTermChild_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Exponential:
 				assigned = factorWithTermChild_check(right, left);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorWithBase_check(right, left);
 				break second;
 			case Fraction:
 				assigned = addSimilar_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					assigned = addFractions_check(left, right);
-				if (!Moderator.isInEasyMode || !assigned)
+				if (!AlgebraActivity.isInEasyMode || !assigned)
 					factorLikeTerms_check(left, right);
 				break second;
 			case Variable:
@@ -270,10 +265,10 @@ public class AdditionTransformations {
 			return false;
 		}
 
-		if (Moderator.isInEasyMode) {
+		if (AlgebraActivity.isInEasyMode) {
 			factorLikeTerms(left, right, likeTerms);
 		} else {
-			Moderator.selectedMenu.add(new FLTButton(left, right, likeTerms));
+			AlgebraActivity.contextMenuArea.add(new FLTButton(left, right, likeTerms));
 		}
 
 		return true;
@@ -289,8 +284,6 @@ public class AdditionTransformations {
 	 */
 	static void factorLikeTerms(MathNode left, MathNode right,
 			LinkedHashMap<MathNode, MathNode> likeTerms) {
-		RootPanel.get().add(new HTML("factor like terms"));
-		
 		//Highlight terms in AlgOut
 		for(MathNode key : likeTerms.keySet()){
 			likeTerms.get(key).highlight();
@@ -362,10 +355,10 @@ public class AdditionTransformations {
 			return false;
 		}
 
-		if (Moderator.isInEasyMode) {
+		if (AlgebraActivity.isInEasyMode) {
 			factorWithBase(other, exponential);
 		} else {
-			Moderator.selectedMenu.add(new FWBButton(other, exponential));
+			AlgebraActivity.contextMenuArea.add(new FWBButton(other, exponential));
 		}
 
 		return true;
@@ -379,8 +372,6 @@ public class AdditionTransformations {
 	 * @param exponential
 	 */
 	static void factorWithBase(MathNode other, MathNode exponential) {
-		RootPanel.get().add(new HTML("factor with base"));
-		
 		other.highlight();
 		operation.highlight();
 		exponential.getChildAt(0).highlight();
@@ -415,10 +406,10 @@ public class AdditionTransformations {
 
 		for (MathNode termChild : term.getChildren()) {
 			if (termChild.isLike(other)) {
-				if (Moderator.isInEasyMode) {
+				if (AlgebraActivity.isInEasyMode) {
 					factorWithTermChild(other, termContainer, termChild);
 				} else {
-					Moderator.selectedMenu.add(new FWTCButton(other,
+					AlgebraActivity.contextMenuArea.add(new FWTCButton(other,
 							termContainer, termChild));
 				}
 				return true;
@@ -437,8 +428,6 @@ public class AdditionTransformations {
 	 */
 	static void factorWithTermChild(MathNode other, MathNode term,
 			MathNode termChild) {
-		RootPanel.get().add(new HTML("factor with term child"));
-		
 		other.highlight();
 		operation.highlight();
 		termChild.highlight();
@@ -485,10 +474,10 @@ public class AdditionTransformations {
 			return false;
 		}
 
-		if (Moderator.isInEasyMode) {
+		if (AlgebraActivity.isInEasyMode) {
 			addFractions(left, right);
 		} else {
-			Moderator.selectedMenu.add(new AddFractionsButton(left, right));
+			AlgebraActivity.contextMenuArea.add(new AddFractionsButton(left, right));
 		}
 
 		return true;
@@ -512,13 +501,14 @@ public class AdditionTransformations {
 	}
 
 	private static boolean addSimilar_check(MathNode left, MathNode right) {
-
 		if (!left.isLike(right)) {
 			return false;
 		}
 
-		if (Moderator.isInEasyMode) {
+		if (AlgebraActivity.isInEasyMode) {
 			addSimilar(left, right);
+		} else {
+			AlgebraActivity.contextMenuArea.add(new AddSimilarButton(left, right));
 		}
 		return true;
 	}
@@ -558,10 +548,10 @@ public class AdditionTransformations {
 		}
 		final BigDecimal totalValue = total;
 
-		if (Moderator.isInEasyMode) {
+		if (AlgebraActivity.isInEasyMode) {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
 		} else {//prompt
-			Moderator.selectedMenu.add(new HTML(leftValue.toString() + " "
+			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString() + " "
 					+ operation.getSymbol() + " " + rightValue.toString() +" ="));
 			TextBox inp = new TextBox();
 			inp.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -573,7 +563,7 @@ public class AdditionTransformations {
 					}
 				}
 			});
-			Moderator.selectedMenu.add(inp);
+			AlgebraActivity.contextMenuArea.add(inp);
 			inp.setFocus(true);
 		}
 
@@ -591,26 +581,14 @@ public class AdditionTransformations {
 		operation.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel(leftValue.toString()+operation.toString()+rightValue.toString()+" = "+totalValue.toString());
+		Moderator.reloadEquationPanel(leftValue.toString()+" "+operation.toString()+" "+rightValue.toString()+" = "+totalValue.toString());
 	}
 
 	static void addZero(MathNode other, MathNode zero) {
 
 		zero.highlight();
 
-//		if (zero.getIndex() > other.getIndex()) {
-//			MathNode zeroOp = zero.getPrevSibling();
-//			if (Type.Operation.equals(zeroOp.getType())) {
-//				zeroOp.remove();
-//			}
-//		} else {
-//			MathNode zeroOp = zero.getNextSibling();
-//			if (Type.Operation.equals(zeroOp.getType())) {
-//				zeroOp.remove();
-//			}
-//		}
 		operation.remove();
-
 		zero.remove();
 
 		parent.decase();
@@ -681,6 +659,21 @@ class AddFractionsButton extends Button {
 			@Override
 			public void onClick(ClickEvent event) {
 				AdditionTransformations.addFractions(left, right);
+			}
+		});
+	}
+}
+
+class AddSimilarButton extends Button {
+	
+	AddSimilarButton(final MathNode left, final MathNode right) {
+		
+		setHTML("Add Similar");
+		
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AdditionTransformations.addSimilar(left, right);
 			}
 		});
 	}

@@ -199,9 +199,8 @@ public class BothSidesMenu extends FlowPanel {
 		@Override
 		public void onClick(ClickEvent event) {
 			// Prepare Target side
-			if (!Type.Sum.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(Type.Sum);
-			}
+				
 			// Leave 0 in old side if top node
 			if (isSide) {
 				node.getParent().addBefore(node.getIndex(), Type.Number, "0");
@@ -312,9 +311,8 @@ public class BothSidesMenu extends FlowPanel {
 		@Override
 		public void onClick(ClickEvent event) {
 			// Prepare Target side
-			if (!Type.Term.equals(targetSide.getType())) {
-				targetSide = targetSide.encase(Type.Term);
-			}
+			targetSide = targetSide.encase(Type.Term);
+			
 			if (isNestedInFraction) {
 				if (node.getIndex() == 0) {
 					MathNode nextOp = node.getNextSibling();

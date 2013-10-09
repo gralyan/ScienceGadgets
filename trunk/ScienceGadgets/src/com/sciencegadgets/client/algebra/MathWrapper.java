@@ -40,7 +40,6 @@ import com.sciencegadgets.client.algebra.transformations.AssociativeDropControll
  */
 public class MathWrapper extends Wrapper {
 
-	private WrapDragController dragController = null;
 	private BothSidesMenu bothSidesMenu;
 
 	/**
@@ -50,88 +49,12 @@ public class MathWrapper extends Wrapper {
 	 * <b>Note - this widget can only be draggable if it's attached to an
 	 * {@link AbsolutePanel}</b>
 	 * </p>
-	 * 
-	 * @param svg
-	 * 
-	 * @param theElement
-	 *            - the element to wrap in widget
 	 */
 	public MathWrapper(MathNode node, EquationPanel eqPanel, Element element) {
 		super(node, eqPanel, element);
 
 		bothSidesMenu = new BothSidesMenu(this, element.getOffsetWidth() + "px");
 		menu = new FlowPanel();
-	}
-
-	public void addAssociativeDragDrop() {
-
-		// Add associative drag and drop
-		if ((Type.Sum.equals(node.getParentType()) || Type.Term.equals(node
-				.getParentType())) && !Type.Operation.equals(node.getType())) {
-
-			addDragController();
-
-			LinkedList<MathNode> siblings = node.getParent().getChildren();
-			siblings.remove(node);
-			for (MathNode dropNode : siblings) {
-				if (!Type.Operation.equals(dropNode.getType()))
-					dragController
-							.registerDropController(new AssociativeDropController(
-									(MathWrapper) dropNode.getWrapper()));
-
-			}
-		}
-	}
-
-	/**
-	 * Called when attaching Widget. If it is draggable, it can only be attached
-	 * to an {@link AbsolutePanel}
-	 */
-	public void onAttach() {
-		super.onAttach();
-
-	}
-
-	// public NodeMenu getContextMenu() {
-	// return (NodeMenu) menu;
-	// }
-
-	public WrapDragController getDragControl() {
-		return dragController;
-	}
-
-	/**
-	 * Add a drag controller to this widget, can be a subclass of
-	 * {@link AbstractDragController} such as {@link ElementDragController}
-	 * <p>
-	 * If a drag controller already exists, it is overridden
-	 * </p>
-	 * 
-	 * @return The new drag controller added
-	 */
-	public WrapDragController addDragController() {
-
-		WrapDragController dragC = new WrapDragController(eqPanel, false);
-
-		dragController = dragC;
-		dragController.makeDraggable(this);
-		return dragController;
-	}
-
-	/**
-	 * removes a drag controller from this widget
-	 * 
-	 */
-	public void removeDragController() {
-		if (dragController != null) {
-			dragController.makeNotDraggable(this);
-			dragController = null;
-		}
-	}
-
-	public void removeDropTargets() {
-		dragController.unregisterDropControllers();
-		dragController.getDropControllers().clear();
 	}
 
 	/**
@@ -144,8 +67,8 @@ public class MathWrapper extends Wrapper {
 	 */
 	public void select() {
 
-		Moderator.selectedMenu.clear();
-		Moderator.selectedMenu.add(bothSidesMenu);
+		AlgebraActivity.selectedMenu.clear();
+		AlgebraActivity.selectedMenu.add(bothSidesMenu);
 
 		switch (node.getType()) {
 		case Equation:
@@ -158,12 +81,9 @@ public class MathWrapper extends Wrapper {
 			AlgebraicTransformations.operation(node);
 			return;
 		case Number:
+			AlgebraicTransformations.factorizeNumbers_check(node);
 		case Variable:
-			if (node.getSymbol().startsWith(Type.Operator.MINUS.getSign())
-					&& !node.getSymbol().equals("-1")) {
-				AlgebraicTransformations.separateNegative(node);
-				return;
-			}
+			AlgebraicTransformations.separateNegative_check(node);
 			break;
 		}
 
@@ -172,7 +92,7 @@ public class MathWrapper extends Wrapper {
 	}
 
 	public void unselect() {
-		Moderator.selectedMenu.clear();
+		AlgebraActivity.selectedMenu.clear();
 		super.unselect();
 	}
 

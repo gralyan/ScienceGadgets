@@ -40,7 +40,7 @@ public class MathTree {
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private Element mathML;
-//	private EquationHTML eqHTML;
+	// private EquationHTML eqHTML;
 	private EquationHTML eqHTMLAlgOut;
 	private boolean inEditMode;
 	private int idCounter = 0;
@@ -56,9 +56,7 @@ public class MathTree {
 	 */
 	public MathTree(Element mathML, boolean inEditMode)
 			throws TopNodesNotFoundException {
-		if (!inEditMode) {
-			mathML = EquationRandomizer.randomizeNumbers(mathML);
-		}
+		mathML = EquationRandomizer.randomizeNumbers(mathML, !inEditMode);
 
 		this.mathML = mathML;
 		this.inEditMode = inEditMode;
@@ -113,26 +111,26 @@ public class MathTree {
 
 	public void reloadEqHTML() {
 		eqHTMLAlgOut = new EquationHTML(mathML);
-		
+
 		NodeList<Element> allElements = eqHTMLAlgOut.getElement()
 				.getElementsByTagName("*");
-//		for (int i = 0; i < allElementOut.getLength(); i++) {
-//			Element el = (Element) allElementOut.getItem(i);
-//			el.removeAttribute("id");
-//		}
+		// for (int i = 0; i < allElementOut.getLength(); i++) {
+		// Element el = (Element) allElementOut.getItem(i);
+		// el.removeAttribute("id");
+		// }
 
-//		eqHTML = new EquationHTML(mathML);
+		// eqHTML = new EquationHTML(mathML);
 
 		idHTMLMap.clear();
 
-//		NodeList<Element> allElements = eqHTML.getElement()
-//				.getElementsByTagName("*");
+		// NodeList<Element> allElements = eqHTML.getElement()
+		// .getElementsByTagName("*");
 		for (int i = 0; i < allElements.getLength(); i++) {
 			Element el = (Element) allElements.getItem(i);
 			idHTMLMap.put(el.getAttribute("id"), el);
-//			el.removeAttribute("class");
+			// el.removeAttribute("class");
 			el.removeAttribute("id");
-//			el.getStyle().setDisplay(Display.INLINE_BLOCK);
+			// el.getStyle().setDisplay(Display.INLINE_BLOCK);
 		}
 	}
 
@@ -257,12 +255,18 @@ public class MathTree {
 		 * @return - encasing node
 		 */
 		public MathNode encase(Type type) {
-
+			System.out.println("encasing 1 " + getRoot());
 			// Don't encase sum in sum or term in term
-			if (getType().equals(type)
-					&& (Type.Sum.equals(type) || Type.Term.equals(type))) {
+			if (getType().equals(type) && (Type.Sum.equals(type)
+					|| Type.Term.equals(type))) {
+				System.out.println("encasing 2 " + getRoot());
 				return this;
 
+			} else if (getParentType().equals(type) && (Type.Sum.equals(type)
+					|| Type.Term.equals(type))) {
+				System.out.println("encasing 3 " + getRoot());
+
+				return getParent();
 			} else {
 				MathNode encasing = new MathNode(type, "");
 				// Move around nodes
@@ -283,33 +287,29 @@ public class MathTree {
 		 */
 		public void decase() {
 
-			/*
-			 * if the first node is a minus operation, the minus is removed and
-			 * the next node is encased in a term and multiplied by -1
-			 */
+			// Propagate leading minus sign or remove leading plus
 			if (getChildCount() != 0) {
 				MathNode possibleMinus = getChildAt(0);
 				if (Type.Operation.equals(possibleMinus.getType())) {
 					if (Operator.MINUS.getSign().equals(
 							possibleMinus.getSymbol())) {
 						if (getChildCount() > 1) {
-							// System.out.println("decase negative prop");
-							// MathNode casing =
-							// getChildAt(1).encase(Type.Term);
-							// casing.add(0, Type.Operation, Operator
-							// .getMultiply().getSign());
-							// casing.add(0, Type.Number,
-							// (Operator.MINUS.getSign() + "1"));
 							AlgebraicTransformations
 									.propagateNegative(getChildAt(1));
 							possibleMinus.remove();
 						} else {
+							possibleMinus.remove();
+							MathNode parent = this.getParent();
+							this.remove();
+							parent.decase();
 							JSNICalls.error("Operation with no siblings: "
 									+ toString());
+							return;
 						}
 					} else {
-						JSNICalls.error("Operation as a first child: "
-								+ toString());
+						possibleMinus.remove();
+						decase();
+						return;
 					}
 				}
 			}
@@ -319,7 +319,6 @@ public class MathTree {
 				this.replace(Type.Number, "0");
 				break;
 			case 1:
-				System.out.println("decase 1");
 				Type childType = getFirstChild().getType();
 				if (childType.equals(getParentType())
 						&& (Type.Sum.equals(childType) || Type.Term
@@ -339,7 +338,6 @@ public class MathTree {
 				}
 				break;
 			case 2:// Should only be sums with a negative in front
-				System.out.println("decase 2");
 				JSNICalls
 						.error("There should not be two children in a Sum or Term: "
 								+ toString());
@@ -630,7 +628,7 @@ public class MathTree {
 
 		public Element getHTMLClone() {
 			Element html = (Element) getHTMLAlgOut().cloneNode(true);
-			
+
 			html.removeAttribute("class");
 			html.getStyle().setDisplay(Display.INLINE_BLOCK);
 			return html;

@@ -25,7 +25,6 @@ public class EquationPanel extends AbsolutePanel {
 	public HashMap<MathNode, EquationLayer> eqLayerMap = new HashMap<MathNode, EquationLayer>();
 
 	MathTree mathMLBindingTree;
-	private boolean inEditMode;
 	private EquationLayer rootLayer;
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
@@ -36,10 +35,9 @@ public class EquationPanel extends AbsolutePanel {
 
 	// Width of equation compared to panel
 
-	public EquationPanel(MathTree mathTree, boolean inEditMode) {
+	public EquationPanel(MathTree mathTree) {
 
 		this.mathMLBindingTree = mathTree;
-		this.inEditMode = inEditMode;
 
 		setStyleName("eqPanel");
 		// zIndex eqPanel=1 wrapper=2 menu=3
@@ -88,19 +86,19 @@ public class EquationPanel extends AbsolutePanel {
 		super.onLoad();
 		rootNode = mathMLBindingTree.getRoot();
 
-		if (!inEditMode) {
+		if (!AlgebraActivity.inEditMode) {
 			findRootLayerMergingNodes(rootNode);
 		}
 		draw(rootNode, null);
 
-		if (!inEditMode) {
+		if (!AlgebraActivity.inEditMode) {
 			for (MathNode merge : mergeRootNodes) {
 				placeNextEqWrappers(merge, rootLayer);
 			}
+		}
 
-			 for (MathWrapper wrap : mathWrappers) {
-			 wrap.addAssociativeDragDrop();
-			 }
+		for (MathWrapper wrap : mathWrappers) {
+			wrap.addAssociativeDragDrop();
 		}
 
 		for (EquationLayer eqLayer : eqLayerMap.values()) {
@@ -108,7 +106,7 @@ public class EquationPanel extends AbsolutePanel {
 		}
 
 		// Initialize focus to previous focus before reload
-		focusLayer = setFocus(Moderator.focusLayerId);
+		focusLayer = setFocus(AlgebraActivity.focusLayerId);
 		if (focusLayer == null) {
 			focusLayer = eqLayerMap.get(rootNode);
 		}
@@ -144,7 +142,7 @@ public class EquationPanel extends AbsolutePanel {
 	private void draw(MathNode node, EquationLayer parentLayer) {
 
 		EquationLayer eqLayer;
-		if (!mergeRootNodes.contains(node) || inEditMode) {
+		if (!mergeRootNodes.contains(node) || AlgebraActivity.inEditMode) {
 			eqLayer = new EquationLayer(node);
 
 			AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
@@ -182,7 +180,7 @@ public class EquationPanel extends AbsolutePanel {
 		// EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
 		for (MathNode node : childNodes) {
-			if (!inEditMode) {
+			if (!AlgebraActivity.inEditMode) {
 				if (mergeRootNodes.contains(node)) {
 					continue;
 				}
@@ -194,7 +192,7 @@ public class EquationPanel extends AbsolutePanel {
 					.getElementById(node.getId() + "-ofLayer-"
 							+ parentNode.getId());
 
-			if (inEditMode) {// Edit Mode
+			if (AlgebraActivity.inEditMode) {// Edit Mode
 				EditWrapper wrap = new EditWrapper(node, this, layerNode);
 				eqLayer.addWrapper(wrap);
 			} else {// Solver Mode
@@ -210,8 +208,8 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	void setFocusOut() {
-		if (inEditMode)
-			Moderator.changeNodeMenu.setVisible(false);
+		if (AlgebraActivity.inEditMode)
+			AlgebraActivity.changeNodeMenu.setVisible(false);
 
 		EquationLayer parentLayer = focusLayer.getParentLayer();
 		if (parentLayer != null)
@@ -232,9 +230,9 @@ public class EquationPanel extends AbsolutePanel {
 
 	void setFocus(final EquationLayer newFocus) {
 		final EquationLayer prevFocus = focusLayer;
-		// if (selectedWrapper != null) {
-		// selectedWrapper.unselect(inEditMode);
-		// }
+		if (selectedWrapper != null) {
+			selectedWrapper.unselect(AlgebraActivity.inEditMode);
+		}
 
 		newFocus.setOpacity(0);
 		newFocus.setVisible(true);
@@ -243,7 +241,8 @@ public class EquationPanel extends AbsolutePanel {
 		fade.run(300, Duration.currentTimeMillis() - 100);
 
 		focusLayer = newFocus;
-		Moderator.focusLayerId = focusLayer.getElement().getAttribute("id");
+		AlgebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
+				"id");
 
 	}
 

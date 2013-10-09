@@ -49,6 +49,7 @@ import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgOut;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationHTML;
 
 //Uncomment to use as gadget////////////////////////////////////
@@ -466,10 +467,10 @@ public class EquationBrowser extends FlowPanel {
 				sumGrid.clear(true);
 				break;
 			case edit:
-				Moderator.inEditMode = true;
+				AlgebraActivity.inEditMode = true;
 				break;
 			case solve:
-				Moderator.inEditMode = false;
+				AlgebraActivity.inEditMode = false;
 				break;
 
 			}

@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.edit;
 
 import com.google.gwt.user.client.Element;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationLayer;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree;
@@ -10,8 +11,6 @@ import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class EditWrapper extends Wrapper {
-
-	private static ChangeNodeMenu changeNodeMenu = Moderator.changeNodeMenu;
 
 	public EditWrapper(MathNode node, EquationPanel eqPanel,
 			 Element element) {
@@ -28,7 +27,7 @@ public class EditWrapper extends Wrapper {
 
 		// Don't allow sums inside sums or terms in terms
 		if (Type.Sum.equals(parentType) || Type.Term.equals(parentType)) {
-			changeNodeMenu.setEnable(parentType, false);
+			AlgebraActivity.changeNodeMenu.setEnable(parentType, false);
 		}
 
 		// Display editMenu if this wrapper has been set(not ???)
@@ -36,17 +35,17 @@ public class EditWrapper extends Wrapper {
 //			menu.setVisible(true);
 			// editMenu.setFocus();
 			// Disable menu options of the selected type
-			changeNodeMenu.setEnable(nodeType, false);
+			AlgebraActivity.changeNodeMenu.setEnable(nodeType, false);
 		}
 
 		if (!Type.Operation.equals(nodeType)) {
-			changeNodeMenu.setVisible(true);
+			AlgebraActivity.changeNodeMenu.setVisible(true);
 		}
 		super.select();
 	}
 
 	public void unselect() {
-		changeNodeMenu.setVisible(false);
+		AlgebraActivity.changeNodeMenu.setVisible(false);
 
 //		menu.setVisible(false);
 
@@ -54,7 +53,7 @@ public class EditWrapper extends Wrapper {
 			((EditMenu) menu).getResponse().removeFromParent();
 
 		for (Type type : Type.values()) {
-			changeNodeMenu.setEnable(type, true);
+			AlgebraActivity.changeNodeMenu.setEnable(type, true);
 		}
 		super.unselect();
 	}

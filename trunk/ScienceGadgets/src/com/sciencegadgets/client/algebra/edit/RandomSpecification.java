@@ -28,6 +28,7 @@ public class RandomSpecification extends PopupPanel {
 	public static final String SOMETIMES = "S";
 	public static final String NEVER = "N";
 	public static final String RANDOM_SYMBOL = "?";
+	public static final String DELIMITER = "_";
 
 	private RadioButton neverNeg;
 	private RadioButton sometimesNeg;
@@ -42,6 +43,8 @@ public class RandomSpecification extends PopupPanel {
 		this.mlNode = mlNode;
 
 		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
+		this.setWidth("100%");
+		this.setHeight("100%");
 		
 		VerticalPanel mainPanel = new VerticalPanel();
 		ScrollPanel scrollPanel = new ScrollPanel(mainPanel);
@@ -128,7 +131,7 @@ public class RandomSpecification extends PopupPanel {
 				response.setText("");
 				randSpec.hide();
 				mlNode.setSymbol(RANDOM_SYMBOL);
-				mlNode.getMLNode().setAttribute("data-randomness", neg + "-" + lowerB + "-" + upperB + "-" + decP);
+				mlNode.getMLNode().setAttribute("data-randomness", neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
 				Moderator.reloadEquationPanel(null);
 				Moderator.setActivity(Activity.algebra);
 			}

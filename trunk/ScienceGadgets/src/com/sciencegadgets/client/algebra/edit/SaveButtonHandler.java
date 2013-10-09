@@ -21,7 +21,6 @@ public class SaveButtonHandler implements ClickHandler {
 		try {
 			String equation = Moderator.mathTree.getRoot().toString();
 			if (equation.contains(ChangeNodeMenu.NOT_SET)) {
-				JSNICalls.log("Not set: " + equation);
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
 				return;
