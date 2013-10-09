@@ -49,7 +49,6 @@ public class Wrapper extends HTML {
 		addClickHandler(new WrapperClickHandler());
 		addTouchEndHandler(new WrapperTouchHandler());
 		addTouchStartHandler(new WrapperTouchStartHandler());
-		
 
 	}
 
@@ -95,7 +94,8 @@ public class Wrapper extends HTML {
 
 			// If there is another selection, unselect it
 			if (EquationPanel.selectedWrapper != null) {
-				EquationPanel.selectedWrapper.unselect(AlgebraActivity.inEditMode);
+				EquationPanel.selectedWrapper
+						.unselect(AlgebraActivity.inEditMode);
 			}
 
 			AlgebraActivity.contextMenuArea.add(menu);
@@ -121,16 +121,16 @@ public class Wrapper extends HTML {
 
 	protected void select() {
 
-			EquationPanel.selectedWrapper = this;
-			this.getElement().addClassName("selectedWrapper");
+		EquationPanel.selectedWrapper = this;
+		this.getElement().addClassName("selectedWrapper");
 	}
 
 	protected void unselect() {
 
-			EquationPanel.selectedWrapper = null;
-			this.getElement().removeClassName("selectedWrapper");
+		EquationPanel.selectedWrapper = null;
+		this.getElement().removeClassName("selectedWrapper");
 	}
-	
+
 	@Override
 	protected void onUnload() {
 		removeDropTargets();
@@ -156,7 +156,7 @@ public class Wrapper extends HTML {
 				if (!Type.Operation.equals(dropNode.getType()))
 					dragController
 							.registerDropController(new AssociativeDropController(
-									(MathWrapper) dropNode.getWrapper()));
+									dropNode.getWrapper()));
 			}
 		}
 	}
@@ -167,10 +167,10 @@ public class Wrapper extends HTML {
 
 	public WrapDragController addDragController() {
 
-		WrapDragController dragC = new WrapDragController(eqPanel, false);
-
-		dragController = dragC;
-		dragController.makeDraggable(this);
+		if (dragController == null) {
+			dragController = new WrapDragController(eqPanel, false);
+			dragController.makeDraggable(this);
+		}
 		return dragController;
 	}
 
@@ -207,15 +207,14 @@ public class Wrapper extends HTML {
 			select(AlgebraActivity.inEditMode);
 		}
 	}
-	
+
 	// Sole purpose is to detect touchability, then unsink click and itself
 	class WrapperTouchStartHandler implements TouchStartHandler {
-		
+
 		@Override
 		public void onTouchStart(TouchStartEvent event) {
 			eqPanel.unsinkClicks();
 		}
 	}
-	
 
 }

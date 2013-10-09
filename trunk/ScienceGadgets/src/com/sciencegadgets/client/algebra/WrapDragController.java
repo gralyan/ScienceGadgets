@@ -16,6 +16,7 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,8 @@ import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class WrapDragController extends PickupDragController {
 
+	LinkedList<DropController> dropControllers = null;
+
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
 		super(boundaryPanel, allowDroppingOnBoundaryPanel);
@@ -37,19 +40,48 @@ public class WrapDragController extends PickupDragController {
 	}
 
 	@Override
-	public void dragMove() {
-		super.dragMove();
+	public void dragEnd() {
+		super.dragEnd();
+
+		for (DropController dropC : dropControllers) {
+			dropC.getDropTarget().removeStyleName("selectedWrapper");
+		}
 	}
 
 	@Override
 	public void dragStart() {
 		super.dragStart();
 
+		if (AlgebraActivity.isInEasyMode) {
+			for (DropController dropC : dropControllers) {
+				dropC.getDropTarget().addStyleName("selectedWrapper");
+			}
+		}
 	}
 
 	@Override
-	public void dragEnd() {
-		super.dragEnd();
-
+	public void registerDropController(DropController dropC) {
+		super.registerDropController(dropC);
+		if (dropControllers == null) {
+			dropControllers = new LinkedList<DropController>();
+		}
+		dropControllers.add(dropC);
 	}
+
+	@Override
+	public void unregisterDropControllers() {
+		super.unregisterDropControllers();
+		if (dropControllers != null) {
+			dropControllers.clear();
+		}
+	}
+
+	@Override
+	public void unregisterDropController(DropController dropC) {
+		super.unregisterDropController(dropC);
+		if (dropControllers != null) {
+			dropControllers.remove(dropC);
+		}
+	}
+
 }
