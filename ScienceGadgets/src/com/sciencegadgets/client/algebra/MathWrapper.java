@@ -81,7 +81,9 @@ public class MathWrapper extends Wrapper {
 			AlgebraicTransformations.operation(node);
 			return;
 		case Number:
+			AlgebraicTransformations.separateNegative_check(node);
 			AlgebraicTransformations.factorizeNumbers_check(node);
+			break;
 		case Variable:
 			AlgebraicTransformations.separateNegative_check(node);
 			break;

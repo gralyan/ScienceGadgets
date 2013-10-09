@@ -20,6 +20,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
+import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 
 public class EquationPanel extends AbsolutePanel {
 	public HashMap<MathNode, EquationLayer> eqLayerMap = new HashMap<MathNode, EquationLayer>();
@@ -94,6 +95,10 @@ public class EquationPanel extends AbsolutePanel {
 		if (!AlgebraActivity.inEditMode) {
 			for (MathNode merge : mergeRootNodes) {
 				placeNextEqWrappers(merge, rootLayer);
+			}
+
+			for (MathWrapper wrap : mathWrappers) {
+				AlgebraicTransformations.cancellation_check(wrap.getNode());
 			}
 		}
 

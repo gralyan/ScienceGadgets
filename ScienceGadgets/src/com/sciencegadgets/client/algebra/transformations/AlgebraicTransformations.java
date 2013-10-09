@@ -1,20 +1,19 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
+import com.allen_sauer.gwt.dnd.client.DragController;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.MathWrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.WrapDragController;
 
 public class AlgebraicTransformations {
 
@@ -46,7 +45,69 @@ public class AlgebraicTransformations {
 	}
 
 	/**
+	 * Place button allowing for cancellation
+	 * 
+	 * @param node
+	 */
+	@SuppressWarnings("unused")
+	public static void cancellation_check(MathNode node) {
+		MathNode thisSide = null;
+		MathNode parent = node.getParent();
+		if (Type.Fraction.equals(parent.getType())) {
+			thisSide = node;
+		} else if (Type.Term.equals(parent.getType())
+				&& Type.Fraction.equals(parent.getParentType())) {
+			thisSide = parent;
+		} else {
+			return;
+		}
+		if (thisSide == null) {
+			return;
+		}
+
+		MathNode otherSide = null;
+		if (thisSide.getIndex() == 0) {
+			otherSide = thisSide.getNextSibling();
+		} else {
+			otherSide = thisSide.getPrevSibling();
+		}
+		if (otherSide == null) {
+			return;
+		}
+
+		if (node.isLike(otherSide)) {
+			LinkedList<MathNode> list = new LinkedList<MathNode>();
+			list.add(otherSide);
+			cancellation_addDragDrops(node, list);
+		} else if (Type.Term.equals(otherSide.getType())) {
+			LinkedList<MathNode> list = new LinkedList<MathNode>();
+			for (MathNode child : otherSide.getChildren()) {
+				if (node.isLike(child)) {
+					list.add(child);
+				}
+			}
+			if (list.size() > 0) {
+				cancellation_addDragDrops(node, list);
+			}
+		}
+
+	}
+
+	private static void cancellation_addDragDrops(MathNode node,
+			LinkedList<MathNode> dropNodes) {
+
+		WrapDragController dragController = node.getWrapper()
+				.addDragController();
+		for (MathNode dropNode : dropNodes) {
+			dragController
+					.registerDropController(new CancellationDropController(
+							(MathWrapper) dropNode.getWrapper()));
+		}
+	}
+
+	/**
 	 * List the factors of the number as buttons to choose factor
+	 * 
 	 * @param node
 	 */
 	public static void factorizeNumbers_check(MathNode node) {
@@ -58,9 +119,10 @@ public class AlgebraicTransformations {
 		}
 
 		LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
-		
-		for(Integer factor : primeFactors){
-		AlgebraActivity.contextMenuArea.add(new FactorNumberButton(factor, node));
+
+		for (Integer factor : primeFactors) {
+			AlgebraActivity.contextMenuArea.add(new FactorNumberButton(factor,
+					node));
 		}
 	}
 
@@ -70,7 +132,7 @@ public class AlgebraicTransformations {
 
 		int start = 2;
 		byte inc = 1;
-		if (n % 2 == 1) {//odd numbers can't have even factors
+		if (n % 2 == 1) {// odd numbers can't have even factors
 			start = 3;
 			inc = 2;
 		}
@@ -79,30 +141,26 @@ public class AlgebraicTransformations {
 				factors.add(i);
 			}
 		}
-		for (int i = 2; i <= n-1; i++) {
-			if (n % i == 0) {
-				System.out.println(i +" " +n/i);
-			}
-		}
-		System.out.println("");
 		return factors;
 	}
 
 	static void factorNumber(Integer factor, MathNode node) {
 
 		String original = node.getSymbol();
-		int factored = Integer.parseInt(original)/factor;
-		
+		int factored = Integer.parseInt(original) / factor;
+
 		node.highlight();
-		
+
 		MathNode parent = node.encase(Type.Term);
 		int index = node.getIndex();
-		parent.addBefore(index, Type.Operation, Operator.getMultiply().getSign());
+		parent.addBefore(index, Type.Operation, Operator.getMultiply()
+				.getSign());
 		parent.addBefore(index, Type.Number, factor.toString());
-		
-		node.setSymbol(factored+"");
-		
-		Moderator.reloadEquationPanel(original+" = "+factor+" "+Operator.getMultiply().getSign()+" "+factored);
+
+		node.setSymbol(factored + "");
+
+		Moderator.reloadEquationPanel(original + " = " + factor + " "
+				+ Operator.getMultiply().getSign() + " " + factored);
 	}
 
 	/**
@@ -173,9 +231,9 @@ public class AlgebraicTransformations {
 
 }
 
-///////////////////////////////////////////////////////////////////////
-//Button choices
-////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
+// Button choices
+// //////////////////////////////////////////////////////////////////////
 class SeperateNegButton extends Button {
 	SeperateNegButton(final MathNode negNode) {
 
@@ -192,9 +250,9 @@ class SeperateNegButton extends Button {
 
 class FactorNumberButton extends Button {
 	FactorNumberButton(final Integer factor, final MathNode node) {
-		
-		setHTML("Factor "+factor);
-		
+
+		setHTML("Factor " + factor);
+
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

@@ -2,15 +2,19 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
+import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathWrapper;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type.Operator;
 
 public class AssociativeDropController extends AbstractDropController {
+	
+	Label response = new Label("Switch");
 
-	public AssociativeDropController(MathWrapper dropWrapper) {
+	public AssociativeDropController(Wrapper dropWrapper) {
 		super(dropWrapper);
 	}
 
@@ -18,8 +22,8 @@ public class AssociativeDropController extends AbstractDropController {
 	public void onDrop(DragContext context) {
 		super.onDrop(context);
 
-		MathNode drag = ((MathWrapper) context.draggable).getNode();
-		MathNode target = ((MathWrapper) context.dropController.getDropTarget())
+		MathNode drag = ((Wrapper) context.draggable).getNode();
+		MathNode target = ((Wrapper) getDropTarget())
 				.getNode();
 		MathNode parent = drag.getParent();
 		boolean isSum = Type.Sum.equals(parent.getType());
@@ -74,13 +78,14 @@ public class AssociativeDropController extends AbstractDropController {
 	@Override
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
-		context.dropController.getDropTarget().addStyleName("selectedWrapper");
+		getDropTarget().addStyleName("selectedDropWrapper");
+		AlgebraActivity.contextMenuArea.add(response);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		super.onLeave(context);
-		context.dropController.getDropTarget().removeStyleName("selectedWrapper");
+		getDropTarget().removeStyleName("selectedDropWrapper");
+		AlgebraActivity.contextMenuArea.remove(response);
 	}
-
 }

@@ -66,11 +66,11 @@ public class AlgebraActivity extends AbsolutePanel {
 		// Context Menu Area
 		contextMenuArea = new FlowPanel();
 		contextMenuArea.addStyleName("layoutRow");
-		contextMenuArea.setSize("20%", "100%");
+		contextMenuArea.setSize("30%", "100%");
 		lowerEqArea.add(contextMenuArea);
 		// SelectedMenuArea
 		selectedMenu = new FlowPanel();
-		selectedMenu.setSize("80%", "100%");
+		selectedMenu.setSize("70%", "100%");
 		selectedMenu.addStyleName("layoutRow");
 
 		if (inEditMode) {
