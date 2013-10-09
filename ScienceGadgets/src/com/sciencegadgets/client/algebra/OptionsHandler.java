@@ -3,12 +3,13 @@ package com.sciencegadgets.client.algebra;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 
 public class OptionsHandler implements ClickHandler {
 
@@ -21,7 +22,7 @@ public class OptionsHandler implements ClickHandler {
 
 		AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
 
-		int optionsButtonHeight = Moderator.upperEqArea.getOffsetHeight();
+		int optionsButtonHeight = AlgebraActivity.upperEqArea.getOffsetHeight();
 		optionsPopup.getElement().getStyle().setBackgroundColor("white");
 		optionsPopup.setPixelSize(mainPanel.getOffsetWidth() / 4,
 				mainPanel.getOffsetHeight() - optionsButtonHeight);
@@ -38,14 +39,14 @@ public class OptionsHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		optionsPanel.clear();
 
-		if (!Moderator.inEditMode) {
-			String easyOptionText = Moderator.isInEasyMode ? "<b>Easy</b> Hard"
+		if (!AlgebraActivity.inEditMode) {
+			String easyOptionText = AlgebraActivity.isInEasyMode ? "<b>Easy</b> Hard"
 					: "Easy <b>Hard</b>";
 			easyHardOption.setHTML(easyOptionText);
 			optionsPanel.add(easyHardOption);
 		}
 		
-		String editOptionText = Moderator.inEditMode ? "<b>Edit</b> Solve"
+		String editOptionText = AlgebraActivity.inEditMode ? "<b>Edit</b> Solve"
 				: "Edit <b>Solve</b>";
 		editSolveOption.setHTML(editOptionText);
 		optionsPanel.add(editSolveOption);
@@ -74,11 +75,8 @@ class EasyHardClickHandler implements ClickHandler {
 
 	@Override
 	public void onClick(ClickEvent event) {
-		System.out.println("easy Clicked");
 		optionsHandler.optionsPopup.hide();
-		System.out.println("inEasy: " + Moderator.isInEasyMode);
-		Moderator.isInEasyMode = !Moderator.isInEasyMode;
-		System.out.println("inEasy: " + Moderator.isInEasyMode);
+		AlgebraActivity.isInEasyMode = !AlgebraActivity.isInEasyMode;
 		Moderator.reloadEquationPanel(null);
 	}
 
@@ -93,11 +91,18 @@ class EditSolveClickHandler implements ClickHandler {
 
 	@Override
 	public void onClick(ClickEvent event) {
-		System.out.println("edit Clicked");
+		String equation = Moderator.mathTree.getRoot().toString();
+		if (equation.contains(ChangeNodeMenu.NOT_SET)) {
+			Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
+					+ ") must be set or removed before solving");
+			return;
+		}
+
 		optionsHandler.optionsPopup.hide();
-		System.out.println("inEdit: " + Moderator.inEditMode);
-		Moderator.inEditMode = !Moderator.inEditMode;
-		System.out.println("inEdit: " + Moderator.inEditMode);
+		if (EquationPanel.selectedWrapper != null) {
+			EquationPanel.selectedWrapper.unselect(AlgebraActivity.inEditMode);
+		}
+		AlgebraActivity.inEditMode = !AlgebraActivity.inEditMode;
 		Moderator.makeAlgebraWorkspace(Moderator.mathTree.getMathMLClone());
 	}
 

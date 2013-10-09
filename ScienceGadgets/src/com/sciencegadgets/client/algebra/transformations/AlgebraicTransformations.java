@@ -1,17 +1,16 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.TopNodesNotFoundException;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.Type;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Type.Operator;
 
 public class AlgebraicTransformations {
@@ -23,28 +22,72 @@ public class AlgebraicTransformations {
 	 * @param negNode
 	 *            - node of negative number
 	 */
-	public static void separateNegative(MathNode negNode) {
-
-		if(Moderator.isInEasyMode){
-			separateNegative_perform(negNode);
-		}else{
-			Moderator.selectedMenu.add(new SeperateNegButton(negNode));
+	public static void separateNegative_check(MathNode negNode) {
+		if (negNode.getSymbol().startsWith(Type.Operator.MINUS.getSign())
+				&& !negNode.getSymbol().equals("-1")) {
+			AlgebraActivity.contextMenuArea.add(new SeperateNegButton(negNode));
 		}
-		
 	}
 
-	public static void separateNegative_perform(MathNode negNode) {
+	public static void separateNegative(MathNode negNode) {
 		MathNode parent = negNode.getParent();
 		negNode.setSymbol(negNode.getSymbol().replaceFirst(
 				Type.Operator.MINUS.getSign(), ""));
-		if (!Type.Term.equals(parent.getType())) {
-			parent = negNode.encase(Type.Term);
-		}
+		parent = negNode.encase(Type.Term);
+
 		int nodeIndex = negNode.getIndex();
 		parent.addBefore(nodeIndex, Type.Operation, Type.Operator.getMultiply()
 				.getSign());
 		parent.addBefore(nodeIndex, Type.Number, "-1");
 		Moderator.reloadEquationPanel(null);
+	}
+
+	/**
+	 * List the factors of the number as buttons to choose factor
+	 * @param node
+	 */
+	public static void factorizeNumbers_check(MathNode node) {
+		Integer number;
+		try {
+			number = Integer.parseInt(node.getSymbol());
+		} catch (NumberFormatException e) {
+			return;
+		}
+
+		LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
+		
+		for(Integer factor : primeFactors){
+		AlgebraActivity.contextMenuArea.add(new FactorNumberButton(factor, node));
+		}
+	}
+	private static LinkedHashSet<Integer> findPrimeFactors(Integer number) {
+		int n = Math.abs(number);
+		LinkedHashSet<Integer> factors = new LinkedHashSet<Integer>();
+		for (int i = 2; i <= n / i; i++) {
+			while (n % i == 0) {
+				factors.add(i);
+				n /= i;
+			}
+		}
+		return factors;
+	}
+	static void factorNumber(Integer factor, MathNode node) {
+		String original = node.getSymbol();
+		int factored = Integer.parseInt(original)/factor;
+		
+		System.out.println("1 "+node.getTree().getRoot().toString());
+		MathNode parent = node.encase(Type.Term);
+		System.out.println("2 "+node.getTree().getRoot().toString());
+		int index = node.getIndex();
+		parent.addBefore(index, Type.Operation, Operator.getMultiply().getSign());
+		System.out.println("3 "+node.getTree().getRoot().toString());
+		parent.addBefore(index, Type.Number, factor.toString());
+		System.out.println("4 "+node.getTree().getRoot().toString());
+		System.out.println("");
+		
+		node.setSymbol(factored+"");
+		
+		Moderator.reloadEquationPanel(original+" = "+factor+" "+Operator.getMultiply().getSign()+" "+factored);
 	}
 
 	/**
@@ -56,7 +99,7 @@ public class AlgebraicTransformations {
 	public static void operation(MathNode opNode) {
 		MathNode left, right = null;
 
-		Moderator.selectedMenu.clear();
+		AlgebraActivity.contextMenuArea.clear();
 
 		left = opNode.getPrevSibling();
 		right = opNode.getNextSibling();
@@ -84,11 +127,13 @@ public class AlgebraicTransformations {
 		case Number:
 		case Variable:
 			String symbol = toNegate.getSymbol();
+			System.out.println("negating " + symbol);
 			if (symbol.startsWith(Operator.MINUS.getSign())) {
 				symbol = symbol.replaceFirst(Operator.MINUS.getSign(), "");
 			} else {
 				symbol = Operator.MINUS.getSign() + symbol;
 			}
+			System.out.println("negated " + symbol);
 			toNegate.setSymbol(symbol);
 			break;
 		case Term:
@@ -104,24 +149,41 @@ public class AlgebraicTransformations {
 			break;
 		default:
 			MathNode casing = toNegate.encase(Type.Term);
-			casing.addBefore(0, Type.Operation, Operator.getMultiply().getSign());
+			casing.addBefore(0, Type.Operation, Operator.getMultiply()
+					.getSign());
 			casing.addBefore(0, Type.Number, "-1");
 
 		}
 	}
-	
 
 }
 
-class SeperateNegButton extends Button{
+///////////////////////////////////////////////////////////////////////
+//Button choices
+////////////////////////////////////////////////////////////////////////
+class SeperateNegButton extends Button {
 	SeperateNegButton(final MathNode negNode) {
-		
+
 		setHTML("Seperate (-)");
+
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AlgebraicTransformations.separateNegative(negNode);
+			}
+		});
+	}
+}
+
+class FactorNumberButton extends Button {
+	FactorNumberButton(final Integer factor, final MathNode node) {
+		
+		setHTML("Factor "+factor);
 		
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.separateNegative_perform(negNode);
+				AlgebraicTransformations.factorNumber(factor, node);
 			}
 		});
 	}

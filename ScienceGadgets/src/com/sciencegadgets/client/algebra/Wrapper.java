@@ -1,5 +1,8 @@
 package com.sciencegadgets.client.algebra;
 
+import java.util.LinkedList;
+
+import com.allen_sauer.gwt.dnd.client.AbstractDragController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,6 +18,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
+import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
 
 public class Wrapper extends HTML {
 
@@ -23,15 +27,14 @@ public class Wrapper extends HTML {
 	// protected EquationLayer eqLayer;
 	public int paddingLeft = 0;
 	public int paddingRight = 0;
-	public Element element;
 	protected FlowPanel menu;
+	private WrapDragController dragController = null;
 
 	public Wrapper(MathNode node, final EquationPanel eqPanel, Element element) {
 		super(element);
 
 		this.node = node;
 		this.eqPanel = eqPanel;
-		this.element = element;
 
 		onAttach();
 
@@ -85,17 +88,17 @@ public class Wrapper extends HTML {
 
 			// If this was already selected, focus in on it
 			if (node.getType().hasChildren()) {
-				this.unselect(Moderator.inEditMode);
+				this.unselect(AlgebraActivity.inEditMode);
 				eqPanel.setFocus(getEqLayer());
 			}
 		} else {
 
 			// If there is another selection, unselect it
 			if (EquationPanel.selectedWrapper != null) {
-				EquationPanel.selectedWrapper.unselect(Moderator.inEditMode);
+				EquationPanel.selectedWrapper.unselect(AlgebraActivity.inEditMode);
 			}
 
-			Moderator.contextMenuArea.add(menu);
+			AlgebraActivity.contextMenuArea.add(menu);
 
 			if (inEditMode) {
 				((EditWrapper) this).select();
@@ -107,7 +110,7 @@ public class Wrapper extends HTML {
 
 	public void unselect(boolean inEditMode) {
 
-		Moderator.contextMenuArea.clear();
+		AlgebraActivity.contextMenuArea.clear();
 
 		if (inEditMode) {
 			((EditWrapper) this).unselect();
@@ -127,6 +130,60 @@ public class Wrapper extends HTML {
 			EquationPanel.selectedWrapper = null;
 			this.getElement().removeClassName("selectedWrapper");
 	}
+	
+	@Override
+	protected void onUnload() {
+		removeDropTargets();
+		removeDragController();
+		super.onUnload();
+	}
+
+	// /////////////////////////////////////////////////////////////////////
+	// Drag & Drop
+	// ////////////////////////////////////////////////////////////////////
+
+	public void addAssociativeDragDrop() {
+
+		// Add associative drag and drop
+		if ((Type.Sum.equals(node.getParentType()) || Type.Term.equals(node
+				.getParentType())) && !Type.Operation.equals(node.getType())) {
+
+			addDragController();
+
+			LinkedList<MathNode> siblings = node.getParent().getChildren();
+			siblings.remove(node);
+			for (MathNode dropNode : siblings) {
+				if (!Type.Operation.equals(dropNode.getType()))
+					dragController
+							.registerDropController(new AssociativeDropController(
+									(MathWrapper) dropNode.getWrapper()));
+			}
+		}
+	}
+
+	public WrapDragController getDragControl() {
+		return dragController;
+	}
+
+	public WrapDragController addDragController() {
+
+		WrapDragController dragC = new WrapDragController(eqPanel, false);
+
+		dragController = dragC;
+		dragController.makeDraggable(this);
+		return dragController;
+	}
+
+	public void removeDragController() {
+		if (dragController != null) {
+			dragController.makeNotDraggable(this);
+			dragController = null;
+		}
+	}
+
+	public void removeDropTargets() {
+		dragController.unregisterDropControllers();
+	}
 
 	// /////////////////////////////////////////////////////////////////////
 	// Inner Classes
@@ -137,7 +194,7 @@ public class Wrapper extends HTML {
 		public void onClick(ClickEvent event) {
 			event.preventDefault();
 			event.stopPropagation();
-			select(Moderator.inEditMode);
+			select(AlgebraActivity.inEditMode);
 		}
 	}
 
@@ -147,12 +204,13 @@ public class Wrapper extends HTML {
 		public void onTouchEnd(TouchEndEvent event) {
 			event.preventDefault();
 			event.stopPropagation();
-			select(Moderator.inEditMode);
+			select(AlgebraActivity.inEditMode);
 		}
 	}
 	
 	// Sole purpose is to detect touchability, then unsink click and itself
 	class WrapperTouchStartHandler implements TouchStartHandler {
+		
 		@Override
 		public void onTouchStart(TouchStartEvent event) {
 			eqPanel.unsinkClicks();

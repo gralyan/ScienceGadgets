@@ -43,7 +43,7 @@ public class AlgOut extends ScrollPanel {
 		getScrollableElement().setId("algOutScroll");
 		getScrollableElement().getStyle().clearOverflow();
 
-		origionalHeightStr = Moderator.upperEqArea.getElement().getStyle()
+		origionalHeightStr = AlgebraActivity.upperEqArea.getElement().getStyle()
 				.getHeight();
 
 		this.sinkEvents(Event.ONCLICK);
@@ -80,7 +80,7 @@ public class AlgOut extends ScrollPanel {
 		private double dir;
 
 		AlgOutSlide() {
-			alg = Moderator.upperEqArea;
+			alg = AlgebraActivity.upperEqArea;
 			startingHeight = alg.getOffsetHeight();
 
 			if (expanded) {

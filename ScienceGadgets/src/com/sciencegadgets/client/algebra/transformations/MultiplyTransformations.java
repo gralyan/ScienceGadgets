@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Type.Operator;
@@ -17,7 +18,6 @@ public class MultiplyTransformations {
 	protected static MathNode parent;
 	protected static MathNode grandParent;
 	private static final int same = 0;
-	private static boolean isInEasyMode = Moderator.isInEasyMode;
 
 	public static void assign(MathNode left, MathNode multiplyNode,
 			MathNode right) {
@@ -211,11 +211,12 @@ public class MultiplyTransformations {
 
 	private static boolean multiplyCombineBases(MathNode left, MathNode right) {
 		
-		left.getChildAt(1).highlight();
+		left.highlight();
 		operation.highlight();
-		right.getChildAt(1).highlight();
+		right.highlight();
 		
 		// May not already be in exponent eg. a = a^1
+		//could factor out entire side rather than just base
 		MathNode leftBase;
 		if (Type.Exponential.equals(left.getType())) {
 			leftBase = left.getChildAt(0);
@@ -325,10 +326,10 @@ public class MultiplyTransformations {
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		final BigDecimal totalValue = leftValue.multiply(rightValue);
 
-		if (isInEasyMode) {
+		if (AlgebraActivity.isInEasyMode) {
 			multiplyNumbers(left, right, totalValue, leftValue, rightValue);
 		} else {//prompt
-			Moderator.selectedMenu.add(new HTML(leftValue.toString() + " "
+			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString() + " "
 					+ operation.getSymbol() + " " + rightValue.toString() +" ="));
 			TextBox inp = new TextBox();
 			inp.setFocus(true);
@@ -341,7 +342,7 @@ public class MultiplyTransformations {
 					}
 				}
 			});
-			Moderator.selectedMenu.add(inp);
+			AlgebraActivity.contextMenuArea.add(inp);
 		}
 
 	}
