@@ -1,6 +1,9 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -60,30 +63,42 @@ public class AlgebraicTransformations {
 		AlgebraActivity.contextMenuArea.add(new FactorNumberButton(factor, node));
 		}
 	}
+
 	private static LinkedHashSet<Integer> findPrimeFactors(Integer number) {
 		int n = Math.abs(number);
 		LinkedHashSet<Integer> factors = new LinkedHashSet<Integer>();
-		for (int i = 2; i <= n / i; i++) {
-			while (n % i == 0) {
+
+		int start = 2;
+		byte inc = 1;
+		if (n % 2 == 1) {//odd numbers can't have even factors
+			start = 3;
+			inc = 2;
+		}
+		for (int i = start; i <= Math.sqrt(n); i = i + inc) {
+			if (n % i == 0) {
 				factors.add(i);
-				n /= i;
 			}
 		}
+		for (int i = 2; i <= n-1; i++) {
+			if (n % i == 0) {
+				System.out.println(i +" " +n/i);
+			}
+		}
+		System.out.println("");
 		return factors;
 	}
+
 	static void factorNumber(Integer factor, MathNode node) {
+
 		String original = node.getSymbol();
 		int factored = Integer.parseInt(original)/factor;
 		
-		System.out.println("1 "+node.getTree().getRoot().toString());
+		node.highlight();
+		
 		MathNode parent = node.encase(Type.Term);
-		System.out.println("2 "+node.getTree().getRoot().toString());
 		int index = node.getIndex();
 		parent.addBefore(index, Type.Operation, Operator.getMultiply().getSign());
-		System.out.println("3 "+node.getTree().getRoot().toString());
 		parent.addBefore(index, Type.Number, factor.toString());
-		System.out.println("4 "+node.getTree().getRoot().toString());
-		System.out.println("");
 		
 		node.setSymbol(factored+"");
 		
