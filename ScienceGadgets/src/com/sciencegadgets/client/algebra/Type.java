@@ -3,9 +3,9 @@ package com.sciencegadgets.client.algebra;
 import java.util.NoSuchElementException;
 
 /**
- * tag - attributes
- * mn - data-randomness
- * function - 
+ * <b>tag - attributes</b></br>
+ * mn - data-randomness</br>
+ * 
  * 
  *
  */
@@ -14,6 +14,7 @@ public enum Type {
 	Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
 			"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
 			"mo", false), Equation("math", true);
+	
 //, Aesthetic("mglyph", false)
 	private String tag;
 	private boolean hasChildren;

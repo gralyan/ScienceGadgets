@@ -14,22 +14,18 @@
  */
 package com.sciencegadgets.client.algebra;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class WrapDragController extends PickupDragController {
 
 	LinkedList<DropController> dropControllers = null;
+	Element dragDummy;
 
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
@@ -51,10 +47,12 @@ public class WrapDragController extends PickupDragController {
 	@Override
 	public void dragStart() {
 		super.dragStart();
-
 		if (AlgebraActivity.isInEasyMode) {
 			for (DropController dropC : dropControllers) {
-				dropC.getDropTarget().addStyleName("selectedWrapper");
+				Widget target = dropC.getDropTarget();
+				if(!(target instanceof AbsolutePanel)){
+					target.addStyleName("selectedWrapper");
+				}
 			}
 		}
 	}
@@ -83,5 +81,33 @@ public class WrapDragController extends PickupDragController {
 			dropControllers.remove(dropC);
 		}
 	}
+
+	
+	
+	
+//	
+//	@Override
+//	protected void restoreSelectedWidgetsLocation() {
+//		dragDummy.getParentElement().insertBefore(context.draggable.getElement(), dragDummy);
+//	    dragDummy.removeFromParent();
+//	}
+//
+//	@Override
+//	protected void restoreSelectedWidgetsStyle() {
+////	    for (Widget widget : context.selectedWidgets) {
+////	        SavedWidgetInfo info = savedWidgetInfoMap.get(widget);
+////	        widget.getElement().getStyle().setProperty("margin", info.initialDraggableMargin);
+////	      }
+//	}
+//
+//	@Override
+//	protected void saveSelectedWidgetsLocationAndStyle() {
+//	    Widget drag = context.selectedWidgets.get(0);
+//	    dragDummy = ((Element)drag.getElement().cloneNode(true));
+//	    dragDummy.getStyle().setColor("#555555");
+//	    drag.getElement().getParentElement().insertBefore(dragDummy, drag.getElement());
+//	}
+//	
+	
 
 }

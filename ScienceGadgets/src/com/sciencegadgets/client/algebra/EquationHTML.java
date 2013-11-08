@@ -90,10 +90,11 @@ public class EquationHTML extends HTML {
 				}
 			}
 			break;
+		case Term:
 		case Equation:
 		case Sum:
-		case Term:
 			nodeHTML.addClassName(parentType.asChild());
+			break;
 		}
 
 		// Add parenthesis to some sums

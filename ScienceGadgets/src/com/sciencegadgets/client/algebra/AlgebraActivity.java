@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.algebra;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -34,6 +35,9 @@ public class AlgebraActivity extends AbsolutePanel {
 		upperEqArea = new FlowPanel();
 		upperEqArea.setSize("100%", "15%");
 		this.add(upperEqArea);
+		FlowPanel upperGap = new FlowPanel();
+		upperGap.setSize("100%", "10%");
+		this.add(upperGap);
 		
 		if(optionsButton == null){
 		optionsButton = new Button("Options", new OptionsHandler());
@@ -56,7 +60,7 @@ public class AlgebraActivity extends AbsolutePanel {
 		}
 
 		// Equation Area - 70%
-		eqPanelHolder.setSize("100%", "70%");
+		eqPanelHolder.setSize("100%", "60%");
 		this.add(eqPanelHolder);
 
 		// Lower Area - 15%

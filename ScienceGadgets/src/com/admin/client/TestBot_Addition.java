@@ -75,9 +75,9 @@ public class TestBot_Addition extends AdditionTransformations{
 		parentElement.insertAfter(rightElement, multiplyElement);
 
 		MathTree mathTree = new MathTree(mathElement, false);
-		MathNode leftNode = mathTree.getMathNode(leftElement.getAttribute("id"));
-		MathNode rightNode = mathTree.getMathNode(rightElement.getAttribute("id"));
-		operation = mathTree.getMathNode(multiplyElement.getAttribute("id"));
+		MathNode leftNode = mathTree.getNodeById(leftElement.getAttribute("id"));
+		MathNode rightNode = mathTree.getNodeById(rightElement.getAttribute("id"));
+		operation = mathTree.getNodeById(multiplyElement.getAttribute("id"));
 		parent = operation.getParent();
 		grandParent = parent.getParent();
 

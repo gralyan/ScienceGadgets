@@ -13,7 +13,7 @@ import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 
 public class OptionsHandler implements ClickHandler {
 
-	PopupPanel optionsPopup = new PopupPanel();
+	public static PopupPanel optionsPopup = new PopupPanel();
 	FlowPanel optionsPanel = new FlowPanel();
 	MenuOption easyHardOption = new MenuOption(new EasyHardClickHandler(this));
 	MenuOption editSolveOption = new MenuOption(new EditSolveClickHandler(this));
@@ -77,7 +77,7 @@ class EasyHardClickHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		optionsHandler.optionsPopup.hide();
 		AlgebraActivity.isInEasyMode = !AlgebraActivity.isInEasyMode;
-		Moderator.reloadEquationPanel(null);
+		Moderator.reloadEquationPanel(null, null);
 	}
 
 }

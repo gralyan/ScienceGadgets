@@ -15,35 +15,32 @@
 package com.sciencegadgets.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.sciencegadgets.client.algebra.AlgOut;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.OptionsHandler;
-import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
-import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.SymbolPalette;
+import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
 public class Moderator implements EntryPoint {
 
-//	public static EquationPanel eqPanel = null;
+	// public static EquationPanel eqPanel = null;
 
 	public static MathTree mathTree = null;
 	// public static LinkedList<AbstractMathDropController> dropControllers;
@@ -55,27 +52,49 @@ public class Moderator implements EntryPoint {
 			.get("scienceGadgetArea");
 	private EquationBrowser browserPanel = null;
 	private static Activity currentActivity = null;
+	public static boolean isTouch = false;
 	
-	// private static DropControllAssigner dropAssigner;
-
+	private final DatabaseHelperAsync dataBase = GWT
+			.create(DatabaseHelper.class);
 	@Override
 	public void onModuleLoad() {
+//
+//		// Resize area when window resizes
+//		fitWindow();
+//		Window.addResizeHandler(new ResizeAreaHandler());
+//
+//		History.addValueChangeHandler(new HistoryChange<String>());
+//		
+//		detectTouch();
+//
+//		switchToBrowser();
+//		
+//		JSNICalls.jowl();
+		
+		dataBase.getUnitsFromOwl(new AsyncCallback<String[]>() {
 
-//		 Resize area when window resizes
-		fitWindow();
-		Window.addResizeHandler(new ResizeAreaHandler());
+			@Override
+			public void onSuccess(String[] result) {
+				for(String res : result){
+				JSNICalls.log("Saved: " + res);
+				}
+			}
 
-		History.addValueChangeHandler(new HistoryChange<String>());
-
-		switchToBrowser();
-
-//		 try {
-//		 TestBot_Addition.deployTestBot();
-//		 } catch (TopNodesNotFoundException e) {
-//		 e.printStackTrace();
-//		 } catch (Exception e) {
-//		 e.printStackTrace();
-//		 }
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Save failed "
+						+ caught.getCause().toString());
+				JSNICalls.error("Save Failed: "
+						+ caught.getCause().toString());
+			}
+		});
+		// try {
+		// TestBot_Addition.deployTestBot();
+		// } catch (TopNodesNotFoundException e) {
+		// e.printStackTrace();
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 
 	}
 
@@ -102,11 +121,11 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.clear();
 
 		scienceGadgetArea.add(new AlgebraActivity());
-		
+
 		try {
 			if (mathML != null) {
 				mathTree = new MathTree(mathML, AlgebraActivity.inEditMode);
-				reloadEquationPanel(null);
+				reloadEquationPanel(null, null);
 			}
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
@@ -119,9 +138,10 @@ public class Moderator implements EntryPoint {
 	 * @param changeComment
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
-	public static void reloadEquationPanel(String changeComment) {
+	public static void reloadEquationPanel(String changeComment, Rule rule) {
 		if (changeComment != null) {
-			AlgebraActivity.algOut.updateAlgOut(changeComment, mathTree.getHTMLAlgOut());
+			AlgebraActivity.algOut.updateAlgOut(changeComment, rule,
+					mathTree.getHTMLAlgOut());
 		}
 		if (!AlgebraActivity.inEditMode) {
 			AlgebraActivity.selectedMenu.clear();
@@ -149,15 +169,13 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.add(browserPanel);
 	}
 
-
-
 	class ResizeAreaHandler implements ResizeHandler {
 		Timer resizeTimer = new Timer() {
 			@Override
 			public void run() {
 				fitWindow();
 				if (Activity.algebra.equals(currentActivity)) {
-					reloadEquationPanel(null);
+					reloadEquationPanel(null, null);
 				}
 			}
 		};
@@ -176,6 +194,18 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");
 		Window.scrollTo(0, scienceGadgetArea.getAbsoluteTop());
 
+	}
+
+	private void detectTouch() {
+		scienceGadgetArea.sinkEvents(Event.ONTOUCHSTART);
+		scienceGadgetArea.addHandler(new TouchStartHandler() {
+			@Override
+			public void onTouchStart(TouchStartEvent event) {
+				isTouch = true;
+				scienceGadgetArea.unsinkEvents(Event.ONTOUCHSTART);
+			}
+		}, TouchStartEvent.getType());
+//		
 	}
 
 	class HistoryChange<String> implements ValueChangeHandler<String> {
