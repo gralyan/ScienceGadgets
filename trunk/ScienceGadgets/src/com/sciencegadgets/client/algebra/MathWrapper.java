@@ -88,6 +88,14 @@ public class MathWrapper extends Wrapper {
 			AlgebraicTransformations.separateNegative_check(node);
 			break;
 		}
+		
+		switch (node.getParentType()) {
+		case Fraction:
+			if(node.getIndex() == 1){
+			AlgebraicTransformations.denominatorFlip_check(node);
+			}
+			break;
+		}
 
 		super.select();
 

@@ -102,7 +102,7 @@ public class ChangeNodeMenu extends FlowPanel {
 				}
 				node.remove();
 				parent.decase();
-				Moderator.reloadEquationPanel(null);
+				Moderator.reloadEquationPanel(null, null);
 				break;
 			case Exponential:
 			case Fraction:
@@ -119,7 +119,7 @@ public class ChangeNodeMenu extends FlowPanel {
 					break;
 				}
 				parent.remove();
-				Moderator.reloadEquationPanel(null);
+				Moderator.reloadEquationPanel(null, null);
 				break;
 			}
 		}
@@ -172,7 +172,7 @@ public class ChangeNodeMenu extends FlowPanel {
 						parent.addBefore(index, newNode);
 
 					}
-					Moderator.reloadEquationPanel(null);
+					Moderator.reloadEquationPanel(null, null);
 
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();

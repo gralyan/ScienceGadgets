@@ -132,7 +132,7 @@ public class RandomSpecification extends PopupPanel {
 				randSpec.hide();
 				mlNode.setSymbol(RANDOM_SYMBOL);
 				mlNode.getMLNode().setAttribute("data-randomness", neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
-				Moderator.reloadEquationPanel(null);
+				Moderator.reloadEquationPanel(null, null);
 				Moderator.setActivity(Activity.algebra);
 			}
 		}

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Type.Operator;
@@ -27,13 +28,12 @@ public class MultiplyTransformations {
 
 		Type leftType = left.getType();
 		Type rightType = right.getType();
-		
-		//Check for improper types for left and right
+
+		// Check for improper types for left and right
 		switch (leftType) {
 		case Equation:
 		case Term:
-			JSNICalls
-			.error("Illegal node within Term: " + leftType);
+			JSNICalls.error("Illegal node within Term: " + leftType);
 			break;
 		case Operation:
 			JSNICalls.error("Operation in wrong place: "
@@ -41,13 +41,13 @@ public class MultiplyTransformations {
 			break;
 		case Number:
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
-			if(leftValue.compareTo(new BigDecimal(0)) == same){
+			if (leftValue.compareTo(new BigDecimal(0)) == same) {
 				multiplyZero(right, left);
 				return;
-			}else if(leftValue.compareTo(new BigDecimal(1)) == same){
+			} else if (leftValue.compareTo(new BigDecimal(1)) == same) {
 				multiplyOne(right, left);
 				return;
-			}else if(leftValue.compareTo(new BigDecimal(-1)) == same){
+			} else if (leftValue.compareTo(new BigDecimal(-1)) == same) {
 				multiplyNegOne(right, left);
 				return;
 			}
@@ -56,8 +56,7 @@ public class MultiplyTransformations {
 		switch (rightType) {
 		case Equation:
 		case Term:
-			JSNICalls
-			.error("Illegal node within Term: " + rightType);
+			JSNICalls.error("Illegal node within Term: " + rightType);
 			break;
 		case Operation:
 			JSNICalls.error("Operation in wrong place: "
@@ -65,20 +64,20 @@ public class MultiplyTransformations {
 			break;
 		case Number:
 			BigDecimal rightValue = new BigDecimal(right.getSymbol());
-			if(rightValue.compareTo(new BigDecimal(0)) == same){
+			if (rightValue.compareTo(new BigDecimal(0)) == same) {
 				multiplyZero(left, right);
 				return;
-			}else if(rightValue.compareTo(new BigDecimal(1)) == same){
+			} else if (rightValue.compareTo(new BigDecimal(1)) == same) {
 				multiplyOne(left, right);
 				return;
-			}else if(rightValue.compareTo(new BigDecimal(-1)) == same){
+			} else if (rightValue.compareTo(new BigDecimal(-1)) == same) {
 				multiplyNegOne(left, right);
 				return;
 			}
 			break;
 		}
 
-		//Assignments in 2d switch (leftType, rightType)
+		// Assignments in 2d switch (leftType, rightType)
 		first: switch (leftType) {
 		case Sum:
 			second: switch (rightType) {
@@ -129,11 +128,12 @@ public class MultiplyTransformations {
 			if (Type.Variable.equals(rightType)) {
 				multiplyCombineBases(left, right);
 				break first;
-			} else if (Type.Number.equals(rightType)) {
-				multiplyOperationToSpace();
-				break first;
 			}
-			//fall through
+			// else if (Type.Number.equals(rightType)) {
+			// multiplyOperationToSpace();
+			// break first;
+			// }
+			// fall through
 		case Number:
 			second: switch (rightType) {
 			case Sum:
@@ -146,7 +146,7 @@ public class MultiplyTransformations {
 				multiplyWithFraction(left, right, false);
 				break second;
 			case Variable:
-				multiplyOperationToSpace();
+				// multiplyOperationToSpace();
 				break second;
 			case Number:
 				multiplyNumbers_prompt(left, right);
@@ -158,7 +158,7 @@ public class MultiplyTransformations {
 
 	private static void multiplyDistribution(MathNode dist, MathNode sum,
 			boolean reversed) {
-		
+
 		dist.highlight();
 		operation.highlight();
 
@@ -178,13 +178,13 @@ public class MultiplyTransformations {
 		operation.remove();
 
 		parent.decase();
-		
-		Moderator.reloadEquationPanel("Distribute");
+
+		Moderator.reloadEquationPanel("Distribute", Rule.Distribution);
 	}
 
 	private static boolean multiplyCombineExponents(MathNode left,
 			MathNode right) {
-		
+
 		left.getChildAt(0).highlight();
 		operation.highlight();
 		right.getChildAt(0).highlight();
@@ -205,18 +205,18 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Combine Exponents");
+		Moderator.reloadEquationPanel("Combine Exponents", Rule.Exponents);
 		return true;
 	}
 
 	private static boolean multiplyCombineBases(MathNode left, MathNode right) {
-		
+
 		left.highlight();
 		operation.highlight();
 		right.highlight();
-		
+
 		// May not already be in exponent eg. a = a^1
-		//could factor out entire side rather than just base
+		// could factor out entire side rather than just base
 		MathNode leftBase;
 		if (Type.Exponential.equals(left.getType())) {
 			leftBase = left.getChildAt(0);
@@ -235,10 +235,11 @@ public class MultiplyTransformations {
 			if (Type.Exponential.equals(left.getType())
 					&& Type.Exponential.equals(right.getType())) {
 				multiplyCombineExponents(left, right);
-			} else if (Type.Variable.equals(left.getType())
-					&& Type.Variable.equals(right.getType())) {
-				multiplyOperationToSpace();
 			}
+			// else if (Type.Variable.equals(left.getType())
+			// && Type.Variable.equals(right.getType())) {
+			// multiplyOperationToSpace();
+			// }
 			return false;
 		} else {
 			if (!Type.Exponential.equals(left.getType())) {
@@ -264,17 +265,17 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Combine Bases");
+		Moderator.reloadEquationPanel("Combine Bases", Rule.Exponents);
 		return true;
 	}
 
 	private static void multiplyWithFraction(MathNode nonFrac,
 			MathNode fraction, boolean reversed) {
-		
+
 		fraction.highlight();
 		operation.highlight();
 		nonFrac.highlight();
-		
+
 		MathNode numerator = fraction.getChildAt(0);
 		numerator = numerator.encase(Type.Term);
 
@@ -283,16 +284,17 @@ public class MultiplyTransformations {
 		numerator.addBefore(index, nonFrac);
 
 		parent.decase();
-		
-		Moderator.reloadEquationPanel("Multiply with Fraction");
+
+		Moderator.reloadEquationPanel("Multiply with Fraction",
+				Rule.FractionMultiplication);
 	}
 
 	private static void multiplyFractions(MathNode left, MathNode right) {
-		
+
 		left.highlight();
 		operation.highlight();
 		right.highlight();
-		
+
 		MathNode numerator = right.getChildAt(0);
 		numerator = numerator.encase(Type.Term);
 		numerator.addBefore(0, operation);
@@ -307,17 +309,18 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Multiply Fractions");
+		Moderator.reloadEquationPanel("Multiply Fractions",
+				Rule.FractionMultiplication);
 	}
 
-	private static void multiplyOperationToSpace() {
-		
-		operation.highlight();
-		
-		operation.setSymbol(Operator.SPACE.getSign());
-
-		Moderator.reloadEquationPanel("Op to Space");
-	}
+	// private static void multiplyOperationToSpace() {
+	//
+	// operation.highlight();
+	//
+	// operation.setSymbol(Operator.SPACE.getSign());
+	//
+	// Moderator.reloadEquationPanel("Op to Space", null);
+	// }
 
 	private static void multiplyNumbers_prompt(final MathNode left,
 			final MathNode right) {
@@ -328,39 +331,73 @@ public class MultiplyTransformations {
 
 		if (AlgebraActivity.isInEasyMode) {
 			multiplyNumbers(left, right, totalValue, leftValue, rightValue);
-		} else {//prompt
-			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString() + " "
-					+ operation.getSymbol() + " " + rightValue.toString() +" ="));
+
+		} else {// prompt
+			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString()
+					+ " " + operation.getSymbol() + " " + rightValue.toString()
+					+ " ="));
 			TextBox inp = new TextBox();
+			inp.getElement().setAttribute("type", "number");
 			inp.setFocus(true);
+
 			inp.addValueChangeHandler(new ValueChangeHandler<String>() {
+				int incorrenctCounter = 0;
+
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-					BigDecimal inputValue = new BigDecimal(event.getValue());
-					if (inputValue.compareTo(totalValue) == same) {
-						multiplyNumbers(left, right, totalValue, leftValue, rightValue);
+					try {
+						BigDecimal inputValue = new BigDecimal(event.getValue());
+						if (inputValue.compareTo(totalValue) == same) {// correct
+							incorrenctCounter = 0;
+							AlgebraActivity.contextMenuArea
+									.remove(ResponseNote.response);
+							multiplyNumbers(left, right, totalValue, leftValue,
+									rightValue);
+						} else {// incorrect
+							ResponseNote.response
+									.setText(ResponseNote.Incorrect.toString()
+											+ ": " + ++incorrenctCounter);
+							AlgebraActivity.contextMenuArea
+									.add(ResponseNote.response);
+						}
+					} catch (NumberFormatException e) {
+						ResponseNote.response.setText("Not a number");
+						AlgebraActivity.contextMenuArea
+								.add(ResponseNote.response);
 					}
 				}
 			});
 			AlgebraActivity.contextMenuArea.add(inp);
+			inp.setFocus(true);
 		}
 
 	}
 
-	static void multiplyNumbers(MathNode left, MathNode right, BigDecimal totalValue, BigDecimal leftValue, BigDecimal rightValue) {
-		
+	static void multiplyNumbers(MathNode left, MathNode right,
+			BigDecimal totalValue, BigDecimal leftValue, BigDecimal rightValue) {
+
 		right.highlight();
 		operation.highlight();
 		left.highlight();
 
-		right.setSymbol(totalValue.stripTrailingZeros().toString());
-		
+		totalValue = totalValue.stripTrailingZeros();
+
+		if (totalValue.compareTo(new BigDecimal(1000000)) < 0) {
+			right.setSymbol(totalValue.toPlainString());// full number
+		} else {
+			right.setSymbol(totalValue.toString());// Scientific notation
+		}
+
 		left.remove();
 		operation.remove();
-		
+
 		parent.decase();
 
-		Moderator.reloadEquationPanel(leftValue.toString()+operation.toString()+rightValue.toString()+" = "+totalValue.toString());
+		Moderator
+				.reloadEquationPanel(
+						leftValue.toString() + operation.toString()
+								+ rightValue.toString() + " = "
+								+ totalValue.toString(), Rule.Multiplication);
 	}
 
 	private static void multiplyZero(MathNode other, MathNode zero) {
@@ -369,55 +406,66 @@ public class MultiplyTransformations {
 		operation.highlight();
 		other.highlight();
 
-		MathNode first = zero.getIndex()<other.getIndex()?zero:other;
-		MathNode second = zero.getIndex()>other.getIndex()?zero:other;
-		
+		String otherSymbol = other.getSymbol();
+
+		MathNode first = zero.getIndex() < other.getIndex() ? zero : other;
+		MathNode second = zero.getIndex() > other.getIndex() ? zero : other;
+
 		MathNode firstOp = first.getPrevSibling();
 		MathNode secondNext = second.getNextSibling();
 		if (firstOp != null) {
 			if (Type.Operation.equals(firstOp.getType())) {
 				firstOp.remove();
 			}
-		} else if (secondNext != null && Type.Operation.equals(secondNext.getType())) {
+		} else if (secondNext != null
+				&& Type.Operation.equals(secondNext.getType())) {
 			secondNext.remove();
 		}
 
 		zero.remove();
 		operation.remove();
 		other.remove();
-		
+
 		parent.decase();
 
-		Moderator.reloadEquationPanel("a "+operation.toString()+" 0 = 0");
+		Moderator.reloadEquationPanel(otherSymbol + " " + operation.toString()
+				+ " 0 = 0", Rule.Multiplication);
 	}
-	private static void multiplyOne(MathNode other, MathNode one){
-		
+
+	private static void multiplyOne(MathNode other, MathNode one) {
+
 		other.highlight();
 		operation.highlight();
 		one.highlight();
-		
+
+		String otherSymbol = other.getSymbol();
+
 		one.remove();
 		operation.remove();
-		
+
 		parent.decase();
-		
-		Moderator.reloadEquationPanel("a "+operation.toString()+" 1 = a");
+
+		Moderator.reloadEquationPanel(otherSymbol + " " + operation.toString()
+				+ " 1 = " + otherSymbol, Rule.Multiplication);
 	}
 
-	private static void multiplyNegOne(MathNode other, MathNode negOne){
-		
+	private static void multiplyNegOne(MathNode other, MathNode negOne) {
+
 		other.highlight();
 		operation.highlight();
 		negOne.highlight();
-		
+
+		String otherSymbol = other.getSymbol();
+
 		AlgebraicTransformations.propagateNegative(other);
-		
+
 		operation.remove();
 		negOne.remove();
-		
+
 		parent.decase();
-		
-		Moderator.reloadEquationPanel("a "+operation.toString()+" -1 = -a");
+
+		Moderator.reloadEquationPanel(otherSymbol + " " + operation.toString()
+				+ " -1 = -" + otherSymbol, Rule.Multiplication);
 	}
 
 }

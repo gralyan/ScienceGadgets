@@ -23,12 +23,15 @@ import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class AlgOut extends ScrollPanel {
 
@@ -56,7 +59,7 @@ public class AlgOut extends ScrollPanel {
 		this.addHandler(new AlgOutTouchMoveHandler(), TouchMoveEvent.getType());
 	}
 
-	public void updateAlgOut(String changeComment, EquationHTML eqHTML) {
+	public void updateAlgOut(String changeComment, Rule rule, EquationHTML eqHTML) {
 
 		FlowPanel row = new FlowPanel();
 		row.addStyleName("algOutRow");
@@ -64,7 +67,11 @@ public class AlgOut extends ScrollPanel {
 		eqHTML.addStyleName("algOutEquationRow");
 		row.add(eqHTML);
 
-		HTML changeRow = new HTML(changeComment);
+		Anchor changeRow = new Anchor(changeComment,true);
+		if(rule != null){
+		changeRow.setHref(rule.getPage());
+		changeRow.setTarget("_blank");
+		}
 		changeRow.addStyleName("algOutChangeRow");
 		row.add(changeRow);
 		
@@ -143,3 +150,5 @@ public class AlgOut extends ScrollPanel {
 		}
 	}
 }
+
+

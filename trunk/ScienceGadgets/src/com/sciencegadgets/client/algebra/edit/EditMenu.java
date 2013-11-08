@@ -196,7 +196,7 @@ public class EditMenu extends FlowPanel {
 				node.setSymbol(extraction);
 				node.getMLNode().removeAttribute("data-randomness");
 
-				Moderator.reloadEquationPanel(null);
+				Moderator.reloadEquationPanel(null, null);
 			}
 		}
 
@@ -252,7 +252,7 @@ public class EditMenu extends FlowPanel {
 		public void onClick(ClickEvent event) {
 			node.setSymbol(operator.getSign());
 
-			Moderator.reloadEquationPanel(null);
+			Moderator.reloadEquationPanel(null, null);
 		}
 
 	}
@@ -328,7 +328,7 @@ public class EditMenu extends FlowPanel {
 				break;
 			}
 			node.append(Type.Variable, ChangeNodeMenu.NOT_SET);
-			Moderator.reloadEquationPanel(null);
+			Moderator.reloadEquationPanel(null, null);
 		}
 
 	}

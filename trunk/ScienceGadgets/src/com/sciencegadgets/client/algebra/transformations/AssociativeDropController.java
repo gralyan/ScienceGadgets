@@ -72,7 +72,7 @@ public class AssociativeDropController extends AbstractDropController {
 			parent.addBefore(dropIndex, drag);
 
 		}
-		Moderator.reloadEquationPanel("Associative Property");
+		Moderator.reloadEquationPanel("Associative Property", Rule.Commutative);
 	}
 
 	@Override

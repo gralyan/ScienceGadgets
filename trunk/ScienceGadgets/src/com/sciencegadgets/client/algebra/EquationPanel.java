@@ -1,10 +1,14 @@
 package com.sciencegadgets.client.algebra;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Duration;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchEndEvent;
@@ -25,12 +29,13 @@ import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformation
 public class EquationPanel extends AbsolutePanel {
 	public HashMap<MathNode, EquationLayer> eqLayerMap = new HashMap<MathNode, EquationLayer>();
 
-	MathTree mathMLBindingTree;
+	MathTree mathTree;
 	private EquationLayer rootLayer;
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
-	private LinkedList<MathNode> mergeRootNodes = new LinkedList<MathNode>();
-	private LinkedList<MathWrapper> mathWrappers = new LinkedList<MathWrapper>();
+	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
+	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
+	private ArrayList<MathWrapper> mathWrappers = new ArrayList<MathWrapper>();
 
 	private MathNode rootNode;
 
@@ -38,70 +43,61 @@ public class EquationPanel extends AbsolutePanel {
 
 	public EquationPanel(MathTree mathTree) {
 
-		this.mathMLBindingTree = mathTree;
+		this.mathTree = mathTree;
 
 		setStyleName("eqPanel");
 		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(1);
 
-		this.sinkEvents(Event.ONCLICK);
-		this.addHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				setFocusOut();
-			}
-		}, ClickEvent.getType());
-
-		this.sinkEvents(Event.ONTOUCHEND);
-		this.addHandler(new TouchEndHandler() {
-			@Override
-			public void onTouchEnd(TouchEndEvent event) {
-				event.stopPropagation();
-				event.preventDefault();
-				setFocusOut();
-			}
-		}, TouchEndEvent.getType());
-
-		// Sole purpose is to detect touchability, then unsink click and itself
-		this.sinkEvents(Event.ONTOUCHSTART);
-		this.addHandler(new TouchStartHandler() {
-			@Override
-			public void onTouchStart(TouchStartEvent event) {
-				unsinkClicks();
-			}
-		}, TouchStartEvent.getType());
-
-	}
-
-	public void unsinkClicks() {
-		unsinkEvents(Event.ONCLICK);
-		unsinkEvents(Event.ONTOUCHSTART);
-		for (MathWrapper wrap : mathWrappers) {
-			wrap.unsinkEvents(Event.ONCLICK);
-			wrap.unsinkEvents(Event.ONTOUCHSTART);
+		if (Moderator.isTouch) {
+			this.sinkEvents(Event.ONTOUCHSTART);
+			this.addHandler(new TouchStartHandler() {
+				@Override
+				public void onTouchStart(TouchStartEvent event) {
+					if(OptionsHandler.optionsPopup.isShowing()){
+						event.preventDefault();
+						event.stopPropagation();
+						OptionsHandler.optionsPopup.hide();
+					}else{
+						setFocusOut();
+					}
+				}
+			}, TouchStartEvent.getType());
+		} else {
+			this.sinkEvents(Event.ONCLICK);
+			this.addHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					setFocusOut();
+				}
+			}, ClickEvent.getType());
 		}
+
 	}
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		rootNode = mathMLBindingTree.getRoot();
+		rootNode = mathTree.getRoot();
 
 		if (!AlgebraActivity.inEditMode) {
 			findRootLayerMergingNodes(rootNode);
+			findFractionMergingNodes();
 		}
 		draw(rootNode, null);
 
 		if (!AlgebraActivity.inEditMode) {
+			// Seperately place into root layer, skipped in draw()
 			for (MathNode merge : mergeRootNodes) {
 				placeNextEqWrappers(merge, rootLayer);
 			}
-
+			for (MathNode merge : mergeFractionNodes) {
+				placeNextEqWrappers(merge, eqLayerMap.get(merge.getParent()));
+			}
 			for (MathWrapper wrap : mathWrappers) {
 				AlgebraicTransformations.cancellation_check(wrap.getNode());
 			}
 		}
-
 		for (MathWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
 		}
@@ -119,6 +115,12 @@ public class EquationPanel extends AbsolutePanel {
 
 	}
 
+	/**
+	 * Finds unnecessary layers to merge. No need for top level sums or terms,
+	 * or sums and terms in fractions
+	 * 
+	 * @param root
+	 */
 	private void findRootLayerMergingNodes(MathNode root) {
 		LinkedList<MathNode> sideEqSide = root.getChildren();
 
@@ -140,6 +142,19 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
+	private void findFractionMergingNodes() {
+		ArrayList<MathNode> fractions = mathTree.getNodesByType(Type.Fraction);
+
+		for (MathNode frac : fractions) {
+			for (MathNode child : frac.getChildren()) {
+				// numerator and denominator
+				if (Type.Term.equals(child.getType()) && !mergeRootNodes.contains(child)) {
+					mergeFractionNodes.add(child);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Replicates the equation graphic for each equation layer (node) to be
 	 * displayed when this layer is in focus
@@ -147,7 +162,14 @@ public class EquationPanel extends AbsolutePanel {
 	private void draw(MathNode node, EquationLayer parentLayer) {
 
 		EquationLayer eqLayer;
-		if (!mergeRootNodes.contains(node) || AlgebraActivity.inEditMode) {
+		if (!AlgebraActivity.inEditMode
+				&& mergeFractionNodes.contains(node)) {
+			eqLayer = parentLayer;
+
+		} else if (!AlgebraActivity.inEditMode && mergeRootNodes.contains(node)) {
+			eqLayer = rootLayer;
+
+		} else {
 			eqLayer = new EquationLayer(node);
 
 			AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
@@ -167,10 +189,8 @@ public class EquationPanel extends AbsolutePanel {
 			}
 
 			placeNextEqWrappers(node, eqLayer);
-
-		} else {
-			eqLayer = rootLayer;
 		}
+
 		for (MathNode childNode : node.getChildren()) {
 
 			if (childNode.getType().hasChildren()) {
@@ -186,11 +206,14 @@ public class EquationPanel extends AbsolutePanel {
 
 		for (MathNode node : childNodes) {
 			if (!AlgebraActivity.inEditMode) {
-				if (mergeRootNodes.contains(node)) {
+				if (mergeRootNodes.contains(node)
+						|| mergeFractionNodes.contains(node)) {
 					continue;
 				}
 				if (mergeRootNodes.contains(parentNode)) {
 					parentNode = rootNode;
+				} else if (mergeFractionNodes.contains(parentNode)) {
+					parentNode = parentNode.getParent();
 				}
 			}
 			com.google.gwt.user.client.Element layerNode = DOM

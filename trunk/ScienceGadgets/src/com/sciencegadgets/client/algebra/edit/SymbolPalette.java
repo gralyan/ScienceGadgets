@@ -93,7 +93,7 @@ public class SymbolPalette extends PopupPanel {
 			palette.hide();
 			String symbol = useButton.getElement().getInnerText();
 			node.setSymbol(symbol);
-			Moderator.reloadEquationPanel(null);
+			Moderator.reloadEquationPanel(null, null);
 			Moderator.setActivity(Activity.algebra);
 		}
 

@@ -14,6 +14,8 @@
  */
 package com.sciencegadgets.client.algebra;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -40,7 +42,6 @@ public class MathTree {
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private Element mathML;
-	// private EquationHTML eqHTML;
 	private EquationHTML eqHTMLAlgOut;
 	private boolean inEditMode;
 	private int idCounter = 0;
@@ -66,9 +67,9 @@ public class MathTree {
 		reloadEqHTML();
 	}
 
-	public MathNode getMathNode(String id) {
-		return idMap.get(id);
-	}
+//	public MathNode getMathNode(String id) {
+//		return idMap.get(id);
+//	}
 
 	public Element getMathMLClone() {
 		return (Element) mathML.cloneNode(true);
@@ -114,23 +115,13 @@ public class MathTree {
 
 		NodeList<Element> allElements = eqHTMLAlgOut.getElement()
 				.getElementsByTagName("*");
-		// for (int i = 0; i < allElementOut.getLength(); i++) {
-		// Element el = (Element) allElementOut.getItem(i);
-		// el.removeAttribute("id");
-		// }
-
-		// eqHTML = new EquationHTML(mathML);
 
 		idHTMLMap.clear();
 
-		// NodeList<Element> allElements = eqHTML.getElement()
-		// .getElementsByTagName("*");
 		for (int i = 0; i < allElements.getLength(); i++) {
 			Element el = (Element) allElements.getItem(i);
 			idHTMLMap.put(el.getAttribute("id"), el);
-			// el.removeAttribute("class");
 			el.removeAttribute("id");
-			// el.getStyle().setDisplay(Display.INLINE_BLOCK);
 		}
 	}
 
@@ -176,12 +167,30 @@ public class MathTree {
 		if (id == "") {
 			id = createId();
 		}
-
 		// add node to binding map
 		if (!idMap.containsKey(id)) {
 			idMap.put(id, node);
 			idMLMap.put(id, node.getMLNode());
 		}
+	}
+	
+	/**
+	 * Gets all nodes by specified type, use null for all nodes
+	 * @param type
+	 * @return
+	 */
+	public ArrayList<MathNode> getNodesByType(Type type){
+		ArrayList<MathNode> nodes = new ArrayList<MathNode>();
+		String tag = "*";
+		if(type != null){
+			tag = type.getTag();
+		}
+		NodeList<Element> elements = root.getMLNode().getElementsByTagName(tag);
+		for(int i=0 ; i<elements.getLength() ; i++){
+			String id = elements.getItem(i).getAttribute("id");
+			nodes.add(idMap.get(id));
+		}
+		return nodes;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -415,8 +424,7 @@ public class MathTree {
 		 * @return - The newly create child
 		 * @throws Exception
 		 */
-		public MathNode addBefore(int index, Type type, String symbol)
-				throws NoSuchElementException {
+		public MathNode addBefore(int index, Type type, String symbol) {
 			MathNode newNode = new MathNode(type, symbol);
 			this.addBefore(index, newNode);
 			return newNode;
@@ -426,8 +434,7 @@ public class MathTree {
 			addBefore(-1, newNode);
 		}
 
-		public MathNode append(Type type, String symbol)
-				throws NoSuchElementException {
+		public MathNode append(Type type, String symbol){
 			return addBefore(-1, type, symbol);
 		}
 
@@ -491,10 +498,6 @@ public class MathTree {
 				return sibling;
 			} catch (JavaScriptException e) {
 				return null;
-				// throw new IndexOutOfBoundsException(
-				// "there is no child at index " + siblingIndex + ", "
-				// + indexesAway + "indexes away from sibling: \n"
-				// + this.toString() + "\n" + this);
 			}
 		}
 
@@ -615,7 +618,11 @@ public class MathTree {
 		}
 
 		public Type getParentType() {
-			String parentTag = getMLNode().getParentElement().getTagName();
+			Element parentEl = getMLNode().getParentElement();
+			if(parentEl == null){
+				return null;
+			}
+			String parentTag = parentEl.getTagName();
 			return Type.getType(parentTag);
 		}
 
@@ -642,7 +649,7 @@ public class MathTree {
 		public void highlight() {
 			getHTMLAlgOut().getStyle().setColor("red");
 		}
-
+		
 		public boolean isLike(MathNode another) {
 
 			if (!getType().equals(another.getType())) {

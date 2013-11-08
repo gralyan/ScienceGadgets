@@ -2,6 +2,8 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -10,6 +12,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class BothSidesMenu extends FlowPanel {
 	private MathWrapper mlWrapper;
@@ -127,6 +130,8 @@ public class BothSidesMenu extends FlowPanel {
 
 		BothSidesButton(Math operation) {
 			this.addStyleName("bothSidesButton");
+			addMouseDownHandler(new AlternativeHTML(operation,
+					node.getHTMLString()));
 			switch (operation) {
 			case ADD:
 				setHTML("Add " + node.getHTMLString() + " to both sides");
@@ -189,18 +194,26 @@ public class BothSidesMenu extends FlowPanel {
 			}
 		}
 
+		@Override
+		public void onClick(ClickEvent event) {
+			node.highlight();
+		}
+
 		protected String doubleChangeComment() {
-			return changeComment = changeComment
-					+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + changeComment;
+			return changeComment = changeComment + "&nbsp;&nbsp;&nbsp; both sides";
+
+			// return changeComment = changeComment
+			// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + changeComment;
 		}
 	}
 
 	class AddOrSubBothHandler extends BothSidesHandler {
 		@Override
 		public void onClick(ClickEvent event) {
+			super.onClick(event);
 			// Prepare Target side
-				targetSide = targetSide.encase(Type.Sum);
-				
+			targetSide = targetSide.encase(Type.Sum);
+
 			// Leave 0 in old side if top node
 			if (isSide) {
 				node.getParent().addBefore(node.getIndex(), Type.Number, "0");
@@ -236,24 +249,31 @@ public class BothSidesMenu extends FlowPanel {
 			oldParent.decase();
 
 			changeComment += node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment());
+			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
 
 	class DivideBothHandler extends BothSidesHandler {
 		@Override
 		public void onClick(ClickEvent event) {
+			super.onClick(event);
 			MathNode operator = null;
 
-			// Leave 1 in old side if top node
-			if (isSide) {
+			if (Type.Fraction.equals(oldParent.getType())) {
+				// leave 1 in numerator
+				oldParent.addBefore(0, Type.Number, "1");
+			} else if (isSide) {
+				// Leave 1 in old side if top node
 				oldParent.addBefore(node.getIndex(), Type.Number, "1");
 			} else {
 				// take operation
 				if (node.getIndex() > 0) {
 					operator = node.getPrevSibling();
+				} else {
+					operator = node.getNextSibling();
 				}
 			}
+
 			// Prepare Target side
 			if (!Type.Fraction.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(Type.Fraction);
@@ -277,32 +297,15 @@ public class BothSidesMenu extends FlowPanel {
 
 			// clean source side
 			MathNode oldFirstSib = oldParent.getFirstChild();
-			if (oldFirstSib != null) {
-				String OldFirstSymbol = oldFirstSib.getSymbol();
-				if (CROSS.equals(OldFirstSymbol) || DOT.equals(OldFirstSymbol)
-						|| SPACE.equals(OldFirstSymbol))
-					oldFirstSib.remove();
+			if (oldFirstSib != null
+					&& Type.Operation.equals(oldFirstSib.getType())) {
+				oldFirstSib.remove();
 			}
 
-			if (Type.Fraction.equals(oldParent.getType())) {
-				// leave 1 in numerator
-				oldParent.addBefore(0, Type.Number, "1");
-			} else if (Type.Term.equals(oldParent.getType())) {
-				if (oldParent.getChildCount() == 1) {
-					// No need to be encased in term anymore
-					oldParent.getParent().addBefore(oldParent.getIndex(),
-							oldParent.getFirstChild());
-					oldParent.remove();
-				} else if (oldParent.getChildCount() == 2) {
-					JSNICalls.warn("There shouldn't be two children in a term");
-				}
-			} else {
-				JSNICalls
-						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
-			}
+			oldParent.decase();
 
-			changeComment += "/" + node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment());
+			changeComment += "\u00F7" + node.toString();
+			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
 
@@ -310,21 +313,20 @@ public class BothSidesMenu extends FlowPanel {
 
 		@Override
 		public void onClick(ClickEvent event) {
+			super.onClick(event);
 			// Prepare Target side
 			targetSide = targetSide.encase(Type.Term);
-			
+
 			if (isNestedInFraction) {
+				MathNode operation = null;
 				if (node.getIndex() == 0) {
-					MathNode nextOp = node.getNextSibling();
-					if (nextOp != null
-							&& Type.Operation.equals(nextOp.getType())) {
-						targetSide.append(nextOp);
-					}
+					operation = node.getNextSibling();
 				} else {
-					MathNode PrevOp = node.getPrevSibling();
-					if (Type.Operation.equals(PrevOp.getType())) {
-						targetSide.append(PrevOp);
-					}
+					operation = node.getPrevSibling();
+				}
+				if (operation != null
+						&& Type.Operation.equals(operation.getType())) {
+					targetSide.append(operation);
 				}
 			} else if (isTopLevel) {
 				targetSide.append(Type.Operation, Type.Operator.getMultiply()
@@ -334,6 +336,7 @@ public class BothSidesMenu extends FlowPanel {
 						.warn("Multiplying somethimg that's not top level or nested in a top level fraction: "
 								+ node.toString());
 			}
+
 			if (Type.Term.equals(node.getType())) {// Termception
 				for (MathNode transplants : node.getChildren()) {
 					targetSide.append(transplants);
@@ -350,14 +353,7 @@ public class BothSidesMenu extends FlowPanel {
 						oldParent.getFirstChild());
 				oldParent.remove();
 			} else if (Type.Term.equals(oldParent.getType())) {
-				if (oldParent.getChildCount() == 1) {
-					// No need to be encased in term anymore
-					oldParent.getParent().addBefore(oldParent.getIndex(),
-							oldParent.getFirstChild());
-					oldParent.remove();
-				} else if (oldParent.getChildCount() == 2) {
-					JSNICalls.warn("There shouldn't be two children in a term");
-				}
+				oldParent.decase();
 			} else {
 				JSNICalls
 						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
@@ -365,39 +361,61 @@ public class BothSidesMenu extends FlowPanel {
 
 			changeComment += Type.Operator.getMultiply().getSign()
 					+ node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment());
+			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
-	
+
+	// TODO finish, implement, test
 	class RootBothHandler extends BothSidesHandler {
-		
+
 		@Override
 		public void onClick(ClickEvent event) {
+			super.onClick(event);
 			// Prepare Target side
-			
+
 			if (!Type.Exponential.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(Type.Exponential);
 				MathNode frac = targetSide.append(Type.Fraction, "");
 				frac.append(Type.Number, "1");
 				frac.append(node);
-			}else{
+			} else {
 				MathNode targetExp = targetSide.getChildAt(1);
-				if(!Type.Term.equals(targetExp.getType())){
+				if (!Type.Term.equals(targetExp.getType())) {
 					targetExp = targetExp.encase(Type.Term);
 				}
-				targetExp.append(Type.Operation, Operator.getMultiply().getSign());
+				targetExp.append(Type.Operation, Operator.getMultiply()
+						.getSign());
 				MathNode frac = targetExp.append(Type.Fraction, "");
 				frac.append(Type.Number, "1");
 				frac.append(node);
 			}
-			
+
 			// clean source side
-			oldParent.getParent().addBefore(oldParent.getIndex(), oldParent.getFirstChild());
+			oldParent.getParent().addBefore(oldParent.getIndex(),
+					oldParent.getFirstChild());
 			oldParent.remove();
-			
-			changeComment += "\u221A"
-					+ node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment());
+
+			changeComment += "\u221A" + node.toString();
+			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
+}
+
+class AlternativeHTML implements MouseDownHandler {
+	com.sciencegadgets.client.algebra.BothSidesMenu.Math math = null;
+	String html = null;
+
+	public AlternativeHTML(
+			com.sciencegadgets.client.algebra.BothSidesMenu.Math math,
+			String htmlString) {
+		this.math = math;
+		this.html = htmlString;
+	}
+
+	@Override
+	public void onMouseDown(MouseDownEvent event) {
+		((Button) event.getSource())
+				.setHTML(html + "&nbsp;&nbsp;&nbsp;" + html);
+	}
+
 }

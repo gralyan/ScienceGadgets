@@ -16,6 +16,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.Type;
 import com.sciencegadgets.client.algebra.Type.Operator;
 
@@ -207,8 +208,8 @@ public class AdditionTransformations {
 			inBinomialSecond = inBinomialA;
 		}
 
-		MathNode termCasing = operation.getParent().addBefore(operation.getIndex(),
-				Type.Term, "");
+		MathNode termCasing = operation.getParent().addBefore(
+				operation.getIndex(), Type.Term, "");
 
 		for (MathNode factor : factors) {
 			termCasing.append(factor);
@@ -220,7 +221,7 @@ public class AdditionTransformations {
 		binomialCasing.append(operation);
 		binomialCasing.append(inBinomialSecond);
 
-		 parent.decase();
+		parent.decase();
 	}
 
 	private static boolean factorLikeTerms_check(MathNode left, MathNode right) {
@@ -268,7 +269,8 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			factorLikeTerms(left, right, likeTerms);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new FLTButton(left, right, likeTerms));
+			AlgebraActivity.contextMenuArea.add(new FLTButton(left, right,
+					likeTerms));
 		}
 
 		return true;
@@ -284,13 +286,13 @@ public class AdditionTransformations {
 	 */
 	static void factorLikeTerms(MathNode left, MathNode right,
 			LinkedHashMap<MathNode, MathNode> likeTerms) {
-		//Highlight terms in AlgOut
-		for(MathNode key : likeTerms.keySet()){
+		// Highlight terms in AlgOut
+		for (MathNode key : likeTerms.keySet()) {
 			likeTerms.get(key).highlight();
 			key.highlight();
 		}
 
-		//Like terms are cloned to simplify cleanup
+		// Like terms are cloned to simplify cleanup
 		LinkedList<MathNode> factors = new LinkedList<MathNode>();
 		for (MathNode factor : likeTerms.values()) {
 			factors.add(factor.clone());
@@ -345,7 +347,7 @@ public class AdditionTransformations {
 		left.decase();
 		right.decase();
 
-		Moderator.reloadEquationPanel("Factor Like Terms");
+		Moderator.reloadEquationPanel("Factor Like Terms", Rule.LikeTerms);
 	}
 
 	private static boolean factorWithBase_check(MathNode other,
@@ -358,7 +360,8 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			factorWithBase(other, exponential);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new FWBButton(other, exponential));
+			AlgebraActivity.contextMenuArea.add(new FWBButton(other,
+					exponential));
 		}
 
 		return true;
@@ -388,7 +391,7 @@ public class AdditionTransformations {
 		exp.append(Type.Operation, Operator.MINUS.getSign());
 		exp.append(Type.Number, "1");
 
-		Moderator.reloadEquationPanel("Factor with Base");
+		Moderator.reloadEquationPanel("Factor with Base", Rule.Factorization);
 	}
 
 	private static boolean factorWithTermChild_check(MathNode other,
@@ -455,7 +458,8 @@ public class AdditionTransformations {
 		// exp.add(Type.Operation, Operator.MINUS.getSign());
 		// exp.add(Type.Number, "1");
 		// } else {
-		inBinomialA = other.getParent().addBefore(other.getIndex(), Type.Number, "1");
+		inBinomialA = other.getParent().addBefore(other.getIndex(),
+				Type.Number, "1");
 		other.remove();
 		// }
 
@@ -465,7 +469,7 @@ public class AdditionTransformations {
 
 		term.decase();
 
-		Moderator.reloadEquationPanel("Factor with TermChild");
+		Moderator.reloadEquationPanel("Factor", Rule.Factorization);
 	}
 
 	private static boolean addFractions_check(MathNode left, MathNode right) {
@@ -477,7 +481,8 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			addFractions(left, right);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new AddFractionsButton(left, right));
+			AlgebraActivity.contextMenuArea.add(new AddFractionsButton(left,
+					right));
 		}
 
 		return true;
@@ -485,7 +490,7 @@ public class AdditionTransformations {
 	}
 
 	static void addFractions(MathNode left, MathNode right) {
-		
+
 		right.highlight();
 		operation.highlight();
 		left.highlight();
@@ -497,7 +502,7 @@ public class AdditionTransformations {
 		left.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Add Fractions");
+		Moderator.reloadEquationPanel("Add Fractions", Rule.FractionAddition);
 	}
 
 	private static boolean addSimilar_check(MathNode left, MathNode right) {
@@ -508,20 +513,22 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			addSimilar(left, right);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new AddSimilarButton(left, right));
+			AlgebraActivity.contextMenuArea.add(new AddSimilarButton(left,
+					right));
 		}
 		return true;
 	}
 
 	static void addSimilar(MathNode left, MathNode right) {
-		
+
 		right.highlight();
 		operation.highlight();
 		left.highlight();
 
 		if (isPlus) {
 			MathNode casing = right.encase(Type.Term);
-			casing.addBefore(0, Type.Operation, Operator.getMultiply().getSign());
+			casing.addBefore(0, Type.Operation, Operator.getMultiply()
+					.getSign());
 			casing.addBefore(0, Type.Number, "2");
 		} else {
 			right.remove();
@@ -531,7 +538,7 @@ public class AdditionTransformations {
 		operation.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Add similar");
+		Moderator.reloadEquationPanel("Add similar", Rule.LikeTerms);
 	}
 
 	private static void addNumbers_prompt(final MathNode left,
@@ -550,16 +557,39 @@ public class AdditionTransformations {
 
 		if (AlgebraActivity.isInEasyMode) {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
-		} else {//prompt
-			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString() + " "
-					+ operation.getSymbol() + " " + rightValue.toString() +" ="));
+
+		} else {// prompt
+			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString()
+					+ " " + operation.getSymbol() + " " + rightValue.toString()
+					+ " ="));
 			TextBox inp = new TextBox();
+			inp.getElement().setAttribute("type", "number");
+			inp.setFocus(true);
+
 			inp.addValueChangeHandler(new ValueChangeHandler<String>() {
+				int incorrenctCounter = 0;
+
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-					BigDecimal inputValue = new BigDecimal(event.getValue());
-					if (inputValue.compareTo(totalValue) == same) {
-						addNumbers(left, right, totalValue, leftValue, rightValue);
+					try {
+						BigDecimal inputValue = new BigDecimal(event.getValue());
+						if (inputValue.compareTo(totalValue) == same) {// correct
+							incorrenctCounter = 0;
+							AlgebraActivity.contextMenuArea
+									.remove(ResponseNote.response);
+							addNumbers(left, right, totalValue, leftValue,
+									rightValue);
+						} else {// incorrect
+							ResponseNote.response
+									.setText(ResponseNote.Incorrect.toString()
+											+ ": " + ++incorrenctCounter);
+							AlgebraActivity.contextMenuArea
+									.add(ResponseNote.response);
+						}
+					} catch (NumberFormatException e) {
+						ResponseNote.response.setText("Not a number");
+						AlgebraActivity.contextMenuArea
+								.add(ResponseNote.response);
 					}
 				}
 			});
@@ -569,19 +599,24 @@ public class AdditionTransformations {
 
 	}
 
-	static void addNumbers(MathNode left, MathNode right, BigDecimal totalValue, BigDecimal leftValue, BigDecimal rightValue) {
-		
+	static void addNumbers(MathNode left, MathNode right,
+			BigDecimal totalValue, BigDecimal leftValue, BigDecimal rightValue) {
+
 		right.highlight();
 		operation.highlight();
 		left.highlight();
 
 		right.setSymbol(totalValue.stripTrailingZeros().toString());
-		
+
 		left.remove();
 		operation.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel(leftValue.toString()+" "+operation.toString()+" "+rightValue.toString()+" = "+totalValue.toString());
+		Moderator
+				.reloadEquationPanel(
+						leftValue.toString() + " " + operation.toString() + " "
+								+ rightValue.toString() + " = "
+								+ totalValue.toString(), Rule.Addition);
 	}
 
 	static void addZero(MathNode other, MathNode zero) {
@@ -593,7 +628,7 @@ public class AdditionTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Add zero");
+		Moderator.reloadEquationPanel("Add zero", Rule.Addition);
 	}
 }
 
@@ -665,11 +700,11 @@ class AddFractionsButton extends Button {
 }
 
 class AddSimilarButton extends Button {
-	
+
 	AddSimilarButton(final MathNode left, final MathNode right) {
-		
+
 		setHTML("Add Similar");
-		
+
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
