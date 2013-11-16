@@ -11,26 +11,26 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 
 public class ChangeNodeMenu extends FlowPanel {
 
 	public static final String NOT_SET = "\u25A1";
-	private HashMap<Type, Button> menuMap = new HashMap<Type, Button>();
+	private HashMap<TypeML, Button> menuMap = new HashMap<TypeML, Button>();
 	private Button removeButton;
 
 	public ChangeNodeMenu() {
 
 		setSize("100%", "100%");
 
-		Type[] types = Type.values();
+		TypeML[] types = TypeML.values();
 
 		double buttonWidthPercent = 100.0 / types.length;
 
 		// Change buttons
-		for (Type type : types) {
-			if (Type.Operation.equals(type))
+		for (TypeML type : types) {
+			if (TypeML.Operation.equals(type))
 				continue;
 
 			ChangeNodeHandler changeHandler = new ChangeNodeHandler(type);
@@ -51,7 +51,7 @@ public class ChangeNodeMenu extends FlowPanel {
 		this.add(removeButton);
 	}
 
-	public Button getButton(Type menuOption) {
+	public Button getButton(TypeML menuOption) {
 		Button button;
 
 		if (menuOption == null) {
@@ -62,14 +62,14 @@ public class ChangeNodeMenu extends FlowPanel {
 		return button;
 	}
 
-	public void setEnable(Type menuOption, boolean isEnabled) {
+	public void setEnable(TypeML menuOption, boolean isEnabled) {
 		Button button = getButton(menuOption);
 		if (button != null) {
 			button.setEnabled(isEnabled);
 		}
 	}
 
-	public boolean isEnabled(Type menuOption) {
+	public boolean isEnabled(TypeML menuOption) {
 		Button button = getButton(menuOption);
 		return button.isEnabled();
 	}
@@ -91,13 +91,13 @@ public class ChangeNodeMenu extends FlowPanel {
 				if (node.getIndex() == 0) {
 					MathNode nextOp = node.getNextSibling();
 					if (nextOp != null
-							&& Type.Operation.equals(nextOp.getType())
+							&& TypeML.Operation.equals(nextOp.getType())
 							&& !Operator.MINUS.getSign().equals(
 									nextOp.getSymbol()))
 						nextOp.remove();
 				} else {
 					MathNode prevOp = node.getPrevSibling();
-					if (Type.Operation.equals(prevOp.getType()))
+					if (TypeML.Operation.equals(prevOp.getType()))
 						prevOp.remove();
 				}
 				node.remove();
@@ -126,9 +126,9 @@ public class ChangeNodeMenu extends FlowPanel {
 	}
 
 	private class ChangeNodeHandler implements ClickHandler {
-		Type type;
+		TypeML type;
 
-		ChangeNodeHandler(Type type) {
+		ChangeNodeHandler(TypeML type) {
 			this.type = type;
 		}
 
@@ -141,7 +141,7 @@ public class ChangeNodeMenu extends FlowPanel {
 				int index = node.getIndex();
 
 				try {
-					Type.Operator operator = null;
+					TypeML.Operator operator = null;
 
 					switch (type) {
 					case Number:
@@ -154,10 +154,10 @@ public class ChangeNodeMenu extends FlowPanel {
 						break;
 
 					case Sum:
-						operator = Type.Operator.PLUS;
+						operator = TypeML.Operator.PLUS;
 					case Term:
 						if (operator == null)
-							operator = Type.Operator.getMultiply();
+							operator = TypeML.Operator.getMultiply();
 					case Exponential:
 					case Fraction:
 						MathNode newNode = Moderator.mathTree
@@ -165,10 +165,10 @@ public class ChangeNodeMenu extends FlowPanel {
 
 						newNode.append(node);
 						if (operator != null) {
-							newNode.addBefore(-1, Type.Operation,
+							newNode.addBefore(-1, TypeML.Operation,
 									operator.getSign());
 						}
-						newNode.addBefore(-1, Type.Variable, NOT_SET);
+						newNode.addBefore(-1, TypeML.Variable, NOT_SET);
 						parent.addBefore(index, newNode);
 
 					}

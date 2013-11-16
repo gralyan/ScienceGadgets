@@ -6,9 +6,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.Type;
+import com.sciencegadgets.client.algebra.TypeML;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 
 public class AssociativeDropController extends AbstractDropController {
 	
@@ -26,18 +26,18 @@ public class AssociativeDropController extends AbstractDropController {
 		MathNode target = ((Wrapper) getDropTarget())
 				.getNode();
 		MathNode parent = drag.getParent();
-		boolean isSum = Type.Sum.equals(parent.getType());
+		boolean isSum = TypeML.Sum.equals(parent.getType());
 
 		drag.highlight();
 		target.highlight();
 
 		MathNode dragOp = drag.getPrevSibling();
-		if (dragOp == null || !Type.Operation.equals(dragOp.getType())) {
+		if (dragOp == null || !TypeML.Operation.equals(dragOp.getType())) {
 			if (isSum) {
-				dragOp = drag.getTree().NEW_NODE(Type.Operation,
+				dragOp = drag.getTree().NEW_NODE(TypeML.Operation,
 						Operator.PLUS.getSign());
 			} else {
-				dragOp = drag.getTree().NEW_NODE(Type.Operation,
+				dragOp = drag.getTree().NEW_NODE(TypeML.Operation,
 						Operator.getMultiply().getSign());
 			}
 		}
@@ -48,16 +48,16 @@ public class AssociativeDropController extends AbstractDropController {
 			parent.addAfter(dragOp.getIndex(), drag);
 
 			MathNode firstNode = parent.getFirstChild();
-			if (Type.Operation.equals(firstNode.getType()) && !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
+			if (TypeML.Operation.equals(firstNode.getType()) && !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
 				firstNode.remove();
 			}
 		} else {// add before drop
 			
 			if(target.getIndex() == 0){
 				if(isSum){
-					parent.addBefore(0, Type.Operation, Operator.PLUS.getSign());
+					parent.addBefore(0, TypeML.Operation, Operator.PLUS.getSign());
 				}else{
-				parent.addBefore(0, Type.Operation, Operator.getMultiply().getSign());
+				parent.addBefore(0, TypeML.Operation, Operator.getMultiply().getSign());
 				}
 			}
 			int dropIndex = target.getPrevSibling().getIndex();

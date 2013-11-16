@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class AlgOut extends ScrollPanel {

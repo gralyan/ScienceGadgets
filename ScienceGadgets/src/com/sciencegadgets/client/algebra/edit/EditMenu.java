@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type;
+import com.sciencegadgets.client.algebra.TypeML;
 
 public class EditMenu extends FlowPanel {
 
@@ -98,38 +98,38 @@ public class EditMenu extends FlowPanel {
 			this.place(randomNumberButton);
 			break;
 		case Operation:
-			HashMap<Type.Operator, Boolean> opMap = new HashMap<Type.Operator, Boolean>();
-			Type.Operator operation = node.getOperation();
+			HashMap<TypeML.Operator, Boolean> opMap = new HashMap<TypeML.Operator, Boolean>();
+			TypeML.Operator operation = node.getOperation();
 			if (operation == null) {
 				break;
 			}
 
 			operationMenu: switch (operation) {
 			case CROSS:
-				opMap.put(Type.Operator.CROSS, false);
-				opMap.put(Type.Operator.DOT, true);
-				opMap.put(Type.Operator.SPACE, true);
+				opMap.put(TypeML.Operator.CROSS, false);
+				opMap.put(TypeML.Operator.DOT, true);
+				opMap.put(TypeML.Operator.SPACE, true);
 				break operationMenu;
 			case DOT:
-				opMap.put(Type.Operator.CROSS, true);
-				opMap.put(Type.Operator.DOT, false);
-				opMap.put(Type.Operator.SPACE, true);
+				opMap.put(TypeML.Operator.CROSS, true);
+				opMap.put(TypeML.Operator.DOT, false);
+				opMap.put(TypeML.Operator.SPACE, true);
 				break operationMenu;
 			case SPACE:
-				opMap.put(Type.Operator.CROSS, true);
-				opMap.put(Type.Operator.DOT, true);
-				opMap.put(Type.Operator.SPACE, false);
+				opMap.put(TypeML.Operator.CROSS, true);
+				opMap.put(TypeML.Operator.DOT, true);
+				opMap.put(TypeML.Operator.SPACE, false);
 				break operationMenu;
 			case MINUS:
-				opMap.put(Type.Operator.PLUS, true);
-				opMap.put(Type.Operator.MINUS, false);
+				opMap.put(TypeML.Operator.PLUS, true);
+				opMap.put(TypeML.Operator.MINUS, false);
 				break operationMenu;
 			case PLUS:
-				opMap.put(Type.Operator.PLUS, false);
-				opMap.put(Type.Operator.MINUS, true);
+				opMap.put(TypeML.Operator.PLUS, false);
+				opMap.put(TypeML.Operator.MINUS, true);
 				break operationMenu;
 			}
-			for (Type.Operator op : opMap.keySet()) {
+			for (TypeML.Operator op : opMap.keySet()) {
 				Button signButton = new Button(op.getSign());
 				if (opMap.get(op)) {
 					signButton.addClickHandler(new SignChangeHandler(op));
@@ -242,9 +242,9 @@ public class EditMenu extends FlowPanel {
 
 	private class SignChangeHandler implements ClickHandler {
 
-		Type.Operator operator;
+		TypeML.Operator operator;
 
-		SignChangeHandler(Type.Operator operator) {
+		SignChangeHandler(TypeML.Operator operator) {
 			this.operator = operator;
 		}
 
@@ -321,13 +321,13 @@ public class EditMenu extends FlowPanel {
 		public void onClick(ClickEvent event) {
 			switch (node.getType()) {
 			case Sum:
-				node.append(Type.Operation, "+");
+				node.append(TypeML.Operation, "+");
 				break;
 			case Term:
-				node.append(Type.Operation, Type.Operator.getMultiply().getSign());
+				node.append(TypeML.Operation, TypeML.Operator.getMultiply().getSign());
 				break;
 			}
-			node.append(Type.Variable, ChangeNodeMenu.NOT_SET);
+			node.append(TypeML.Variable, ChangeNodeMenu.NOT_SET);
 			Moderator.reloadEquationPanel(null, null);
 		}
 

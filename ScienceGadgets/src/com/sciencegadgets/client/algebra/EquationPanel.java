@@ -129,7 +129,7 @@ public class EquationPanel extends AbsolutePanel {
 			case Fraction:
 				mergeRootNodes.add(side);
 				for (MathNode inFrac : side.getChildren()) {
-					if (Type.Term.equals(inFrac.getType())) {
+					if (TypeML.Term.equals(inFrac.getType())) {
 						mergeRootNodes.add(inFrac);
 					}
 				}
@@ -143,12 +143,12 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	private void findFractionMergingNodes() {
-		ArrayList<MathNode> fractions = mathTree.getNodesByType(Type.Fraction);
+		ArrayList<MathNode> fractions = mathTree.getNodesByType(TypeML.Fraction);
 
 		for (MathNode frac : fractions) {
 			for (MathNode child : frac.getChildren()) {
 				// numerator and denominator
-				if (Type.Term.equals(child.getType()) && !mergeRootNodes.contains(child)) {
+				if (TypeML.Term.equals(child.getType()) && !mergeRootNodes.contains(child)) {
 					mergeFractionNodes.add(child);
 				}
 			}

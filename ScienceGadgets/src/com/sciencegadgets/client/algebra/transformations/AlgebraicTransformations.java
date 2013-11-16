@@ -12,8 +12,8 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathWrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 import com.sciencegadgets.client.algebra.WrapDragController;
 
 public class AlgebraicTransformations {
@@ -28,7 +28,7 @@ public class AlgebraicTransformations {
 	 *            - node of negative number
 	 */
 	public static void separateNegative_check(MathNode negNode) {
-		if (negNode.getSymbol().startsWith(Type.Operator.MINUS.getSign())
+		if (negNode.getSymbol().startsWith(TypeML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
 			AlgebraActivity.contextMenuArea.add(new SeperateNegButton(negNode));
 		}
@@ -37,14 +37,14 @@ public class AlgebraicTransformations {
 	public static void separateNegative(MathNode negNode) {
 		MathNode parent = negNode.getParent();
 		String newSymbol = negNode.getSymbol().replaceFirst(
-				Type.Operator.MINUS.getSign(), "");
+				TypeML.Operator.MINUS.getSign(), "");
 		negNode.setSymbol(newSymbol);
-		parent = negNode.encase(Type.Term);
+		parent = negNode.encase(TypeML.Term);
 
 		int nodeIndex = negNode.getIndex();
-		parent.addBefore(nodeIndex, Type.Operation, Type.Operator.getMultiply()
+		parent.addBefore(nodeIndex, TypeML.Operation, TypeML.Operator.getMultiply()
 				.getSign());
-		parent.addBefore(nodeIndex, Type.Number, "-1");
+		parent.addBefore(nodeIndex, TypeML.Number, "-1");
 		Moderator.reloadEquationPanel("-"+newSymbol+" = -1"+Operator.getMultiply().getSign()+newSymbol, null);
 	}
 
@@ -56,10 +56,10 @@ public class AlgebraicTransformations {
 	public static void cancellation_check(MathNode node) {
 		MathNode thisSide = null;
 		MathNode parent = node.getParent();
-		if (Type.Fraction.equals(parent.getType())) {
+		if (TypeML.Fraction.equals(parent.getType())) {
 			thisSide = node;
-		} else if (Type.Term.equals(parent.getType())
-				&& Type.Fraction.equals(parent.getParentType())) {
+		} else if (TypeML.Term.equals(parent.getType())
+				&& TypeML.Fraction.equals(parent.getParentType())) {
 			thisSide = parent;
 		} else {
 			return;
@@ -79,7 +79,7 @@ public class AlgebraicTransformations {
 			LinkedList<MathNode> list = new LinkedList<MathNode>();
 			list.add(otherSide);
 			cancellation_addDragDrops(node, list);
-		} else if (Type.Term.equals(otherSide.getType())) {
+		} else if (TypeML.Term.equals(otherSide.getType())) {
 			LinkedList<MathNode> list = new LinkedList<MathNode>();
 			for (MathNode child : otherSide.getChildren()) {
 				if (node.isLike(child)) {
@@ -158,11 +158,11 @@ public class AlgebraicTransformations {
 
 		node.highlight();
 
-		MathNode parent = node.encase(Type.Term);
+		MathNode parent = node.encase(TypeML.Term);
 		int index = node.getIndex();
-		parent.addBefore(index, Type.Operation, Operator.getMultiply()
+		parent.addBefore(index, TypeML.Operation, Operator.getMultiply()
 				.getSign());
-		parent.addBefore(index, Type.Number, factor.toString());
+		parent.addBefore(index, TypeML.Number, factor.toString());
 
 		node.setSymbol(factored + "");
 
@@ -227,10 +227,10 @@ public class AlgebraicTransformations {
 			propagateNegative(toNegate.getFirstChild());
 			break;
 		default:
-			MathNode casing = toNegate.encase(Type.Term);
-			casing.addBefore(0, Type.Operation, Operator.getMultiply()
+			MathNode casing = toNegate.encase(TypeML.Term);
+			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
 					.getSign());
-			casing.addBefore(0, Type.Number, "-1");
+			casing.addBefore(0, TypeML.Number, "-1");
 
 		}
 	}
@@ -242,9 +242,9 @@ public class AlgebraicTransformations {
 	public static void denominatorFlip(MathNode node) {
 		node.highlight();
 		
-		if(!Type.Fraction.equals(node.getType())){
-			node = node.encase(Type.Fraction);
-			node.append(Type.Number, "1");
+		if(!TypeML.Fraction.equals(node.getType())){
+			node = node.encase(TypeML.Fraction);
+			node.append(TypeML.Number, "1");
 		}
 		//Flip
 		node.append(node.getChildAt(0));
@@ -253,13 +253,13 @@ public class AlgebraicTransformations {
 		MathNode grandParent = parentFraction.getParent();
 		int index = parentFraction.getIndex();
 		
-		if(!Type.Term.equals(grandParent.getType())){
-			grandParent = parentFraction.encase(Type.Term);
+		if(!TypeML.Term.equals(grandParent.getType())){
+			grandParent = parentFraction.encase(TypeML.Term);
 			index = 0;
 		}
 		
 		grandParent.addBefore(index, parentFraction.getChildAt(1));
-		grandParent.addBefore(index, Type.Operation, Operator.getMultiply().getSign());
+		grandParent.addBefore(index, TypeML.Operation, Operator.getMultiply().getSign());
 		grandParent.addBefore(index, parentFraction.getChildAt(0));
 		
 		parentFraction.remove();

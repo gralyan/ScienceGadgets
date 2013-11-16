@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
 
 public class TestBot_Addition extends AdditionTransformations{

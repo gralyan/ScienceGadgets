@@ -9,7 +9,7 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathWrapper;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type;
+import com.sciencegadgets.client.algebra.TypeML;
 
 public class CancellationDropController extends AbstractDropController {
 
@@ -34,9 +34,9 @@ public class CancellationDropController extends AbstractDropController {
 		for (MathNode side : dragAndTarget) {
 
 			MathNode sideParent = side.getParent();
-			if (Type.Fraction.equals(sideParent.getType())) {
+			if (TypeML.Fraction.equals(sideParent.getType())) {
 				if (side.getIndex() == 0) {// numerator
-					side.replace(Type.Number, "1");
+					side.replace(TypeML.Number, "1");
 				} else {// denominator
 					denomToRemove = side;
 				}
@@ -47,7 +47,7 @@ public class CancellationDropController extends AbstractDropController {
 				} else {
 					sideOp = side.getPrevSibling();
 				}
-				if (sideOp != null && Type.Operation.equals(sideOp.getType())) {
+				if (sideOp != null && TypeML.Operation.equals(sideOp.getType())) {
 					sideOp.remove();
 				}
 				side.remove();

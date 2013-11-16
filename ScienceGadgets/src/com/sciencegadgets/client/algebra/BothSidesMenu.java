@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class BothSidesMenu extends FlowPanel {
@@ -25,11 +25,11 @@ public class BothSidesMenu extends FlowPanel {
 	boolean isNestedInFraction = false;
 	boolean isSide = false;
 
-	private final String PLUS = Type.Operator.PLUS.getSign();
-	private final String MINUS = Type.Operator.MINUS.getSign();
-	private final String CROSS = Type.Operator.CROSS.getSign();
-	private final String DOT = Type.Operator.DOT.getSign();
-	private final String SPACE = Type.Operator.SPACE.getSign();
+	private final String PLUS = TypeML.Operator.PLUS.getSign();
+	private final String MINUS = TypeML.Operator.MINUS.getSign();
+	private final String CROSS = TypeML.Operator.CROSS.getSign();
+	private final String DOT = TypeML.Operator.DOT.getSign();
+	private final String SPACE = TypeML.Operator.SPACE.getSign();
 
 	public BothSidesMenu(MathWrapper mlWrapper, String width) {
 
@@ -38,7 +38,7 @@ public class BothSidesMenu extends FlowPanel {
 		tree = node.getTree();
 		parentNode = node.getParent();
 
-		if (Type.Operation.equals(node.getType())) {
+		if (TypeML.Operation.equals(node.getType())) {
 			return;
 		}
 
@@ -79,8 +79,8 @@ public class BothSidesMenu extends FlowPanel {
 			if (isTopLevel) {
 				this.add(new BothSidesButton(Math.DIVIDE));
 			}
-			if (Type.Fraction.equals(parentNode.getParent().getType())
-					&& !Type.Operation.equals(node.getType())) {
+			if (TypeML.Fraction.equals(parentNode.getParent().getType())
+					&& !TypeML.Operation.equals(node.getType())) {
 				if (parentNode.getParent().isRightSide()
 						|| parentNode.getParent().isLeftSide()) {
 
@@ -212,11 +212,11 @@ public class BothSidesMenu extends FlowPanel {
 		public void onClick(ClickEvent event) {
 			super.onClick(event);
 			// Prepare Target side
-			targetSide = targetSide.encase(Type.Sum);
+			targetSide = targetSide.encase(TypeML.Sum);
 
 			// Leave 0 in old side if top node
 			if (isSide) {
-				node.getParent().addBefore(node.getIndex(), Type.Number, "0");
+				node.getParent().addBefore(node.getIndex(), TypeML.Number, "0");
 			}
 			// take operation
 			if (node.getIndex() > 0 && !isSide) {
@@ -233,7 +233,7 @@ public class BothSidesMenu extends FlowPanel {
 				}
 				targetSide.append(operator);
 			} else {
-				targetSide.append(Type.Operation, MINUS);
+				targetSide.append(TypeML.Operation, MINUS);
 				changeComment += MINUS;
 			}
 
@@ -259,12 +259,12 @@ public class BothSidesMenu extends FlowPanel {
 			super.onClick(event);
 			MathNode operator = null;
 
-			if (Type.Fraction.equals(oldParent.getType())) {
+			if (TypeML.Fraction.equals(oldParent.getType())) {
 				// leave 1 in numerator
-				oldParent.addBefore(0, Type.Number, "1");
+				oldParent.addBefore(0, TypeML.Number, "1");
 			} else if (isSide) {
 				// Leave 1 in old side if top node
-				oldParent.addBefore(node.getIndex(), Type.Number, "1");
+				oldParent.addBefore(node.getIndex(), TypeML.Number, "1");
 			} else {
 				// take operation
 				if (node.getIndex() > 0) {
@@ -275,17 +275,17 @@ public class BothSidesMenu extends FlowPanel {
 			}
 
 			// Prepare Target side
-			if (!Type.Fraction.equals(targetSide.getType())) {
-				targetSide = targetSide.encase(Type.Fraction);
+			if (!TypeML.Fraction.equals(targetSide.getType())) {
+				targetSide = targetSide.encase(TypeML.Fraction);
 				if (operator != null)
 					operator.remove();
 			} else {
 				targetSide = targetSide.getChildAt(1);
-				if (!Type.Term.equals(targetSide.getType())) {
-					targetSide = targetSide.encase(Type.Term);
+				if (!TypeML.Term.equals(targetSide.getType())) {
+					targetSide = targetSide.encase(TypeML.Term);
 				}
 				if (operator == null) {
-					targetSide.append(Type.Operation, Type.Operator
+					targetSide.append(TypeML.Operation, TypeML.Operator
 							.getMultiply().getSign());
 				} else {
 					targetSide.append(operator);
@@ -298,7 +298,7 @@ public class BothSidesMenu extends FlowPanel {
 			// clean source side
 			MathNode oldFirstSib = oldParent.getFirstChild();
 			if (oldFirstSib != null
-					&& Type.Operation.equals(oldFirstSib.getType())) {
+					&& TypeML.Operation.equals(oldFirstSib.getType())) {
 				oldFirstSib.remove();
 			}
 
@@ -315,7 +315,7 @@ public class BothSidesMenu extends FlowPanel {
 		public void onClick(ClickEvent event) {
 			super.onClick(event);
 			// Prepare Target side
-			targetSide = targetSide.encase(Type.Term);
+			targetSide = targetSide.encase(TypeML.Term);
 
 			if (isNestedInFraction) {
 				MathNode operation = null;
@@ -325,11 +325,11 @@ public class BothSidesMenu extends FlowPanel {
 					operation = node.getPrevSibling();
 				}
 				if (operation != null
-						&& Type.Operation.equals(operation.getType())) {
+						&& TypeML.Operation.equals(operation.getType())) {
 					targetSide.append(operation);
 				}
 			} else if (isTopLevel) {
-				targetSide.append(Type.Operation, Type.Operator.getMultiply()
+				targetSide.append(TypeML.Operation, TypeML.Operator.getMultiply()
 						.getSign());
 			} else {
 				JSNICalls
@@ -337,7 +337,7 @@ public class BothSidesMenu extends FlowPanel {
 								+ node.toString());
 			}
 
-			if (Type.Term.equals(node.getType())) {// Termception
+			if (TypeML.Term.equals(node.getType())) {// Termception
 				for (MathNode transplants : node.getChildren()) {
 					targetSide.append(transplants);
 				}
@@ -347,19 +347,19 @@ public class BothSidesMenu extends FlowPanel {
 			}
 
 			// clean source side
-			if (Type.Fraction.equals(oldParent.getType())) {
+			if (TypeML.Fraction.equals(oldParent.getType())) {
 				// remove unnecessary intermediate fraction
 				oldParent.getParent().addBefore(oldParent.getIndex(),
 						oldParent.getFirstChild());
 				oldParent.remove();
-			} else if (Type.Term.equals(oldParent.getType())) {
+			} else if (TypeML.Term.equals(oldParent.getType())) {
 				oldParent.decase();
 			} else {
 				JSNICalls
 						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			changeComment += Type.Operator.getMultiply().getSign()
+			changeComment += TypeML.Operator.getMultiply().getSign()
 					+ node.toString();
 			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
@@ -373,20 +373,20 @@ public class BothSidesMenu extends FlowPanel {
 			super.onClick(event);
 			// Prepare Target side
 
-			if (!Type.Exponential.equals(targetSide.getType())) {
-				targetSide = targetSide.encase(Type.Exponential);
-				MathNode frac = targetSide.append(Type.Fraction, "");
-				frac.append(Type.Number, "1");
+			if (!TypeML.Exponential.equals(targetSide.getType())) {
+				targetSide = targetSide.encase(TypeML.Exponential);
+				MathNode frac = targetSide.append(TypeML.Fraction, "");
+				frac.append(TypeML.Number, "1");
 				frac.append(node);
 			} else {
 				MathNode targetExp = targetSide.getChildAt(1);
-				if (!Type.Term.equals(targetExp.getType())) {
-					targetExp = targetExp.encase(Type.Term);
+				if (!TypeML.Term.equals(targetExp.getType())) {
+					targetExp = targetExp.encase(TypeML.Term);
 				}
-				targetExp.append(Type.Operation, Operator.getMultiply()
+				targetExp.append(TypeML.Operation, Operator.getMultiply()
 						.getSign());
-				MathNode frac = targetExp.append(Type.Fraction, "");
-				frac.append(Type.Number, "1");
+				MathNode frac = targetExp.append(TypeML.Fraction, "");
+				frac.append(TypeML.Number, "1");
 				frac.append(node);
 			}
 

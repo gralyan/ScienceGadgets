@@ -8,7 +8,7 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 
 public class EquationHTML extends HTML {
 
@@ -51,8 +51,8 @@ public class EquationHTML extends HTML {
 		Element mlParent = mlNode.getParentElement();
 
 		String id = mlNode.getAttribute("id");
-		Type type = Type.getType(mlNode.getTagName());
-		Type parentType = Type.getType(mlParent.getTagName());
+		TypeML type = TypeML.getType(mlNode.getTagName());
+		TypeML parentType = TypeML.getType(mlParent.getTagName());
 
 		// make new display node with appropriate properties
 		Element nodeHTML = DOM.createDiv();
@@ -68,9 +68,9 @@ public class EquationHTML extends HTML {
 			boolean isDenominator = mlNode.equals(mlParent
 					.getFirstChildElement().getNextSiblingElement());
 			if (isNumerator) {
-				nodeHTML.addClassName(Type.Fraction.asChild() + "-numerator");
+				nodeHTML.addClassName(TypeML.Fraction.asChild() + "-numerator");
 			} else if (isDenominator) {
-				nodeHTML.addClassName(Type.Fraction.asChild() + "-denominator");
+				nodeHTML.addClassName(TypeML.Fraction.asChild() + "-denominator");
 			}
 			break;
 		case Exponential:
@@ -78,9 +78,9 @@ public class EquationHTML extends HTML {
 			boolean isExponential = mlNode.equals(mlParent
 					.getFirstChildElement().getNextSiblingElement());
 			if (isBase) {
-				nodeHTML.addClassName(Type.Exponential.asChild() + "-base");
+				nodeHTML.addClassName(TypeML.Exponential.asChild() + "-base");
 			} else if (isExponential) {
-				nodeHTML.addClassName(Type.Exponential.asChild() + "-exponent");
+				nodeHTML.addClassName(TypeML.Exponential.asChild() + "-exponent");
 				if("mfrac".equalsIgnoreCase(mlNode.getTagName()) && "1".equals(mlNode.getFirstChildElement().getInnerText())){
 					Element radical = DOM.createDiv();
 					radical.addClassName("radical");
@@ -98,8 +98,8 @@ public class EquationHTML extends HTML {
 		}
 
 		// Add parenthesis to some sums
-		if ((Type.Sum.equals(type) && Type.Term.equals(parentType)) || 
-				(Type.Exponential.equals(parentType) && !Type.Number.equals(type) && !Type.Variable.equals(type))) {
+		if ((TypeML.Sum.equals(type) && TypeML.Term.equals(parentType)) || 
+				(TypeML.Exponential.equals(parentType) && !TypeML.Number.equals(type) && !TypeML.Variable.equals(type))) {
 			fenced.add(nodeHTML);
 		}
 
@@ -121,13 +121,13 @@ public class EquationHTML extends HTML {
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
 				String text = mlNode.getInnerText();
 				if (text.startsWith("&")) { // must insert as js code
-					for (Type.Operator op : Type.Operator.values()) {
+					for (TypeML.Operator op : TypeML.Operator.values()) {
 						if (op.getHTML().equals(text)) {
 							text = op.getSign();
 						}
 					}
-				} else if (Type.Number
-						.equals(Type.getType(mlNode.getTagName()))
+				} else if (TypeML.Number
+						.equals(TypeML.getType(mlNode.getTagName()))
 						&& text.startsWith(Operator.MINUS.getSign())) {
 					// All negative numbers in parentheses
 					text = "(" + text + ")";
@@ -144,7 +144,7 @@ public class EquationHTML extends HTML {
 
 			Element parOpen = DOM.createDiv();
 			parOpen.addClassName(Aesthetic);
-			parOpen.addClassName(Type.Sum.asChild());
+			parOpen.addClassName(TypeML.Sum.asChild());
 			Element parClose = (Element) parOpen.cloneNode(true);
 			parOpen.setInnerText("(");
 			parClose.setInnerText(")");
@@ -173,8 +173,8 @@ public class EquationHTML extends HTML {
 	}
 
 	/**
-	 * Matches the heights of all the children of an {@link Type.Equation},
-	 * {@link Type.Term} or {@link Type.Sum} by:<br/>
+	 * Matches the heights of all the children of an {@link TypeML.Equation},
+	 * {@link TypeML.Term} or {@link TypeML.Sum} by:<br/>
 	 * 1.Lifting centers to the tallest denominator using padding-bottom<br/>
 	 * 2.Matching tops to tallest height with padding-top<br/>
 	 * <b>Note:</b> All children of these nodes are initially aligned at their
@@ -191,15 +191,15 @@ public class EquationHTML extends HTML {
 		}
 		// This method is only appropriate for type Equation, Term, or Sum
 		String curClass = curEl.getClassName();
-		if (curClass.contains(Type.Equation.toString())
-				|| curClass.contains(Type.Term.toString())
-				|| curClass.contains(Type.Sum.toString())) {
+		if (curClass.contains(TypeML.Equation.toString())
+				|| curClass.contains(TypeML.Term.toString())
+				|| curClass.contains(TypeML.Sum.toString())) {
 			// Child of another Equation, Term or Sum is done with parent
-			if (!curClass.contains(Type.Equation.toString())) {
+			if (!curClass.contains(TypeML.Equation.toString())) {
 				String parentClass = curEl.getParentElement().getClassName();
-				if (parentClass.contains(Type.Equation.toString())
-						|| parentClass.contains(Type.Term.toString())
-						|| parentClass.contains(Type.Sum.toString())) {
+				if (parentClass.contains(TypeML.Equation.toString())
+						|| parentClass.contains(TypeML.Term.toString())
+						|| parentClass.contains(TypeML.Sum.toString())) {
 					return;
 				}
 			}
@@ -219,7 +219,7 @@ public class EquationHTML extends HTML {
 			int liftCenter = 999999999;// shortest child
 			for (Element child : childrenInline) {
 				// Find the tallest denominator to match centers
-				if (child.getClassName().contains(Type.Fraction.toString())) {
+				if (child.getClassName().contains(TypeML.Fraction.toString())) {
 					fractionsInline.add(child);
 					int numeratorHeight = ((Element) child.getChild(0))
 							.getOffsetHeight();
@@ -257,7 +257,7 @@ public class EquationHTML extends HTML {
 				for (Element child : childrenInline) {
 					int lift = tallestDenominator;
 					
-					if (child.getClassName().contains(Type.Fraction.toString())) {
+					if (child.getClassName().contains(TypeML.Fraction.toString())) {
 						lift -= ((Element) child.getChild(1)).getOffsetHeight();
 						if (lift != tallestDenominator) {// if changed
 							// Lift frac to match horizontal lines
@@ -349,8 +349,8 @@ public class EquationHTML extends HTML {
 			Element child = (Element) children.getItem(i);
 
 			String childClass = child.getClassName();
-			if (childClass.contains(Type.Term.toString())
-					|| childClass.contains(Type.Sum.toString())) {
+			if (childClass.contains(TypeML.Term.toString())
+					|| childClass.contains(TypeML.Sum.toString())) {
 				addChildrenIfInline(child, childrenInline, parentsInline);
 				parentsInline.add(child);
 				childrenInline.add(child);

@@ -17,8 +17,8 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.ResponseNote;
-import com.sciencegadgets.client.algebra.Type;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 
 public class AdditionTransformations {
 
@@ -42,8 +42,8 @@ public class AdditionTransformations {
 		// + operation.toString());
 		// }
 
-		Type leftType = left.getType();
-		Type rightType = right.getType();
+		TypeML leftType = left.getType();
+		TypeML rightType = right.getType();
 
 		// Check for improper types for left and right
 		switch (rightType) {
@@ -209,14 +209,14 @@ public class AdditionTransformations {
 		}
 
 		MathNode termCasing = operation.getParent().addBefore(
-				operation.getIndex(), Type.Term, "");
+				operation.getIndex(), TypeML.Term, "");
 
 		for (MathNode factor : factors) {
 			termCasing.append(factor);
-			termCasing.append(Type.Operation, Operator.getMultiply().getSign());
+			termCasing.append(TypeML.Operation, Operator.getMultiply().getSign());
 		}
 
-		MathNode binomialCasing = termCasing.append(Type.Sum, "");
+		MathNode binomialCasing = termCasing.append(TypeML.Sum, "");
 		binomialCasing.append(inBinomialFirst);
 		binomialCasing.append(operation);
 		binomialCasing.append(inBinomialSecond);
@@ -229,15 +229,15 @@ public class AdditionTransformations {
 		MathNode rightTerm = right;
 
 		// If sides are fractions, like terms come from numerators
-		if (Type.Fraction.equals(left.getType())) {
-			if (Type.Term.equals(left.getChildAt(0).getType())) {
+		if (TypeML.Fraction.equals(left.getType())) {
+			if (TypeML.Term.equals(left.getChildAt(0).getType())) {
 				leftTerm = left.getChildAt(0);
 			} else {
 				return false;
 			}
 		}
-		if (Type.Fraction.equals(right.getType())) {
-			if (Type.Term.equals(right.getChildAt(0).getType())) {
+		if (TypeML.Fraction.equals(right.getType())) {
+			if (TypeML.Term.equals(right.getChildAt(0).getType())) {
 				rightTerm = right.getChildAt(0);
 			} else {
 				return false;
@@ -247,12 +247,12 @@ public class AdditionTransformations {
 		// Collect like terms
 		LinkedHashMap<MathNode, MathNode> likeTerms = new LinkedHashMap<MathNode, MathNode>();
 		a: for (MathNode leftChild : leftTerm.getChildren()) {
-			if (Type.Operation.equals(leftChild.getType())) {
+			if (TypeML.Operation.equals(leftChild.getType())) {
 				continue a;
 			}
 			b: for (MathNode rightChild : rightTerm.getChildren()) {
 				if (likeTerms.containsValue(rightChild)
-						|| Type.Operation.equals(rightChild.getType())) {
+						|| TypeML.Operation.equals(rightChild.getType())) {
 					continue b;
 				}
 				if (leftChild.isLike(rightChild)) {
@@ -300,20 +300,20 @@ public class AdditionTransformations {
 
 		// Remove operation on like term
 		if (likeTerms.size() * 2 - 1 == left.getChildCount()) {
-			left = left.replace(Type.Term, "");// will be MathNode.decase[d]
-			left.append(Type.Number, "1");
+			left = left.replace(TypeML.Term, "");// will be MathNode.decase[d]
+			left.append(TypeML.Number, "1");
 		} else {
 			for (MathNode extraFactor : likeTerms.keySet()) {
 
 				if (extraFactor.getIndex() == 0) {
 					MathNode nextOp = extraFactor.getNextSibling();
 					if (nextOp != null
-							&& Type.Operation.equals(nextOp.getType())) {
+							&& TypeML.Operation.equals(nextOp.getType())) {
 						nextOp.remove();
 					}
 				} else {
 					MathNode prevOp = extraFactor.getPrevSibling();
-					if (Type.Operation.equals(prevOp.getType())) {
+					if (TypeML.Operation.equals(prevOp.getType())) {
 						prevOp.remove();
 					}
 				}
@@ -322,19 +322,19 @@ public class AdditionTransformations {
 		}
 
 		if (likeTerms.size() * 2 - 1 == right.getChildCount()) {
-			right = right.replace(Type.Term, "");
-			right.append(Type.Number, "1");
+			right = right.replace(TypeML.Term, "");
+			right.append(TypeML.Number, "1");
 		} else {
 			for (MathNode fact : likeTerms.values()) {
 				if (fact.getIndex() == 0) {
 					MathNode nextOp = fact.getNextSibling();
 					if (nextOp != null
-							&& Type.Operation.equals(nextOp.getType())) {
+							&& TypeML.Operation.equals(nextOp.getType())) {
 						nextOp.remove();
 					}
 				} else {
 					MathNode prevOp = fact.getPrevSibling();
-					if (Type.Operation.equals(prevOp.getType())) {
+					if (TypeML.Operation.equals(prevOp.getType())) {
 						prevOp.remove();
 					}
 				}
@@ -381,15 +381,15 @@ public class AdditionTransformations {
 
 		MathNode inBinomialB = exponential;
 		MathNode inBinomialA = other.getParent().addBefore(other.getIndex(),
-				Type.Number, "1");
+				TypeML.Number, "1");
 
 		LinkedList<MathNode> factors = new LinkedList<MathNode>();
 		factors.add(other);
 		factor(factors, inBinomialA, inBinomialB);
 
-		MathNode exp = exponential.getChildAt(1).encase(Type.Sum);
-		exp.append(Type.Operation, Operator.MINUS.getSign());
-		exp.append(Type.Number, "1");
+		MathNode exp = exponential.getChildAt(1).encase(TypeML.Sum);
+		exp.append(TypeML.Operation, Operator.MINUS.getSign());
+		exp.append(TypeML.Number, "1");
 
 		Moderator.reloadEquationPanel("Factor with Base", Rule.Factorization);
 	}
@@ -399,8 +399,8 @@ public class AdditionTransformations {
 		MathNode term = termContainer;
 
 		// If sides are fractions, like terms come from numerators
-		if (Type.Fraction.equals(termContainer.getType())) {
-			if (Type.Term.equals(termContainer.getChildAt(0).getType())) {
+		if (TypeML.Fraction.equals(termContainer.getType())) {
+			if (TypeML.Term.equals(termContainer.getChildAt(0).getType())) {
 				term = termContainer.getChildAt(0);
 			} else {
 				return false;
@@ -440,12 +440,12 @@ public class AdditionTransformations {
 
 		if (termChild.getIndex() == 0) {
 			MathNode nextOp = termChild.getNextSibling();
-			if (nextOp != null && Type.Operation.equals(nextOp.getType())) {
+			if (nextOp != null && TypeML.Operation.equals(nextOp.getType())) {
 				nextOp.remove();
 			}
 		} else {
 			MathNode prevOp = termChild.getPrevSibling();
-			if (Type.Operation.equals(prevOp.getType())) {
+			if (TypeML.Operation.equals(prevOp.getType())) {
 				prevOp.remove();
 			}
 		}
@@ -459,7 +459,7 @@ public class AdditionTransformations {
 		// exp.add(Type.Number, "1");
 		// } else {
 		inBinomialA = other.getParent().addBefore(other.getIndex(),
-				Type.Number, "1");
+				TypeML.Number, "1");
 		other.remove();
 		// }
 
@@ -495,7 +495,7 @@ public class AdditionTransformations {
 		operation.highlight();
 		left.highlight();
 
-		MathNode numeratorCasing = right.getChildAt(0).encase(Type.Sum);
+		MathNode numeratorCasing = right.getChildAt(0).encase(TypeML.Sum);
 		numeratorCasing.addBefore(0, operation);
 		numeratorCasing.addBefore(0, left.getChildAt(0));
 
@@ -526,10 +526,10 @@ public class AdditionTransformations {
 		left.highlight();
 
 		if (isPlus) {
-			MathNode casing = right.encase(Type.Term);
-			casing.addBefore(0, Type.Operation, Operator.getMultiply()
+			MathNode casing = right.encase(TypeML.Term);
+			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
 					.getSign());
-			casing.addBefore(0, Type.Number, "2");
+			casing.addBefore(0, TypeML.Number, "2");
 		} else {
 			right.remove();
 		}
