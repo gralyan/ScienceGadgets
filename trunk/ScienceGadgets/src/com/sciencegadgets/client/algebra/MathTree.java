@@ -31,7 +31,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 
 public class MathTree {
@@ -147,7 +147,7 @@ public class MathTree {
 		return new MathNode(mlNode);
 	}
 
-	public MathNode NEW_NODE(Type type, String symbol) {
+	public MathNode NEW_NODE(TypeML type, String symbol) {
 		return new MathNode(type, symbol);
 	}
 
@@ -179,7 +179,7 @@ public class MathTree {
 	 * @param type
 	 * @return
 	 */
-	public ArrayList<MathNode> getNodesByType(Type type){
+	public ArrayList<MathNode> getNodesByType(TypeML type){
 		ArrayList<MathNode> nodes = new ArrayList<MathNode>();
 		String tag = "*";
 		if(type != null){
@@ -225,7 +225,7 @@ public class MathTree {
 		 * @param symbol
 		 *            - inner text
 		 */
-		public MathNode(Type type, String symbol) {
+		public MathNode(TypeML type, String symbol) {
 
 			String tag = type.getTag();
 
@@ -263,9 +263,9 @@ public class MathTree {
 		 *            - the tag of the new node
 		 * @return - encasing node
 		 */
-		public MathNode encase(Type type) {
+		public MathNode encase(TypeML type) {
 			// Don't encase sum in sum or term in term
-			boolean sumOrTerm = Type.Sum.equals(type) || Type.Term.equals(type);
+			boolean sumOrTerm = TypeML.Sum.equals(type) || TypeML.Term.equals(type);
 			if (getType().equals(type) && sumOrTerm) {
 				return this;
 			} else if (getParentType().equals(type) && sumOrTerm) {
@@ -292,7 +292,7 @@ public class MathTree {
 			// Propagate leading minus sign or remove leading plus
 			if (getChildCount() != 0) {
 				MathNode possibleMinus = getChildAt(0);
-				if (Type.Operation.equals(possibleMinus.getType())) {
+				if (TypeML.Operation.equals(possibleMinus.getType())) {
 					if (Operator.MINUS.getSign().equals(
 							possibleMinus.getSymbol())) {
 						if (getChildCount() > 1) {
@@ -318,12 +318,12 @@ public class MathTree {
 
 			switch (this.getChildCount()) {
 			case 0:
-				this.replace(Type.Number, "0");
+				this.replace(TypeML.Number, "0");
 				break;
 			case 1:
-				Type childType = getFirstChild().getType();
+				TypeML childType = getFirstChild().getType();
 				if (childType.equals(getParentType())
-						&& (Type.Sum.equals(childType) || Type.Term
+						&& (TypeML.Sum.equals(childType) || TypeML.Term
 								.equals(childType))) {
 					LinkedList<MathNode> grandChildren = this.getFirstChild()
 							.getChildren();
@@ -352,7 +352,7 @@ public class MathTree {
 			this.remove();
 		}
 
-		public MathNode replace(Type type, String symbol) {
+		public MathNode replace(TypeML type, String symbol) {
 			MathNode replacement = new MathNode(type, symbol);
 			replace(replacement);
 			return replacement;
@@ -363,7 +363,7 @@ public class MathTree {
 
 			// Don't add sum to sum or term to term, just add it's children
 			if (getType().equals(node.getType())
-					&& (Type.Sum.equals(node.getType()) || Type.Term
+					&& (TypeML.Sum.equals(node.getType()) || TypeML.Term
 							.equals(node.getType()))) {
 				LinkedList<MathNode> children = node.getChildren();
 				for (int i = children.size(); i > 0; i--) {
@@ -392,7 +392,7 @@ public class MathTree {
 			add(index, node, true);
 		}
 
-		public MathNode addAfter(int index, Type type, String symbol) {
+		public MathNode addAfter(int index, TypeML type, String symbol) {
 			MathNode newNode = new MathNode(type, symbol);
 			this.addAfter(index, newNode);
 			return newNode;
@@ -424,7 +424,7 @@ public class MathTree {
 		 * @return - The newly create child
 		 * @throws Exception
 		 */
-		public MathNode addBefore(int index, Type type, String symbol) {
+		public MathNode addBefore(int index, TypeML type, String symbol) {
 			MathNode newNode = new MathNode(type, symbol);
 			this.addBefore(index, newNode);
 			return newNode;
@@ -434,7 +434,7 @@ public class MathTree {
 			addBefore(-1, newNode);
 		}
 
-		public MathNode append(Type type, String symbol){
+		public MathNode append(TypeML type, String symbol){
 			return addBefore(-1, type, symbol);
 		}
 
@@ -597,11 +597,11 @@ public class MathTree {
 				return false;
 		}
 
-		public Type.Operator getOperation() {
+		public TypeML.Operator getOperation() {
 			if ("mo".equalsIgnoreCase(getTag())) {
 				String symbol = getSymbol();
 
-				for (Type.Operator op : Type.Operator.values()) {
+				for (TypeML.Operator op : TypeML.Operator.values()) {
 					if (op.getSign().equalsIgnoreCase(symbol)
 							|| op.getHTML().equalsIgnoreCase(symbol)) {
 						return op;
@@ -613,17 +613,17 @@ public class MathTree {
 			return null;
 		}
 
-		public Type getType() {
-			return Type.getType(getTag());
+		public TypeML getType() {
+			return TypeML.getType(getTag());
 		}
 
-		public Type getParentType() {
+		public TypeML getParentType() {
 			Element parentEl = getMLNode().getParentElement();
 			if(parentEl == null){
 				return null;
 			}
 			String parentTag = parentEl.getTagName();
-			return Type.getType(parentTag);
+			return TypeML.getType(parentTag);
 		}
 
 		public Element getHTMLClone() {
@@ -746,9 +746,9 @@ public class MathTree {
 			case Sum:
 			case Term:// Confirm that there are < 3 children
 				if (getType().equals(getParent().getType())) {
-					if (Type.Term.equals(getType())) {
+					if (TypeML.Term.equals(getType())) {
 						isTermception = true;
-					} else if (Type.Sum.equals(getType())) {
+					} else if (TypeML.Sum.equals(getType())) {
 						isSumception = true;
 					}
 				}

@@ -153,15 +153,15 @@ public class Wrapper extends HTML implements HasHandlers {
 	public void addAssociativeDragDrop() {
 
 		// Add associative drag and drop
-		if ((Type.Sum.equals(node.getParentType()) || Type.Term.equals(node
-				.getParentType())) && !Type.Operation.equals(node.getType())) {
+		if ((TypeML.Sum.equals(node.getParentType()) || TypeML.Term.equals(node
+				.getParentType())) && !TypeML.Operation.equals(node.getType())) {
 
 			addDragController();
 
 			LinkedList<MathNode> siblings = node.getParent().getChildren();
 			siblings.remove(node);
 			for (MathNode dropNode : siblings) {
-				if (!Type.Operation.equals(dropNode.getType()))
+				if (!TypeML.Operation.equals(dropNode.getType()))
 					dragController
 							.registerDropController(new AssociativeDropController(
 									dropNode.getWrapper()));

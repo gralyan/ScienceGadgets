@@ -11,8 +11,8 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.Type;
-import com.sciencegadgets.client.algebra.Type.Operator;
+import com.sciencegadgets.client.algebra.TypeML;
+import com.sciencegadgets.client.algebra.TypeML.Operator;
 
 public class MultiplyTransformations {
 	protected static MathNode operation;
@@ -26,8 +26,8 @@ public class MultiplyTransformations {
 		parent = multiplyNode.getParent();
 		grandParent = parent.getParent();
 
-		Type leftType = left.getType();
-		Type rightType = right.getType();
+		TypeML leftType = left.getType();
+		TypeML rightType = right.getType();
 
 		// Check for improper types for left and right
 		switch (leftType) {
@@ -125,7 +125,7 @@ public class MultiplyTransformations {
 			}
 			break first;
 		case Variable:
-			if (Type.Variable.equals(rightType)) {
+			if (TypeML.Variable.equals(rightType)) {
 				multiplyCombineBases(left, right);
 				break first;
 			}
@@ -163,9 +163,9 @@ public class MultiplyTransformations {
 		operation.highlight();
 
 		for (MathNode sumChild : sum.getChildren()) {
-			if (!Type.Operation.equals(sumChild.getType())) {
+			if (!TypeML.Operation.equals(sumChild.getType())) {
 
-				MathNode sumChildCasings = sumChild.encase(Type.Term);
+				MathNode sumChildCasings = sumChild.encase(TypeML.Term);
 
 				int index = reversed ? -1 : 0;
 				sumChildCasings.addBefore(index, operation.getType(),
@@ -196,7 +196,7 @@ public class MultiplyTransformations {
 		MathNode leftBase = left.getChildAt(0);
 		MathNode rightBase = right.getChildAt(0);
 
-		MathNode rightCasing = rightBase.encase(Type.Term);
+		MathNode rightCasing = rightBase.encase(TypeML.Term);
 
 		rightCasing.addBefore(0, operation);
 		rightCasing.addBefore(0, leftBase);
@@ -218,13 +218,13 @@ public class MultiplyTransformations {
 		// May not already be in exponent eg. a = a^1
 		// could factor out entire side rather than just base
 		MathNode leftBase;
-		if (Type.Exponential.equals(left.getType())) {
+		if (TypeML.Exponential.equals(left.getType())) {
 			leftBase = left.getChildAt(0);
 		} else {
 			leftBase = left;
 		}
 		MathNode rightBase;
-		if (Type.Exponential.equals(right.getType())) {
+		if (TypeML.Exponential.equals(right.getType())) {
 			rightBase = right.getChildAt(0);
 		} else {
 			rightBase = right;
@@ -232,8 +232,8 @@ public class MultiplyTransformations {
 
 		if (!leftBase.isLike(rightBase)) {
 			// TODO only in automatic mode
-			if (Type.Exponential.equals(left.getType())
-					&& Type.Exponential.equals(right.getType())) {
+			if (TypeML.Exponential.equals(left.getType())
+					&& TypeML.Exponential.equals(right.getType())) {
 				multiplyCombineExponents(left, right);
 			}
 			// else if (Type.Variable.equals(left.getType())
@@ -242,22 +242,22 @@ public class MultiplyTransformations {
 			// }
 			return false;
 		} else {
-			if (!Type.Exponential.equals(left.getType())) {
-				left = left.encase(Type.Exponential);
-				left.append(Type.Number, "1");
+			if (!TypeML.Exponential.equals(left.getType())) {
+				left = left.encase(TypeML.Exponential);
+				left.append(TypeML.Number, "1");
 			}
-			if (!Type.Exponential.equals(right.getType())) {
-				right = right.encase(Type.Exponential);
-				right.append(Type.Number, "1");
+			if (!TypeML.Exponential.equals(right.getType())) {
+				right = right.encase(TypeML.Exponential);
+				right.append(TypeML.Number, "1");
 			}
 		}
 
 		MathNode leftExp = left.getChildAt(1);
 		MathNode rightExp = right.getChildAt(1);
 
-		MathNode rightCasing = rightExp.encase(Type.Sum);
+		MathNode rightCasing = rightExp.encase(TypeML.Sum);
 
-		rightCasing.addBefore(0, Type.Operation, Operator.PLUS.getSign());
+		rightCasing.addBefore(0, TypeML.Operation, Operator.PLUS.getSign());
 		rightCasing.addBefore(0, leftExp);
 
 		left.remove();
@@ -277,7 +277,7 @@ public class MultiplyTransformations {
 		nonFrac.highlight();
 
 		MathNode numerator = fraction.getChildAt(0);
-		numerator = numerator.encase(Type.Term);
+		numerator = numerator.encase(TypeML.Term);
 
 		int index = reversed ? -1 : 0;
 		numerator.addBefore(index, operation);
@@ -296,13 +296,13 @@ public class MultiplyTransformations {
 		right.highlight();
 
 		MathNode numerator = right.getChildAt(0);
-		numerator = numerator.encase(Type.Term);
+		numerator = numerator.encase(TypeML.Term);
 		numerator.addBefore(0, operation);
 		numerator.addBefore(0, left.getChildAt(0));
 
 		MathNode denominator = right.getChildAt(1);
-		denominator = denominator.encase(Type.Term);
-		denominator.addBefore(0, Type.Operation, operation.getSymbol());
+		denominator = denominator.encase(TypeML.Term);
+		denominator.addBefore(0, TypeML.Operation, operation.getSymbol());
 		denominator.addBefore(0, left.getChildAt(1));
 
 		left.remove();
@@ -414,11 +414,11 @@ public class MultiplyTransformations {
 		MathNode firstOp = first.getPrevSibling();
 		MathNode secondNext = second.getNextSibling();
 		if (firstOp != null) {
-			if (Type.Operation.equals(firstOp.getType())) {
+			if (TypeML.Operation.equals(firstOp.getType())) {
 				firstOp.remove();
 			}
 		} else if (secondNext != null
-				&& Type.Operation.equals(secondNext.getType())) {
+				&& TypeML.Operation.equals(secondNext.getType())) {
 			secondNext.remove();
 		}
 

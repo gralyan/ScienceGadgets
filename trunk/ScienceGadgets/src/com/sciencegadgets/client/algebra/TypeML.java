@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  *
  */
 
-public enum Type {
+public enum TypeML {
 	Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
 			"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
 			"mo", false), Equation("math", true);
@@ -20,7 +20,7 @@ public enum Type {
 	private boolean hasChildren;
 	public final String IN_PREFIX = "in-";
 
-	Type(String tag, boolean hasChildren) {
+	TypeML(String tag, boolean hasChildren) {
 		this.tag = tag;
 		this.hasChildren = hasChildren;
 	}
@@ -37,25 +37,25 @@ public enum Type {
 		return hasChildren;
 	}
 
-	static Type getType(String tag) throws NoSuchElementException {
+	static TypeML getType(String tag) throws NoSuchElementException {
 		tag = tag.toLowerCase();
-		Type type = null;
+		TypeML type = null;
 		if ("mfenced".equals(tag)) {
-			type = Type.Sum;
+			type = TypeML.Sum;
 		} else if ("mrow".equals(tag)) {
-			type = Type.Term;
+			type = TypeML.Term;
 		} else if ("mi".equals(tag)) {
-			type = Type.Variable;
+			type = TypeML.Variable;
 		} else if ("mn".equals(tag)) {
-			type = Type.Number;
+			type = TypeML.Number;
 		} else if ("msup".equals(tag)) {
-			type = Type.Exponential;
+			type = TypeML.Exponential;
 		} else if ("mfrac".equals(tag)) {
-			type = Type.Fraction;
+			type = TypeML.Fraction;
 		} else if ("mo".equals(tag)) {
-			type = Type.Operation;
+			type = TypeML.Operation;
 		} else if ("math".equals(tag)) {
-			type = Type.Equation;
+			type = TypeML.Equation;
 		}
 //		else if ("mglyph".equals(tag)) {
 //			type = Type.Aesthetic;

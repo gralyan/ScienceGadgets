@@ -6,7 +6,7 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationLayer;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.Type;
+import com.sciencegadgets.client.algebra.TypeML;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
@@ -22,11 +22,11 @@ public class EditWrapper extends Wrapper {
 	}
 
 	public void select() {
-		Type parentType = node.getParentType();
-		Type nodeType = node.getType();
+		TypeML parentType = node.getParentType();
+		TypeML nodeType = node.getType();
 
 		// Don't allow sums inside sums or terms in terms
-		if (Type.Sum.equals(parentType) || Type.Term.equals(parentType)) {
+		if (TypeML.Sum.equals(parentType) || TypeML.Term.equals(parentType)) {
 			AlgebraActivity.changeNodeMenu.setEnable(parentType, false);
 		}
 
@@ -38,7 +38,7 @@ public class EditWrapper extends Wrapper {
 			AlgebraActivity.changeNodeMenu.setEnable(nodeType, false);
 		}
 
-		if (!Type.Operation.equals(nodeType)) {
+		if (!TypeML.Operation.equals(nodeType)) {
 			AlgebraActivity.changeNodeMenu.setVisible(true);
 		}
 		super.select();
@@ -52,7 +52,7 @@ public class EditWrapper extends Wrapper {
 		if (((EditMenu) menu).getResponse() != null)
 			((EditMenu) menu).getResponse().removeFromParent();
 
-		for (Type type : Type.values()) {
+		for (TypeML type : TypeML.values()) {
 			AlgebraActivity.changeNodeMenu.setEnable(type, true);
 		}
 		super.unselect();

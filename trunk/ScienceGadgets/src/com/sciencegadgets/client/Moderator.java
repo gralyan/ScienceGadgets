@@ -71,15 +71,13 @@ public class Moderator implements EntryPoint {
 //		
 //		JSNICalls.jowl();
 		
+//			dataBase.getVariables(new AsyncCallback<String[][]>() {
 		dataBase.getUnitsFromOwl(new AsyncCallback<String[]>() {
-
 			@Override
 			public void onSuccess(String[] result) {
-				for(String res : result){
-				JSNICalls.log("Saved: " + res);
-				}
+//			public void onSuccess(String[][] result) {
 			}
-
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert("Save failed "
@@ -88,6 +86,7 @@ public class Moderator implements EntryPoint {
 						+ caught.getCause().toString());
 			}
 		});
+		
 		// try {
 		// TestBot_Addition.deployTestBot();
 		// } catch (TopNodesNotFoundException e) {
