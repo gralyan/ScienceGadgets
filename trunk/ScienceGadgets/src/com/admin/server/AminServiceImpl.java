@@ -18,13 +18,10 @@ public class AminServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String saveEquation(String name) throws IllegalArgumentException {
-		Equation e = new Equation();
-		e.setXML(name);
-		
+	public String saveEquation(String mathML) throws IllegalArgumentException {
+		Equation e = new Equation(mathML, null, null);
 		ObjectifyService.ofy().save().entity(e).now();
-
-		return e.getXML();
+		return e.getMathML();
 	}
 
 

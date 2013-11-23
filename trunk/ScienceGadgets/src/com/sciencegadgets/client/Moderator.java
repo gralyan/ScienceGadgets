@@ -14,8 +14,9 @@
  */
 package com.sciencegadgets.client;
 
+import java.util.List;
+
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -27,7 +28,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
@@ -36,6 +36,8 @@ import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 import com.sciencegadgets.client.algebra.edit.SymbolPalette;
 import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
 public class Moderator implements EntryPoint {
@@ -54,38 +56,18 @@ public class Moderator implements EntryPoint {
 	private static Activity currentActivity = null;
 	public static boolean isTouch = false;
 	
-	private final DatabaseHelperAsync dataBase = GWT
-			.create(DatabaseHelper.class);
 	@Override
 	public void onModuleLoad() {
 //
 //		// Resize area when window resizes
-//		fitWindow();
-//		Window.addResizeHandler(new ResizeAreaHandler());
-//
-//		History.addValueChangeHandler(new HistoryChange<String>());
-//		
-//		detectTouch();
-//
-//		switchToBrowser();
-//		
-//		JSNICalls.jowl();
+		fitWindow();
+		Window.addResizeHandler(new ResizeAreaHandler());
+
+		History.addValueChangeHandler(new HistoryChange<String>());
 		
-//			dataBase.getVariables(new AsyncCallback<String[][]>() {
-		dataBase.getUnitsFromOwl(new AsyncCallback<String[]>() {
-			@Override
-			public void onSuccess(String[] result) {
-//			public void onSuccess(String[][] result) {
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Save failed "
-						+ caught.getCause().toString());
-				JSNICalls.error("Save Failed: "
-						+ caught.getCause().toString());
-			}
-		});
+		detectTouch();
+
+		switchToBrowser();
 		
 		// try {
 		// TestBot_Addition.deployTestBot();
@@ -163,7 +145,7 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.clear();
 
 		if (browserPanel == null) {
-			browserPanel = new EquationBrowser(this);
+			browserPanel = new EquationBrowser();
 		}
 		scienceGadgetArea.add(browserPanel);
 	}

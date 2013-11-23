@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.MathTree;
@@ -17,10 +18,11 @@ import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class SymbolPalette extends PopupPanel {
 
-	Grid grid = new Grid(4, 12);
-	Button useButton = new Button("Select Symbol", new UseHandler());
-	SymbolPalette palette = this;
-	MathNode node;
+	private Grid grid = new Grid(4, 12);
+	private Button useButton = new Button("Select Symbol", new UseHandler());
+	private SymbolPalette palette = this;
+	private MathNode node;
+	private TextBox symbolInput;
 
 	// lower, upper, name
 	private String[][] greekLetters = { { "α", "Α", "alpha" },
@@ -34,8 +36,9 @@ public class SymbolPalette extends PopupPanel {
 			{ "ψ", "Ψ", "psi" }, { "ω", "Ω", "omega" } };
 	public Cell selectedSymbol;
 
-	public SymbolPalette(MathNode node) {
+	public SymbolPalette(MathNode node, TextBox symbolInput) {
 		this.node = node;
+		this.symbolInput = symbolInput;
 		
 		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
 		
@@ -62,8 +65,9 @@ public class SymbolPalette extends PopupPanel {
 		this.add(mainPanel);
 	}
 	
-	public void setNode(MathNode mlNode){
+	public void setContext(MathNode mlNode, TextBox symbolInput){
 		this.node = mlNode;
+		this.symbolInput = symbolInput;
 	}
 
 	private class SymbolClickHandler implements ClickHandler {
@@ -92,8 +96,9 @@ public class SymbolPalette extends PopupPanel {
 		public void onClick(ClickEvent event) {
 			palette.hide();
 			String symbol = useButton.getElement().getInnerText();
-			node.setSymbol(symbol);
-			Moderator.reloadEquationPanel(null, null);
+			symbolInput.setText(symbol);
+//			node.setSymbol(symbol);
+//			Moderator.reloadEquationPanel(null, null);
 			Moderator.setActivity(Activity.algebra);
 		}
 

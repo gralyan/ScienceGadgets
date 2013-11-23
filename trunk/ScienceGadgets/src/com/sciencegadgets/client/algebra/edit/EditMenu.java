@@ -1,9 +1,9 @@
 package com.sciencegadgets.client.algebra.edit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
@@ -13,16 +13,21 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
+import com.sciencegadgets.client.SelectionPanel;
+import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.TypeML;
+import com.sciencegadgets.client.entities.DataModerator;
 
-public class EditMenu extends FlowPanel {
+public class EditMenu extends CommunistPanel {
 
 	EditWrapper editWrapper;
 	MathNode node;
@@ -38,64 +43,92 @@ public class EditMenu extends FlowPanel {
 	private final String OPERATION_CHANGE = "Change Sign";
 
 	public EditMenu(EditWrapper editWrapper, String width) {
+		super(true);
 
 		this.editWrapper = editWrapper;
 		this.node = editWrapper.getNode();
+		
+		this.setSize("100%", "100%");
 
 		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(3);
+		
+		ArrayList<Widget> components = new ArrayList<Widget>();
 
 		switch (node.getType()) {
 		case Sum:
 			Button extendSum = new Button("+" + ChangeNodeMenu.NOT_SET,
 					new ExtendSumTermHandler());
 			extendSum.setTitle(SUM_EXTEND);
-			this.place(extendSum);
+			components.add(extendSum);
 			break;
 		case Term:
 			Button extendTerm = new Button("x" + ChangeNodeMenu.NOT_SET,
 					new ExtendSumTermHandler());
 			extendTerm.setTitle(TERM_EXTEND);
-			this.place(extendTerm);
+			components.add(extendTerm);
 			break;
 		case Fraction:
 			break;
 		case Exponential:
 			break;
 		case Variable:
-			TextBox variableInput = new TextBox();
-			variableInput
-					.addChangeHandler(new InputChangeHandler(variableInput));
-			variableInput.setWidth(width);
-			variableInput.addClickHandler(new FocusOnlyClickHandler());
-			variableInput.addTouchStartHandler(new FocusOnlyTouchHandler());
-			variableInput.setText(node.getSymbol());
-			variableInput.setTitle(VARIABLE_INPUT);
-			focusable = variableInput;
-			this.place(variableInput);
+			//1st Component - symbol
+			CommunistPanel symbolComponent = new CommunistPanel(false);
+			components.add(symbolComponent);
+			
+			TextBox symbolInput = new TextBox();
+			symbolInput.setWidth(width);
+			symbolInput.addClickHandler(new FocusOnlyClickHandler());
+			symbolInput.addTouchStartHandler(new FocusOnlyTouchHandler());
+			symbolInput.setText(node.getSymbol());
+			symbolInput.setTitle(VARIABLE_INPUT);
+			focusable = symbolInput;
+			symbolComponent.add(symbolInput);
 
-			Button insertSymbolButton = new Button("α",
-					new InsertSymbolHandler());
+			Button insertSymbolButton = new Button("Symbols",
+					new InsertSymbolHandler(symbolInput));
 			insertSymbolButton.setWidth(width);
 			insertSymbolButton.setTitle(VARIABLE_INSERT);
-			this.place(insertSymbolButton);
+			symbolComponent.add(insertSymbolButton);
+
+			//2nd Component - QuantityKind
+			UnitSelection quantityBox = new UnitSelection(true);
+			components.add(quantityBox);
+
+			//3rd Component - Use button
+			Button varChangeButton = new Button("Use", new UseHandler(
+					symbolInput, quantityBox.quantityBox));
+			components.add(varChangeButton);
 			break;
 		case Number:
+			//1st Component - number
+			CommunistPanel numberComponent = new CommunistPanel(false);
+			components.add(numberComponent);
+			
 			DoubleBox numberInput = new DoubleBox();
-			numberInput.addChangeHandler(new InputChangeHandler(numberInput));
 			numberInput.setWidth(width);
 			numberInput.addClickHandler(new FocusOnlyClickHandler());
 			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			numberInput.setText(node.getSymbol());
 			numberInput.setTitle(NUMBER_INPUT);
 			focusable = numberInput;
-			this.place(numberInput);
+			numberComponent.add(numberInput);
 
 			Button randomNumberButton = new Button("random",
-					new RandomNumberHandler());
+					new RandomNumberHandler(numberInput));
 			randomNumberButton.setWidth(width);
 			randomNumberButton.setTitle(NUMBER_RANDOM_SPEC);
-			this.place(randomNumberButton);
+			numberComponent.add(randomNumberButton);
+
+			//2nd Component - Unit
+			UnitSelection unitComponent = new UnitSelection();
+			components.add(unitComponent);
+
+			//3rd Component - Use Button
+			Button numChangeButton = new Button("Use", new UseHandler(
+					numberInput, unitComponent.unitBox));
+			components.add(numChangeButton);
 			break;
 		case Operation:
 			HashMap<TypeML.Operator, Boolean> opMap = new HashMap<TypeML.Operator, Boolean>();
@@ -134,12 +167,16 @@ public class EditMenu extends FlowPanel {
 				if (opMap.get(op)) {
 					signButton.addClickHandler(new SignChangeHandler(op));
 				} else {
-					signButton.setVisible(false);
+					signButton.setEnabled(false);
 				}
-				this.place(signButton);
 				signButton.setTitle(OPERATION_CHANGE);
+				components.add(signButton);
 			}
 			break;
+		}
+		System.out.println(components.size()+" "+node.toString());
+		if(components.size()>0){
+		this.add(components.toArray(new Widget[components.size()]));
 		}
 	}
 
@@ -149,24 +186,9 @@ public class EditMenu extends FlowPanel {
 		}
 	}
 
-	public void place(Widget w) {
-		w.setHeight("100%");
-		w.setWidth("100%");
-		FlowPanel container = new FlowPanel();
-		this.add(container);
-		container.add(w);
-
-		int count = this.getWidgetCount();
-		int height = 100 / count;
-		for (int i = 0; i < count; i++) {
-			getWidget(i).setHeight(height + "%");
-			getWidget(i).setWidth("100%");
-		}
-	}
-
 	public void setResponse(Widget responseNotes) {
 		this.responseNotes = responseNotes;
-		this.place(responseNotes);
+		this.add(responseNotes);
 		this.setFocus();
 	}
 
@@ -174,16 +196,19 @@ public class EditMenu extends FlowPanel {
 		return responseNotes;
 	}
 
-	private class InputChangeHandler implements ChangeHandler {
+	@SuppressWarnings("rawtypes")
+	private class UseHandler implements ClickHandler {
 
-		FocusWidget input;
+		ValueBoxBase input;
+		SelectionPanel quantityOrUnitBox;
 
-		public InputChangeHandler(FocusWidget input) {
+		public UseHandler(ValueBoxBase input, SelectionPanel quantityOrUnitBox) {
 			this.input = input;
+			this.quantityOrUnitBox =quantityOrUnitBox;
 		}
 
 		@Override
-		public void onChange(ChangeEvent event) {
+		public void onClick(ClickEvent event) {
 			String extraction = null;
 
 			if (input instanceof DoubleBox) {
@@ -193,32 +218,59 @@ public class EditMenu extends FlowPanel {
 			}
 
 			if (extraction != null) {
-				node.setSymbol(extraction);
-				node.getMLNode().removeAttribute("data-randomness");
 
-				Moderator.reloadEquationPanel(null, null);
+				if (RandomSpecification.RANDOM_SYMBOL.equals(extraction)) {
+					String rand = input.getTitle();
+					if(!rand.contains(RandomSpecification.DELIMITER)){
+						Window.alert("Please specify the randomness");
+						return;
+					}
+					node.getMLNode().setAttribute("data-randomness", rand);
+				} else {
+					node.getMLNode().removeAttribute("data-randomness");
+				}
+				node.setSymbol(extraction);
+				
+				String quantityOrUnit = quantityOrUnitBox.getSelectedValue();
+				if(quantityOrUnit != null && !quantityOrUnit.equals("")){
+				node.getMLNode().setAttribute("data-unit", quantityOrUnit);
+				}
+//				Moderator.reloadEquationPanel(null, null);
 			}
 		}
 
 		private String extractNumber() {
 			String inputString = null;
-			Double inputValue = ((DoubleBox) input).getValue();
-
-			if (inputValue == null) {
-				Window.alert("The input must be a number\nchange this to a variable node if you want a variable");
+			if (RandomSpecification.RANDOM_SYMBOL.equals(input.getText())) {
+				return RandomSpecification.RANDOM_SYMBOL;
 			} else {
-				inputString = String.valueOf(inputValue).replaceAll(
-						(String) "\\.0$", "");
-				;
+				Double inputValue = ((DoubleBox) input).getValue();
+
+				if (inputValue == null) {
+					input.getElement().getStyle().setColor("red");
+					Window.alert("The input must be a number\nyou can also change this to a variable if necessary");
+				} else {
+					input.getElement().getStyle().clearColor();
+					//no need for trailing 0's
+					inputString = String.valueOf(inputValue).replaceAll(
+							(String) "\\.0$", "");
+					;
+				}
+				return inputString;
 			}
-			return inputString;
 		}
 
 		private String extractVariable() {
 			String inputString = ((TextBox) input).getText();
 
-			if (inputString == null) {
-				Window.alert("That's some crazy input");
+			if (inputString == null || inputString.equals("")) {
+				input.getElement().getStyle().setColor("red");
+				Window.alert("Variable cannot be empty");
+			}else if(inputString.matches(".*\\d.*")){
+				input.getElement().getStyle().setColor("red");
+				Window.alert("Variable cannot contain numbers");
+			}else{
+				input.getElement().getStyle().clearColor();
 			}
 			return inputString;
 		}
@@ -252,12 +304,18 @@ public class EditMenu extends FlowPanel {
 		public void onClick(ClickEvent event) {
 			node.setSymbol(operator.getSign());
 
-			Moderator.reloadEquationPanel(null, null);
+//			Moderator.reloadEquationPanel(null, null);
 		}
 
 	}
 
 	private class InsertSymbolHandler implements ClickHandler {
+
+		TextBox symbolInput;
+
+		public InsertSymbolHandler(TextBox symbolInput) {
+			this.symbolInput = symbolInput;
+		}
 
 		@Override
 		public void onClick(ClickEvent event) {
@@ -266,8 +324,7 @@ public class EditMenu extends FlowPanel {
 
 			SymbolPalette symbolPopup;
 			if (Moderator.symbolPopup == null) {
-				symbolPopup = new SymbolPalette(node);
-//				AbsolutePanel mainPanel = editWrapper.getEqPanel();
+				symbolPopup = new SymbolPalette(node, symbolInput);
 				AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
 
 				symbolPopup.setPixelSize(mainPanel.getOffsetWidth(),
@@ -279,7 +336,7 @@ public class EditMenu extends FlowPanel {
 				Moderator.symbolPopup = symbolPopup;
 			} else {
 				symbolPopup = Moderator.symbolPopup;
-				symbolPopup.setNode(node);
+				symbolPopup.setContext(node, symbolInput);
 			}
 
 			Moderator.setActivity(Activity.insert_symbol);
@@ -289,13 +346,18 @@ public class EditMenu extends FlowPanel {
 
 	private class RandomNumberHandler implements ClickHandler {
 
+		DoubleBox numberInput;
+
+		public RandomNumberHandler(DoubleBox numberInput) {
+			this.numberInput = numberInput;
+		}
+
 		@Override
 		public void onClick(ClickEvent event) {
 
 			RandomSpecification randomSpec;
 			if (Moderator.randomSpec == null) {
-				randomSpec = new RandomSpecification(node);
-//				AbsolutePanel mainPanel = editWrapper.getEqPanel();
+				randomSpec = new RandomSpecification(node, numberInput);
 				AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
 
 				randomSpec.setPixelSize(mainPanel.getOffsetWidth(),
@@ -307,7 +369,7 @@ public class EditMenu extends FlowPanel {
 				Moderator.randomSpec = randomSpec;
 			} else {
 				randomSpec = Moderator.randomSpec;
-				randomSpec.setNode(node);
+				randomSpec.setContext(node, numberInput);
 			}
 
 			Moderator.setActivity(Activity.random_spec);
@@ -324,7 +386,8 @@ public class EditMenu extends FlowPanel {
 				node.append(TypeML.Operation, "+");
 				break;
 			case Term:
-				node.append(TypeML.Operation, TypeML.Operator.getMultiply().getSign());
+				node.append(TypeML.Operation, TypeML.Operator.getMultiply()
+						.getSign());
 				break;
 			}
 			node.append(TypeML.Variable, ChangeNodeMenu.NOT_SET);

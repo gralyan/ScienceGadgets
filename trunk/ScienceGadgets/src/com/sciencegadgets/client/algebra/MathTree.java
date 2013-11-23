@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import com.google.gwt.core.client.JavaScriptException;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -67,9 +68,9 @@ public class MathTree {
 		reloadEqHTML();
 	}
 
-//	public MathNode getMathNode(String id) {
-//		return idMap.get(id);
-//	}
+	// public MathNode getMathNode(String id) {
+	// return idMap.get(id);
+	// }
 
 	public Element getMathMLClone() {
 		return (Element) mathML.cloneNode(true);
@@ -173,20 +174,21 @@ public class MathTree {
 			idMLMap.put(id, node.getMLNode());
 		}
 	}
-	
+
 	/**
 	 * Gets all nodes by specified type, use null for all nodes
+	 * 
 	 * @param type
 	 * @return
 	 */
-	public ArrayList<MathNode> getNodesByType(TypeML type){
+	public ArrayList<MathNode> getNodesByType(TypeML type) {
 		ArrayList<MathNode> nodes = new ArrayList<MathNode>();
 		String tag = "*";
-		if(type != null){
+		if (type != null) {
 			tag = type.getTag();
 		}
 		NodeList<Element> elements = root.getMLNode().getElementsByTagName(tag);
-		for(int i=0 ; i<elements.getLength() ; i++){
+		for (int i = 0; i < elements.getLength(); i++) {
 			String id = elements.getItem(i).getAttribute("id");
 			nodes.add(idMap.get(id));
 		}
@@ -265,7 +267,8 @@ public class MathTree {
 		 */
 		public MathNode encase(TypeML type) {
 			// Don't encase sum in sum or term in term
-			boolean sumOrTerm = TypeML.Sum.equals(type) || TypeML.Term.equals(type);
+			boolean sumOrTerm = TypeML.Sum.equals(type)
+					|| TypeML.Term.equals(type);
 			if (getType().equals(type) && sumOrTerm) {
 				return this;
 			} else if (getParentType().equals(type) && sumOrTerm) {
@@ -434,7 +437,7 @@ public class MathTree {
 			addBefore(-1, newNode);
 		}
 
-		public MathNode append(TypeML type, String symbol){
+		public MathNode append(TypeML type, String symbol) {
 			return addBefore(-1, type, symbol);
 		}
 
@@ -552,6 +555,23 @@ public class MathTree {
 
 		public void setSymbol(String symbol) {
 			mlNode.setInnerText(symbol);
+
+			for (Element similar : getSimilarHTMLFromAllLayers()) {
+				similar.setInnerText(symbol);
+			}
+		}
+
+		public ArrayList<Element> getSimilarHTMLFromAllLayers() {
+			String id = getMLNode().getAttribute("id");
+			ArrayList<Element> similar = new ArrayList<Element>();
+			for (int i = 0; i < wrappers.size(); i++) {
+				Element possible = Document.get().getElementById(
+						id + EquationPanel.OF_LAYER + "ML" + i);
+				if (possible != null) {
+					similar.add(possible);
+				}
+			}
+			return similar;
 		}
 
 		public String getSymbol() {
@@ -619,7 +639,7 @@ public class MathTree {
 
 		public TypeML getParentType() {
 			Element parentEl = getMLNode().getParentElement();
-			if(parentEl == null){
+			if (parentEl == null) {
 				return null;
 			}
 			String parentTag = parentEl.getTagName();
@@ -649,7 +669,7 @@ public class MathTree {
 		public void highlight() {
 			getHTMLAlgOut().getStyle().setColor("red");
 		}
-		
+
 		public boolean isLike(MathNode another) {
 
 			if (!getType().equals(another.getType())) {

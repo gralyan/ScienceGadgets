@@ -1,8 +1,11 @@
 package com.sciencegadgets.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
+import java.util.Set;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Unit;
 
 /**
@@ -10,12 +13,13 @@ import com.sciencegadgets.client.entities.Unit;
  */
 @RemoteServiceRelativePath("greet")
 public interface DatabaseHelper extends RemoteService {
-	String[][] getVariables() throws IllegalArgumentException;
-	String[] getEquationsByVariables(String[] name) throws IllegalArgumentException;
-	String[] getAlgebraEquations() throws IllegalArgumentException;
-	String saveEquation(String name) throws IllegalArgumentException;
-	String[] getUnits() throws IllegalArgumentException;
-	String[] saveUnit(Unit unit) throws IllegalArgumentException;
-	String[] getUnitsFromOwl() throws IllegalArgumentException;
+	Equation[] getAlgebraEquations() throws IllegalArgumentException;
+	Unit[] getUnitsByQuantity(String quantityKind)
+			throws IllegalArgumentException;
+	Set<String> getQuantityKinds();
+	String saveEquation(String mathML, String html)
+			throws IllegalArgumentException;
+	Equation[] getEquationsWithQuantities(List<String> quantityKinds)
+			throws IllegalArgumentException;
 	
 }

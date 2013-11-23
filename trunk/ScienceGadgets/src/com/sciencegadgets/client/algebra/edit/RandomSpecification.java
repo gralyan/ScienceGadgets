@@ -38,9 +38,11 @@ public class RandomSpecification extends PopupPanel {
 
 	private IntegerBox decPlace;
 	private Label response;
+	private DoubleBox numberInput;
 
-	RandomSpecification(MathNode mlNode) {
+	RandomSpecification(MathNode mlNode, DoubleBox numberInput) {
 		this.mlNode = mlNode;
+		this.numberInput = numberInput;
 
 		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
 		this.setWidth("100%");
@@ -95,8 +97,9 @@ public class RandomSpecification extends PopupPanel {
 
 	}
 
-	public void setNode(MathNode mlNode) {
+	public void setContext(MathNode mlNode, DoubleBox numberInput) {
 		this.mlNode = mlNode;
+		this.numberInput=numberInput;
 	}
 
 	private class OkClickHandler implements ClickHandler {
@@ -130,9 +133,11 @@ public class RandomSpecification extends PopupPanel {
 			} else {
 				response.setText("");
 				randSpec.hide();
-				mlNode.setSymbol(RANDOM_SYMBOL);
-				mlNode.getMLNode().setAttribute("data-randomness", neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
-				Moderator.reloadEquationPanel(null, null);
+//				mlNode.setSymbol(RANDOM_SYMBOL);
+//				mlNode.getMLNode().setAttribute("data-randomness", neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
+				numberInput.setText(RANDOM_SYMBOL);
+				numberInput.setTitle(neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
+//				Moderator.reloadEquationPanel(null, null);
 				Moderator.setActivity(Activity.algebra);
 			}
 		}
