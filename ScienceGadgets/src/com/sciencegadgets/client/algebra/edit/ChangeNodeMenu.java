@@ -163,6 +163,7 @@ public class ChangeNodeMenu extends FlowPanel {
 						MathNode newNode = Moderator.mathTree
 								.NEW_NODE(type, "");
 
+						//Sum, Term, Exponential and Fraction
 						newNode.append(node);
 						if (operator != null) {
 							newNode.addBefore(-1, TypeML.Operation,

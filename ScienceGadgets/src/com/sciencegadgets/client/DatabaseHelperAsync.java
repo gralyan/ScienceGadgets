@@ -1,24 +1,23 @@
 package com.sciencegadgets.client;
 
+import java.util.List;
+import java.util.Set;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Unit;
 
 /**
  * The async counterpart of <code>GreetingService</code>.
  */
 public interface DatabaseHelperAsync {
-	void getVariables(AsyncCallback<String[][]> callback)
+	void getAlgebraEquations(AsyncCallback<Equation[]> asyncCallback);
+	void saveEquation(String mathML, String html, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
-	void getEquationsByVariables(String[] input, AsyncCallback<String[]> callback)
+	void getEquationsWithQuantities(List<String> quantityKinds, AsyncCallback<Equation[]> callback)
 			throws IllegalArgumentException;
-	void getAlgebraEquations(AsyncCallback<String[]> asyncCallback);
-	void saveEquation(String input, AsyncCallback<String> callback)
+	void getUnitsByQuantity(String quantityKind, AsyncCallback<Unit[]> callback)
 			throws IllegalArgumentException;
-	void getUnits(AsyncCallback<String[]> callback)
-			throws IllegalArgumentException;
-	void saveUnit(Unit unit, AsyncCallback<String[]> callback)
-			throws IllegalArgumentException;
-	void getUnitsFromOwl(AsyncCallback<String[]> callback)
-			throws IllegalArgumentException;
+	void getQuantityKinds(AsyncCallback<Set<String>> callback);
 
 }

@@ -13,22 +13,25 @@ public class Unit implements Serializable{
 	private static final long serialVersionUID = -6353142243407326936L;
 
 	@Id
-	String code;
+	String symbol;
 	
 	@Parent
 	Key<QuantityKind> quantityKind;
 	
 	String label;
-	String symbol;
 	String description;
 	String conversionMultiplier;
 	String conversionOffset;
 
 	public Unit() {
 	}
-	
-	public void setCode(String code) {
-		this.code = code;
+	public Unit(String symbol, Key<QuantityKind> quantityKind,String label,String description,String conversionMultiplier,String conversionOffset) {
+		this.symbol=symbol;
+		this.quantityKind=quantityKind;
+		this.label=label;
+		this.description=description;
+		this.conversionMultiplier=conversionMultiplier;
+		this.conversionOffset=conversionOffset;
 	}
 
 	public void setLabel(String label) {
@@ -53,10 +56,6 @@ public class Unit implements Serializable{
 
 	public void setConversionOffset(String conversionOffset) {
 		this.conversionOffset = conversionOffset;
-	}
-	
-	public String getCode() {
-		return code;
 	}
 	
 	public String getLabel() {

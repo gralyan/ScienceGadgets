@@ -1,28 +1,49 @@
 package com.sciencegadgets.client.entities;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.user.client.ui.HTML;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-
-
+import com.googlecode.objectify.annotation.Index;
 
 @Entity
-public class Equation {
-	
+public class Equation implements Serializable {
+
+	private static final long serialVersionUID = 8904253167706595238L;
+
 	@Id
 	Long id;
-	
-	String xml;
-	
-	public Equation(){ } 
-	
-	public void setXML(String xml){
-		this.xml = xml;
+
+	@Index
+	List<Key<QuantityKind>> quantityKinds;
+
+	String mathML;
+	String html;
+
+	public Equation() {
 	}
 
-	public String getXML(){
-		return xml;
+	public Equation(String mathML, String html, List<Key<QuantityKind>> quantityKinds) {
+		this.mathML = mathML;
+		this.html = html;
+this.quantityKinds = quantityKinds;
+	}
+
+	public String getMathML() {
+		return mathML;
+	}
+
+	public String getHtml() {
+		return html;
+	}
+	
+	public List<Key<QuantityKind>> getQuantityKinds() {
+		return quantityKinds;
 	}
 }
-
-
-    

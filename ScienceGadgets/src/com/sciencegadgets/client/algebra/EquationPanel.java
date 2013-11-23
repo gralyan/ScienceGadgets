@@ -36,6 +36,8 @@ public class EquationPanel extends AbsolutePanel {
 	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
 	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
 	private ArrayList<MathWrapper> mathWrappers = new ArrayList<MathWrapper>();
+	
+	public static final String OF_LAYER = "-ofLayer-";
 
 	private MathNode rootNode;
 
@@ -217,7 +219,7 @@ public class EquationPanel extends AbsolutePanel {
 				}
 			}
 			com.google.gwt.user.client.Element layerNode = DOM
-					.getElementById(node.getId() + "-ofLayer-"
+					.getElementById(node.getId() + OF_LAYER
 							+ parentNode.getId());
 
 			if (AlgebraActivity.inEditMode) {// Edit Mode

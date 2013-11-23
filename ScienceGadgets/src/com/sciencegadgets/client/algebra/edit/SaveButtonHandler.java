@@ -19,13 +19,16 @@ public class SaveButtonHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent arg0) {
 		try {
-			String equation = Moderator.mathTree.getRoot().toString();
-			if (equation.contains(ChangeNodeMenu.NOT_SET)) {
+			String mathML = Moderator.mathTree.getRoot().toString();
+			if (mathML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
 				return;
 			}
-			dataBase.saveEquation(equation, new AsyncCallback<String>() {
+			
+			String html = JSNICalls.elementToString(Moderator.mathTree.getEqHTMLClone().getElement());
+			
+			dataBase.saveEquation(mathML, html, new AsyncCallback<String>() {
 
 				@Override
 				public void onSuccess(String result) {

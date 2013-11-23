@@ -81,7 +81,7 @@ public class EquationLayer extends SimplePanel {
 		// example: Wrapper-ML1-ofLayer-ML1
 		if (oldId != null) {
 			if (oldId.contains("ML")) {
-				curEl.setAttribute("id", oldId + "-ofLayer-" + layerId);
+				curEl.setAttribute("id", oldId + EquationPanel.OF_LAYER + layerId);
 			} else if (oldId.contains("Root")) {
 				curEl.setAttribute("id", "Root-ofLayer-" + layerId);
 			}
