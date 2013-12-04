@@ -14,22 +14,11 @@
  */
 package com.sciencegadgets.client.algebra;
 
-import java.math.BigDecimal;
-import java.util.LinkedList;
-
-import com.allen_sauer.gwt.dnd.client.AbstractDragController;
-import com.allen_sauer.gwt.dnd.client.DragContext;
-import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
-import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
-import com.sciencegadgets.shared.TypeML.Operator;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -53,7 +42,7 @@ public class MathWrapper extends Wrapper {
 	public MathWrapper(MathNode node, EquationPanel eqPanel, Element element) {
 		super(node, eqPanel, element);
 
-		bothSidesMenu = new BothSidesMenu(this, element.getOffsetWidth() + "px");
+		bothSidesMenu = new BothSidesMenu(node, element.getOffsetWidth() + "px");
 		menu = new FlowPanel();
 	}
 
@@ -83,6 +72,7 @@ public class MathWrapper extends Wrapper {
 		case Number:
 			AlgebraicTransformations.separateNegative_check(node);
 			AlgebraicTransformations.factorizeNumbers_check(node);
+			AlgebraicTransformations.unitConversion_check(node);
 			break;
 		case Variable:
 			AlgebraicTransformations.separateNegative_check(node);

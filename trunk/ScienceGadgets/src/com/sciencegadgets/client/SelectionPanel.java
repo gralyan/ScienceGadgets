@@ -1,7 +1,9 @@
 package com.sciencegadgets.client;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.google.appengine.api.datastore.Entity;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -41,11 +43,14 @@ public class SelectionPanel extends FlowPanel {
 	}
 
 	public void add(String html) {
-		this.add(html, null);
+		this.add(html, null, null);
 	}
 
 	public void add(String html, String value) {
-		super.add(new Cell(html, value));
+		super.add(new Cell(html, value, null));
+	}
+	public void add(String html, String value, Serializable entity) {
+		super.add(new Cell(html, value, entity));
 	}
 
 	public String getSelectedText() {
@@ -77,13 +82,15 @@ public class SelectionPanel extends FlowPanel {
 	}
 
 	public class Cell extends HTML {
-		public String value;
-		public String html;
+		private String value;
+		private String html;
+		private Serializable entity;
 
-		Cell(String html, final String value) {
+		Cell(String html, final String value, Serializable entity) {
 			super(html);
 			this.html = html;
 			this.value = value;
+			this.entity = entity;
 			this.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -103,6 +110,9 @@ public class SelectionPanel extends FlowPanel {
 
 		public String getValue() {
 			return value;
+		}
+		public Serializable getEntity() {
+			return entity;
 		}
 	}
 

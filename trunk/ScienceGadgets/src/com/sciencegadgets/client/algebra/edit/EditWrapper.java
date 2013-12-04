@@ -1,13 +1,10 @@
 package com.sciencegadgets.client.algebra.edit;
 
 import com.google.gwt.user.client.Element;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.EquationLayer;
 import com.sciencegadgets.client.algebra.EquationPanel;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.shared.TypeML;
 
 public class EditWrapper extends Wrapper {

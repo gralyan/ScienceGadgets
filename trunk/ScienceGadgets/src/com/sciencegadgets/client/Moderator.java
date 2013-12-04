@@ -14,8 +14,6 @@
  */
 package com.sciencegadgets.client;
 
-import java.util.List;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
@@ -32,10 +30,10 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 import com.sciencegadgets.client.algebra.edit.SymbolPalette;
-import com.sciencegadgets.client.entities.DataModerator;
-import com.sciencegadgets.client.entities.Unit;
+import com.sciencegadgets.client.conversion.ConversionAvtivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
 public class Moderator implements EntryPoint {
@@ -53,22 +51,23 @@ public class Moderator implements EntryPoint {
 	private EquationBrowser browserPanel = null;
 	private static Activity currentActivity = null;
 	public static boolean isTouch = false;
-	
+	private static ConversionAvtivity conversionActivity;
+
 	@Override
 	public void onModuleLoad() {
-////
-////		// Resize area when window resizes
+		// //
+		// // // Resize area when window resizes
 		fitWindow();
 		Window.addResizeHandler(new ResizeAreaHandler());
 
 		History.addValueChangeHandler(new HistoryChange<String>());
-		
+
 		detectTouch();
 
 		switchToBrowser();
-		
-//		scienceGadgetArea.add(new UploadButton());
-		
+
+		// scienceGadgetArea.add(new UploadButton());
+
 		// try {
 		// TestBot_Addition.deployTestBot();
 		// } catch (TopNodesNotFoundException e) {
@@ -103,14 +102,23 @@ public class Moderator implements EntryPoint {
 
 		scienceGadgetArea.add(new AlgebraActivity());
 
-		try {
-			if (mathML != null) {
-				mathTree = new MathTree(mathML, AlgebraActivity.inEditMode);
-				AlgebraActivity.reloadEquationPanel(null, null);
-			}
-		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
-			e.printStackTrace();
+		if (mathML != null) {
+			mathTree = new MathTree(mathML, AlgebraActivity.inEditMode);
+			AlgebraActivity.reloadEquationPanel(null, null);
 		}
+	}
+
+	public static void switchToConversion(MathNode node) {
+		setActivity(Activity.conversion);
+		scienceGadgetArea.clear();
+		
+		if(conversionActivity == null){
+			conversionActivity = new ConversionAvtivity();
+			conversionActivity.getElement().setAttribute("id","conversionActivity");
+
+		}
+		conversionActivity.reload(node);
+		scienceGadgetArea.add(conversionActivity);
 	}
 
 	public void switchToBrowser() {
@@ -159,7 +167,7 @@ public class Moderator implements EntryPoint {
 				scienceGadgetArea.unsinkEvents(Event.ONTOUCHSTART);
 			}
 		}, TouchStartEvent.getType());
-//		
+		//
 	}
 
 	class HistoryChange<String> implements ValueChangeHandler<String> {

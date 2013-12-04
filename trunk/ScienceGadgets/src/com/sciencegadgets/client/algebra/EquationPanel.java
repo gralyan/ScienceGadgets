@@ -1,26 +1,18 @@
 package com.sciencegadgets.client.algebra;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Duration;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.TouchEndEvent;
-import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -184,7 +176,7 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayer.setParentLayer(parentLayer);
 			eqLayerMap.put(node, eqLayer);
 			eqLayer.getElement().setAttribute("id", "eqLayer-" + node.getId());
-			eqLayer.addStyleName("fillParent");
+			eqLayer.addStyleName("interactiveEquation");
 			this.add(eqLayer, 0, 0);
 
 			if (parentLayer == null) {

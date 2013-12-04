@@ -570,7 +570,7 @@ public class AdditionTransformations {
 	private static void addNumbers_prompt(final MathNode left,
 			final MathNode right) {
 
-		if (!left.getUnit().equals(right.getUnit())) {
+		if (!left.getUnitAttribute().equals(right.getUnitAttribute())) {
 			Window.alert("You can only add quantities with similar units.\nPlease convert first.");
 			return;
 		}

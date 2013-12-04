@@ -1,7 +1,5 @@
 package com.sciencegadgets.client.algebra.edit;
 
-import java.awt.ScrollPane;
-
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,7 +14,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
-import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class RandomSpecification extends PopupPanel {

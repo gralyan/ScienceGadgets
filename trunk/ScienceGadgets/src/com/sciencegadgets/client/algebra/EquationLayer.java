@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
@@ -18,7 +16,7 @@ public class EquationLayer extends SimplePanel {
 	MathNode mathNode;
 	EquationHTML eqHTML;
 
-	EquationLayer(MathNode mathNode) {
+	public EquationLayer(MathNode mathNode) {
 		super();
 		this.mathNode = mathNode;
 	}
@@ -28,7 +26,7 @@ public class EquationLayer extends SimplePanel {
 		super.onLoad();
 		eqHTML = mathNode.getTree().getEqHTMLClone();
 		replaceChildsId(eqHTML.getElement(), mathNode.getId());
-		eqHTML.addStyleName("interactiveEquation");
+		addStyleName("eqLayer");
 		eqHTML.autoFillParent = true;
 		this.add(eqHTML);
 	}

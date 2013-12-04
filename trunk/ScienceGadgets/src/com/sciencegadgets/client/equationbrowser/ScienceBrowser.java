@@ -1,8 +1,6 @@
 package com.sciencegadgets.client.equationbrowser;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,9 +26,7 @@ public class ScienceBrowser extends FlowPanel {
 	private SelectionPanel sciBrowseEq = new SelectionPanel("Equations");
 	private FlowPanel sciBrowseSum = new FlowPanel();
 	public Grid sumGrid = new Grid(1, 4);
-	private Button combineEqButton = new Button("Combine");
 	private CheckBox multiSwitch = new CheckBox("Multi-Select");
-	private Set<String> selectedVars = new HashSet<String>();
 	private HashMap<TextBox, Element> inputBinding = new HashMap<TextBox, Element>();
 	private Button sumButton = new Button("Use");
 	public static HTML labelSumEq = new HTML("");
@@ -49,8 +45,6 @@ public class ScienceBrowser extends FlowPanel {
 			}
 		});
 		DataModerator.fill_Quantities(sciBrowseVar);
-		// varSelection.add(multiSwitch);
-		// multiSwitch.addClickHandler(new MultiSwitchClickHandler());
 
 		// (2) Second box, Equation list
 		sciBrowseEq.addSelectionHandler(new SelectionHandler() {

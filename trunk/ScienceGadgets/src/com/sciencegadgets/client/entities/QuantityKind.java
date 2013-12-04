@@ -8,6 +8,10 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 public class QuantityKind implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9219594642384303351L;
 	@Id
 	String id;
 	String dimension;

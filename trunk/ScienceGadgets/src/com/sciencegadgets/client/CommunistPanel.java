@@ -1,8 +1,5 @@
 package com.sciencegadgets.client;
 
-import java.util.ArrayList;
-
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 

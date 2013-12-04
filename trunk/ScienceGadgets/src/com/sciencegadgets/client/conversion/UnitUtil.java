@@ -11,10 +11,13 @@ public class UnitUtil {
 	public static Element attributeToHTML(String dataUnit) {
 		Element numerator = DOM.createDiv();
 		Element denominator = DOM.createDiv();
-
-		String[] units = dataUnit.split("\\*");
-
-		for (String unit : units) {
+		
+		String[] unitsAndQK = dataUnit.split("\\*");
+		
+		//Last string in array is QuantityKind
+		for(int i=0 ; i<unitsAndQK.length-1; i++){
+			String unit = unitsAndQK[i];
+			
 			Element unitDiv = DOM.createDiv();
 			if (unit.contains("^-1")) {
 				unitDiv.setInnerText(unit.replace("^-1", ""));
@@ -60,5 +63,20 @@ public class UnitUtil {
 			numerator.addClassName(TypeML.Term.asChild());
 			return numerator;
 		}
+	}
+	
+	public static String getSymbol(String dataUnit){
+
+		String[] unitsAndQK = dataUnit.split("\\*");
+String symbol = "";
+		for(int i=0 ; i<unitsAndQK.length-1; i++){
+			symbol = symbol+unitsAndQK[i];
+		}
+		return symbol;
+	}
+	public static String getQuantityKind(String dataUnit){
+		
+		String[] unitsAndQK = dataUnit.split("\\*");
+		return unitsAndQK[unitsAndQK.length-1];
 	}
 }
