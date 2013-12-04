@@ -14,12 +14,13 @@ public class SelectionPanel extends FlowPanel {
 	ArrayList<Cell> cells = new ArrayList<Cell>();
 	private Cell selectedCell = null;
 	private SelectionHandler selectionHandler;
+	private final Label labelAlg = new Label();
 
 	public SelectionPanel(String title) {
 		super();
 		setStylePrimaryName("selectionPanel");
 
-		Label labelAlg = new Label(title);
+		labelAlg.setText(title);
 		labelAlg.setStylePrimaryName("rowHeader");
 		add(labelAlg);
 	}
@@ -27,6 +28,12 @@ public class SelectionPanel extends FlowPanel {
 	public SelectionPanel(String title, SelectionHandler selectionHandler) {
 		this(title);
 		addSelectionHandler(selectionHandler);
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		add(labelAlg);
 	}
 
 	public void centerText() {
@@ -81,9 +88,15 @@ public class SelectionPanel extends FlowPanel {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					selectedCell = (Cell) event.getSource();
-					selectionHandler.onSelect(selectedCell);
+					if (selectedCell != null) {
+						selectedCell.removeStyleName("selectedCell");
+					}
 
+					selectedCell = (Cell) event.getSource();
+					selectedCell.addStyleName("selectedCell");
+					if (selectionHandler != null) {
+						selectionHandler.onSelect(selectedCell);
+					}
 				}
 			});
 		}
@@ -96,9 +109,8 @@ public class SelectionPanel extends FlowPanel {
 	public void addSelectionHandler(SelectionHandler handler) {
 		selectionHandler = handler;
 	}
-	
 
 	public interface SelectionHandler {
-	  void onSelect(SelectionPanel.Cell selected);
+		void onSelect(SelectionPanel.Cell selected);
 	}
 }

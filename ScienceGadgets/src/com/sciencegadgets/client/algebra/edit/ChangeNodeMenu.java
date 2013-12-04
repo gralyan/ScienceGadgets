@@ -9,10 +9,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.TypeML;
-import com.sciencegadgets.client.algebra.TypeML.Operator;
+import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 public class ChangeNodeMenu extends FlowPanel {
 
@@ -102,7 +103,7 @@ public class ChangeNodeMenu extends FlowPanel {
 				}
 				node.remove();
 				parent.decase();
-				Moderator.reloadEquationPanel(null, null);
+				AlgebraActivity.reloadEquationPanel(null, null);
 				break;
 			case Exponential:
 			case Fraction:
@@ -119,7 +120,7 @@ public class ChangeNodeMenu extends FlowPanel {
 					break;
 				}
 				parent.remove();
-				Moderator.reloadEquationPanel(null, null);
+				AlgebraActivity.reloadEquationPanel(null, null);
 				break;
 			}
 		}
@@ -173,7 +174,7 @@ public class ChangeNodeMenu extends FlowPanel {
 						parent.addBefore(index, newNode);
 
 					}
-					Moderator.reloadEquationPanel(null, null);
+					AlgebraActivity.reloadEquationPanel(null, null);
 
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();

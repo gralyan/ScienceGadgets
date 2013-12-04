@@ -1,6 +1,6 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import com.sciencegadgets.client.algebra.TypeML.Operator;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 	public enum Rule {
 		Commutative("http://en.wikipedia.org/wiki/Commutative_property"), 

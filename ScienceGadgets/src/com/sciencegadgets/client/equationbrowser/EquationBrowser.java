@@ -26,8 +26,6 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 //
 public class EquationBrowser extends FlowPanel {
 
-	EquationDatabase data = new EquationDatabase();
-
 	ScienceBrowser scienceBrowser = new ScienceBrowser();
 	AlgebraBrowser algebraBrowser = new AlgebraBrowser();
 	private RadioButton modeAlg = new RadioButton("mode", "Algebra");
@@ -38,7 +36,7 @@ public class EquationBrowser extends FlowPanel {
 
 	public EquationBrowser() {
 
-		this.setStyleName("equationBrowser");
+		this.getElement().setId("equationBrowser");
 
 		 Grid modes = new Grid(1, 2);
 		 modes.setWidget(0, 0, modeAlg);

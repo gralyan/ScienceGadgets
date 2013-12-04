@@ -18,13 +18,14 @@ public class AlgebraBrowser extends SelectionPanel {
 			public void onSelect(Cell selected) {
 				String mathmlStr = selected.getValue();
 				if (mathmlStr != null) {
-					Element mathml = (Element) (new HTML(mathmlStr).getElement()
-							.getFirstChildElement());
+//					Element mathml = (Element) XMLParser.parse(mathmlStr).getDocumentElement();
+					Element mathml = (Element) (new HTML(mathmlStr)
+							.getElement().getFirstChildElement());
 					Moderator.makeAlgebraWorkspace(mathml);
 				}
-	}
+			}
 		});
-		addStyleName("algSelectionBox");
+		getElement().setId("algBrowser");
 
 		DataModerator.database
 				.getAlgebraEquations(new AsyncCallback<Equation[]>() {
@@ -42,8 +43,7 @@ public class AlgebraBrowser extends SelectionPanel {
 						} else {
 							for (int i = 0; i < size; i++) {
 								Equation equation = eqList[i];
-								add(equation.getHtml(),
-										equation.getMathML());
+								add(equation.getHtml(), equation.getMathML());
 							}
 						}
 					}

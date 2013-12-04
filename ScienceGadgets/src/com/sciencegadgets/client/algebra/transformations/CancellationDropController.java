@@ -4,12 +4,11 @@ import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathWrapper;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.TypeML;
+import com.sciencegadgets.shared.TypeML;
 
 public class CancellationDropController extends AbstractDropController {
 
@@ -64,7 +63,7 @@ public class CancellationDropController extends AbstractDropController {
 			fracParent.decase();
 		}
 		
-		Moderator.reloadEquationPanel("Cancellation", Rule.Cancellation);
+		AlgebraActivity.reloadEquationPanel("Cancellation", Rule.Cancellation);
 	}
 
 	@Override

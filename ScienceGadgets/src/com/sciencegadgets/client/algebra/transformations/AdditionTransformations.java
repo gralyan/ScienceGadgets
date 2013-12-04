@@ -7,18 +7,17 @@ import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.ResponseNote;
-import com.sciencegadgets.client.algebra.TypeML;
-import com.sciencegadgets.client.algebra.TypeML.Operator;
+import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 public class AdditionTransformations {
 
@@ -26,6 +25,7 @@ public class AdditionTransformations {
 	protected static MathNode parent;
 	protected static MathNode grandParent;
 	protected static boolean isPlus;
+	protected static boolean isMinusBeforeLeft = false;
 	private static final int same = 0;
 
 	public static void assign(MathNode left, MathNode sign, MathNode right,
@@ -36,11 +36,12 @@ public class AdditionTransformations {
 		isPlus = isPlusSign;// Operator.PLUS.getSign().equals(sign.getSymbol());
 		boolean assigned = false;
 
-		// if (!isPlus && !Operator.MINUS.getSign().equals(sign.getSymbol())) {
-		// throw new Exception(
-		// "Sign is neither Operator.MINUS or Operator.PLUS: "
-		// + operation.toString());
-		// }
+		// propagate the negative to the left node if preceded by a minus
+		MathNode leftPrev = left.getPrevSibling();
+		if (leftPrev != null && "-".equals(leftPrev.getSymbol())
+				&& TypeML.Operation.equals(leftPrev.getType())) {
+			isMinusBeforeLeft = true;
+		}
 
 		TypeML leftType = left.getType();
 		TypeML rightType = right.getType();
@@ -213,7 +214,8 @@ public class AdditionTransformations {
 
 		for (MathNode factor : factors) {
 			termCasing.append(factor);
-			termCasing.append(TypeML.Operation, Operator.getMultiply().getSign());
+			termCasing.append(TypeML.Operation, Operator.getMultiply()
+					.getSign());
 		}
 
 		MathNode binomialCasing = termCasing.append(TypeML.Sum, "");
@@ -347,7 +349,8 @@ public class AdditionTransformations {
 		left.decase();
 		right.decase();
 
-		Moderator.reloadEquationPanel("Factor Like Terms", Rule.LikeTerms);
+		AlgebraActivity
+				.reloadEquationPanel("Factor Like Terms", Rule.LikeTerms);
 	}
 
 	private static boolean factorWithBase_check(MathNode other,
@@ -391,7 +394,8 @@ public class AdditionTransformations {
 		exp.append(TypeML.Operation, Operator.MINUS.getSign());
 		exp.append(TypeML.Number, "1");
 
-		Moderator.reloadEquationPanel("Factor with Base", Rule.Factorization);
+		AlgebraActivity.reloadEquationPanel("Factor with Base",
+				Rule.Factorization);
 	}
 
 	private static boolean factorWithTermChild_check(MathNode other,
@@ -469,7 +473,7 @@ public class AdditionTransformations {
 
 		term.decase();
 
-		Moderator.reloadEquationPanel("Factor", Rule.Factorization);
+		AlgebraActivity.reloadEquationPanel("Factor", Rule.Factorization);
 	}
 
 	private static boolean addFractions_check(MathNode left, MathNode right) {
@@ -495,6 +499,11 @@ public class AdditionTransformations {
 		operation.highlight();
 		left.highlight();
 
+		if (isMinusBeforeLeft) {
+			left.getPrevSibling().setSymbol(Operator.PLUS.getSign());
+			AlgebraicTransformations.propagateNegative(left);
+		}
+
 		MathNode numeratorCasing = right.getChildAt(0).encase(TypeML.Sum);
 		numeratorCasing.addBefore(0, operation);
 		numeratorCasing.addBefore(0, left.getChildAt(0));
@@ -502,7 +511,8 @@ public class AdditionTransformations {
 		left.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Add Fractions", Rule.FractionAddition);
+		AlgebraActivity.reloadEquationPanel("Add Fractions",
+				Rule.FractionAddition);
 	}
 
 	private static boolean addSimilar_check(MathNode left, MathNode right) {
@@ -525,12 +535,28 @@ public class AdditionTransformations {
 		operation.highlight();
 		left.highlight();
 
-		if (isPlus) {
+		if (isPlus && !isMinusBeforeLeft) {
 			MathNode casing = right.encase(TypeML.Term);
 			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
 					.getSign());
 			casing.addBefore(0, TypeML.Number, "2");
-		} else {
+		} else if (!isPlus && isMinusBeforeLeft) {
+			MathNode casing = right.encase(TypeML.Term);
+			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
+					.getSign());
+			casing.addBefore(0, TypeML.Number, "-2");
+		} else if ((!isPlus && !isMinusBeforeLeft)
+				|| (isPlus && isMinusBeforeLeft)) {
+			// Remove residual operations
+			MathNode leftOp = left.getPrevSibling();
+			MathNode rightNext = right.getNextSibling();
+			if (leftOp != null && TypeML.Operation.equals(leftOp.getType())) {
+				leftOp.remove();
+			} else if (rightNext != null
+					&& TypeML.Operation.equals(rightNext.getType())) {
+				rightNext.remove();
+			}
+
 			right.remove();
 		}
 
@@ -538,13 +564,24 @@ public class AdditionTransformations {
 		operation.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Add similar", Rule.LikeTerms);
+		AlgebraActivity.reloadEquationPanel("Add similar", Rule.LikeTerms);
 	}
 
 	private static void addNumbers_prompt(final MathNode left,
 			final MathNode right) {
 
-		final BigDecimal leftValue = new BigDecimal(left.getSymbol());
+		if (!left.getUnit().equals(right.getUnit())) {
+			Window.alert("You can only add quantities with similar units.\nPlease convert first.");
+			return;
+		}
+
+		BigDecimal leftV;
+		if (isMinusBeforeLeft) {
+			leftV = new BigDecimal(left.getSymbol()).negate();
+		} else {
+			leftV = new BigDecimal(left.getSymbol());
+		}
+		final BigDecimal leftValue = leftV;
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		BigDecimal total;
 
@@ -559,42 +596,47 @@ public class AdditionTransformations {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else {// prompt
-			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString()
-					+ " " + operation.getSymbol() + " " + rightValue.toString()
-					+ " ="));
-			TextBox inp = new TextBox();
-			inp.getElement().setAttribute("type", "number");
-			inp.setFocus(true);
 
-			inp.addValueChangeHandler(new ValueChangeHandler<String>() {
-				int incorrenctCounter = 0;
-
+			final DialogBox dialogBox = new DialogBox(true, true);
+			final FlowPanel prompt = new FlowPanel();
+			prompt.add(new HTML(leftValue.toString() + " "
+					+ operation.getSymbol() + " " + rightValue.toString()));
+			final TextBox input = new TextBox();
+			input.getElement().setAttribute("type", "number");
+			prompt.add(input);
+			final HTML incorrectResponse = new HTML("<b>Incorrect</b>");
+			Button okButton = new Button("ok", new ClickHandler() {
 				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
+				public void onClick(ClickEvent event) {
 					try {
-						BigDecimal inputValue = new BigDecimal(event.getValue());
-						if (inputValue.compareTo(totalValue) == same) {// correct
-							incorrenctCounter = 0;
-							AlgebraActivity.contextMenuArea
-									.remove(ResponseNote.response);
+						BigDecimal inputValue = new BigDecimal(input.getValue());
+						if (inputValue.compareTo(totalValue) == same) {
+							// correct
+							dialogBox.hide();
+							dialogBox.removeFromParent();
 							addNumbers(left, right, totalValue, leftValue,
 									rightValue);
-						} else {// incorrect
-							ResponseNote.response
-									.setText(ResponseNote.Incorrect.toString()
-											+ ": " + ++incorrenctCounter);
-							AlgebraActivity.contextMenuArea
-									.add(ResponseNote.response);
+						} else {
+							// incorrect
+							incorrectResponse.setHTML(incorrectResponse
+									.getHTML() + "<br/>" + inputValue);
+							prompt.add(incorrectResponse);
 						}
 					} catch (NumberFormatException e) {
-						ResponseNote.response.setText("Not a number");
-						AlgebraActivity.contextMenuArea
-								.add(ResponseNote.response);
+						incorrectResponse.setHTML(incorrectResponse.getHTML()
+								+ "<br/>Not a number");
+						prompt.add(incorrectResponse);
 					}
 				}
 			});
-			AlgebraActivity.contextMenuArea.add(inp);
-			inp.setFocus(true);
+			prompt.add(okButton);
+			dialogBox.add(prompt);
+			dialogBox.setGlassEnabled(true);
+			dialogBox.setAnimationEnabled(true);
+			dialogBox.center();
+
+			input.setFocus(true);
+
 		}
 
 	}
@@ -608,15 +650,17 @@ public class AdditionTransformations {
 
 		right.setSymbol(totalValue.stripTrailingZeros().toString());
 
+		if (isMinusBeforeLeft) {
+			left.getPrevSibling().setSymbol(Operator.PLUS.getSign());
+		}
+
 		left.remove();
 		operation.remove();
 		parent.decase();
 
-		Moderator
-				.reloadEquationPanel(
-						leftValue.toString() + " " + operation.toString() + " "
-								+ rightValue.toString() + " = "
-								+ totalValue.toString(), Rule.Addition);
+		AlgebraActivity.reloadEquationPanel(leftValue.toString() + " "
+				+ operation.toString() + " " + rightValue.toString() + " = "
+				+ totalValue.toString(), Rule.Addition);
 	}
 
 	static void addZero(MathNode other, MathNode zero) {
@@ -628,7 +672,7 @@ public class AdditionTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Add zero", Rule.Addition);
+		AlgebraActivity.reloadEquationPanel("Add zero", Rule.Addition);
 	}
 }
 

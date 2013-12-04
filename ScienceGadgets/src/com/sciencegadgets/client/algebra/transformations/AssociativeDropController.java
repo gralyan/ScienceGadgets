@@ -3,12 +3,11 @@ package com.sciencegadgets.client.algebra.transformations;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.TypeML;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.TypeML.Operator;
+import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 public class AssociativeDropController extends AbstractDropController {
 	
@@ -72,7 +71,7 @@ public class AssociativeDropController extends AbstractDropController {
 			parent.addBefore(dropIndex, drag);
 
 		}
-		Moderator.reloadEquationPanel("Associative Property", Rule.Commutative);
+		AlgebraActivity.reloadEquationPanel("Associative Property", Rule.Commutative);
 	}
 
 	@Override

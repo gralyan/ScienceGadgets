@@ -24,6 +24,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
+import com.sciencegadgets.shared.TypeML;
 
 public class Wrapper extends HTML implements HasHandlers {
 

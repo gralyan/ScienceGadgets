@@ -2,17 +2,19 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.TypeML;
-import com.sciencegadgets.client.algebra.TypeML.Operator;
+import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 public class MultiplyTransformations {
 	protected static MathNode operation;
@@ -129,10 +131,6 @@ public class MultiplyTransformations {
 				multiplyCombineBases(left, right);
 				break first;
 			}
-			// else if (Type.Number.equals(rightType)) {
-			// multiplyOperationToSpace();
-			// break first;
-			// }
 			// fall through
 		case Number:
 			second: switch (rightType) {
@@ -179,7 +177,7 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Distribute", Rule.Distribution);
+		AlgebraActivity.reloadEquationPanel("Distribute", Rule.Distribution);
 	}
 
 	private static boolean multiplyCombineExponents(MathNode left,
@@ -205,7 +203,8 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Combine Exponents", Rule.Exponents);
+		AlgebraActivity
+				.reloadEquationPanel("Combine Exponents", Rule.Exponents);
 		return true;
 	}
 
@@ -265,7 +264,7 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Combine Bases", Rule.Exponents);
+		AlgebraActivity.reloadEquationPanel("Combine Bases", Rule.Exponents);
 		return true;
 	}
 
@@ -285,7 +284,7 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Multiply with Fraction",
+		AlgebraActivity.reloadEquationPanel("Multiply with Fraction",
 				Rule.FractionMultiplication);
 	}
 
@@ -309,7 +308,7 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel("Multiply Fractions",
+		AlgebraActivity.reloadEquationPanel("Multiply Fractions",
 				Rule.FractionMultiplication);
 	}
 
@@ -333,42 +332,47 @@ public class MultiplyTransformations {
 			multiplyNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else {// prompt
-			AlgebraActivity.contextMenuArea.add(new HTML(leftValue.toString()
-					+ " " + operation.getSymbol() + " " + rightValue.toString()
-					+ " ="));
-			TextBox inp = new TextBox();
-			inp.getElement().setAttribute("type", "number");
-			inp.setFocus(true);
 
-			inp.addValueChangeHandler(new ValueChangeHandler<String>() {
-				int incorrenctCounter = 0;
-
+			final DialogBox dialogBox = new DialogBox(true, true);
+			final FlowPanel prompt = new FlowPanel();
+			prompt.add(new HTML(leftValue.toString() + " "
+					+ operation.getSymbol() + " " + rightValue.toString()));
+			final TextBox input = new TextBox();
+			input.getElement().setAttribute("type", "number");
+			prompt.add(input);
+			final HTML incorrectResponse = new HTML("<b>Incorrect</b>");
+			Button okButton = new Button("ok", new ClickHandler() {
 				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
+				public void onClick(ClickEvent event) {
 					try {
-						BigDecimal inputValue = new BigDecimal(event.getValue());
-						if (inputValue.compareTo(totalValue) == same) {// correct
-							incorrenctCounter = 0;
-							AlgebraActivity.contextMenuArea
-									.remove(ResponseNote.response);
+						BigDecimal inputValue = new BigDecimal(input.getValue());
+						if (inputValue.compareTo(totalValue) == same) {
+							// correct
+							dialogBox.hide();
+							dialogBox.removeFromParent();
 							multiplyNumbers(left, right, totalValue, leftValue,
 									rightValue);
-						} else {// incorrect
-							ResponseNote.response
-									.setText(ResponseNote.Incorrect.toString()
-											+ ": " + ++incorrenctCounter);
-							AlgebraActivity.contextMenuArea
-									.add(ResponseNote.response);
+						} else {
+							// incorrect
+							incorrectResponse.setHTML(incorrectResponse
+									.getHTML() + "<br/>" + inputValue);
+							prompt.add(incorrectResponse);
 						}
 					} catch (NumberFormatException e) {
-						ResponseNote.response.setText("Not a number");
-						AlgebraActivity.contextMenuArea
-								.add(ResponseNote.response);
+						incorrectResponse.setHTML(incorrectResponse.getHTML()
+								+ "<br/>Not a number");
+						prompt.add(incorrectResponse);
 					}
 				}
 			});
-			AlgebraActivity.contextMenuArea.add(inp);
-			inp.setFocus(true);
+			prompt.add(okButton);
+			dialogBox.add(prompt);
+			dialogBox.setGlassEnabled(true);
+			dialogBox.setAnimationEnabled(true);
+			dialogBox.center();
+
+			input.setFocus(true);
+
 		}
 
 	}
@@ -388,12 +392,16 @@ public class MultiplyTransformations {
 			right.setSymbol(totalValue.toString());// Scientific notation
 		}
 
+		String leftUnit = left.getUnit();
+		String rightUnit = right.getUnit();
+		right.setAttribute(MathAttribute.Unit, rightUnit + "*" + leftUnit);
+
 		left.remove();
 		operation.remove();
 
 		parent.decase();
 
-		Moderator
+		AlgebraActivity
 				.reloadEquationPanel(
 						leftValue.toString() + operation.toString()
 								+ rightValue.toString() + " = "
@@ -408,15 +416,13 @@ public class MultiplyTransformations {
 
 		String otherSymbol = other.getSymbol();
 
+		// Remove residual operations
 		MathNode first = zero.getIndex() < other.getIndex() ? zero : other;
 		MathNode second = zero.getIndex() > other.getIndex() ? zero : other;
-
 		MathNode firstOp = first.getPrevSibling();
 		MathNode secondNext = second.getNextSibling();
-		if (firstOp != null) {
-			if (TypeML.Operation.equals(firstOp.getType())) {
+		if (firstOp != null && TypeML.Operation.equals(firstOp.getType())){
 				firstOp.remove();
-			}
 		} else if (secondNext != null
 				&& TypeML.Operation.equals(secondNext.getType())) {
 			secondNext.remove();
@@ -428,8 +434,9 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel(otherSymbol + " " + operation.toString()
-				+ " 0 = 0", Rule.Multiplication);
+		AlgebraActivity.reloadEquationPanel(
+				otherSymbol + " " + operation.toString() + " 0 = 0",
+				Rule.Multiplication);
 	}
 
 	private static void multiplyOne(MathNode other, MathNode one) {
@@ -445,8 +452,9 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel(otherSymbol + " " + operation.toString()
-				+ " 1 = " + otherSymbol, Rule.Multiplication);
+		AlgebraActivity.reloadEquationPanel(
+				otherSymbol + " " + operation.toString() + " 1 = "
+						+ otherSymbol, Rule.Multiplication);
 	}
 
 	private static void multiplyNegOne(MathNode other, MathNode negOne) {
@@ -464,8 +472,9 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel(otherSymbol + " " + operation.toString()
-				+ " -1 = -" + otherSymbol, Rule.Multiplication);
+		AlgebraActivity.reloadEquationPanel(
+				otherSymbol + " " + operation.toString() + " -1 = -"
+						+ otherSymbol, Rule.Multiplication);
 	}
 
 }
