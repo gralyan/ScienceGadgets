@@ -5,8 +5,10 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
+import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class AlgebraActivity extends AbsolutePanel {
 
@@ -84,5 +86,32 @@ public class AlgebraActivity extends AbsolutePanel {
 			selectedMenu.add(changeNodeMenu);
 		}
 		lowerEqArea.add(selectedMenu);
+	}
+
+	/**
+	 * Updates the equation in all places when a change is made
+	 * 
+	 * @param changeComment
+	 *            - use null for simple reload, specify change to add to AlgOut
+	 */
+	public static void reloadEquationPanel(String changeComment, Rule rule) {
+		if (changeComment != null) {
+			algOut.updateAlgOut(changeComment, rule,
+					Moderator.mathTree.getHTMLAlgOut());
+		}
+		contextMenuArea.clear();
+		eqPanelHolder.clear();
+	
+		Moderator.mathTree.validateTree();
+		Moderator.mathTree.reloadEqHTML();
+		eqPanel = new EquationPanel(Moderator.mathTree);
+		eqPanelHolder.add(eqPanel);
+	
+		if (inEditMode) {
+			changeNodeMenu.setVisible(false);
+		}else{
+			selectedMenu.clear();
+		}
+		
 	}
 }

@@ -25,6 +25,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
+import com.sciencegadgets.shared.TypeML;
 
 public class EquationPanel extends AbsolutePanel {
 	public HashMap<MathNode, EquationLayer> eqLayerMap = new HashMap<MathNode, EquationLayer>();

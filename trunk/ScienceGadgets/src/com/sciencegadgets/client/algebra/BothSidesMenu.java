@@ -9,10 +9,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.TypeML.Operator;
 import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 public class BothSidesMenu extends FlowPanel {
 	private MathWrapper mlWrapper;
@@ -249,7 +249,7 @@ public class BothSidesMenu extends FlowPanel {
 			oldParent.decase();
 
 			changeComment += node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
 
@@ -305,7 +305,7 @@ public class BothSidesMenu extends FlowPanel {
 			oldParent.decase();
 
 			changeComment += "\u00F7" + node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
 
@@ -361,7 +361,7 @@ public class BothSidesMenu extends FlowPanel {
 
 			changeComment += TypeML.Operator.getMultiply().getSign()
 					+ node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
 
@@ -396,7 +396,7 @@ public class BothSidesMenu extends FlowPanel {
 			oldParent.remove();
 
 			changeComment += "\u221A" + node.toString();
-			Moderator.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
 		}
 	}
 }

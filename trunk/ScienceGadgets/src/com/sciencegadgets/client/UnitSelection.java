@@ -2,16 +2,30 @@ package com.sciencegadgets.client;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.http.client.Request;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.entities.DataModerator;
 
 public class UnitSelection extends CommunistPanel {
 
-	final public SelectionPanel quantityBox = new SelectionPanel("Quantity Kind");
+	final public SelectionPanel quantityBox = new SelectionPanel(
+			"Quantity Kind");
 	final public SelectionPanel unitBox = new SelectionPanel("Unit");
 	boolean quantityOnly = false;
-	boolean filled = false;
+	boolean quantityFilled = false;
+	boolean unitOnly = false;
+	boolean unitFilled = false;
+
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		if (!quantityFilled && !unitOnly) {
+			quantityFilled = true;
+			DataModerator.fill_Quantities(quantityBox);
+		}
+
+	}
 
 	/**
 	 * Regular vertical unit selection with mandatory QuantityKind selection to
@@ -19,16 +33,6 @@ public class UnitSelection extends CommunistPanel {
 	 */
 	public UnitSelection() {
 		this(false);
-	}
-
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		if(!filled){
-			filled = true;
-			DataModerator.fill_Quantities(quantityBox);
-		}
-		
 	}
 
 	public UnitSelection(boolean quantityOnly) {
@@ -45,12 +49,23 @@ public class UnitSelection extends CommunistPanel {
 				public void onSelect(Cell selection) {
 					unitBox.clear();
 					String selected = quantityBox.getSelectedText();
-					if(selected != null && !selected.equals("")){
-					DataModerator.fill_UnitsByQuantity(selected, unitBox);
+					if (selected != null && !selected.equals("")) {
+						DataModerator.fill_UnitsByQuantity(selected, unitBox);
 					}
 				}
 			});
 		}
 	}
 
+	public UnitSelection(String quantityKind) {
+		super(false);
+
+		this.add(unitBox);
+
+		unitBox.clear();
+		if (quantityKind != null && !quantityKind.equals("")) {
+			DataModerator.fill_UnitsByQuantity(quantityKind, unitBox);
+		}
+
+	}
 }

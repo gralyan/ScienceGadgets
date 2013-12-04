@@ -23,9 +23,11 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.UnitSelection;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.TypeML;
 import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TypeML;
 
 public class EditMenu extends CommunistPanel {
 
@@ -225,15 +227,15 @@ public class EditMenu extends CommunistPanel {
 						Window.alert("Please specify the randomness");
 						return;
 					}
-					node.getMLNode().setAttribute("data-randomness", rand);
+					node.getMLNode().setAttribute(MathAttribute.Randomness.getName(), rand);
 				} else {
-					node.getMLNode().removeAttribute("data-randomness");
+					node.getMLNode().removeAttribute(MathAttribute.Randomness.getName());
 				}
 				node.setSymbol(extraction);
 				
 				String quantityOrUnit = quantityOrUnitBox.getSelectedValue();
 				if(quantityOrUnit != null && !quantityOrUnit.equals("")){
-				node.getMLNode().setAttribute("data-unit", quantityOrUnit);
+				node.getMLNode().setAttribute(MathAttribute.Unit.getName(), quantityOrUnit);
 				}
 //				Moderator.reloadEquationPanel(null, null);
 			}
@@ -247,10 +249,10 @@ public class EditMenu extends CommunistPanel {
 				Double inputValue = ((DoubleBox) input).getValue();
 
 				if (inputValue == null) {
-					input.getElement().getStyle().setColor("red");
+					input.getElement().getStyle().setBackgroundColor("red");
 					Window.alert("The input must be a number\nyou can also change this to a variable if necessary");
 				} else {
-					input.getElement().getStyle().clearColor();
+					input.getElement().getStyle().clearBackgroundColor();
 					//no need for trailing 0's
 					inputString = String.valueOf(inputValue).replaceAll(
 							(String) "\\.0$", "");
@@ -264,13 +266,13 @@ public class EditMenu extends CommunistPanel {
 			String inputString = ((TextBox) input).getText();
 
 			if (inputString == null || inputString.equals("")) {
-				input.getElement().getStyle().setColor("red");
+				input.getElement().getStyle().setBackgroundColor("red");
 				Window.alert("Variable cannot be empty");
 			}else if(inputString.matches(".*\\d.*")){
-				input.getElement().getStyle().setColor("red");
+				input.getElement().getStyle().setBackgroundColor("red");
 				Window.alert("Variable cannot contain numbers");
 			}else{
-				input.getElement().getStyle().clearColor();
+				input.getElement().getStyle().clearBackgroundColor();
 			}
 			return inputString;
 		}
@@ -391,7 +393,7 @@ public class EditMenu extends CommunistPanel {
 				break;
 			}
 			node.append(TypeML.Variable, ChangeNodeMenu.NOT_SET);
-			Moderator.reloadEquationPanel(null, null);
+			AlgebraActivity.reloadEquationPanel(null, null);
 		}
 
 	}

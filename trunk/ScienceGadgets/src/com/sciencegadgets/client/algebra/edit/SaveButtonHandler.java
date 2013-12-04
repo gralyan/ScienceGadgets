@@ -10,7 +10,6 @@ import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 
-
 public class SaveButtonHandler implements ClickHandler {
 
 	private final DatabaseHelperAsync dataBase = GWT
@@ -19,27 +18,33 @@ public class SaveButtonHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent arg0) {
 		try {
-			String mathML = Moderator.mathTree.getRoot().toString();
+			final String mathML = Moderator.mathTree.getRoot().toString();
 			if (mathML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
 				return;
 			}
-			
-			String html = JSNICalls.elementToString(Moderator.mathTree.getEqHTMLClone().getElement());
-			
+
+			String html = JSNICalls.elementToString(Moderator.mathTree
+					.getEqHTMLClone().getElement());
+
 			dataBase.saveEquation(mathML, html, new AsyncCallback<String>() {
 
 				@Override
 				public void onSuccess(String result) {
-					Window.alert("Saved!");
-					JSNICalls.log("Saved: " + result);
+					if (result != null) {
+						Window.alert("Saved!");
+						JSNICalls.log("Saved: " + result);
+					} else {
+						Window.alert("Save didn't work");
+						JSNICalls.error("Save Failed, MathML not well formed: "
+								+ mathML);
+					}
 				}
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("Save failed "
-							+ caught.getCause().toString());
+					Window.alert("Save didn't work");
 					JSNICalls.error("Save Failed: "
 							+ caught.getCause().toString());
 				}

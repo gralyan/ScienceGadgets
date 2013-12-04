@@ -31,11 +31,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
 import com.sciencegadgets.client.algebra.edit.SymbolPalette;
-import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
@@ -58,8 +56,8 @@ public class Moderator implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-//
-//		// Resize area when window resizes
+////
+////		// Resize area when window resizes
 		fitWindow();
 		Window.addResizeHandler(new ResizeAreaHandler());
 
@@ -68,6 +66,8 @@ public class Moderator implements EntryPoint {
 		detectTouch();
 
 		switchToBrowser();
+		
+//		scienceGadgetArea.add(new UploadButton());
 		
 		// try {
 		// TestBot_Addition.deployTestBot();
@@ -106,37 +106,10 @@ public class Moderator implements EntryPoint {
 		try {
 			if (mathML != null) {
 				mathTree = new MathTree(mathML, AlgebraActivity.inEditMode);
-				reloadEquationPanel(null, null);
+				AlgebraActivity.reloadEquationPanel(null, null);
 			}
 		} catch (com.sciencegadgets.client.TopNodesNotFoundException e) {
 			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Updates the equation in all places when a change is made
-	 * 
-	 * @param changeComment
-	 *            - use null for simple reload, specify change to add to AlgOut
-	 */
-	public static void reloadEquationPanel(String changeComment, Rule rule) {
-		if (changeComment != null) {
-			AlgebraActivity.algOut.updateAlgOut(changeComment, rule,
-					mathTree.getHTMLAlgOut());
-		}
-		if (!AlgebraActivity.inEditMode) {
-			AlgebraActivity.selectedMenu.clear();
-		}
-		AlgebraActivity.contextMenuArea.clear();
-		AlgebraActivity.eqPanelHolder.clear();
-
-		mathTree.validateTree();
-		mathTree.reloadEqHTML();
-		AlgebraActivity.eqPanel = new EquationPanel(mathTree);
-		AlgebraActivity.eqPanelHolder.add(AlgebraActivity.eqPanel);
-
-		if (AlgebraActivity.inEditMode) {
-			AlgebraActivity.changeNodeMenu.setVisible(false);
 		}
 	}
 
@@ -156,7 +129,7 @@ public class Moderator implements EntryPoint {
 			public void run() {
 				fitWindow();
 				if (Activity.algebra.equals(currentActivity)) {
-					reloadEquationPanel(null, null);
+					AlgebraActivity.reloadEquationPanel(null, null);
 				}
 			}
 		};

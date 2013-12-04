@@ -8,7 +8,10 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.algebra.TypeML.Operator;
+import com.sciencegadgets.client.conversion.UnitUtil;
+import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 public class EquationHTML extends HTML {
 
@@ -32,6 +35,7 @@ public class EquationHTML extends HTML {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
+		// revealUnits();
 		if (autoFillParent) {
 			resizeEquation();
 		}
@@ -58,7 +62,7 @@ public class EquationHTML extends HTML {
 		Element nodeHTML = DOM.createDiv();
 		nodeHTML.setId(id);
 		nodeHTML.addClassName(type.toString());
-		
+
 		boolean isRadical = false;
 
 		switch (parentType) {
@@ -70,7 +74,8 @@ public class EquationHTML extends HTML {
 			if (isNumerator) {
 				nodeHTML.addClassName(TypeML.Fraction.asChild() + "-numerator");
 			} else if (isDenominator) {
-				nodeHTML.addClassName(TypeML.Fraction.asChild() + "-denominator");
+				nodeHTML.addClassName(TypeML.Fraction.asChild()
+						+ "-denominator");
 			}
 			break;
 		case Exponential:
@@ -80,8 +85,11 @@ public class EquationHTML extends HTML {
 			if (isBase) {
 				nodeHTML.addClassName(TypeML.Exponential.asChild() + "-base");
 			} else if (isExponential) {
-				nodeHTML.addClassName(TypeML.Exponential.asChild() + "-exponent");
-				if("mfrac".equalsIgnoreCase(mlNode.getTagName()) && "1".equals(mlNode.getFirstChildElement().getInnerText())){
+				nodeHTML.addClassName(TypeML.Exponential.asChild()
+						+ "-exponent");
+				if ("mfrac".equalsIgnoreCase(mlNode.getTagName())
+						&& "1".equals(mlNode.getFirstChildElement()
+								.getInnerText())) {
 					Element radical = DOM.createDiv();
 					radical.addClassName("radical");
 					radical.addClassName(Aesthetic);
@@ -98,41 +106,59 @@ public class EquationHTML extends HTML {
 		}
 
 		// Add parenthesis to some sums
-		if ((TypeML.Sum.equals(type) && TypeML.Term.equals(parentType)) || 
-				(TypeML.Exponential.equals(parentType) && !TypeML.Number.equals(type) && !TypeML.Variable.equals(type))) {
+		if ((TypeML.Sum.equals(type) && TypeML.Term.equals(parentType))
+				|| (TypeML.Exponential.equals(parentType)
+						&& !TypeML.Number.equals(type) && !TypeML.Variable
+							.equals(type))) {
 			fenced.add(nodeHTML);
 		}
 
 		// Addition to tree
-		if(!isRadical){
-		displayParentEl.appendChild(nodeHTML);}
+		if (!isRadical) {
+			displayParentEl.appendChild(nodeHTML);
+		}
 
 		for (int i = 0; i < mlNode.getChildCount(); i++) {
 			Node child = mlNode.getChild(i);
 
 			// Recursive creation
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if(!isRadical){
+				if (!isRadical) {
 					makeHTMLNode((Element) child, nodeHTML);
-				}else{
+				} else {
 					makeHTMLNode((Element) child.getChild(1), nodeHTML);
 				}
 				// Inner text operation adjustment
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
 				String text = mlNode.getInnerText();
-				if (text.startsWith("&")) { // must insert as js code
-					for (TypeML.Operator op : TypeML.Operator.values()) {
-						if (op.getHTML().equals(text)) {
-							text = op.getSign();
+				Element unit = null;
+				switch (type) {
+				case Number:
+					String unitName = mlNode.getAttribute(MathAttribute.Unit
+							.getName());
+					if (!"".equals(unitName)) {
+						unit = UnitUtil.attributeToHTML(unitName);
+					}
+				case Variable:
+					if (text.startsWith(Operator.MINUS.getSign())) {
+						// All negative numbers in parentheses
+						text = "(" + text + ")";
+					}
+					break;
+				case Operation:
+					if (text.startsWith("&")) { // must insert as js code
+						for (TypeML.Operator op : TypeML.Operator.values()) {
+							if (op.getHTML().equals(text)) {
+								text = op.getSign();
+							}
 						}
 					}
-				} else if (TypeML.Number
-						.equals(TypeML.getType(mlNode.getTagName()))
-						&& text.startsWith(Operator.MINUS.getSign())) {
-					// All negative numbers in parentheses
-					text = "(" + text + ")";
+					break;
 				}
 				nodeHTML.setInnerText(text);
+				if (unit != null) {
+					nodeHTML.appendChild(unit);
+				}
 			}
 		}
 	}
@@ -256,17 +282,17 @@ public class EquationHTML extends HTML {
 				// Lift every child to the center of the tallest denominator
 				for (Element child : childrenInline) {
 					int lift = tallestDenominator;
-					
-					if (child.getClassName().contains(TypeML.Fraction.toString())) {
+
+					if (child.getClassName().contains(
+							TypeML.Fraction.toString())) {
 						lift -= ((Element) child.getChild(1)).getOffsetHeight();
 						if (lift != tallestDenominator) {// if changed
 							// Lift frac to match horizontal lines
 							child.getStyle().setBottom(lift, Unit.PX);
 						}
 					} else if (fracContainerSibs.contains(child)) {
-						
-						if (child.getClassName().contains(
-								Aesthetic)) {
+
+						if (child.getClassName().contains(Aesthetic)) {
 							// Don't raise or pad, stretch aesthetics
 							int childHeight = child.getOffsetHeight();
 							double ratio = child.getParentElement()
@@ -281,13 +307,13 @@ public class EquationHTML extends HTML {
 									"scaleY(" + ratio + ")");
 							child.getStyle().setProperty("OTransform",
 									"scaleY(" + ratio + ")");
-							
-							//Lift aesthetics 
+
+							// Lift aesthetics
 							if (!fracContainers.contains(child)) {
 								lift -= (liftCenter / 2);
 								child.getStyle().setBottom(lift, Unit.PX);
 							}
-							
+
 						} else if (!fracContainers.contains(child)) {
 
 							child.getStyle().clearHeight();
@@ -329,17 +355,17 @@ public class EquationHTML extends HTML {
 		}
 	}
 
-	private double toEm(int px) {
-		System.out.println("px: \t" + px);
-		System.out.println("fontSize/100: \t" + fontPercent / 100);
-		System.out.println("em: " + px / 16 * fontPercent / 100);
-		System.out.println(" ");
-
-		if (fontPercent != 0) {
-
-		}
-		return px / 16 * fontPercent / 100;
-	}
+	// private double toEm(int px) {
+	// System.out.println("px: \t" + px);
+	// System.out.println("fontSize/100: \t" + fontPercent / 100);
+	// System.out.println("em: " + px / 16 * fontPercent / 100);
+	// System.out.println(" ");
+	//
+	// if (fontPercent != 0) {
+	//
+	// }
+	// return px / 16 * fontPercent / 100;
+	// }
 
 	private void addChildrenIfInline(Element curEl,
 			LinkedList<Element> childrenInline,
@@ -383,9 +409,26 @@ public class EquationHTML extends HTML {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.getItem(i);
 			if (Node.ELEMENT_NODE == child.getNodeType()) {
-				findTerminalChildren((Element) child, terminals);
+				if (!((Element) child).getClassName().contains(
+						UnitUtil.UNIT_CLASSNAME)) {
+					findTerminalChildren((Element) child, terminals);
+				}
 			} else {
 				terminals.add(el);
+			}
+		}
+	}
+
+	private void revealUnits() {
+		NodeList<Element> all = this.getElement().getElementsByTagName("div");
+		Element quantity;
+		for (int i = 0; i < all.getLength(); i++) {
+			quantity = all.getItem(i);
+			if (quantity.getClassName().contains(TypeML.Number.toString())) {
+				// Element number = DOM.createDiv();
+				// number.addClassName(TypeML.Term.asChild());
+				// quantity.appendChild(number);
+				quantity.appendChild(UnitUtil.attributeToHTML("gr*gal^-2"));
 			}
 		}
 	}

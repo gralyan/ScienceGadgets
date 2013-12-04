@@ -15,7 +15,6 @@
 package com.sciencegadgets.client.algebra;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -27,13 +26,12 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.TopNodesNotFoundException;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.TypeML.Operator;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
+import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 
 public class MathTree {
 
@@ -471,11 +469,17 @@ public class MathTree {
 			return mlNode.getChildCount();
 		}
 
-		public MathNode getNextSibling() throws IndexOutOfBoundsException {
+		/**
+		 * @return <b>Next sibling</b> or <b>null</b> if none exists
+		 */
+		public MathNode getNextSibling() {
 			return getSibling(1);
 		}
 
-		public MathNode getPrevSibling() throws IndexOutOfBoundsException {
+		/**
+		 * @return <b>Previous sibling</b> or <b>null</b> if none exists
+		 */
+		public MathNode getPrevSibling() {
 			return getSibling(-1);
 		}
 
@@ -491,8 +495,7 @@ public class MathTree {
 		 *            </p>
 		 * @return
 		 */
-		private MathNode getSibling(int indexesAway)
-				throws IndexOutOfBoundsException {
+		private MathNode getSibling(int indexesAway) {
 			MathNode parent = this.getParent();
 			int siblingIndex = getIndex() + indexesAway;
 
@@ -511,6 +514,7 @@ public class MathTree {
 			idMap.remove(id);
 			idMLMap.remove(id);
 			mlNode.removeFromParent();
+			wrappers.remove(wrapper);
 		}
 
 		private void removeChildren() {
@@ -603,6 +607,14 @@ public class MathTree {
 			return getMLNode().getAttribute("id");
 		}
 
+		public String getUnit() {
+			return mlNode.getAttribute(MathAttribute.Unit.getName());
+		}
+
+		public void setAttribute(MathAttribute attribute, String value) {
+			mlNode.setAttribute(attribute.getName(), value);
+		}
+
 		public boolean isLeftSide() {
 			if (this.equals(root.getChildAt(0)))
 				return true;
@@ -679,6 +691,7 @@ public class MathTree {
 			// breaks not needed, returns at each step
 			switch (getType()) {
 			case Term:
+				// fall through
 			case Sum:
 				LinkedList<MathNode> assignedOtherChildren = new LinkedList<MathNode>();
 				a: for (MathNode child : getChildren()) {
@@ -700,6 +713,7 @@ public class MathTree {
 					return false;
 				}
 			case Exponential:
+				// fall through
 			case Fraction:
 				if (getChildAt(0).isLike(another.getChildAt(0))
 						&& getChildAt(1).isLike(another.getChildAt(1))) {
@@ -716,14 +730,19 @@ public class MathTree {
 				} else {
 					return true;
 				}
-				// case Number:
-				// case Variable:
-			default:
+			case Number:
+				if (!getUnit().equals(another.getUnit())) {
+					return false;
+				}
+				// fall through
+			case Variable:
 				if (getSymbol().equals(another.getSymbol())) {
 					return true;
 				} else {
 					return false;
 				}
+			default:
+				return false;
 			}
 		}
 

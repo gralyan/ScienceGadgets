@@ -2,6 +2,7 @@ package com.sciencegadgets.client.entities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
@@ -23,6 +24,10 @@ public class DataModerator {
 	 */
 	private static HashMap<String, Unit[]> unitsQuantity = new HashMap<String, Unit[]>();
 	/**
+	 * Holds only previously queried Unit groups by parent QuantityKind 
+	 */
+	private static HashMap<String, Equation[]> equationsQuantity = new HashMap<String, Equation[]>();
+	/**
 	 * Holds all every QuantityKind once it has been queried for
 	 */
 	private static Set<String> quantityKinds = null;
@@ -32,7 +37,6 @@ public class DataModerator {
 	// //////////////////////////////////////////////////////////////////
 	public static void fill_UnitsByQuantity(final String quantityKind,
 			SelectionPanel unitBox) {
-		System.out.println("fill_UnitsByQuantity");
 		Unit[] units = unitsQuantity.get(quantityKind);
 
 		if (units == null || units.length == 0) {
@@ -45,7 +49,6 @@ public class DataModerator {
 
 	private static void query_UnitsByQuantity(final SelectionPanel unitBox,
 			final String quantityKind) {
-		System.out.println("query_UnitsByQuantity");
 		database.getUnitsByQuantity(quantityKind, new AsyncCallback<Unit[]>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -65,12 +68,49 @@ public class DataModerator {
 			unitBox.add(unit.getLabel()+" ("+unit.getSymbol()+")", unit.getSymbol());
 		}
 	}
+	// //////////////////////////////////////////////////////////////////
+	// EquationsByQuantities
+	// //////////////////////////////////////////////////////////////////
+	public static void fill_EquationsByQuantities(final String quantityKinds,
+			SelectionPanel equationBox) {
+		Equation[] equations = equationsQuantity.get(quantityKinds);
+		
+		if (equations == null || equations.length == 0) {
+			// If no local, get and fill local from database by RPC first
+			query_EquationsByQuantities(equationBox, quantityKinds);
+		} else {
+			populate_EquationsByQuantities(equationBox, equations);
+		}
+	}
+	
+	private static void query_EquationsByQuantities(final SelectionPanel equationBox,
+			final String quantityKinds) {
+		ArrayList<String> qk = new ArrayList<String>();
+		qk.add(quantityKinds);
+		database.getEquationsWithQuantities(qk, new AsyncCallback<Equation[]>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+			
+			@Override
+			public void onSuccess(Equation[] equations) {
+				equationsQuantity.put(quantityKinds, equations);
+				populate_EquationsByQuantities(equationBox, equations);
+			}
+		});
+	}
+	
+	private static void populate_EquationsByQuantities(SelectionPanel equationBox, Equation[] equations) {
+		equationBox.clear();
+		for (Equation equation : equations) {
+			equationBox.add(equation.getHtml(), equation.getMathML());
+		}
+	}
 
 	// //////////////////////////////////////////////////////////////////
 	// Quantities
 	// //////////////////////////////////////////////////////////////////
 	public static void fill_Quantities(SelectionPanel quantityBox) {
-		System.out.println("fill_Quantities");
 
 		if (!quantityKindsQueried) {
 			// If no local, try to get from database by RPC first
@@ -86,7 +126,6 @@ public class DataModerator {
 	}
 
 	private static void query_Quantities(final SelectionPanel quantityBox) {
-		System.out.println("query_Quantities");
 		database.getQuantityKinds(new AsyncCallback<Set<String>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -104,7 +143,6 @@ public class DataModerator {
 	}
 
 	private static void populate_Quantities(SelectionPanel quantityBox) {
-		System.out.println("populate_Quantities");
 		quantityBox.clear();
 		for (String quantityKind : quantityKinds) {
 			quantityBox.add(quantityKind, quantityKind);

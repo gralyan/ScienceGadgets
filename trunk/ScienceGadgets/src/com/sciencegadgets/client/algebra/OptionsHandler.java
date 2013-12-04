@@ -1,6 +1,5 @@
 package com.sciencegadgets.client.algebra;
 
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -9,16 +8,18 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 
 public class OptionsHandler implements ClickHandler {
 
 	public static PopupPanel optionsPopup = new PopupPanel();
-	FlowPanel optionsPanel = new FlowPanel();
-	MenuOption closeOption = new MenuOption(new CloseClickHandler());
-	MenuOption easyHardOption = new MenuOption(new EasyHardClickHandler());
-	MenuOption editSolveOption = new MenuOption(new EditSolveClickHandler());
+	OptionsPanel optionsPanel = new OptionsPanel();
+	Button closeOption = new Button("Close",new CloseClickHandler());
+	ToggleSlide easyHardOption;
+	ToggleSlide editSolveOption;
 
 	public OptionsHandler() {
 
@@ -43,22 +44,14 @@ public class OptionsHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		optionsPanel.clear();
 		
-		closeOption.setHTML("<b>Close</b>");
-		closeOption.setSize("100%", "15%");
 		optionsPanel.add(closeOption);
 
 		if (!AlgebraActivity.inEditMode) {
-			String easyOptionText = AlgebraActivity.isInEasyMode ? "<b>Easy</b> Hard"
-					: "Easy <b>Hard</b>";
-			easyHardOption.setHTML(easyOptionText);
-			easyHardOption.setSize("100%", "15%");
+			easyHardOption = new ToggleSlide("Easy", "Hard", AlgebraActivity.isInEasyMode, new EasyHardClickHandler());
 			optionsPanel.add(easyHardOption);
 		}
 		
-		String editOptionText = AlgebraActivity.inEditMode ? "<b>Edit</b> Solve"
-				: "Edit <b>Solve</b>";
-		editSolveOption.setHTML(editOptionText);
-		editSolveOption.setSize("100%", "15%");
+		editSolveOption = new ToggleSlide("Edit", "Solve", AlgebraActivity.inEditMode, new EditSolveClickHandler());
 		optionsPanel.add(editSolveOption);
 		
 		optionsPopup.show();
@@ -66,13 +59,11 @@ public class OptionsHandler implements ClickHandler {
 
 }
 
-class MenuOption extends Button {
-
-	MenuOption(ClickHandler clickHandler) {
-		super();
-		addClickHandler(clickHandler);
-		getElement().getStyle().setDisplay(Display.BLOCK);
-
+class OptionsPanel extends FlowPanel{
+	@Override
+	public void add(Widget w) {
+		w.setSize("100%", "15%");
+		super.add(w);
 	}
 }
 
@@ -90,7 +81,7 @@ class EasyHardClickHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		OptionsHandler.optionsPopup.hide();
 		AlgebraActivity.isInEasyMode = !AlgebraActivity.isInEasyMode;
-		Moderator.reloadEquationPanel(null, null);
+		AlgebraActivity.reloadEquationPanel(null, null);
 	}
 
 }
