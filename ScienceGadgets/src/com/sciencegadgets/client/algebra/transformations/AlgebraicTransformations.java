@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import org.apache.tools.ant.taskdefs.Sleep;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -137,7 +135,7 @@ public class AlgebraicTransformations {
 	}
 
 	static void substitute_prompt(final MathNode isolatedVar) {
-		String quantityKind = isolatedVar.getUnit();
+		String quantityKind = isolatedVar.getUnitAttribute();
 		if (quantityKind == null || quantityKind.equals("")) {
 			Window.alert("No similar other equations with similar variables available");
 			return;
@@ -151,32 +149,20 @@ public class AlgebraicTransformations {
 			public void onSelect(Cell selected) {
 
 				MathNode eqNode = isolatedVar.getParent();
-				// Make sure isolated var is a child of an EQUATION
-				if (!TypeML.Equation.equals(eqNode.getType())) {
-					JSNICalls.error("The isolated variable wasn't a child of"
-							+ " EQUATION <math>, it was a child of: \n"
-							+ eqNode);
-					dialog.removeFromParent();
-					dialog.hide();
-					return;
-				}
-				// Find element of other side to plug in
+				
 				Element substitute = null;
-				LinkedList<MathNode> eqChildren = eqNode.getChildren();
-				for (int i = 0; i < 3; i++) {
-					MathNode eqChild = eqChildren.get(i);
-					if (!isolatedVar.equals(eqChild)
-							&& !TypeML.Operation.equals(eqChild.getType())) {
-						substitute = eqChild.getMLNode();
-					}
-				}
-				if (substitute == null) {
+				if(isolatedVar.isLeftSide()){
+					substitute = isolatedVar.getTree().getRightSide().getMLNode();
+				}else if(isolatedVar.isRightSide()){
+					substitute = isolatedVar.getTree().getLeftSide().getMLNode();
+				}else{
 					JSNICalls.error("Could not find the element to substitute"
 							+ " in: \n" + eqNode);
 					dialog.removeFromParent();
 					dialog.hide();
 					return;
 				}
+				
 				String subIntoEqStr = selected.getValue();
 				Element subIntoEqEl = new HTML(subIntoEqStr).getElement()
 						.getFirstChildElement();
@@ -200,7 +186,7 @@ public class AlgebraicTransformations {
 				.getElementsByTagName(TypeML.Variable.getTag());
 		findSub: for (int j = 0; j < possibleSubs.getLength(); j++) {
 			Element possibleSub = possibleSubs.getItem(j);
-			if (!isolatedVar.getUnit().equals(
+			if (!isolatedVar.getUnitAttribute().equals(
 					possibleSub.getAttribute(MathAttribute.Unit.getName()))) {
 				continue findSub;
 			}
@@ -470,6 +456,14 @@ public class AlgebraicTransformations {
 		}
 	}
 
+	public static void unitConversion_check(MathNode node) {
+		if(!"".equals(node.getUnitAttribute())){
+			AlgebraActivity.contextMenuArea.add(new UnitConversionButton(node));
+		}
+	}
+	public static void unitConversion(MathNode node) {
+		Moderator.switchToConversion(node);
+	}
 	public static void denominatorFlip_check(MathNode node) {
 		AlgebraActivity.contextMenuArea.add(new DenominatorFlipButton(node));
 	}
@@ -515,7 +509,7 @@ class VariableSpec extends FlowPanel {
 
 	VariableSpec(MathNode mathNode) {
 		this.mathNode = mathNode;
-		unitSelect = new UnitSelection(mathNode.getUnit());
+		unitSelect = new UnitSelection(mathNode.getUnitAttribute());
 		Label symbol = new Label(mathNode.getSymbol() + " =");
 
 		symbol.addStyleName("layoutRow");
@@ -571,6 +565,19 @@ class DenominatorFlipButton extends Button {
 			@Override
 			public void onClick(ClickEvent event) {
 				AlgebraicTransformations.denominatorFlip(node);
+			}
+		});
+	}
+}
+class UnitConversionButton extends Button {
+	UnitConversionButton(final MathNode node) {
+		
+		setHTML("Convert Units");
+		
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AlgebraicTransformations.unitConversion(node);
 			}
 		});
 	}

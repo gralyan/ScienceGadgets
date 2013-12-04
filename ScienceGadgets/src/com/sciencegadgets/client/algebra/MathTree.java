@@ -27,7 +27,6 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -54,8 +53,7 @@ public class MathTree {
 	 *            - true if intended for edit mode, false if for solving mode
 	 * @throws TopNodesNotFoundException
 	 */
-	public MathTree(Element mathML, boolean inEditMode)
-			throws TopNodesNotFoundException {
+	public MathTree(Element mathML, boolean inEditMode) {
 		mathML = EquationRandomizer.randomizeNumbers(mathML, !inEditMode);
 
 		this.mathML = mathML;
@@ -607,7 +605,7 @@ public class MathTree {
 			return getMLNode().getAttribute("id");
 		}
 
-		public String getUnit() {
+		public String getUnitAttribute() {
 			return mlNode.getAttribute(MathAttribute.Unit.getName());
 		}
 
@@ -731,7 +729,7 @@ public class MathTree {
 					return true;
 				}
 			case Number:
-				if (!getUnit().equals(another.getUnit())) {
+				if (!getUnitAttribute().equals(another.getUnitAttribute())) {
 					return false;
 				}
 				// fall through
@@ -829,25 +827,13 @@ public class MathTree {
 
 	}
 
-	private void bindMLtoNodes(Node mathMLequation)
-			throws TopNodesNotFoundException {
-
-		// Find the top tree nodes: [left side] <mo>=<mo> [right side]
+	private void bindMLtoNodes(Node mathMLequation) {
 		Element rootNode = (Element) mathMLequation;
 		root = new MathNode(rootNode);
 
 		addRecursively(rootNode);
 
 		validateTree();
-
-		// // Prints both maps for debugging
-		// System.out.println("idMLMap");
-		// for (String key : idMLMap.keySet())
-		// System.out.println(key + "\t" + idMLMap.get(key).getString());
-		//
-		// System.out.println("idMap");
-		// for (String key : idMap.keySet())
-		// System.out.println(key + "\t" + idMap.get(key).toString());
 	}
 
 	private void addRecursively(Element mathMLNode) {

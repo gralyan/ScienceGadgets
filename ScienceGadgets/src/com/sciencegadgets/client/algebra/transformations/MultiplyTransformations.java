@@ -392,8 +392,8 @@ public class MultiplyTransformations {
 			right.setSymbol(totalValue.toString());// Scientific notation
 		}
 
-		String leftUnit = left.getUnit();
-		String rightUnit = right.getUnit();
+		String leftUnit = left.getUnitAttribute();
+		String rightUnit = right.getUnitAttribute();
 		right.setAttribute(MathAttribute.Unit, rightUnit + "*" + leftUnit);
 
 		left.remove();

@@ -2,7 +2,6 @@ package com.admin.server;
 
 import com.admin.client.AdminService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.sciencegadgets.client.entities.Equation;
 

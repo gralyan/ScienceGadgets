@@ -1,16 +1,14 @@
 package com.admin.client;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.sciencegadgets.client.TopNodesNotFoundException;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.MultiplyTransformations;
 
 public class TestBot_Multiplication extends MultiplyTransformations {
-	 public static void deployTestBot() throws TopNodesNotFoundException {
+	 public static void deployTestBot() {
 	 String sum =
 	 "<mfenced separators=\"\" open=\"\" close=\"\"><mi>s</mi><mo>+</mo><mi>u</mi><mo>+</mo><mrow><mi>m</mi><mo>\u00B7</mo><mi>m</mi></mrow></mfenced>";
 	 String term =

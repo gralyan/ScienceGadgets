@@ -15,7 +15,6 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
 public class BothSidesMenu extends FlowPanel {
-	private MathWrapper mlWrapper;
 	private MathNode node;
 	private MathNode parentNode;
 	private MathTree tree;
@@ -31,10 +30,9 @@ public class BothSidesMenu extends FlowPanel {
 	private final String DOT = TypeML.Operator.DOT.getSign();
 	private final String SPACE = TypeML.Operator.SPACE.getSign();
 
-	public BothSidesMenu(MathWrapper mlWrapper, String width) {
+	public BothSidesMenu(MathNode node, String width) {
 
-		this.mlWrapper = mlWrapper;
-		this.node = mlWrapper.getNode();
+		this.node = node;
 		tree = node.getTree();
 		parentNode = node.getParent();
 

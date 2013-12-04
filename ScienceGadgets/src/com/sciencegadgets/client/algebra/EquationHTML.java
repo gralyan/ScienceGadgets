@@ -419,17 +419,4 @@ public class EquationHTML extends HTML {
 		}
 	}
 
-	private void revealUnits() {
-		NodeList<Element> all = this.getElement().getElementsByTagName("div");
-		Element quantity;
-		for (int i = 0; i < all.getLength(); i++) {
-			quantity = all.getItem(i);
-			if (quantity.getClassName().contains(TypeML.Number.toString())) {
-				// Element number = DOM.createDiv();
-				// number.addClassName(TypeML.Term.asChild());
-				// quantity.appendChild(number);
-				quantity.appendChild(UnitUtil.attributeToHTML("gr*gal^-2"));
-			}
-		}
-	}
 }

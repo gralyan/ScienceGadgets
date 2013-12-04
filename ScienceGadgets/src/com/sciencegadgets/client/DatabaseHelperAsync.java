@@ -3,7 +3,6 @@ package com.sciencegadgets.client;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.http.client.Request;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Unit;
@@ -20,6 +19,7 @@ public interface DatabaseHelperAsync {
 	void getUnitsByQuantity(String quantityKind, AsyncCallback<Unit[]> callback)
 			throws IllegalArgumentException;
 	void getQuantityKinds(AsyncCallback<Set<String>> callback);
+	
 	void getBlobURL(AsyncCallback<String> callback);
 
 }

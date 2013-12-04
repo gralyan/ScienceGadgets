@@ -1,7 +1,5 @@
 package com.admin.client;
 
-import com.admin.client.AdminService;
-import com.admin.client.AdminServiceAsync;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;

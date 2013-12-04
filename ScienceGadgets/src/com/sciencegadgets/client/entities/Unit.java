@@ -13,7 +13,7 @@ public class Unit implements Serializable{
 	private static final long serialVersionUID = -6353142243407326936L;
 
 	@Id
-	String symbol;
+	String name;
 	
 	@Parent
 	Key<QuantityKind> quantityKind;
@@ -25,8 +25,8 @@ public class Unit implements Serializable{
 
 	public Unit() {
 	}
-	public Unit(String symbol, Key<QuantityKind> quantityKind,String label,String description,String conversionMultiplier,String conversionOffset) {
-		this.symbol=symbol;
+	public Unit(String name, Key<QuantityKind> quantityKind,String label,String description,String conversionMultiplier,String conversionOffset) {
+		this.name=name;
 		this.quantityKind=quantityKind;
 		this.label=label;
 		this.description=description;
@@ -34,40 +34,19 @@ public class Unit implements Serializable{
 		this.conversionOffset=conversionOffset;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
-
-	public void setQuantityKind(Key<QuantityKind> quantityKind) {
-		this.quantityKind = quantityKind;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setConversionMultiplier(String conversionMultiplier) {
-		this.conversionMultiplier = conversionMultiplier;
-	}
-
-	public void setConversionOffset(String conversionOffset) {
-		this.conversionOffset = conversionOffset;
-	}
-	
 	public String getLabel() {
 		return label;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public String getName() {
+		return name;
 	}
 
-	public Key<QuantityKind> getQuantityKind() {
+	public Key<QuantityKind> getQuantityKindKey() {
 		return quantityKind;
+	}
+	public String getQuantityKindName() {
+		return quantityKind.getName();
 	}
 
 	public String getDescription() {
@@ -80,6 +59,9 @@ public class Unit implements Serializable{
 
 	public String getConversionOffset() {
 		return conversionOffset;
+	}
+	public String getSymbol() {
+		return name.replace("*"+quantityKind.getName(), "");
 	}
 
 }
