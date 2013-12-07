@@ -28,7 +28,7 @@ public class EquationPanel extends AbsolutePanel {
 	public static Wrapper selectedWrapper;
 	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
 	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
-	private ArrayList<MathWrapper> mathWrappers = new ArrayList<MathWrapper>();
+	private ArrayList<AlgebaWrapper> mathWrappers = new ArrayList<AlgebaWrapper>();
 	
 	public static final String OF_LAYER = "-ofLayer-";
 
@@ -89,11 +89,11 @@ public class EquationPanel extends AbsolutePanel {
 			for (MathNode merge : mergeFractionNodes) {
 				placeNextEqWrappers(merge, eqLayerMap.get(merge.getParent()));
 			}
-			for (MathWrapper wrap : mathWrappers) {
+			for (AlgebaWrapper wrap : mathWrappers) {
 				AlgebraicTransformations.cancellation_check(wrap.getNode());
 			}
 		}
-		for (MathWrapper wrap : mathWrappers) {
+		for (AlgebaWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
 		}
 
@@ -219,7 +219,7 @@ public class EquationPanel extends AbsolutePanel {
 				EditWrapper wrap = new EditWrapper(node, this, layerNode);
 				eqLayer.addWrapper(wrap);
 			} else {// Solver Mode
-				MathWrapper wrap = new MathWrapper(node, this, layerNode);
+				AlgebaWrapper wrap = new AlgebaWrapper(node, this, layerNode);
 				eqLayer.addWrapper(wrap);
 				mathWrappers.add(wrap);
 			}
@@ -254,7 +254,7 @@ public class EquationPanel extends AbsolutePanel {
 	void setFocus(final EquationLayer newFocus) {
 		final EquationLayer prevFocus = focusLayer;
 		if (selectedWrapper != null) {
-			selectedWrapper.unselect(AlgebraActivity.inEditMode);
+			selectedWrapper.unselect();
 		}
 
 		newFocus.setOpacity(0);

@@ -21,5 +21,6 @@ public interface DatabaseHelperAsync {
 	void getQuantityKinds(AsyncCallback<Set<String>> callback);
 	
 	void getBlobURL(AsyncCallback<String> callback);
+	void getUnit(String unitAttribute, AsyncCallback<Unit> callback);
 
 }
