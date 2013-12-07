@@ -1,8 +1,7 @@
-package com.sciencegadgets.client.conversion;
+package com.sciencegadgets.shared;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
-import com.sciencegadgets.shared.TypeML;
 
 public class UnitUtil {
 	
@@ -65,18 +64,18 @@ public class UnitUtil {
 		}
 	}
 	
-	public static String getSymbol(String dataUnit){
+	public static String getSymbol(String unitAttribute){
 
-		String[] unitsAndQK = dataUnit.split("\\*");
+		String[] unitsAndQK = unitAttribute.split("\\*");
 String symbol = "";
 		for(int i=0 ; i<unitsAndQK.length-1; i++){
 			symbol = symbol+unitsAndQK[i];
 		}
 		return symbol;
 	}
-	public static String getQuantityKind(String dataUnit){
+	public static String getQuantityKind(String unitAttribute){
 		
-		String[] unitsAndQK = dataUnit.split("\\*");
+		String[] unitsAndQK = unitAttribute.split("\\*");
 		return unitsAndQK[unitsAndQK.length-1];
 	}
 }

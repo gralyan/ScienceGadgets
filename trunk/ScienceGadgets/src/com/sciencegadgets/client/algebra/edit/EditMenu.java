@@ -40,7 +40,7 @@ public class EditMenu extends CommunistPanel {
 	private final String VARIABLE_INSERT = "Special Symbols";
 	private final String OPERATION_CHANGE = "Change Sign";
 
-	public EditMenu(EditWrapper editWrapper, String width) {
+	public EditMenu(EditWrapper editWrapper) {
 		super(true);
 
 		this.editWrapper = editWrapper;
@@ -76,7 +76,6 @@ public class EditMenu extends CommunistPanel {
 			components.add(symbolComponent);
 			
 			TextBox symbolInput = new TextBox();
-			symbolInput.setWidth(width);
 			symbolInput.addClickHandler(new FocusOnlyClickHandler());
 			symbolInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			symbolInput.setText(node.getSymbol());
@@ -86,12 +85,11 @@ public class EditMenu extends CommunistPanel {
 
 			Button insertSymbolButton = new Button("Symbols",
 					new InsertSymbolHandler(symbolInput));
-			insertSymbolButton.setWidth(width);
 			insertSymbolButton.setTitle(VARIABLE_INSERT);
 			symbolComponent.add(insertSymbolButton);
 
 			//2nd Component - QuantityKind
-			UnitSelection quantityBox = new UnitSelection(true);
+			UnitSelection quantityBox = new UnitSelection(true, false);
 			components.add(quantityBox);
 
 			//3rd Component - Use button
@@ -105,7 +103,6 @@ public class EditMenu extends CommunistPanel {
 			components.add(numberComponent);
 			
 			DoubleBox numberInput = new DoubleBox();
-			numberInput.setWidth(width);
 			numberInput.addClickHandler(new FocusOnlyClickHandler());
 			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			numberInput.setText(node.getSymbol());
@@ -115,7 +112,6 @@ public class EditMenu extends CommunistPanel {
 
 			Button randomNumberButton = new Button("random",
 					new RandomNumberHandler(numberInput));
-			randomNumberButton.setWidth(width);
 			randomNumberButton.setTitle(NUMBER_RANDOM_SPEC);
 			numberComponent.add(randomNumberButton);
 
@@ -172,7 +168,6 @@ public class EditMenu extends CommunistPanel {
 			}
 			break;
 		}
-		System.out.println(components.size()+" "+node.toString());
 		if(components.size()>0){
 		this.add(components.toArray(new Widget[components.size()]));
 		}

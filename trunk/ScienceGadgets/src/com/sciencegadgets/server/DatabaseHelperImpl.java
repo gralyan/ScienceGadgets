@@ -22,6 +22,7 @@ import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.UnitUtil;
 
 @SuppressWarnings("serial")
 public class DatabaseHelperImpl extends RemoteServiceServlet implements
@@ -33,6 +34,12 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		ObjectifyService.register(QuantityKind.class);
 	}
 
+	@Override
+	public Unit getUnit(String unitAttribute){
+		String parent = UnitUtil.getQuantityKind(unitAttribute);
+		Key<QuantityKind> parentKey = Key.create(QuantityKind.class, parent);
+		return ObjectifyService.ofy().load().type(Unit.class).parent(parentKey).id(unitAttribute).now();
+	}
 	@Override
 	public String saveEquation(String mathML, String html)
 			throws IllegalArgumentException {

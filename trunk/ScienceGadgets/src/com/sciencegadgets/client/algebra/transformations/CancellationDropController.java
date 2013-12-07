@@ -5,7 +5,7 @@ import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.MathWrapper;
+import com.sciencegadgets.client.algebra.AlgebaWrapper;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.shared.TypeML;
 
@@ -13,15 +13,15 @@ public class CancellationDropController extends AbstractDropController {
 
 	Label response = new Label(ResponseNote.Cancel.toString());
 
-	public CancellationDropController(MathWrapper dropTarget) {
+	public CancellationDropController(AlgebaWrapper dropTarget) {
 		super(dropTarget);
 	}
 
 	@Override
 	public void onDrop(DragContext context) {
 		super.onDrop(context);
-		MathNode drag = ((MathWrapper) context.draggable).getNode();
-		MathNode target = ((MathWrapper) getDropTarget()).getNode();
+		MathNode drag = ((AlgebaWrapper) context.draggable).getNode();
+		MathNode target = ((AlgebaWrapper) getDropTarget()).getNode();
 
 		drag.highlight();
 		target.highlight();

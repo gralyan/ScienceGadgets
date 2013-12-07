@@ -25,7 +25,7 @@ import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.MathWrapper;
+import com.sciencegadgets.client.algebra.AlgebaWrapper;
 import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.entities.DataModerator;
@@ -320,7 +320,7 @@ public class AlgebraicTransformations {
 		for (MathNode dropNode : dropNodes) {
 			dragController
 					.registerDropController(new CancellationDropController(
-							(MathWrapper) dropNode.getWrapper()));
+							(AlgebaWrapper) dropNode.getWrapper()));
 		}
 	}
 

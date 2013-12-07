@@ -107,7 +107,7 @@ public class MathTree {
 		}
 	}
 
-	public void reloadEqHTML() {
+	public EquationHTML reloadEqHTML() {
 		eqHTMLAlgOut = new EquationHTML(mathML);
 
 		NodeList<Element> allElements = eqHTMLAlgOut.getElement()
@@ -120,6 +120,7 @@ public class MathTree {
 			idHTMLMap.put(el.getAttribute("id"), el);
 			el.removeAttribute("id");
 		}
+		return eqHTMLAlgOut;
 	}
 
 	public EquationHTML getHTMLAlgOut() {

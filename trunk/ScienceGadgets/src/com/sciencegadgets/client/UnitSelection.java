@@ -1,5 +1,7 @@
 package com.sciencegadgets.client;
 
+import java.security.InvalidParameterException;
+
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.entities.DataModerator;
@@ -12,7 +14,6 @@ public class UnitSelection extends CommunistPanel {
 	boolean quantityOnly = false;
 	boolean quantityFilled = false;
 	boolean unitOnly = false;
-	boolean unitFilled = false;
 
 	@Override
 	protected void onLoad() {
@@ -29,26 +30,31 @@ public class UnitSelection extends CommunistPanel {
 	 * narrow units
 	 */
 	public UnitSelection() {
-		this(false);
+		this(false, false);
 	}
 
-	public UnitSelection(boolean quantityOnly) {
+	public UnitSelection(boolean quantityOnly, boolean unitOnly) {
 		super(false);
 		this.quantityOnly = quantityOnly;
+		this.unitOnly = unitOnly;
+		
+		if(quantityOnly && unitOnly){
+			JSNICalls.error("Can't be quantityOnly and unitOnly");
+		}
 
-		this.add(quantityBox);
+		if (quantityOnly) {
+			this.add(quantityBox);
 
-		if (!quantityOnly) {
+		} else if (unitOnly) {
+			this.add(unitBox);
+		}else {
+			this.add(quantityBox);
 			this.add(unitBox);
 
 			quantityBox.addSelectionHandler(new SelectionHandler() {
 				@Override
 				public void onSelect(Cell selection) {
-					unitBox.clear();
-					String selected = quantityBox.getSelectedText();
-					if (selected != null && !selected.equals("")) {
-						DataModerator.fill_UnitsByQuantity(selected, unitBox);
-					}
+					reloadUnitBox(quantityBox.getSelectedText());
 				}
 			});
 		}
@@ -58,7 +64,11 @@ public class UnitSelection extends CommunistPanel {
 		super(false);
 
 		this.add(unitBox);
+		reloadUnitBox(quantityKind);
 
+	}
+
+	public void reloadUnitBox(String quantityKind) {
 		unitBox.clear();
 		if (quantityKind != null && !quantityKind.equals("")) {
 			DataModerator.fill_UnitsByQuantity(quantityKind, unitBox);

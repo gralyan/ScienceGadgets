@@ -99,7 +99,7 @@ class EditSolveClickHandler implements ClickHandler {
 
 		OptionsHandler.optionsPopup.hide();
 		if (EquationPanel.selectedWrapper != null) {
-			EquationPanel.selectedWrapper.unselect(AlgebraActivity.inEditMode);
+			EquationPanel.selectedWrapper.unselect();
 		}
 		AlgebraActivity.inEditMode = !AlgebraActivity.inEditMode;
 		Moderator.makeAlgebraWorkspace(Moderator.mathTree.getMathMLClone());

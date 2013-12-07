@@ -8,34 +8,30 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
 import com.sciencegadgets.shared.TypeML;
 
 public class Wrapper extends HTML implements HasHandlers {
 
 	protected MathNode node;
-	protected EquationPanel eqPanel;
-	// protected EquationLayer eqLayer;
-	public int paddingLeft = 0;
-	public int paddingRight = 0;
+	protected AbsolutePanel parentPanel;
 	protected FlowPanel menu;
 	private WrapDragController dragController = null;
 
-	public Wrapper(MathNode node, final EquationPanel eqPanel, Element element) {
+	public Wrapper(MathNode node, final AbsolutePanel parentPanel, Element element) {
 		super(element);
 
 		this.node = node;
-		this.eqPanel = eqPanel;
+		this.parentPanel = parentPanel;
 
 		onAttach();
 
 		node.wrap(this);
-		node.getWrapper();
 
 		this.addStyleName("displayWrapper");
 
@@ -54,17 +50,6 @@ public class Wrapper extends HTML implements HasHandlers {
 		return node;
 	}
 
-	public EquationLayer getEqLayer() {
-		return eqPanel.eqLayerMap.get(node);
-	}
-
-	public EquationPanel getEqPanel() {
-		return eqPanel;
-	}
-
-	// public VerticalPanel getMenu(){
-	// return menu;
-	// }
 
 	public Wrapper getNextSiblingWrapper() throws IndexOutOfBoundsException {
 		return node.getNextSibling().getWrapper();
@@ -78,54 +63,12 @@ public class Wrapper extends HTML implements HasHandlers {
 		return node.getParent().getWrapper();
 	}
 
-	// Public selection methods, calls subclasses approprimathNodeately
-	public void select(boolean inEditMode) {
-
-		if (this.equals(EquationPanel.selectedWrapper)) {
-
-			// If this was already selected, focus in on it
-			if (node.getType().hasChildren()) {
-				
-				this.unselect(AlgebraActivity.inEditMode);
-				eqPanel.setFocus(getEqLayer());
-			}
-		} else {
-
-			// If there is another selection, unselect it
-			if (EquationPanel.selectedWrapper != null) {
-				EquationPanel.selectedWrapper
-						.unselect(AlgebraActivity.inEditMode);
-			}
-
-			AlgebraActivity.contextMenuArea.add(menu);
-
-			if (inEditMode) {
-				((EditWrapper) this).select();
-			} else {
-				((MathWrapper) this).select();
-			}
-		}
-	}
-
-	public void unselect(boolean inEditMode) {
-
-		AlgebraActivity.contextMenuArea.clear();
-
-		if (inEditMode) {
-			((EditWrapper) this).unselect();
-		} else {
-			((MathWrapper) this).unselect();
-		}
-	}
-
-	protected void select() {
-
+	public void select() {
 		EquationPanel.selectedWrapper = this;
 		this.getElement().addClassName("selectedWrapper");
 	}
 
-	protected void unselect() {
-
+	public void unselect() {
 		EquationPanel.selectedWrapper = null;
 		this.getElement().removeClassName("selectedWrapper");
 	}
@@ -167,7 +110,7 @@ public class Wrapper extends HTML implements HasHandlers {
 	public WrapDragController addDragController() {
 
 		if (dragController == null) {
-			dragController = new WrapDragController(eqPanel, false);
+			dragController = new WrapDragController(parentPanel, false);
 			dragController.makeDraggable(this);
 		}
 
@@ -194,7 +137,7 @@ public class Wrapper extends HTML implements HasHandlers {
 		public void onClick(ClickEvent event) {
 			event.preventDefault();
 			event.stopPropagation();
-			select(AlgebraActivity.inEditMode);
+			select();
 		}
 	}
 
@@ -204,7 +147,7 @@ public class Wrapper extends HTML implements HasHandlers {
 			event.preventDefault();
 			event.stopPropagation();
 			
-			select(AlgebraActivity.inEditMode);
+			select();
 		}
 	}
 

@@ -117,7 +117,7 @@ public class Moderator implements EntryPoint {
 			conversionActivity.getElement().setAttribute("id","conversionActivity");
 
 		}
-		conversionActivity.reload(node);
+		conversionActivity.load(node);
 		scienceGadgetArea.add(conversionActivity);
 	}
 

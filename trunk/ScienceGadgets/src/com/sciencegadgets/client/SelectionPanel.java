@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class SelectionPanel extends FlowPanel {
 
-	ArrayList<Cell> cells = new ArrayList<Cell>();
+	private ArrayList<Cell> cells = new ArrayList<Cell>();
 	private Cell selectedCell = null;
 	private SelectionHandler selectionHandler;
 	private final Label labelAlg = new Label();
@@ -32,6 +32,9 @@ public class SelectionPanel extends FlowPanel {
 		addSelectionHandler(selectionHandler);
 	}
 
+	public ArrayList<Cell> getCells(){
+		return cells;
+	}
 	@Override
 	public void clear() {
 		super.clear();
@@ -47,10 +50,12 @@ public class SelectionPanel extends FlowPanel {
 	}
 
 	public void add(String html, String value) {
-		super.add(new Cell(html, value, null));
+		this.add(html, value, null);
 	}
 	public void add(String html, String value, Serializable entity) {
-		super.add(new Cell(html, value, entity));
+		Cell cell = new Cell(html, value, entity);
+		super.add(cell);
+		cells .add(cell);
 	}
 
 	public String getSelectedText() {

@@ -27,7 +27,7 @@ import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformation
  * @author John Gralyan
  * 
  */
-public class MathWrapper extends Wrapper {
+public class AlgebaWrapper extends ZoomWrapper {
 
 	private BothSidesMenu bothSidesMenu;
 
@@ -39,7 +39,7 @@ public class MathWrapper extends Wrapper {
 	 * {@link AbsolutePanel}</b>
 	 * </p>
 	 */
-	public MathWrapper(MathNode node, EquationPanel eqPanel, Element element) {
+	public AlgebaWrapper(MathNode node, EquationPanel eqPanel, Element element) {
 		super(node, eqPanel, element);
 
 		bothSidesMenu = new BothSidesMenu(node, element.getOffsetWidth() + "px");
@@ -55,48 +55,46 @@ public class MathWrapper extends Wrapper {
 	 *            - selects if true, unselects if false
 	 */
 	public void select() {
-
-		AlgebraActivity.selectedMenu.clear();
-		AlgebraActivity.selectedMenu.add(bothSidesMenu);
-
-		switch (node.getType()) {
-		case Equation:
-		case Exponential:
-		case Fraction:
-		case Sum:
-		case Term:
-			break;
-		case Operation:
-			AlgebraicTransformations.operation(node);
-			return;
-		case Number:
-			AlgebraicTransformations.separateNegative_check(node);
-			AlgebraicTransformations.factorizeNumbers_check(node);
-			AlgebraicTransformations.unitConversion_check(node);
-			break;
-		case Variable:
-			AlgebraicTransformations.separateNegative_check(node);
-			AlgebraicTransformations.isolatedVariable_check(node);
-			break;
-		}
-		
-		switch (node.getParentType()) {
-		case Fraction:
-			if(node.getIndex() == 1){
-			AlgebraicTransformations.denominatorFlip_check(node);
-			}
-			break;
-		}
-
 		super.select();
 
+		if (this.equals(EquationPanel.selectedWrapper)) {
+			AlgebraActivity.selectedMenu.clear();
+			AlgebraActivity.selectedMenu.add(bothSidesMenu);
+
+			switch (node.getType()) {
+			case Equation:
+			case Exponential:
+			case Fraction:
+			case Sum:
+			case Term:
+				break;
+			case Operation:
+				AlgebraicTransformations.operation(node);
+				return;
+			case Number:
+				AlgebraicTransformations.separateNegative_check(node);
+				AlgebraicTransformations.factorizeNumbers_check(node);
+				AlgebraicTransformations.unitConversion_check(node);
+				break;
+			case Variable:
+				AlgebraicTransformations.separateNegative_check(node);
+				AlgebraicTransformations.isolatedVariable_check(node);
+				break;
+			}
+
+			switch (node.getParentType()) {
+			case Fraction:
+				if (node.getIndex() == 1) {
+					AlgebraicTransformations.denominatorFlip_check(node);
+				}
+				break;
+			}
+		}
 	}
 
 	public void unselect() {
-		AlgebraActivity.selectedMenu.clear();
 		super.unselect();
+		AlgebraActivity.selectedMenu.clear();
 	}
 
 }
-
-
