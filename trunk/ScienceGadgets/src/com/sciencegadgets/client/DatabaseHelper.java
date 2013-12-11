@@ -21,7 +21,7 @@ public interface DatabaseHelper extends RemoteService {
 			throws IllegalArgumentException;
 	Equation[] getEquationsWithQuantities(List<String> quantityKinds)
 			throws IllegalArgumentException;
-	Unit getUnit(String unitAttribute);
+	Unit getUnit(String unitName);
 	
 	String getBlobURL();
 }

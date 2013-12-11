@@ -104,9 +104,9 @@ public class ConversionAvtivity extends AbsolutePanel {
 		}
 	}
 
-	void fillUnitSelection(final String unitAttribute) {
+	void fillUnitSelection(final String unitName) {
 
-		DataModerator.database.getUnit(unitAttribute,
+		DataModerator.database.getUnit(unitName,
 				new AsyncCallback<Unit>() {
 
 					@Override
