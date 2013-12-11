@@ -1,7 +1,5 @@
 package com.sciencegadgets.client;
 
-import java.security.InvalidParameterException;
-
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.entities.DataModerator;

@@ -21,17 +21,15 @@ public class Unit implements Serializable{
 	String label;
 	String description;
 	String conversionMultiplier;
-	String conversionOffset;
 
 	public Unit() {
 	}
-	public Unit(String name, Key<QuantityKind> quantityKind,String label,String description,String conversionMultiplier,String conversionOffset) {
+	public Unit(String name, Key<QuantityKind> quantityKind,String label,String description,String conversionMultiplier) {
 		this.name=name;
 		this.quantityKind=quantityKind;
 		this.label=label;
 		this.description=description;
 		this.conversionMultiplier=conversionMultiplier;
-		this.conversionOffset=conversionOffset;
 	}
 
 	public String getLabel() {
@@ -57,9 +55,6 @@ public class Unit implements Serializable{
 		return conversionMultiplier;
 	}
 
-	public String getConversionOffset() {
-		return conversionOffset;
-	}
 	public String getSymbol() {
 		return name.replace("*"+quantityKind.getName(), "");
 	}

@@ -2,8 +2,11 @@ package com.sciencegadgets.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,10 +18,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.ObjectifyService;
+import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.entities.QuantityKind;
+import com.sciencegadgets.client.entities.Unit;
+
 public class OwlMiner {
 
 	TreeMap<String, String> map = new TreeMap<String, String>();
 	HashSet<String> set = new HashSet<String>();
+
 	/**
 	 * ObjectifyService.ofy().load().type(QuantityKind.class).id(qKind).now();
 	 * 
@@ -27,18 +37,32 @@ public class OwlMiner {
 	 */
 	public String[] getUnitsFromOwl() throws IllegalArgumentException {
 
-		// // Delete all
-//		List<Unit> units = ObjectifyService.ofy().load().type(Unit.class).list();
-//		List<QuantityKind> qKinds = ObjectifyService.ofy().load()
-//				.type(QuantityKind.class).list();
-//		for (Unit u : units) {
-//			ObjectifyService.ofy().delete().entity(u).now();
-//		}
-		// for (QuantityKind u : qKinds) {
-		// ObjectifyService.ofy().delete().entity(u).now();
-		//
-		// }
+		// Delete all
+		List<QuantityKind> qKinds = ObjectifyService.ofy().load()
+				.type(QuantityKind.class).list();
+		ArrayList<Key<Unit>> unitKeys = new ArrayList<Key<Unit>>();
+		ArrayList<String> qKindsNames = new ArrayList<String>(qKinds.size());
+	
+		for (QuantityKind q : qKinds) {
+			qKindsNames.add(q.getId());
 
+			Key<QuantityKind> qkey = Key.create(QuantityKind.class, q.getId());
+
+			List<Unit> units = ObjectifyService.ofy().load().type(Unit.class)
+					.ancestor(qkey).list();
+
+			for (Unit u : units) {
+				Key<Unit> ukey = Key.create(qkey, Unit.class, u.getName());
+				unitKeys.add(ukey);
+			}
+		}
+		ObjectifyService.ofy().delete().keys(unitKeys).now();
+		ObjectifyService.ofy().delete().type(QuantityKind.class)
+				.ids(qKindsNames).now();
+
+		// ///////////////////////////////
+		// Mine owl for QuatityKinds
+		// ///////////////////////////////
 		Document doc = getDoc("Data/qudt-1.0/dimension.owl");
 		NodeList dimensionNodes = doc.getElementsByTagName("qudt:Dimension");
 
@@ -124,10 +148,9 @@ public class OwlMiner {
 		map.remove("ElectricCurrentPerUnitLength");
 		map.put("AuxillaryMagneticField", "0,-1,0,0,1,0,0,0");
 
-		
-		
-		
-		
+		// ////////////////////////////////
+		// Mine owl for Units
+		// ////////////////////////////////
 		Document unitDoc = getDoc("Data/qudt-1.0/unit.owl");
 		NodeList eqNodes = unitDoc.getElementsByTagName("*");
 
@@ -187,7 +210,9 @@ public class OwlMiner {
 			String offset = extractProperty(node, "qudt:conversionOffset");
 			if (offset == null || offset.equals("0.0") || offset.equals("0")) {
 				offset = "0";
-			} else {
+			} else if (label.equals("Degree Celsius")
+					|| label.equals("Degree Fahrenheit")) {
+				continue;
 			}
 
 			String multiplier = extractProperty(node,
@@ -195,7 +220,8 @@ public class OwlMiner {
 			if (multiplier == null) {
 				continue;
 			} else {
-				multiplier = multiplier.replace("1.0e0 ", "1").replace("1.0E0 ", "1").replace("e", "E");
+				multiplier = multiplier.replace("1.0e0", "1")
+						.replace("1.0E0", "1").replace("e", "E");
 			}
 
 			if (qKind == null) {
@@ -255,120 +281,160 @@ public class OwlMiner {
 				symbolFixed = label;
 			} else if (qKind.equals("PrefixBinary")) {
 				symbolFixed = label;
+
 				// Close enough to international
 			} else if (label.equals("US Survey Foot")) {
 				continue;
 			} else if (label.equals("Mile US Statute")) {
 				continue;
+
 				// Duplicate
 			} else if ((label.equals("Biot") || label.equals("Metric Ton") || label
 					.equals("Gon"))
 					&& systemUnit.equals("qudt:NotUsedWithSIUnit")) {
 				continue;
+
 				// No space
 			} else if (symbol.equals("therm (US)")) {
-				symbolFixed = "therm(US)";
+				symbolFixed = "therm<sub>US</sub>";
 			} else if (symbol.equals("therm (EC)")) {
-				symbolFixed = "therm(EC)";
+				symbolFixed = "therm<sub>EC</sub>";
+
 				// Incorrect
-			} else if (symbol.equals("(K^2)m/W")) {
-				symbolFixed = "K*m^2*W^-1";
-			} else if (symbol.equals("ft-lbf(ft^2-s)")) {
-				symbolFixed = "ft^-1*lbf*s^-1)";
+				// } else if (symbol.equals("(K^2)m/W")) {
+				// symbolFixed = "K*m^2*W^-1";
+				// } else if (symbol.equals("ft-lbf(ft^2-s)")) {
+				// symbolFixed = "ft^-1*lbf*s^-1)";
+
 				// Confusing
-			} else if (label.equals("Ounce Troy")) {
-				symbolFixed = "oz(Troy)";
 			} else if (label.equals("Ounce Mass")) {
 				symbolFixed = "oz";
-			} else if (label.equals("Ton - Long")) {
-				symbolFixed = "ton(UK)";
-			} else if (label.equals("Ton - Short")) {
-				symbolFixed = "ton(US)";
-			} else if (label.equals("Imperial Pint")) {
-				symbolFixed = "pt(UK)";
-			} else if (label.equals("US Liquid Pint")) {
-				symbolFixed = "pt(US)";
-			} else if (label.equals("Imperial Gallon")) {
-				symbolFixed = "gal(UK)";
-			} else if (label.equals("US Gallon")) {
-				symbolFixed = "gal(US)";
-			} else if (label.equals("US Liquid Ounce")) {
-				symbolFixed = "oz(fl,US)";
-			} else if (label.equals("Imperial Ounce")) {
-				symbolFixed = "oz(fl,UK)";
-			} else if (label.equals("Pound Troy")) {
-				symbolFixed = "lb(Troy)";
 			} else if (label.equals("Pound Mass")) {
 				symbolFixed = "lb";
+			} else if (label.equals("Ton - Long")) {
+				symbolFixed = "ton<sub>UK</sub>";
+			} else if (label.equals("Imperial Pint")) {
+				symbolFixed = "pt<sub>UK</sub>";
+			} else if (label.equals("Imperial Gallon")) {
+				symbolFixed = "gal<sub>UK</sub>";
+			} else if (label.equals("Imperial Ounce")) {
+				symbolFixed = "fl.oz<sub>UK</sub>";
+			} else if (label.equals("Ton - Short")) {
+				symbolFixed = "ton<sub>US</sub>";
+			} else if (label.equals("US Liquid Pint")) {
+				symbolFixed = "pt<sub>US</sub>";
+			} else if (label.equals("US Gallon")) {
+				symbolFixed = "gal<sub>US</sub>";
+			} else if (label.equals("US Liquid Ounce")) {
+				symbolFixed = "fl.oz<sub>US</sub>";
+			} else if (label.equals("Ounce Troy")) {
+				symbolFixed = "oz<sub>Troy</sub>";
+			} else if (label.equals("Pound Troy")) {
+				symbolFixed = "lb<sub>Troy</sub>";
+
+				// No underscore (_)
+			} else if (symbolFixed.equals("dry_qt")) {
+				symbolFixed = "qt<sub>dry</sub>";
+			} else if (symbolFixed.equals("dry_gal")) {
+				symbolFixed = "gal<sub>dry</sub>";
+			} else if (symbolFixed.equals("dry_pt")) {
+				symbolFixed = "pt<sub>dry</sub>";
+			} else if (symbolFixed.equals("E_h")) {
+				symbolFixed = "E<sub>h</sub>";
+			} else if (symbolFixed.equals("Θ_P")) {
+				symbolFixed = "Θ<sub>P</sub>";
+			} else if (symbolFixed.equals("l_P")) {
+				symbolFixed = "l<sub>P</sub>";
+			} else if (symbolFixed.equals("m_P")) {
+				symbolFixed = "m<sub>P</sub>";
+			} else if (symbolFixed.equals("t_P")) {
+				symbolFixed = "t<sub>P</sub>";
+			} else if (symbolFixed.equals("Q_p")) {
+				symbolFixed = "Q<sub>P</sub>";
+
 				// Conflicting
-			} else if (label.equals("Faraday")) {
-				symbolFixed = "Faraday";// Farad=F
-			} else if (label.equals("Cord")) {
-				symbolFixed = "Cord";// Colomb=C
-			} else if (label.equals("Diopter")) {
-				symbolFixed = "dpt";// Debye=D
-			} else if (label.equals("Rad")) {
-				symbolFixed = "rad(dose)";// radian=rad
-			} else if (label.equals("Gauss")) {
-				symbolFixed = "Gs";// Gravity=G
-			} else if (label.equals("Bit")) {
-				symbolFixed = "bit";// Barn=b
-			} else if (label.equals("Year Sidereal")) {
-				symbolFixed = "yr(side)";// year 365=yr
-			} else if (label.equals("Lambert")) {
-				symbolFixed = "la";// Liter=L
+				// } else if (label.equals("Faraday")) {
+				// symbolFixed = "Faraday";// Farad=F
+				// } else if (label.equals("Cord")) {
+				// symbolFixed = "Cord";// Colomb=C
+				// } else if (label.equals("Diopter")) {
+				// symbolFixed = "dpt";// Debye=D
+				// } else if (label.equals("Rad")) {
+				// symbolFixed = "rad(dose)";// radian=rad
+				// } else if (label.equals("Gauss")) {
+				// symbolFixed = "Gs";// Gravity=G
+				// } else if (label.equals("Bit")) {
+				// symbolFixed = "bit";// Barn=b
+				// } else if (label.equals("Year Sidereal")) {
+				// symbolFixed = "yr(side)";// year 365=yr
+				// } else if (label.equals("Lambert")) {
+				// symbolFixed = "la";// Liter=L
 
-			} else {
-				symbolFixed = symbolFixed.replace("^-", "expNeg")
-						.replace("-", "*").replace(" / ", "/")
-						.replace(" ", "*").replace("(", "").replace(")", "");
-				symbolFixed = symbolFixed.replace("expNeg", "^-");
-
-				String[] fractionParts = symbolFixed.split("/");
-
-				symbolFixed = fractionParts[0];
-				if (fractionParts.length > 1) {
-					String[] denominator = fractionParts[1].split("\\*");
-					for (String den : denominator) {
-						if (den.contains("^")) {
-							den = den.replace("^", "^-");
-						} else {
-							den = den + "^-1";
-						}
-						symbolFixed = symbolFixed + "*" + den;
-					}
-				}
-
-				String[] symbolParts = symbolFixed.split("\\*");
-				Arrays.sort(symbolParts);
-				symbolFixed = "";
-				for (String part : symbolParts) {
-					if (symbolFixed.equals("")) {
-						symbolFixed = part;
-					} else {
-						symbolFixed = symbolFixed + "*" + part;
-					}
-				}
+				// Standardize derived units
+				// } else {
+				// symbolFixed = symbolFixed.replace("^-", "expNeg")
+				// .replace("-", "*").replace(" / ", "/")
+				// .replace(" ", "*").replace("(", "").replace(")", "");
+				// symbolFixed = symbolFixed.replace("expNeg", "^-");
+				//
+				// String[] fractionParts = symbolFixed.split("/");
+				//
+				// symbolFixed = fractionParts[0];
+				// if (fractionParts.length > 1) {
+				// String[] denominator = fractionParts[1].split("\\*");
+				// for (String den : denominator) {
+				// if (den.contains("^")) {
+				// den = den.replace("^", "^-");
+				// } else {
+				// den = den + "^-1";
+				// }
+				// symbolFixed = symbolFixed + "*" + den;
+				// }
+				//
+				// String[] symbolParts = symbolFixed.split("\\*");
+				// Arrays.sort(symbolParts);
+				// symbolFixed = "";
+				// for (String part : symbolParts) {
+				// if (symbolFixed.equals("")) {
+				// symbolFixed = part;
+				// } else {
+				// symbolFixed = symbolFixed + "*" + part;
+				// }
+				// }
+				// }
+			} else if (symbolFixed.contains("^") || symbolFixed.contains(" ")
+					|| symbolFixed.contains("-") || symbolFixed.contains("/")
+					|| symbolFixed.contains("(") || symbolFixed.contains(")")) {
+				continue;
 			}
+
+			// System.out.println(qKind + "_" + symbolFixed + "," + label + ","
+			// + multiplier);
 			
-//			Key<QuantityKind> qKindKey = Key.create(QuantityKind.class, qKind);
-//			Unit unit = new Unit(symbolFixed, qKindKey, label, extractProperty(
-//					node, "qudt:description"), multiplier, offset);
-//			ObjectifyService.ofy().save().entity(unit);
-//
-//			String oldDim = map.get(qKind);
-//			map.put(qKind, oldDim.replace(",", "_"));
+			 Key<QuantityKind> qKindKey = Key.create(QuantityKind.class,
+			 qKind);
+			 Unit unit = new Unit(qKind + "_" + symbolFixed, qKindKey, label,
+			 extractProperty(
+			 node, "qudt:description"), multiplier);
+			 ObjectifyService.ofy().save().entity(unit);
+
+			// mark quantity kind as used as a parent
+			String oldDim = map.get(qKind);
+			map.put(qKind, oldDim.replace(",", "_"));
 		}
 
-//		for (String quantity : map.keySet()) {
-//			if (map.get(quantity).contains("_")) {
-//				ObjectifyService
-//						.ofy()
-//						.save()
-//						.entity(new QuantityKind(quantity, map.get(quantity)
-//								.replace("_", ","))).now();
-//			}
-//		}
+		for (String quantity : map.keySet()) {
+			// If used as parent, save quantity kind
+			if (map.get(quantity).contains("_")) {
+				 ObjectifyService
+				 .ofy()
+				 .save()
+				 .entity(new QuantityKind(quantity, map.get(quantity)
+				 .replace("_", ","))).now();
+
+				// System.out.println(quantity);
+			}
+		}
 
 		return null;
 	}

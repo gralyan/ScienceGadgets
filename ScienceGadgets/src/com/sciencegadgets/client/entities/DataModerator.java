@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.SelectionPanel;
-import com.sciencegadgets.shared.UnitUtil;
 
 public class DataModerator {
 

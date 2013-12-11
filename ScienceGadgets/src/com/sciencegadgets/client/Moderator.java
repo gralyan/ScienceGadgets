@@ -55,8 +55,8 @@ public class Moderator implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		// //
-		// // // Resize area when window resizes
+		//
+		// // Resize area when window resizes
 		fitWindow();
 		Window.addResizeHandler(new ResizeAreaHandler());
 
@@ -66,6 +66,7 @@ public class Moderator implements EntryPoint {
 
 		switchToBrowser();
 
+		// Blobs
 		// scienceGadgetArea.add(new UploadButton());
 
 		// try {
@@ -111,10 +112,11 @@ public class Moderator implements EntryPoint {
 	public static void switchToConversion(MathNode node) {
 		setActivity(Activity.conversion);
 		scienceGadgetArea.clear();
-		
-		if(conversionActivity == null){
+
+		if (conversionActivity == null) {
 			conversionActivity = new ConversionAvtivity();
-			conversionActivity.getElement().setAttribute("id","conversionActivity");
+			conversionActivity.getElement().setAttribute("id",
+					"conversionActivity");
 
 		}
 		conversionActivity.load(node);

@@ -35,10 +35,10 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Unit getUnit(String unitAttribute){
-		String parent = UnitUtil.getQuantityKind(unitAttribute);
+	public Unit getUnit(String unitName){
+		String parent = UnitUtil.getQuantityKind(unitName);
 		Key<QuantityKind> parentKey = Key.create(QuantityKind.class, parent);
-		return ObjectifyService.ofy().load().type(Unit.class).parent(parentKey).id(unitAttribute).now();
+		return ObjectifyService.ofy().load().type(Unit.class).parent(parentKey).id(unitName).now();
 	}
 	@Override
 	public String saveEquation(String mathML, String html)
