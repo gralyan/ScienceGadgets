@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
@@ -41,7 +42,7 @@ import com.sciencegadgets.shared.TypeML.Operator;
 public class AlgebraicTransformations {
 
 	public static Label response = new Label();
-	final static HashSet<VariableSpec> varSpecs = new HashSet<VariableSpec>();
+	final static HashSet<VariableEvaluateSpec> varSpecs = new HashSet<VariableEvaluateSpec>();
 
 	public static void isolatedVariable_check(MathNode isolatedVar) {
 		if (TypeML.Equation.equals(isolatedVar.getParentType())) {
@@ -53,9 +54,7 @@ public class AlgebraicTransformations {
 	}
 
 	static void evaluate_prompt(MathNode isolatedVar) {
-		final DialogBox dialog = new DialogBox(true, true);
-		FlowPanel prompt = new FlowPanel();
-		dialog.add(prompt);
+		final Prompt prompt = new Prompt();
 
 		varSpecs.clear();
 
@@ -65,7 +64,7 @@ public class AlgebraicTransformations {
 			MathNode node = wrap.getNode();
 			if (TypeML.Variable.equals(node.getType())
 					&& !node.equals(isolatedVar)) {
-				VariableSpec varSpec = new VariableSpec(node);
+				VariableEvaluateSpec varSpec = new VariableEvaluateSpec(node);
 				varSpecs.add(varSpec);
 				prompt.add(varSpec);
 			}
@@ -75,14 +74,13 @@ public class AlgebraicTransformations {
 			return;
 		}
 
-		// EvaluateButton okButton = new EvaluateButton(varSpecs);
-		Button okButton = new Button("OK", new ClickHandler() {
+		prompt.addOkHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				// Make sure the entire spec is filled
 				boolean completelyFilled = true;
-				for (VariableSpec varSpec : varSpecs) {
+				for (VariableEvaluateSpec varSpec : varSpecs) {
 					Double value = varSpec.valueInput.getValue();
 					if (value == null) {
 						varSpec.valueInput.getElement().getStyle()
@@ -104,23 +102,18 @@ public class AlgebraicTransformations {
 					}
 				}
 				if (completelyFilled) {
-					dialog.hide();
-					dialog.removeFromParent();
+					prompt.disappear();
 					AlgebraicTransformations.evaluate(varSpecs);
 				}
 
 			}
 		});
 
-		dialog.setGlassEnabled(true);
-		dialog.setAnimationEnabled(true);
-		dialog.center();
-		prompt.add(new FlowPanel());
-		prompt.add(okButton);
+		prompt.appear();
 	}
 
-	static void evaluate(HashSet<VariableSpec> varSpecs) {
-		for (VariableSpec varSpec : varSpecs) {
+	static void evaluate(HashSet<VariableEvaluateSpec> varSpecs) {
+		for (VariableEvaluateSpec varSpec : varSpecs) {
 
 			String value = String.valueOf(varSpec.value).replaceAll(
 					(String) "\\.0$", "");
@@ -149,20 +142,22 @@ public class AlgebraicTransformations {
 			public void onSelect(Cell selected) {
 
 				MathNode eqNode = isolatedVar.getParent();
-				
+
 				Element substitute = null;
-				if(isolatedVar.isLeftSide()){
-					substitute = isolatedVar.getTree().getRightSide().getMLNode();
-				}else if(isolatedVar.isRightSide()){
-					substitute = isolatedVar.getTree().getLeftSide().getMLNode();
-				}else{
+				if (isolatedVar.isLeftSide()) {
+					substitute = isolatedVar.getTree().getRightSide()
+							.getMLNode();
+				} else if (isolatedVar.isRightSide()) {
+					substitute = isolatedVar.getTree().getLeftSide()
+							.getMLNode();
+				} else {
 					JSNICalls.error("Could not find the element to substitute"
 							+ " in: \n" + eqNode);
 					dialog.removeFromParent();
 					dialog.hide();
 					return;
 				}
-				
+
 				String subIntoEqStr = selected.getValue();
 				Element subIntoEqEl = new HTML(subIntoEqStr).getElement()
 						.getFirstChildElement();
@@ -457,13 +452,15 @@ public class AlgebraicTransformations {
 	}
 
 	public static void unitConversion_check(MathNode node) {
-		if(!"".equals(node.getUnitAttribute())){
+		if (!"".equals(node.getUnitAttribute())) {
 			AlgebraActivity.contextMenuArea.add(new UnitConversionButton(node));
 		}
 	}
+
 	public static void unitConversion(MathNode node) {
 		Moderator.switchToConversion(node);
 	}
+
 	public static void denominatorFlip_check(MathNode node) {
 		AlgebraActivity.contextMenuArea.add(new DenominatorFlipButton(node));
 	}
@@ -500,14 +497,14 @@ public class AlgebraicTransformations {
 
 }
 
-class VariableSpec extends FlowPanel {
+class VariableEvaluateSpec extends FlowPanel {
 	protected final DoubleBox valueInput = new DoubleBox();
 	protected UnitSelection unitSelect = null;;
 	protected MathNode mathNode = null;
 	protected Double value = null;
 	protected String unit;
 
-	VariableSpec(MathNode mathNode) {
+	VariableEvaluateSpec(MathNode mathNode) {
 		this.mathNode = mathNode;
 		unitSelect = new UnitSelection(mathNode.getUnitAttribute());
 		Label symbol = new Label(mathNode.getSymbol() + " =");
@@ -569,11 +566,12 @@ class DenominatorFlipButton extends Button {
 		});
 	}
 }
+
 class UnitConversionButton extends Button {
 	UnitConversionButton(final MathNode node) {
-		
+
 		setHTML("Convert Units");
-		
+
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
