@@ -21,6 +21,7 @@ public class Prompt extends DialogBox {
 	public Prompt() {
 		this(null);
 	}
+
 	public Prompt(Widget w) {
 		super(true, true);
 		FlowPanel mainPanel = new FlowPanel();
@@ -31,7 +32,7 @@ public class Prompt extends DialogBox {
 		//
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
-		
+
 		addDomHandler(new KeyDownHandler() {
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
@@ -51,7 +52,7 @@ public class Prompt extends DialogBox {
 	public void addOkHandler(ClickHandler handler) {
 		okButton.addClickHandler(handler);
 	}
-	
+
 	@Override
 	public void add(Widget w) {
 		flowPanel.add(w);
@@ -63,30 +64,32 @@ public class Prompt extends DialogBox {
 	}
 
 	public void appear() {
-		setPixelSize(Moderator.scienceGadgetArea.getOffsetWidth()*75/100, Moderator.scienceGadgetArea.getOffsetHeight()*75/100);
-//		setSize("75%","75%");
-//		show();
+		setPixelSize(Moderator.scienceGadgetArea.getOffsetWidth() * 75 / 100,
+				Moderator.scienceGadgetArea.getOffsetHeight() * 75 / 100);
+		// setSize("75%","75%");
+		// show();
 		center();
 	}
 
-public class FocusOnlyClickHandler implements ClickHandler {
-	@Override
-	public void onClick(ClickEvent event) {
-		event.preventDefault();
-		event.stopPropagation();
+	public class FocusOnlyClickHandler implements ClickHandler {
+		@Override
+		public void onClick(ClickEvent event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
 	}
-}
 
-public class FocusOnlyTouchHandler implements TouchStartHandler {
-	@Override
-	public void onTouchStart(TouchStartEvent event) {
-		event.preventDefault();
-		event.stopPropagation();
+	public class FocusOnlyTouchHandler implements TouchStartHandler {
+		@Override
+		public void onTouchStart(TouchStartEvent event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
 	}
-}
-class PromptComposite extends Composite{
-	PromptComposite(Widget w){
-		initWidget(w);
+
+	class PromptComposite extends Composite {
+		PromptComposite(Widget w) {
+			initWidget(w);
+		}
 	}
-}
 }
