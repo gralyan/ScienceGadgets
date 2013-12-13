@@ -1,7 +1,12 @@
 package com.sciencegadgets.client.algebra;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.Moderator;
@@ -9,82 +14,56 @@ import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
-public class AlgebraActivity extends AbsolutePanel {
+public class AlgebraActivity extends Composite {
 
-	public static SimplePanel eqPanelHolder = new SimplePanel();
+	interface AlgebraUiBinder extends UiBinder<AbsolutePanel, AlgebraActivity> {
+	}
+
+	private static AlgebraUiBinder algebraUiBinder = GWT
+			.create(AlgebraUiBinder.class);
+
+	@UiField
+	public static SimplePanel eqPanelHolder;
+	@UiField
+	public static FlowPanel upperEqArea;
+	@UiField
+	public static FlowPanel upperRightEqArea;
+	@UiField
+	public static FlowPanel lowerEqArea;
+	@UiField
+	public static FlowPanel contextMenuArea;
+	@UiField
+	public static FlowPanel selectedMenu;
+	@UiField
+	public static Button optionsButton;
 	public static EquationPanel eqPanel = null;
 	public static AlgOut algOut = null;
-	public static FlowPanel upperEqArea = null;
-	public static FlowPanel lowerEqArea = null;
-	public static FlowPanel contextMenuArea = null;
-	public static FlowPanel selectedMenu = null;
-	public static ChangeNodeMenu changeNodeMenu = null;
+	public static ChangeNodeMenu changeNodeMenu = new ChangeNodeMenu();
 	private static Button saveEquationButton = new Button("Save Equation",
 			new SaveButtonHandler());
-	public static Button optionsButton = null;
+
 	public static String focusLayerId = null;
 	public static boolean isInEasyMode = false;
 	public static boolean inEditMode = false;
 
-	public AlgebraActivity(){
-		eqPanelHolder.clear();
-		this.setSize("100%", "100%");
-		this.clear();
-		
+	public AlgebraActivity() {
+		initWidget(algebraUiBinder.createAndBindUi(this));
 
-		// Upper Area - 15%
-		upperEqArea = new FlowPanel();
-		upperEqArea.setSize("100%", "15%");
-		this.add(upperEqArea);
-		FlowPanel upperGap = new FlowPanel();
-		upperGap.setSize("100%", "10%");
-		this.add(upperGap);
-		
-		if(optionsButton == null){
-		optionsButton = new Button("Options", new OptionsHandler());
-		optionsButton.setSize("10%", "100%");
-		optionsButton.addStyleName("layoutRow");
-		}
-		upperEqArea.add(optionsButton);
-		
-		
+		optionsButton.addClickHandler(new OptionsHandler());
+
 		if (inEditMode) {
-			saveEquationButton.setSize("90%", "100%");
+			saveEquationButton.setSize("100%", "100%");
 			saveEquationButton.setStyleName("saveEquationButton");
-			saveEquationButton.addStyleName("layoutRow");
-			upperEqArea.add(saveEquationButton);
+			upperRightEqArea.add(saveEquationButton);
 		} else {
 			algOut = new AlgOut();
-			algOut.setSize("90%", "100%");
-			algOut.addStyleName("layoutRow");
-			upperEqArea.add(algOut);
+			algOut.setSize("100%", "100%");
+			upperRightEqArea.add(algOut);
 		}
-
-		// Equation Area - 70%
-		eqPanelHolder.setSize("100%", "60%");
-		this.add(eqPanelHolder);
-
-		// Lower Area - 15%
-		lowerEqArea = new FlowPanel();
-		lowerEqArea.setSize("100%", "15%");
-		this.add(lowerEqArea);
-		// Context Menu Area
-		contextMenuArea = new FlowPanel();
-		contextMenuArea.addStyleName("layoutRow");
-		contextMenuArea.setSize("30%", "100%");
-		lowerEqArea.add(contextMenuArea);
-		// SelectedMenuArea
-		selectedMenu = new FlowPanel();
-		selectedMenu.setSize("70%", "100%");
-		selectedMenu.addStyleName("layoutRow");
 
 		if (inEditMode) {
-			if (changeNodeMenu == null) {
-				changeNodeMenu = new ChangeNodeMenu();
-			}
 			selectedMenu.add(changeNodeMenu);
 		}
-		lowerEqArea.add(selectedMenu);
 	}
 
 	/**
@@ -100,17 +79,17 @@ public class AlgebraActivity extends AbsolutePanel {
 		}
 		contextMenuArea.clear();
 		eqPanelHolder.clear();
-	
+
 		Moderator.mathTree.validateTree();
 		Moderator.mathTree.reloadEqHTML();
 		eqPanel = new EquationPanel(Moderator.mathTree);
 		eqPanelHolder.add(eqPanel);
-	
+
 		if (inEditMode) {
 			changeNodeMenu.setVisible(false);
-		}else{
+		} else {
 			selectedMenu.clear();
 		}
-		
+
 	}
 }

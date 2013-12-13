@@ -32,7 +32,6 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecification;
-import com.sciencegadgets.client.algebra.edit.SymbolPalette;
 import com.sciencegadgets.client.conversion.ConversionAvtivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
@@ -44,7 +43,7 @@ public class Moderator implements EntryPoint {
 	// public static LinkedList<AbstractMathDropController> dropControllers;
 	private int SGAWidth;
 	private static int SGAHeight;
-	public static SymbolPalette symbolPopup;
+//	public static VariableSpecification symbolPopup;
 	public static RandomSpecification randomSpec = null;
 	public static AbsolutePanel scienceGadgetArea = RootPanel
 			.get("scienceGadgetArea");
@@ -191,32 +190,32 @@ public class Moderator implements EntryPoint {
 
 				AlgebraActivity.focusLayerId = null;
 
-				if (symbolPopup != null && symbolPopup.isShowing()) {
-					symbolPopup.hide();
-				}
-				if (randomSpec != null && randomSpec.isShowing()) {
-					randomSpec.hide();
-				}
+//				if (symbolPopup != null && symbolPopup.isShowing()) {
+//					symbolPopup.hide();
+//				}
+//				if (randomSpec != null && randomSpec.isShowing()) {
+//					randomSpec.hide();
+//				}
 				switchToBrowser();
 				break;
 			case algebra:
-				if (symbolPopup != null && symbolPopup.isShowing()) {
-					symbolPopup.hide();
-				}
-				if (randomSpec != null && randomSpec.isShowing()) {
-					randomSpec.hide();
-				}
+//				if (symbolPopup != null && symbolPopup.isShowing()) {
+//					symbolPopup.hide();
+//				}
+//				if (randomSpec != null && randomSpec.isShowing()) {
+//					randomSpec.hide();
+//				}
 				// DOM.getElementById("algebraWorkspace").getStyle().setDisplay(Display.BLOCK);
 				break;
 			case insert_symbol:
-				if (symbolPopup != null && !symbolPopup.isShowing()) {
-					symbolPopup.show();
-				}
+//				if (symbolPopup != null && !symbolPopup.isShowing()) {
+//					symbolPopup.show();
+//				}
 				break;
 			case random_spec:
-				if (randomSpec != null && !randomSpec.isShowing()) {
-					randomSpec.show();
-				}
+//				if (randomSpec != null && !randomSpec.isShowing()) {
+//					randomSpec.show();
+//				}
 				break;
 			case conversion:
 

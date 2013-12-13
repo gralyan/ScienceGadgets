@@ -7,22 +7,18 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
-import com.sciencegadgets.client.SelectionPanel;
+import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 
 public class EditMenu extends CommunistPanel {
@@ -36,8 +32,6 @@ public class EditMenu extends CommunistPanel {
 	private final String TERM_EXTEND = "Multiply by another term";
 	private final String NUMBER_INPUT = "Set Constant";
 	private final String NUMBER_RANDOM_SPEC = "Set Random Constant";
-	private final String VARIABLE_INPUT = "Set Variable Symbol";
-	private final String VARIABLE_INSERT = "Special Symbols";
 	private final String OPERATION_CHANGE = "Change Sign";
 
 	public EditMenu(EditWrapper editWrapper) {
@@ -71,31 +65,17 @@ public class EditMenu extends CommunistPanel {
 		case Exponential:
 			break;
 		case Variable:
-			//1st Component - symbol
-			CommunistPanel symbolComponent = new CommunistPanel(false);
-			components.add(symbolComponent);
-			
-			TextBox symbolInput = new TextBox();
-			symbolInput.addClickHandler(new FocusOnlyClickHandler());
-			symbolInput.addTouchStartHandler(new FocusOnlyTouchHandler());
-			symbolInput.setText(node.getSymbol());
-			symbolInput.setTitle(VARIABLE_INPUT);
-			focusable = symbolInput;
-			symbolComponent.add(symbolInput);
-
-			Button insertSymbolButton = new Button("Symbols",
-					new InsertSymbolHandler(symbolInput));
-			insertSymbolButton.setTitle(VARIABLE_INSERT);
-			symbolComponent.add(insertSymbolButton);
-
-			//2nd Component - QuantityKind
-			UnitSelection quantityBox = new UnitSelection(true, false);
-			components.add(quantityBox);
-
-			//3rd Component - Use button
-			Button varChangeButton = new Button("Use", new UseHandler(
-					symbolInput, quantityBox.quantityBox));
-			components.add(varChangeButton);
+			Button varSpec = new Button();
+			varSpec.setHTML("spec");
+			final EditMenu editMenu = this;
+			varSpec.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					Prompt varPrompt = new VariableSpecification(editMenu);
+					varPrompt.appear();
+				}
+			});
+			components.add(varSpec);
 			break;
 		case Number:
 			//1st Component - number
@@ -103,14 +83,14 @@ public class EditMenu extends CommunistPanel {
 			components.add(numberComponent);
 			
 			DoubleBox numberInput = new DoubleBox();
-			numberInput.addClickHandler(new FocusOnlyClickHandler());
-			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
+//			numberInput.addClickHandler(new FocusOnlyClickHandler());
+//			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
 			numberInput.setText(node.getSymbol());
 			numberInput.setTitle(NUMBER_INPUT);
 			focusable = numberInput;
 			numberComponent.add(numberInput);
 
-			Button randomNumberButton = new Button("random",
+			Button randomNumberButton = new Button("Random",
 					new RandomNumberHandler(numberInput));
 			randomNumberButton.setTitle(NUMBER_RANDOM_SPEC);
 			numberComponent.add(randomNumberButton);
@@ -120,9 +100,9 @@ public class EditMenu extends CommunistPanel {
 			components.add(unitComponent);
 
 			//3rd Component - Use Button
-			Button numChangeButton = new Button("Use", new UseHandler(
-					numberInput, unitComponent.unitBox));
-			components.add(numChangeButton);
+//			Button numChangeButton = new Button("Use", new UseHandler(
+//					numberInput, unitComponent.unitBox));
+//			components.add(numChangeButton);
 			break;
 		case Operation:
 			HashMap<TypeML.Operator, Boolean> opMap = new HashMap<TypeML.Operator, Boolean>();
@@ -189,102 +169,6 @@ public class EditMenu extends CommunistPanel {
 		return responseNotes;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private class UseHandler implements ClickHandler {
-
-		ValueBoxBase input;
-		SelectionPanel quantityOrUnitBox;
-
-		public UseHandler(ValueBoxBase input, SelectionPanel quantityOrUnitBox) {
-			this.input = input;
-			this.quantityOrUnitBox =quantityOrUnitBox;
-		}
-
-		@Override
-		public void onClick(ClickEvent event) {
-			String extraction = null;
-
-			if (input instanceof DoubleBox) {
-				extraction = extractNumber();
-			} else if (input instanceof TextBox) {
-				extraction = extractVariable();
-			}
-
-			if (extraction != null) {
-
-				if (RandomSpecification.RANDOM_SYMBOL.equals(extraction)) {
-					String rand = input.getTitle();
-					if(!rand.contains(RandomSpecification.DELIMITER)){
-						Window.alert("Please specify the randomness");
-						return;
-					}
-					node.getMLNode().setAttribute(MathAttribute.Randomness.getName(), rand);
-				} else {
-					node.getMLNode().removeAttribute(MathAttribute.Randomness.getName());
-				}
-				node.setSymbol(extraction);
-				
-				String quantityOrUnit = quantityOrUnitBox.getSelectedValue();
-				if(quantityOrUnit != null && !quantityOrUnit.equals("")){
-				node.getMLNode().setAttribute(MathAttribute.Unit.getName(), quantityOrUnit);
-				}
-				AlgebraActivity.reloadEquationPanel(null, null);
-			}
-		}
-
-		private String extractNumber() {
-			String inputString = null;
-			if (RandomSpecification.RANDOM_SYMBOL.equals(input.getText())) {
-				return RandomSpecification.RANDOM_SYMBOL;
-			} else {
-				Double inputValue = ((DoubleBox) input).getValue();
-
-				if (inputValue == null) {
-					input.getElement().getStyle().setBackgroundColor("red");
-					Window.alert("The input must be a number\nyou can also change this to a variable if necessary");
-				} else {
-					input.getElement().getStyle().clearBackgroundColor();
-					//no need for trailing 0's
-					inputString = String.valueOf(inputValue).replaceAll(
-							(String) "\\.0$", "");
-					;
-				}
-				return inputString;
-			}
-		}
-
-		private String extractVariable() {
-			String inputString = ((TextBox) input).getText();
-
-			if (inputString == null || inputString.equals("")) {
-				input.getElement().getStyle().setBackgroundColor("red");
-				Window.alert("Variable cannot be empty");
-			}else if(inputString.matches(".*\\d.*")){
-				input.getElement().getStyle().setBackgroundColor("red");
-				Window.alert("Variable cannot contain numbers");
-			}else{
-				input.getElement().getStyle().clearBackgroundColor();
-			}
-			return inputString;
-		}
-	}
-
-	private class FocusOnlyClickHandler implements ClickHandler {
-		@Override
-		public void onClick(ClickEvent event) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	}
-
-	private class FocusOnlyTouchHandler implements TouchStartHandler {
-		@Override
-		public void onTouchStart(TouchStartEvent event) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	}
-
 	private class SignChangeHandler implements ClickHandler {
 
 		TypeML.Operator operator;
@@ -302,40 +186,6 @@ public class EditMenu extends CommunistPanel {
 
 	}
 
-	private class InsertSymbolHandler implements ClickHandler {
-
-		TextBox symbolInput;
-
-		public InsertSymbolHandler(TextBox symbolInput) {
-			this.symbolInput = symbolInput;
-		}
-
-		@Override
-		public void onClick(ClickEvent event) {
-			event.preventDefault();
-			event.stopPropagation();
-
-			SymbolPalette symbolPopup;
-			if (Moderator.symbolPopup == null) {
-				symbolPopup = new SymbolPalette(node, symbolInput);
-				AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
-
-				symbolPopup.setPixelSize(mainPanel.getOffsetWidth(),
-						mainPanel.getOffsetHeight());
-				symbolPopup.setPopupPosition(mainPanel.getAbsoluteLeft(),
-						mainPanel.getAbsoluteTop());
-				symbolPopup.getElement().getStyle().setZIndex(10);
-
-				Moderator.symbolPopup = symbolPopup;
-			} else {
-				symbolPopup = Moderator.symbolPopup;
-				symbolPopup.setContext(node, symbolInput);
-			}
-
-			Moderator.setActivity(Activity.insert_symbol);
-			symbolPopup.show();
-		}
-	}
 
 	private class RandomNumberHandler implements ClickHandler {
 

@@ -22,6 +22,7 @@ public class OptionsHandler implements ClickHandler {
 	ToggleSlide editSolveOption;
 
 	public OptionsHandler() {
+		optionsPopup.clear();
 
 		AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
 
@@ -38,7 +39,7 @@ public class OptionsHandler implements ClickHandler {
 		
 		optionsPopup.hide();
 		optionsPopup.setAutoHideEnabled(true);
-	}
+	    }
 
 	@Override
 	public void onClick(ClickEvent event) {

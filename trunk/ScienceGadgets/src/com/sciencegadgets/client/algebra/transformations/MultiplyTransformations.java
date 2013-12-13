@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -333,23 +334,25 @@ public class MultiplyTransformations {
 
 		} else {// prompt
 
-			final DialogBox dialogBox = new DialogBox(true, true);
-			final FlowPanel prompt = new FlowPanel();
+			final Prompt prompt = new Prompt();
+
 			prompt.add(new HTML(leftValue.toString() + " "
 					+ operation.getSymbol() + " " + rightValue.toString()));
+
 			final TextBox input = new TextBox();
 			input.getElement().setAttribute("type", "number");
 			prompt.add(input);
+
 			final HTML incorrectResponse = new HTML("<b>Incorrect</b>");
-			Button okButton = new Button("ok", new ClickHandler() {
+
+			prompt.addOkHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					try {
 						BigDecimal inputValue = new BigDecimal(input.getValue());
 						if (inputValue.compareTo(totalValue) == same) {
 							// correct
-							dialogBox.hide();
-							dialogBox.removeFromParent();
+							prompt.disappear();
 							multiplyNumbers(left, right, totalValue, leftValue,
 									rightValue);
 						} else {
@@ -365,11 +368,7 @@ public class MultiplyTransformations {
 					}
 				}
 			});
-			prompt.add(okButton);
-			dialogBox.add(prompt);
-			dialogBox.setGlassEnabled(true);
-			dialogBox.setAnimationEnabled(true);
-			dialogBox.center();
+			prompt.appear();
 
 			input.setFocus(true);
 
@@ -421,8 +420,8 @@ public class MultiplyTransformations {
 		MathNode second = zero.getIndex() > other.getIndex() ? zero : other;
 		MathNode firstOp = first.getPrevSibling();
 		MathNode secondNext = second.getNextSibling();
-		if (firstOp != null && TypeML.Operation.equals(firstOp.getType())){
-				firstOp.remove();
+		if (firstOp != null && TypeML.Operation.equals(firstOp.getType())) {
+			firstOp.remove();
 		} else if (secondNext != null
 				&& TypeML.Operation.equals(secondNext.getType())) {
 			secondNext.remove();
