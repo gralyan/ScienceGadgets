@@ -1,66 +1,79 @@
 package com.sciencegadgets.shared;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 /**
- * <b>data-unit</b> = baseUnit*baseUnit... <br/>
- * <b>baseUnit</b> = quantityKind_symbol_exponent <br/>
- * <b>unitName</b> = quantityKind_symbol <br/>
+ * <b>data-unit</b> attribute <b>= </b>id^exp*id^exp... <br/>
+ * <br/>
+ * <b>basic</b> Unit<b>=</b> quantityKind_symbol^exp <br/>
+ * <b>basic</b> Quantity<b>=</b> quantityKind^exp <br/>
  * <br/>
  * examples: <br/>
  * <b>liters:</b> Volume_L_1 <br/>
- * <b>meters per seconds squared:</b> Length_m_1*Time_s_-2
+ * <b>meters per seconds squared:</b> Length_m^1*Time_s^-2
  */
 public class UnitUtil {
 
 	public static final String UNIT_CLASSNAME = "unit";
+	public static final String BASE_DELIMITER = "*";
+	public static final String BASE_DELIMITER_REGEX = "\\*";
+	public static final String EXP_DELIMITER = "^";
+	public static final String EXP_DELIMITER_REGEX = "\\^";
+	public static final String NAME_DELIMITER = "_";
 
-	public static Element attributeToHTML(String dataUnit) {
+	public static Element element_From_MathNode(MathNode mathNode) {
+		return element_From_attribute(mathNode.getUnitAttribute());
+	}
+
+	public static Element element_From_attribute(String dataUnit) {
 
 		Element numerator = DOM.createDiv();
 		Element denominator = DOM.createDiv();
 
-		String[] baseUnits = dataUnit.split("\\*");
+		String[] dataUnitArray = dataUnit.split(BASE_DELIMITER_REGEX);
 
-		for (String baseUnit : baseUnits) {
+		for (String basic : dataUnitArray) {
+			if ("".equals(basic)) {
+				continue;
+			}
 
-			String[] unitParts = baseUnit.split("_");
-			String symbol = unitParts[1];
-			String exponent = unitParts[2];
+			String[] baseAndExp = basic.split(EXP_DELIMITER_REGEX);
+			String name = baseAndExp[0];
+			String exponent = baseAndExp[1];
+
+			String[] nameParts = name.split(NAME_DELIMITER);
+
+			// If Unit: (baseParts ==Unit.getId()== QuantityKind_Symbol)
+			// Else QuantityKind: (baseParts == QuantityKind)
+			String symbol = nameParts.length == 2 ? nameParts[1] : name;
 
 			Element unitDiv = DOM.createDiv();
-			unitDiv.setInnerText(symbol);
+			unitDiv.addClassName(TypeML.Term.asChild());
 
-			if (exponent.equals("0")) {
-				JSNICalls
-						.error("There should never be a unit with exponent of 0: "
-								+ dataUnit);
-			} else if (exponent.equals("1")) {
-				numerator.appendChild(unitDiv);
-			} else if (exponent.equals("-1")) {
+			if (exponent.startsWith("-")) {// Negative
+				exponent = exponent.replace("-", "");
 				denominator.appendChild(unitDiv);
-			} else if (exponent.startsWith("-")) {// Negative
-				denominator.appendChild(unitDiv);
-
-				Element expDiv = DOM.createDiv();
-				expDiv.setInnerText(exponent);
-				denominator.appendChild(expDiv);
-
-				unitDiv.addClassName(TypeML.Exponential.asChild() + "-base");
-				expDiv.addClassName(TypeML.Exponential.asChild() + "-exponent");
-			} else {// positive number
+			} else {
 				numerator.appendChild(unitDiv);
-
-				Element expDiv = DOM.createDiv();
-				expDiv.setInnerText(exponent);
-				numerator.appendChild(expDiv);
-
-				unitDiv.addClassName(TypeML.Exponential.asChild() + "-base");
-				expDiv.addClassName(TypeML.Exponential.asChild() + "-exponent");
-
 			}
+			if ("1".equals(exponent)) {
+				exponent = TypeML.Operator.SPACE.getSign();
+			}
+
+			Element symbolDiv = DOM.createDiv();
+			symbolDiv.addClassName(TypeML.Exponential.asChild() + "-base");
+			symbolDiv.setInnerText(symbol);
+			unitDiv.appendChild(symbolDiv);
+
+			Element expDiv = DOM.createDiv();
+			expDiv.addClassName(TypeML.Exponential.asChild() + "-exponent");
+			expDiv.setInnerText(exponent);
+			unitDiv.appendChild(expDiv);
 		}
 
 		if (denominator.getChildCount() > 0) {
@@ -72,6 +85,12 @@ public class UnitUtil {
 			frac.appendChild(numerator);
 			frac.appendChild(denominator);
 			frac.addClassName(UNIT_CLASSNAME);
+			
+			if(numerator.getChildCount()==0) {
+				Element oneDiv = DOM.createDiv();
+				oneDiv.setInnerText("1");
+				numerator.appendChild(oneDiv);
+			}
 			return frac;
 		} else {
 			numerator.addClassName(TypeML.Term.asChild());

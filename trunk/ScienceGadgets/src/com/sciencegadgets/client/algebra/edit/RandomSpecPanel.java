@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
@@ -16,10 +17,9 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
-public class RandomSpecification extends PopupPanel {
+public class RandomSpecPanel extends FlowPanel {
 
-	MathNode mlNode;
-	RandomSpecification randSpec = this;
+	RandomSpecPanel randSpec = this;
 
 	public static final String ALWAYS = "A";
 	public static final String SOMETIMES = "S";
@@ -35,11 +35,9 @@ public class RandomSpecification extends PopupPanel {
 
 	private IntegerBox decPlace;
 	private Label response;
-	private DoubleBox numberInput;
+	Button okButton = new Button("Set Random");
 
-	RandomSpecification(MathNode mlNode, DoubleBox numberInput) {
-		this.mlNode = mlNode;
-		this.numberInput = numberInput;
+	RandomSpecPanel() {
 
 		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
 		this.setWidth("100%");
@@ -83,7 +81,6 @@ public class RandomSpecification extends PopupPanel {
 		decPlace = new IntegerBox();
 		mainPanel.add(decPlace);
 
-		Button okButton = new Button("OK", new OkClickHandler());
 		mainPanel.add(okButton);
 
 		response = new Label("");
@@ -93,16 +90,13 @@ public class RandomSpecification extends PopupPanel {
 		this.add(scrollPanel);
 
 	}
-
-	public void setContext(MathNode mlNode, DoubleBox numberInput) {
-		this.mlNode = mlNode;
-		this.numberInput=numberInput;
+	
+	public void addOkClickHandler(ClickHandler handler) {
+		okButton.addClickHandler(handler);
 	}
 
-	private class OkClickHandler implements ClickHandler {
+	public String getRandomness() {
 
-		@Override
-		public void onClick(ClickEvent event) {
 			String neg = null;
 			if (alwaysNeg.getValue()) {
 				neg = ALWAYS;
@@ -120,24 +114,24 @@ public class RandomSpecification extends PopupPanel {
 			//Only proceed if all the input was valid
 			if (neg == null || upperB == null || lowerB == null || decP == null) {
 				response.setText("All the fields must be filled");
-				return;
+				return null;
 			} else if (upperB < lowerB) {
 				response.setText("The upper bound must be greater than the lower bound");
-				return;
+				return null;
 			} else if (upperB < 0 || lowerB < 0) {
 				response.setText("The bounds shouldn't be negative");
-				return;
+				return null;
 			} else {
 				response.setText("");
-				randSpec.hide();
+//				randSpec.hide();
 //				mlNode.setSymbol(RANDOM_SYMBOL);
 //				mlNode.getMLNode().setAttribute("data-randomness", neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
-				numberInput.setText(RANDOM_SYMBOL);
-				numberInput.setTitle(neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
+//				numberInput.setText(RANDOM_SYMBOL);
+//				numberInput.setTitle(neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
 //				Moderator.reloadEquationPanel(null, null);
-				Moderator.setActivity(Activity.algebra);
+//				Moderator.setActivity(Activity.algebra);
+				return neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP;
 			}
-		}
 
 	}
 

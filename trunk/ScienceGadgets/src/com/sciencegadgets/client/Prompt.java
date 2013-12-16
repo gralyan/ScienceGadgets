@@ -1,5 +1,6 @@
 package com.sciencegadgets.client;
 
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -7,6 +8,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -26,12 +28,17 @@ public class Prompt extends DialogBox {
 		super(true, true);
 		FlowPanel mainPanel = new FlowPanel();
 		mainPanel.add(flowPanel);
-		mainPanel.add(new FlowPanel());
+		FlowPanel gap = new FlowPanel();
+		gap.setHeight("10px");
+		mainPanel.add(gap);
 		mainPanel.add(okButton);
 		super.add(mainPanel);
-		//
+		
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
+		
+		getElement().getStyle().setBackgroundColor("#ADD850");
+		okButton.addStyleName("smallestButton");
 
 		addDomHandler(new KeyDownHandler() {
 			@Override
@@ -64,9 +71,9 @@ public class Prompt extends DialogBox {
 	}
 
 	public void appear() {
-		setPixelSize(Moderator.scienceGadgetArea.getOffsetWidth() * 75 / 100,
-				Moderator.scienceGadgetArea.getOffsetHeight() * 75 / 100);
-		// setSize("75%","75%");
+		flowPanel.setPixelSize(Window.getClientWidth() * 80 / 100,
+				Window.getClientHeight() * 70 / 100);
+//		 setSize("75%","75%");
 		// show();
 		center();
 	}

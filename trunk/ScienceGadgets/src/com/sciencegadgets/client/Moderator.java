@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.edit.RandomSpecification;
+import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.conversion.ConversionAvtivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
@@ -44,7 +44,7 @@ public class Moderator implements EntryPoint {
 	private int SGAWidth;
 	private static int SGAHeight;
 //	public static VariableSpecification symbolPopup;
-	public static RandomSpecification randomSpec = null;
+	public static RandomSpecPanel randomSpec = null;
 	public static AbsolutePanel scienceGadgetArea = RootPanel
 			.get("scienceGadgetArea");
 	private EquationBrowser browserPanel = null;
@@ -151,7 +151,7 @@ public class Moderator implements EntryPoint {
 
 	private void fitWindow() {
 		SGAHeight = Window.getClientHeight();
-		SGAWidth = Window.getClientWidth() * 97 / 100;
+		SGAWidth = Window.getClientWidth() * 98 / 100;
 
 		// Take up the window
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");

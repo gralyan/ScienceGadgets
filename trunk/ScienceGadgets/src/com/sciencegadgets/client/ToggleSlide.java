@@ -4,32 +4,31 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
 public class ToggleSlide extends FlowPanel implements HasClickHandlers {
-	Label firstOption = new Label();
-	Label secondOption = new Label();
-	Label selectedOption = null;
+	HTML firstOption = new HTML();
+	HTML secondOption = new HTML();
+	HTML selectedOption = null;
 
 	public ToggleSlide(String first, String second, boolean firstIsSelected, ClickHandler clickHangler) {
 		this(first, second, firstIsSelected);
 		addClickHandler(clickHangler);
 	}
 	public ToggleSlide(String first, String second, boolean firstIsSelected) {
+		this();
+		setOptions(first, second, firstIsSelected);
+	}
+	
+	/**
+	 * Be sure to set the options with {@link #setOptions(String, String, boolean)}
+	 */
+	public ToggleSlide() {
 		
 		this.addStyleName("ToggleSlide");
-
-		firstOption.setText(first);
-		secondOption.setText(second);
-		
-		if(firstIsSelected){
-			selectedOption = firstOption;
-			firstOption.addStyleName("toggleOptionSelected");
-		}else{
-			selectedOption = secondOption;
-			secondOption.addStyleName("toggleOptionSelected");
-		}
 
 		firstOption.addStyleName("toggleOption");
 		secondOption.addStyleName("toggleOption");
@@ -53,6 +52,37 @@ public class ToggleSlide extends FlowPanel implements HasClickHandlers {
 				}
 			}
 		});
+	}
+	
+	public void setOptions(String first, String second, boolean firstIsSelected) {
+		firstOption.setText(first);
+		secondOption.setText(second);
+		setOptions(firstIsSelected);
+		
+	}
+	public void setOptionsHtml(String first, String second, boolean firstIsSelected) {
+		firstOption.setHTML(first);
+		secondOption.setHTML(second);
+		setOptions(firstIsSelected);
+	}
+	public void setOptions(SafeHtml first, SafeHtml second, boolean firstIsSelected) {
+		firstOption.setHTML(first);
+		secondOption.setHTML(second);
+		setOptions(firstIsSelected);
+	}
+	private void setOptions(boolean firstIsSelected) {
+
+		if(firstIsSelected){
+			selectedOption = firstOption;
+			firstOption.addStyleName("toggleOptionSelected");
+		}else{
+			selectedOption = secondOption;
+			secondOption.addStyleName("toggleOptionSelected");
+		}
+	}
+	
+	public boolean isFistSelected() {
+		return firstOption.equals(selectedOption);
 	}
 
 	@Override

@@ -27,6 +27,7 @@ public class EditMenu extends CommunistPanel {
 	MathNode node;
 	Focusable focusable = null;
 	Widget responseNotes = null;
+	final EditMenu editMenu = this;
 
 	private final String SUM_EXTEND = "Add another term";
 	private final String TERM_EXTEND = "Multiply by another term";
@@ -67,7 +68,6 @@ public class EditMenu extends CommunistPanel {
 		case Variable:
 			Button varSpec = new Button();
 			varSpec.setHTML("spec");
-			final EditMenu editMenu = this;
 			varSpec.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -78,32 +78,45 @@ public class EditMenu extends CommunistPanel {
 			components.add(varSpec);
 			break;
 		case Number:
-			//1st Component - number
-			CommunistPanel numberComponent = new CommunistPanel(false);
-			components.add(numberComponent);
-			
-			DoubleBox numberInput = new DoubleBox();
-//			numberInput.addClickHandler(new FocusOnlyClickHandler());
-//			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
-			numberInput.setText(node.getSymbol());
-			numberInput.setTitle(NUMBER_INPUT);
-			focusable = numberInput;
-			numberComponent.add(numberInput);
-
-			Button randomNumberButton = new Button("Random",
-					new RandomNumberHandler(numberInput));
-			randomNumberButton.setTitle(NUMBER_RANDOM_SPEC);
-			numberComponent.add(randomNumberButton);
-
-			//2nd Component - Unit
-			UnitSelection unitComponent = new UnitSelection();
-			components.add(unitComponent);
-
-			//3rd Component - Use Button
-//			Button numChangeButton = new Button("Use", new UseHandler(
-//					numberInput, unitComponent.unitBox));
-//			components.add(numChangeButton);
+			Button numSpec = new Button();
+			numSpec.setHTML("spec");
+			numSpec.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					Prompt numPrompt = new NumberSpecification(editMenu);
+					numPrompt.appear();
+				}
+			});
+			components.add(numSpec);
 			break;
+			
+			
+//			//1st Component - number
+//			CommunistPanel numberComponent = new CommunistPanel(false);
+//			components.add(numberComponent);
+//			
+//			DoubleBox numberInput = new DoubleBox();
+////			numberInput.addClickHandler(new FocusOnlyClickHandler());
+////			numberInput.addTouchStartHandler(new FocusOnlyTouchHandler());
+//			numberInput.setText(node.getSymbol());
+//			numberInput.setTitle(NUMBER_INPUT);
+//			focusable = numberInput;
+//			numberComponent.add(numberInput);
+//
+//			Button randomNumberButton = new Button("Random",
+//					new RandomNumberHandler(numberInput));
+//			randomNumberButton.setTitle(NUMBER_RANDOM_SPEC);
+//			numberComponent.add(randomNumberButton);
+//
+//			//2nd Component - Unit
+//			UnitSelection unitComponent = new UnitSelection();
+//			components.add(unitComponent);
+//
+//			//3rd Component - Use Button
+////			Button numChangeButton = new Button("Use", new UseHandler(
+////					numberInput, unitComponent.unitBox));
+////			components.add(numChangeButton);
+//			break;
 		case Operation:
 			HashMap<TypeML.Operator, Boolean> opMap = new HashMap<TypeML.Operator, Boolean>();
 			TypeML.Operator operation = node.getOperation();
@@ -187,38 +200,38 @@ public class EditMenu extends CommunistPanel {
 	}
 
 
-	private class RandomNumberHandler implements ClickHandler {
-
-		DoubleBox numberInput;
-
-		public RandomNumberHandler(DoubleBox numberInput) {
-			this.numberInput = numberInput;
-		}
-
-		@Override
-		public void onClick(ClickEvent event) {
-
-			RandomSpecification randomSpec;
-			if (Moderator.randomSpec == null) {
-				randomSpec = new RandomSpecification(node, numberInput);
-				AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
-
-				randomSpec.setPixelSize(mainPanel.getOffsetWidth(),
-						mainPanel.getOffsetHeight());
-				randomSpec.setPopupPosition(mainPanel.getAbsoluteLeft(),
-						mainPanel.getAbsoluteTop());
-				randomSpec.getElement().getStyle().setZIndex(10);
-
-				Moderator.randomSpec = randomSpec;
-			} else {
-				randomSpec = Moderator.randomSpec;
-				randomSpec.setContext(node, numberInput);
-			}
-
-			Moderator.setActivity(Activity.random_spec);
-			randomSpec.show();
-		}
-	}
+//	private class RandomNumberHandler implements ClickHandler {
+//
+//		DoubleBox numberInput;
+//
+//		public RandomNumberHandler(DoubleBox numberInput) {
+//			this.numberInput = numberInput;
+//		}
+//
+//		@Override
+//		public void onClick(ClickEvent event) {
+//
+//			RandomSpecPanel randomSpec;
+//			if (Moderator.randomSpec == null) {
+//				randomSpec = new RandomSpecPanel(node, numberInput);
+//				AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
+//
+//				randomSpec.setPixelSize(mainPanel.getOffsetWidth(),
+//						mainPanel.getOffsetHeight());
+//				randomSpec.setPopupPosition(mainPanel.getAbsoluteLeft(),
+//						mainPanel.getAbsoluteTop());
+//				randomSpec.getElement().getStyle().setZIndex(10);
+//
+//				Moderator.randomSpec = randomSpec;
+//			} else {
+//				randomSpec = Moderator.randomSpec;
+//				randomSpec.setContext(node, numberInput);
+//			}
+//
+//			Moderator.setActivity(Activity.random_spec);
+//			randomSpec.show();
+//		}
+//	}
 
 	private class ExtendSumTermHandler implements ClickHandler {
 

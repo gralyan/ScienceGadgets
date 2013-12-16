@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Random;
-import com.sciencegadgets.client.algebra.edit.RandomSpecification;
+import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 
 public class EquationRandomizer {
 
@@ -31,7 +31,7 @@ public class EquationRandomizer {
 			com.google.gwt.dom.client.Element var = variables.getItem(i);
 			String varRandomness = var.getAttribute("data-randomness");
 
-			if (varRandomness.contains(RandomSpecification.DELIMITER)) {
+			if (varRandomness.contains(RandomSpecPanel.DELIMITER)) {
 				if(randomize){
 				randomizeNumbers(var, varRandomness);
 				}else{
@@ -46,7 +46,7 @@ public class EquationRandomizer {
 
 		// negative_lowerBound_upperBound_decimal place
 		String[] specs = varRandomness
-				.split(RandomSpecification.DELIMITER);
+				.split(RandomSpecPanel.DELIMITER);
 
 		try {
 			String negativity = specs[0];
@@ -59,8 +59,8 @@ public class EquationRandomizer {
 					+ lowerBound;
 
 			// Make negative
-			if (RandomSpecification.ALWAYS.equals(negativity)
-					|| RandomSpecification.SOMETIMES.equals(negativity)
+			if (RandomSpecPanel.ALWAYS.equals(negativity)
+					|| RandomSpecPanel.SOMETIMES.equals(negativity)
 					&& Random.nextBoolean()) {
 				randomNumber *= -1;
 			}
@@ -81,7 +81,7 @@ public class EquationRandomizer {
 	}
 	
 	private static void unrandomizeNumbers(Element var) {
-		var.setInnerText(RandomSpecification.RANDOM_SYMBOL);
+		var.setInnerText(RandomSpecPanel.RANDOM_SYMBOL);
 	}
 
 }

@@ -39,9 +39,9 @@ class EditSpecHandler implements ClickHandler {
 
 		if (extraction != null) {
 
-			if (RandomSpecification.RANDOM_SYMBOL.equals(extraction)) {
+			if (RandomSpecPanel.RANDOM_SYMBOL.equals(extraction)) {
 				String rand = input.getTitle();
-				if(!rand.contains(RandomSpecification.DELIMITER)){
+				if(!rand.contains(RandomSpecPanel.DELIMITER)){
 					Window.alert("Please specify the randomness");
 					return;
 				}
@@ -61,8 +61,8 @@ class EditSpecHandler implements ClickHandler {
 
 	private String extractNumber() {
 		String inputString = null;
-		if (RandomSpecification.RANDOM_SYMBOL.equals(input.getText())) {
-			return RandomSpecification.RANDOM_SYMBOL;
+		if (RandomSpecPanel.RANDOM_SYMBOL.equals(input.getText())) {
+			return RandomSpecPanel.RANDOM_SYMBOL;
 		} else {
 			Double inputValue = ((DoubleBox) input).getValue();
 

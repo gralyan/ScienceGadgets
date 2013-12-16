@@ -37,11 +37,11 @@ public class EquationBrowser extends FlowPanel {
 
 		this.getElement().setId("equationBrowser");
 
-		 Grid modes = new Grid(1, 2);
-		 modes.setWidget(0, 0, modeAlg);
-		 modes.setWidget(0, 1, modeSci);
-		 modes.setStyleName("modes");
-		 this.add(modes);
+		Grid modes = new Grid(1, 2);
+		modes.setWidget(0, 0, modeAlg);
+		modes.setWidget(0, 1, modeSci);
+		modes.setStyleName("modes");
+		this.add(modes);
 
 		Grid modes2 = new Grid(1, 2);
 		modes2.setWidget(0, 0, modeSolve);
@@ -55,11 +55,13 @@ public class EquationBrowser extends FlowPanel {
 		modeSolve.addClickHandler(new ModeSelectHandler(Mode.solve));
 
 		modeAlg.setValue(true, true);
-		modeSolve.setValue(true, true);
-		
+		if (AlgebraActivity.inEditMode) {
+			modeEdit.setValue(true, true);
+		} else {
+			modeSolve.setValue(true, true);
+		}
 		this.add(algebraBrowser);
 	}
-
 
 	private enum Mode {
 		science, algebra, edit, solve;
@@ -97,36 +99,36 @@ public class EquationBrowser extends FlowPanel {
 		}
 	}
 
-//	/**
-//	 * Single selection handler for equation list
-//	 */
-//	class EqClickHandler implements ClickHandler {
-//		HTMLTable table;
-//
-//		public EqClickHandler(HTMLTable table) {
-//			this.table = table;
-//		}
-//
-//		public void onClick(ClickEvent event) {
-//			Cell clickedCell = table.getCellForEvent(event);
-//			if (clickedCell != null) {
-//				Element clickedEl = clickedCell.getElement();
-//
-//				if (!clickedEl.getId().equals("selectedEq")) {
-//					com.google.gwt.dom.client.Element prevSel = Document.get()
-//							.getElementById("selectedEq");
-//					if (prevSel != null) {
-//						prevSel.removeAttribute("id");
-//					}
-//					clickedEl.setId("selectedEq");
-//				}
-//
-//				// For Algebra practice mode
-//					// For Science Mode
-//				} else if (scienceBrowser.eqGrid.equals(table) && modeSci.getValue()) {
-//					fillSummary(mathml);
-//				}
-//			}
-//		}
-//	}
+	// /**
+	// * Single selection handler for equation list
+	// */
+	// class EqClickHandler implements ClickHandler {
+	// HTMLTable table;
+	//
+	// public EqClickHandler(HTMLTable table) {
+	// this.table = table;
+	// }
+	//
+	// public void onClick(ClickEvent event) {
+	// Cell clickedCell = table.getCellForEvent(event);
+	// if (clickedCell != null) {
+	// Element clickedEl = clickedCell.getElement();
+	//
+	// if (!clickedEl.getId().equals("selectedEq")) {
+	// com.google.gwt.dom.client.Element prevSel = Document.get()
+	// .getElementById("selectedEq");
+	// if (prevSel != null) {
+	// prevSel.removeAttribute("id");
+	// }
+	// clickedEl.setId("selectedEq");
+	// }
+	//
+	// // For Algebra practice mode
+	// // For Science Mode
+	// } else if (scienceBrowser.eqGrid.equals(table) && modeSci.getValue()) {
+	// fillSummary(mathml);
+	// }
+	// }
+	// }
+	// }
 }
