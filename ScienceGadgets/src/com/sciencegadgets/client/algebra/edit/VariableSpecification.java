@@ -1,128 +1,125 @@
 package com.sciencegadgets.client.algebra.edit;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.sciencegadgets.client.Moderator;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.sciencegadgets.client.Prompt;
+import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
+import com.sciencegadgets.client.SelectionPanel;
+import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.UnitSelection;
-import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.edit.QuantitySpecification.UnitSelectionHandler;
+import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.UnitUtil;
 
-public class VariableSpecification extends Prompt {
+public class VariableSpecification extends QuantitySpecification {
 
-	interface VariableSpecUiBinder extends UiBinder<FlowPanel, VariableSpecification> {
-	}
-	private static VariableSpecUiBinder variableSpecUiBinder = GWT
-			.create(VariableSpecUiBinder.class);
+	private HashSet<SymbolButton> latinButtons = new HashSet<SymbolButton>();
+	private HashSet<SymbolButton> greekButtons = new HashSet<SymbolButton>();
+
+	SymbolClickHandler symbolClick = new SymbolClickHandler();
 	
-	@UiField
-	Grid symbolPalette;
-	@UiField
-	TextBox symbolInput;
-	@UiField
-	FlowPanel unitSelectionHolder;
-	
-	private MathNode node;
-//	private Grid grid = new Grid(4, 12);
-//	private Button useButton = new Button("Select Symbol", new UseHandler());
-
-	private final String VARIABLE_INSERT = "Special Symbols";
-
-	private String[][] greekLetters = { { "α", "Α", "alpha" },
-			{ "β", "Β", "beta" }, { "γ", "Γ", "gamma" }, { "δ", "Δ", "delta" },
-			{ "ε", "Ε", "epsilon" }, { "ζ", "Ζ", "zeta" }, { "η", "Η", "eta" },
-			{ "θ", "Θ", "theta" }, { "ι", "Ι", "iota" }, { "κ", "Κ", "kappa" },
-			{ "λ", "Λ", "lambda" }, { "μ", "Μ", "mu" }, { "ν", "Ν", "nu" },
-			{ "ξ", "Ξ", "xi" }, { "ο", "Ο", "omicron" }, { "π", "Π", "pi" },
-			{ "ρ", "Ρ", "rho" }, { "σ", "Σ", "sigma" }, { "τ", "Τ", "tau" },
-			{ "υ", "Υ", "upsilon" }, { "φ", "Φ", "phi" }, { "χ", "Χ", "chi" },
-			{ "ψ", "Ψ", "psi" }, { "ω", "Ω", "omega" } };
-	public Cell selectedSymbol;
-
 	public VariableSpecification(EditMenu editMenu) {
-		super();
+		super(editMenu);
 
-		add(variableSpecUiBinder.createAndBindUi(this));
-		
-		this.node = editMenu.node;
-
-		//1st Component - symbol
-//		this.symbolInput = new TextBox();
-		symbolInput.addClickHandler(new FocusOnlyClickHandler());
-		symbolInput.addTouchStartHandler(new FocusOnlyTouchHandler());
-		symbolInput.setText(node.getSymbol());
-		editMenu.focusable = symbolInput;
-//		add(symbolInput);
-		
-		//Symbols
-		symbolPalette.resize(4, 12);
-		for (int j = 0; j < 12; j++) {
-			symbolPalette.setHTML(0, j, greekLetters[j][0]);
-			symbolPalette.setHTML(1, j, greekLetters[j + 12][0]);
-			symbolPalette.setHTML(2, j, greekLetters[j][1]);
-			symbolPalette.setHTML(3, j, greekLetters[j + 12][1]);
+		// Symbol Selection
+		symbolPalette.add(new Label("Latin"));
+		for (char i = 0; i < 26; i++) {
+			SymbolButton button = new SymbolButton((char) ('a' + i) + "",
+					symbolClick);
+			latinButtons.add(button);
+			symbolPalette.add(button);
 		}
-		symbolPalette.addClickHandler(new SymbolClickHandler());
+		symbolPalette.add(new Label("Greek"));
+		for (char i = 0; i < 25; i++) {
+			if (i != 17) {
+				SymbolButton button = new SymbolButton((char) ('α' + i) + "",
+						symbolClick);
+				greekButtons.add(button);
+				symbolPalette.add(button);
+			}
+		}
 		
-		//2nd Component - QuantityKind
-		UnitSelection quantityBox = new UnitSelection(true, false);
-		quantityBox.setSize("100%", "100%");
-		unitSelectionHolder.add(quantityBox);
-		
-		//3rd Component - Use button
-		addOkHandler(new EditSpecHandler(
-				editMenu, symbolInput, quantityBox.quantityBox));
-		
-//		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
-	}
-	
 
+		symbolCaseToggle.setOptions("a", "A", true);
+		symbolCaseToggle.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				boolean isLower = symbolCaseToggle.isFistSelected();
+				int latinDiff = isLower ? 'a' - 'A' : 'A' - 'a';
+				for (SymbolButton button : latinButtons) {
+
+					int changed = button.getText().toCharArray()[0] + latinDiff;
+					button.setText("" + (char) changed);
+				}
+				int greekDiff = isLower ? 'α' - 'Α' : 'Α' - 'α';
+				for (SymbolButton button : greekButtons) {
+
+					int changed = button.getText().toCharArray()[0] + greekDiff;
+					button.setText("" + (char) changed);
+				}
+			}
+		});
+		
+		// QuantityKind Selection
+		UnitSelection quantityBox = new UnitSelection(true, false);
+		unitSelectionHolder.add(quantityBox);
+		quantityBox.addStyleName("fillParent");
+		quantityBox.quantityBox.addSelectionHandler(new UnitSelectionHandler());
+
+	}
+
+	class SymbolButton extends Button {
+		public SymbolButton(String string, SymbolClickHandler handler) {
+			super(string, handler);
+			addStyleName("smallestButton");
+		}
+	}
 	private class SymbolClickHandler implements ClickHandler {
 		@Override
 		public void onClick(ClickEvent event) {
-			Cell selectedCell = symbolPalette.getCellForEvent(event);
-
-			if (selectedCell != null) {
-
-//				useButton.setEnabled(true);
-//				useButton.setHTML(selectedCell.getElement().getInnerText());
-				symbolInput.setText(selectedCell.getElement().getInnerText());
-				
-				if(selectedSymbol != null){
-					selectedSymbol.getElement().removeClassName("selectedVar");
-				}
-				selectedSymbol = selectedCell;
-				selectedSymbol.getElement().addClassName("selectedVar");
-				
-			}
+			String oldText = symbolDisplay.getText();
+			symbolDisplay.setText(oldText
+					+ ((Button) event.getSource()).getText());
 		}
 	}
 
-//	private class UseHandler implements ClickHandler {
-//
-//		@Override
-//		public void onClick(ClickEvent event) {
-//			palette.hide();
-//			String symbol = useButton.getElement().getInnerText();
-//			symbolInput.setText(symbol);
-////			node.setSymbol(symbol);
-////			Moderator.reloadEquationPanel(null, null);
-//			Moderator.setActivity(Activity.algebra);
-//		}
-//
-//	}
+	String extractSymbol() {
+		String inputString = symbolDisplay.getText();
+
+		if (inputString == null || inputString.equals("")) {
+			// symbolDisplay.getElement().getStyle().setBackgroundColor("red");
+			Window.alert("Variable cannot be empty");
+			return null;
+		} else if (inputString.matches(".*\\d.*")) {
+			// symbolDisplay.getElement().getStyle().setBackgroundColor("red");
+			Window.alert("Variable cannot contain numbers");
+			return null;
+		} else {
+			// symbolDisplay.getElement().getStyle().clearBackgroundColor();
+			return inputString;
+		}
+	}
+
+
+	@Override
+	void setSymbol(String symbol) {
+		node.setSymbol(symbol);
+	}
 }

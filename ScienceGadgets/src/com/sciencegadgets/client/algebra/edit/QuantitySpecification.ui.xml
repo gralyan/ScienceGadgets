@@ -1,0 +1,67 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:sg="urn:import:com.sciencegadgets.client">
+
+	<ui:style>
+		.spec {
+			margin: 1%;
+			height: 98%;
+			width: 47%;
+			display: inline-block;
+			vertical-align: top;
+			border: thin solid darkGreen;
+		}
+		
+		.display {
+			display: inline-block;
+			vertical-align: top;
+			width: 37%;
+			height: 100%;
+			margin-left: 1%;
+			background-color: darkGreen;
+			text-align: center;
+		}
+		
+		.toggle {
+			vertical-align: top;
+			display: inline-block;
+			width: 10%;
+			height: 100%;
+			margin-right: 1%;
+		}
+		
+		.symbolPalette {
+			overflow-y: scroll;
+		}
+	</ui:style>
+
+	<g:FlowPanel height="100%">
+
+		<!-- current value displays -->
+		<g:FlowPanel height="20%">
+
+			<g:Label ui:field="symbolDisplay" addStyleNames="{style.display}"
+				title="Variable Symbol"></g:Label>
+			<sg:ToggleSlide ui:field="symbolCaseToggle"
+				addStyleNames="{style.toggle}"></sg:ToggleSlide>
+
+			<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display}"
+				title="Variable Unit"></g:FlowPanel>
+			<sg:ToggleSlide ui:field="unitReciprocalToggle"
+				addStyleNames="{style.toggle}"></sg:ToggleSlide>
+		</g:FlowPanel>
+
+		<!-- input boxes -->
+		<g:FlowPanel height="80%">
+
+			<g:FlowPanel ui:field="symbolPalette"
+				addStyleNames="{style.spec} {style.symbolPalette}"></g:FlowPanel>
+
+			<g:FlowPanel ui:field="unitSelectionHolder"
+				addStyleNames="{style.spec}"></g:FlowPanel>
+
+		</g:FlowPanel>
+
+	</g:FlowPanel>
+
+</ui:UiBinder> 

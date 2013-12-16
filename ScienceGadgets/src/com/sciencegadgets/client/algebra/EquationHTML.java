@@ -137,7 +137,7 @@ public class EquationHTML extends HTML {
 					String unitName = mlNode.getAttribute(MathAttribute.Unit
 							.getName());
 					if (!"".equals(unitName)) {
-						unit = UnitUtil.attributeToHTML(unitName);
+						unit = UnitUtil.element_From_attribute(unitName);
 					}
 				case Variable:
 					if (text.startsWith(Operator.MINUS.getSign())) {
