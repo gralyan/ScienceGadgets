@@ -5,18 +5,11 @@ import java.util.HashMap;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.CommunistPanel;
-import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.Moderator.Activity;
 import com.sciencegadgets.client.Prompt;
-import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.TypeML;
@@ -31,8 +24,6 @@ public class EditMenu extends CommunistPanel {
 
 	private final String SUM_EXTEND = "Add another term";
 	private final String TERM_EXTEND = "Multiply by another term";
-	private final String NUMBER_INPUT = "Set Constant";
-	private final String NUMBER_RANDOM_SPEC = "Set Random Constant";
 	private final String OPERATION_CHANGE = "Change Sign";
 
 	public EditMenu(EditWrapper editWrapper) {

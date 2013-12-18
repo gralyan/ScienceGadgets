@@ -18,8 +18,9 @@
 			width: 37%;
 			height: 100%;
 			margin-left: 1%;
-			background-color: darkGreen;
 			text-align: center;
+			background-color: lime;
+			border: thin solid darkGreen;
 		}
 		
 		.toggle {

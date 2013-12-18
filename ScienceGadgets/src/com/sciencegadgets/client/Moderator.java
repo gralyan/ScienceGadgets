@@ -32,7 +32,7 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
-import com.sciencegadgets.client.conversion.ConversionAvtivity;
+import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
 public class Moderator implements EntryPoint {
@@ -50,7 +50,7 @@ public class Moderator implements EntryPoint {
 	private EquationBrowser browserPanel = null;
 	private static Activity currentActivity = null;
 	public static boolean isTouch = false;
-	private static ConversionAvtivity conversionActivity;
+	private static ConversionActivity conversionActivity;
 
 	@Override
 	public void onModuleLoad() {
@@ -113,7 +113,7 @@ public class Moderator implements EntryPoint {
 		scienceGadgetArea.clear();
 
 		if (conversionActivity == null) {
-			conversionActivity = new ConversionAvtivity();
+			conversionActivity = new ConversionActivity();
 			conversionActivity.getElement().setAttribute("id",
 					"conversionActivity");
 

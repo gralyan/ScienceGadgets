@@ -17,6 +17,7 @@ package com.sciencegadgets.client.algebra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import com.google.gwt.core.client.JavaScriptException;
@@ -31,6 +32,7 @@ import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformation
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.UnitUtil;
 
 public class MathTree {
 
@@ -39,8 +41,9 @@ public class MathTree {
 	private HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
+	private HashMap<Element, String> idUnitHTMLMap = new HashMap<Element, String>();
 	private Element mathML;
-	private EquationHTML eqHTMLAlgOut;
+	private EquationHTML eqHTML;
 	private boolean inEditMode;
 	private int idCounter = 0;
 
@@ -108,23 +111,29 @@ public class MathTree {
 	}
 
 	public EquationHTML reloadEqHTML() {
-		eqHTMLAlgOut = new EquationHTML(mathML);
+		eqHTML = new EquationHTML(mathML);
 
-		NodeList<Element> allElements = eqHTMLAlgOut.getElement()
+		NodeList<Element> allElements = eqHTML.getElement()
 				.getElementsByTagName("*");
 
 		idHTMLMap.clear();
 
 		for (int i = 0; i < allElements.getLength(); i++) {
 			Element el = (Element) allElements.getItem(i);
-			idHTMLMap.put(el.getAttribute("id"), el);
+			String elId = el.getAttribute("id");
+			if (elId.contains(UnitUtil.UNIT_NODE_DELIMITER)) {
+				String parentElId = elId.split(UnitUtil.UNIT_NODE_DELIMITER)[1];
+				idUnitHTMLMap.put(el, parentElId);
+			} else {
+				idHTMLMap.put(elId, el);
+			}
 			el.removeAttribute("id");
 		}
-		return eqHTMLAlgOut;
+		return eqHTML;
 	}
 
-	public EquationHTML getHTMLAlgOut() {
-		return eqHTMLAlgOut;
+	public EquationHTML getHTML() {
+		return eqHTML;
 	}
 
 	public LinkedList<Wrapper> getWrappers() {
@@ -430,8 +439,9 @@ public class MathTree {
 			return newNode;
 		}
 
-		public void append(MathNode newNode) {
+		public MathNode append(MathNode newNode) {
 			addBefore(-1, newNode);
+			return newNode;
 		}
 
 		public MathNode append(TypeML type, String symbol) {
@@ -658,7 +668,7 @@ public class MathTree {
 		}
 
 		public Element getHTMLClone() {
-			Element html = (Element) getHTMLAlgOut().cloneNode(true);
+			Element html = (Element) getHTML().cloneNode(true);
 
 			html.removeAttribute("class");
 			html.getStyle().setDisplay(Display.INLINE_BLOCK);
@@ -669,7 +679,12 @@ public class MathTree {
 			return getHTMLClone().getString();
 		}
 
-		public Element getHTMLAlgOut() {
+		/**
+		 * This should
+		 * only be done after {@link MathTree#reloadEqHTML()}
+		 * @return The current HTML element associated with this node
+		 */
+		public Element getHTML() {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
 				JSNICalls.warn("No HTML for node: " + toString());
@@ -677,8 +692,18 @@ public class MathTree {
 			return (Element) el;
 		}
 
+		public Element[] getHTMLofUnits() {
+			LinkedList<Element> units = new LinkedList<Element>();
+			for (Entry<Element, String> entry : idUnitHTMLMap.entrySet()) {
+				if (getId().equals(entry.getValue())) {
+					units.add(entry.getKey());
+				}
+			}
+			return units.toArray(new Element[units.size()]);
+		}
+
 		public void highlight() {
-			getHTMLAlgOut().getStyle().setColor("red");
+			getHTML().getStyle().setColor("red");
 		}
 
 		public boolean isLike(MathNode another) {
@@ -838,7 +863,6 @@ public class MathTree {
 	}
 
 	private void addRecursively(Element mathMLNode) {
-
 		String id = createId();
 
 		mathMLNode.setAttribute("id", id);
@@ -846,7 +870,7 @@ public class MathTree {
 		idMLMap.put(id, mathMLNode);
 		idMap.put(id, new MathNode(mathMLNode));
 
-		NodeList<Node> mathMLChildren = (mathMLNode).getChildNodes();
+		NodeList<Node> mathMLChildren = mathMLNode.getChildNodes();
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Element currentNode = (Element) mathMLChildren.getItem(i);
 

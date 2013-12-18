@@ -5,35 +5,36 @@ import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.shared.UnitUtil;
 
 class ConversionWrapper extends Wrapper {
 
-	ConversionAvtivity conversionAvtivity = null;
-	private boolean cancelled;
+	ConversionActivity conversionAvtivity = null;
+	private MathNode jointNode;
 
-	ConversionWrapper(MathNode node, AbsolutePanel panel, Element element) {
+	ConversionWrapper(MathNode node,MathNode jointNode, AbsolutePanel panel, Element element, ConversionActivity conversionAvtivity) {
 		super(node, panel, element);
-		conversionAvtivity = ((ConversionAvtivity) parentPanel);
+		this.conversionAvtivity = conversionAvtivity;
+		this.jointNode = jointNode;
 	}
-
-	public void cancel() {
-		getElement().getStyle()
-		.setTextDecoration(TextDecoration.LINE_THROUGH);
-		cancelled = true;
+	
+	public MathNode getJointNode() {
+		return jointNode;
 	}
 
 	@Override
 	public void select() {
-		if (this.equals(ConversionAvtivity.selectedWrapper) || cancelled) {
+		if (this.equals(ConversionActivity.selectedWrapper)) {
 			return;
 		}
 
-		conversionAvtivity.fillUnitSelection(node.getUnitAttribute());
+		String unitName = UnitUtil.getUnitNames(node)[0];
+		conversionAvtivity.fillUnitSelection(unitName);
 
-		if (ConversionAvtivity.selectedWrapper != null) {
-			ConversionAvtivity.selectedWrapper.unselect();
+		if (ConversionActivity.selectedWrapper != null) {
+			ConversionActivity.selectedWrapper.unselect();
 		}
-		ConversionAvtivity.selectedWrapper = this;
+		ConversionActivity.selectedWrapper = this;
 		super.select();
 	}
 
@@ -41,7 +42,7 @@ class ConversionWrapper extends Wrapper {
 	public void unselect() {
 		super.unselect();
 		conversionAvtivity.unitSelection.unitBox.clear();
-		ConversionAvtivity.selectedWrapper = null;
+		ConversionActivity.selectedWrapper = null;
 	}
 
 }

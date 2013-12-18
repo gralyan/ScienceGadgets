@@ -8,7 +8,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.UnitSelection;
-import com.sciencegadgets.client.algebra.edit.QuantitySpecification.UnitSelectionHandler;
 import com.sciencegadgets.shared.MathAttribute;
 
 public class NumberSpecification extends QuantitySpecification {
@@ -65,7 +64,7 @@ public class NumberSpecification extends QuantitySpecification {
 		});
 
 		// Unit Selection
-		UnitSelection unitBox = new UnitSelection(false, false);
+		UnitSelection unitBox = new UnitSelection(true);
 		unitSelectionHolder.add(unitBox);
 		unitBox.addStyleName("fillParent");
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());

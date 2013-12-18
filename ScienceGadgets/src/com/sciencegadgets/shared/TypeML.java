@@ -28,6 +28,9 @@ public enum TypeML {
 	public String asChild() {
 		return (IN_PREFIX + toString().toLowerCase());
 	}
+	public String asChild(TypeArgument arg) {
+		return (IN_PREFIX + toString().toLowerCase()+arg.get());
+	}
 
 	public String getTag() {
 		return tag;
@@ -67,6 +70,20 @@ public enum TypeML {
 		return type;
 	}
 
+	public static enum TypeArgument {
+		NUMERATOR("-numerator"), DENOMINATOR("-denominator"), BASE("-base"), EXPONENT(
+				"-exponent");
+		
+		String convention;
+
+		TypeArgument(String convention){
+			this.convention = convention;
+		}
+		
+		String get() {
+			return convention;
+		}
+	}
 	public static enum Operator {
 		Equals("\u003D", "&#x3d;"),DOT("\u00B7", "&middot;"), SPACE("\u00A0", "&nbsp;"), CROSS("\u00D7",
 //				"&times;"), PLUS("+", "&#43;"), MINUS("\u002D", "&#45;");

@@ -16,6 +16,10 @@ public class CommunistPanel extends FlowPanel {
 	public CommunistPanel(boolean isHorizontal) {
 		this.isHorizontal = isHorizontal;
 	}
+	
+	public void setHorizontal(boolean isHorizontal) {
+		
+	}
 
 	public void add(Widget[] widgets) {
 		for (Widget widget : widgets) {

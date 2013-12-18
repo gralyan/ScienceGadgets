@@ -1,32 +1,13 @@
 package com.sciencegadgets.client.algebra.edit;
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DoubleBox;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueBoxBase;
-import com.sciencegadgets.client.Prompt;
-import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.client.SelectionPanel;
-import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.UnitSelection;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.edit.QuantitySpecification.UnitSelectionHandler;
-import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.UnitUtil;
 
 public class VariableSpecification extends QuantitySpecification {
 
@@ -78,7 +59,7 @@ public class VariableSpecification extends QuantitySpecification {
 		});
 		
 		// QuantityKind Selection
-		UnitSelection quantityBox = new UnitSelection(true, false);
+		UnitSelection quantityBox = new UnitSelection(true, false, false);
 		unitSelectionHolder.add(quantityBox);
 		quantityBox.addStyleName("fillParent");
 		quantityBox.quantityBox.addSelectionHandler(new UnitSelectionHandler());
