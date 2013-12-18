@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.workPanel {
+			height: 100%;
+			width: 33%;
+			display: inline-block;
+			vertical-align: top;
+		}
+		
+		.dimensionalAnalysisArea {
+			background-color: white;
+		}
+	</ui:style>
+
+	<g:FlowPanel height="100%">
+
+		<g:FlowPanel ui:field="dimensionalAnalysisArea" height="50%"
+			styleName="{style.dimensionalAnalysisArea}"></g:FlowPanel>
+
+		<g:FlowPanel ui:field="workArea" height="50%">
+
+			<g:FlowPanel ui:field="unitSelectionArea" addStyleNames="{style.workPanel}"></g:FlowPanel>
+
+			<g:AbsolutePanel ui:field="wrapperArea"
+				addStyleNames="{style.workPanel}"></g:AbsolutePanel>
+
+			<g:Button ui:field="okButton" text="Convert" addStyleNames="{style.workPanel}"></g:Button>
+		</g:FlowPanel>
+
+
+	</g:FlowPanel>
+
+</ui:UiBinder> 

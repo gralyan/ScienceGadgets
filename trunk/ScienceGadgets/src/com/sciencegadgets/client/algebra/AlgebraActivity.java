@@ -44,7 +44,7 @@ public class AlgebraActivity extends Composite {
 
 	public static String focusLayerId = null;
 	public static boolean isInEasyMode = false;
-	public static boolean inEditMode = true;
+	public static boolean inEditMode = false;
 
 	public AlgebraActivity() {
 		initWidget(algebraUiBinder.createAndBindUi(this));
@@ -75,7 +75,7 @@ public class AlgebraActivity extends Composite {
 	public static void reloadEquationPanel(String changeComment, Rule rule) {
 		if (changeComment != null) {
 			algOut.updateAlgOut(changeComment, rule,
-					Moderator.mathTree.getHTMLAlgOut());
+					Moderator.mathTree.getHTML());
 		}
 		contextMenuArea.clear();
 		eqPanelHolder.clear();

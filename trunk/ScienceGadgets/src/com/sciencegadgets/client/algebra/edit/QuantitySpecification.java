@@ -1,6 +1,5 @@
 package com.sciencegadgets.client.algebra.edit;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import com.google.gwt.core.client.GWT;
@@ -9,19 +8,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.ToggleSlide;
-import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -51,15 +42,12 @@ public abstract class QuantitySpecification extends Prompt {
 	FlowPanel unitSelectionHolder;
 
 	protected MathNode node;
-	private String prevSymbol = "";
-	private Element prevUnit = null;
-	private Element unitHTML;
 	private boolean isReciprocal = false;
-	private String dataUnit = "";
 
 	// Stores the unit name and associated exponent
-	LinkedHashMap<String, Integer> prevUnitMap = new LinkedHashMap<String, Integer>();
 	LinkedHashMap<String, Integer> unitMap = new LinkedHashMap<String, Integer>();
+	private String dataUnit = "";
+	private Element unitHTML;
 
 	public QuantitySpecification(EditMenu editMenu) {
 		super();
@@ -71,36 +59,23 @@ public abstract class QuantitySpecification extends Prompt {
 		symbolDisplay.setText(node.getSymbol());
 
 		// Unit Display
-		unitHTML = UnitUtil.element_From_MathNode(node);
-		unitHTML.removeClassName(UnitUtil.UNIT_CLASSNAME);
+		unitHTML = UnitUtil.element_From_MathNode(node, null, false);
 		unitHTML.addClassName("fillParent");
 		unitDisplay.getElement().appendChild(unitHTML);
 
 		symbolDisplay.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				// Switch symbol with saved previous symbol
-				String intermediateSymbol = symbolDisplay.getText();
-				symbolDisplay.setText(prevSymbol);
-				prevSymbol = intermediateSymbol;
+				symbolDisplay.setText("");
 			}
 		});
-		unitDisplay.addHandler(new ClickHandler() {
+		unitDisplay.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				// Switch unit with saved previous unit
-				Element intermediateUnit = prevUnit;
-				prevUnit = unitHTML;
+				dataUnit = "";
 				unitHTML.removeFromParent();
-				if (intermediateUnit != null) {
-					unitHTML = intermediateUnit;
-					unitDisplay.getElement().appendChild(unitHTML);
-				}
-
-				// Switch unitMap with saved previous unitMap
-				LinkedHashMap<String, Integer> intermediateUnitMap = unitMap;
-				unitMap = prevUnitMap;
-				prevUnitMap = intermediateUnitMap;
+				unitHTML=null;
+				unitMap.clear();
 			}
 		}, ClickEvent.getType());
 
@@ -171,11 +146,11 @@ public abstract class QuantitySpecification extends Prompt {
 			}
 			setSymbol(symbol);
 
-			if (dataUnit != null) {
+			if (dataUnit == null || "".equals(dataUnit)) {
+				node.getMLNode().removeAttribute(MathAttribute.Unit.getName());
+			}else {
 				node.getMLNode().setAttribute(MathAttribute.Unit.getName(),
 						dataUnit);
-			}else {
-				node.getMLNode().removeAttribute(MathAttribute.Unit.getName());
 			}
 			disappear();
 			AlgebraActivity.reloadEquationPanel(null, null);

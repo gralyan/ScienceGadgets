@@ -3,7 +3,6 @@ package com.sciencegadgets.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.google.appengine.api.datastore.Entity;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

@@ -27,12 +27,12 @@ public class UnitSelection extends CommunistPanel {
 	 * Regular vertical unit selection with mandatory QuantityKind selection to
 	 * narrow units
 	 */
-	public UnitSelection() {
-		this(false, false);
+	public UnitSelection( boolean isHorizontal) {
+		this(false, false, isHorizontal);
 	}
 
-	public UnitSelection(boolean quantityOnly, boolean unitOnly) {
-		super(false);
+	public UnitSelection(boolean quantityOnly, boolean unitOnly, boolean isHorizontal) {
+		super(isHorizontal);
 		this.quantityOnly = quantityOnly;
 		this.unitOnly = unitOnly;
 		
@@ -40,6 +40,9 @@ public class UnitSelection extends CommunistPanel {
 			JSNICalls.error("Can't be quantityOnly and unitOnly");
 		}
 
+		unitBox.addStyleName("layoutRow");
+		quantityBox.addStyleName("layoutRow");
+		
 		if (quantityOnly) {
 			this.add(quantityBox);
 

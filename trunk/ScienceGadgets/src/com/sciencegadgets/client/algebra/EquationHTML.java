@@ -10,6 +10,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.TypeArgument;
 import com.sciencegadgets.shared.UnitUtil;
 import com.sciencegadgets.shared.TypeML.Operator;
 
@@ -72,10 +73,11 @@ public class EquationHTML extends HTML {
 			boolean isDenominator = mlNode.equals(mlParent
 					.getFirstChildElement().getNextSiblingElement());
 			if (isNumerator) {
-				nodeHTML.addClassName(TypeML.Fraction.asChild() + "-numerator");
+				nodeHTML.addClassName(TypeML.Fraction
+						.asChild(TypeArgument.NUMERATOR));
 			} else if (isDenominator) {
-				nodeHTML.addClassName(TypeML.Fraction.asChild()
-						+ "-denominator");
+				nodeHTML.addClassName(TypeML.Fraction
+						.asChild(TypeArgument.DENOMINATOR));
 			}
 			break;
 		case Exponential:
@@ -83,10 +85,11 @@ public class EquationHTML extends HTML {
 			boolean isExponential = mlNode.equals(mlParent
 					.getFirstChildElement().getNextSiblingElement());
 			if (isBase) {
-				nodeHTML.addClassName(TypeML.Exponential.asChild() + "-base");
+				nodeHTML.addClassName(TypeML.Exponential
+						.asChild(TypeArgument.BASE));
 			} else if (isExponential) {
-				nodeHTML.addClassName(TypeML.Exponential.asChild()
-						+ "-exponent");
+				nodeHTML.addClassName(TypeML.Exponential
+						.asChild(TypeArgument.EXPONENT));
 				if ("mfrac".equalsIgnoreCase(mlNode.getTagName())
 						&& "1".equals(mlNode.getFirstChildElement()
 								.getInnerText())) {
@@ -105,11 +108,16 @@ public class EquationHTML extends HTML {
 			break;
 		}
 
-		// Add parenthesis to some sums
-		if ((TypeML.Sum.equals(type) && TypeML.Term.equals(parentType))
-				|| (TypeML.Exponential.equals(parentType)
-						&& !TypeML.Number.equals(type) && !TypeML.Variable
-							.equals(type))) {
+		// (fence) sums in terms
+		if ((TypeML.Sum.equals(type) && TypeML.Term.equals(parentType))) {
+			fenced.add(nodeHTML);
+		}
+		// (fence) terms, sums, exponentials, fractions or numbers with units
+		// in bases or exponents
+		if ((TypeML.Exponential.equals(parentType) && //
+				!TypeML.Variable.equals(type))//
+				&& !(TypeML.Number.equals(type) && //
+				"".equals(mlNode.getAttribute(MathAttribute.Unit.getName())))) {
 			fenced.add(nodeHTML);
 		}
 
@@ -137,7 +145,7 @@ public class EquationHTML extends HTML {
 					String unitName = mlNode.getAttribute(MathAttribute.Unit
 							.getName());
 					if (!"".equals(unitName)) {
-						unit = UnitUtil.element_From_attribute(unitName);
+						unit = UnitUtil.element_From_attribute(unitName, id);
 					}
 				case Variable:
 					if (text.startsWith(Operator.MINUS.getSign())) {
@@ -166,7 +174,7 @@ public class EquationHTML extends HTML {
 	/** Surround marked sums in parentheses */
 	private void addParenthesis() {
 
-		for (Element sum : fenced) {
+		for (Element toFence : fenced) {
 
 			Element parOpen = DOM.createDiv();
 			parOpen.addClassName(Aesthetic);
@@ -175,8 +183,17 @@ public class EquationHTML extends HTML {
 			parOpen.setInnerText("(");
 			parClose.setInnerText(")");
 
-			sum.insertFirst(parOpen);
-			sum.appendChild(parClose);
+			String fenceClass = toFence.getClassName();
+			if (fenceClass != null) {
+				if (fenceClass.contains(TypeML.Fraction.name())) {
+					Element toFenceParent = toFence.getParentElement();
+					toFenceParent.insertBefore(parOpen, toFence);
+					toFenceParent.insertAfter(parClose, toFence);
+				} else {
+					toFence.insertFirst(parOpen);
+					toFence.appendChild(parClose);
+				}
+			}
 		}
 	}
 
@@ -238,8 +255,6 @@ public class EquationHTML extends HTML {
 
 			addChildrenIfInline(curEl, childrenInline, parentsInline);
 
-			// NodeList<Node> children = curEl.getChildNodes();
-
 			int tallestNumerator = 0;
 			int tallestDenominator = 0;
 			int liftCenter = 999999999;// shortest child
@@ -293,20 +308,19 @@ public class EquationHTML extends HTML {
 					} else if (fracContainerSibs.contains(child)) {
 
 						if (child.getClassName().contains(Aesthetic)) {
+							System.out.println(child.getString());
 							// Don't raise or pad, stretch aesthetics
 							int childHeight = child.getOffsetHeight();
 							double ratio = child.getParentElement()
 									.getOffsetHeight() / childHeight;
-							child.getStyle().setProperty("transform",
-									"scaleY(" + ratio + ")");
-							child.getStyle().setProperty("WebkitTransform",
-									"scaleY(" + ratio + ")");
-							child.getStyle().setProperty("MozTransform",
-									"scaleY(" + ratio + ")");
-							child.getStyle().setProperty("MsTransform",
-									"scaleY(" + ratio + ")");
-							child.getStyle().setProperty("OTransform",
-									"scaleY(" + ratio + ")");
+
+							String[] transformCSStypes = { "transform",
+									"WebkitTransform", "MozTransform",
+									"MsTransform", "OTransform" };
+							for (String t : transformCSStypes) {
+								child.getStyle().setProperty(t,
+										"scaleY(" + ratio + ")");
+							}
 
 							// Lift aesthetics
 							if (!fracContainers.contains(child)) {
