@@ -59,45 +59,6 @@ public class JSNICalls {
 			return element.xml;
 		}
 	}-*/;
-
-	public static native String jowl() /*-{
-			try {
-				console.log('init jowl...');
-			} catch (e) {
-				console = {
-					log : function() {
-					}
-				}
-			}
-@com.sciencegadgets.client.JSNICalls::onL(Ljava/lang/String;)("1");
-			jOWL.load("Data/qudt-1.0/unit.owl", onLoad, {
-				reason : true,
-				locale : 'en'
-			});
-			console.log('2222');
-			jOWL.load("Data/qudt-1.0/quantity.owl", @com.sciencegadgets.client.JSNICalls::onL(Ljava/lang/String;)("2"), {
-				reason : true,
-				locale : 'en'
-			});
-			console.log('loaded');
-
-	}-*/;
 	
-	public static void onL(String s){
-		log("onL "+s);
-	}
-
-	public static native String onLoad() /*-{
-			console.log('onLoad');
-			new jOWL.SPARQL_DL("Type(?x, wine)").execute({
-				onComplete : function(results) {
-					arra = results.jOWLArray("?x");
-			console.log(arra);
-					
-					return (arra);
-				}
-			});
-
-	}-*/;
 
 }

@@ -21,10 +21,15 @@ public class EquationHTML extends HTML {
 	public boolean autoFillParent = false;
 	private LinkedList<Element> fenced = new LinkedList<Element>();
 	public final String Aesthetic = "Aesthetic";
+	private boolean hasSmallUnits = true;
 
 	public EquationHTML(Element mlTree) {
+		this(mlTree, true);
+	}
+	public EquationHTML(Element mlTree, boolean hasSmallUnits) {
 		this.mlTree = mlTree;
 		this.setStyleName("Equation");
+		this.hasSmallUnits = hasSmallUnits;
 
 		NodeList<Node> children = mlTree.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -145,7 +150,7 @@ public class EquationHTML extends HTML {
 					String unitName = mlNode.getAttribute(MathAttribute.Unit
 							.getName());
 					if (!"".equals(unitName)) {
-						unit = UnitUtil.element_From_attribute(unitName, id);
+						unit = UnitUtil.element_From_attribute(unitName, id, hasSmallUnits);
 					}
 				case Variable:
 					if (text.startsWith(Operator.MINUS.getSign())) {
@@ -308,12 +313,12 @@ public class EquationHTML extends HTML {
 					} else if (fracContainerSibs.contains(child)) {
 
 						if (child.getClassName().contains(Aesthetic)) {
-							System.out.println(child.getString());
 							// Don't raise or pad, stretch aesthetics
 							int childHeight = child.getOffsetHeight();
 							double ratio = child.getParentElement()
 									.getOffsetHeight() / childHeight;
 
+							//Stretch Aesthetics
 							String[] transformCSStypes = { "transform",
 									"WebkitTransform", "MozTransform",
 									"MsTransform", "OTransform" };
@@ -384,13 +389,14 @@ public class EquationHTML extends HTML {
 	private void addChildrenIfInline(Element curEl,
 			LinkedList<Element> childrenInline,
 			LinkedList<Element> parentsInline) {
+		
 		NodeList<Node> children = curEl.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element) children.getItem(i);
 
 			String childClass = child.getClassName();
 			if (childClass.contains(TypeML.Term.toString())
-					|| childClass.contains(TypeML.Sum.toString())) {
+					|| childClass.contains(TypeML.Sum.toString())|| childClass.contains(TypeML.Exponential.toString())) {
 				addChildrenIfInline(child, childrenInline, parentsInline);
 				parentsInline.add(child);
 				childrenInline.add(child);
@@ -403,6 +409,7 @@ public class EquationHTML extends HTML {
 	private void analizeFractionRelationships(Element fraction, Element curEl,
 			LinkedList<Element> fracContainers,
 			LinkedList<Element> fracContainerSibs) {
+
 		Element fracContain = fraction;
 		while (!curEl.equals(fracContain)) {
 			fracContainers.add(fracContain);

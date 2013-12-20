@@ -57,7 +57,7 @@ public class ScienceBrowser extends FlowPanel {
 					// XMLParser.parse(mathmlStr).getDocumentElement();
 					Element mathml = (Element) (new HTML(mathmlStr)
 							.getElement().getFirstChildElement());
-					Moderator.makeAlgebraWorkspace(mathml);
+					Moderator.switchToAlgebra(mathml);
 				}
 			}
 		});
@@ -244,7 +244,7 @@ public class ScienceBrowser extends FlowPanel {
 					}
 				}
 			}
-			Moderator.makeAlgebraWorkspace(labelSumEq.getElement()
+			Moderator.switchToAlgebra(labelSumEq.getElement()
 					.getFirstChildElement());
 		}
 

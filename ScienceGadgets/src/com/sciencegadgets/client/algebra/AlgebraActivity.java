@@ -23,28 +23,30 @@ public class AlgebraActivity extends Composite {
 			.create(AlgebraUiBinder.class);
 
 	@UiField
-	public static SimplePanel eqPanelHolder;
-	@UiField
-	public static FlowPanel upperEqArea;
-	@UiField
-	public static FlowPanel upperRightEqArea;
-	@UiField
-	public static FlowPanel lowerEqArea;
-	@UiField
-	public static FlowPanel contextMenuArea;
-	@UiField
-	public static FlowPanel selectedMenu;
+	static FlowPanel upperEqArea;
 	@UiField
 	public static Button optionsButton;
+	@UiField
+	public static FlowPanel upperRightEqArea;
+
+	@UiField
+	public static SimplePanel eqPanelHolder;
+
+	@UiField
+	public static FlowPanel lowerEqArea;
+	
 	public static EquationPanel eqPanel = null;
+
+	public static FlowPanel algTransformMenu = new FlowPanel();
+	public static FlowPanel bothSidesButtonMenu = new FlowPanel();
 	public static AlgOut algOut = null;
-	public static ChangeNodeMenu changeNodeMenu = new ChangeNodeMenu();
+	
 	private static Button saveEquationButton = new Button("Save Equation",
 			new SaveButtonHandler());
 
 	public static String focusLayerId = null;
 	public static boolean isInEasyMode = false;
-	public static boolean inEditMode = false;
+	public static boolean inEditMode = true;
 
 	public AlgebraActivity() {
 		initWidget(algebraUiBinder.createAndBindUi(this));
@@ -52,18 +54,22 @@ public class AlgebraActivity extends Composite {
 		optionsButton.addClickHandler(new OptionsHandler());
 
 		if (inEditMode) {
-			saveEquationButton.setSize("100%", "100%");
 			saveEquationButton.setStyleName("saveEquationButton");
 			upperRightEqArea.add(saveEquationButton);
 		} else {
 			algOut = new AlgOut();
-			algOut.setSize("100%", "100%");
 			upperRightEqArea.add(algOut);
+			
+			algTransformMenu.addStyleName("layoutRow");
+			algTransformMenu.setSize("30%", "100%");
+			lowerEqArea.add(algTransformMenu);
+			
+			bothSidesButtonMenu.addStyleName("layoutRow");
+			bothSidesButtonMenu.setSize("70%", "100%");
+			lowerEqArea.add(bothSidesButtonMenu);
 		}
+		
 
-		if (inEditMode) {
-			selectedMenu.add(changeNodeMenu);
-		}
 	}
 
 	/**
@@ -77,18 +83,16 @@ public class AlgebraActivity extends Composite {
 			algOut.updateAlgOut(changeComment, rule,
 					Moderator.mathTree.getHTML());
 		}
-		contextMenuArea.clear();
 		eqPanelHolder.clear();
 
 		Moderator.mathTree.validateTree();
-		Moderator.mathTree.reloadEqHTML();
+		Moderator.mathTree.reloadEqHTML(true);
 		eqPanel = new EquationPanel(Moderator.mathTree);
 		eqPanelHolder.add(eqPanel);
 
-		if (inEditMode) {
-			changeNodeMenu.setVisible(false);
-		} else {
-			selectedMenu.clear();
+		if (!inEditMode) {
+			algTransformMenu.clear();
+			bothSidesButtonMenu.clear();
 		}
 
 	}

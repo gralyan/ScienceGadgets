@@ -46,9 +46,9 @@ public class AlgebraicTransformations {
 
 	public static void isolatedVariable_check(MathNode isolatedVar) {
 		if (TypeML.Equation.equals(isolatedVar.getParentType())) {
-			AlgebraActivity.contextMenuArea.add(new EvaluatePromptButton(
+			AlgebraActivity.algTransformMenu.add(new EvaluatePromptButton(
 					isolatedVar));
-			AlgebraActivity.contextMenuArea.add(new SubstituteButton(
+			AlgebraActivity.algTransformMenu.add(new SubstituteButton(
 					isolatedVar));
 		}
 	}
@@ -215,7 +215,7 @@ public class AlgebraicTransformations {
 			} else {
 				subParent.replaceChild(substitute, possibleSub);
 			}
-			Moderator.makeAlgebraWorkspace(subIntoEqEl);
+			Moderator.switchToAlgebra(subIntoEqEl);
 			break;
 
 		}
@@ -231,7 +231,7 @@ public class AlgebraicTransformations {
 	public static void separateNegative_check(MathNode negNode) {
 		if (negNode.getSymbol().startsWith(TypeML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
-			AlgebraActivity.contextMenuArea.add(new SeperateNegButton(negNode));
+			AlgebraActivity.algTransformMenu.add(new SeperateNegButton(negNode));
 		}
 	}
 
@@ -338,7 +338,7 @@ public class AlgebraicTransformations {
 		LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
 
 		for (Integer factor : primeFactors) {
-			AlgebraActivity.contextMenuArea.add(new FactorNumberButton(factor,
+			AlgebraActivity.algTransformMenu.add(new FactorNumberButton(factor,
 					number / factor, node));
 		}
 	}
@@ -394,7 +394,7 @@ public class AlgebraicTransformations {
 	public static void operation(MathNode opNode) {
 		MathNode left, right = null;
 
-		AlgebraActivity.contextMenuArea.clear();
+		AlgebraActivity.algTransformMenu.clear();
 
 		left = opNode.getPrevSibling();
 		right = opNode.getNextSibling();
@@ -453,7 +453,7 @@ public class AlgebraicTransformations {
 
 	public static void unitConversion_check(MathNode node) {
 		if (!"".equals(node.getUnitAttribute())) {
-			AlgebraActivity.contextMenuArea.add(new UnitConversionButton(node));
+			AlgebraActivity.algTransformMenu.add(new UnitConversionButton(node));
 		}
 	}
 
@@ -462,7 +462,7 @@ public class AlgebraicTransformations {
 	}
 
 	public static void denominatorFlip_check(MathNode node) {
-		AlgebraActivity.contextMenuArea.add(new DenominatorFlipButton(node));
+		AlgebraActivity.algTransformMenu.add(new DenominatorFlipButton(node));
 	}
 
 	static void denominatorFlip(MathNode node) {

@@ -49,14 +49,17 @@ public abstract class QuantitySpecification extends Prompt {
 	private String dataUnit = "";
 	private Element unitHTML;
 
-	public QuantitySpecification(EditMenu editMenu) {
+	public QuantitySpecification(MathNode mathNode) {
 		super();
-		this.node = editMenu.node;
+		this.node = mathNode;
 
 		add(uiBinder.createAndBindUi(this));
 
 		// Symbol Display
-		symbolDisplay.setText(node.getSymbol());
+		String oldSymbol = node.getSymbol();
+		if (!ChangeNodeMenu.NOT_SET.equals(oldSymbol)) {
+			symbolDisplay.setText(oldSymbol);
+		}
 
 		// Unit Display
 		unitHTML = UnitUtil.element_From_MathNode(node, null, false);
@@ -74,7 +77,7 @@ public abstract class QuantitySpecification extends Prompt {
 			public void onClick(ClickEvent event) {
 				dataUnit = "";
 				unitHTML.removeFromParent();
-				unitHTML=null;
+				unitHTML = null;
 				unitMap.clear();
 			}
 		}, ClickEvent.getType());
@@ -90,7 +93,6 @@ public abstract class QuantitySpecification extends Prompt {
 				isReciprocal = !isReciprocal;
 			}
 		});
-
 
 		// OK button
 		addOkHandler(new OkHandler());
@@ -133,8 +135,6 @@ public abstract class QuantitySpecification extends Prompt {
 		}
 	}
 
-
-
 	private class OkHandler implements ClickHandler {
 
 		@Override
@@ -148,7 +148,7 @@ public abstract class QuantitySpecification extends Prompt {
 
 			if (dataUnit == null || "".equals(dataUnit)) {
 				node.getMLNode().removeAttribute(MathAttribute.Unit.getName());
-			}else {
+			} else {
 				node.getMLNode().setAttribute(MathAttribute.Unit.getName(),
 						dataUnit);
 			}
@@ -156,7 +156,8 @@ public abstract class QuantitySpecification extends Prompt {
 			AlgebraActivity.reloadEquationPanel(null, null);
 		}
 	}
-	
+
 	abstract void setSymbol(String symbol);
+
 	abstract String extractSymbol();
 }

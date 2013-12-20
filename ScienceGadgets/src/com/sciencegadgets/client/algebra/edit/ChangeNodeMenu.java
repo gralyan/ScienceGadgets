@@ -1,88 +1,68 @@
 package com.sciencegadgets.client.algebra.edit;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
-public class ChangeNodeMenu extends FlowPanel {
+public class ChangeNodeMenu extends CommunistPanel {
 
 	public static final String NOT_SET = "\u25A1";
-	private HashMap<TypeML, Button> menuMap = new HashMap<TypeML, Button>();
+	public static final String REFERENCE = "\u2191";
 	private Button removeButton;
+	private MathNode node;
 
-	public ChangeNodeMenu() {
+	private static final Object[][] types = {//
+			{ TypeML.Number, "#" }, //
+			{ TypeML.Variable, "x" },//
+			{ TypeML.Sum, REFERENCE + "+" + NOT_SET },//
+			{ TypeML.Term, REFERENCE + Operator.DOT.getSign() + NOT_SET },//
+			{
+					TypeML.Fraction,
+					"<div style='border-bottom: thin solid;'>" + REFERENCE
+							+ "</div><div>" + NOT_SET + "</div>" },//
+			{ TypeML.Exponential, REFERENCE + "<sup>" + NOT_SET + "</sup>" } };
 
-		setSize("100%", "100%");
+	public ChangeNodeMenu(MathNode node) {
+		super(true);
+		this.node = node;
+		addStyleName("fillParent");
 
-		TypeML[] types = TypeML.values();
-
-		double buttonWidthPercent = 100.0 / types.length;
+		LinkedList<Widget> allButtons = new LinkedList<Widget>();
 
 		// Change buttons
-		for (TypeML type : types) {
-			if (TypeML.Operation.equals(type))
-				continue;
-
-			ChangeNodeHandler changeHandler = new ChangeNodeHandler(type);
-			Button changeButton = new Button(type.toString(), changeHandler);
-			changeButton.setSize(buttonWidthPercent + "%", "100%");
-			changeButton.setStyleName("changeNodeButton");
-			menuMap.put(type, changeButton);
-			this.add(changeButton);
+		for (Object[] type : types) {
+			Button changeButton = new Button((String) type[1],
+					new ChangeNodeHandler((TypeML) type[0]));
+			changeButton.addStyleName("changeNodeButton");
+			allButtons.add(changeButton);
 		}
 
 		// Remove button
-		RemoveNodeHandler removeHandler = new RemoveNodeHandler();
-		Button removeButton = new Button("Remove", removeHandler);
-		removeButton.setSize(buttonWidthPercent + "%", "100%");
-		removeButton.setStyleName("changeNodeButton");
+		this.removeButton = new Button("Remove", new RemoveNodeHandler());
 		removeButton.getElement().getStyle().setColor("red");
-		this.removeButton = removeButton;
-		this.add(removeButton);
-	}
+		allButtons.add(removeButton);
 
-	public Button getButton(TypeML menuOption) {
-		Button button;
+		addAll(allButtons);
 
-		if (menuOption == null) {
-			button = removeButton;
-		} else {
-			button = menuMap.get(menuOption);
-		}
-		return button;
-	}
-
-	public void setEnable(TypeML menuOption, boolean isEnabled) {
-		Button button = getButton(menuOption);
-		if (button != null) {
-			button.setEnabled(isEnabled);
-		}
-	}
-
-	public boolean isEnabled(TypeML menuOption) {
-		Button button = getButton(menuOption);
-		return button.isEnabled();
 	}
 
 	private class RemoveNodeHandler implements ClickHandler {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			if (EquationPanel.selectedWrapper == null) {
-				return;
-			}
 
-			MathNode node = EquationPanel.selectedWrapper.getNode();
 			MathNode parent = node.getParent();
 
 			switch (parent.getType()) {
@@ -121,63 +101,101 @@ public class ChangeNodeMenu extends FlowPanel {
 				parent.remove();
 				AlgebraActivity.reloadEquationPanel(null, null);
 				break;
+			case Equation:
+				node.replace(TypeML.Number, "1");
 			}
 		}
 	}
 
 	private class ChangeNodeHandler implements ClickHandler {
-		TypeML type;
+		TypeML toType;
 
-		ChangeNodeHandler(TypeML type) {
-			this.type = type;
+		ChangeNodeHandler(TypeML toType) {
+			this.toType = toType;
 		}
 
 		@Override
 		public void onClick(ClickEvent event) {
 
-			if (EquationPanel.selectedWrapper != null) {
-				MathNode node = EquationPanel.selectedWrapper.getNode();
-				MathNode parent = node.getParent();
-				int index = node.getIndex();
+			MathNode parent = node.getParent();
+			boolean isSameTypeNode = toType.equals(node.getType());
+			boolean isSameTypeParent = toType.equals(node.getParentType());
+			int nodeindex = node.getIndex();
+			try {
+				TypeML.Operator operator = null;
 
-				try {
-					TypeML.Operator operator = null;
-
-					switch (type) {
-					case Number:
-						parent.addBefore(node.getIndex(), type, "1");
-						node.remove();
-						break;
-					case Variable:
-						parent.addBefore(node.getIndex(), type, "x");
-						node.remove();
-						break;
-
-					case Sum:
-						operator = TypeML.Operator.PLUS;
-					case Term:
-						if (operator == null)
-							operator = TypeML.Operator.getMultiply();
-					case Exponential:
-					case Fraction:
-						MathNode newNode = Moderator.mathTree
-								.NEW_NODE(type, "");
-
-						//Sum, Term, Exponential and Fraction
-						newNode.append(node);
-						if (operator != null) {
-							newNode.addBefore(-1, TypeML.Operation,
-									operator.getSign());
-						}
-						newNode.addBefore(-1, TypeML.Variable, NOT_SET);
-						parent.addBefore(index, newNode);
-
+				switch (toType) {
+				case Number:
+					if (!isSameTypeNode) {
+						node = node.replace(toType, NOT_SET);
 					}
-					AlgebraActivity.reloadEquationPanel(null, null);
+					Prompt numPrompt = new NumberSpecification(node);
+					numPrompt.appear();
+					break;
+				case Variable:
+					if (!isSameTypeNode
+							|| NOT_SET.equals(node.getSymbol())) {
+						node = node.replace(toType, NOT_SET);
+					}
+					Prompt varPrompt = new VariableSpecification(node);
+					varPrompt.appear();
+					break;
+				case Sum:
+					if (isSameTypeNode) {
+						// don't encase sum in sum just extend this sum
+						node.append(TypeML.Operation, "+");
+						node.append(TypeML.Variable, NOT_SET);
+						break;
+					} else if (isSameTypeParent) {
+						// don't add sum in sum just extend parent sum
+						parent.addAfter(nodeindex, TypeML.Variable,
+								NOT_SET);
+						parent.addAfter(nodeindex, TypeML.Operation, "+");
+						break;
+					} else {
+						// encase in sum
+						operator = TypeML.Operator.PLUS;
+						// fall through
+					}
+				case Term:
+					if (isSameTypeNode) {
+						// don't encase term in term just extend this term
+						node.append(TypeML.Operation, TypeML.Operator
+								.getMultiply().getSign());
+						node.append(TypeML.Variable, NOT_SET);
+						break;
+					} else if (isSameTypeParent) {
+						// don't add sum in sum just extend parent sum
+						parent.addAfter(nodeindex, TypeML.Variable,
+								NOT_SET);
+						parent.addAfter(nodeindex, TypeML.Operation,
+								TypeML.Operator.getMultiply().getSign());
+						break;
+					} else {
+						// encase in term
+						if (operator == null) {
+							operator = TypeML.Operator.getMultiply();
+						}
+						// fall through
+					}
+				case Exponential:
+					// fall through
+				case Fraction:
 
-				} catch (NoSuchElementException e) {
-					e.printStackTrace();
+					// For Sum, Term, Exponential and Fraction
+
+					MathNode newNode = parent.addBefore(nodeindex, toType, "");
+					newNode.append(node);
+					if (operator != null) {
+						newNode.append(TypeML.Operation, operator.getSign());
+					}
+					newNode.append(TypeML.Variable, NOT_SET);
+					break;
 				}
+				AlgebraActivity.reloadEquationPanel(null, null);
+
+			} catch (NoSuchElementException e) {
+				e.printStackTrace();
 			}
 		}
 	}

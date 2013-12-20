@@ -28,6 +28,7 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -64,7 +65,7 @@ public class MathTree {
 
 		bindMLtoNodes(mathML);
 
-		reloadEqHTML();
+		reloadEqHTML(true);
 	}
 
 	// public MathNode getMathNode(String id) {
@@ -110,8 +111,19 @@ public class MathTree {
 		}
 	}
 
-	public EquationHTML reloadEqHTML() {
-		eqHTML = new EquationHTML(mathML);
+	public EquationHTML reloadEqHTML(boolean hasSmallUnits) {
+		for(Wrapper w : wrappers) {
+			if(w instanceof EditWrapper) {
+				((EditWrapper) w).onUnload();
+				
+			}else if(w instanceof AlgebaWrapper){
+				((AlgebaWrapper)w).onUnload();
+			}
+			w.getElement().removeFromParent();
+		}
+		wrappers.clear();
+		
+		eqHTML = new EquationHTML(mathML, hasSmallUnits);
 
 		NodeList<Element> allElements = eqHTML.getElement()
 				.getElementsByTagName("*");

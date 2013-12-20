@@ -11,7 +11,7 @@ import com.sciencegadgets.shared.TypeML.Operator;
 
 public class AssociativeDropController extends AbstractDropController {
 	
-	Label response = new Label("Switch");
+	Label switchResponse = new Label("Switch");
 
 	public AssociativeDropController(Wrapper dropWrapper) {
 		super(dropWrapper);
@@ -78,13 +78,13 @@ public class AssociativeDropController extends AbstractDropController {
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
 		getDropTarget().addStyleName("selectedDropWrapper");
-		AlgebraActivity.contextMenuArea.add(response);
+		AlgebraActivity.algTransformMenu.add(switchResponse);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		super.onLeave(context);
 		getDropTarget().removeStyleName("selectedDropWrapper");
-		AlgebraActivity.contextMenuArea.remove(response);
+		AlgebraActivity.algTransformMenu.remove(switchResponse);
 	}
 }

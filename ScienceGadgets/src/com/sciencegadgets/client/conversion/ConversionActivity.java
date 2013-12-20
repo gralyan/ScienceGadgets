@@ -61,7 +61,6 @@ public class ConversionActivity extends AbsolutePanel {
 
 	private MathNode totalNode;
 	private MathNode wrapperFraction;
-	private final HashSet<ConversionWrapper> wrappers = new HashSet<ConversionWrapper>();
 
 	public ConversionActivity() {
 
@@ -165,7 +164,7 @@ public class ConversionActivity extends AbsolutePanel {
 	void reloadEquation() {
 		//Make and add entire equation before moving left
 		dimensionalAnalysisArea.clear();
-		EquationHTML eqHTML = mTree.reloadEqHTML();
+		EquationHTML eqHTML = mTree.reloadEqHTML(false);
 		eqHTML.autoFillParent = true;
 
 		dimensionalAnalysisArea.add(eqHTML);
@@ -186,7 +185,6 @@ public class ConversionActivity extends AbsolutePanel {
 		mTree.getEquals().getHTML().removeFromParent();
 
 		//Recreate wrappers
-		wrappers.clear();
 		placeWrappers();
 		
 	}
@@ -197,7 +195,7 @@ public class ConversionActivity extends AbsolutePanel {
 			for (MathNode toWrap : map.keySet()) {
 				MathNode jointNode = map.get(toWrap);
 				if (!cancelled.contains(jointNode)) {
-					wrappers.add(new ConversionWrapper(toWrap, jointNode, wrapperArea,
+					mTree.getWrappers().add(new ConversionWrapper(toWrap, jointNode, wrapperArea,
 							toWrap.getHTML(), this));
 				} else {
 					toWrap.getHTML().getStyle().setDisplay(Display.NONE);

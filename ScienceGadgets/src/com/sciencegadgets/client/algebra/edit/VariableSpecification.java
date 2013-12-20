@@ -8,6 +8,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.UnitSelection;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class VariableSpecification extends QuantitySpecification {
 
@@ -16,8 +17,8 @@ public class VariableSpecification extends QuantitySpecification {
 
 	SymbolClickHandler symbolClick = new SymbolClickHandler();
 	
-	public VariableSpecification(EditMenu editMenu) {
-		super(editMenu);
+	public VariableSpecification(MathNode mathNode) {
+		super(mathNode);
 
 		// Symbol Selection
 		symbolPalette.add(new Label("Latin"));
