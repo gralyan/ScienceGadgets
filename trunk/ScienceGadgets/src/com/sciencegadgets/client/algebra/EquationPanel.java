@@ -223,6 +223,7 @@ public class EquationPanel extends AbsolutePanel {
 				eqLayer.addWrapper(wrap);
 				mathWrappers.add(wrap);
 			}
+			
 		}
 	}
 
@@ -231,9 +232,6 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	void setFocusOut() {
-		if (AlgebraActivity.inEditMode)
-			AlgebraActivity.changeNodeMenu.setVisible(false);
-
 		EquationLayer parentLayer = focusLayer.getParentLayer();
 		if (parentLayer != null)
 			setFocus(parentLayer);
@@ -254,9 +252,14 @@ public class EquationPanel extends AbsolutePanel {
 	void setFocus(final EquationLayer newFocus) {
 		final EquationLayer prevFocus = focusLayer;
 		if (selectedWrapper != null) {
-			selectedWrapper.unselect();
+			if(selectedWrapper instanceof EditWrapper) {
+				((EditWrapper)selectedWrapper).unselect();
+			}else if(selectedWrapper instanceof AlgebaWrapper){
+				((AlgebaWrapper)selectedWrapper).unselect();
+			}
 		}
 
+		
 		newFocus.setOpacity(0);
 		newFocus.setVisible(true);
 

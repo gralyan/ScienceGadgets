@@ -21,7 +21,14 @@ public class CommunistPanel extends FlowPanel {
 		
 	}
 
-	public void add(Widget[] widgets) {
+	public void addAll(Widget[] widgets) {
+		for (Widget widget : widgets) {
+			addToContainer(widget);
+		}
+		redistribute();
+	}
+
+	public void addAll(Iterable<Widget> widgets) {
 		for (Widget widget : widgets) {
 			addToContainer(widget);
 		}

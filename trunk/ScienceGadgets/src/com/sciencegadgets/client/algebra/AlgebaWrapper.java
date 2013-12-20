@@ -43,7 +43,7 @@ public class AlgebaWrapper extends ZoomWrapper {
 		super(node, eqPanel, element);
 
 		bothSidesMenu = new BothSidesMenu(node, element.getOffsetWidth() + "px");
-		menu = new FlowPanel();
+//		menu = new FlowPanel();
 	}
 
 	/**
@@ -58,9 +58,10 @@ public class AlgebaWrapper extends ZoomWrapper {
 		super.select();
 
 		if (this.equals(EquationPanel.selectedWrapper)) {
-			AlgebraActivity.selectedMenu.clear();
-			AlgebraActivity.selectedMenu.add(bothSidesMenu);
+			AlgebraActivity.bothSidesButtonMenu.clear();
+			AlgebraActivity.bothSidesButtonMenu.add(bothSidesMenu);
 
+			AlgebraActivity.algTransformMenu.clear();
 			switch (node.getType()) {
 			case Equation:
 			case Exponential:
@@ -94,7 +95,8 @@ public class AlgebaWrapper extends ZoomWrapper {
 
 	public void unselect() {
 		super.unselect();
-		AlgebraActivity.selectedMenu.clear();
+		AlgebraActivity.algTransformMenu.clear();
+		AlgebraActivity.bothSidesButtonMenu.clear();
 	}
 
 }

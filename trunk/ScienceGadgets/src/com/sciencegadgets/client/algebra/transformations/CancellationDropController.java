@@ -11,7 +11,7 @@ import com.sciencegadgets.shared.TypeML;
 
 public class CancellationDropController extends AbstractDropController {
 
-	Label response = new Label(ResponseNote.Cancel.toString());
+	Label cancelResponse = new Label(ResponseNote.Cancel.toString());
 
 	public CancellationDropController(AlgebaWrapper dropTarget) {
 		super(dropTarget);
@@ -69,14 +69,14 @@ public class CancellationDropController extends AbstractDropController {
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
 		getDropTarget().addStyleName("selectedDropWrapper");
-		AlgebraActivity.contextMenuArea.add(response);
+		AlgebraActivity.algTransformMenu.add(cancelResponse);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		super.onLeave(context);
 		getDropTarget().removeStyleName("selectedDropWrapper");
-		AlgebraActivity.contextMenuArea.remove(response);
+		AlgebraActivity.algTransformMenu.remove(cancelResponse);
 	}
 
 }

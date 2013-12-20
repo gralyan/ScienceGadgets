@@ -8,6 +8,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.UnitSelection;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 
 public class NumberSpecification extends QuantitySpecification {
@@ -16,8 +17,8 @@ public class NumberSpecification extends QuantitySpecification {
 	RandomSpecPanel randSpec = new RandomSpecPanel();
 	KeyPadNumerical numPad = new KeyPadNumerical();
 
-	public NumberSpecification(EditMenu editMenu) {
-		super(editMenu);
+	public NumberSpecification(MathNode mathNode) {
+		super(mathNode);
 
 		symbolPalette.add(numPad);
 		numPad.addNumberClickHandler(new ClickHandler() {

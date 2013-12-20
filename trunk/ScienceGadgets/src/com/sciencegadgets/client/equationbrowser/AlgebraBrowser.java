@@ -21,7 +21,7 @@ public class AlgebraBrowser extends SelectionPanel {
 //					Element mathml = (Element) XMLParser.parse(mathmlStr).getDocumentElement();
 					Element mathml = (Element) (new HTML(mathmlStr)
 							.getElement().getFirstChildElement());
-					Moderator.makeAlgebraWorkspace(mathml);
+					Moderator.switchToAlgebra(mathml);
 				}
 			}
 		});

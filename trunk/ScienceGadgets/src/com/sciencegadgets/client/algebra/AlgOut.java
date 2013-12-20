@@ -24,22 +24,22 @@ import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
-public class AlgOut extends ScrollPanel {
+public class AlgOut extends FlowPanel {
 
 	boolean expanded = false;
-	FlowPanel algOutFlow = new FlowPanel();
+//	private FlowPanel algOutFlow =new FlowPanel();
 	public String origionalHeightStr;
 	public boolean scrolled = false;
 
 	public AlgOut() {
-		add(algOutFlow);
-		algOutFlow.getElement().setId("algOut");
-		getScrollableElement().setId("algOutScroll");
-		getScrollableElement().getStyle().clearOverflow();
+		addStyleName("algOut");
 
 		origionalHeightStr = AlgebraActivity.upperEqArea.getElement().getStyle()
 				.getHeight();
@@ -52,6 +52,11 @@ public class AlgOut extends ScrollPanel {
 
 		this.sinkEvents(Event.ONSCROLL);
 		this.addHandler(new AlgOutTouchMoveHandler(), TouchMoveEvent.getType());
+		
+		Label firstRow = new Label("Solve");
+		firstRow.setSize("100%", "100%");
+		firstRow.addStyleName("algOutRow");
+		add(firstRow);
 	}
 
 	public void updateAlgOut(String changeComment, Rule rule, EquationHTML eqHTML) {
@@ -70,9 +75,13 @@ public class AlgOut extends ScrollPanel {
 		changeRow.addStyleName("algOutChangeRow");
 		row.add(changeRow);
 		
-		algOutFlow.add(row);
+		add(row);
 
 		scrollToBottom();
+	}
+	
+	private void scrollToBottom() {
+		getElement().setScrollTop(getElement().getScrollHeight() - getElement().getClientHeight());
 	}
 
 	class AlgOutSlide extends Animation {

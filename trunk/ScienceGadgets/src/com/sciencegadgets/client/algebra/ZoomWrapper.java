@@ -35,7 +35,7 @@ public class ZoomWrapper extends Wrapper {
 				EquationPanel.selectedWrapper.unselect();
 			}
 
-			AlgebraActivity.contextMenuArea.add(menu);
+//			AlgebraActivity.contextMenuArea.add(menu);
 
 			super.select();
 		}
@@ -43,8 +43,6 @@ public class ZoomWrapper extends Wrapper {
 	
 	@Override
 	public void unselect() {
-		AlgebraActivity.contextMenuArea.clear();
-		
 		super.unselect();
 	}
 }

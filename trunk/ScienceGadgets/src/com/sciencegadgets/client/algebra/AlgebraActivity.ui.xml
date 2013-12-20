@@ -23,20 +23,9 @@
 
 		<g:FlowPanel width="100%" height="10%"></g:FlowPanel><!--gap -->
 
-		<g:SimplePanel ui:field="eqPanelHolder" width="100%" height="60%">
-		</g:SimplePanel>
+		<g:SimplePanel ui:field="eqPanelHolder" width="100%" height="60%"></g:SimplePanel>
 
-		<g:FlowPanel ui:field="lowerEqArea" width="100%" height="15%">
-
-			<g:FlowPanel ui:field="contextMenuArea" addStyleNames='{style.row}'
-				width="30%" height="100%">
-			</g:FlowPanel>
-
-			<g:FlowPanel ui:field="selectedMenu" addStyleNames='{style.row}'
-				width="70%" height="100%">
-			</g:FlowPanel>
-
-		</g:FlowPanel>
+		<g:FlowPanel ui:field="lowerEqArea" width="100%" height="15%"></g:FlowPanel>
 		
 	</g:AbsolutePanel>
 	

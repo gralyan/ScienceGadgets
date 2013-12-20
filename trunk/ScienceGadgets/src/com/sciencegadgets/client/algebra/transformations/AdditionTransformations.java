@@ -272,7 +272,7 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			factorLikeTerms(left, right, likeTerms);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new FLTButton(left, right,
+			AlgebraActivity.algTransformMenu.add(new FLTButton(left, right,
 					likeTerms));
 		}
 
@@ -364,7 +364,7 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			factorWithBase(other, exponential);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new FWBButton(other,
+			AlgebraActivity.algTransformMenu.add(new FWBButton(other,
 					exponential));
 		}
 
@@ -417,7 +417,7 @@ public class AdditionTransformations {
 				if (AlgebraActivity.isInEasyMode) {
 					factorWithTermChild(other, termContainer, termChild);
 				} else {
-					AlgebraActivity.contextMenuArea.add(new FWTCButton(other,
+					AlgebraActivity.algTransformMenu.add(new FWTCButton(other,
 							termContainer, termChild));
 				}
 				return true;
@@ -486,7 +486,7 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			addFractions(left, right);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new AddFractionsButton(left,
+			AlgebraActivity.algTransformMenu.add(new AddFractionsButton(left,
 					right));
 		}
 
@@ -524,7 +524,7 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			addSimilar(left, right);
 		} else {
-			AlgebraActivity.contextMenuArea.add(new AddSimilarButton(left,
+			AlgebraActivity.algTransformMenu.add(new AddSimilarButton(left,
 					right));
 		}
 		return true;

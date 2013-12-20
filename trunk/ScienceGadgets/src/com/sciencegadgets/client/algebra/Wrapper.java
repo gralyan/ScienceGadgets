@@ -20,7 +20,6 @@ public class Wrapper extends HTML implements HasHandlers {
 
 	protected MathNode node;
 	protected AbsolutePanel parentPanel;
-	protected FlowPanel menu;
 	private WrapDragController dragController = null;
 
 	public Wrapper(MathNode node, final AbsolutePanel parentPanel, Element element) {
@@ -45,7 +44,6 @@ public class Wrapper extends HTML implements HasHandlers {
 		}
 
 	}
-
 	public MathNode getNode() {
 		return node;
 	}
@@ -77,6 +75,7 @@ public class Wrapper extends HTML implements HasHandlers {
 	protected void onUnload() {
 		removeDropTargets();
 		removeDragController();
+		dragController = null;
 		super.onUnload();
 	}
 
@@ -125,7 +124,9 @@ public class Wrapper extends HTML implements HasHandlers {
 	}
 
 	public void removeDropTargets() {
+		if(dragController != null) {
 		dragController.unregisterDropControllers();
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////

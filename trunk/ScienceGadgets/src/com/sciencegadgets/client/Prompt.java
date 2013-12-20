@@ -17,14 +17,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Prompt extends DialogBox {
 
+	private static final double HEIGHT_FRACTION = 0.7;
+	private static final double WIDTH_FRACTION = 0.8;
 	protected final FlowPanel flowPanel = new FlowPanel();
 	final Button okButton = new Button("OK");
 
 	public Prompt() {
-		this(null);
-	}
-
-	public Prompt(Widget w) {
 		super(true, true);
 		FlowPanel mainPanel = new FlowPanel();
 		mainPanel.add(flowPanel);
@@ -71,32 +69,28 @@ public class Prompt extends DialogBox {
 	}
 
 	public void appear() {
-		flowPanel.setPixelSize(Window.getClientWidth() * 80 / 100,
-				Window.getClientHeight() * 70 / 100);
-//		 setSize("75%","75%");
-		// show();
+		resize();
 		center();
 	}
-
-	public class FocusOnlyClickHandler implements ClickHandler {
-		@Override
-		public void onClick(ClickEvent event) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
+	
+	public void resize() {
+		flowPanel.setPixelSize((int)(Window.getClientWidth() * WIDTH_FRACTION),
+				(int)(Window.getClientHeight() * HEIGHT_FRACTION));
 	}
 
-	public class FocusOnlyTouchHandler implements TouchStartHandler {
-		@Override
-		public void onTouchStart(TouchStartEvent event) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	}
-
-	class PromptComposite extends Composite {
-		PromptComposite(Widget w) {
-			initWidget(w);
-		}
-	}
+//	public class FocusOnlyClickHandler implements ClickHandler {
+//		@Override
+//		public void onClick(ClickEvent event) {
+//			event.preventDefault();
+//			event.stopPropagation();
+//		}
+//	}
+//
+//	public class FocusOnlyTouchHandler implements TouchStartHandler {
+//		@Override
+//		public void onTouchStart(TouchStartEvent event) {
+//			event.preventDefault();
+//			event.stopPropagation();
+//		}
+//	}
 }
