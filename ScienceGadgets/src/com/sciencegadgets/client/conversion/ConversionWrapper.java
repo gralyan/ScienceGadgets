@@ -5,21 +5,22 @@ import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.shared.UnitUtil;
 
 class ConversionWrapper extends Wrapper {
 
 	ConversionActivity conversionAvtivity = null;
-	private MathNode jointNode;
+	private UnitDisplay unitDisplay;
 
-	ConversionWrapper(MathNode node,MathNode jointNode, AbsolutePanel panel, Element element, ConversionActivity conversionAvtivity) {
-		super(node, panel, element);
+	ConversionWrapper(UnitDisplay unitDisplay, AbsolutePanel panel, ConversionActivity conversionAvtivity) {
+		super(unitDisplay.wrappedNode, panel, unitDisplay.wrappedNode.getHTML());
 		this.conversionAvtivity = conversionAvtivity;
-		this.jointNode = jointNode;
+		this.unitDisplay = unitDisplay;
 	}
 	
-	public MathNode getJointNode() {
-		return jointNode;
+	public UnitDisplay getUnitDisplay() {
+		return unitDisplay;
 	}
 
 	@Override

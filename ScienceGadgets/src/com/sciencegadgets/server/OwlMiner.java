@@ -296,9 +296,9 @@ public class OwlMiner {
 
 				// No space
 			} else if (symbol.equals("therm (US)")) {
-				symbolFixed = "therm<sub>US</sub>";
+				symbolFixed = "therm(US)";
 			} else if (symbol.equals("therm (EC)")) {
-				symbolFixed = "therm<sub>EC</sub>";
+				symbolFixed = "therm(EC)";
 
 				// Incorrect
 				// } else if (symbol.equals("(K^2)m/W")) {
@@ -312,45 +312,45 @@ public class OwlMiner {
 			} else if (label.equals("Pound Mass")) {
 				symbolFixed = "lb";
 			} else if (label.equals("Ton - Long")) {
-				symbolFixed = "ton<sub>UK</sub>";
+				symbolFixed = "ton(UK)";
 			} else if (label.equals("Imperial Pint")) {
-				symbolFixed = "pt<sub>UK</sub>";
+				symbolFixed = "pt(UK)";
 			} else if (label.equals("Imperial Gallon")) {
-				symbolFixed = "gal<sub>UK</sub>";
+				symbolFixed = "gal(UK)";
 			} else if (label.equals("Imperial Ounce")) {
-				symbolFixed = "fl.oz<sub>UK</sub>";
+				symbolFixed = "fl.oz.(UK>";
 			} else if (label.equals("Ton - Short")) {
-				symbolFixed = "ton<sub>US</sub>";
+				symbolFixed = "ton(US)";
 			} else if (label.equals("US Liquid Pint")) {
-				symbolFixed = "pt<sub>US</sub>";
+				symbolFixed = "pt(US)";
 			} else if (label.equals("US Gallon")) {
-				symbolFixed = "gal<sub>US</sub>";
+				symbolFixed = "gal(US)";
 			} else if (label.equals("US Liquid Ounce")) {
-				symbolFixed = "fl.oz<sub>US</sub>";
+				symbolFixed = "fl.oz.(US)";
 			} else if (label.equals("Ounce Troy")) {
-				symbolFixed = "oz<sub>Troy</sub>";
+				symbolFixed = "oz(Troy)";
 			} else if (label.equals("Pound Troy")) {
-				symbolFixed = "lb<sub>Troy</sub>";
+				symbolFixed = "lb(Troy)";
 
 				// No underscore (_)
 			} else if (symbolFixed.equals("dry_qt")) {
-				symbolFixed = "qt<sub>dry</sub>";
+				symbolFixed = "qt(dry)";
 			} else if (symbolFixed.equals("dry_gal")) {
-				symbolFixed = "gal<sub>dry</sub>";
+				symbolFixed = "gal(dry)";
 			} else if (symbolFixed.equals("dry_pt")) {
-				symbolFixed = "pt<sub>dry</sub>";
+				symbolFixed = "pt(dry)";
 			} else if (symbolFixed.equals("E_h")) {
-				symbolFixed = "E<sub>h</sub>";
+				symbolFixed = "Eh";
 			} else if (symbolFixed.equals("Θ_P")) {
-				symbolFixed = "Θ<sub>P</sub>";
+				symbolFixed = "Θp>";
 			} else if (symbolFixed.equals("l_P")) {
-				symbolFixed = "l<sub>P</sub>";
+				symbolFixed = "lp";
 			} else if (symbolFixed.equals("m_P")) {
-				symbolFixed = "m<sub>P</sub>";
+				symbolFixed = "mp";
 			} else if (symbolFixed.equals("t_P")) {
-				symbolFixed = "t<sub>P</sub>";
+				symbolFixed = "tp";
 			} else if (symbolFixed.equals("Q_p")) {
-				symbolFixed = "Q<sub>P</sub>";
+				symbolFixed = "Qp";
 
 				// Conflicting
 				// } else if (label.equals("Faraday")) {

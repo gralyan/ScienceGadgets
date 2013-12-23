@@ -10,7 +10,7 @@
 		}
 		
 		.dimensionalAnalysisArea {
-			background-color: white;
+			background-color: silver;
 		}
 	</ui:style>
 
@@ -26,7 +26,7 @@
 			<g:AbsolutePanel ui:field="wrapperArea"
 				addStyleNames="{style.workPanel}"></g:AbsolutePanel>
 
-			<g:Button ui:field="okButton" text="Convert" addStyleNames="{style.workPanel}"></g:Button>
+			<g:Button ui:field="convertButton" text="Convert" addStyleNames="{style.workPanel}"></g:Button>
 		</g:FlowPanel>
 
 

@@ -48,12 +48,12 @@ public class Moderator implements EntryPoint {
 			.get("scienceGadgetArea");
 	private EquationBrowser browserPanel = null;
 	public static boolean isTouch = false;
-	
+
 	private static ConversionActivity conversionActivity;
 	private static AlgebraActivity algebraActivity;
-	
+
 	private static Activity currentActivity = null;
-	public static LinkedList<Prompt> prompts = new LinkedList<Prompt>(); 
+	public static LinkedList<Prompt> prompts = new LinkedList<Prompt>();
 
 	@Override
 	public void onModuleLoad() {
@@ -85,22 +85,16 @@ public class Moderator implements EntryPoint {
 	}
 
 	public static void setActivity(Activity activity) {
-		if(!activity.equals(currentActivity)) {
+		if (!activity.equals(currentActivity)) {
 			currentActivity = activity;
-			History.newItem(activity.toString()+"_"+historyCount++);
+			History.newItem(activity.toString() + "_" + historyCount++);
 		}
 	}
 
-	/**
-	 * Creates the view of the equation
-	 * 
-	 * @param mathML
-	 *            - the equation as an element
-	 */
 	public static void switchToAlgebra(Element mathML) {
 		setActivity(Activity.algebra);
 		scienceGadgetArea.clear();
-		
+
 		algebraActivity = new AlgebraActivity();
 		scienceGadgetArea.add(algebraActivity);
 
@@ -108,6 +102,16 @@ public class Moderator implements EntryPoint {
 			mathTree = new MathTree(mathML, AlgebraActivity.inEditMode);
 			AlgebraActivity.reloadEquationPanel(null, null);
 		}
+	}
+
+	public static void reloadAlgebraActivity() {
+		setActivity(Activity.algebra);
+		
+		AlgebraActivity.eqPanelHolder.clear();
+		
+		scienceGadgetArea.clear();
+		scienceGadgetArea.add(algebraActivity);
+		AlgebraActivity.reloadEquationPanel(null, null);
 	}
 
 	public static void switchToConversion(MathNode node) {
@@ -142,7 +146,7 @@ public class Moderator implements EntryPoint {
 				if (Activity.algebra.equals(currentActivity)) {
 					AlgebraActivity.reloadEquationPanel(null, null);
 				}
-				for(Prompt prompt : prompts) {
+				for (Prompt prompt : prompts) {
 					prompt.resize();
 				}
 			}
@@ -158,22 +162,20 @@ public class Moderator implements EntryPoint {
 		SGAHeight = Window.getClientHeight();
 		SGAWidth = Window.getClientWidth() * 98 / 100;
 
-		// Take up the window
+		// Fill up the window
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");
 		Window.scrollTo(0, scienceGadgetArea.getAbsoluteTop());
 
 	}
 
 	private void detectTouch() {
-		scienceGadgetArea.sinkEvents(Event.ONTOUCHSTART);
-		scienceGadgetArea.addHandler(new TouchStartHandler() {
+		scienceGadgetArea.addDomHandler(new TouchStartHandler() {
 			@Override
 			public void onTouchStart(TouchStartEvent event) {
 				isTouch = true;
 				scienceGadgetArea.unsinkEvents(Event.ONTOUCHSTART);
 			}
 		}, TouchStartEvent.getType());
-		//
 	}
 
 	class HistoryChange<String> implements ValueChangeHandler<String> {
@@ -181,32 +183,23 @@ public class Moderator implements EntryPoint {
 		@Override
 		public void onValueChange(ValueChangeEvent<String> event) {
 			Activity newActivity;
-//			try {
-			System.out.println("event " +event
-						.getValue());
-				newActivity = Activity.valueOf(((java.lang.String) event
-						.getValue()).split("_")[0]);
-					
-//			} catch (IllegalArgumentException e) {
-//				System.out.println("caucht");
-//				newActivity = Activity.equation_browser;
-//				currentActivity = Activity.equation_browser;
-//			}
-			
-			if(newActivity !=Activity.algebra && AlgebraActivity.eqPanel!= null) {
-AlgebraActivity.eqPanel.removeFromParent();
+			newActivity = Activity
+					.valueOf(((java.lang.String) event.getValue()).split("_")[0]);
+
+			if (AlgebraActivity.eqPanel != null) {
+				AlgebraActivity.eqPanel.removeFromParent();
 			}
 
 			switch (newActivity) {
 			case browser:
-//				switchToBrowser();
-				if(browserPanel != null) {
+				// switchToBrowser();
+				if (browserPanel != null) {
 					scienceGadgetArea.clear();
 					scienceGadgetArea.add(browserPanel);
 				}
 				break;
 			case algebra:
-				if(algebraActivity != null) {
+				if (algebraActivity != null) {
 					scienceGadgetArea.clear();
 					scienceGadgetArea.add(algebraActivity);
 					AlgebraActivity.reloadEquationPanel(null, null);
@@ -217,7 +210,7 @@ AlgebraActivity.eqPanel.removeFromParent();
 			case random_spec:
 				break;
 			case conversion:
-				if(conversionActivity != null) {
+				if (conversionActivity != null) {
 					scienceGadgetArea.clear();
 					scienceGadgetArea.add(conversionActivity);
 				}

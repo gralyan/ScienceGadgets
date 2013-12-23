@@ -17,93 +17,117 @@ package com.sciencegadgets.client.algebra;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.TouchEndEvent;
-import com.google.gwt.event.dom.client.TouchEndHandler;
-import com.google.gwt.event.dom.client.TouchMoveEvent;
-import com.google.gwt.event.dom.client.TouchMoveHandler;
-import com.google.gwt.user.client.Event;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.UIObject;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class AlgOut extends FlowPanel {
 
 	boolean expanded = false;
-//	private FlowPanel algOutFlow =new FlowPanel();
 	public String origionalHeightStr;
 	public boolean scrolled = false;
+	FlowPanel firstRow = new FlowPanel();
 
 	public AlgOut() {
 		addStyleName("algOut");
 
-		origionalHeightStr = AlgebraActivity.upperEqArea.getElement().getStyle()
-				.getHeight();
+		origionalHeightStr = AlgebraActivity.upperEqArea.getElement()
+				.getStyle().getHeight();
 
-		this.sinkEvents(Event.ONCLICK);
-		this.addHandler(new AlgOutClickHandler(), ClickEvent.getType());
+//		this.addDomHandler(new AlgOutTouchMoveHandler(),
+//				TouchMoveEvent.getType());
+		// this.addDomHandler(new AlgOutTouchEndHandler(),
+		// TouchEndEvent.getType());
 
-		this.sinkEvents(Event.ONTOUCHEND);
-		this.addHandler(new AlgOutTouchEndHandler(), TouchEndEvent.getType());
+		if(Moderator.isTouch) {
+			this.addDomHandler(new AlgOutTouchStart(), TouchStartEvent.getType());
+		}else {
+			this.addDomHandler(new AlgOutClickHandler(), ClickEvent.getType());
+		}
 
-		this.sinkEvents(Event.ONSCROLL);
-		this.addHandler(new AlgOutTouchMoveHandler(), TouchMoveEvent.getType());
-		
-		Label firstRow = new Label("Solve");
-		firstRow.setSize("100%", "100%");
+		Label firstRowEq = new Label("Solve");
+		firstRowEq.addStyleName("algOutEquationRow");
+		firstRow.add(firstRowEq);
+
+		Label firstRowCh = new Label();
+		firstRowCh.addStyleName("algOutChangeRow");
+		firstRow.add(firstRowCh);
+
 		firstRow.addStyleName("algOutRow");
+
 		add(firstRow);
 	}
 
-	public void updateAlgOut(String changeComment, Rule rule, EquationHTML eqHTML) {
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		firstRow.setSize("100%", getOffsetHeight() + "px");
+	}
+
+	public void updateAlgOut(String changeComment, Rule rule,
+			EquationHTML eqHTML) {
 
 		FlowPanel row = new FlowPanel();
 		row.addStyleName("algOutRow");
-		
+
 		eqHTML.addStyleName("algOutEquationRow");
 		row.add(eqHTML);
 
-		Anchor changeRow = new Anchor(changeComment,true);
-		if(rule != null){
-		changeRow.setHref(rule.getPage());
-		changeRow.setTarget("_blank");
+		Anchor changeRow = new Anchor(changeComment, true);
+		if (rule != null) {
+			changeRow.setHref(rule.getPage());
+			changeRow.setTarget("_blank");
 		}
 		changeRow.addStyleName("algOutChangeRow");
 		row.add(changeRow);
-		
+
 		add(row);
 
 		scrollToBottom();
 	}
-	
+
 	private void scrollToBottom() {
-		getElement().setScrollTop(getElement().getScrollHeight() - getElement().getClientHeight());
+		getElement()
+				.setScrollTop(
+						getElement().getScrollHeight()
+								- getElement().getClientHeight());
 	}
 
 	class AlgOutSlide extends Animation {
 
-		private FlowPanel alg;
+		private FlowPanel alg = AlgebraActivity.upperEqArea;;
+		int heightDiff = 0;
+		private int direction;
 		private int startingHeight;
-		private double dir;
 
-		AlgOutSlide() {
-			alg = AlgebraActivity.upperEqArea;
-			startingHeight = alg.getOffsetHeight();
+		@Override
+		public void run(int duration) {
+			int normalHeight = getOffsetHeight();
+			heightDiff = getElement().getScrollHeight() - normalHeight;
 
 			if (expanded) {
-				dir = -0.5;
-			} else {
-				dir = 1;
+
+				startingHeight = normalHeight + heightDiff;
+				direction = -1;
+
+			} else if (heightDiff < 3) {
+				// don't do anything if there is nothing hidden to expand
+				return;
+			} else {// not expanded but should be
+
+				startingHeight = normalHeight;
+				direction = 1;
 			}
+			super.run(duration);
 		}
 
 		@Override
 		protected void onUpdate(double progress) {
-			alg.setHeight((startingHeight + (dir * progress * startingHeight))
+			alg.setHeight((startingHeight + (direction * heightDiff * progress))
 					+ "px");
 		}
 
@@ -115,7 +139,7 @@ public class AlgOut extends FlowPanel {
 				expanded = false;
 				scrollToBottom();
 			} else {
-				alg.setHeight((startingHeight * 2) + "px");
+				alg.setHeight(getElement().getScrollHeight() + "px");
 				expanded = true;
 				scrollToBottom();
 			}
@@ -123,36 +147,45 @@ public class AlgOut extends FlowPanel {
 	}
 
 	class AlgOutClickHandler implements ClickHandler {
+		AlgOutSlide slide = new AlgOutSlide();
+
 		@Override
 		public void onClick(ClickEvent event) {
-				AlgOutSlide slide = new AlgOutSlide();
-				slide.run(300);
+			slide.run(300);
 		}
 	}
 
-	class AlgOutTouchMoveHandler implements TouchMoveHandler {
-		@Override
-		public void onTouchMove(TouchMoveEvent event) {
-			scrolled = true;
-		}
-	}
+	class AlgOutTouchStart implements TouchStartHandler {
+		AlgOutSlide slide = new AlgOutSlide();
 
-	class AlgOutTouchEndHandler implements TouchEndHandler {
 		@Override
-		public void onTouchEnd(TouchEndEvent event) {
-			((UIObject) event.getSource()).unsinkEvents(Event.ONCLICK);
-			
-			event.stopPropagation();
-			event.preventDefault();
-			
-			if (!scrolled) {
-				AlgOutSlide slide = new AlgOutSlide();
-				slide.run(300);
-			} else {
-				scrolled = false;//restore field
-			}
+		public void onTouchStart(TouchStartEvent event) {
+			slide.run(300);
 		}
+
 	}
+	// class AlgOutTouchMoveHandler implements TouchMoveHandler {
+	// @Override
+	// public void onTouchMove(TouchMoveEvent event) {
+	// scrolled = true;
+	// }
+	// }
+	//
+	// class AlgOutTouchEndHandler implements TouchEndHandler {
+	// AlgOutSlide slide = new AlgOutSlide();
+	//
+	// @Override
+	// public void onTouchEnd(TouchEndEvent event) {
+	// ((UIObject) event.getSource()).unsinkEvents(Event.ONCLICK);
+	//
+	// event.stopPropagation();
+	// event.preventDefault();
+	//
+	// if (!scrolled) {
+	// slide.run(300);
+	// } else {
+	// scrolled = false;// restore field
+	// }
+	// }
+	// }
 }
-
-

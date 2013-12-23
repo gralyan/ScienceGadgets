@@ -23,18 +23,26 @@ public class Prompt extends DialogBox {
 	final Button okButton = new Button("OK");
 
 	public Prompt() {
+		this(true);
+	}
+
+	public Prompt(boolean hasOkButton) {
 		super(true, true);
 		FlowPanel mainPanel = new FlowPanel();
 		mainPanel.add(flowPanel);
-		FlowPanel gap = new FlowPanel();
-		gap.setHeight("10px");
-		mainPanel.add(gap);
-		mainPanel.add(okButton);
+		if (hasOkButton) {
+			FlowPanel gap = new FlowPanel();
+			gap.setHeight("10px");
+			mainPanel.add(gap);
+			mainPanel.add(okButton);
+		}
 		super.add(mainPanel);
-		
+
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
-		
+
+		flowPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
+
 		getElement().getStyle().setBackgroundColor("#ADD850");
 		okButton.addStyleName("smallestButton");
 
@@ -72,25 +80,26 @@ public class Prompt extends DialogBox {
 		resize();
 		center();
 	}
-	
+
 	public void resize() {
-		flowPanel.setPixelSize((int)(Window.getClientWidth() * WIDTH_FRACTION),
-				(int)(Window.getClientHeight() * HEIGHT_FRACTION));
+		flowPanel.setPixelSize(
+				(int) (Window.getClientWidth() * WIDTH_FRACTION),
+				(int) (Window.getClientHeight() * HEIGHT_FRACTION));
 	}
 
-//	public class FocusOnlyClickHandler implements ClickHandler {
-//		@Override
-//		public void onClick(ClickEvent event) {
-//			event.preventDefault();
-//			event.stopPropagation();
-//		}
-//	}
-//
-//	public class FocusOnlyTouchHandler implements TouchStartHandler {
-//		@Override
-//		public void onTouchStart(TouchStartEvent event) {
-//			event.preventDefault();
-//			event.stopPropagation();
-//		}
-//	}
+	// public class FocusOnlyClickHandler implements ClickHandler {
+	// @Override
+	// public void onClick(ClickEvent event) {
+	// event.preventDefault();
+	// event.stopPropagation();
+	// }
+	// }
+	//
+	// public class FocusOnlyTouchHandler implements TouchStartHandler {
+	// @Override
+	// public void onTouchStart(TouchStartEvent event) {
+	// event.preventDefault();
+	// event.stopPropagation();
+	// }
+	// }
 }

@@ -647,7 +647,7 @@ public class AdditionTransformations {
 		operation.highlight();
 		left.highlight();
 
-		right.setSymbol(totalValue.stripTrailingZeros().toString());
+		right.setSymbol(totalValue.stripTrailingZeros().toEngineeringString());
 
 		if (isMinusBeforeLeft) {
 			left.getPrevSibling().setSymbol(Operator.PLUS.getSign());
@@ -657,9 +657,15 @@ public class AdditionTransformations {
 		operation.remove();
 		parent.decase();
 
-		AlgebraActivity.reloadEquationPanel(leftValue.toString() + " "
-				+ operation.toString() + " " + rightValue.toString() + " = "
-				+ totalValue.toString(), Rule.Addition);
+		AlgebraActivity.reloadEquationPanel(leftValue.stripTrailingZeros()
+				.toEngineeringString()
+				+ " "
+				+ operation.toString()
+				+ " "
+				+ rightValue.stripTrailingZeros().toEngineeringString()
+				+ " = "
+				+ totalValue.stripTrailingZeros().toEngineeringString(),
+				Rule.Addition);
 	}
 
 	static void addZero(MathNode other, MathNode zero) {

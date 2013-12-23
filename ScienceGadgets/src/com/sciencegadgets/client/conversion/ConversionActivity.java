@@ -2,8 +2,7 @@ package com.sciencegadgets.client.conversion;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -12,13 +11,16 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.UnitSelection;
@@ -47,14 +49,16 @@ public class ConversionActivity extends AbsolutePanel {
 	FlowPanel unitSelectionArea;
 	@UiField
 	AbsolutePanel wrapperArea;
+	@UiField
+	Button convertButton;
 
 	final UnitSelection unitSelection = new UnitSelection(false, true, false);
-	private final HashSet<MathNode> cancelled = new HashSet<MathNode>();
 	private MathTree mTree = null;
+	private MathNode node;
 
 	// wrapped nodes and history nodes
-	HashMap<MathNode, MathNode> numerators = new HashMap<MathNode, MathNode>();
-	HashMap<MathNode, MathNode> denominators = new HashMap<MathNode, MathNode>();
+
+	LinkedList<UnitDisplay> unitDisplays = new LinkedList<UnitDisplay>();
 
 	private Unit selectedUnit = null;
 	static ConversionWrapper selectedWrapper = null;
@@ -66,15 +70,39 @@ public class ConversionActivity extends AbsolutePanel {
 
 		add(conversionUiBinder.createAndBindUi(this));
 
+		getElement().setAttribute("id", "conversionActivity");
+
 		unitSelection.unitBox.addSelectionHandler(new ConvertSelectHandler());
 		unitSelection.addStyleName("fillParent");
 		unitSelectionArea.add(unitSelection);
 
 		wrapperArea.addStyleName("fillParent");
+
+		convertButton.addClickHandler(new ConvertClickHandler());
+	}
+
+	class ConvertClickHandler implements ClickHandler {
+		@Override
+		public void onClick(ClickEvent event) {
+			String unitAttribute = "";
+			for (UnitDisplay unitDisplay : unitDisplays) {
+				if (!unitDisplay.isCanceled) {
+					unitAttribute = unitAttribute + "*"
+							+ unitDisplay.wrappedNode.getUnitAttribute();
+				}
+			}
+			unitAttribute = unitAttribute.replaceFirst(
+					UnitUtil.BASE_DELIMITER_REGEX, "");
+			System.out.println(unitAttribute);
+			node.setSymbol(totalNode.getSymbol());
+			node.setAttribute(MathAttribute.Unit, unitAttribute);
+			Moderator.reloadAlgebraActivity();
+		}
 	}
 
 	public void load(MathNode node) {
-		cancelled.clear();
+		this.node = node;
+		unitDisplays.clear();
 		selectedUnit = null;
 		selectedWrapper = null;
 
@@ -95,12 +123,6 @@ public class ConversionActivity extends AbsolutePanel {
 
 		mTree.getRightSide().replace(TypeML.Term, "");
 		mTree.getLeftSide().replace(TypeML.Term, "");
-
-		// MathNode firstLeft = mTree.getLeftSide().append(node.clone());
-		// MathNode firstRight = mTree.getRightSide().append(node.clone());
-
-		// mTree.getRightSide().append(firstLeft);
-		// mTree.getLeftSide().append(firstRight);
 
 		totalNode = mTree.getLeftSide().append(TypeML.Number, node.getSymbol());
 		mTree.getRightSide().append(totalNode.clone());
@@ -127,17 +149,17 @@ public class ConversionActivity extends AbsolutePanel {
 				MathNode dr = unitNode;
 				denomLeft.append(dl);
 				denomRight.append(dr);
-				denominators.put(dl, dr);
+				unitDisplays.add(new UnitDisplay(dl, dr, false, false));
 			} else {
 				MathNode unitNode = mTree.NEW_NODE(TypeML.Exponential, "");
 				unitNode.setAttribute(MathAttribute.Unit, base);
 				unitNode.append(TypeML.Variable, symbol);
 				unitNode.append(TypeML.Number, exp.replace("-", ""));
-				MathNode nl = unitNode.clone();
-				MathNode nr = unitNode;
-				numerLeft.append(nl);
-				numerRight.append(nr);
-				numerators.put(nl, nr);
+				MathNode unitNodeClone = unitNode.clone();
+				numerLeft.append(unitNodeClone);
+				numerRight.append(unitNode);
+				unitDisplays.add(new UnitDisplay(unitNodeClone, unitNode,
+						false, true));
 			}
 		}
 
@@ -162,7 +184,7 @@ public class ConversionActivity extends AbsolutePanel {
 	}
 
 	void reloadEquation() {
-		//Make and add entire equation before moving left
+		// Make and add entire equation before moving left
 		dimensionalAnalysisArea.clear();
 		EquationHTML eqHTML = mTree.reloadEqHTML(false);
 		eqHTML.autoFillParent = true;
@@ -181,36 +203,33 @@ public class ConversionActivity extends AbsolutePanel {
 				com.google.gwt.dom.client.Style.Unit.PCT);
 		wrapperArea.getElement().appendChild(workingHTML);
 
-		//No need for equals sign either
+		// No need for equals sign either
 		mTree.getEquals().getHTML().removeFromParent();
 
-		//Recreate wrappers
+		// Recreate wrappers
 		placeWrappers();
-		
+
 	}
 
 	private void placeWrappers() {
-		HashMap[] numAndDen = { numerators, denominators };
-		for (HashMap<MathNode, MathNode> map : numAndDen) {
-			for (MathNode toWrap : map.keySet()) {
-				MathNode jointNode = map.get(toWrap);
-				if (!cancelled.contains(jointNode)) {
-					mTree.getWrappers().add(new ConversionWrapper(toWrap, jointNode, wrapperArea,
-							toWrap.getHTML(), this));
-				} else {
-					toWrap.getHTML().getStyle().setDisplay(Display.NONE);
-					if (TypeML.Number.equals(jointNode.getType())) {
-						Element[] units = jointNode.getHTMLofUnits();
-						for (Element unit : units) {
-							Style style = unit.getStyle();
-							style.setTextDecoration(TextDecoration.LINE_THROUGH);
-							style.setColor("red");
-						}
-					} else {
-						Style style = jointNode.getHTML().getStyle();
+		for (UnitDisplay unitDisplay : unitDisplays) {
+			MathNode jointNode = unitDisplay.historyNode;
+			if (!unitDisplay.isCanceled) {
+				mTree.getWrappers().add(
+						new ConversionWrapper(unitDisplay, wrapperArea, this));
+			} else {
+				unitDisplay.wrappedNode.getHTML().getStyle().setDisplay(Display.NONE);
+				if (TypeML.Number.equals(jointNode.getType())) {
+					Element[] units = jointNode.getHTMLofUnits();
+					for (Element unit : units) {
+						Style style = unit.getStyle();
 						style.setTextDecoration(TextDecoration.LINE_THROUGH);
 						style.setColor("red");
 					}
+				} else {
+					Style style = jointNode.getHTML().getStyle();
+					style.setTextDecoration(TextDecoration.LINE_THROUGH);
+					style.setColor("red");
 				}
 			}
 		}
@@ -256,7 +275,8 @@ public class ConversionActivity extends AbsolutePanel {
 
 		MathNode numNode, denNode = null;
 		String numUnitName, denUnitName = null;
-		if (numerators.containsKey(selectedWrapper.getNode())) {
+		boolean selectIsNumerator = selectedWrapper.getUnitDisplay().inNumerator;
+		if (selectIsNumerator) {
 			numNode = toNode;
 			denNode = fromNode;
 			numUnitName = toUnit.getName();
@@ -314,13 +334,12 @@ public class ConversionActivity extends AbsolutePanel {
 			total = total.divide(new BigDecimal(denNode.getSymbol()),
 					MathContext.DECIMAL32);
 		}
-		totalNode.setSymbol(total.toPlainString());
+		totalNode.setSymbol(total.stripTrailingZeros().toEngineeringString());
 
-		numerators.put(numWrap, numNode);
-		denominators.put(denWrap, denNode);
-
-		cancelled.add(selectedWrapper.getJointNode());
-		cancelled.add(fromNode);
+		selectedWrapper.getUnitDisplay().isCanceled = true;
+		
+		unitDisplays.add(new UnitDisplay(numWrap, numNode, !selectIsNumerator, true));
+		unitDisplays.add(new UnitDisplay(denWrap, denNode, selectIsNumerator, false));
 
 		selectedWrapper.unselect();
 		reloadEquation();
@@ -330,6 +349,22 @@ public class ConversionActivity extends AbsolutePanel {
 		@Override
 		public void onSelect(Cell selected) {
 			convert((Unit) selected.getEntity());
+		}
+	}
+
+	class UnitDisplay {
+		MathNode wrappedNode;
+		MathNode historyNode;
+		boolean isCanceled = false;
+		boolean inNumerator = true;
+
+		public UnitDisplay(MathNode wrappedNode, MathNode historyNode,
+				boolean isCanceled, boolean inNumerator) {
+			super();
+			this.wrappedNode = wrappedNode;
+			this.historyNode = historyNode;
+			this.isCanceled = isCanceled;
+			this.inNumerator = inNumerator;
 		}
 	}
 }

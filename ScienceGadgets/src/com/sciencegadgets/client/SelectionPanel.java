@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -87,29 +89,39 @@ public class SelectionPanel extends FlowPanel {
 
 	public class Cell extends HTML {
 		private String value;
-		private String html;
 		private Serializable entity;
 
 		Cell(String html, final String value, Serializable entity) {
 			super(html);
-			this.html = html;
 			this.value = value;
 			this.entity = entity;
-			this.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					if (selectedCell != null) {
-						selectedCell.removeStyleName("selectedCell");
+			
+			if(Moderator.isTouch) {
+				this.addTouchStartHandler(new TouchStartHandler() {
+					@Override
+					public void onTouchStart(TouchStartEvent event) {
+						select((Cell) event.getSource());
 					}
-
-					selectedCell = (Cell) event.getSource();
-					selectedCell.addStyleName("selectedCell");
-					if (selectionHandler != null) {
-						selectionHandler.onSelect(selectedCell);
+				});
+			}else {
+				this.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						select((Cell) event.getSource());
 					}
-				}
-			});
+				});
+			}
+		}
+		private void select(Cell selection) {
+			if (selectedCell != null) {
+				selectedCell.removeStyleName("selectedCell");
+			}
+			
+			selectedCell = selection;
+			selectedCell.addStyleName("selectedCell");
+			if (selectionHandler != null) {
+				selectionHandler.onSelect(selectedCell);
+			}
 		}
 
 		public String getValue() {

@@ -231,7 +231,8 @@ public class AlgebraicTransformations {
 	public static void separateNegative_check(MathNode negNode) {
 		if (negNode.getSymbol().startsWith(TypeML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
-			AlgebraActivity.algTransformMenu.add(new SeperateNegButton(negNode));
+			AlgebraActivity.algTransformMenu
+					.add(new SeperateNegButton(negNode));
 		}
 	}
 
@@ -335,15 +336,11 @@ public class AlgebraicTransformations {
 			return;
 		}
 
-		LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
-
-		for (Integer factor : primeFactors) {
-			AlgebraActivity.algTransformMenu.add(new FactorNumberButton(factor,
-					number / factor, node));
-		}
+		AlgebraActivity.algTransformMenu.add(new FactorPromptButton(number,
+				node));
 	}
 
-	private static LinkedHashSet<Integer> findPrimeFactors(Integer number) {
+	static LinkedHashSet<Integer> findPrimeFactors(Integer number) {
 		LinkedHashSet<Integer> factors = new LinkedHashSet<Integer>();
 
 		if (number < 0) {
@@ -453,7 +450,8 @@ public class AlgebraicTransformations {
 
 	public static void unitConversion_check(MathNode node) {
 		if (!"".equals(node.getUnitAttribute())) {
-			AlgebraActivity.algTransformMenu.add(new UnitConversionButton(node));
+			AlgebraActivity.algTransformMenu
+					.add(new UnitConversionButton(node));
 		}
 	}
 
@@ -524,6 +522,50 @@ class VariableEvaluateSpec extends FlowPanel {
 // /////////////////////////////////////////////////////////////////////
 // Button choices
 // //////////////////////////////////////////////////////////////////////
+
+class FactorPromptButton extends Button {
+	public FactorPromptButton(final Integer number, final MathNode node) {
+		setHTML("Factor");
+
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedHashSet<Integer> primeFactors = AlgebraicTransformations
+						.findPrimeFactors(number);
+
+				Prompt prompt = new Prompt(false);
+				Label title = new Label();
+				title.setText(""+number);
+				title.setHeight("20%");
+				prompt.add(title);
+				for (Integer factor : primeFactors) {
+					prompt.add(new FactorNumberButton(factor, number / factor,
+							node, prompt));
+				}
+				prompt.appear();
+			}
+		});
+
+	}
+}
+
+class FactorNumberButton extends Button {
+	FactorNumberButton(final int factor, final int cofactor,
+			final MathNode node, final Prompt prompt) {
+
+		setHTML(factor + " " + Operator.getMultiply().getSign() + " "
+				+ cofactor);
+		setSize("50%", "50%");
+
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AlgebraicTransformations.factorNumber(factor, node);
+				prompt.disappear();
+			}
+		});
+	}
+}
 class SeperateNegButton extends Button {
 	SeperateNegButton(final MathNode negNode) {
 
@@ -538,20 +580,6 @@ class SeperateNegButton extends Button {
 	}
 }
 
-class FactorNumberButton extends Button {
-	FactorNumberButton(final int factor, final int cofactor, final MathNode node) {
-
-		setHTML("Factor " + "(" + factor + ")"
-				+ Operator.getMultiply().getSign() + "(" + cofactor + ")");
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.factorNumber(factor, node);
-			}
-		});
-	}
-}
 
 class DenominatorFlipButton extends Button {
 	DenominatorFlipButton(final MathNode node) {
