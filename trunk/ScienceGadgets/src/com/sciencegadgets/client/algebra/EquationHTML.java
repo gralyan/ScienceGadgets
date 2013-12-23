@@ -26,6 +26,7 @@ public class EquationHTML extends HTML {
 	public EquationHTML(Element mlTree) {
 		this(mlTree, true);
 	}
+
 	public EquationHTML(Element mlTree, boolean hasSmallUnits) {
 		this.mlTree = mlTree;
 		this.setStyleName("Equation");
@@ -69,8 +70,6 @@ public class EquationHTML extends HTML {
 		nodeHTML.setId(id);
 		nodeHTML.addClassName(type.toString());
 
-		boolean isRadical = false;
-
 		switch (parentType) {
 		case Fraction:
 			boolean isNumerator = mlNode
@@ -95,15 +94,15 @@ public class EquationHTML extends HTML {
 			} else if (isExponential) {
 				nodeHTML.addClassName(TypeML.Exponential
 						.asChild(TypeArgument.EXPONENT));
-				if ("mfrac".equalsIgnoreCase(mlNode.getTagName())
-						&& "1".equals(mlNode.getFirstChildElement()
-								.getInnerText())) {
-					Element radical = DOM.createDiv();
-					radical.addClassName("radical");
-					radical.addClassName(Aesthetic);
-					displayParentEl.insertFirst(radical);
-					displayParentEl.insertFirst(nodeHTML);
-				}
+//				if ("mfrac".equalsIgnoreCase(mlNode.getTagName())
+//						&& "1".equals(mlNode.getFirstChildElement()
+//								.getInnerText())) {
+					// Element radical = DOM.createDiv();
+					// radical.addClassName("radical");
+					// radical.addClassName(Aesthetic);
+					// displayParentEl.insertFirst(radical);
+//					displayParentEl.insertFirst(nodeHTML);
+//				}
 			}
 			break;
 		case Term:
@@ -127,20 +126,14 @@ public class EquationHTML extends HTML {
 		}
 
 		// Addition to tree
-		if (!isRadical) {
-			displayParentEl.appendChild(nodeHTML);
-		}
+		displayParentEl.appendChild(nodeHTML);
 
 		for (int i = 0; i < mlNode.getChildCount(); i++) {
 			Node child = mlNode.getChild(i);
 
 			// Recursive creation
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (!isRadical) {
-					makeHTMLNode((Element) child, nodeHTML);
-				} else {
-					makeHTMLNode((Element) child.getChild(1), nodeHTML);
-				}
+				makeHTMLNode((Element) child, nodeHTML);
 				// Inner text operation adjustment
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
 				String text = mlNode.getInnerText();
@@ -150,7 +143,8 @@ public class EquationHTML extends HTML {
 					String unitName = mlNode.getAttribute(MathAttribute.Unit
 							.getName());
 					if (!"".equals(unitName)) {
-						unit = UnitUtil.element_From_attribute(unitName, id, hasSmallUnits);
+						unit = UnitUtil.element_From_attribute(unitName, id,
+								hasSmallUnits);
 					}
 				case Variable:
 					if (text.startsWith(Operator.MINUS.getSign())) {
@@ -318,7 +312,7 @@ public class EquationHTML extends HTML {
 							double ratio = child.getParentElement()
 									.getOffsetHeight() / childHeight;
 
-							//Stretch Aesthetics
+							// Stretch Aesthetics
 							String[] transformCSStypes = { "transform",
 									"WebkitTransform", "MozTransform",
 									"MsTransform", "OTransform" };
@@ -389,14 +383,15 @@ public class EquationHTML extends HTML {
 	private void addChildrenIfInline(Element curEl,
 			LinkedList<Element> childrenInline,
 			LinkedList<Element> parentsInline) {
-		
+
 		NodeList<Node> children = curEl.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element) children.getItem(i);
 
 			String childClass = child.getClassName();
 			if (childClass.contains(TypeML.Term.toString())
-					|| childClass.contains(TypeML.Sum.toString())|| childClass.contains(TypeML.Exponential.toString())) {
+					|| childClass.contains(TypeML.Sum.toString())
+					|| childClass.contains(TypeML.Exponential.toString())) {
 				addChildrenIfInline(child, childrenInline, parentsInline);
 				parentsInline.add(child);
 				childrenInline.add(child);

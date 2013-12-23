@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -101,9 +102,10 @@ public class BothSidesMenu extends FlowPanel {
 			}
 			break;
 		case Exponential:
-			if (isTopLevel && node.getIndex() == 1) {
-				this.add(new BothSidesButton(Math.ROOT));
-			}
+			//TODO - Finish
+//			if (isTopLevel && node.getIndex() == 1) {
+//				this.add(new BothSidesButton(Math.ROOT));
+//			}
 			break;
 		case Equation:
 			isSide = true;
@@ -198,7 +200,8 @@ public class BothSidesMenu extends FlowPanel {
 		}
 
 		protected String doubleChangeComment() {
-			return changeComment = changeComment + "&nbsp;&nbsp;&nbsp; both sides";
+			return changeComment = changeComment
+					+ "&nbsp;&nbsp;&nbsp; both sides";
 
 			// return changeComment = changeComment
 			// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + changeComment;
@@ -247,7 +250,8 @@ public class BothSidesMenu extends FlowPanel {
 			oldParent.decase();
 
 			changeComment += node.toString();
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+					Rule.Solving);
 		}
 	}
 
@@ -279,9 +283,7 @@ public class BothSidesMenu extends FlowPanel {
 					operator.remove();
 			} else {
 				targetSide = targetSide.getChildAt(1);
-				if (!TypeML.Term.equals(targetSide.getType())) {
-					targetSide = targetSide.encase(TypeML.Term);
-				}
+				targetSide = targetSide.encase(TypeML.Term);
 				if (operator == null) {
 					targetSide.append(TypeML.Operation, TypeML.Operator
 							.getMultiply().getSign());
@@ -303,7 +305,8 @@ public class BothSidesMenu extends FlowPanel {
 			oldParent.decase();
 
 			changeComment += "\u00F7" + node.toString();
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+					Rule.Solving);
 		}
 	}
 
@@ -327,8 +330,8 @@ public class BothSidesMenu extends FlowPanel {
 					targetSide.append(operation);
 				}
 			} else if (isTopLevel) {
-				targetSide.append(TypeML.Operation, TypeML.Operator.getMultiply()
-						.getSign());
+				targetSide.append(TypeML.Operation, TypeML.Operator
+						.getMultiply().getSign());
 			} else {
 				JSNICalls
 						.warn("Multiplying somethimg that's not top level or nested in a top level fraction: "
@@ -359,7 +362,8 @@ public class BothSidesMenu extends FlowPanel {
 
 			changeComment += TypeML.Operator.getMultiply().getSign()
 					+ node.toString();
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+					Rule.Solving);
 		}
 	}
 
@@ -378,9 +382,7 @@ public class BothSidesMenu extends FlowPanel {
 				frac.append(node);
 			} else {
 				MathNode targetExp = targetSide.getChildAt(1);
-				if (!TypeML.Term.equals(targetExp.getType())) {
-					targetExp = targetExp.encase(TypeML.Term);
-				}
+				targetExp = targetExp.encase(TypeML.Term);
 				targetExp.append(TypeML.Operation, Operator.getMultiply()
 						.getSign());
 				MathNode frac = targetExp.append(TypeML.Fraction, "");
@@ -394,7 +396,8 @@ public class BothSidesMenu extends FlowPanel {
 			oldParent.remove();
 
 			changeComment += "\u221A" + node.toString();
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(), Rule.Solving);
+			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+					Rule.Solving);
 		}
 	}
 }

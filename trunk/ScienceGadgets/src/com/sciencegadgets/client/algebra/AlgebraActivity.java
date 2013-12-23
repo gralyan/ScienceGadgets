@@ -11,7 +11,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
+import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
+import com.sciencegadgets.client.algebra.edit.VariableSpecification;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class AlgebraActivity extends Composite {
@@ -46,7 +48,9 @@ public class AlgebraActivity extends Composite {
 
 	public static String focusLayerId = null;
 	public static boolean isInEasyMode = false;
-	public static boolean inEditMode = true;
+	public static boolean inEditMode = false;
+	public static VariableSpecification varSpec;
+	public static NumberSpecification numSpec;
 
 	public AlgebraActivity() {
 		initWidget(algebraUiBinder.createAndBindUi(this));

@@ -6,10 +6,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.ToggleSlide;
@@ -55,32 +58,43 @@ public abstract class QuantitySpecification extends Prompt {
 
 		add(uiBinder.createAndBindUi(this));
 
-		// Symbol Display
-		String oldSymbol = node.getSymbol();
-		if (!ChangeNodeMenu.NOT_SET.equals(oldSymbol)) {
-			symbolDisplay.setText(oldSymbol);
+		if(Moderator.isTouch) {
+			//Symbol Display Touch
+			symbolDisplay.addTouchStartHandler(new TouchStartHandler() {
+				@Override
+				public void onTouchStart(TouchStartEvent event) {
+					symbolDisplay.setText("");
+				}
+			});
+			//Unit Display Touch
+			unitDisplay.addDomHandler(new TouchStartHandler() {
+				@Override
+				public void onTouchStart(TouchStartEvent event) {
+					dataUnit = "";
+					unitHTML.removeFromParent();
+					unitHTML = null;
+					unitMap.clear();
+				}
+			}, TouchStartEvent.getType());
+		}else {
+			//Symbol Display Click
+			symbolDisplay.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					symbolDisplay.setText("");
+				}
+			});
+			//Unit Display Click
+			unitDisplay.addDomHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					dataUnit = "";
+					unitHTML.removeFromParent();
+					unitHTML = null;
+					unitMap.clear();
+				}
+			}, ClickEvent.getType());
 		}
-
-		// Unit Display
-		unitHTML = UnitUtil.element_From_MathNode(node, null, false);
-		unitHTML.addClassName("fillParent");
-		unitDisplay.getElement().appendChild(unitHTML);
-
-		symbolDisplay.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				symbolDisplay.setText("");
-			}
-		});
-		unitDisplay.addDomHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				dataUnit = "";
-				unitHTML.removeFromParent();
-				unitHTML = null;
-				unitMap.clear();
-			}
-		}, ClickEvent.getType());
 
 		unitReciprocalToggle
 				.setOptionsHtml(
@@ -97,6 +111,25 @@ public abstract class QuantitySpecification extends Prompt {
 		// OK button
 		addOkHandler(new OkHandler());
 
+		reload(mathNode);
+	}
+	
+	public void reload(MathNode mathNode) {
+
+		node = mathNode; 
+		
+		// Symbol Display
+		String oldSymbol = node.getSymbol();
+		if (ChangeNodeMenu.NOT_SET.equals(oldSymbol)) {
+			symbolDisplay.setText("");
+		}else {
+			symbolDisplay.setText(oldSymbol);
+		}
+
+		// Unit Display
+		unitHTML = UnitUtil.element_From_MathNode(node, null, false);
+		unitHTML.addClassName("fillParent");
+		unitDisplay.getElement().appendChild(unitHTML);
 	}
 
 	class UnitSelectionHandler implements SelectionHandler {
@@ -128,8 +161,7 @@ public abstract class QuantitySpecification extends Prompt {
 			if (unitHTML != null) {
 				unitHTML.removeFromParent();
 			}
-			unitHTML = UnitUtil.element_From_attribute(dataUnit);
-			unitHTML.removeClassName(UnitUtil.UNIT_CLASSNAME);
+			unitHTML = UnitUtil.element_From_attribute(dataUnit, null, false);
 			unitHTML.addClassName("fillParent");
 			unitDisplay.getElement().appendChild(unitHTML);
 		}

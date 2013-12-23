@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.KeyPadNumerical;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -20,22 +23,25 @@ public class NumberSpecification extends QuantitySpecification {
 	public NumberSpecification(MathNode mathNode) {
 		super(mathNode);
 
+		//Number Pad
 		symbolPalette.add(numPad);
-		numPad.addNumberClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				String oldText = symbolDisplay.getText();
-				String newText = "";
-				if(RandomSpecPanel.RANDOM_SYMBOL.equals(oldText)) {
-					newText = ((Button) event.getSource()).getText();
-				}else {
-					newText = oldText
-							+ ((Button) event.getSource()).getText();
+		if (Moderator.isTouch) {
+			numPad.addNumberTouchHandler(new TouchStartHandler() {
+				@Override
+				public void onTouchStart(TouchStartEvent event) {
+					numberSelect(((Button) event.getSource()).getText());
 				}
-				symbolDisplay.setText(newText);
-			}
-		});
-
+			});
+		} else {
+			numPad.addNumberClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					numberSelect(((Button) event.getSource()).getText());
+				}
+			});
+		}
+		
+		//Randomness Spec
 		symbolPalette.add(randSpec);
 		randSpec.setVisible(false);
 		randSpec.addOkClickHandler((new ClickHandler() {
@@ -48,6 +54,7 @@ public class NumberSpecification extends QuantitySpecification {
 			}
 		}));
 
+		//Symbol Toggle - switch Number Pad and Randomness Spec
 		symbolCaseToggle.setOptions("#", "?", true);
 		symbolCaseToggle.addClickHandler(new ClickHandler() {
 			@Override
@@ -72,6 +79,17 @@ public class NumberSpecification extends QuantitySpecification {
 
 	}
 
+	protected void numberSelect(String text) {
+		String oldText = symbolDisplay.getText();
+		String newText = "";
+		if (RandomSpecPanel.RANDOM_SYMBOL.equals(oldText)) {
+			newText = text;
+		} else {
+			newText = oldText + text;
+		}
+		symbolDisplay.setText(newText);
+	}
+
 	@Override
 	String extractSymbol() {
 		String inputString = null;
@@ -80,12 +98,7 @@ public class NumberSpecification extends QuantitySpecification {
 		} else {
 			try {
 				BigDecimal value = new BigDecimal(symbolDisplay.getText());
-
-				// no need for trailing 0's
-				// inputString = String.valueOf(value).replaceAll(
-				// (String) "\\.0$", "");
 				inputString = value.toString();
-				;
 				return inputString;
 
 			} catch (NumberFormatException e) {

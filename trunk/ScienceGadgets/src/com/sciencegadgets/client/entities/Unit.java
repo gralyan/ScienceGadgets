@@ -6,6 +6,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
+import com.sciencegadgets.shared.UnitUtil;
 
 @Entity
 public class Unit implements Serializable{
@@ -56,7 +57,7 @@ public class Unit implements Serializable{
 	}
 
 	public String getSymbol() {
-		return name.replace("*"+quantityKind.getName(), "");
+		return UnitUtil.getSymbol(name);
 	}
 
 }

@@ -385,11 +385,7 @@ public class MultiplyTransformations {
 
 		totalValue = totalValue.stripTrailingZeros();
 
-		if (totalValue.compareTo(new BigDecimal(1000000)) < 0) {
-			right.setSymbol(totalValue.toPlainString());// full number
-		} else {
-			right.setSymbol(totalValue.toString());// Scientific notation
-		}
+		right.setSymbol(totalValue.stripTrailingZeros().toEngineeringString());
 
 		String leftUnit = left.getUnitAttribute();
 		String rightUnit = right.getUnitAttribute();
@@ -400,11 +396,15 @@ public class MultiplyTransformations {
 
 		parent.decase();
 
-		AlgebraActivity
-				.reloadEquationPanel(
-						leftValue.toString() + operation.toString()
-								+ rightValue.toString() + " = "
-								+ totalValue.toString(), Rule.Multiplication);
+		AlgebraActivity.reloadEquationPanel(leftValue.stripTrailingZeros()
+				.toEngineeringString()
+				+ " "
+				+ operation.toString()
+				+ " "
+				+ rightValue.stripTrailingZeros().toEngineeringString()
+				+ " = "
+				+ totalValue.stripTrailingZeros().toEngineeringString(),
+				Rule.Multiplication);
 	}
 
 	private static void multiplyZero(MathNode other, MathNode zero) {

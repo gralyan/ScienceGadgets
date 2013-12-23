@@ -3,6 +3,7 @@ package com.sciencegadgets.client;
 import java.util.HashSet;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -38,6 +39,11 @@ HashSet<NumberButton> buttons = new HashSet<NumberButton>();
 	public void addNumberClickHandler(ClickHandler handler) {
 		for(NumberButton b : buttons) {
 			b.addClickHandler(handler);
+		}
+	}
+	public void addNumberTouchHandler(TouchStartHandler handler) {
+		for(NumberButton b : buttons) {
+			b.addTouchStartHandler(handler);
 		}
 	}
 	

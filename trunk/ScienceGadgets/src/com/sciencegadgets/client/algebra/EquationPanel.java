@@ -22,14 +22,14 @@ import com.sciencegadgets.shared.TypeML;
 public class EquationPanel extends AbsolutePanel {
 	public HashMap<MathNode, EquationLayer> eqLayerMap = new HashMap<MathNode, EquationLayer>();
 
-	MathTree mathTree;
+	private MathTree mathTree;
 	private EquationLayer rootLayer;
 	private static EquationLayer focusLayer;
 	public static Wrapper selectedWrapper;
 	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
 	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
 	private ArrayList<AlgebaWrapper> mathWrappers = new ArrayList<AlgebaWrapper>();
-	
+
 	public static final String OF_LAYER = "-ofLayer-";
 
 	private MathNode rootNode;
@@ -45,25 +45,29 @@ public class EquationPanel extends AbsolutePanel {
 		this.getElement().getStyle().setZIndex(1);
 
 		if (Moderator.isTouch) {
-			this.sinkEvents(Event.ONTOUCHSTART);
-			this.addHandler(new TouchStartHandler() {
+			this.addDomHandler(new TouchStartHandler() {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
-					if(OptionsHandler.optionsPopup.isShowing()){
+					if (OptionsHandler.optionsPopup.isShowing()) {
 						event.preventDefault();
 						event.stopPropagation();
 						OptionsHandler.optionsPopup.hide();
-					}else{
+					} else {
 						setFocusOut();
 					}
 				}
 			}, TouchStartEvent.getType());
 		} else {
-			this.sinkEvents(Event.ONCLICK);
-			this.addHandler(new ClickHandler() {
+			this.addDomHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					setFocusOut();
+					if (OptionsHandler.optionsPopup.isShowing()) {
+						event.preventDefault();
+						event.stopPropagation();
+						OptionsHandler.optionsPopup.hide();
+					} else {
+						setFocusOut();
+					}
 				}
 			}, ClickEvent.getType());
 		}
@@ -138,12 +142,14 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	private void findFractionMergingNodes() {
-		ArrayList<MathNode> fractions = mathTree.getNodesByType(TypeML.Fraction);
+		ArrayList<MathNode> fractions = mathTree
+				.getNodesByType(TypeML.Fraction);
 
 		for (MathNode frac : fractions) {
 			for (MathNode child : frac.getChildren()) {
 				// numerator and denominator
-				if (TypeML.Term.equals(child.getType()) && !mergeRootNodes.contains(child)) {
+				if (TypeML.Term.equals(child.getType())
+						&& !mergeRootNodes.contains(child)) {
 					mergeFractionNodes.add(child);
 				}
 			}
@@ -157,8 +163,7 @@ public class EquationPanel extends AbsolutePanel {
 	private void draw(MathNode node, EquationLayer parentLayer) {
 
 		EquationLayer eqLayer;
-		if (!AlgebraActivity.inEditMode
-				&& mergeFractionNodes.contains(node)) {
+		if (!AlgebraActivity.inEditMode && mergeFractionNodes.contains(node)) {
 			eqLayer = parentLayer;
 
 		} else if (!AlgebraActivity.inEditMode && mergeRootNodes.contains(node)) {
@@ -200,6 +205,10 @@ public class EquationPanel extends AbsolutePanel {
 		// EquationLayer eqLayer = eqLayerMap.get(parentNode);
 
 		for (MathNode node : childNodes) {
+			if(node.equals(mathTree.getRoot())) {
+				continue;
+			}
+			
 			if (!AlgebraActivity.inEditMode) {
 				if (mergeRootNodes.contains(node)
 						|| mergeFractionNodes.contains(node)) {
@@ -223,7 +232,7 @@ public class EquationPanel extends AbsolutePanel {
 				eqLayer.addWrapper(wrap);
 				mathWrappers.add(wrap);
 			}
-			
+
 		}
 	}
 
@@ -252,14 +261,13 @@ public class EquationPanel extends AbsolutePanel {
 	void setFocus(final EquationLayer newFocus) {
 		final EquationLayer prevFocus = focusLayer;
 		if (selectedWrapper != null) {
-			if(selectedWrapper instanceof EditWrapper) {
-				((EditWrapper)selectedWrapper).unselect();
-			}else if(selectedWrapper instanceof AlgebaWrapper){
-				((AlgebaWrapper)selectedWrapper).unselect();
+			if (selectedWrapper instanceof EditWrapper) {
+				((EditWrapper) selectedWrapper).unselect();
+			} else if (selectedWrapper instanceof AlgebaWrapper) {
+				((AlgebaWrapper) selectedWrapper).unselect();
 			}
 		}
 
-		
 		newFocus.setOpacity(0);
 		newFocus.setVisible(true);
 
