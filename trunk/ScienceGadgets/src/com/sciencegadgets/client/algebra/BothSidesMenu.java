@@ -102,10 +102,9 @@ public class BothSidesMenu extends FlowPanel {
 			}
 			break;
 		case Exponential:
-			//TODO - Finish
-//			if (isTopLevel && node.getIndex() == 1) {
-//				this.add(new BothSidesButton(Math.ROOT));
-//			}
+			if (isTopLevel && node.getIndex() == 1) {
+				this.add(new BothSidesButton(Math.INVERSE_EXPONENT));
+			}
 			break;
 		case Equation:
 			isSide = true;
@@ -123,7 +122,7 @@ public class BothSidesMenu extends FlowPanel {
 	}
 
 	enum Math {
-		ADD, SUBTRACT, MULTIPLY, DIVIDE, ROOT
+		ADD, SUBTRACT, MULTIPLY, DIVIDE, INVERSE_EXPONENT
 	}
 
 	class BothSidesButton extends Button {
@@ -149,8 +148,9 @@ public class BothSidesMenu extends FlowPanel {
 				setHTML("Divide both sides by " + node.getHTMLString());
 				addClickHandler(new DivideBothHandler());
 				break;
-			case ROOT:
-				setHTML("Root both sides by " + node.getHTMLString());
+			case INVERSE_EXPONENT:
+				setHTML("Raise both sides by the inverse of "
+						+ node.getHTMLString());
 				addClickHandler(new RootBothHandler());
 				break;
 			}
@@ -375,17 +375,30 @@ public class BothSidesMenu extends FlowPanel {
 			super.onClick(event);
 			// Prepare Target side
 
+			MathNode target = null;
 			if (!TypeML.Exponential.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(TypeML.Exponential);
-				MathNode frac = targetSide.append(TypeML.Fraction, "");
-				frac.append(TypeML.Number, "1");
-				frac.append(node);
+				target = targetSide;
 			} else {
 				MathNode targetExp = targetSide.getChildAt(1);
 				targetExp = targetExp.encase(TypeML.Term);
 				targetExp.append(TypeML.Operation, Operator.getMultiply()
 						.getSign());
-				MathNode frac = targetExp.append(TypeML.Fraction, "");
+				target = targetExp;
+			}
+
+			if (TypeML.Fraction.equals(node.getType())) {
+				MathNode numerator = node.getChildAt(0);
+				if (TypeML.Number.equals(numerator.getType())
+						&& "1".equals(numerator.getSymbol())) {
+					target.append(node.getChildAt(1));
+					node.remove();
+				} else {
+					node.append(numerator);//flip
+					target.append(node);
+				}
+			} else {
+				MathNode frac = target.append(TypeML.Fraction, "");
 				frac.append(TypeML.Number, "1");
 				frac.append(node);
 			}
@@ -395,7 +408,7 @@ public class BothSidesMenu extends FlowPanel {
 					oldParent.getFirstChild());
 			oldParent.remove();
 
-			changeComment += "\u221A" + node.toString();
+			changeComment += "\u221A";
 			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
 					Rule.Solving);
 		}

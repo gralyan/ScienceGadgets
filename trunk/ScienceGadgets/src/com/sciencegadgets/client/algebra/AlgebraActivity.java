@@ -48,7 +48,7 @@ public class AlgebraActivity extends Composite {
 
 	public static String focusLayerId = null;
 	public static boolean isInEasyMode = false;
-	public static boolean inEditMode = false;
+	public static boolean inEditMode = true;
 	public static VariableSpecification varSpec;
 	public static NumberSpecification numSpec;
 

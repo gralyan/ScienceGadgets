@@ -34,6 +34,8 @@ public class EquationPanel extends AbsolutePanel {
 
 	private MathNode rootNode;
 
+	private EquationLayer modelEqLayer;
+
 	// Width of equation compared to panel
 
 	public EquationPanel(MathTree mathTree) {
@@ -78,12 +80,17 @@ public class EquationPanel extends AbsolutePanel {
 	protected void onLoad() {
 		super.onLoad();
 		rootNode = mathTree.getRoot();
+		
+		modelEqLayer = new EquationLayer(null, mathTree.getEqHTMLClone());
+		this.add(modelEqLayer);
 
 		if (!AlgebraActivity.inEditMode) {
 			findRootLayerMergingNodes(rootNode);
 			findFractionMergingNodes();
 		}
 		draw(rootNode, null);
+
+		modelEqLayer.removeFromParent();
 
 		if (!AlgebraActivity.inEditMode) {
 			// Seperately place into root layer, skipped in draw()
@@ -170,13 +177,14 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayer = rootLayer;
 
 		} else {
-			eqLayer = new EquationLayer(node);
+//			eqLayer = new EquationLayer(node);
+			eqLayer = modelEqLayer.clone(node);
 
-			AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
-			menuPanel.getElement().setAttribute("id",
-					"menuLayer-" + node.getId());
-			menuPanel.addStyleName("fillParent");
-			this.add(menuPanel, 0, 0);
+//			AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
+//			menuPanel.getElement().setAttribute("id",
+//					"menuLayer-" + node.getId());
+//			menuPanel.addStyleName("fillParent");
+//			this.add(menuPanel, 0, 0);
 
 			eqLayer.setParentLayer(parentLayer);
 			eqLayerMap.put(node, eqLayer);

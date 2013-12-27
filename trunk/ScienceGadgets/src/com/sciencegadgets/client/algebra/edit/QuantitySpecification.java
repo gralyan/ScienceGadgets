@@ -59,13 +59,6 @@ public abstract class QuantitySpecification extends Prompt {
 		add(uiBinder.createAndBindUi(this));
 
 		if(Moderator.isTouch) {
-			//Symbol Display Touch
-			symbolDisplay.addTouchStartHandler(new TouchStartHandler() {
-				@Override
-				public void onTouchStart(TouchStartEvent event) {
-					symbolDisplay.setText("");
-				}
-			});
 			//Unit Display Touch
 			unitDisplay.addDomHandler(new TouchStartHandler() {
 				@Override
@@ -77,13 +70,7 @@ public abstract class QuantitySpecification extends Prompt {
 				}
 			}, TouchStartEvent.getType());
 		}else {
-			//Symbol Display Click
-			symbolDisplay.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					symbolDisplay.setText("");
-				}
-			});
+			
 			//Unit Display Click
 			unitDisplay.addDomHandler(new ClickHandler() {
 				@Override

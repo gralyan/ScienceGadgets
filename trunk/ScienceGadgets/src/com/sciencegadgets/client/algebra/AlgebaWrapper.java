@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
+import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -60,11 +61,13 @@ public class AlgebaWrapper extends ZoomWrapper {
 		if (this.equals(EquationPanel.selectedWrapper)) {
 			AlgebraActivity.bothSidesButtonMenu.clear();
 			AlgebraActivity.bothSidesButtonMenu.add(bothSidesMenu);
-
+			
 			AlgebraActivity.algTransformMenu.clear();
+
 			switch (node.getType()) {
 			case Equation:
 			case Exponential:
+				ExponentialTransformations.assign(node);
 			case Fraction:
 			case Sum:
 			case Term:

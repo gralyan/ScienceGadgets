@@ -12,8 +12,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
@@ -598,44 +600,16 @@ public class AdditionTransformations {
 
 		} else {// prompt
 
-			final Prompt prompt = new Prompt();
-
-			prompt.add(new HTML(leftValue.toString() + " "
-					+ operation.getSymbol() + " " + rightValue.toString()));
-
-			final TextBox input = new TextBox();
-			input.getElement().setAttribute("type", "number");
-			prompt.add(input);
-
-			final HTML incorrectResponse = new HTML("<b>Incorrect</b>");
-
-			prompt.addOkHandler(new ClickHandler() {
+			String question = leftValue.toString() + " "
+					+ operation.getSymbol() + " " + rightValue.toString()+" = ";
+			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 				@Override
-				public void onClick(ClickEvent event) {
-					try {
-						BigDecimal inputValue = new BigDecimal(input.getValue());
-						if (inputValue.compareTo(totalValue) == same) {
-							// correct
-							prompt.disappear();
-							addNumbers(left, right, totalValue, leftValue,
-									rightValue);
-						} else {
-							// incorrect
-							incorrectResponse.setHTML(incorrectResponse
-									.getHTML() + "<br/>" + inputValue);
-							prompt.add(incorrectResponse);
-						}
-					} catch (NumberFormatException e) {
-						incorrectResponse.setHTML(incorrectResponse.getHTML()
-								+ "<br/>Not a number");
-						prompt.add(incorrectResponse);
-					}
+				void onCorrect() {
+					addNumbers(left, right, totalValue, leftValue,
+							rightValue);
 				}
-			});
+			};
 			prompt.appear();
-
-			input.setFocus(true);
-
 		}
 
 	}

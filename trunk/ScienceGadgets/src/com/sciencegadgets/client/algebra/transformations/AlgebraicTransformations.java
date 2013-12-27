@@ -391,8 +391,6 @@ public class AlgebraicTransformations {
 	public static void operation(MathNode opNode) {
 		MathNode left, right = null;
 
-		AlgebraActivity.algTransformMenu.clear();
-
 		left = opNode.getPrevSibling();
 		right = opNode.getNextSibling();
 
