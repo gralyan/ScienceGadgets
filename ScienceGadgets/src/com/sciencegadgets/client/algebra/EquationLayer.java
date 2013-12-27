@@ -15,19 +15,26 @@ public class EquationLayer extends SimplePanel {
 	AbsolutePanel ContextMenuPanel = new AbsolutePanel();
 	MathNode mathNode;
 	EquationHTML eqHTML;
+	private String layerId;
 
-	public EquationLayer(MathNode mathNode) {
+	public EquationLayer(MathNode mathNode, EquationHTML eqHTML) {
 		super();
 		this.mathNode = mathNode;
+		this.eqHTML = eqHTML;
+
+		if(mathNode != null) {
+		layerId=mathNode.getId();
+		replaceChildsId(eqHTML.getElement());
+		addStyleName("eqLayer");
+		eqHTML.autoFillParent = true;
+		}else {
+			eqHTML.pilot = true;
+		}
 	}
 	
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		eqHTML = mathNode.getTree().getEqHTMLClone();
-		replaceChildsId(eqHTML.getElement(), mathNode.getId());
-		addStyleName("eqLayer");
-		eqHTML.autoFillParent = true;
 		this.add(eqHTML);
 	}
 
@@ -67,9 +74,8 @@ public class EquationLayer extends SimplePanel {
 	 * prefix. The prefix is the equations placement in the list
 	 * 
 	 * @param parent
-	 * @param layerId
 	 */
-	private void replaceChildsId(Element curEl, String layerId) {
+	private void replaceChildsId(Element curEl) {
 
 		// Element curEl = (Element) (parent.getChild(i));
 		String oldId = curEl.getId();
@@ -78,7 +84,9 @@ public class EquationLayer extends SimplePanel {
 		// Wrapper-[equation id]-ofLayer-[MathML node id]
 		// example: Wrapper-ML1-ofLayer-ML1
 		if (oldId != null) {
-			if (oldId.contains("ML")) {
+			if(oldId.contains(EquationPanel.OF_LAYER)) {
+				curEl.setAttribute("id", oldId.split(EquationPanel.OF_LAYER)[0] + EquationPanel.OF_LAYER + layerId);
+			}else if (oldId.contains("ML")) {
 				curEl.setAttribute("id", oldId + EquationPanel.OF_LAYER + layerId);
 			} else if (oldId.contains("Root")) {
 				curEl.setAttribute("id", "Root-ofLayer-" + layerId);
@@ -88,9 +96,13 @@ public class EquationLayer extends SimplePanel {
 		if (curEl.getChildCount() > 0) {
 			for (int i = 0; i < curEl.getChildCount(); i++) {
 				if (Node.ELEMENT_NODE == curEl.getChild(i).getNodeType()) {
-					replaceChildsId((Element) curEl.getChild(i), layerId);
+					replaceChildsId((Element) curEl.getChild(i));
 				}
 			}
 		}
+	}
+
+	public EquationLayer clone(MathNode node) {
+		return new EquationLayer(node, eqHTML.clone());
 	}
 }

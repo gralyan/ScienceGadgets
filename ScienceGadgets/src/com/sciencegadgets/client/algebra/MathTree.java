@@ -258,7 +258,10 @@ public class MathTree {
 
 			this.mlNode = newNode;
 		}
-
+		
+		/**
+		 * Returns a copy of this node 
+		 */
 		public MathNode clone() {
 			Element newEl = (Element) mlNode.cloneNode(true);
 			newEl.removeAttribute("id");

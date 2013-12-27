@@ -18,28 +18,13 @@ public class NumberSpecification extends QuantitySpecification {
 
 	String randomness = "";
 	RandomSpecPanel randSpec = new RandomSpecPanel();
-	KeyPadNumerical numPad = new KeyPadNumerical();
+	KeyPadNumerical numPad = new KeyPadNumerical(symbolDisplay);
 
 	public NumberSpecification(MathNode mathNode) {
 		super(mathNode);
 
 		//Number Pad
 		symbolPalette.add(numPad);
-		if (Moderator.isTouch) {
-			numPad.addNumberTouchHandler(new TouchStartHandler() {
-				@Override
-				public void onTouchStart(TouchStartEvent event) {
-					numberSelect(((Button) event.getSource()).getText());
-				}
-			});
-		} else {
-			numPad.addNumberClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					numberSelect(((Button) event.getSource()).getText());
-				}
-			});
-		}
 		
 		//Randomness Spec
 		symbolPalette.add(randSpec);
@@ -79,16 +64,7 @@ public class NumberSpecification extends QuantitySpecification {
 
 	}
 
-	protected void numberSelect(String text) {
-		String oldText = symbolDisplay.getText();
-		String newText = "";
-		if (RandomSpecPanel.RANDOM_SYMBOL.equals(oldText)) {
-			newText = text;
-		} else {
-			newText = oldText + text;
-		}
-		symbolDisplay.setText(newText);
-	}
+
 
 	@Override
 	String extractSymbol() {

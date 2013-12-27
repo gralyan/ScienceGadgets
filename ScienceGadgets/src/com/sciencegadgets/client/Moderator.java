@@ -160,11 +160,11 @@ public class Moderator implements EntryPoint {
 
 	private void fitWindow() {
 		SGAHeight = Window.getClientHeight();
-		SGAWidth = Window.getClientWidth() * 98 / 100;
+		SGAWidth = Window.getClientWidth();
 
 		// Fill up the window
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");
-		Window.scrollTo(0, scienceGadgetArea.getAbsoluteTop());
+//		Window.scrollTo(0, scienceGadgetArea.getAbsoluteTop());
 
 	}
 
