@@ -1,5 +1,8 @@
 package com.sciencegadgets.shared;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
@@ -119,7 +122,12 @@ public class UnitUtil {
 	}
 
 	public static String[] getUnitNames(String dataUnit_attribute) {
-		String[] bases = dataUnit_attribute.split(BASE_DELIMITER_REGEX);
+		return getUnitNames(dataUnit_attribute.split(BASE_DELIMITER_REGEX));
+	}
+	public static String[] getUnitNames(MathNode mNode) {
+		return getUnitNames(getUnits(mNode));
+	}
+	private static String[] getUnitNames(String[] bases) {
 		for(int i=0 ; i < bases.length ; i++) {
 			String name = bases[i].split(EXP_DELIMITER_REGEX)[0];
 			bases[i] = name;
@@ -136,17 +144,17 @@ public class UnitUtil {
 	public static String getSymbol(String unitName) {
 		return unitName.split(NAME_DELIMITER)[1];
 	}
-	public static String[] getUnitNames(MathNode mNode) {
-		String[] bases = getUnits(mNode);
-		for(int i=0 ; i < bases.length ; i++) {
-			String name = bases[i].split(EXP_DELIMITER_REGEX)[0];
-			bases[i] = name;
-		}
-		return bases;
-	}
 	public static String[] getUnits(MathNode mNode) {
 		String att = mNode.getUnitAttribute();
 		return att.split(BASE_DELIMITER_REGEX);
-		
+	}
+	public static LinkedHashMap<String, Integer> getUnitMap(MathNode mNode){
+		String[] basics = getUnits(mNode);
+		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+		for(String basic : basics) {
+			String[] baseAndExp = basic.split(EXP_DELIMITER_REGEX);
+			map.put(baseAndExp[0], Integer.parseInt(baseAndExp[1]));
+		}
+		return map;
 	}
 }

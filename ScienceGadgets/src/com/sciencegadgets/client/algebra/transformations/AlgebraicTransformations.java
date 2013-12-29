@@ -379,7 +379,7 @@ public class AlgebraicTransformations {
 
 		AlgebraActivity.reloadEquationPanel(original + " = " + factor + " "
 				+ Operator.getMultiply().getSign() + " " + factored,
-				Rule.FactorizationInteger);
+				Rule.INTEGER_FACTORIZATION);
 	}
 
 	/**
@@ -488,7 +488,7 @@ public class AlgebraicTransformations {
 		parentFraction.remove();
 
 		AlgebraActivity.reloadEquationPanel("Multiply by Resiprocal",
-				Rule.FractionDivision);
+				Rule.FRACTION_DIVISION);
 	}
 
 }

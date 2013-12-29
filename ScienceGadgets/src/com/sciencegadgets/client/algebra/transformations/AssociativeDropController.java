@@ -71,7 +71,7 @@ public class AssociativeDropController extends AbstractDropController {
 			parent.addBefore(dropIndex, drag);
 
 		}
-		AlgebraActivity.reloadEquationPanel("Associative Property", Rule.Commutative);
+		AlgebraActivity.reloadEquationPanel("Associative Property", Rule.COMMUNATIVE_PROPERTY);
 	}
 
 	@Override

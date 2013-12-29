@@ -251,7 +251,7 @@ public class BothSidesMenu extends FlowPanel {
 
 			changeComment += node.toString();
 			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
-					Rule.Solving);
+					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
 
@@ -306,7 +306,7 @@ public class BothSidesMenu extends FlowPanel {
 
 			changeComment += "\u00F7" + node.toString();
 			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
-					Rule.Solving);
+					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
 
@@ -363,7 +363,7 @@ public class BothSidesMenu extends FlowPanel {
 			changeComment += TypeML.Operator.getMultiply().getSign()
 					+ node.toString();
 			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
-					Rule.Solving);
+					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
 
@@ -410,7 +410,7 @@ public class BothSidesMenu extends FlowPanel {
 
 			changeComment += "\u221A";
 			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
-					Rule.Solving);
+					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
 }

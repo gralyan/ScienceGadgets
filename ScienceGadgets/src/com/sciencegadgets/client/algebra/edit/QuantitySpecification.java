@@ -98,25 +98,38 @@ public abstract class QuantitySpecification extends Prompt {
 		// OK button
 		addOkHandler(new OkHandler());
 
+
 		reload(mathNode);
 	}
 	
 	public void reload(MathNode mathNode) {
 
 		node = mathNode; 
+
+		dataUnit = "";
+		if(unitHTML != null) {
+			unitHTML.removeFromParent();
+			unitHTML = null;
+		}
+		unitMap.clear();
 		
 		// Symbol Display
 		String oldSymbol = node.getSymbol();
 		if (ChangeNodeMenu.NOT_SET.equals(oldSymbol)) {
 			symbolDisplay.setText("");
+			
 		}else {
 			symbolDisplay.setText(oldSymbol);
+
+			// Unit Display
+			unitHTML = UnitUtil.element_From_MathNode(node, null, false);
+			unitHTML.addClassName("fillParent");
+			unitDisplay.getElement().appendChild(unitHTML);
+			
+			dataUnit = node.getUnitAttribute();
+			unitMap = UnitUtil.getUnitMap(node);
 		}
 
-		// Unit Display
-		unitHTML = UnitUtil.element_From_MathNode(node, null, false);
-		unitHTML.addClassName("fillParent");
-		unitDisplay.getElement().appendChild(unitHTML);
 	}
 
 	class UnitSelectionHandler implements SelectionHandler {

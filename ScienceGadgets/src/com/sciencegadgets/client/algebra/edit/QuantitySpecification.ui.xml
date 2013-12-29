@@ -38,12 +38,12 @@
 		<!-- current value displays -->
 		<g:FlowPanel height="20%">
 
-			<g:Label ui:field="symbolDisplay" addStyleNames="{style.display}"
+			<g:Label ui:field="symbolDisplay" addStyleNames="{style.display} numberDisplay"
 				title="Variable Symbol"></g:Label>
 			<sg:ToggleSlide ui:field="symbolCaseToggle"
 				addStyleNames="{style.toggle}"></sg:ToggleSlide>
 
-			<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display}"
+			<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display} numberDisplay"
 				title="Variable Unit"></g:FlowPanel>
 			<sg:ToggleSlide ui:field="unitReciprocalToggle"
 				addStyleNames="{style.toggle}"></sg:ToggleSlide>

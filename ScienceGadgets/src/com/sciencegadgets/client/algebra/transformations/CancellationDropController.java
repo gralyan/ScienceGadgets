@@ -62,7 +62,7 @@ public class CancellationDropController extends AbstractDropController {
 			fracParent.decase();
 		}
 		
-		AlgebraActivity.reloadEquationPanel("Cancellation", Rule.Cancellation);
+		AlgebraActivity.reloadEquationPanel("Cancellation", Rule.CANCELLING_FRACTIONS);
 	}
 
 	@Override
