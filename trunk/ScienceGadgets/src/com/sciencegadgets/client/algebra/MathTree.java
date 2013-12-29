@@ -545,7 +545,6 @@ public class MathTree {
 			LinkedList<MathNode> children = getChildren();
 
 			for (MathNode child : children) {
-				JSNICalls.log("Removing Nested child: " + child.toString());
 				String id = child.getId();
 				idMap.remove(id);
 				idMLMap.remove(id);

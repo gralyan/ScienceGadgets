@@ -42,11 +42,13 @@ public abstract class NumberPrompt extends Prompt {
 						incorrectResponse.setHTML(incorrectResponse.getHTML()
 								+ "<br/>" + inputValue);
 						add(incorrectResponse);
+						display.setText("");
 					}
 				} catch (NumberFormatException e) {
 					incorrectResponse.setHTML(incorrectResponse.getHTML()
 							+ "<br/>Not a number");
 					add(incorrectResponse);
+					display.setText("");
 				}
 			}
 		});

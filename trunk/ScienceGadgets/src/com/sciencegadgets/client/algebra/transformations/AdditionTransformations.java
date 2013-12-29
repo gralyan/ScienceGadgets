@@ -33,173 +33,180 @@ public class AdditionTransformations {
 
 	public static void assign(MathNode left, MathNode sign, MathNode right,
 			boolean isPlusSign) {
-		operation = sign;
-		parent = operation.getParent();
-		grandParent = parent.getParent();
-		isPlus = isPlusSign;// Operator.PLUS.getSign().equals(sign.getSymbol());
-		boolean assigned = false;
+		try {
 
-		// propagate the negative to the left node if preceded by a minus
-		MathNode leftPrev = left.getPrevSibling();
-		if (leftPrev != null && "-".equals(leftPrev.getSymbol())
-				&& TypeML.Operation.equals(leftPrev.getType())) {
-			isMinusBeforeLeft = true;
-		}
+			operation = sign;
+			parent = operation.getParent();
+			grandParent = parent.getParent();
+			isPlus = isPlusSign;// Operator.PLUS.getSign().equals(sign.getSymbol());
+			boolean assigned = false;
 
-		TypeML leftType = left.getType();
-		TypeML rightType = right.getType();
-
-		// Check for improper types for left and right
-		switch (rightType) {
-		case Equation:
-		case Sum:
-			JSNICalls.error("Illegal node within Sum: " + rightType);
-			break;
-		case Operation:
-			JSNICalls.error("Operation in wrong place: "
-					+ right.getParent().toString());
-			break;
-		case Number:
-			BigDecimal rightValue = new BigDecimal(right.getSymbol());
-			if (rightValue.compareTo(new BigDecimal(0)) == same) {
-				addZero(left, right);
-				return;
+			// propagate the negative to the left node if preceded by a minus
+			MathNode leftPrev = left.getPrevSibling();
+			if (leftPrev != null && "-".equals(leftPrev.getSymbol())
+					&& TypeML.Operation.equals(leftPrev.getType())) {
+				isMinusBeforeLeft = true;
 			}
-			break;
-		}
-		switch (leftType) {
-		case Equation:
-		case Sum:
-			JSNICalls.error("Illegal node within Sum: " + leftType);
-			break;
-		case Operation:
-			JSNICalls.error("Operation in wrong place: "
-					+ left.getParent().toString());
-			break;
-		case Number:
-			BigDecimal leftValue = new BigDecimal(left.getSymbol());
-			if (leftValue.compareTo(new BigDecimal(0)) == same) {
-				addZero(right, left);
-				return;
-			}
-			break;
-		}
 
-		// Assignments in 2d switch (leftType, rightType)
-		first: switch (leftType) {
-		case Term:
-			second: switch (rightType) {
-			case Term:
-				assigned = addSimilar_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorLikeTerms_check(left, right);
-				break second;
-			case Exponential:
-				assigned = factorWithBase_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorWithTermChild_check(right, left);
-				break second;
-			case Fraction:
-				assigned = factorWithTermChild_check(right, left);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorLikeTerms_check(left, right);
-				break second;
-			case Variable:
-				factorWithTermChild_check(right, left);
-				break second;
+			TypeML leftType = left.getType();
+			TypeML rightType = right.getType();
+
+			// Check for improper types for left and right
+			switch (rightType) {
+			case Equation:
+			case Sum:
+				JSNICalls.error("Illegal node within Sum: " + rightType);
+				break;
+			case Operation:
+				JSNICalls.error("Operation in wrong place: "
+						+ right.getParent().toString());
+				break;
 			case Number:
-				factorWithTermChild_check(right, left);
-				break second;
+				BigDecimal rightValue = new BigDecimal(right.getSymbol());
+				if (rightValue.compareTo(new BigDecimal(0)) == same) {
+					addZero(left, right);
+					return;
+				}
+				break;
 			}
-			break first;
-		case Exponential:
-			second: switch (rightType) {
+			switch (leftType) {
+			case Equation:
+			case Sum:
+				JSNICalls.error("Illegal node within Sum: " + leftType);
+				break;
+			case Operation:
+				JSNICalls.error("Operation in wrong place: "
+						+ left.getParent().toString());
+				break;
+			case Number:
+				BigDecimal leftValue = new BigDecimal(left.getSymbol());
+				if (leftValue.compareTo(new BigDecimal(0)) == same) {
+					addZero(right, left);
+					return;
+				}
+				break;
+			}
+
+			// Assignments in 2d switch (leftType, rightType)
+			first: switch (leftType) {
 			case Term:
-				assigned = factorWithBase_check(right, left);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorWithTermChild_check(left, right);
-				break second;
-			case Exponential:
-				assigned = addSimilar_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
+				second: switch (rightType) {
+				case Term:
+					assigned = addSimilar_check(left, right);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorLikeTerms_check(left, right);
+					break second;
+				case Exponential:
 					assigned = factorWithBase_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorWithBase_check(right, left);
-				break second;
-			case Fraction:
-				assigned = factorWithTermChild_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorWithBase_check(right, left);
-				break second;
-			case Variable:
-				factorWithBase_check(right, left);
-				break second;
-			case Number:
-				factorWithBase_check(right, left);
-				break second;
-			}
-			break first;
-		case Fraction:
-			second: switch (rightType) {
-			case Term:
-				assigned = factorWithTermChild_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorLikeTerms_check(left, right);
-				break second;
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorWithTermChild_check(right, left);
+					break second;
+				case Fraction:
+					assigned = factorWithTermChild_check(right, left);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorLikeTerms_check(left, right);
+					break second;
+				case Variable:
+					factorWithTermChild_check(right, left);
+					break second;
+				case Number:
+					factorWithTermChild_check(right, left);
+					break second;
+				}
+				break first;
 			case Exponential:
-				assigned = factorWithTermChild_check(right, left);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
+				second: switch (rightType) {
+				case Term:
+					assigned = factorWithBase_check(right, left);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorWithTermChild_check(left, right);
+					break second;
+				case Exponential:
+					assigned = addSimilar_check(left, right);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						assigned = factorWithBase_check(left, right);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorWithBase_check(right, left);
+					break second;
+				case Fraction:
+					assigned = factorWithTermChild_check(left, right);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorWithBase_check(right, left);
+					break second;
+				case Variable:
 					factorWithBase_check(right, left);
-				break second;
+					break second;
+				case Number:
+					factorWithBase_check(right, left);
+					break second;
+				}
+				break first;
 			case Fraction:
-				assigned = addSimilar_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					assigned = addFractions_check(left, right);
-				if (!AlgebraActivity.isInEasyMode || !assigned)
-					factorLikeTerms_check(left, right);
-				break second;
+				second: switch (rightType) {
+				case Term:
+					assigned = factorWithTermChild_check(left, right);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorLikeTerms_check(left, right);
+					break second;
+				case Exponential:
+					assigned = factorWithTermChild_check(right, left);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorWithBase_check(right, left);
+					break second;
+				case Fraction:
+					assigned = addSimilar_check(left, right);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						assigned = addFractions_check(left, right);
+					if (!AlgebraActivity.isInEasyMode || !assigned)
+						factorLikeTerms_check(left, right);
+					break second;
+				case Variable:
+					factorWithTermChild_check(right, left);
+					break second;
+				case Number:
+					factorWithTermChild_check(right, left);
+					break second;
+				}
+				break first;
 			case Variable:
-				factorWithTermChild_check(right, left);
-				break second;
+				second: switch (rightType) {
+				case Term:
+					factorWithTermChild_check(left, right);
+					break second;
+				case Exponential:
+					factorWithBase_check(left, right);
+					break second;
+				case Fraction:
+					factorWithTermChild_check(left, right);
+					break second;
+				case Variable:
+					addSimilar_check(left, right);
+					break second;
+				}
+				break first;
 			case Number:
-				factorWithTermChild_check(right, left);
-				break second;
+				second: switch (rightType) {
+				case Term:
+					factorWithTermChild_check(left, right);
+					break second;
+				case Exponential:
+					factorWithBase_check(left, right);
+					break second;
+				case Fraction:
+					factorWithTermChild_check(left, right);
+					break second;
+				case Number:
+					addNumbers_prompt(left, right);
+					break second;
+				}
+				break first;
 			}
-			break first;
-		case Variable:
-			second: switch (rightType) {
-			case Term:
-				factorWithTermChild_check(left, right);
-				break second;
-			case Exponential:
-				factorWithBase_check(left, right);
-				break second;
-			case Fraction:
-				factorWithTermChild_check(left, right);
-				break second;
-			case Variable:
-				addSimilar_check(left, right);
-				break second;
-			}
-			break first;
-		case Number:
-			second: switch (rightType) {
-			case Term:
-				factorWithTermChild_check(left, right);
-				break second;
-			case Exponential:
-				factorWithBase_check(left, right);
-				break second;
-			case Fraction:
-				factorWithTermChild_check(left, right);
-				break second;
-			case Number:
-				addNumbers_prompt(left, right);
-				break second;
-			}
-			break first;
-		}
 
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			JSNICalls
+					.error("A number node couldn't be parsed: " + e.toString());
+		}
 	}
 
 	private static void factor(Collection<MathNode> factors,
@@ -352,8 +359,8 @@ public class AdditionTransformations {
 		left.decase();
 		right.decase();
 
-		AlgebraActivity
-				.reloadEquationPanel("Factor Like Terms", Rule.LikeTerms);
+		AlgebraActivity.reloadEquationPanel("Factor Like Terms",
+				Rule.COMBINING_LIKE_TERMS);
 	}
 
 	private static boolean factorWithBase_check(MathNode other,
@@ -398,7 +405,7 @@ public class AdditionTransformations {
 		exp.append(TypeML.Number, "1");
 
 		AlgebraActivity.reloadEquationPanel("Factor with Base",
-				Rule.Factorization);
+				Rule.FACTORIZATION);
 	}
 
 	private static boolean factorWithTermChild_check(MathNode other,
@@ -476,7 +483,7 @@ public class AdditionTransformations {
 
 		term.decase();
 
-		AlgebraActivity.reloadEquationPanel("Factor", Rule.Factorization);
+		AlgebraActivity.reloadEquationPanel("Factor", Rule.FACTORIZATION);
 	}
 
 	private static boolean addFractions_check(MathNode left, MathNode right) {
@@ -515,7 +522,7 @@ public class AdditionTransformations {
 		parent.decase();
 
 		AlgebraActivity.reloadEquationPanel("Add Fractions",
-				Rule.FractionAddition);
+				Rule.FRACTION_ADDITION);
 	}
 
 	private static boolean addSimilar_check(MathNode left, MathNode right) {
@@ -567,7 +574,8 @@ public class AdditionTransformations {
 		operation.remove();
 		parent.decase();
 
-		AlgebraActivity.reloadEquationPanel("Add similar", Rule.LikeTerms);
+		AlgebraActivity.reloadEquationPanel("Add similar",
+				Rule.COMBINING_LIKE_TERMS);
 	}
 
 	private static void addNumbers_prompt(final MathNode left,
@@ -601,12 +609,12 @@ public class AdditionTransformations {
 		} else {// prompt
 
 			String question = leftValue.toString() + " "
-					+ operation.getSymbol() + " " + rightValue.toString()+" = ";
+					+ operation.getSymbol() + " " + rightValue.toString()
+					+ " = ";
 			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 				@Override
 				void onCorrect() {
-					addNumbers(left, right, totalValue, leftValue,
-							rightValue);
+					addNumbers(left, right, totalValue, leftValue, rightValue);
 				}
 			};
 			prompt.appear();
@@ -639,7 +647,7 @@ public class AdditionTransformations {
 				+ rightValue.stripTrailingZeros().toEngineeringString()
 				+ " = "
 				+ totalValue.stripTrailingZeros().toEngineeringString(),
-				Rule.Addition);
+				Rule.ADDITION);
 	}
 
 	static void addZero(MathNode other, MathNode zero) {
@@ -651,7 +659,7 @@ public class AdditionTransformations {
 
 		parent.decase();
 
-		AlgebraActivity.reloadEquationPanel("Add zero", Rule.Addition);
+		AlgebraActivity.reloadEquationPanel("Add zero", Rule.ADDITION);
 	}
 }
 

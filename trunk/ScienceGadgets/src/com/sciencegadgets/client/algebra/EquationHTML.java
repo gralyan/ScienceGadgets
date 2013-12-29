@@ -300,8 +300,6 @@ public class EquationHTML extends HTML {
 
 				s.setPaddingTop(childTopPad / pxPerEm, Unit.EM);
 				s.setPaddingBottom(childBottomPad / pxPerEm, Unit.EM);
-//				s.setPaddingTop(childTopPad , Unit.PX);
-//				s.setPaddingBottom(childBottomPad , Unit.PX);
 			}
 		}
 
