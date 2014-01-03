@@ -26,7 +26,7 @@ public class SaveButtonHandler implements ClickHandler {
 			}
 
 			String html = JSNICalls.elementToString(Moderator.mathTree
-					.getEqHTMLClone().getElement());
+					.getDisplayClone().getElement());
 
 			dataBase.saveEquation(mathML, html, new AsyncCallback<String>() {
 

@@ -4,12 +4,8 @@ import java.math.BigDecimal;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.KeyPadNumerical;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -35,6 +31,8 @@ public class NumberSpecification extends QuantitySpecification {
 				randomness = randSpec.getRandomness();
 				if (randomness != null) {
 					symbolDisplay.setText(RandomSpecPanel.RANDOM_SYMBOL);
+				}else {
+					symbolDisplay.setText("");
 				}
 			}
 		}));

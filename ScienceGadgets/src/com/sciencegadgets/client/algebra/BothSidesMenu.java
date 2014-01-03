@@ -129,8 +129,8 @@ public class BothSidesMenu extends FlowPanel {
 
 		BothSidesButton(Math operation) {
 			this.addStyleName("bothSidesButton");
-			addMouseDownHandler(new AlternativeHTML(operation,
-					node.getHTMLString()));
+//			addMouseDownHandler(new AlternativeHTML(operation,
+//					node.getHTMLString()));
 			switch (operation) {
 			case ADD:
 				setHTML("Add " + node.getHTMLString() + " to both sides");
@@ -197,14 +197,7 @@ public class BothSidesMenu extends FlowPanel {
 		@Override
 		public void onClick(ClickEvent event) {
 			node.highlight();
-		}
-
-		protected String doubleChangeComment() {
-			return changeComment = changeComment
-					+ "&nbsp;&nbsp;&nbsp; both sides";
-
-			// return changeComment = changeComment
-			// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + changeComment;
+			node.lineThrough();
 		}
 	}
 
@@ -249,8 +242,8 @@ public class BothSidesMenu extends FlowPanel {
 
 			oldParent.decase();
 
-			changeComment += node.toString();
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+			changeComment += node.getHTMLString();
+			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
@@ -304,8 +297,8 @@ public class BothSidesMenu extends FlowPanel {
 
 			oldParent.decase();
 
-			changeComment += "\u00F7" + node.toString();
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+			changeComment += TypeML.Operator.DIVIDE.getSign() + node.getHTMLString();
+			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
@@ -361,13 +354,12 @@ public class BothSidesMenu extends FlowPanel {
 			}
 
 			changeComment += TypeML.Operator.getMultiply().getSign()
-					+ node.toString();
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+					+ node.getHTMLString();
+			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
 
-	// TODO finish, implement, test
 	class RootBothHandler extends BothSidesHandler {
 
 		@Override
@@ -408,28 +400,28 @@ public class BothSidesMenu extends FlowPanel {
 					oldParent.getFirstChild());
 			oldParent.remove();
 
-			changeComment += "\u221A";
-			AlgebraActivity.reloadEquationPanel(doubleChangeComment(),
+			changeComment += "^" + node.getHTMLString();
+			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
 }
 
-class AlternativeHTML implements MouseDownHandler {
-	com.sciencegadgets.client.algebra.BothSidesMenu.Math math = null;
-	String html = null;
-
-	public AlternativeHTML(
-			com.sciencegadgets.client.algebra.BothSidesMenu.Math math,
-			String htmlString) {
-		this.math = math;
-		this.html = htmlString;
-	}
-
-	@Override
-	public void onMouseDown(MouseDownEvent event) {
-		((Button) event.getSource())
-				.setHTML(html + "&nbsp;&nbsp;&nbsp;" + html);
-	}
-
-}
+//class AlternativeHTML implements MouseDownHandler {
+//	com.sciencegadgets.client.algebra.BothSidesMenu.Math math = null;
+//	String html = null;
+//
+//	public AlternativeHTML(
+//			com.sciencegadgets.client.algebra.BothSidesMenu.Math math,
+//			String htmlString) {
+//		this.math = math;
+//		this.html = htmlString;
+//	}
+//
+//	@Override
+//	public void onMouseDown(MouseDownEvent event) {
+//		((Button) event.getSource())
+//				.setHTML(html + "&nbsp;&nbsp;&nbsp;" + html);
+//	}
+//
+//}

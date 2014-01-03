@@ -18,6 +18,8 @@ public class KeyPadNumerical extends FlowPanel {
 	Label symbolDisplay;
 
 	public KeyPadNumerical(final Label symbolDisplay) {
+		addStyleName("keyPadNumerical");
+		
 		this.symbolDisplay = symbolDisplay;
 		symbolDisplay.addStyleName("numberDisplay");
 
@@ -28,6 +30,18 @@ public class KeyPadNumerical extends FlowPanel {
 		}
 		//separate numbers from special characters with a div
 		this.add(new FlowPanel());
+		
+		NumberButton neg = new NumberButton("-");
+		neg.setTitle("negative");
+		buttons.add(neg);
+		oneAllowedButtons.add(neg);
+		this.add(neg);
+		
+		NumberButton period = new NumberButton(".");
+		period.setTitle("decimal dot");
+		buttons.add(period);
+		oneAllowedButtons.add(period);
+		this.add(period);
 
 		NumberButton e = new NumberButton("E");
 		e.setTitle("x10^");
@@ -41,12 +55,6 @@ public class KeyPadNumerical extends FlowPanel {
 		oneAllowedButtons.add(exp);
 		this.add(exp);
 
-		NumberButton neg = new NumberButton("-");
-		neg.setTitle("negative");
-		buttons.add(neg);
-		oneAllowedButtons.add(neg);
-		this.add(neg);
-
 		if (Moderator.isTouch) {
 			//Clear Display on Touch
 			symbolDisplay.addTouchStartHandler(new TouchStartHandler() {
@@ -59,6 +67,7 @@ public class KeyPadNumerical extends FlowPanel {
 			addNumberTouchHandler(new TouchStartHandler() {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
+					event.preventDefault();
 					numberSelect(((Button) event.getSource()));
 				}
 			});
@@ -93,13 +102,14 @@ public class KeyPadNumerical extends FlowPanel {
 		}
 	}
 
-	protected void displaySelect() {
+	public void displaySelect() {
 		for(Button b : oneAllowedButtons) {
 			b.setEnabled(true);
 		}
 		symbolDisplay.setText("");
 	}
 	protected void numberSelect(Button button) {
+		
 		String oldText = symbolDisplay.getText();
 		String newText = "";
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(oldText)) {

@@ -22,7 +22,8 @@ public abstract class NumberPrompt extends Prompt {
 		final Label display = new Label();
 		display.addStyleName("layoutRow");
 
-		KeyPadNumerical keyPad = new KeyPadNumerical(display);
+		final KeyPadNumerical keyPad = new KeyPadNumerical(display);
+
 		add(display);
 		add(keyPad);
 
@@ -42,13 +43,17 @@ public abstract class NumberPrompt extends Prompt {
 						incorrectResponse.setHTML(incorrectResponse.getHTML()
 								+ "<br/>" + inputValue);
 						add(incorrectResponse);
-						display.setText("");
+						keyPad.displaySelect();
 					}
 				} catch (NumberFormatException e) {
-					incorrectResponse.setHTML(incorrectResponse.getHTML()
-							+ "<br/>Not a number");
-					add(incorrectResponse);
-					display.setText("");
+					if ("".equals(display.getText())) {
+						disappear();
+					} else {
+						incorrectResponse.setHTML(incorrectResponse.getHTML()
+								+ "<br/>Not a number");
+						add(incorrectResponse);
+						keyPad.displaySelect();
+					}
 				}
 			}
 		});
