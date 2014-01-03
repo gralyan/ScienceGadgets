@@ -48,7 +48,7 @@ public class AlgebraActivity extends Composite {
 
 	public static String focusLayerId = null;
 	public static boolean isInEasyMode = false;
-	public static boolean inEditMode = true;
+	public static boolean inEditMode = false;
 	public static VariableSpecification varSpec;
 	public static NumberSpecification numSpec;
 
@@ -85,12 +85,12 @@ public class AlgebraActivity extends Composite {
 	public static void reloadEquationPanel(String changeComment, Rule rule) {
 		if (changeComment != null) {
 			algOut.updateAlgOut(changeComment, rule,
-					Moderator.mathTree.getHTML());
+					Moderator.mathTree);
 		}
 		eqPanelHolder.clear();
 
 		Moderator.mathTree.validateTree();
-		Moderator.mathTree.reloadEqHTML(true);
+		Moderator.mathTree.reloadDisplay(true);
 		eqPanel = new EquationPanel(Moderator.mathTree);
 		eqPanelHolder.add(eqPanel);
 

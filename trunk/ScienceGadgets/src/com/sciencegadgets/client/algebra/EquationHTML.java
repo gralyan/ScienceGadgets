@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.shared.MathAttribute;
@@ -24,6 +25,8 @@ public class EquationHTML extends HTML {
 	public boolean autoFillParent = false;
 	private boolean hasSmallUnits = true;
 	public boolean pilot = false;
+	private Element left = null;
+	private Element right = null;
 
 	public EquationHTML(Element mlTree) {
 		this(mlTree, true);
@@ -35,15 +38,25 @@ public class EquationHTML extends HTML {
 		this.hasSmallUnits = hasSmallUnits;
 
 		NodeList<Node> children = mlTree.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			makeHTMLNode((Element) children.getItem(i), this.getElement());
-		}
+//		for (int i = 0; i < children.getLength(); i++) {
+//		}
+		left = makeHTMLNode((Element) children.getItem(0), this.getElement());
+		makeHTMLNode((Element) children.getItem(1), this.getElement());
+		right = makeHTMLNode((Element) children.getItem(2), this.getElement());
 
 	}
 
 	private EquationHTML(String html) {
 		super(html);
 		this.setStyleName("Equation");
+	}
+	
+	public Element getLeft(){
+		return left;
+	}
+	
+	public Element getRight(){
+		return right;
 	}
 
 	@Override
@@ -69,8 +82,9 @@ public class EquationHTML extends HTML {
 	 * <br/>
 	 *            and adds it to<br/>
 	 * @param displayParentEl
+	 * @return 
 	 */
-	private void makeHTMLNode(Element mlNode, Element displayParentEl) {
+	private Element makeHTMLNode(Element mlNode, Element displayParentEl) {
 		Element mlParent = mlNode.getParentElement();
 
 		String id = mlNode.getAttribute("id");
@@ -79,8 +93,8 @@ public class EquationHTML extends HTML {
 
 		// make new display node with appropriate properties
 		Element nodeHTML = DOM.createDiv();
+		Element fence = nodeHTML;
 		nodeHTML.setId(id);
-		nodeHTML.addClassName(type.toString());
 
 		switch (parentType) {
 		case Fraction:
@@ -115,10 +129,15 @@ public class EquationHTML extends HTML {
 			break;
 		}
 
+		if (TypeML.Fraction.equals(type)) {
+			nodeHTML.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+		}
+
 		// (fence) sums in terms
 		if ((TypeML.Sum.equals(type) && TypeML.Term.equals(parentType))) {
 			// fenced.add(nodeHTML);
-			nodeHTML.addClassName(FENCED);
+			fence = nodeHTML.appendChild(DOM.createDiv());
+			fence.addClassName(FENCED);
 		}
 		// (fence) terms, sums, exponentials, fractions or numbers with units
 		// in bases or exponents
@@ -127,8 +146,10 @@ public class EquationHTML extends HTML {
 				&& !(TypeML.Number.equals(type) && "".equals(mlNode
 						.getAttribute(MathAttribute.Unit.getName())))) {
 			// fenced.add(nodeHTML);
-			nodeHTML.addClassName(FENCED);
+			fence = nodeHTML.appendChild(DOM.createDiv());
+			fence.addClassName(FENCED);
 		}
+
 
 		// Addition to tree
 		displayParentEl.appendChild(nodeHTML);
@@ -138,7 +159,7 @@ public class EquationHTML extends HTML {
 
 			// Recursive creation
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				makeHTMLNode((Element) child, nodeHTML);
+				makeHTMLNode((Element) child, fence);
 				// Inner text operation adjustment
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
 				String text = mlNode.getInnerText();
@@ -156,7 +177,9 @@ public class EquationHTML extends HTML {
 					if (text.startsWith(Operator.MINUS.getSign())) {
 						// All negative numbers in parentheses
 						// text = "(" + text + ")";
-						nodeHTML.addClassName(FENCED);
+//						nodeHTML.addClassName(FENCED);
+						fence = nodeHTML.appendChild(DOM.createDiv());
+						fence.addClassName(FENCED);
 					}
 					break;
 				case Operation:
@@ -169,12 +192,14 @@ public class EquationHTML extends HTML {
 					}
 					break;
 				}
-				nodeHTML.setInnerText(text);
+				fence.setInnerText(text);
 				if (unit != null) {
-					nodeHTML.appendChild(unit);
+					fence.appendChild(unit);
 				}
 			}
 		}
+		fence.addClassName(type.toString());
+		return fence;
 	}
 
 	/**
@@ -276,10 +301,16 @@ public class EquationHTML extends HTML {
 		// Lift exponents of fraction bases to top
 		if (curClass.contains(TypeML.Exponential.toString())) {
 			Element base = ((Element) curEl.getChild(0));
-			if (base.getClassName().contains(TypeML.Fraction.toString())) {
-				Element exp = ((Element) curEl.getChild(1));
-				int lift = (base.getOffsetHeight() / 2) - exp.getOffsetHeight();
-				exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
+			if (base.getClassName().equals(
+					TypeML.Exponential.asChild(TypeArgument.BASE))) {
+				Element baseChild = ((Element) base.getChild(0));
+				if (baseChild != null && baseChild.getClassName().contains(
+						TypeML.Fraction.toString())) {
+					Element exp = ((Element) curEl.getChild(1));
+					int lift = (base.getOffsetHeight() / 2)
+							- exp.getOffsetHeight();
+					exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
+				}
 			}
 
 			// Align inline siblings flush using padding at highest and lowest

@@ -24,6 +24,7 @@ import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
@@ -47,6 +48,7 @@ public class Moderator implements EntryPoint {
 	public static AbsolutePanel scienceGadgetArea = RootPanel
 			.get("scienceGadgetArea");
 	private EquationBrowser browserPanel = null;
+	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
 	private static ConversionActivity conversionActivity;
@@ -106,9 +108,9 @@ public class Moderator implements EntryPoint {
 
 	public static void reloadAlgebraActivity() {
 		setActivity(Activity.algebra);
-		
+
 		AlgebraActivity.eqPanelHolder.clear();
-		
+
 		scienceGadgetArea.clear();
 		scienceGadgetArea.add(algebraActivity);
 		AlgebraActivity.reloadEquationPanel(null, null);
@@ -164,18 +166,30 @@ public class Moderator implements EntryPoint {
 
 		// Fill up the window
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");
-//		Window.scrollTo(0, scienceGadgetArea.getAbsoluteTop());
+		// Window.scrollTo(0, scienceGadgetArea.getAbsoluteTop());
 
 	}
 
 	private void detectTouch() {
-		scienceGadgetArea.addDomHandler(new TouchStartHandler() {
+		// Touch handler in main panel that is only used to detect touch once
+		TouchStartHandler detectTouch = new TouchStartHandler() {
 			@Override
 			public void onTouchStart(TouchStartEvent event) {
 				isTouch = true;
-				scienceGadgetArea.unsinkEvents(Event.ONTOUCHSTART);
+				// scienceGadgetArea.unsinkEvents(Event.ONTOUCHSTART);
+				removeDetectTouch();
 			}
-		}, TouchStartEvent.getType());
+		};
+		detectTouchReg = scienceGadgetArea.addDomHandler(detectTouch,
+				TouchStartEvent.getType());
+
+		//
+	}
+
+	void removeDetectTouch() {
+		if (detectTouchReg != null) {
+			detectTouchReg.removeHandler();
+		}
 	}
 
 	class HistoryChange<String> implements ValueChangeHandler<String> {

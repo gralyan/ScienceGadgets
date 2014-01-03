@@ -81,7 +81,7 @@ public class EquationPanel extends AbsolutePanel {
 		super.onLoad();
 		rootNode = mathTree.getRoot();
 		
-		modelEqLayer = new EquationLayer(null, mathTree.getEqHTMLClone());
+		modelEqLayer = new EquationLayer(null, mathTree.getDisplayClone());
 		this.add(modelEqLayer);
 
 		if (!AlgebraActivity.inEditMode) {

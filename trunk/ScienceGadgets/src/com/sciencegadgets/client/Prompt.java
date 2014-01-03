@@ -1,5 +1,7 @@
 package com.sciencegadgets.client;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -8,11 +10,17 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Prompt extends DialogBox {
@@ -21,13 +29,14 @@ public class Prompt extends DialogBox {
 	private static final double WIDTH_FRACTION = 0.8;
 	protected final FlowPanel flowPanel = new FlowPanel();
 	final Button okButton = new Button("OK");
+	private HandlerRegistration nativePreview;
 
 	public Prompt() {
 		this(true);
 	}
 
 	public Prompt(boolean hasOkButton) {
-		super(true, true);
+		super(true, false);
 		FlowPanel mainPanel = new FlowPanel();
 		mainPanel.add(flowPanel);
 		if (hasOkButton) {
@@ -54,6 +63,7 @@ public class Prompt extends DialogBox {
 				}
 			}
 		}, KeyDownEvent.getType());
+
 	}
 
 	/**
@@ -74,11 +84,16 @@ public class Prompt extends DialogBox {
 	public void disappear() {
 		hide();
 		removeFromParent();
+		
+		if(nativePreview != null) {
+		nativePreview.removeHandler();
+	}
 	}
 
 	public void appear() {
 		resize();
 		center();
+
 	}
 
 	public void resize() {
@@ -87,19 +102,54 @@ public class Prompt extends DialogBox {
 				(int) (Window.getClientHeight() * HEIGHT_FRACTION));
 	}
 
-	// public class FocusOnlyClickHandler implements ClickHandler {
-	// @Override
-	// public void onClick(ClickEvent event) {
-	// event.preventDefault();
-	// event.stopPropagation();
-	// }
-	// }
-	//
-	// public class FocusOnlyTouchHandler implements TouchStartHandler {
+	@Override
+	public void hide() {
+		super.hide();
+		Moderator.prompts.remove(this);
+
+		if(Moderator.isTouch) {
+		// Allow touching to autoHide, GWT issue 7596 workaround
+		nativePreview = Event.addNativePreviewHandler(new NativePreviewHandler() {
+			public void onPreviewNativeEvent(NativePreviewEvent event) {
+				addAutoHideOnGlassTouch(event);
+			}
+		});
+		}
+	}
+
+	@Override
+	public void center() {
+		super.center();
+
+		Moderator.prompts.add(this);
+
+	}
+
+	// private void addAutoHideOnGlassTouch() {
+	// HTML glass = HTML.wrap(getGlassElement());
+	// glass.addDomHandler(new TouchStartHandler() {
 	// @Override
 	// public void onTouchStart(TouchStartEvent event) {
-	// event.preventDefault();
-	// event.stopPropagation();
+	// JSNICalls.log("glass touch");
 	// }
+	// }, TouchStartEvent.getType());
 	// }
+	private void addAutoHideOnGlassTouch(NativePreviewEvent event) {
+		Event nativeEvent = Event.as(event.getNativeEvent());
+		int type = nativeEvent.getTypeInt();
+		if (Event.ONTOUCHSTART == type) {
+
+			EventTarget target = nativeEvent.getEventTarget();
+
+			JSNICalls.log("target " + target.toSource());
+			if (Element.is(target)) {
+				if (target.equals(getGlassElement())) {
+					JSNICalls.log("glass touch");
+					disappear();
+				}
+			}
+		}
+		event.cancel();
+	}
+
 }

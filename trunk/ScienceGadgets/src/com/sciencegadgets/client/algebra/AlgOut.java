@@ -15,13 +15,16 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.animation.client.Animation;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
@@ -38,24 +41,20 @@ public class AlgOut extends FlowPanel {
 		origionalHeightStr = AlgebraActivity.upperEqArea.getElement()
 				.getStyle().getHeight();
 
-//		this.addDomHandler(new AlgOutTouchMoveHandler(),
-//				TouchMoveEvent.getType());
-		// this.addDomHandler(new AlgOutTouchEndHandler(),
-		// TouchEndEvent.getType());
-
-		if(Moderator.isTouch) {
-			this.addDomHandler(new AlgOutTouchStart(), TouchStartEvent.getType());
-		}else {
+		if (Moderator.isTouch) {
+			this.addDomHandler(new AlgOutTouchStart(),
+					TouchStartEvent.getType());
+		} else {
 			this.addDomHandler(new AlgOutClickHandler(), ClickEvent.getType());
 		}
 
 		Label firstRowEq = new Label("Solve");
-		firstRowEq.addStyleName("algOutEquationRow");
+		firstRowEq.addStyleName("algOutEqRow");
 		firstRow.add(firstRowEq);
 
-		Label firstRowCh = new Label();
-		firstRowCh.addStyleName("algOutChangeRow");
-		firstRow.add(firstRowCh);
+		Label firstRowRule = new Label();
+		firstRowRule.addStyleName("algOutRuleRow");
+		firstRow.add(firstRowRule);
 
 		firstRow.addStyleName("algOutRow");
 
@@ -68,24 +67,15 @@ public class AlgOut extends FlowPanel {
 		firstRow.setSize("100%", getOffsetHeight() + "px");
 	}
 
-	public void updateAlgOut(String changeComment, Rule rule,
-			EquationHTML eqHTML) {
+	public void updateAlgOut(String changeComment, Rule rule, MathTree mathTree) {
+		
+		changeComment = changeComment.replace("lineThrough", "");
 
-		FlowPanel row = new FlowPanel();
-		row.addStyleName("algOutRow");
+		add(new AlgOutRow(changeComment, rule, mathTree));
 
-		eqHTML.addStyleName("algOutEquationRow");
-		row.add(eqHTML);
-
-		Anchor changeRow = new Anchor(changeComment, true);
-		if (rule != null) {
-			changeRow.setHref(rule.getPage());
-			changeRow.setTarget("_blank");
+		if (Rule.SOLVING_ALGEBRAIC_EQUATIONS.equals(rule)) {
+			add(new AlgOutRow(changeComment));
 		}
-		changeRow.addStyleName("algOutChangeRow");
-		row.add(changeRow);
-
-		add(row);
 
 		scrollToBottom();
 	}
@@ -97,6 +87,55 @@ public class AlgOut extends FlowPanel {
 								- getElement().getClientHeight());
 	}
 
+	class AlgOutRow extends FlowPanel {
+		private FlowPanel eqSide = new FlowPanel();
+		private Anchor ruleSide = new Anchor();
+
+		AlgOutRow(String changeComment) {
+			this(changeComment, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", changeComment);
+
+			addStyleName("algOutChangeRow");
+
+
+		}
+
+		AlgOutRow(String changeComment, Rule rule, MathTree mathTree) {
+			this(mathTree.getLeftDisplay().getString(),//
+					"&nbsp;=&nbsp;",//
+					mathTree.getRightDisplay().getString());
+			
+			if (Rule.SOLVING_ALGEBRAIC_EQUATIONS.equals(rule)) {
+				ruleSide.setHTML(changeComment + "&nbsp;&nbsp;&nbsp; both sides");
+			}else {
+				ruleSide.setHTML(changeComment);
+			}
+			ruleSide.setHref(rule.getPage());
+			ruleSide.setTarget("_blank");
+		}
+
+		private AlgOutRow(String leftStr, String middleStr, String rightStr) {
+			addStyleName("algOutRow");
+
+			eqSide.addStyleName("algOutEqRow");
+			add(eqSide);
+
+			HTML left = new HTML(leftStr);
+			HTML equals = new HTML(middleStr);
+			HTML right = new HTML(rightStr);
+
+			left.addStyleName("algOutEqLeft");
+			equals.addStyleName("algOutEqEquals");
+			right.addStyleName("algOutEqRight");
+			eqSide.add(left);
+			eqSide.add(equals);
+			eqSide.add(right);
+
+			ruleSide.addStyleName("algOutRuleRow");
+			add(ruleSide);
+
+		}
+	}
+
 	class AlgOutSlide extends Animation {
 
 		private FlowPanel alg = AlgebraActivity.upperEqArea;;
@@ -106,20 +145,19 @@ public class AlgOut extends FlowPanel {
 
 		@Override
 		public void run(int duration) {
-			int normalHeight = getOffsetHeight();
-			heightDiff = getElement().getScrollHeight() - normalHeight;
+			startingHeight = getOffsetHeight();
+			int diff = getElement().getScrollHeight() - startingHeight;
 
 			if (expanded) {
 
-				startingHeight = normalHeight + heightDiff;
 				direction = -1;
 
-			} else if (heightDiff < 3) {
+			} else if (diff < 3) {
 				// don't do anything if there is nothing hidden to expand
 				return;
 			} else {// not expanded but should be
 
-				startingHeight = normalHeight;
+				heightDiff = diff;
 				direction = 1;
 			}
 			super.run(duration);
@@ -164,28 +202,4 @@ public class AlgOut extends FlowPanel {
 		}
 
 	}
-	// class AlgOutTouchMoveHandler implements TouchMoveHandler {
-	// @Override
-	// public void onTouchMove(TouchMoveEvent event) {
-	// scrolled = true;
-	// }
-	// }
-	//
-	// class AlgOutTouchEndHandler implements TouchEndHandler {
-	// AlgOutSlide slide = new AlgOutSlide();
-	//
-	// @Override
-	// public void onTouchEnd(TouchEndEvent event) {
-	// ((UIObject) event.getSource()).unsinkEvents(Event.ONCLICK);
-	//
-	// event.stopPropagation();
-	// event.preventDefault();
-	//
-	// if (!scrolled) {
-	// slide.run(300);
-	// } else {
-	// scrolled = false;// restore field
-	// }
-	// }
-	// }
 }

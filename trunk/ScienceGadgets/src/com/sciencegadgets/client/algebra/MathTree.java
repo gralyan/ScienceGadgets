@@ -16,6 +16,7 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -26,6 +27,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -65,7 +67,7 @@ public class MathTree {
 
 		bindMLtoNodes(mathML);
 
-		reloadEqHTML(true);
+		reloadDisplay(true);
 	}
 
 	// public MathNode getMathNode(String id) {
@@ -76,8 +78,15 @@ public class MathTree {
 		return (Element) mathML.cloneNode(true);
 	}
 
-	public EquationHTML getEqHTMLClone() {
+	public EquationHTML getDisplayClone() {
 		return new EquationHTML(mathML);
+	}
+	
+	public Element getLeftDisplay() {
+		return eqHTML.getLeft();
+	}
+	public Element getRightDisplay() {
+		return eqHTML.getRight();
 	}
 
 	public MathNode getRoot() {
@@ -111,7 +120,7 @@ public class MathTree {
 		}
 	}
 
-	public EquationHTML reloadEqHTML(boolean hasSmallUnits) {
+	public EquationHTML reloadDisplay(boolean hasSmallUnits) {
 		for(Wrapper w : wrappers) {
 			if(w instanceof EditWrapper) {
 				((EditWrapper) w).onUnload();
@@ -141,10 +150,6 @@ public class MathTree {
 			}
 			el.removeAttribute("id");
 		}
-		return eqHTML;
-	}
-
-	public EquationHTML getHTML() {
 		return eqHTML;
 	}
 
@@ -633,6 +638,9 @@ public class MathTree {
 		public String getUnitAttribute() {
 			return mlNode.getAttribute(MathAttribute.Unit.getName());
 		}
+		public LinkedHashMap<String, Integer> getUnitMap() {
+			return UnitUtil.getUnitMap(this);
+		}
 
 		public void setAttribute(MathAttribute attribute, String value) {
 			mlNode.setAttribute(attribute.getName(), value);
@@ -695,7 +703,7 @@ public class MathTree {
 
 		/**
 		 * This should
-		 * only be done after {@link MathTree#reloadEqHTML()}
+		 * only be done after {@link MathTree#reloadDisplay()}
 		 * @return The current HTML element associated with this node
 		 */
 		public Element getHTML() {
@@ -717,7 +725,10 @@ public class MathTree {
 		}
 
 		public void highlight() {
-			getHTML().getStyle().setColor("red");
+			getHTML().addClassName("highlight");
+		}
+		public void lineThrough() {
+			getHTML().addClassName("lineThrough");
 		}
 
 		public boolean isLike(MathNode another) {
@@ -769,7 +780,7 @@ public class MathTree {
 					return true;
 				}
 			case Number:
-				if (!getUnitAttribute().equals(another.getUnitAttribute())) {
+				if(!UnitUtil.compaereUnits(this, another)) {
 					return false;
 				}
 				// fall through

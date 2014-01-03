@@ -186,7 +186,7 @@ public class ConversionActivity extends AbsolutePanel {
 	void reloadEquation() {
 		// Make and add entire equation before moving left
 		dimensionalAnalysisArea.clear();
-		EquationHTML eqHTML = mTree.reloadEqHTML(false);
+		EquationHTML eqHTML = mTree.reloadDisplay(false);
 		eqHTML.autoFillParent = true;
 
 		dimensionalAnalysisArea.add(eqHTML);

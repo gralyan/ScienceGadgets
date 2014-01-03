@@ -290,33 +290,51 @@ public class AlgebraicTransformations {
 			return;
 		}
 
+		LinkedList<MathNode> cancelDropTargets = new LinkedList<MathNode>();
+		LinkedList<MathNode> divideDropTargets = new LinkedList<MathNode>();
 		if (node.isLike(otherSide)) {
-			LinkedList<MathNode> list = new LinkedList<MathNode>();
-			list.add(otherSide);
-			cancellation_addDragDrops(node, list);
+			cancelDropTargets.add(otherSide);
+			
+		} else if (TypeML.Number.equals(otherSide.getType())) {
+			if (TypeML.Number.equals(node.getType())) {
+				divideDropTargets.add(otherSide);
+			}
+			
 		} else if (TypeML.Term.equals(otherSide.getType())) {
-			LinkedList<MathNode> list = new LinkedList<MathNode>();
+
 			for (MathNode child : otherSide.getChildren()) {
+				
 				if (node.isLike(child)) {
-					list.add(child);
+					cancelDropTargets.add(child);
+					
+				} else if (TypeML.Number.equals(child.getType())) {
+					if (TypeML.Number.equals(node.getType())) {
+						divideDropTargets.add(child);
+					}
 				}
 			}
-			if (list.size() > 0) {
-				cancellation_addDragDrops(node, list);
-			}
+		}
+		if (cancelDropTargets.size() > 0 || divideDropTargets.size() > 0) {
+			cancellation_addDragDrops(node, cancelDropTargets, divideDropTargets);
 		}
 
 	}
 
 	static void cancellation_addDragDrops(MathNode node,
-			LinkedList<MathNode> dropNodes) {
+			LinkedList<MathNode> cancelDropTargets, LinkedList<MathNode> divideDropTargets) {
 
 		WrapDragController dragController = node.getWrapper()
 				.addDragController();
-		for (MathNode dropNode : dropNodes) {
+		
+		for (MathNode cancelDropTarget : cancelDropTargets) {
 			dragController
-					.registerDropController(new CancellationDropController(
-							(AlgebaWrapper) dropNode.getWrapper()));
+					.registerDropController(new DivideDropController(
+							(AlgebaWrapper) cancelDropTarget.getWrapper(), true));
+		}
+		for (MathNode divideDropTarget : divideDropTargets) {
+			dragController
+			.registerDropController(new DivideDropController(
+					(AlgebaWrapper) divideDropTarget.getWrapper(),false));
 		}
 	}
 
@@ -533,7 +551,7 @@ class FactorPromptButton extends Button {
 
 				Prompt prompt = new Prompt(false);
 				Label title = new Label();
-				title.setText(""+number);
+				title.setText("" + number);
 				title.setHeight("20%");
 				prompt.add(title);
 				for (Integer factor : primeFactors) {
@@ -564,6 +582,7 @@ class FactorNumberButton extends Button {
 		});
 	}
 }
+
 class SeperateNegButton extends Button {
 	SeperateNegButton(final MathNode negNode) {
 
@@ -577,7 +596,6 @@ class SeperateNegButton extends Button {
 		});
 	}
 }
-
 
 class DenominatorFlipButton extends Button {
 	DenominatorFlipButton(final MathNode node) {

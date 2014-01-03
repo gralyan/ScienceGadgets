@@ -87,7 +87,7 @@ public enum TypeML {
 	public static enum Operator {
 		Equals("\u003D", "&#x3d;"),DOT("\u00B7", "&middot;"), SPACE("\u00A0", "&nbsp;"), CROSS("\u00D7",
 //				"&times;"), PLUS("+", "&#43;"), MINUS("\u002D", "&#45;");
-	"&times;"), PLUS("\u002B", "&#43;"), MINUS("\u002D", "&#45;");
+	"&times;"), PLUS("\u002B", "&#43;"), MINUS("\u002D", "&#45;"), DIVIDE("\u00F7","&#247;");
 
 		private String sign;
 		private String html;

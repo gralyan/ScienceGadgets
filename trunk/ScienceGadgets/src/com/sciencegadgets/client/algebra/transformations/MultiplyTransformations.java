@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -379,14 +380,7 @@ public class MultiplyTransformations {
 			}
 			rightUnitMap.put(untBase, newRightExp);
 		}
-		String combinedUnit = "";
-		for (Entry<String, Integer> unitEntry : rightUnitMap.entrySet()) {
-			combinedUnit = combinedUnit + UnitUtil.BASE_DELIMITER
-					+ unitEntry.getKey() + UnitUtil.EXP_DELIMITER
-					+ unitEntry.getValue();
-		}
-		combinedUnit = combinedUnit.replaceFirst(UnitUtil.BASE_DELIMITER_REGEX,
-				"");
+		String combinedUnit = UnitUtil.getUnitAttribute(rightUnitMap);
 		right.setAttribute(MathAttribute.Unit, combinedUnit);
 
 		

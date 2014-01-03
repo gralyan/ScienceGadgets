@@ -14,6 +14,7 @@ package com.sciencegadgets.client.algebra.transformations;
 		CANCELLING_FRACTIONS("http://en.wikipedia.org/wiki/Fraction_%28mathematics%29#Multiplying_a_fraction_by_another_fraction"),
 		DISTRIBUTIVE_PROPERTY("http://en.wikipedia.org/wiki/Distributive_property"),
 		EXPONENT_PROPERTIES("http://simple.wikipedia.org/wiki/Exponentiation"),
+		DIVISION("http://en.wikipedia.org/wiki/Division_%28mathematics%29"),
 		INTEGER_FACTORIZATION("http://en.wikipedia.org/wiki/Prime_factorization");
 		
 

@@ -152,12 +152,7 @@ public abstract class QuantitySpecification extends Prompt {
 			} else {
 				unitMap.put(name, exp);
 			}
-			dataUnit = "";
-			for (String base : unitMap.keySet()) {
-				dataUnit = dataUnit + UnitUtil.BASE_DELIMITER + base
-						+ UnitUtil.EXP_DELIMITER + unitMap.get(base);
-			}
-			dataUnit = dataUnit.replaceFirst(UnitUtil.BASE_DELIMITER_REGEX, "");
+			dataUnit = UnitUtil.getUnitAttribute(unitMap);
 			if (unitHTML != null) {
 				unitHTML.removeFromParent();
 			}
