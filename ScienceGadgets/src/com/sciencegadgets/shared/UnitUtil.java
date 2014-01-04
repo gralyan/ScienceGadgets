@@ -8,7 +8,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.shared.TypeML.TypeArgument;
 
 /**
  * <b>data-unit</b> attribute <b>= </b>id^exp*id^exp... <br/>
@@ -89,13 +88,13 @@ public class UnitUtil {
 
 			Element symbolDiv = DOM.createDiv();
 			symbolDiv.addClassName(TypeML.Exponential
-					.asChild(TypeArgument.BASE));
+					.asChild(true));
 			symbolDiv.setInnerText(symbol);
 			unitDiv.appendChild(symbolDiv);
 
 			Element expDiv = DOM.createDiv();
 			expDiv.addClassName(TypeML.Exponential
-					.asChild(TypeArgument.EXPONENT));
+					.asChild(false));
 			expDiv.setInnerText(exponent);
 			unitDiv.appendChild(expDiv);
 		}
@@ -104,9 +103,9 @@ public class UnitUtil {
 			Element frac = DOM.createDiv();
 			frac.addClassName(TypeML.Term.asChild());
 			numerator.addClassName(TypeML.Fraction
-					.asChild(TypeArgument.NUMERATOR));
+					.asChild(true));
 			denominator.addClassName(TypeML.Fraction
-					.asChild(TypeArgument.DENOMINATOR));
+					.asChild(false));
 			frac.appendChild(numerator);
 			frac.appendChild(denominator);
 			frac.addClassName(UNIT_CLASSNAME);

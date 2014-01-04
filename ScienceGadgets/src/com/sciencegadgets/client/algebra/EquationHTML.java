@@ -1,6 +1,5 @@
 package com.sciencegadgets.client.algebra;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
@@ -11,9 +10,9 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.TypeArgument;
 import com.sciencegadgets.shared.UnitUtil;
 import com.sciencegadgets.shared.TypeML.Operator;
 
@@ -38,8 +37,8 @@ public class EquationHTML extends HTML {
 		this.hasSmallUnits = hasSmallUnits;
 
 		NodeList<Node> children = mlTree.getChildNodes();
-//		for (int i = 0; i < children.getLength(); i++) {
-//		}
+		// for (int i = 0; i < children.getLength(); i++) {
+		// }
 		left = makeHTMLNode((Element) children.getItem(0), this.getElement());
 		makeHTMLNode((Element) children.getItem(1), this.getElement());
 		right = makeHTMLNode((Element) children.getItem(2), this.getElement());
@@ -50,12 +49,12 @@ public class EquationHTML extends HTML {
 		super(html);
 		this.setStyleName("Equation");
 	}
-	
-	public Element getLeft(){
+
+	public Element getLeft() {
 		return left;
 	}
-	
-	public Element getRight(){
+
+	public Element getRight() {
 		return right;
 	}
 
@@ -82,7 +81,7 @@ public class EquationHTML extends HTML {
 	 * <br/>
 	 *            and adds it to<br/>
 	 * @param displayParentEl
-	 * @return 
+	 * @return
 	 */
 	private Element makeHTMLNode(Element mlNode, Element displayParentEl) {
 		Element mlParent = mlNode.getParentElement();
@@ -90,76 +89,96 @@ public class EquationHTML extends HTML {
 		String id = mlNode.getAttribute("id");
 		TypeML type = TypeML.getType(mlNode.getTagName());
 		TypeML parentType = TypeML.getType(mlParent.getTagName());
+		boolean isSecondChild = false;
 
 		// make new display node with appropriate properties
-		Element nodeHTML = DOM.createDiv();
-		Element fence = nodeHTML;
-		nodeHTML.setId(id);
-
+		Element container = DOM.createDiv();
+		Element nodeHtml = container;
+		container.setId(id);
+		
+		String functionName =null;
+		
+		//Add class names based on parents
 		switch (parentType) {
 		case Fraction:
-			boolean isNumerator = mlNode
-					.equals(mlParent.getFirstChildElement());
-			boolean isDenominator = mlNode.equals(mlParent
-					.getFirstChildElement().getNextSiblingElement());
-			if (isNumerator) {
-				nodeHTML.addClassName(TypeML.Fraction
-						.asChild(TypeArgument.NUMERATOR));
-			} else if (isDenominator) {
-				nodeHTML.addClassName(TypeML.Fraction
-						.asChild(TypeArgument.DENOMINATOR));
-			}
-			break;
 		case Exponential:
-			boolean isBase = mlNode.equals(mlParent.getFirstChildElement());
-			boolean isExponential = mlNode.equals(mlParent
-					.getFirstChildElement().getNextSiblingElement());
-			if (isBase) {
-				nodeHTML.addClassName(TypeML.Exponential
-						.asChild(TypeArgument.BASE));
-			} else if (isExponential) {
-				nodeHTML.addClassName(TypeML.Exponential
-						.asChild(TypeArgument.EXPONENT));
+			boolean isFirstChild = mlNode.equals(mlParent
+					.getFirstChildElement());
+			isSecondChild = mlNode.equals(mlParent.getFirstChildElement()
+					.getNextSiblingElement());
+			if (isFirstChild) {
+				container.addClassName(parentType.asChild(true));
+			} else if (isSecondChild) {
+				container.addClassName(parentType.asChild(false));
+			} else {
+				JSNICalls.error("Wrong children for a " + parentType + " "
+						+ mlNode.getParentElement().getString());
 			}
 			break;
-		case Term:
+		case Log:
+		case Trig:
 		case Equation:
+		case Term:
 		case Sum:
-			nodeHTML.addClassName(parentType.asChild());
+			container.addClassName(parentType.asChild());
 			break;
 		}
 
-		if (TypeML.Fraction.equals(type)) {
-			nodeHTML.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+		// Add parentheses (fence) to certain elements
+		switch (parentType) {
+		case Term:// Sums in Terms
+			if (TypeML.Sum.equals(type)) {
+				
+				nodeHtml = container.appendChild(DOM.createDiv());
+				nodeHtml.addClassName(FENCED);
+			}
+			break;
+		case Exponential:// All but Variables and unitless Numbers
+			if (!TypeML.Variable.equals(type)//
+					&& !(TypeML.Number.equals(type) && "".equals(mlNode
+							.getAttribute(MathAttribute.Unit.getName())))) {
+				
+				nodeHtml = container.appendChild(DOM.createDiv());
+				nodeHtml.addClassName(FENCED);
+			}
+			break;
+			
 		}
-
-		// (fence) sums in terms
-		if ((TypeML.Sum.equals(type) && TypeML.Term.equals(parentType))) {
-			// fenced.add(nodeHTML);
-			fence = nodeHTML.appendChild(DOM.createDiv());
-			fence.addClassName(FENCED);
-		}
-		// (fence) terms, sums, exponentials, fractions or numbers with units
-		// in bases or exponents
-		if ((TypeML.Exponential.equals(parentType)//
-				&& !TypeML.Variable.equals(type))//
-				&& !(TypeML.Number.equals(type) && "".equals(mlNode
-						.getAttribute(MathAttribute.Unit.getName())))) {
-			// fenced.add(nodeHTML);
-			fence = nodeHTML.appendChild(DOM.createDiv());
-			fence.addClassName(FENCED);
+		
+		switch (type) {
+		case Log:
+			functionName = "log";
+			Element base = DOM.createDiv();
+			base.addClassName(TypeML.Log.asLogBase());
+			base.setInnerText(mlNode.getAttribute(MathAttribute.LogBase.getName()));
+			nodeHtml.insertFirst(base);
+			
+			// fall through
+		case Trig:
+			Element funcName = DOM.createDiv();
+			if(functionName == null) {
+				functionName = mlNode.getAttribute(MathAttribute.Function
+						.getName());
+			}
+			funcName.setInnerText(functionName);
+			funcName.addClassName("functionName");
+			nodeHtml.insertFirst(funcName);
+			// fall through
+			break;
+		case Fraction:
+			container.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
 		}
 
 
 		// Addition to tree
-		displayParentEl.appendChild(nodeHTML);
+		displayParentEl.appendChild(container);
 
 		for (int i = 0; i < mlNode.getChildCount(); i++) {
 			Node child = mlNode.getChild(i);
 
 			// Recursive creation
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				makeHTMLNode((Element) child, fence);
+				makeHTMLNode((Element) child, nodeHtml);
 				// Inner text operation adjustment
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
 				String text = mlNode.getInnerText();
@@ -177,9 +196,9 @@ public class EquationHTML extends HTML {
 					if (text.startsWith(Operator.MINUS.getSign())) {
 						// All negative numbers in parentheses
 						// text = "(" + text + ")";
-//						nodeHTML.addClassName(FENCED);
-						fence = nodeHTML.appendChild(DOM.createDiv());
-						fence.addClassName(FENCED);
+						// nodeHTML.addClassName(FENCED);
+						nodeHtml = container.appendChild(DOM.createDiv());
+						nodeHtml.addClassName(FENCED);
 					}
 					break;
 				case Operation:
@@ -192,14 +211,14 @@ public class EquationHTML extends HTML {
 					}
 					break;
 				}
-				fence.setInnerText(text);
+				nodeHtml.setInnerText(text);
 				if (unit != null) {
-					fence.appendChild(unit);
+					nodeHtml.appendChild(unit);
 				}
 			}
 		}
-		fence.addClassName(type.toString());
-		return fence;
+		nodeHtml.addClassName(type.toString());
+		return nodeHtml;
 	}
 
 	/**
@@ -301,17 +320,9 @@ public class EquationHTML extends HTML {
 		// Lift exponents of fraction bases to top
 		if (curClass.contains(TypeML.Exponential.toString())) {
 			Element base = ((Element) curEl.getChild(0));
-			if (base.getClassName().equals(
-					TypeML.Exponential.asChild(TypeArgument.BASE))) {
-				Element baseChild = ((Element) base.getChild(0));
-				if (baseChild != null && baseChild.getClassName().contains(
-						TypeML.Fraction.toString())) {
-					Element exp = ((Element) curEl.getChild(1));
-					int lift = (base.getOffsetHeight() / 2)
-							- exp.getOffsetHeight();
-					exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
-				}
-			}
+			Element exp = ((Element) curEl.getChild(1));
+			int lift = (exp.getOffsetTop() - base.getOffsetTop());
+			exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
 
 			// Align inline siblings flush using padding at highest and lowest
 		} else {

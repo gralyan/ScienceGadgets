@@ -81,10 +81,11 @@ public class MathTree {
 	public EquationHTML getDisplayClone() {
 		return new EquationHTML(mathML);
 	}
-	
+
 	public Element getLeftDisplay() {
 		return eqHTML.getLeft();
 	}
+
 	public Element getRightDisplay() {
 		return eqHTML.getRight();
 	}
@@ -121,17 +122,17 @@ public class MathTree {
 	}
 
 	public EquationHTML reloadDisplay(boolean hasSmallUnits) {
-		for(Wrapper w : wrappers) {
-			if(w instanceof EditWrapper) {
+		for (Wrapper w : wrappers) {
+			if (w instanceof EditWrapper) {
 				((EditWrapper) w).onUnload();
-				
-			}else if(w instanceof AlgebaWrapper){
-				((AlgebaWrapper)w).onUnload();
+
+			} else if (w instanceof AlgebaWrapper) {
+				((AlgebaWrapper) w).onUnload();
 			}
 			w.getElement().removeFromParent();
 		}
 		wrappers.clear();
-		
+
 		eqHTML = new EquationHTML(mathML, hasSmallUnits);
 
 		NodeList<Element> allElements = eqHTML.getElement()
@@ -183,6 +184,14 @@ public class MathTree {
 
 		for (MathNode node : idMap.values()) {
 			node.validate();
+		}
+
+		if (idMap.size() != idMLMap.size()) {
+			JSNICalls
+					.error("The binding maps must have the same size: idMap.size()="
+							+ idMap.size()
+							+ " idMLMap.size()="
+							+ idMLMap.size());
 		}
 	}
 
@@ -263,9 +272,9 @@ public class MathTree {
 
 			this.mlNode = newNode;
 		}
-		
+
 		/**
-		 * Returns a copy of this node 
+		 * Returns a copy of this node
 		 */
 		public MathNode clone() {
 			Element newEl = (Element) mlNode.cloneNode(true);
@@ -638,6 +647,11 @@ public class MathTree {
 		public String getUnitAttribute() {
 			return mlNode.getAttribute(MathAttribute.Unit.getName());
 		}
+		
+		public String getAttribute(MathAttribute attribute) {
+			return mlNode.getAttribute(attribute.getName());
+		}
+
 		public LinkedHashMap<String, Integer> getUnitMap() {
 			return UnitUtil.getUnitMap(this);
 		}
@@ -676,6 +690,21 @@ public class MathTree {
 			return null;
 		}
 
+		public boolean hasChildElements() {
+			switch (getType().childRequirement()) {
+			case TERMINAL:
+				return false;
+			case EQUATION:
+			case SEQUENCE:
+			case BINARY:
+			case UNARY:
+				if (getChildCount() > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public TypeML getType() {
 			return TypeML.getType(getTag());
 		}
@@ -702,8 +731,8 @@ public class MathTree {
 		}
 
 		/**
-		 * This should
-		 * only be done after {@link MathTree#reloadDisplay()}
+		 * This should only be done after {@link MathTree#reloadDisplay()}
+		 * 
 		 * @return The current HTML element associated with this node
 		 */
 		public Element getHTML() {
@@ -727,6 +756,7 @@ public class MathTree {
 		public void highlight() {
 			getHTML().addClassName("highlight");
 		}
+
 		public void lineThrough() {
 			getHTML().addClassName("lineThrough");
 		}
@@ -780,7 +810,7 @@ public class MathTree {
 					return true;
 				}
 			case Number:
-				if(!UnitUtil.compaereUnits(this, another)) {
+				if (!UnitUtil.compaereUnits(this, another)) {
 					return false;
 				}
 				// fall through
@@ -803,9 +833,45 @@ public class MathTree {
 		private void validate() {
 
 			int childCount = getChildCount();
+			boolean isWrongChildren = false;
 
-			boolean isBadNumber = false, isWrongChildren = false, isSumception = false, isTermception = false;
+			// Confirm the correct number of children
+			switch (getType().childRequirement()) {
+			case EQUATION:
+				if (childCount != 3)
+					isWrongChildren = true;
+				break;
+			case TERMINAL:
+				if (childCount != 1
+						|| getMLNode().getChild(0).getNodeType() != Node.TEXT_NODE) {
+					isWrongChildren = true;
+				}
+				break;
+			case UNARY:
+				if (childCount != 1)
+					isWrongChildren = true;
+				break;
+			case BINARY:
+				if (childCount != 2)
+					isWrongChildren = true;
+				break;
+			case SEQUENCE:
+				if (childCount < 3) {
+					isWrongChildren = true;
+				}
+				break;
+			}
 
+			if (isWrongChildren) {
+				String errorMerrage = "Wrong number of children, type: "
+						+ getType() + " can't have (" + childCount
+						+ ") children: " + toString();
+				JSNICalls.error(errorMerrage);
+				//Damage control
+				replace(TypeML.Number, "1");
+				return;
+			}
+			
 			switch (getType()) {
 			case Number:
 				// Confirm that the symbol is a number in solve mode
@@ -813,66 +879,40 @@ public class MathTree {
 					try {
 						Double.parseDouble(getSymbol());
 					} catch (NumberFormatException e) {
-						isBadNumber = true;
+						JSNICalls.warn("The number node " + toString()
+								+ " must have a number");
+						//Damage control
+						setSymbol("1");
 					}
-				}
-				// no break
-			case Variable:
-				// no break
-			case Operation:
-				// Confirm that there are no children
-				if (childCount != 1) {
-					isWrongChildren = true;
-				}
-				break;
-			case Exponential:// Confirm that there are 2 children
-			case Fraction:
-				if (childCount != 2) {
-					isWrongChildren = true;
 				}
 				break;
 			case Sum:
 			case Term:// Confirm that there are < 3 children
 				if (getType().equals(getParent().getType())) {
 					if (TypeML.Term.equals(getType())) {
-						isTermception = true;
+						JSNICalls.error("There shouldn't be a term in a term"
+								+ getParent().toString());
 					} else if (TypeML.Sum.equals(getType())) {
-						isSumception = true;
+						JSNICalls.error("There shouldn't be a sum in a sum: "
+								+ getParent().toString());
 					}
-				}
-				if (childCount < 3) {
-					isWrongChildren = true;
 				}
 				break;
 			case Equation:
 				checkSideForm();
-			}
-
-			if (isBadNumber) {
-				JSNICalls.warn("The number node " + toString()
-						+ " must have a number");
-			}
-			if (isWrongChildren) {
-				String errorMerrage = "Wrong number of children, type: "
-						+ getType() + " can't have (" + childCount
-						+ ") children: " + toString();
-				JSNICalls.error(errorMerrage);
-				throw new IllegalArgumentException(errorMerrage);
-			}
-			if (isSumception) {
-				JSNICalls.error("There shouldn't be a sum in a sum: "
-						+ getParent().toString());
-			}
-			if (isTermception) {
-				JSNICalls.error("There shouldn't be a term in a term"
-						+ getParent().toString());
-			}
-			if (idMap.size() != idMLMap.size()) {
-				JSNICalls
-						.error("The binding maps must have the same size: idMap.size()="
-								+ idMap.size()
-								+ " idMLMap.size()="
-								+ idMLMap.size());
+				break;
+			case Log:// Confirm the base is a number
+				if (!inEditMode) {
+					try {
+						Double.parseDouble(getAttribute(MathAttribute.LogBase));
+					} catch (NumberFormatException e) {
+						JSNICalls.error("The base of a log must be a number: "
+								+ getParent().toString());
+						//Damage control
+						setAttribute(MathAttribute.LogBase, "10");
+					}
+				}
+				break;
 			}
 		}
 

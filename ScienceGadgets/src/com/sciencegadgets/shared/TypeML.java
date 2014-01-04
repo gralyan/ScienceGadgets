@@ -2,92 +2,106 @@ package com.sciencegadgets.shared;
 
 import java.util.NoSuchElementException;
 
+import com.sciencegadgets.client.JSNICalls;
+
 /**
- * <b>tag - attributes</b></br>
- * mn - data-randomness</br>
+ * <em><b>TypeML - tag - attributes</b></em></br> Number - mn -
+ * data-randomness</br> Number - mn - data-unit</br> TrigFunction- trig -
+ * data-function</br>
  * 
- * 
- *
  */
 
 public enum TypeML {
-	Term("mrow", true), Sum("mfenced", true), Exponential("msup", true), Fraction(
-			"mfrac", true), Variable("mi", false), Number("mn", false), Operation(
-			"mo", false), Equation("math", true);
-	
-//, Aesthetic("mglyph", false)
-	private String tag;
-	private boolean hasChildren;
-	public final String IN_PREFIX = "in-";
+	Equation("math", ChildRequirement.EQUATION), //
+	Number("mn", ChildRequirement.TERMINAL), //
+	Variable("mi", ChildRequirement.TERMINAL), //
+	Operation("mo", ChildRequirement.TERMINAL), //
+	Term("mrow", ChildRequirement.SEQUENCE), //
+	Sum("mfenced", ChildRequirement.SEQUENCE), //
+	Fraction("mfrac", ChildRequirement.BINARY), //
+	Exponential("msup", ChildRequirement.BINARY), //
+	Log("log", ChildRequirement.UNARY), //
+	Trig("trig", ChildRequirement.UNARY);
 
-	TypeML(String tag, boolean hasChildren) {
+	private String tag;
+	private ChildRequirement childRequirement;
+	public static final String IN_PREFIX = "in-";
+
+	TypeML(String tag, ChildRequirement childRequirement) {
 		this.tag = tag;
-		this.hasChildren = hasChildren;
+		this.childRequirement = childRequirement;
 	}
 
 	public String asChild() {
 		return (IN_PREFIX + toString().toLowerCase());
 	}
-	public String asChild(TypeArgument arg) {
-		return (IN_PREFIX + toString().toLowerCase()+arg.get());
+
+	public String asChild(boolean isFirstChild) {
+		String firstChild = "";
+		String seconChild = "";
+		switch (this) {
+		case Fraction:
+			firstChild = "-numerator";
+			seconChild = "-denominator";
+			break;
+		case Exponential:
+			firstChild = "-base";
+			seconChild = "-exponent";
+			break;
+		}
+		String qualifier = seconChild;
+		if(isFirstChild) {
+			qualifier = firstChild;
+		}
+		return (IN_PREFIX + toString().toLowerCase() + qualifier);
+	}
+	public String asLogBase() {
+		if(this.equals(Log)) {
+			return (IN_PREFIX + toString().toLowerCase()+"-base");
+		}
+		return "";
 	}
 
 	public String getTag() {
 		return tag;
 	}
 
-	public boolean hasChildren() {
-		return hasChildren;
+	public ChildRequirement childRequirement() {
+		return childRequirement;
 	}
 
 	public static TypeML getType(String tag) throws NoSuchElementException {
 		tag = tag.toLowerCase();
-		TypeML type = null;
-		if ("mfenced".equals(tag)) {
-			type = TypeML.Sum;
-		} else if ("mrow".equals(tag)) {
-			type = TypeML.Term;
-		} else if ("mi".equals(tag)) {
-			type = TypeML.Variable;
-		} else if ("mn".equals(tag)) {
-			type = TypeML.Number;
-		} else if ("msup".equals(tag)) {
-			type = TypeML.Exponential;
-		} else if ("mfrac".equals(tag)) {
-			type = TypeML.Fraction;
-		} else if ("mo".equals(tag)) {
-			type = TypeML.Operation;
-		} else if ("math".equals(tag)) {
-			type = TypeML.Equation;
+		for (TypeML type : TypeML.values()) {
+			if (type.getTag().equals(tag)) {
+				return type;
+			}
 		}
-//		else if ("mglyph".equals(tag)) {
-//			type = Type.Aesthetic;
-//		}
-		if (type == null) {
-			throw new NoSuchElementException("There is no type for the tag: "
-					+ tag);
-		}
-		return type;
+		JSNICalls.error("There is no type for the tag: " + tag);
+		return null;
 	}
 
-	public static enum TypeArgument {
-		NUMERATOR("-numerator"), DENOMINATOR("-denominator"), BASE("-base"), EXPONENT(
-				"-exponent");
-		
-		String convention;
+	/**
+	 * <em><b>childCountRequirement</b></em></br> 0 - no element children,
+	 * <b>text only</b></br> 1 - one element child, no text</br> 2 - two element
+	 * children, no text</br> 3 - three element children, no text, <b>equation only, middle
+	 * must be equals</b></br> 4 - At least 3 element children, no text,
+	 * <b>every other must my operation</b></br>
+	 */
+	public static enum ChildRequirement {
+		EQUATION,TERMINAL, UNARY, BINARY,  SEQUENCE;
 
-		TypeArgument(String convention){
-			this.convention = convention;
-		}
-		
-		String get() {
-			return convention;
-		}
 	}
+
+
+	public static enum TrigFunctions {
+		sin, cos, tan, sec, csc, cot, sinh, cosh, tanh, sech, csch, coth, arcsin, arccos, arctan, arccot, arccsc, arcsec, arccosh, arccoth, arccsch, arcsech, arcsinh, arctanh;
+	}
+
 	public static enum Operator {
-		Equals("\u003D", "&#x3d;"),DOT("\u00B7", "&middot;"), SPACE("\u00A0", "&nbsp;"), CROSS("\u00D7",
-//				"&times;"), PLUS("+", "&#43;"), MINUS("\u002D", "&#45;");
-	"&times;"), PLUS("\u002B", "&#43;"), MINUS("\u002D", "&#45;"), DIVIDE("\u00F7","&#247;");
+		Equals("\u003D", "&#x3d;"), DOT("\u00B7", "&middot;"), SPACE("\u00A0",
+				"&nbsp;"), CROSS("\u00D7", "&times;"), PLUS("\u002B", "&#43;"), MINUS(
+				"\u002D", "&#45;"), DIVIDE("\u00F7", "&#247;");
 
 		private String sign;
 		private String html;
@@ -109,5 +123,5 @@ public enum TypeML {
 			return DOT;
 		}
 	}
-	
+
 }
