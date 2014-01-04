@@ -201,7 +201,7 @@ public class EquationPanel extends AbsolutePanel {
 
 		for (MathNode childNode : node.getChildren()) {
 
-			if (childNode.getType().hasChildren()) {
+			if (childNode.hasChildElements()) {
 				draw(childNode, eqLayer);
 			}
 		}

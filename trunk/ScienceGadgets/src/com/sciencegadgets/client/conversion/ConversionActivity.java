@@ -222,14 +222,16 @@ public class ConversionActivity extends AbsolutePanel {
 				if (TypeML.Number.equals(jointNode.getType())) {
 					Element[] units = jointNode.getHTMLofUnits();
 					for (Element unit : units) {
-						Style style = unit.getStyle();
-						style.setTextDecoration(TextDecoration.LINE_THROUGH);
-						style.setColor("red");
+//						Style style = unit.getStyle();
+//						style.setTextDecoration(TextDecoration.LINE_THROUGH);
+//						style.setColor("red");
+						unit.addClassName("lineThrough");
 					}
 				} else {
-					Style style = jointNode.getHTML().getStyle();
-					style.setTextDecoration(TextDecoration.LINE_THROUGH);
-					style.setColor("red");
+//					Style style = jointNode.getHTML().getStyle();
+//					style.setTextDecoration(TextDecoration.LINE_THROUGH);
+//					style.setColor("red");
+					jointNode.getHTML().addClassName("lineThrough");
 				}
 			}
 		}

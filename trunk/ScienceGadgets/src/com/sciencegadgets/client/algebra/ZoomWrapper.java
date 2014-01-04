@@ -24,7 +24,7 @@ public class ZoomWrapper extends Wrapper {
 		if (this.equals(EquationPanel.selectedWrapper)) {
 
 			// If this was already selected, focus in on it
-			if (node.getType().hasChildren()) {
+			if (node.hasChildElements()) {
 				unselect();
 				eqPanel.setFocus(getEqLayer());
 			}
