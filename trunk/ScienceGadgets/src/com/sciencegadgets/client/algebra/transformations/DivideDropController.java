@@ -102,8 +102,8 @@ public class DivideDropController extends AbstractDropController {
 		}
 		
 
-		drag.highlight();
-		target.highlight();
+		drag.lineThrough();
+		target.lineThrough();
 
 		if (isCancel) {
 			AlgebraActivity.reloadEquationPanel("Cancellation",

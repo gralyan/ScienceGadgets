@@ -96,6 +96,14 @@ public enum TypeML {
 
 	public static enum TrigFunctions {
 		sin, cos, tan, sec, csc, cot, sinh, cosh, tanh, sech, csch, coth, arcsin, arccos, arctan, arccot, arccsc, arcsec, arccosh, arccoth, arccsch, arcsech, arcsinh, arctanh;
+		
+		public static String getInverse(String function){
+			if(function.startsWith("arc")) {
+				return function.replace("arc", "");
+			}else {
+				return "arc"+function;
+			}
+		}
 	}
 
 	public static enum Operator {

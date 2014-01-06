@@ -16,7 +16,6 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
@@ -65,9 +64,10 @@ public class AlgebaWrapper extends ZoomWrapper {
 			AlgebraActivity.algTransformMenu.clear();
 
 			switch (node.getType()) {
-			case Equation:
 			case Exponential:
 				ExponentialTransformations.assign(node);
+				AlgebraicTransformations.unravelExpLog_check(node);
+				break;
 			case Fraction:
 			case Sum:
 			case Term:
@@ -84,6 +84,12 @@ public class AlgebaWrapper extends ZoomWrapper {
 				AlgebraicTransformations.separateNegative_check(node);
 				AlgebraicTransformations.isolatedVariable_check(node);
 				break;
+			case Log:
+				AlgebraicTransformations.unravelLogExp_check(node);
+				break;
+			case Trig:
+				AlgebraicTransformations.inverseTrig_check(node);
+				
 			}
 
 			switch (node.getParentType()) {

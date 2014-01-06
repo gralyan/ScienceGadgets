@@ -95,10 +95,10 @@ public class EquationHTML extends HTML {
 		Element container = DOM.createDiv();
 		Element nodeHtml = container;
 		container.setId(id);
-		
-		String functionName =null;
-		
-		//Add class names based on parents
+
+		String functionName = null;
+
+		// Add class names based on parents
 		switch (parentType) {
 		case Fraction:
 		case Exponential:
@@ -128,35 +128,32 @@ public class EquationHTML extends HTML {
 		switch (parentType) {
 		case Term:// Sums in Terms
 			if (TypeML.Sum.equals(type)) {
-				
-				nodeHtml = container.appendChild(DOM.createDiv());
-				nodeHtml.addClassName(FENCED);
+				nodeHtml = fence(nodeHtml, container);
 			}
 			break;
 		case Exponential:// All but Variables and unitless Numbers
 			if (!TypeML.Variable.equals(type)//
 					&& !(TypeML.Number.equals(type) && "".equals(mlNode
 							.getAttribute(MathAttribute.Unit.getName())))) {
-				
-				nodeHtml = container.appendChild(DOM.createDiv());
-				nodeHtml.addClassName(FENCED);
+				nodeHtml = fence(nodeHtml, container);
 			}
 			break;
-			
+
 		}
-		
+
 		switch (type) {
 		case Log:
 			functionName = "log";
 			Element base = DOM.createDiv();
 			base.addClassName(TypeML.Log.asLogBase());
-			base.setInnerText(mlNode.getAttribute(MathAttribute.LogBase.getName()));
+			base.setInnerText(mlNode.getAttribute(MathAttribute.LogBase
+					.getName()));
 			nodeHtml.insertFirst(base);
-			
+
 			// fall through
 		case Trig:
 			Element funcName = DOM.createDiv();
-			if(functionName == null) {
+			if (functionName == null) {
 				functionName = mlNode.getAttribute(MathAttribute.Function
 						.getName());
 			}
@@ -168,7 +165,6 @@ public class EquationHTML extends HTML {
 		case Fraction:
 			container.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
 		}
-
 
 		// Addition to tree
 		displayParentEl.appendChild(container);
@@ -197,8 +193,7 @@ public class EquationHTML extends HTML {
 						// All negative numbers in parentheses
 						// text = "(" + text + ")";
 						// nodeHTML.addClassName(FENCED);
-						nodeHtml = container.appendChild(DOM.createDiv());
-						nodeHtml.addClassName(FENCED);
+						nodeHtml = fence(nodeHtml, container);
 					}
 					break;
 				case Operation:
@@ -221,10 +216,19 @@ public class EquationHTML extends HTML {
 		return nodeHtml;
 	}
 
+	private Element fence(Element nodeHtml, Element container) {
+		String containerClass = container.getClassName();
+		if (!(containerClass.contains(TypeML.Trig.asChild()) || containerClass
+				.contains(TypeML.Log.asChild()))) {
+
+			nodeHtml = container.appendChild(DOM.createDiv());
+			nodeHtml.addClassName(FENCED);
+		}
+		return nodeHtml;
+	}
+
 	/**
 	 * Resizes the equation to fill the panel
-	 * 
-	 * @param el
 	 */
 	private void resizeEquation() {
 		double widthRatio = (double) this.getParent().getOffsetWidth()

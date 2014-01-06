@@ -33,6 +33,7 @@ import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
 /**
  * This class contains the set of static methods used to perform algebraic
@@ -294,19 +295,19 @@ public class AlgebraicTransformations {
 		LinkedList<MathNode> divideDropTargets = new LinkedList<MathNode>();
 		if (node.isLike(otherSide)) {
 			cancelDropTargets.add(otherSide);
-			
+
 		} else if (TypeML.Number.equals(otherSide.getType())) {
 			if (TypeML.Number.equals(node.getType())) {
 				divideDropTargets.add(otherSide);
 			}
-			
+
 		} else if (TypeML.Term.equals(otherSide.getType())) {
 
 			for (MathNode child : otherSide.getChildren()) {
-				
+
 				if (node.isLike(child)) {
 					cancelDropTargets.add(child);
-					
+
 				} else if (TypeML.Number.equals(child.getType())) {
 					if (TypeML.Number.equals(node.getType())) {
 						divideDropTargets.add(child);
@@ -315,26 +316,26 @@ public class AlgebraicTransformations {
 			}
 		}
 		if (cancelDropTargets.size() > 0 || divideDropTargets.size() > 0) {
-			cancellation_addDragDrops(node, cancelDropTargets, divideDropTargets);
+			cancellation_addDragDrops(node, cancelDropTargets,
+					divideDropTargets);
 		}
 
 	}
 
 	static void cancellation_addDragDrops(MathNode node,
-			LinkedList<MathNode> cancelDropTargets, LinkedList<MathNode> divideDropTargets) {
+			LinkedList<MathNode> cancelDropTargets,
+			LinkedList<MathNode> divideDropTargets) {
 
 		WrapDragController dragController = node.getWrapper()
 				.addDragController();
-		
+
 		for (MathNode cancelDropTarget : cancelDropTargets) {
-			dragController
-					.registerDropController(new DivideDropController(
-							(AlgebaWrapper) cancelDropTarget.getWrapper(), true));
+			dragController.registerDropController(new DivideDropController(
+					(AlgebaWrapper) cancelDropTarget.getWrapper(), true));
 		}
 		for (MathNode divideDropTarget : divideDropTargets) {
-			dragController
-			.registerDropController(new DivideDropController(
-					(AlgebaWrapper) divideDropTarget.getWrapper(),false));
+			dragController.registerDropController(new DivideDropController(
+					(AlgebaWrapper) divideDropTarget.getWrapper(), false));
 		}
 	}
 
@@ -509,6 +510,49 @@ public class AlgebraicTransformations {
 				Rule.FRACTION_DIVISION);
 	}
 
+	public static void unravelLogExp_check(MathNode log) {
+		MathNode exponential = log.getFirstChild();
+		if (TypeML.Exponential.equals(exponential.getType())) {
+			MathNode exponentialBase = exponential.getFirstChild();
+			if (TypeML.Number.equals(exponentialBase.getType())
+					&& exponentialBase.getSymbol().equals(
+							log.getAttribute(MathAttribute.LogBase))) {
+				MathNode exponentialExp = exponential.getChildAt(1);
+				AlgebraActivity.algTransformMenu.add(new UnravelButton(log,
+						exponentialExp, Rule.LOGARITHM));
+			}
+		}
+	}
+
+	public static void unravelExpLog_check(MathNode exponential) {
+		MathNode log = exponential.getChildAt(1);
+		if (TypeML.Log.equals(log.getType())) {
+			String logBase = log.getAttribute(MathAttribute.LogBase);
+			MathNode exponentialBase = exponential.getFirstChild();
+			if (TypeML.Number.equals(exponentialBase.getType()) && exponentialBase.getSymbol().equals(logBase)) {
+				AlgebraActivity.algTransformMenu.add(new UnravelButton(
+						exponential, log.getFirstChild(), Rule.LOGARITHM));
+
+			}
+		}
+	}
+
+	public static void inverseTrig_check(MathNode trig) {
+		MathNode trigChild = trig.getFirstChild();
+		if (TypeML.Trig.equals(trigChild.getType())) {
+			String trigChildFunc = trigChild
+					.getAttribute(MathAttribute.Function);
+			String trigChildFuncInverse = TrigFunctions
+					.getInverse(trigChildFunc);
+			String trigFunc = trig.getAttribute(MathAttribute.Function);
+			if (trigFunc.equals(trigChildFuncInverse)) {
+				AlgebraActivity.algTransformMenu.add(new UnravelButton(trig,
+						trigChild.getFirstChild(),
+						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS));
+			}
+		}
+	}
+
 }
 
 class VariableEvaluateSpec extends FlowPanel {
@@ -648,6 +692,25 @@ class SubstituteButton extends Button {
 			@Override
 			public void onClick(ClickEvent event) {
 				AlgebraicTransformations.substitute_prompt(isolatedVarNode);
+			}
+		});
+	}
+}
+
+class UnravelButton extends Button {
+
+	public UnravelButton(final MathNode toReplace, final MathNode replacement,
+			final Rule rule) {
+
+		setHTML(replacement.getHTMLString());
+
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String changeComment = toReplace.getHTMLString() + " = "
+						+ replacement.getHTMLString();
+				toReplace.replace(replacement);
+				AlgebraActivity.reloadEquationPanel(changeComment, rule);
 			}
 		});
 	}
