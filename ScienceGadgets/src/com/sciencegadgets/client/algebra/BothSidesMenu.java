@@ -2,20 +2,20 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
-public class BothSidesMenu extends FlowPanel {
+public class BothSidesMenu extends CommunistPanel {
 	private MathNode node;
 	private MathNode parentNode;
 	private MathTree tree;
@@ -25,18 +25,21 @@ public class BothSidesMenu extends FlowPanel {
 	boolean isNestedInFraction = false;
 	boolean isSide = false;
 
-	private final String PLUS = TypeML.Operator.PLUS.getSign();
-	private final String MINUS = TypeML.Operator.MINUS.getSign();
-	private final String CROSS = TypeML.Operator.CROSS.getSign();
-	private final String DOT = TypeML.Operator.DOT.getSign();
-	private final String SPACE = TypeML.Operator.SPACE.getSign();
+	public static final String BOTH_SIDES = " <b>both sides</b> ";
+
+	private static final String PLUS = TypeML.Operator.PLUS.getSign();
+	private static final String MINUS = TypeML.Operator.MINUS.getSign();
+	private static final String MULTIPLY = TypeML.Operator.getMultiply()
+			.getSign();
+	private static final String DIVIDE = TypeML.Operator.DIVIDE.getSign();
 
 	public BothSidesMenu(MathNode node, String width) {
+		super(true);
 
 		this.node = node;
 		tree = node.getTree();
 		parentNode = node.getParent();
-
+		TypeML type = node.getType();
 		if (TypeML.Operation.equals(node.getType())) {
 			return;
 		}
@@ -46,13 +49,15 @@ public class BothSidesMenu extends FlowPanel {
 		this.addStyleName("fillParent");
 
 		if (parentNode.isLeftSide() || parentNode.isRightSide()) {
-			switch (node.getType()) {
+			switch (type) {
 			case Sum:
 			case Term:
 			case Exponential:
 			case Fraction:
 			case Variable:
 			case Number:
+			case Log:
+			case Trig:
 				isTopLevel = true;
 			}
 		}
@@ -102,56 +107,78 @@ public class BothSidesMenu extends FlowPanel {
 			}
 			break;
 		case Exponential:
-			if (isTopLevel && node.getIndex() == 1) {
-				this.add(new BothSidesButton(Math.INVERSE_EXPONENT));
+			if (isTopLevel) {
+				if (node.getIndex() == 1) {
+					this.add(new BothSidesButton(Math.INVERSE_EXPONENT));
+				} else if (node.getIndex() == 0 && TypeML.Number.equals(type)) {
+					this.add(new BothSidesButton(Math.LOG));
+				}
 			}
 			break;
+		case Log:
+			if (isTopLevel) {
+
+			}
 		case Equation:
 			isSide = true;
-			BothSidesButton sub = new BothSidesButton(Math.SUBTRACT);
-			sub.removeStyleName("bothSidesButton");
-			sub.addStyleName("bothSidesButtonHalf");
-			BothSidesButton div = new BothSidesButton(Math.DIVIDE);
-			div.removeStyleName("bothSidesButton");
-			div.addStyleName("bothSidesButtonHalf");
-			this.add(sub);
-			this.add(div);
+			this.add(new BothSidesButton(Math.SUBTRACT));
+			this.add(new BothSidesButton(Math.DIVIDE));
+			if (TypeML.Log.equals(type)) {
+				this.add(new BothSidesButton(Math.RAISE));
+			} else if (TypeML.Trig.equals(type)) {
+				this.add(new BothSidesButton(Math.INVERSE_TRIG));
+			}
 			break;
 		}
 
 	}
 
 	enum Math {
-		ADD, SUBTRACT, MULTIPLY, DIVIDE, INVERSE_EXPONENT
+		ADD, SUBTRACT, MULTIPLY, DIVIDE, INVERSE_EXPONENT, RAISE, LOG, INVERSE_TRIG
 	}
 
 	class BothSidesButton extends Button {
 
 		BothSidesButton(Math operation) {
-			this.addStyleName("bothSidesButton");
-//			addMouseDownHandler(new AlternativeHTML(operation,
-//					node.getHTMLString()));
+			// addMouseDownHandler(new AlternativeHTML(operation,
+			// node.getHTMLString()));
 			switch (operation) {
 			case ADD:
-				setHTML("Add " + node.getHTMLString() + " to both sides");
+				setHTML(BOTH_SIDES + PLUS + " " + node.getHTMLString());
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case SUBTRACT:
-				setHTML("Subtract both sides by " + node.getHTMLString());
+				setHTML(BOTH_SIDES + MINUS + " " + node.getHTMLString());
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case MULTIPLY:
-				setHTML("Multiply both sides by " + node.getHTMLString());
+				setHTML(BOTH_SIDES + MULTIPLY + " " + node.getHTMLString());
 				addClickHandler(new MultiplyBothHandler());
 				break;
 			case DIVIDE:
-				setHTML("Divide both sides by " + node.getHTMLString());
+				setHTML(BOTH_SIDES + DIVIDE + " " + node.getHTMLString());
 				addClickHandler(new DivideBothHandler());
 				break;
 			case INVERSE_EXPONENT:
-				setHTML("Raise both sides by the inverse of "
-						+ node.getHTMLString());
+				setHTML(BOTH_SIDES + "<sup>1/" + node.getHTMLString()
+						+ "</sup>");
 				addClickHandler(new RootBothHandler());
+				break;
+			case RAISE:
+				String base = node.getAttribute(MathAttribute.LogBase);
+				setHTML(base + "<sup>" + BOTH_SIDES + "</sup>");
+				addClickHandler(new RaiseBothHandler(base));
+				break;
+			case LOG:
+				setHTML("log<sub>" + node.getHTMLString() + "</sub>"
+						+ BOTH_SIDES);
+				addClickHandler(new LogBothHandler());
+				break;
+			case INVERSE_TRIG:
+				String func = node.getAttribute(MathAttribute.Function);
+				String inverseFunc = TrigFunctions.getInverse(func);
+				setHTML(inverseFunc + "(" + BOTH_SIDES + ")");
+				addClickHandler(new InverseTrigBothHandler(inverseFunc));
 				break;
 			}
 		}
@@ -169,7 +196,7 @@ public class BothSidesMenu extends FlowPanel {
 		// renamed for clarity
 		protected MathNode oldParent = parentNode;
 		protected MathNode oldNextSib;
-		protected String changeComment = "";
+		protected String changeComment;
 
 		BothSidesHandler() {
 
@@ -196,7 +223,8 @@ public class BothSidesMenu extends FlowPanel {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			node.highlight();
+			changeComment = ((BothSidesButton) event.getSource()).getHTML();
+
 			node.lineThrough();
 		}
 	}
@@ -218,17 +246,14 @@ public class BothSidesMenu extends FlowPanel {
 				// Flip sign
 				if (MINUS.equals(operator.getSymbol())) {
 					operator.setSymbol(PLUS);
-					changeComment += PLUS;
 				} else if (PLUS.equals(operator.getSymbol())) {
 					operator.setSymbol(MINUS);
-					changeComment += MINUS;
 				} else {
 					JSNICalls.warn("Unknown operation, can't flip");
 				}
 				targetSide.append(operator);
 			} else {
 				targetSide.append(TypeML.Operation, MINUS);
-				changeComment += MINUS;
 			}
 
 			// move node to other side
@@ -242,7 +267,6 @@ public class BothSidesMenu extends FlowPanel {
 
 			oldParent.decase();
 
-			changeComment += node.getHTMLString();
 			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
@@ -297,7 +321,6 @@ public class BothSidesMenu extends FlowPanel {
 
 			oldParent.decase();
 
-			changeComment += TypeML.Operator.DIVIDE.getSign() + node.getHTMLString();
 			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
@@ -343,9 +366,7 @@ public class BothSidesMenu extends FlowPanel {
 			// clean source side
 			if (TypeML.Fraction.equals(oldParent.getType())) {
 				// remove unnecessary intermediate fraction
-				oldParent.getParent().addBefore(oldParent.getIndex(),
-						oldParent.getFirstChild());
-				oldParent.remove();
+				oldParent.replace(oldParent.getFirstChild());
 			} else if (TypeML.Term.equals(oldParent.getType())) {
 				oldParent.decase();
 			} else {
@@ -353,13 +374,21 @@ public class BothSidesMenu extends FlowPanel {
 						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			changeComment += TypeML.Operator.getMultiply().getSign()
-					+ node.getHTMLString();
 			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
 
+	/**
+	 * node clicked: e<br/>
+	 * b<sup>e</sup> = targetSide<br/>
+	 * <br/>
+	 * execute ROOT<br/>
+	 * b<sup>e x 1/e</sup> = targetSide<sup>1/e</sup><br/>
+	 * <br/>
+	 * clean up<br/>
+	 * b = targetSide<sup>1/e</sup></sup>
+	 */
 	class RootBothHandler extends BothSidesHandler {
 
 		@Override
@@ -386,7 +415,7 @@ public class BothSidesMenu extends FlowPanel {
 					target.append(node.getChildAt(1));
 					node.remove();
 				} else {
-					node.append(numerator);//flip
+					node.append(numerator);// flip
 					target.append(node);
 				}
 			} else {
@@ -396,32 +425,122 @@ public class BothSidesMenu extends FlowPanel {
 			}
 
 			// clean source side
-			oldParent.getParent().addBefore(oldParent.getIndex(),
-					oldParent.getFirstChild());
-			oldParent.remove();
+			oldParent.replace(oldParent.getFirstChild());
 
-			changeComment += "^" + node.getHTMLString();
 			AlgebraActivity.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
+
+	/**
+	 * node clicked: log<sub>b</sub>(x)<br/>
+	 * log<sub>b</sub>(x) = targetSide<br/>
+	 * <br/>
+	 * execute RAISE<br/>
+	 * b<sup>log<sub>b</sub>(x)</sup> = b<sup>targetSide</sup><br/>
+	 * <br/>
+	 * clean up<br/>
+	 * x = b<sup>targetSide</sup>
+	 */
+	class RaiseBothHandler extends BothSidesHandler {
+
+		String base;
+
+		RaiseBothHandler(String base) {
+			this.base = base;
+		}
+
+		@Override
+		public void onClick(ClickEvent event) {
+			super.onClick(event);
+			// Prepare Target side
+
+			MathNode targetExp = targetSide.encase(TypeML.Exponential);
+			targetExp.addBefore(0, TypeML.Number, base);
+
+			// clean source side
+			node.replace(node.getFirstChild());
+
+			AlgebraActivity.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+		}
+	}
+
+	/**
+	 * node clicked: b<br/>
+	 * b<sup>e</sup> = targetSide<br/>
+	 * <br/>
+	 * execute LOG<br/>
+	 * log<sub>b</sub>(b<sup>e</sup>) = log<sub>b</sub>(targetSide)<br/>
+	 * <br/>
+	 * clean up<br/>
+	 * e = log<sub>b</sub>(targetSide)</sup>
+	 */
+	class LogBothHandler extends BothSidesHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+			super.onClick(event);
+			// Prepare Target side
+
+			MathNode targetLog = targetSide.encase(TypeML.Log);
+			targetLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
+
+			// clean source side
+			oldParent.replace(oldParent.getChildAt(1));
+
+			AlgebraActivity.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+		}
+	}
+
+	/**
+	 * node clicked: sin(x)<br/>
+	 * sin(x) = targetSide<br/>
+	 * <br/>
+	 * execute INVERSE_TRIG<br/>
+	 * arcsin(sin(x)) = arcsin(targetSide)<br/>
+	 * <br/>
+	 * clean up<br/>
+	 * x = arcsin(targetSide)</sup>
+	 */
+	class InverseTrigBothHandler extends BothSidesHandler {
+		String toFunction;
+
+		InverseTrigBothHandler(String toFunction) {
+			this.toFunction = toFunction;
+		}
+
+		@Override
+		public void onClick(ClickEvent event) {
+			super.onClick(event);
+			// Prepare Target side
+
+			MathNode targetLog = targetSide.encase(TypeML.Trig);
+			targetLog.setAttribute(MathAttribute.Function, toFunction);
+
+			// clean source side
+			node.replace(node.getFirstChild());
+
+			AlgebraActivity.reloadEquationPanel(changeComment,
+					Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
+		}
+	}
 }
 
-//class AlternativeHTML implements MouseDownHandler {
-//	com.sciencegadgets.client.algebra.BothSidesMenu.Math math = null;
-//	String html = null;
+// class AlternativeHTML implements MouseDownHandler {
+// com.sciencegadgets.client.algebra.BothSidesMenu.Math math = null;
+// String html = null;
 //
-//	public AlternativeHTML(
-//			com.sciencegadgets.client.algebra.BothSidesMenu.Math math,
-//			String htmlString) {
-//		this.math = math;
-//		this.html = htmlString;
-//	}
+// public AlternativeHTML(
+// com.sciencegadgets.client.algebra.BothSidesMenu.Math math,
+// String htmlString) {
+// this.math = math;
+// this.html = htmlString;
+// }
 //
-//	@Override
-//	public void onMouseDown(MouseDownEvent event) {
-//		((Button) event.getSource())
-//				.setHTML(html + "&nbsp;&nbsp;&nbsp;" + html);
-//	}
+// @Override
+// public void onMouseDown(MouseDownEvent event) {
+// ((Button) event.getSource())
+// .setHTML(html + "&nbsp;&nbsp;&nbsp;" + html);
+// }
 //
-//}
+// }

@@ -34,6 +34,7 @@ public class AlgOut extends FlowPanel {
 	public String origionalHeightStr;
 	public boolean scrolled = false;
 	FlowPanel firstRow = new FlowPanel();
+	public static final String UP_ARROW = "\u2191";
 
 	public AlgOut() {
 		addStyleName("algOut");
@@ -68,13 +69,14 @@ public class AlgOut extends FlowPanel {
 	}
 
 	public void updateAlgOut(String changeComment, Rule rule, MathTree mathTree) {
-		
+
 		changeComment = changeComment.replace("lineThrough", "");
 
 		add(new AlgOutRow(changeComment, rule, mathTree));
 
-		if (Rule.SOLVING_ALGEBRAIC_EQUATIONS.equals(rule)) {
-			add(new AlgOutRow(changeComment));
+		if (changeComment.contains(BothSidesMenu.BOTH_SIDES)) {
+			add(new AlgOutRow(changeComment.replace(BothSidesMenu.BOTH_SIDES,
+					UP_ARROW)));
 		}
 
 		scrollToBottom();
@@ -91,26 +93,26 @@ public class AlgOut extends FlowPanel {
 		private FlowPanel eqSide = new FlowPanel();
 		private Anchor ruleSide = new Anchor();
 
+		// Change row
 		AlgOutRow(String changeComment) {
 			this(changeComment, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", changeComment);
 
 			addStyleName("algOutChangeRow");
 
-
 		}
 
+		// Equation row
 		AlgOutRow(String changeComment, Rule rule, MathTree mathTree) {
 			this(mathTree.getLeftDisplay().getString(),//
 					"&nbsp;=&nbsp;",//
 					mathTree.getRightDisplay().getString());
+
+			ruleSide.setHTML(changeComment);
 			
-			if (Rule.SOLVING_ALGEBRAIC_EQUATIONS.equals(rule)) {
-				ruleSide.setHTML(changeComment + "&nbsp;&nbsp;&nbsp; both sides");
-			}else {
-				ruleSide.setHTML(changeComment);
+			if (rule != null) {
+				ruleSide.setHref(rule.getPage());
+				ruleSide.setTarget("_blank");
 			}
-			ruleSide.setHref(rule.getPage());
-			ruleSide.setTarget("_blank");
 		}
 
 		private AlgOutRow(String leftStr, String middleStr, String rightStr) {

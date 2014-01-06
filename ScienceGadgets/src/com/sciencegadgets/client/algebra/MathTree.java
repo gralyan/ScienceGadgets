@@ -29,6 +29,7 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
@@ -868,7 +869,7 @@ public class MathTree {
 						+ ") children: " + toString();
 				JSNICalls.error(errorMerrage);
 				//Damage control
-				replace(TypeML.Number, "1");
+				Window.alert("Error, see log");
 				return;
 			}
 			

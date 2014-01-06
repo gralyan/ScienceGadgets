@@ -24,7 +24,6 @@ import com.sciencegadgets.shared.TypeML.TrigFunctions;
 public class ChangeNodeMenu extends CommunistPanel {
 
 	public static final String NOT_SET = "\u25A1";
-	// public static final String REFERENCE = "\u2191";
 	private Button removeButton;
 	private MathNode node;
 	private LogBaseSpecification logBaseSpec = null;
@@ -231,7 +230,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 			for (String base : bases) {
 				Button baseButton = new Button(base, baseClick);
-				baseButton.addStyleName("smallestButton");
+				baseButton.addStyleName("mediumButton");
 				add(baseButton);
 			}
 			KeyPadNumerical keyPad = new KeyPadNumerical(symbolDisplay);
@@ -274,7 +273,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			
 			for (TrigFunctions function : TypeML.TrigFunctions.values()) {
 				Button funcButton = new Button(function.toString(),funcClick );
-				funcButton.addStyleName("smallestButton");
+				funcButton.addStyleName("mediumButton");
 				add(funcButton);
 			}
 		}

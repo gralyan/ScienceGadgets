@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
@@ -39,7 +40,7 @@ public class AlgebraActivity extends Composite {
 	
 	public static EquationPanel eqPanel = null;
 
-	public static FlowPanel algTransformMenu = new FlowPanel();
+	public static FlowPanel algTransformMenu = new CommunistPanel(true);
 	public static FlowPanel bothSidesButtonMenu = new FlowPanel();
 	public static AlgOut algOut = null;
 	

@@ -654,6 +654,9 @@ public class AdditionTransformations {
 
 		zero.highlight();
 
+		if(!isPlus && other.getIndex()> zero.getIndex()) {
+		AlgebraicTransformations.propagateNegative(other);	
+		}
 		operation.remove();
 		zero.remove();
 
