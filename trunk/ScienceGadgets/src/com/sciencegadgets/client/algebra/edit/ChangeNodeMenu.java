@@ -1,7 +1,6 @@
 package com.sciencegadgets.client.algebra.edit;
 
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -10,8 +9,8 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.objectify.annotation.OnSave;
 import com.sciencegadgets.client.CommunistPanel;
-import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
@@ -20,6 +19,7 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.TypeML.TrigFunctions;
+import com.sciencegadgets.client.algebra.transformations.LogBaseSpecification;
 
 public class ChangeNodeMenu extends CommunistPanel {
 
@@ -141,7 +141,15 @@ public class ChangeNodeMenu extends CommunistPanel {
 		switch (toType) {
 		case Log:
 			if (logBaseSpec == null) {
-				logBaseSpec = new LogBaseSpecification();
+				logBaseSpec = new LogBaseSpecification() {
+					@Override
+					public void onSpecify(String base) {
+						super.onSpecify(base);
+						MathNode log = node.encase(TypeML.Log);
+						log.setAttribute(MathAttribute.LogBase, base);
+						AlgebraActivity.reloadEquationPanel(null, null);
+					}
+				};
 			}
 			logBaseSpec.reload();
 			return;
@@ -212,74 +220,29 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 	}
 
-	private class LogBaseSpecification extends Prompt {
-		public final String[] bases = { "2", "10", "e" };
-		private Label symbolDisplay = new Label();
-
-		LogBaseSpecification() {
-			super();
-			add(new Label("What base?"));
-			add(symbolDisplay);
-			
-			ClickHandler baseClick = new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					specify(((Button) event.getSource()).getText());
-				}
-			};
-
-			for (String base : bases) {
-				Button baseButton = new Button(base, baseClick);
-				baseButton.addStyleName("mediumButton");
-				add(baseButton);
-			}
-			KeyPadNumerical keyPad = new KeyPadNumerical(symbolDisplay);
-			add(keyPad);
-			
-			addOkHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					if (!"".equals(symbolDisplay.getText())) {
-						specify(symbolDisplay.getText());
-					} else {
-						disappear();
-					}
-				}
-			});
-		}
-		public void reload() {
-			symbolDisplay.setText("");
-			appear();
-		}
-		private void specify(String base) {
-			disappear();
-			MathNode log = node.encase(TypeML.Log);
-			log.setAttribute(MathAttribute.LogBase, base);
-			AlgebraActivity.reloadEquationPanel(null, null);
-		}
-	}
 	private class TrigFunctionSpecification extends Prompt {
 		TrigFunctionSpecification() {
 			super(false);
 			add(new Label("What function?"));
-			
-			
+
 			ClickHandler funcClick = new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					specify(((Button) event.getSource()).getText());
 				}
 			};
-			
+
 			for (TrigFunctions function : TypeML.TrigFunctions.values()) {
-				Button funcButton = new Button(function.toString(),funcClick );
+				Button funcButton = new Button(function.toString(), funcClick);
 				funcButton.addStyleName("mediumButton");
 				add(funcButton);
 			}
 		}
+
 		public void reload() {
 			appear();
 		}
+
 		private void specify(String function) {
 			disappear();
 			MathNode func = node.encase(TypeML.Trig);
