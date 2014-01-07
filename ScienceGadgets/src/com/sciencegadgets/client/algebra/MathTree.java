@@ -648,7 +648,7 @@ public class MathTree {
 		public String getUnitAttribute() {
 			return mlNode.getAttribute(MathAttribute.Unit.getName());
 		}
-		
+
 		public String getAttribute(MathAttribute attribute) {
 			return mlNode.getAttribute(attribute.getName());
 		}
@@ -868,11 +868,11 @@ public class MathTree {
 						+ getType() + " can't have (" + childCount
 						+ ") children: " + toString();
 				JSNICalls.error(errorMerrage);
-				//Damage control
+				// Damage control
 				Window.alert("Error, see log");
 				return;
 			}
-			
+
 			switch (getType()) {
 			case Number:
 				// Confirm that the symbol is a number in solve mode
@@ -882,7 +882,7 @@ public class MathTree {
 					} catch (NumberFormatException e) {
 						JSNICalls.warn("The number node " + toString()
 								+ " must have a number");
-						//Damage control
+						// Damage control
 						setSymbol("1");
 					}
 				}
@@ -907,10 +907,13 @@ public class MathTree {
 					try {
 						Double.parseDouble(getAttribute(MathAttribute.LogBase));
 					} catch (NumberFormatException e) {
-						JSNICalls.error("The base of a log must be a number: "
-								+ getParent().toString());
-						//Damage control
-						setAttribute(MathAttribute.LogBase, "10");
+						if (!"e".equals(getAttribute(MathAttribute.LogBase))) {
+							JSNICalls
+									.error("The base of a log must be a number: "
+											+ getParent().toString());
+							// Damage control
+							setAttribute(MathAttribute.LogBase, "10");
+						}
 					}
 				}
 				break;
