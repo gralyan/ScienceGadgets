@@ -81,9 +81,9 @@ public class TestBot_Addition extends AdditionTransformations{
 		parent = operation.getParent();
 		grandParent = parent.getParent();
 
-		isPlus = Operator.PLUS.getSign().equals(operation.getSymbol());
+		isMinus = !Operator.PLUS.getSign().equals(operation.getSymbol());
 
-		if (!isPlus && !Operator.MINUS.getSign().equals(operation.getSymbol())) {
+		if (isMinus && !Operator.MINUS.getSign().equals(operation.getSymbol())) {
 			throw new Exception(
 					"Sign is neither Operator.MINUS or Operator.PLUS: "
 							+ operation.toString());
@@ -93,7 +93,7 @@ public class TestBot_Addition extends AdditionTransformations{
 				.getString());
 
 		RootPanel.get().add(dispBefore);
-		assign(leftNode, operation, rightNode, isPlus);
+		assign(leftNode, operation, rightNode, !isMinus);
 		// factorLikeTerms_check(leftNode,
 		// rightNobotCasebotCasebotCasebotCasede);
 		RootPanel.get().add(

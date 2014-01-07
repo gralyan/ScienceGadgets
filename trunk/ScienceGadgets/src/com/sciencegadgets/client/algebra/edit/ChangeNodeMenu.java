@@ -20,6 +20,7 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.TypeML.TrigFunctions;
 import com.sciencegadgets.client.algebra.transformations.LogBaseSpecification;
+import com.sciencegadgets.client.algebra.transformations.TrigFunctionSpecification;
 
 public class ChangeNodeMenu extends CommunistPanel {
 
@@ -155,7 +156,15 @@ public class ChangeNodeMenu extends CommunistPanel {
 			return;
 		case Trig:
 			if (trigFuncSpec == null) {
-				trigFuncSpec = new TrigFunctionSpecification();
+				trigFuncSpec = new TrigFunctionSpecification() {
+					@Override
+					protected void onSpecify(String function) {
+						super.onSpecify(function);
+						MathNode func = node.encase(TypeML.Trig);
+						func.setAttribute(MathAttribute.Function, function);
+						AlgebraActivity.reloadEquationPanel(null, null);
+					}
+				};
 			}
 			trigFuncSpec.reload();
 			return;
@@ -218,37 +227,6 @@ public class ChangeNodeMenu extends CommunistPanel {
 		}
 		AlgebraActivity.reloadEquationPanel(null, null);
 
-	}
-
-	private class TrigFunctionSpecification extends Prompt {
-		TrigFunctionSpecification() {
-			super(false);
-			add(new Label("What function?"));
-
-			ClickHandler funcClick = new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					specify(((Button) event.getSource()).getText());
-				}
-			};
-
-			for (TrigFunctions function : TypeML.TrigFunctions.values()) {
-				Button funcButton = new Button(function.toString(), funcClick);
-				funcButton.addStyleName("mediumButton");
-				add(funcButton);
-			}
-		}
-
-		public void reload() {
-			appear();
-		}
-
-		private void specify(String function) {
-			disappear();
-			MathNode func = node.encase(TypeML.Trig);
-			func.setAttribute(MathAttribute.Function, function);
-			AlgebraActivity.reloadEquationPanel(null, null);
-		}
 	}
 
 	// //////////////////////////////////////////////////////

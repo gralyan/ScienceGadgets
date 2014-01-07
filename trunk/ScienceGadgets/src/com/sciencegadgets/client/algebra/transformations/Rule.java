@@ -17,6 +17,7 @@ package com.sciencegadgets.client.algebra.transformations;
 		DIVISION,//
 		INTEGER_FACTORIZATION,//
 		INVERSE_TRIGONOMETRIC_FUNCTIONS,//
+		TRIGONOMETRIC_FUNCTIONS,//
 		LOGARITHM;//
 		
 

@@ -27,7 +27,7 @@ public class AdditionTransformations {
 	protected static MathNode operation;
 	protected static MathNode parent;
 	protected static MathNode grandParent;
-	protected static boolean isPlus;
+	protected static boolean isMinus;
 	protected static boolean isMinusBeforeLeft = false;
 	private static final int same = 0;
 
@@ -38,7 +38,7 @@ public class AdditionTransformations {
 			operation = sign;
 			parent = operation.getParent();
 			grandParent = parent.getParent();
-			isPlus = isPlusSign;// Operator.PLUS.getSign().equals(sign.getSymbol());
+			isMinus = !isPlusSign;// Operator.PLUS.getSign().equals(sign.getSymbol());
 			boolean assigned = false;
 
 			// propagate the negative to the left node if preceded by a minus
@@ -51,9 +51,8 @@ public class AdditionTransformations {
 			TypeML leftType = left.getType();
 			TypeML rightType = right.getType();
 
-			// Check for improper types for left and right
+			// Check for improper types for right side
 			switch (rightType) {
-			case Equation:
 			case Sum:
 				JSNICalls.error("Illegal node within Sum: " + rightType);
 				break;
@@ -69,8 +68,8 @@ public class AdditionTransformations {
 				}
 				break;
 			}
+			// Check for improper types for left side
 			switch (leftType) {
-			case Equation:
 			case Sum:
 				JSNICalls.error("Illegal node within Sum: " + leftType);
 				break;
@@ -112,6 +111,12 @@ public class AdditionTransformations {
 				case Number:
 					factorWithTermChild_check(right, left);
 					break second;
+				case Log:
+					factorWithTermChild_check(right, left);
+					break second;
+				case Trig:
+					factorWithTermChild_check(right, left);
+					break second;
 				}
 				break first;
 			case Exponential:
@@ -139,6 +144,12 @@ public class AdditionTransformations {
 				case Number:
 					factorWithBase_check(right, left);
 					break second;
+				case Log:
+					factorWithBase_check(right, left);
+					break second;
+				case Trig:
+					factorWithBase_check(right, left);
+					break second;
 				}
 				break first;
 			case Fraction:
@@ -164,6 +175,12 @@ public class AdditionTransformations {
 					factorWithTermChild_check(right, left);
 					break second;
 				case Number:
+					factorWithTermChild_check(right, left);
+					break second;
+				case Log:
+					factorWithTermChild_check(right, left);
+					break second;
+				case Trig:
 					factorWithTermChild_check(right, left);
 					break second;
 				}
@@ -197,6 +214,35 @@ public class AdditionTransformations {
 					break second;
 				case Number:
 					addNumbers_prompt(left, right);
+					break second;
+				}
+				break first;
+			case Log:
+				second: switch (rightType) {
+				case Term:
+					factorWithTermChild_check(left, right);
+					break second;
+				case Exponential:
+					factorWithBase_check(left, right);
+					break second;
+				case Fraction:
+					factorWithTermChild_check(left, right);
+					break second;
+				case Log:
+					logCombination_check(left, right);
+					break second;
+				}
+				break first;
+			case Trig:
+				second: switch (rightType) {
+				case Term:
+					factorWithTermChild_check(left, right);
+					break second;
+				case Exponential:
+					factorWithBase_check(left, right);
+					break second;
+				case Fraction:
+					factorWithTermChild_check(left, right);
 					break second;
 				}
 				break first;
@@ -236,7 +282,8 @@ public class AdditionTransformations {
 		parent.decase();
 	}
 
-	private static boolean factorLikeTerms_check(MathNode left, MathNode right) {
+	private static boolean factorLikeTerms_check(final MathNode left,
+			final MathNode right) {
 		MathNode leftTerm = left;
 		MathNode rightTerm = right;
 
@@ -257,7 +304,7 @@ public class AdditionTransformations {
 		}
 
 		// Collect like terms
-		LinkedHashMap<MathNode, MathNode> likeTerms = new LinkedHashMap<MathNode, MathNode>();
+		final LinkedHashMap<MathNode, MathNode> likeTerms = new LinkedHashMap<MathNode, MathNode>();
 		a: for (MathNode leftChild : leftTerm.getChildren()) {
 			if (TypeML.Operation.equals(leftChild.getType())) {
 				continue a;
@@ -281,10 +328,20 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			factorLikeTerms(left, right, likeTerms);
 		} else {
-			AlgebraActivity.algTransformMenu.add(new FLTButton(left, right,
-					likeTerms));
-		}
 
+			String factorString = "";
+			for (MathNode fact : likeTerms.keySet()) {
+				factorString.concat(fact.getHTMLString());
+			}
+			AlgebraActivity.algTransformMenu.add(new Button("Factor "
+					+ factorString, new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					AdditionTransformations.factorLikeTerms(left, right,
+							likeTerms);
+				}
+			}));
+		}
 		return true;
 	}
 
@@ -363,8 +420,8 @@ public class AdditionTransformations {
 				Rule.COMBINING_LIKE_TERMS);
 	}
 
-	private static boolean factorWithBase_check(MathNode other,
-			MathNode exponential) {
+	private static boolean factorWithBase_check(final MathNode other,
+			final MathNode exponential) {
 
 		if (!other.isLike(exponential.getChildAt(0))) {
 			return false;
@@ -373,10 +430,14 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			factorWithBase(other, exponential);
 		} else {
-			AlgebraActivity.algTransformMenu.add(new FWBButton(other,
-					exponential));
+			AlgebraActivity.algTransformMenu.add(new Button("Factor "
+					+ other.getHTMLString(), new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					AdditionTransformations.factorWithBase(other, exponential);
+				}
+			}));
 		}
-
 		return true;
 	}
 
@@ -408,8 +469,8 @@ public class AdditionTransformations {
 				Rule.FACTORIZATION);
 	}
 
-	private static boolean factorWithTermChild_check(MathNode other,
-			MathNode termContainer) {
+	private static boolean factorWithTermChild_check(final MathNode other,
+			final MathNode termContainer) {
 		MathNode term = termContainer;
 
 		// If sides are fractions, like terms come from numerators
@@ -421,13 +482,20 @@ public class AdditionTransformations {
 			}
 		}
 
-		for (MathNode termChild : term.getChildren()) {
+		for (final MathNode termChild : term.getChildren()) {
 			if (termChild.isLike(other)) {
 				if (AlgebraActivity.isInEasyMode) {
 					factorWithTermChild(other, termContainer, termChild);
 				} else {
-					AlgebraActivity.algTransformMenu.add(new FWTCButton(other,
-							termContainer, termChild));
+					AlgebraActivity.algTransformMenu.add(new Button("Factor "
+							+ other.getHTMLString(), new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent event) {
+							AdditionTransformations.factorWithTermChild(other,
+									termContainer, termChild);
+						}
+					}));
 				}
 				return true;
 			}
@@ -486,7 +554,8 @@ public class AdditionTransformations {
 		AlgebraActivity.reloadEquationPanel("Factor", Rule.FACTORIZATION);
 	}
 
-	private static boolean addFractions_check(MathNode left, MathNode right) {
+	private static boolean addFractions_check(final MathNode left,
+			final MathNode right) {
 		// Common denominators
 		if (!left.getChildAt(1).isLike(right.getChildAt(1))) {
 			return false;
@@ -495,12 +564,16 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			addFractions(left, right);
 		} else {
-			AlgebraActivity.algTransformMenu.add(new AddFractionsButton(left,
-					right));
+			AlgebraActivity.algTransformMenu.add(new Button("Add Fractions",
+					new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent event) {
+							AdditionTransformations.addFractions(left, right);
+						}
+					}));
 		}
-
 		return true;
-
 	}
 
 	static void addFractions(MathNode left, MathNode right) {
@@ -525,7 +598,50 @@ public class AdditionTransformations {
 				Rule.FRACTION_ADDITION);
 	}
 
-	private static boolean addSimilar_check(MathNode left, MathNode right) {
+	private static boolean logCombination_check(final MathNode left,
+			final MathNode right) {
+
+		if (AlgebraActivity.isInEasyMode) {
+			logCombination(left, right);
+		} else {
+			AlgebraActivity.algTransformMenu.add(new Button("Combine Log",
+					new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							AdditionTransformations.logCombination(left, right);
+						}
+					}));
+		}
+		return true;
+	}
+
+	private static void logCombination(final MathNode left, final MathNode right) {
+
+		left.highlight();
+		right.highlight();
+
+		MathNode newLogChild;
+		MathNode leftChild = left.getFirstChild();
+		if (isMinus) {
+			newLogChild = leftChild.encase(TypeML.Fraction);
+		} else {
+			newLogChild = leftChild.encase(TypeML.Term);
+			newLogChild.append(TypeML.Operation, Operator.getMultiply()
+					.getSign());
+		}
+		newLogChild.append(right.getFirstChild());
+		
+		right.remove();
+		operation.remove();
+		
+		parent.decase();
+
+		AlgebraActivity.reloadEquationPanel("Combine Log",
+				Rule.LOGARITHM);
+	}
+
+	private static boolean addSimilar_check(final MathNode left,
+			final MathNode right) {
 		if (!left.isLike(right)) {
 			return false;
 		}
@@ -533,8 +649,13 @@ public class AdditionTransformations {
 		if (AlgebraActivity.isInEasyMode) {
 			addSimilar(left, right);
 		} else {
-			AlgebraActivity.algTransformMenu.add(new AddSimilarButton(left,
-					right));
+			AlgebraActivity.algTransformMenu.add(new Button("Add Similar",
+					new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							AdditionTransformations.addSimilar(left, right);
+						}
+					}));
 		}
 		return true;
 	}
@@ -545,18 +666,18 @@ public class AdditionTransformations {
 		operation.highlight();
 		left.highlight();
 
-		if (isPlus && !isMinusBeforeLeft) {
+		if (!isMinus && !isMinusBeforeLeft) {
 			MathNode casing = right.encase(TypeML.Term);
 			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
 					.getSign());
 			casing.addBefore(0, TypeML.Number, "2");
-		} else if (!isPlus && isMinusBeforeLeft) {
+		} else if (isMinus && isMinusBeforeLeft) {
 			MathNode casing = right.encase(TypeML.Term);
 			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
 					.getSign());
 			casing.addBefore(0, TypeML.Number, "-2");
-		} else if ((!isPlus && !isMinusBeforeLeft)
-				|| (isPlus && isMinusBeforeLeft)) {
+		} else if ((isMinus && !isMinusBeforeLeft)
+				|| (!isMinus && isMinusBeforeLeft)) {
 			// Remove residual operations
 			MathNode leftOp = left.getPrevSibling();
 			MathNode rightNext = right.getNextSibling();
@@ -596,7 +717,7 @@ public class AdditionTransformations {
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		BigDecimal total;
 
-		if (isPlus) {
+		if (!isMinus) {
 			total = leftValue.add(rightValue);
 		} else {
 			total = leftValue.subtract(rightValue);
@@ -654,8 +775,8 @@ public class AdditionTransformations {
 
 		zero.highlight();
 
-		if(!isPlus && other.getIndex()> zero.getIndex()) {
-		AlgebraicTransformations.propagateNegative(other);	
+		if (isMinus && other.getIndex() > zero.getIndex()) {
+			AlgebraicTransformations.propagateNegative(other);
 		}
 		operation.remove();
 		zero.remove();
@@ -663,87 +784,5 @@ public class AdditionTransformations {
 		parent.decase();
 
 		AlgebraActivity.reloadEquationPanel("Add zero", Rule.ADDITION);
-	}
-}
-
-class FLTButton extends Button {
-
-	FLTButton(final MathNode left, final MathNode right,
-			final LinkedHashMap<MathNode, MathNode> likeTerms) {
-
-		String factorString = "";
-		for (MathNode fact : likeTerms.keySet()) {
-			factorString.concat(fact.getHTMLString());
-		}
-		setHTML("Factor " + factorString);
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AdditionTransformations.factorLikeTerms(left, right, likeTerms);
-			}
-		});
-	}
-}
-
-class FWBButton extends Button {
-
-	FWBButton(final MathNode other, final MathNode exponential) {
-
-		setHTML("Factor " + other.getHTMLString());
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AdditionTransformations.factorWithBase(other, exponential);
-			}
-		});
-	}
-}
-
-class FWTCButton extends Button {
-
-	FWTCButton(final MathNode other, final MathNode termContainer,
-			final MathNode termChild) {
-
-		setHTML("Factor " + other.getHTMLString());
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AdditionTransformations.factorWithTermChild(other,
-						termContainer, termChild);
-			}
-		});
-	}
-}
-
-class AddFractionsButton extends Button {
-
-	AddFractionsButton(final MathNode left, final MathNode right) {
-
-		setHTML("Add Fractions");
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AdditionTransformations.addFractions(left, right);
-			}
-		});
-	}
-}
-
-class AddSimilarButton extends Button {
-
-	AddSimilarButton(final MathNode left, final MathNode right) {
-
-		setHTML("Add Similar");
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AdditionTransformations.addSimilar(left, right);
-			}
-		});
 	}
 }

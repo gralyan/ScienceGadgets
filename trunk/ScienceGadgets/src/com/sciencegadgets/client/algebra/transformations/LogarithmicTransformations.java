@@ -26,17 +26,17 @@ public class LogarithmicTransformations {
 			base = log.getAttribute(MathAttribute.LogBase);
 			TypeML logChildType = logChild.getType();
 
-			changeBase();
+			changeBaseRule();
 
 			switch (logChildType) {
 			case Term:
-				expandTerm();
+				logProductRule();
 				break;
 			case Fraction:
-				expandFraction();
+				logQuotientRule();
 				break;
 			case Exponential:
-				simplifyExponential();
+				logPowerRule();
 				break;
 			}
 
@@ -50,7 +50,7 @@ public class LogarithmicTransformations {
 	/**
 	 * log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(y)
 	 */
-	private static void changeBase() {
+	private static void changeBaseRule() {
 		ClickHandler changeBaseHandler = new ClickHandler() {
 
 			@Override
@@ -65,8 +65,10 @@ public class LogarithmicTransformations {
 
 							MathNode fraction = log.encase(TypeML.Fraction);
 							log.setAttribute(MathAttribute.LogBase, newBase);
-							fraction.append(TypeML.Number, base).setAttribute(
-									MathAttribute.LogBase, newBase);
+							
+							MathNode denom = fraction.append(TypeML.Log, "");
+							denom.append(TypeML.Number, base);
+							denom.setAttribute(MathAttribute.LogBase, newBase);
 
 							AlgebraActivity
 									.reloadEquationPanel(
@@ -87,7 +89,7 @@ public class LogarithmicTransformations {
 	/**
 	 * log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)
 	 */
-	private static void expandTerm() {
+	private static void logProductRule() {
 		ClickHandler expandTermHandler = new ClickHandler() {
 
 			@Override
@@ -98,19 +100,20 @@ public class LogarithmicTransformations {
 				MathNode sum = log.encase(TypeML.Sum);
 				int logIndex = log.getIndex();
 
-				LinkedList<MathNode> termChildren = logChild
-						.getChildren();
-				for (int i = 0 ; i< termChildren.size() ; i++) {
+				LinkedList<MathNode> termChildren = logChild.getChildren();
+				for (int i = 0; i < termChildren.size(); i++) {
 					MathNode termChild = termChildren.get(i);
 					if (TypeML.Operation.equals(termChild.getType())) {
-						sum.addBefore(logIndex+i, TypeML.Operation, Operator.PLUS.getSign());
+						sum.addBefore(logIndex + i, TypeML.Operation,
+								Operator.PLUS.getSign());
 					} else {
-						MathNode termChildLog = sum.addBefore(logIndex+i, TypeML.Log, "");
+						MathNode termChildLog = sum.addBefore(logIndex + i,
+								TypeML.Log, "");
 						termChildLog.setAttribute(MathAttribute.LogBase, base);
 						termChildLog.append(termChild);
 					}
 				}
-				
+
 				log.remove();
 
 				AlgebraActivity
@@ -127,7 +130,7 @@ public class LogarithmicTransformations {
 	/**
 	 * log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)
 	 */
-	private static void expandFraction() {
+	private static void logQuotientRule() {
 		ClickHandler expandFractionHandler = new ClickHandler() {
 
 			@Override
@@ -140,19 +143,21 @@ public class LogarithmicTransformations {
 				MathNode numerator = logChild.getFirstChild();
 				MathNode denominator = logChild.getChildAt(1);
 				int logIndex = log.getIndex();
-				
-				MathNode denominatorLog = sum.addBefore(logIndex,TypeML.Log, "");
+
+				MathNode denominatorLog = sum.addBefore(logIndex, TypeML.Log,
+						"");
 				denominatorLog.setAttribute(MathAttribute.LogBase, base);
 				denominatorLog.append(denominator);
-				
-				sum.addBefore(logIndex,TypeML.Operation, Operator.MINUS.getSign());
-				
-				MathNode numeratorLog = sum.addBefore(logIndex,TypeML.Log, "");
+
+				sum.addBefore(logIndex, TypeML.Operation,
+						Operator.MINUS.getSign());
+
+				MathNode numeratorLog = sum.addBefore(logIndex, TypeML.Log, "");
 				numeratorLog.setAttribute(MathAttribute.LogBase, base);
 				numeratorLog.append(numerator);
-				
+
 				log.remove();
-				
+
 				AlgebraActivity
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)",
@@ -167,7 +172,7 @@ public class LogarithmicTransformations {
 	/**
 	 * log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)
 	 */
-	private static void simplifyExponential() {
+	private static void logPowerRule() {
 		ClickHandler expandFractionHandler = new ClickHandler() {
 
 			@Override
@@ -179,12 +184,13 @@ public class LogarithmicTransformations {
 
 				int logIndex = log.getIndex();
 				MathNode exponent = logChild.getChildAt(1);
-				
-				term.addBefore(logIndex, TypeML.Operation, Operator.getMultiply().getSign());
+
+				term.addBefore(logIndex, TypeML.Operation, Operator
+						.getMultiply().getSign());
 				term.addBefore(logIndex, exponent);
-				
+
 				logChild.replace(logChild.getFirstChild());
-				
+
 				AlgebraActivity
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)",

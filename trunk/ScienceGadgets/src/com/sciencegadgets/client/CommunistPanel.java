@@ -16,40 +16,25 @@ public class CommunistPanel extends FlowPanel {
 	public CommunistPanel(boolean isHorizontal) {
 		this.isHorizontal = isHorizontal;
 	}
-	
-	public void setHorizontal(boolean isHorizontal) {
-		
-	}
 
 	public void addAll(Widget[] widgets) {
 		for (Widget widget : widgets) {
-			addToContainer(widget);
+			add(widget);
 		}
 		redistribute();
 	}
 
 	public void addAll(Iterable<Widget> widgets) {
 		for (Widget widget : widgets) {
-			addToContainer(widget);
+			add(widget);
 		}
 		redistribute();
 	}
 
 	@Override
 	public void add(Widget widget) {
-		addToContainer(widget);
+		add(widget);
 		redistribute();
-	}
-	
-	private void addToContainer(Widget widget){
-		widget.setHeight("100%");
-		widget.setWidth("100%");
-		FlowPanel container = new FlowPanel();
-		super.add(container);
-		container.add(widget);
-		if (isHorizontal) {
-			container.addStyleName("layoutRow");
-		}
 	}
 
 	private void redistribute() {
