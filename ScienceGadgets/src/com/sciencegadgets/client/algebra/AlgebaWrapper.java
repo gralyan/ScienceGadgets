@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
+import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -86,6 +87,7 @@ public class AlgebaWrapper extends ZoomWrapper {
 				break;
 			case Log:
 				AlgebraicTransformations.unravelLogExp_check(node);
+				LogarithmicTransformations.assign(node);
 				break;
 			case Trig:
 				AlgebraicTransformations.inverseTrig_check(node);

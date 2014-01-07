@@ -62,7 +62,7 @@ public class BothSidesMenu extends CommunistPanel {
 			}
 		}
 
-		switch (parentNode.getType()) {
+		parent: switch (parentNode.getType()) {
 		case Sum:
 			if (isTopLevel) {
 				if (node.getIndex() > 0) {
@@ -78,7 +78,7 @@ public class BothSidesMenu extends CommunistPanel {
 					this.add(new BothSidesButton(Math.SUBTRACT));
 				}
 			}
-			break;
+			break parent;
 		case Term:
 			if (isTopLevel) {
 				this.add(new BothSidesButton(Math.DIVIDE));
@@ -96,7 +96,7 @@ public class BothSidesMenu extends CommunistPanel {
 					}
 				}
 			}
-			break;
+			break parent;
 		case Fraction:
 			if (isTopLevel) {
 				if (node.getIndex() == 0) {
@@ -105,7 +105,7 @@ public class BothSidesMenu extends CommunistPanel {
 					this.add(new BothSidesButton(Math.MULTIPLY));
 				}
 			}
-			break;
+			break parent;
 		case Exponential:
 			if (isTopLevel) {
 				if (node.getIndex() == 1) {
@@ -114,21 +114,20 @@ public class BothSidesMenu extends CommunistPanel {
 					this.add(new BothSidesButton(Math.LOG));
 				}
 			}
-			break;
-		case Log:
-			if (isTopLevel) {
-
-			}
+			break parent;
 		case Equation:
 			isSide = true;
 			this.add(new BothSidesButton(Math.SUBTRACT));
 			this.add(new BothSidesButton(Math.DIVIDE));
-			if (TypeML.Log.equals(type)) {
+			eq: switch (type) {
+			case Log:
 				this.add(new BothSidesButton(Math.RAISE));
-			} else if (TypeML.Trig.equals(type)) {
+				break eq;
+			case Trig:
 				this.add(new BothSidesButton(Math.INVERSE_TRIG));
+				break eq;
 			}
-			break;
+			break parent;
 		}
 
 	}
@@ -201,14 +200,14 @@ public class BothSidesMenu extends CommunistPanel {
 		BothSidesHandler() {
 
 			MathNode topParent = null;
-			if (isTopLevel) {
+			if (isSide) {
+				topParent = node;
+			} else if (isTopLevel) {
 				topParent = oldParent;
 			} else if (isNestedInFraction) {
 				topParent = oldParent.getParent();
-			} else if (isSide) {
-				topParent = node;
 			} else {
-				JSNICalls.warn("Added bothSidesHandler to wrong node");
+				JSNICalls.warn("Added bothSidesHandler to wrong node: " + node);
 			}
 			if (topParent.isLeftSide()) {
 				isOnTopLeft = true;
@@ -217,7 +216,8 @@ public class BothSidesMenu extends CommunistPanel {
 				isOnTopRight = true;
 				targetSide = tree.getLeftSide();
 			} else {
-				JSNICalls.warn("bothSidesHandler on wrong node");
+				JSNICalls.warn("bothSidesHandler on wrong node: " + node
+						+ "\nparent: " + topParent);
 			}
 		}
 
