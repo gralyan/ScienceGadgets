@@ -31,7 +31,7 @@ import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.AlgebaWrapper;
 import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.transformations.InterFractionDropController.DropType;
+import com.sciencegadgets.client.algebra.transformations.InterFractionDrop.DropType;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -274,15 +274,20 @@ public class AlgebraicTransformations {
 	 * 
 	 * @param node
 	 */
-	public static void cancellation_check(MathNode node) {
+	public static void interFractionDrop_check(MathNode node) {
+
 		MathNode thisSide = null;
 		MathNode parent = node.getParent();
-		if (TypeML.Fraction.equals(parent.getType())) {
+		switch (parent.getType()) {
+		case Fraction:
 			thisSide = node;
-		} else if (TypeML.Term.equals(parent.getType())
-				&& TypeML.Fraction.equals(parent.getParentType())) {
-			thisSide = parent;
-		} else {
+			break;
+		case Term:
+			if (TypeML.Fraction.equals(parent.getParentType())) {
+				thisSide = parent;
+				break;
+			}// else fall through
+		default:
 			return;
 		}
 
@@ -290,73 +295,75 @@ public class AlgebraicTransformations {
 				.getNextSibling() : thisSide.getPrevSibling();
 
 		HashMap<MathNode, DropType> dropTargets = new HashMap<MathTree.MathNode, DropType>();
-		if (node.isLike(otherSide)) {
+
+		if (node.isLike(otherSide)) {// Cancel drop on entire other sides
 			dropTargets.put(otherSide, DropType.CANCEL);
-		} else {
-			boolean isSameType_OtherSide = node.getType().equals(
-					otherSide.getType());
-			switch (otherSide.getType()) {
-			case Number:
-				if (isSameType_OtherSide)
-					dropTargets.put(otherSide, DropType.DIVIDE);
-				break;
-			case Log:
-				if (isSameType_OtherSide
-						&& node.getAttribute(MathAttribute.LogBase).equals(
-								otherSide.getAttribute(MathAttribute.LogBase)))
-					dropTargets.put(otherSide, DropType.LOG_COMBINE);
-				break;
-			case Trig:
-				if (isSameType_OtherSide
-						&& otherSide.getFirstChild().isLike(
-								node.getFirstChild()))
-					dropTargets.put(otherSide, DropType.TRIG_COMBINE);
-				break;
-			case Term:
 
-				for (MathNode child : otherSide.getChildren()) {
-					if (node.isLike(child)) {
-						dropTargets.put(child, DropType.CANCEL);
-					} else {
-						boolean isSameType_OtherSideChild = node.getType()
-								.equals(child.getType());
-						switch (child.getType()) {
-						case Number:
-							if (isSameType_OtherSideChild)
-								dropTargets.put(child, DropType.CANCEL);
-							break;
-						case Log:
-							if (isSameType_OtherSideChild
-									&& node.getAttribute(MathAttribute.LogBase)
-											.equals(otherSide
-													.getAttribute(MathAttribute.LogBase)))
-								dropTargets.put(child, DropType.CANCEL);
-							break;
-						case Trig:
-							if (isSameType_OtherSideChild
-									&& child.getFirstChild().isLike(
-											node.getFirstChild()))
-								dropTargets.put(child, DropType.TRIG_COMBINE);
-							break;
-						}
-					}
+		} else if (TypeML.Term.equals(otherSide.getType())) {
+
+			for (MathNode child : otherSide.getChildren()) {
+				if (node.isLike(child)) {// Cancel drop on child
+					dropTargets.put(child, DropType.CANCEL);
+				} else {// Drop on child
+					addDropTarget(child, node, dropTargets);
 				}
-				break;
-
 			}
+
+		} else {// Drop on entire other side
+			addDropTarget(otherSide, node, dropTargets);
 		}
 
 		if (dropTargets.size() > 0) {
 			WrapDragController dragController = node.getWrapper()
 					.addDragController();
 			for (Entry<MathNode, DropType> dropTarget : dropTargets.entrySet()) {
-				dragController
-						.registerDropController(new InterFractionDropController(
-								(AlgebaWrapper) dropTarget.getKey()
-										.getWrapper(), dropTarget.getValue()));
+				dragController.registerDropController(new InterFractionDrop(
+						(AlgebaWrapper) dropTarget.getKey().getWrapper(),
+						dropTarget.getValue()));
 			}
 		}
 
+	}
+
+	private static void addDropTarget(MathNode target, MathNode drag,
+			HashMap<MathTree.MathNode, DropType> dropTargets) {
+
+		if (!drag.getType().equals(target.getType())) {
+			return;
+		}
+
+		switch (target.getType()) {
+		case Number:
+			dropTargets.put(target, DropType.DIVIDE);
+			break;
+		case Exponential:
+			if (drag.getFirstChild().isLike(target.getFirstChild())) {
+				dropTargets.put(target, DropType.EXPONENTIAL);
+			}
+			break;
+		case Log:
+			if (drag.getAttribute(MathAttribute.LogBase).equals(
+					target.getAttribute(MathAttribute.LogBase))
+					&& TypeML.Number.equals(drag.getFirstChild().getType())) {
+				dropTargets.put(target, DropType.LOG_COMBINE);
+			}
+			break;
+		case Trig:
+			if (target.getFirstChild().isLike(drag.getFirstChild())) {
+				// Make sure (drag or target) is sin and other is cos
+				TrigFunctions dragFunc = TrigFunctions.valueOf(drag
+						.getAttribute(MathAttribute.Function));
+				TrigFunctions targetfunc = TrigFunctions.valueOf(target
+						.getAttribute(MathAttribute.Function));
+				TrigFunctions sin = TrigFunctions.sin;
+				TrigFunctions cos = TrigFunctions.cos;
+				if ((sin.equals(dragFunc) && cos.equals(targetfunc))
+						|| (cos.equals(dragFunc) && sin.equals(targetfunc))) {
+				}
+				dropTargets.put(target, DropType.TRIG_COMBINE);
+			}
+			break;
+		}
 	}
 
 	/**
