@@ -33,7 +33,7 @@ public class CommunistPanel extends FlowPanel {
 
 	@Override
 	public void add(Widget widget) {
-		add(widget);
+		super.add(widget);
 		redistribute();
 	}
 

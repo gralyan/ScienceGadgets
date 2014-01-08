@@ -29,7 +29,6 @@ public class Prompt extends DialogBox {
 	private static final double WIDTH_FRACTION = 0.8;
 	protected final FlowPanel flowPanel = new FlowPanel();
 	final Button okButton = new Button("OK");
-	private HandlerRegistration nativePreview;
 
 	public Prompt() {
 		this(true);
@@ -84,10 +83,6 @@ public class Prompt extends DialogBox {
 	public void disappear() {
 		hide();
 		removeFromParent();
-		
-		if(nativePreview != null) {
-		nativePreview.removeHandler();
-	}
 	}
 
 	public void appear() {
@@ -106,50 +101,12 @@ public class Prompt extends DialogBox {
 	public void hide() {
 		super.hide();
 		Moderator.prompts.remove(this);
-
-		if(Moderator.isTouch) {
-		// Allow touching to autoHide, GWT issue 7596 workaround
-		nativePreview = Event.addNativePreviewHandler(new NativePreviewHandler() {
-			public void onPreviewNativeEvent(NativePreviewEvent event) {
-				addAutoHideOnGlassTouch(event);
-			}
-		});
-		}
 	}
 
 	@Override
 	public void center() {
 		super.center();
-
 		Moderator.prompts.add(this);
-
-	}
-
-	// private void addAutoHideOnGlassTouch() {
-	// HTML glass = HTML.wrap(getGlassElement());
-	// glass.addDomHandler(new TouchStartHandler() {
-	// @Override
-	// public void onTouchStart(TouchStartEvent event) {
-	// JSNICalls.log("glass touch");
-	// }
-	// }, TouchStartEvent.getType());
-	// }
-	private void addAutoHideOnGlassTouch(NativePreviewEvent event) {
-		Event nativeEvent = Event.as(event.getNativeEvent());
-		int type = nativeEvent.getTypeInt();
-		if (Event.ONTOUCHSTART == type) {
-
-			EventTarget target = nativeEvent.getEventTarget();
-
-			JSNICalls.log("target " + target.toSource());
-			if (Element.is(target)) {
-				if (target.equals(getGlassElement())) {
-					JSNICalls.log("glass touch");
-					disappear();
-				}
-			}
-		}
-		event.cancel();
 	}
 
 }

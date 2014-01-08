@@ -101,7 +101,7 @@ public class EquationPanel extends AbsolutePanel {
 				placeNextEqWrappers(merge, eqLayerMap.get(merge.getParent()));
 			}
 			for (AlgebaWrapper wrap : mathWrappers) {
-				AlgebraicTransformations.cancellation_check(wrap.getNode());
+				AlgebraicTransformations.interFractionDrop_check(wrap.getNode());
 			}
 		}
 		for (AlgebaWrapper wrap : mathWrappers) {

@@ -408,6 +408,8 @@ public class MathTree {
 				for (int i = children.size(); i > 0; i--) {
 					addBefore(index, children.get(i - 1));
 				}
+				
+				node.remove();
 
 			} else {
 				Element elementNode = node.getMLNode();

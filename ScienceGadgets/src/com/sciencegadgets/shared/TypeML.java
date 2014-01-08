@@ -3,6 +3,7 @@ package com.sciencegadgets.shared;
 import java.util.NoSuchElementException;
 
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 /**
  * <em><b>TypeML - tag - attributes</b></em></br> Number - mn -
@@ -80,7 +81,7 @@ public enum TypeML {
 		JSNICalls.error("There is no type for the tag: " + tag);
 		return null;
 	}
-
+	
 	/**
 	 * <em><b>childCountRequirement</b></em></br> 0 - no element children,
 	 * <b>text only</b></br> 1 - one element child, no text</br> 2 - two element
