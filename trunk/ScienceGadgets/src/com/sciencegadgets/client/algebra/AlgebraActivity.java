@@ -101,4 +101,8 @@ public class AlgebraActivity extends Composite {
 		}
 
 	}
+	
+	public static void addTransformation(Button transformationButton) {
+		algTransformMenu.add(transformationButton);
+	}
 }

@@ -81,7 +81,7 @@ public class LogarithmicTransformations {
 			}
 		};
 
-		AlgebraActivity.algTransformMenu.add(new Button("Change base",
+		AlgebraActivity.addTransformation(new Button("Change base",
 				changeBaseHandler));
 
 	}
@@ -123,7 +123,7 @@ public class LogarithmicTransformations {
 			}
 		};
 
-		AlgebraActivity.algTransformMenu.add(new Button("Log Product",
+		AlgebraActivity.addTransformation(new Button("Log Product",
 				expandTermHandler));
 	}
 
@@ -165,7 +165,7 @@ public class LogarithmicTransformations {
 			}
 		};
 
-		AlgebraActivity.algTransformMenu.add(new Button("Log Quotient",
+		AlgebraActivity.addTransformation(new Button("Log Quotient",
 				expandFractionHandler));
 	}
 
@@ -198,7 +198,7 @@ public class LogarithmicTransformations {
 			}
 		};
 
-		AlgebraActivity.algTransformMenu.add(new Button("Log Power",
+		AlgebraActivity.addTransformation(new Button("Log Power",
 				expandFractionHandler));
 	}
 }

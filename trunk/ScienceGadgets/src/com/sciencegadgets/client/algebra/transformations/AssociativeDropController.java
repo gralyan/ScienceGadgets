@@ -78,6 +78,7 @@ public class AssociativeDropController extends AbstractDropController {
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
 		getDropTarget().addStyleName("selectedDropWrapper");
+		AlgebraActivity.algTransformMenu.clear();
 		AlgebraActivity.algTransformMenu.add(switchResponse);
 	}
 
