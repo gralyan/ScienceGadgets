@@ -30,6 +30,8 @@ public class AdditionTransformations {
 	boolean isMinus;
 	boolean isMinusBeforeLeft = false;
 
+	LinkedList<AddTransformButton> transformations = new LinkedList<AddTransformButton>();
+
 	public AdditionTransformations(MathNode left, MathNode operation,
 			MathNode right,
 
@@ -51,25 +53,19 @@ public class AdditionTransformations {
 			this.leftType = left.getType();
 			this.rightType = right.getType();
 
-			LinkedList<AddTransformButton> choices = new LinkedList<AddTransformButton>();
-			choices.add(addNumbers_check());
-			choices.add(addSimilar_check());
-			choices.add(factorLikeTerms_check());
-			choices.add(factorWithBase_check());
-			choices.add(factorWithTermChild_check());
-			choices.add(addFractions_check());
-			choices.add(logCombination_check());
+			check(addNumbers_check());
+			check(addSimilar_check());
+			check(factorLikeTerms_check());
+			check(factorWithBase_check());
+			check(factorWithTermChild_check());
+			check(addFractions_check());
+			check(logCombination_check());
 
-			for (Button choice : choices) {
-				if (choice == null) {
-					choices.remove(choice);
-				}
-			}
-			if (AlgebraActivity.isInEasyMode && choices.size() == 1) {
-				choices.getFirst().click();
+			if (AlgebraActivity.isInEasyMode && transformations.size() == 1) {
+				transformations.getFirst().click();
 			} else {
-				for (Button choice : choices) {
-					AlgebraActivity.addTransformation(choice);
+				for (AddTransformButton transform : transformations) {
+					AlgebraActivity.addTransformation(transform);
 				}
 			}
 
@@ -77,6 +73,12 @@ public class AdditionTransformations {
 			e.printStackTrace();
 			JSNICalls
 					.error("A number node couldn't be parsed: " + e.toString());
+		}
+	}
+
+	private void check(AddTransformButton tButt) {
+		if (tButt != null) {
+			transformations.add(tButt);
 		}
 	}
 
@@ -189,7 +191,7 @@ public class AdditionTransformations {
 
 		for (final MathNode termChild : term.getChildren()) {
 			if (termChild.isLike(other)) {
-				return new FactorWithTermChildTransform(this, other, rightTerm,
+				return new FactorWithTermChildTransform(this, other, term,
 						termChild);
 			}
 		}
@@ -495,12 +497,8 @@ class FactorLikeTermsTransform extends AddTransformButton {
 }
 
 /**
- * x + x<sup>y</sup> = x·(1 + x<sup>y-1</sup>) <br/>Factors out a single multiple of
- * the base and other entity if equal
- * 
- * @param other
- *            - term, exponential, fraction, variable, number
- * @param exponential
+ * x + x<sup>y</sup> = x·(1 + x<sup>y-1</sup>) <br/>
+ * Factors out a single multiple of the base and other entity if equal
  */
 class FactorBaseTransform extends AddTransformButton {
 	FactorBaseTransform(final AdditionTransformations context,
@@ -535,13 +533,8 @@ class FactorBaseTransform extends AddTransformButton {
 }
 
 /**
- * x + (x·y) = x·(1 + y) <br/>Factors out a child of the term if similar to the other
- * entity
- * 
- * @param other
- *            - any node
- * @param term
- *            - term, fraction
+ * x + (x·y) = x·(1 + y) <br/>
+ * Factors out a child of the term if similar to the other entity
  */
 class FactorWithTermChildTransform extends AddTransformButton {
 	FactorWithTermChildTransform(final AdditionTransformations context,
@@ -580,8 +573,7 @@ class FactorWithTermChildTransform extends AddTransformButton {
 				// exp.add(Type.Operation, Operator.MINUS.getSign());
 				// exp.add(Type.Number, "1");
 				// } else {
-				inBinomialA = other.getParent().addBefore(other.getIndex(),
-						TypeML.Number, "1");
+				inBinomialA = other.replace(TypeML.Number, "1");
 				other.remove();
 				// }
 
@@ -639,7 +631,8 @@ class AddFractions extends AddTransformButton {
  */
 class AddLogsTransform extends AddTransformButton {
 	AddLogsTransform(AdditionTransformations context) {
-		super(context, "log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)");
+		super(context,
+				"log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)");
 
 		addClickHandler(new ClickHandler() {
 			@Override
