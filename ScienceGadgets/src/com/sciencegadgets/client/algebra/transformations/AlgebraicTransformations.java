@@ -46,182 +46,88 @@ import com.sciencegadgets.shared.TypeML.TrigFunctions;
 public class AlgebraicTransformations {
 
 	public static Label response = new Label();
-	final static HashSet<VariableEvaluateSpec> varSpecs = new HashSet<VariableEvaluateSpec>();
+
+	/**
+	 * Performs the operation specified by the node
+	 * 
+	 * @param opNode
+	 *            - operation to perform
+	 */
+	public static void operation(MathNode opNode) {
+		MathNode left, right = null;
+
+		left = opNode.getPrevSibling();
+		right = opNode.getNextSibling();
+
+		if (left != null && left != null) {
+			switch (opNode.getOperation()) {
+			case CROSS:
+			case DOT:
+			case SPACE:
+				new MultiplyTransformations(left, opNode, right);
+				break;
+			case MINUS:
+				new AdditionTransformations(left, opNode, right, false);
+				break;
+			case PLUS:
+				new AdditionTransformations(left, opNode, right, true);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Propagates negative into the node depending on its type<br/>
+	 * <b>operation</b> - do nothing<br/>
+	 * <b>number or variable</b> - change symbol<br/>
+	 * <b>term</b> - propagate to first child<br/>
+	 * <b>sum</b> - propagate to each child<br/>
+	 * <b>fraction</b> - propagate to first child<br/>
+	 * <b>everything else</b> - encase in term with the number negative one<br/>
+	 * 
+	 * @param toNegate
+	 */
+	public static void propagateNegative(MathNode toNegate) {
+
+		switch (toNegate.getType()) {
+		case Operation:
+			break;
+		case Number:
+		case Variable:
+			String symbol = toNegate.getSymbol();
+			if (symbol.startsWith(Operator.MINUS.getSign())) {
+				symbol = symbol.replaceFirst(Operator.MINUS.getSign(), "");
+			} else {
+				symbol = Operator.MINUS.getSign() + symbol;
+			}
+			toNegate.setSymbol(symbol);
+			break;
+		case Term:
+			propagateNegative(toNegate.getFirstChild());
+			break;
+		case Sum:
+			for (MathNode sumChild : toNegate.getChildren()) {
+				propagateNegative(sumChild);
+			}
+			break;
+		case Fraction:
+			propagateNegative(toNegate.getFirstChild());
+			break;
+		default:
+			MathNode casing = toNegate.encase(TypeML.Term);
+			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
+					.getSign());
+			casing.addBefore(0, TypeML.Number, "-1");
+			break;
+		}
+	}
 
 	public static void isolatedVariable_check(MathNode isolatedVar) {
 		if (TypeML.Equation.equals(isolatedVar.getParentType())) {
-			AlgebraActivity.algTransformMenu.add(new EvaluatePromptButton(
+			AlgebraActivity.addTransformation(new EvaluatePromptButton(
 					isolatedVar));
-			AlgebraActivity.algTransformMenu.add(new SubstituteButton(
-					isolatedVar));
-		}
-	}
-
-	static void evaluate_prompt(MathNode isolatedVar) {
-		final Prompt prompt = new Prompt();
-
-		varSpecs.clear();
-
-		MathTree tree = isolatedVar.getTree();
-		LinkedList<Wrapper> wrappers = tree.getWrappers();
-		for (Wrapper wrap : wrappers) {
-			MathNode node = wrap.getNode();
-			if (TypeML.Variable.equals(node.getType())
-					&& !node.equals(isolatedVar)) {
-				VariableEvaluateSpec varSpec = new VariableEvaluateSpec(node);
-				varSpecs.add(varSpec);
-				prompt.add(varSpec);
-			}
-		}
-		if (varSpecs.size() == 0) {
-			Window.alert("There are no variables to evaluate");
-			return;
-		}
-
-		prompt.addOkHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// Make sure the entire spec is filled
-				boolean completelyFilled = true;
-				for (VariableEvaluateSpec varSpec : varSpecs) {
-					Double value = varSpec.valueInput.getValue();
-					if (value == null) {
-						varSpec.valueInput.getElement().getStyle()
-								.setBackgroundColor("red");
-						completelyFilled = false;
-					} else {
-						varSpec.valueInput.getElement().getStyle()
-								.clearBackgroundColor();
-						varSpec.value = value;
-					}
-					String unit = varSpec.unitSelect.unitBox.getSelectedValue();
-					if (unit == null) {
-						varSpec.unitSelect.getElement().getStyle()
-								.setColor("red");
-						completelyFilled = false;
-					} else {
-						varSpec.unitSelect.getElement().getStyle().clearColor();
-						varSpec.unit = unit;
-					}
-				}
-				if (completelyFilled) {
-					prompt.disappear();
-					AlgebraicTransformations.evaluate(varSpecs);
-				}
-
-			}
-		});
-
-		prompt.appear();
-	}
-
-	static void evaluate(HashSet<VariableEvaluateSpec> varSpecs) {
-		for (VariableEvaluateSpec varSpec : varSpecs) {
-
-			String value = String.valueOf(varSpec.value).replaceAll(
-					(String) "\\.0$", "");
-			String unit = varSpec.unit;
-
-			MathNode quantityPlugIn = Moderator.mathTree.NEW_NODE(
-					TypeML.Number, value);
-			quantityPlugIn.setAttribute(MathAttribute.Unit, unit);
-			varSpec.mathNode.replace(quantityPlugIn);
-		}
-		AlgebraActivity.reloadEquationPanel(null, null);
-	}
-
-	static void substitute_prompt(final MathNode isolatedVar) {
-		String quantityKind = isolatedVar.getUnitAttribute();
-		if (quantityKind == null || quantityKind.equals("")) {
-			Window.alert("No similar other equations with similar variables available");
-			return;
-		}
-		final DialogBox dialog = new DialogBox(true, true);
-		SelectionPanel eqSelect = new SelectionPanel("Equation");
-		dialog.add(eqSelect);
-		DataModerator.fill_EquationsByQuantities(quantityKind, eqSelect);
-		eqSelect.addSelectionHandler(new SelectionHandler() {
-			@Override
-			public void onSelect(Cell selected) {
-
-				MathNode eqNode = isolatedVar.getParent();
-
-				Element substitute = null;
-				if (isolatedVar.isLeftSide()) {
-					substitute = isolatedVar.getTree().getRightSide()
-							.getMLNode();
-				} else if (isolatedVar.isRightSide()) {
-					substitute = isolatedVar.getTree().getLeftSide()
-							.getMLNode();
-				} else {
-					JSNICalls.error("Could not find the element to substitute"
-							+ " in: \n" + eqNode);
-					dialog.removeFromParent();
-					dialog.hide();
-					return;
-				}
-
-				String subIntoEqStr = selected.getValue();
-				Element subIntoEqEl = new HTML(subIntoEqStr).getElement()
-						.getFirstChildElement();
-
-				substitute(isolatedVar, subIntoEqEl, substitute);
-
-				dialog.removeFromParent();
-				dialog.hide();
-			}
-		});
-		dialog.setGlassEnabled(true);
-		dialog.setAnimationEnabled(true);
-		dialog.center();
-	}
-
-	private static void substitute(final MathNode isolatedVar,
-			Element subIntoEqEl, Element substitute) {
-
-		// Find the variable to substutute
-		NodeList<Element> possibleSubs = subIntoEqEl
-				.getElementsByTagName(TypeML.Variable.getTag());
-		findSub: for (int j = 0; j < possibleSubs.getLength(); j++) {
-			Element possibleSub = possibleSubs.getItem(j);
-			if (!isolatedVar.getUnitAttribute().equals(
-					possibleSub.getAttribute(MathAttribute.Unit.getName()))) {
-				continue findSub;
-			}
-			Element subParent = possibleSub.getParentElement();
-			String plugTag = substitute.getTagName();
-			if (plugTag.equals(subParent.getTagName())
-					&& (plugTag.equals(TypeML.Sum.getTag()) || plugTag
-							.equals(TypeML.Term.getTag()))) {
-				Node subPrev = possibleSub.getPreviousSibling();
-				if (subPrev != null && subPrev.getNodeName().equals("mo")
-						&& "-".equals(((Element) subPrev).getInnerText())) {
-					// if a sum is plugged into a variable preceded by minus
-					((Element) subPrev).setInnerText("+");
-					Element negativeSubstitute = new HTML(
-							"<mrow><mn>-1</mn><mo>\u00B7</mo><mfenced><substitute></substitute></mfenced></mrow>")
-							.getElement().getFirstChildElement();
-					subParent.replaceChild(negativeSubstitute, possibleSub);
-					possibleSub = subParent.getElementsByTagName("substitute")
-							.getItem(0);
-					subParent = possibleSub.getParentElement();
-				}
-				NodeList<Node> substituteChildren = substitute.getChildNodes();
-				// Must save count because it will change during the
-				// loop
-				int childCount = substituteChildren.getLength();
-				for (int k = 0; k < childCount; k++) {
-					subParent.insertBefore(substituteChildren.getItem(0),
-							possibleSub);
-				}
-				possibleSub.removeFromParent();
-			} else {
-				subParent.replaceChild(substitute, possibleSub);
-			}
-			Moderator.switchToAlgebra(subIntoEqEl);
-			break;
-
+			AlgebraActivity
+					.addTransformation(new SubstituteButton(isolatedVar));
 		}
 	}
 
@@ -235,36 +141,8 @@ public class AlgebraicTransformations {
 	public static void separateNegative_check(MathNode negNode) {
 		if (negNode.getSymbol().startsWith(TypeML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
-			AlgebraActivity.algTransformMenu
-					.add(new SeperateNegButton(negNode));
+			AlgebraActivity.addTransformation(new SeperateNegButton(negNode));
 		}
-	}
-
-	static void separateNegative(MathNode negNode) {
-		MathNode prevSib = negNode.getPrevSibling();
-		String newSymbol = negNode.getSymbol().replaceFirst(
-				TypeML.Operator.MINUS.getSign(), "");
-		negNode.setSymbol(newSymbol);
-
-		if (prevSib != null && TypeML.Operation.equals(prevSib.getType())) {
-			if (Operator.PLUS.getSign().equals(prevSib.getSymbol())) {
-				prevSib.setSymbol(Operator.MINUS.getSign());
-			} else if (Operator.MINUS.getSign().equals(prevSib.getSymbol())) {
-				prevSib.setSymbol(Operator.PLUS.getSign());
-			} else {
-				JSNICalls.error("The previous operator contains "
-						+ "neither a plus or minus");
-			}
-		} else {
-			MathNode parent = negNode.getParent();
-			parent = negNode.encase(TypeML.Term);
-			int nodeIndex = negNode.getIndex();
-			parent.addBefore(nodeIndex, TypeML.Operation, TypeML.Operator
-					.getMultiply().getSign());
-			parent.addBefore(nodeIndex, TypeML.Number, "-1");
-		}
-		AlgebraActivity.reloadEquationPanel("-" + newSymbol + " = -1"
-				+ Operator.getMultiply().getSign() + newSymbol, null);
 	}
 
 	/**
@@ -325,6 +203,9 @@ public class AlgebraicTransformations {
 
 	}
 
+	/**
+	 * To be used by {@link #interFractionDrop_check}
+	 */
 	private static void addDropTarget(MathNode target, MathNode drag,
 			HashMap<MathTree.MathNode, DropType> dropTargets) {
 
@@ -367,7 +248,7 @@ public class AlgebraicTransformations {
 	}
 
 	/**
-	 * List the factors of the number as buttons to choose factor
+	 * List the factors of the number as buttons to choose in a prompt
 	 * 
 	 * @param node
 	 */
@@ -382,161 +263,29 @@ public class AlgebraicTransformations {
 			return;
 		}
 
-		AlgebraActivity.algTransformMenu.add(new FactorPromptButton(number,
+		AlgebraActivity.addTransformation(new FactorNumberPromptButton(number,
 				node));
 	}
 
-	static LinkedHashSet<Integer> findPrimeFactors(Integer number) {
-		LinkedHashSet<Integer> factors = new LinkedHashSet<Integer>();
-
-		if (number < 0) {
-			number = Math.abs(number);
-		}
-		factors.add(1);
-
-		int start = 2;
-		byte inc = 1;
-		if (number % 2 == 1) {// odd numbers can't have even factors
-			start = 3;
-			inc = 2;
-		}
-		for (int i = start; i <= Math.sqrt(number); i = i + inc) {
-			if (number % i == 0) {
-				factors.add(i);
-			}
-		}
-		return factors;
-	}
-
-	static void factorNumber(Integer factor, MathNode node) {
-
-		String original = node.getSymbol();
-		int factored = Integer.parseInt(original) / factor;
-
-		node.highlight();
-
-		MathNode parent = node.encase(TypeML.Term);
-		int index = node.getIndex();
-		parent.addBefore(index, TypeML.Operation, Operator.getMultiply()
-				.getSign());
-		parent.addBefore(index, TypeML.Number, factor.toString());
-
-		node.setSymbol(factored + "");
-
-		AlgebraActivity.reloadEquationPanel(original + " = " + factor + " "
-				+ Operator.getMultiply().getSign() + " " + factored,
-				Rule.INTEGER_FACTORIZATION);
-	}
-
 	/**
-	 * Performs the operation specified by the node
+	 * Checks if there is a unit attribute
 	 * 
-	 * @param opNode
-	 *            - operation to perform
+	 * @param node
 	 */
-	public static void operation(MathNode opNode) {
-		MathNode left, right = null;
-
-		left = opNode.getPrevSibling();
-		right = opNode.getNextSibling();
-
-		if (left != null && left != null) {
-			switch (opNode.getOperation()) {
-			case CROSS:
-			case DOT:
-			case SPACE:
-				MultiplyTransformations.assign(left, opNode, right);
-				break;
-			case MINUS:
-				AdditionTransformations.assign(left, opNode, right, false);
-				break;
-			case PLUS:
-				AdditionTransformations.assign(left, opNode, right, true);
-				break;
-			}
-		}
-	}
-
-	public static void propagateNegative(MathNode toNegate) {
-
-		switch (toNegate.getType()) {
-		case Number:
-		case Variable:
-			String symbol = toNegate.getSymbol();
-			if (symbol.startsWith(Operator.MINUS.getSign())) {
-				symbol = symbol.replaceFirst(Operator.MINUS.getSign(), "");
-			} else {
-				symbol = Operator.MINUS.getSign() + symbol;
-			}
-			toNegate.setSymbol(symbol);
-			break;
-		case Term:
-			propagateNegative(toNegate.getFirstChild());
-			break;
-		case Sum:
-			for (MathNode sumChild : toNegate.getChildren()) {
-				if (!TypeML.Operation.equals(sumChild.getType())) {
-					propagateNegative(sumChild);
-				}
-			}
-			break;
-		case Fraction:
-			propagateNegative(toNegate.getFirstChild());
-			break;
-		default:
-			MathNode casing = toNegate.encase(TypeML.Term);
-			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
-					.getSign());
-			casing.addBefore(0, TypeML.Number, "-1");
-
-		}
-	}
-
 	public static void unitConversion_check(MathNode node) {
 		if (!"".equals(node.getUnitAttribute())) {
-			AlgebraActivity.algTransformMenu
-					.add(new UnitConversionButton(node));
+			AlgebraActivity.addTransformation(new UnitConversionButton(node));
 		}
-	}
-
-	public static void unitConversion(MathNode node) {
-		Moderator.switchToConversion(node);
 	}
 
 	public static void denominatorFlip_check(MathNode node) {
-		AlgebraActivity.algTransformMenu.add(new DenominatorFlipButton(node));
+		AlgebraActivity.addTransformation(new DenominatorFlipButton(node));
 	}
 
-	static void denominatorFlip(MathNode node) {
-		node.highlight();
-
-		if (!TypeML.Fraction.equals(node.getType())) {
-			node = node.encase(TypeML.Fraction);
-			node.append(TypeML.Number, "1");
-		}
-		// Flip
-		node.append(node.getChildAt(0));
-
-		MathNode parentFraction = node.getParent();
-		MathNode grandParent = parentFraction.getParent();
-		int index = parentFraction.getIndex();
-
-		if (!TypeML.Term.equals(grandParent.getType())) {
-			grandParent = parentFraction.encase(TypeML.Term);
-			index = 0;
-		}
-
-		grandParent.addBefore(index, parentFraction.getChildAt(1));
-		grandParent.addBefore(index, TypeML.Operation, Operator.getMultiply()
-				.getSign());
-		grandParent.addBefore(index, parentFraction.getChildAt(0));
-
-		parentFraction.remove();
-
-		AlgebraActivity.reloadEquationPanel("Multiply by Resiprocal",
-				Rule.FRACTION_DIVISION);
-	}
-
+	/**
+	 * Check if: (log base = exponential base)<br/>
+	 * log<sub>b</sub>(b<sup>x</sup>) = x
+	 */
 	public static void unravelLogExp_check(MathNode log) {
 		MathNode exponential = log.getFirstChild();
 		if (TypeML.Exponential.equals(exponential.getType())) {
@@ -545,12 +294,16 @@ public class AlgebraicTransformations {
 					&& exponentialBase.getSymbol().equals(
 							log.getAttribute(MathAttribute.LogBase))) {
 				MathNode exponentialExp = exponential.getChildAt(1);
-				AlgebraActivity.algTransformMenu.add(new UnravelButton(log,
+				AlgebraActivity.addTransformation(new UnravelButton(log,
 						exponentialExp, Rule.LOGARITHM));
 			}
 		}
 	}
 
+	/**
+	 * Check if: (log base = exponential base)<br/>
+	 * b<sup>log<sub>b</sub>(x)</sup> = x
+	 */
 	public static void unravelExpLog_check(MathNode exponential) {
 		MathNode log = exponential.getChildAt(1);
 		if (TypeML.Log.equals(log.getType())) {
@@ -558,13 +311,18 @@ public class AlgebraicTransformations {
 			MathNode exponentialBase = exponential.getFirstChild();
 			if (TypeML.Number.equals(exponentialBase.getType())
 					&& exponentialBase.getSymbol().equals(logBase)) {
-				AlgebraActivity.algTransformMenu.add(new UnravelButton(
+				AlgebraActivity.addTransformation(new UnravelButton(
 						exponential, log.getFirstChild(), Rule.LOGARITHM));
 
 			}
 		}
 	}
 
+	/**
+	 * Check if function within its inverse function or function of its inverse<br/>
+	 * sin(arcsin(x)) = x<br/>
+	 * arcsin(sin(x)) = x<br/>
+	 */
 	public static void inverseTrig_check(MathNode trig) {
 		MathNode trigChild = trig.getFirstChild();
 		if (TypeML.Trig.equals(trigChild.getType())) {
@@ -574,7 +332,7 @@ public class AlgebraicTransformations {
 					.getInverse(trigChildFunc);
 			String trigFunc = trig.getAttribute(MathAttribute.Function);
 			if (trigFunc.equals(trigChildFuncInverse)) {
-				AlgebraActivity.algTransformMenu.add(new UnravelButton(trig,
+				AlgebraActivity.addTransformation(new UnravelButton(trig,
 						trigChild.getFirstChild(),
 						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS));
 			}
@@ -611,15 +369,18 @@ class VariableEvaluateSpec extends FlowPanel {
 // Button choices
 // //////////////////////////////////////////////////////////////////////
 
-class FactorPromptButton extends Button {
-	public FactorPromptButton(final Integer number, final MathNode node) {
+/**
+ * Decompose
+ * 
+ */
+class FactorNumberPromptButton extends Button {
+	public FactorNumberPromptButton(final Integer number, final MathNode node) {
 		setHTML("Factor");
 
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				LinkedHashSet<Integer> primeFactors = AlgebraicTransformations
-						.findPrimeFactors(number);
+				LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
 
 				Prompt prompt = new Prompt(false);
 				Label title = new Label();
@@ -635,26 +396,69 @@ class FactorPromptButton extends Button {
 		});
 
 	}
-}
 
-class FactorNumberButton extends Button {
-	FactorNumberButton(final int factor, final int cofactor,
-			final MathNode node, final Prompt prompt) {
+	LinkedHashSet<Integer> findPrimeFactors(Integer number) {
+		LinkedHashSet<Integer> factors = new LinkedHashSet<Integer>();
 
-		setHTML(factor + " " + Operator.getMultiply().getSign() + " "
-				+ cofactor);
-		setSize("50%", "50%");
+		if (number < 0) {
+			number = Math.abs(number);
+		}
+		factors.add(1);
 
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.factorNumber(factor, node);
-				prompt.disappear();
+		int start = 2;
+		byte inc = 1;
+		if (number % 2 == 1) {// odd numbers can't have even factors
+			start = 3;
+			inc = 2;
+		}
+		for (int i = start; i <= Math.sqrt(number); i = i + inc) {
+			if (number % i == 0) {
+				factors.add(i);
 			}
-		});
+		}
+		return factors;
+	}
+
+	class FactorNumberButton extends Button {
+		FactorNumberButton(final int factor, final int cofactor,
+				final MathNode node, final Prompt prompt) {
+
+			setHTML(factor + " " + Operator.getMultiply().getSign() + " "
+					+ cofactor);
+			setSize("50%", "50%");
+
+			this.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+
+					String original = node.getSymbol();
+					int factored = Integer.parseInt(original) / factor;
+
+					node.highlight();
+
+					MathNode parent = node.encase(TypeML.Term);
+					int index = node.getIndex();
+					parent.addBefore(index, TypeML.Operation, Operator
+							.getMultiply().getSign());
+					parent.addBefore(index, TypeML.Number, factor + "");
+
+					node.setSymbol(factored + "");
+
+					AlgebraActivity.reloadEquationPanel(original + " = "
+							+ factor + " " + Operator.getMultiply().getSign()
+							+ " " + factored, Rule.INTEGER_FACTORIZATION);
+
+					prompt.disappear();
+				}
+			});
+		}
 	}
 }
 
+/**
+ * -x = -1·x
+ * 
+ */
 class SeperateNegButton extends Button {
 	SeperateNegButton(final MathNode negNode) {
 
@@ -663,12 +467,41 @@ class SeperateNegButton extends Button {
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.separateNegative(negNode);
+				MathNode prevSib = negNode.getPrevSibling();
+				String newSymbol = negNode.getSymbol().replaceFirst(
+						TypeML.Operator.MINUS.getSign(), "");
+				negNode.setSymbol(newSymbol);
+
+				if (prevSib != null
+						&& TypeML.Operation.equals(prevSib.getType())) {
+					if (Operator.PLUS.getSign().equals(prevSib.getSymbol())) {
+						prevSib.setSymbol(Operator.MINUS.getSign());
+					} else if (Operator.MINUS.getSign().equals(
+							prevSib.getSymbol())) {
+						prevSib.setSymbol(Operator.PLUS.getSign());
+					} else {
+						JSNICalls.error("The previous operator contains "
+								+ "neither a plus or minus");
+					}
+				} else {
+					MathNode parent = negNode.getParent();
+					parent = negNode.encase(TypeML.Term);
+					int nodeIndex = negNode.getIndex();
+					parent.addBefore(nodeIndex, TypeML.Operation,
+							TypeML.Operator.getMultiply().getSign());
+					parent.addBefore(nodeIndex, TypeML.Number, "-1");
+				}
+				AlgebraActivity.reloadEquationPanel("-" + newSymbol + " = -1"
+						+ Operator.getMultiply().getSign() + newSymbol, null);
 			}
 		});
 	}
 }
 
+/**
+ * x/(y/z) = x·(z/y)
+ * 
+ */
 class DenominatorFlipButton extends Button {
 	DenominatorFlipButton(final MathNode node) {
 
@@ -677,12 +510,43 @@ class DenominatorFlipButton extends Button {
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.denominatorFlip(node);
+				node.highlight();
+
+				MathNode frac = node;
+				if (!TypeML.Fraction.equals(node.getType())) {
+					frac = node.encase(TypeML.Fraction);
+					frac.append(TypeML.Number, "1");
+				}
+				// Flip
+				frac.append(frac.getChildAt(0));
+
+				MathNode parentFraction = frac.getParent();
+				MathNode grandParent = parentFraction.getParent();
+				int index = parentFraction.getIndex();
+
+				if (!TypeML.Term.equals(grandParent.getType())) {
+					grandParent = parentFraction.encase(TypeML.Term);
+					index = 0;
+				}
+
+				grandParent.addBefore(index, parentFraction.getChildAt(1));
+				grandParent.addBefore(index, TypeML.Operation, Operator
+						.getMultiply().getSign());
+				grandParent.addBefore(index, parentFraction.getChildAt(0));
+
+				parentFraction.remove();
+
+				AlgebraActivity.reloadEquationPanel("Multiply by Resiprocal",
+						Rule.FRACTION_DIVISION);
 			}
 		});
 	}
 }
 
+/**
+ * Switches to unit conversion mode
+ * 
+ */
 class UnitConversionButton extends Button {
 	UnitConversionButton(final MathNode node) {
 
@@ -691,40 +555,224 @@ class UnitConversionButton extends Button {
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.unitConversion(node);
+				Moderator.switchToConversion(node);
 			}
 		});
 	}
 }
 
+/**
+ * Allows for the evaluation of the other side by substituting numbers into the
+ * appropriate variables
+ * 
+ */
 class EvaluatePromptButton extends Button {
-	EvaluatePromptButton(final MathNode isolatedVarNode) {
+	final static HashSet<VariableEvaluateSpec> varSpecs = new HashSet<VariableEvaluateSpec>();
+
+	EvaluatePromptButton(final MathNode isolatedVar) {
 
 		setHTML("Evaluate");
 
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.evaluate_prompt(isolatedVarNode);
+				final Prompt prompt = new Prompt();
+
+				varSpecs.clear();
+
+				MathTree tree = isolatedVar.getTree();
+				LinkedList<Wrapper> wrappers = tree.getWrappers();
+				for (Wrapper wrap : wrappers) {
+					MathNode node = wrap.getNode();
+					if (TypeML.Variable.equals(node.getType())
+							&& !node.equals(isolatedVar)) {
+						VariableEvaluateSpec varSpec = new VariableEvaluateSpec(
+								node);
+						varSpecs.add(varSpec);
+						prompt.add(varSpec);
+					}
+				}
+				if (varSpecs.size() == 0) {
+					Window.alert("There are no variables to evaluate");
+					return;
+				}
+
+				prompt.addOkHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						// Make sure the entire spec is filled
+						boolean completelyFilled = true;
+						for (VariableEvaluateSpec varSpec : varSpecs) {
+							Double value = varSpec.valueInput.getValue();
+							if (value == null) {
+								varSpec.valueInput.getElement().getStyle()
+										.setBackgroundColor("red");
+								completelyFilled = false;
+							} else {
+								varSpec.valueInput.getElement().getStyle()
+										.clearBackgroundColor();
+								varSpec.value = value;
+							}
+							String unit = varSpec.unitSelect.unitBox
+									.getSelectedValue();
+							if (unit == null) {
+								varSpec.unitSelect.getElement().getStyle()
+										.setColor("red");
+								completelyFilled = false;
+							} else {
+								varSpec.unitSelect.getElement().getStyle()
+										.clearColor();
+								varSpec.unit = unit;
+							}
+						}
+
+						// Execute
+						if (completelyFilled) {
+							prompt.disappear();
+							for (VariableEvaluateSpec varSpec : varSpecs) {
+
+								String value = String.valueOf(varSpec.value)
+										.replaceAll((String) "\\.0$", "");
+								String unit = varSpec.unit;
+
+								MathNode quantityPlugIn = Moderator.mathTree
+										.NEW_NODE(TypeML.Number, value);
+								quantityPlugIn.setAttribute(MathAttribute.Unit,
+										unit);
+								varSpec.mathNode.replace(quantityPlugIn);
+							}
+							AlgebraActivity.reloadEquationPanel(null, null);
+						}
+
+					}
+				});
+
+				prompt.appear();
+
 			}
 		});
 	}
 }
 
+/**
+ * Allows for substitution method with another equation into another variable of
+ * the same quantity kind
+ * 
+ */
 class SubstituteButton extends Button {
-	SubstituteButton(final MathNode isolatedVarNode) {
+	SubstituteButton(final MathNode isolatedVar) {
 
 		setHTML("Substitute");
 
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				AlgebraicTransformations.substitute_prompt(isolatedVarNode);
+				String quantityKind = isolatedVar.getUnitAttribute();
+				if (quantityKind == null || quantityKind.equals("")) {
+					Window.alert("No similar other equations with similar variables available");
+					return;
+				}
+				final DialogBox dialog = new DialogBox(true, true);
+				SelectionPanel eqSelect = new SelectionPanel("Equation");
+				dialog.add(eqSelect);
+				DataModerator
+						.fill_EquationsByQuantities(quantityKind, eqSelect);
+				eqSelect.addSelectionHandler(new SelectionHandler() {
+					@Override
+					public void onSelect(Cell selected) {
+
+						MathNode eqNode = isolatedVar.getParent();
+
+						Element substitute = null;
+						if (isolatedVar.isLeftSide()) {
+							substitute = isolatedVar.getTree().getRightSide()
+									.getMLNode();
+						} else if (isolatedVar.isRightSide()) {
+							substitute = isolatedVar.getTree().getLeftSide()
+									.getMLNode();
+						} else {
+							JSNICalls
+									.error("Could not find the element to substitute"
+											+ " in: \n" + eqNode);
+							dialog.removeFromParent();
+							dialog.hide();
+							return;
+						}
+
+						String subIntoEqStr = selected.getValue();
+						Element subIntoEqEl = new HTML(subIntoEqStr)
+								.getElement().getFirstChildElement();
+
+						substitute(isolatedVar, subIntoEqEl, substitute);
+
+						dialog.removeFromParent();
+						dialog.hide();
+					}
+				});
+				dialog.setGlassEnabled(true);
+				dialog.setAnimationEnabled(true);
+				dialog.center();
 			}
 		});
 	}
+
+	private void substitute(final MathNode isolatedVar, Element subIntoEqEl,
+			Element substitute) {
+
+		// Find the variable to substutute
+		NodeList<Element> possibleSubs = subIntoEqEl
+				.getElementsByTagName(TypeML.Variable.getTag());
+		findSub: for (int j = 0; j < possibleSubs.getLength(); j++) {
+			Element possibleSub = possibleSubs.getItem(j);
+			if (!isolatedVar.getUnitAttribute().equals(
+					possibleSub.getAttribute(MathAttribute.Unit.getName()))) {
+				continue findSub;
+			}
+			Element subParent = possibleSub.getParentElement();
+			String plugTag = substitute.getTagName();
+			if (plugTag.equals(subParent.getTagName())
+					&& (plugTag.equals(TypeML.Sum.getTag()) || plugTag
+							.equals(TypeML.Term.getTag()))) {
+				Node subPrev = possibleSub.getPreviousSibling();
+				if (subPrev != null && subPrev.getNodeName().equals("mo")
+						&& "-".equals(((Element) subPrev).getInnerText())) {
+					// if a sum is plugged into a variable preceded by minus
+					((Element) subPrev).setInnerText("+");
+					Element negativeSubstitute = new HTML(
+							"<mrow><mn>-1</mn><mo>\u00B7</mo><mfenced><substitute></substitute></mfenced></mrow>")
+							.getElement().getFirstChildElement();
+					subParent.replaceChild(negativeSubstitute, possibleSub);
+					possibleSub = subParent.getElementsByTagName("substitute")
+							.getItem(0);
+					subParent = possibleSub.getParentElement();
+				}
+				NodeList<Node> substituteChildren = substitute.getChildNodes();
+				// Must save count because it will change during the
+				// loop
+				int childCount = substituteChildren.getLength();
+				for (int k = 0; k < childCount; k++) {
+					subParent.insertBefore(substituteChildren.getItem(0),
+							possibleSub);
+				}
+				possibleSub.removeFromParent();
+			} else {
+				subParent.replaceChild(substitute, possibleSub);
+			}
+			Moderator.switchToAlgebra(subIntoEqEl);
+			break;
+
+		}
+	}
 }
 
+/**
+ * Unravel function within inverse function or inverse function within function<br/>
+ * sin(arcsin(x)) = x<br/>
+ * arcsin(sin(x)) = x<br/>
+ * log<sub>b</sub>(b<sup>x</sup>) = x<br/>
+ * b<sup>log<sub>b</sub>(x)</sup> = x<br/>
+ */
 class UnravelButton extends Button {
 
 	public UnravelButton(final MathNode toReplace, final MathNode replacement,

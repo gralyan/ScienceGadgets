@@ -12,11 +12,11 @@ public class Admin implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		
-		try {
-			TestBot_Addition.deployTestBot();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			TestBot_Addition.deployTestBot();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
 //		Button saveButton = new Button("Save");
 //		RootPanel.get().add(inputBox);

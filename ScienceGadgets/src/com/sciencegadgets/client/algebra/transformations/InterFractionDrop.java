@@ -26,6 +26,7 @@ public class InterFractionDrop extends AbstractDropController {
 	private DropType dropType;
 	private MathNode drag;
 	private MathNode target;
+	private String dropHTML = "";
 
 	public enum DropType {
 		CANCEL, DIVIDE, EXPONENTIAL, LOG_COMBINE, TRIG_COMBINE;
@@ -36,6 +37,8 @@ public class InterFractionDrop extends AbstractDropController {
 
 		this.dropType = dropType;
 		response.getElement().getStyle().setBackgroundColor("white");
+		
+		dropHTML = "<div style=\"display:inline-block;\"><div>"+target.getHTMLString()+"</div><div>"+drag.getHTMLString()+"</div><div>";
 
 		switch (dropType) {
 		case CANCEL:
@@ -133,6 +136,9 @@ public class InterFractionDrop extends AbstractDropController {
 	}
 
 	/**
+	 * sin(x) / cos(x) = tan(x)<br/>
+	 * cos(x) / sin(x) = cot(x)<br/>
+	 * Always target / drag<br/><br/>
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of type {@link TypeML#Trig}<br/>
 	 * 2. One of the nodes(drag or target) is Sin and the other is Cos<br/>
@@ -160,6 +166,8 @@ public class InterFractionDrop extends AbstractDropController {
 	}
 
 	/**
+	 * log<sub>a</sub>(x) / log<sub>a</sub>(y) = log<sub>y</sub>(x)<br/>
+	 * Always target / drag<br/><br/>
 	  * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of type {@link TypeML#Log}<br/>
 	 * 2. The bases of both nodes (drag and target) are the same<br/>
@@ -173,7 +181,9 @@ public class InterFractionDrop extends AbstractDropController {
 		complete();
 	}
 	/**
-	  * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
+	 * b<sup>x</sup> / b<sup>y</sup> = b<sup>x-y</sup><br/>
+	 * Always target / drag<br/><br/>
+	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of type {@link TypeML#Exponential}<br/>
 	 * 2. The bases of both nodes (drag and target) are the same<br/>
 	 */
@@ -188,7 +198,7 @@ public class InterFractionDrop extends AbstractDropController {
 	}
 
 	private void complete() {
-
+		
 		switch (dropType) {
 		case CANCEL:
 			cleanSide(target);
@@ -209,20 +219,16 @@ public class InterFractionDrop extends AbstractDropController {
 					Rule.CANCELLING_FRACTIONS);
 			break;
 		case DIVIDE:
-			AlgebraActivity.reloadEquationPanel(target.getHTMLString() + "/"
-					+ drag.getHTMLString(), Rule.DIVISION);
+			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.DIVISION);
 			break;
 		case EXPONENTIAL:
-			AlgebraActivity.reloadEquationPanel(target.getHTMLString() + "/"
-					+ drag.getHTMLString(), Rule.EXPONENT_PROPERTIES);
+			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.EXPONENT_PROPERTIES);
 			break;
 		case LOG_COMBINE:
-			AlgebraActivity.reloadEquationPanel(target.getHTMLString() + "/"
-					+ drag.getHTMLString(), Rule.LOGARITHM);
+			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.LOGARITHM);
 			break;
 		case TRIG_COMBINE:
-			AlgebraActivity.reloadEquationPanel(target.getHTMLString() + "/"
-					+ drag.getHTMLString(), Rule.TRIGONOMETRIC_FUNCTIONS);
+			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.TRIGONOMETRIC_FUNCTIONS);
 			break;
 		}
 	}
@@ -257,6 +263,7 @@ public class InterFractionDrop extends AbstractDropController {
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
 		getDropTarget().addStyleName("selectedDropWrapper");
+		AlgebraActivity.algTransformMenu.clear();
 		AlgebraActivity.algTransformMenu.add(response);
 	}
 
