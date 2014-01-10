@@ -25,6 +25,8 @@ public class MultiplyTransformations {
 
 	TypeML leftType;
 	TypeML rightType;
+	
+	LinkedList<MultiplyTransformButton> transformations = new LinkedList<MultiplyTransformButton>();
 
 	public MultiplyTransformations(MathNode left, MathNode multiplyNode,
 			MathNode right) {
@@ -36,30 +38,28 @@ public class MultiplyTransformations {
 		this.leftType = left.getType();
 		this.rightType = right.getType();
 
-		LinkedList<Button> transformations = new LinkedList<Button>();
+		check(multiplyNumbers_check());
+		check(multiplyFraction_check());
+		check(multiplyDistribution_check());
+		check(multiplyCombineBases_check());
+		check(multiplyCombineExponents_check());
+		check(logRule_check());
 
-		transformations.add(multiplyNumbers_check());
-		transformations.add(multiplyFraction_check());
-		transformations.add(multiplyDistribution_check());
-		transformations.add(multiplyCombineBases_check());
-		transformations.add(multiplyCombineExponents_check());
-		transformations.add(logRule_check());
-
-		for (Button trans : transformations) {
-			if (trans == null) {
-				transformations.remove(trans);
-			}
-		}
 		if (AlgebraActivity.isInEasyMode && transformations.size() == 1) {
 			transformations.getFirst().click();
 		} else {
-			for (Button trans : transformations) {
+			for (MultiplyTransformButton trans : transformations) {
 				AlgebraActivity.addTransformation(trans);
 			}
 		}
 
 	}
 
+	private void check(MultiplyTransformButton tButt) {
+		if(tButt != null) {
+		transformations.add(tButt);
+		}
+	}
 	/**
 	 * Four button possibilities depending if either of the nodes is -1, 0 1 or
 	 * everything else. -1, 0 and 1 happen automatically. Everything else
@@ -109,9 +109,9 @@ public class MultiplyTransformations {
 	 */
 	private MultiplyTransformButton multiplyDistribution_check() {
 
-		if (TypeML.Term.equals(rightType)) {
+		if (TypeML.Sum.equals(rightType)) {
 			return new MultiplyDistributionTransform(this, left, right, true);
-		} else if (TypeML.Term.equals(leftType)) {
+		} else if (TypeML.Sum.equals(leftType)) {
 			return new MultiplyDistributionTransform(this, right, left, false);
 		} else {
 			return null;
