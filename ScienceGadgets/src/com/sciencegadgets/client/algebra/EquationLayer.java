@@ -73,7 +73,6 @@ public class EquationLayer extends SimplePanel {
 	 * Each equation must have a different set of ID's which only differ in the
 	 * prefix. The prefix is the equations placement in the list
 	 * 
-	 * @param parent
 	 */
 	private void replaceChildsId(Element curEl) {
 

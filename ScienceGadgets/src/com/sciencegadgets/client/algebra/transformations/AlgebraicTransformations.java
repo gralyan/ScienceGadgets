@@ -195,6 +195,7 @@ public class AlgebraicTransformations {
 			WrapDragController dragController = node.getWrapper()
 					.addDragController();
 			for (Entry<MathNode, DropType> dropTarget : dropTargets.entrySet()) {
+				
 				dragController.registerDropController(new InterFractionDrop(
 						(AlgebaWrapper) dropTarget.getKey().getWrapper(),
 						dropTarget.getValue()));
@@ -279,7 +280,7 @@ public class AlgebraicTransformations {
 	}
 
 	public static void denominatorFlip_check(MathNode node) {
-		AlgebraActivity.addTransformation(new DenominatorFlipButton(node));
+		AlgebraActivity.addTransformation(new DenominatorFlipButton(node.getChildAt(1)));
 	}
 
 	/**
@@ -456,7 +457,7 @@ class FactorNumberPromptButton extends Button {
 }
 
 /**
- * -x = -1·x
+ * -x = -1 &middot; x
  * 
  */
 class SeperateNegButton extends Button {
@@ -499,8 +500,8 @@ class SeperateNegButton extends Button {
 }
 
 /**
- * x/(y/z) = x·(z/y)
- * 
+ * x / (y/z) = x &middot; (z/y)<br/>
+ * x / y = x &middot; (1/y)
  */
 class DenominatorFlipButton extends Button {
 	DenominatorFlipButton(final MathNode node) {

@@ -16,7 +16,7 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
-public class AdditionTransformations {
+public class AdditionTransformations extends Transformations{
 
 	MathNode left;
 	MathNode operation;
@@ -30,13 +30,9 @@ public class AdditionTransformations {
 	boolean isMinus;
 	boolean isMinusBeforeLeft = false;
 
-	LinkedList<AddTransformButton> transformations = new LinkedList<AddTransformButton>();
-
 	public AdditionTransformations(MathNode left, MathNode operation,
 			MathNode right,
-
 			boolean isPlusSign) {
-		try {
 
 			this.left = left;
 			this.operation = operation;
@@ -61,25 +57,7 @@ public class AdditionTransformations {
 			check(addFractions_check());
 			check(logCombination_check());
 
-			if (AlgebraActivity.isInEasyMode && transformations.size() == 1) {
-				transformations.getFirst().click();
-			} else {
-				for (AddTransformButton transform : transformations) {
-					AlgebraActivity.addTransformation(transform);
-				}
-			}
-
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			JSNICalls
-					.error("A number node couldn't be parsed: " + e.toString());
-		}
-	}
-
-	private void check(AddTransformButton tButt) {
-		if (tButt != null) {
-			transformations.add(tButt);
-		}
+			addButtons();
 	}
 
 	private AddTransformButton addNumbers_check() {
@@ -92,13 +70,13 @@ public class AdditionTransformations {
 
 		BigDecimal leftValue = new BigDecimal(left.getSymbol());
 		if (leftValue.compareTo(new BigDecimal(0)) == same) {
-			return new AddZeroTransform(this, right, left);
+			return new AddZeroButton(this, right, left);
 		}
 		BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		if (rightValue.compareTo(new BigDecimal(0)) == same) {
-			return new AddZeroTransform(this, left, right);
+			return new AddZeroButton(this, left, right);
 		}
-		return new AddNumbersTransform(this);
+		return new AddNumbersButton(this);
 	}
 
 	private AddTransformButton addSimilar_check() {
@@ -106,7 +84,7 @@ public class AdditionTransformations {
 			return null;
 		}
 		if (left.isLike(right)) {
-			return new AddSimilarTramsform(this);
+			return new AddSimilarButton(this);
 		} else {
 			return null;
 		}
@@ -155,7 +133,7 @@ public class AdditionTransformations {
 			factorString.concat(fact.getHTMLString());
 		}
 
-		return new FactorLikeTermsTransform(this, leftTerm, rightTerm,
+		return new FactorLikeTermsButton(this, leftTerm, rightTerm,
 				likeTerms);
 	}
 
@@ -163,11 +141,11 @@ public class AdditionTransformations {
 
 		if (TypeML.Exponential.equals(leftType)) {
 			if (right.isLike(left.getChildAt(0))) {
-				return new FactorBaseTransform(this, right, left);
+				return new FactorBaseButton(this, right, left);
 			}
 		} else if (TypeML.Exponential.equals(rightType)) {
 			if (left.isLike(right.getChildAt(0))) {
-				return new FactorBaseTransform(this, left, right);
+				return new FactorBaseButton(this, left, right);
 			}
 		}
 		return null;
@@ -191,7 +169,7 @@ public class AdditionTransformations {
 
 		for (final MathNode termChild : term.getChildren()) {
 			if (termChild.isLike(other)) {
-				return new FactorWithTermChildTransform(this, other, term,
+				return new FactorWithTermChildButton(this, other, term,
 						termChild);
 			}
 		}
@@ -204,7 +182,7 @@ public class AdditionTransformations {
 			return null;
 		}
 		if (left.getChildAt(1).isLike(right.getChildAt(1))) {
-			return new AddFractions(this);
+			return new AddFractionsButton(this);
 		} else {
 			return null;
 		}
@@ -216,7 +194,7 @@ public class AdditionTransformations {
 		}
 		if (left.getAttribute(MathAttribute.LogBase).equals(
 				right.getAttribute(MathAttribute.LogBase))) {
-			return new AddLogsTransform(this);
+			return new AddLogsButton(this);
 		} else {
 			return null;
 		}
@@ -293,13 +271,12 @@ class AddTransformButton extends Button {
 		this.isMinusBeforeLeft = context.isMinusBeforeLeft;
 	}
 }
-
 /**
  * x + 0 = x<br/>
  * 0 + x = x
  */
-class AddZeroTransform extends AddTransformButton {
-	AddZeroTransform(AdditionTransformations context, final MathNode other,
+class AddZeroButton extends AddTransformButton {
+	AddZeroButton(AdditionTransformations context, final MathNode other,
 			final MathNode zero) {
 		super(context, "x+0=x");
 
@@ -324,14 +301,13 @@ class AddZeroTransform extends AddTransformButton {
 		});
 	}
 }
-
 /**
  * Numerical Addition, prompt for answer first or just execute if skills are
  * high enough<br/>
  * ex: 1+2=3
  */
-class AddNumbersTransform extends AddTransformButton {
-	AddNumbersTransform(AdditionTransformations context) {
+class AddNumbersButton extends AddTransformButton {
+	AddNumbersButton(AdditionTransformations context) {
 		super(context, "# + #");
 
 		addClickHandler(new ClickHandler() {
@@ -413,8 +389,8 @@ class AddNumbersTransform extends AddTransformButton {
  * xy + xz = x(y + z)<br/>
  * Factors out all like entities within the term or numerator<br/>
  */
-class FactorLikeTermsTransform extends AddTransformButton {
-	FactorLikeTermsTransform(final AdditionTransformations context,
+class FactorLikeTermsButton extends AddTransformButton {
+	FactorLikeTermsButton(final AdditionTransformations context,
 			final MathNode leftTerm, final MathNode rightTerm,
 			final LinkedHashMap<MathNode, MathNode> likeTerms) {
 		super(context, "xy + xz = x(y + z)");
@@ -497,11 +473,11 @@ class FactorLikeTermsTransform extends AddTransformButton {
 }
 
 /**
- * x + x<sup>y</sup> = x·(1 + x<sup>y-1</sup>) <br/>
+ * x + x<sup>y</sup> = x &middot; (1 + x<sup>y-1</sup>) <br/>
  * Factors out a single multiple of the base and other entity if equal
  */
-class FactorBaseTransform extends AddTransformButton {
-	FactorBaseTransform(final AdditionTransformations context,
+class FactorBaseButton extends AddTransformButton {
+	FactorBaseButton(final AdditionTransformations context,
 			final MathNode other, final MathNode exponential) {
 		super(context, "x + x<sup>y</sup> = x·(1 + x<sup>y-1</sup>)");
 
@@ -533,11 +509,11 @@ class FactorBaseTransform extends AddTransformButton {
 }
 
 /**
- * x + (x·y) = x·(1 + y) <br/>
+ * x + (x &middot; y) = x &middot; (1 + y) <br/>
  * Factors out a child of the term if similar to the other entity
  */
-class FactorWithTermChildTransform extends AddTransformButton {
-	FactorWithTermChildTransform(final AdditionTransformations context,
+class FactorWithTermChildButton extends AddTransformButton {
+	FactorWithTermChildButton(final AdditionTransformations context,
 			final MathNode other, final MathNode term, final MathNode termChild) {
 		super(context, "x + (x·y) = x·(1 + y)");
 
@@ -593,8 +569,8 @@ class FactorWithTermChildTransform extends AddTransformButton {
 /**
  * a/b +c/b = (a+c)/b
  */
-class AddFractions extends AddTransformButton {
-	AddFractions(AdditionTransformations context) {
+class AddFractionsButton extends AddTransformButton {
+	AddFractionsButton(AdditionTransformations context) {
 		super(context, "a/b +c/b = (a+c)/b");
 
 		addClickHandler(new ClickHandler() {
@@ -626,11 +602,11 @@ class AddFractions extends AddTransformButton {
 }
 
 /**
- * log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)<br/>
+ * log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x &middot; y)<br/>
  * log<sub>b</sub>(x) - log<sub>b</sub>(y) = log<sub>b</sub>(x/y)
  */
-class AddLogsTransform extends AddTransformButton {
-	AddLogsTransform(AdditionTransformations context) {
+class AddLogsButton extends AddTransformButton {
+	AddLogsButton(AdditionTransformations context) {
 		super(context,
 				"log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)");
 
@@ -667,8 +643,8 @@ class AddLogsTransform extends AddTransformButton {
 /**
  * x+x = 2x
  */
-class AddSimilarTramsform extends AddTransformButton {
-	AddSimilarTramsform(AdditionTransformations context) {
+class AddSimilarButton extends AddTransformButton {
+	AddSimilarButton(AdditionTransformations context) {
 		super(context, "x+x = 2x");
 
 		addClickHandler(new ClickHandler() {

@@ -16,7 +16,7 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitUtil;
 
-public class MultiplyTransformations {
+public class MultiplyTransformations extends Transformations {
 
 	MathNode left;
 	MathNode operation;
@@ -26,8 +26,6 @@ public class MultiplyTransformations {
 	TypeML leftType;
 	TypeML rightType;
 	
-	LinkedList<MultiplyTransformButton> transformations = new LinkedList<MultiplyTransformButton>();
-
 	public MultiplyTransformations(MathNode left, MathNode multiplyNode,
 			MathNode right) {
 
@@ -45,20 +43,8 @@ public class MultiplyTransformations {
 		check(multiplyCombineExponents_check());
 		check(logRule_check());
 
-		if (AlgebraActivity.isInEasyMode && transformations.size() == 1) {
-			transformations.getFirst().click();
-		} else {
-			for (MultiplyTransformButton trans : transformations) {
-				AlgebraActivity.addTransformation(trans);
-			}
-		}
+		addButtons();
 
-	}
-
-	private void check(MultiplyTransformButton tButt) {
-		if(tButt != null) {
-		transformations.add(tButt);
-		}
 	}
 	/**
 	 * Four button possibilities depending if either of the nodes is -1, 0 1 or
@@ -79,23 +65,23 @@ public class MultiplyTransformations {
 		try {
 			BigDecimal rightValue = new BigDecimal(right.getSymbol());
 			if (rightValue.compareTo(zero) == same) {
-				return new MultiplyZeroTransform(this, left, right);
+				return new MultiplyZeroButton(this, left, right);
 			} else if (rightValue.compareTo(one) == same) {
-				return new MultiplyOneTransform(this, left, right);
+				return new MultiplyOneButton(this, left, right);
 			} else if (rightValue.compareTo(negOne) == same) {
-				return new MultiplyNegOneTransform(this, left, right);
+				return new MultiplyNegOneButton(this, left, right);
 			}
 
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
 			if (leftValue.compareTo(zero) == same) {
-				return new MultiplyZeroTransform(this, right, left);
+				return new MultiplyZeroButton(this, right, left);
 			} else if (leftValue.compareTo(one) == same) {
-				return new MultiplyOneTransform(this, right, left);
+				return new MultiplyOneButton(this, right, left);
 			} else if (leftValue.compareTo(negOne) == same) {
-				return new MultiplyNegOneTransform(this, right, left);
+				return new MultiplyNegOneButton(this, right, left);
 			}
 
-			return new MultiplyNumbersTransform(this);
+			return new MultiplyNumbersButton(this);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			JSNICalls
@@ -105,21 +91,21 @@ public class MultiplyTransformations {
 	}
 
 	/**
-	 * x · (y+z) = xy + xz
+	 * x &middot; (y+z) = xy + xz
 	 */
 	private MultiplyTransformButton multiplyDistribution_check() {
 
 		if (TypeML.Sum.equals(rightType)) {
-			return new MultiplyDistributionTransform(this, left, right, true);
+			return new MultiplyDistributionButton(this, left, right, true);
 		} else if (TypeML.Sum.equals(leftType)) {
-			return new MultiplyDistributionTransform(this, right, left, false);
+			return new MultiplyDistributionButton(this, right, left, false);
 		} else {
 			return null;
 		}
 	}
 
 	/**
-	 * x<sup>a</sup> · y<sup>a</sup> = (x·y)<sup>a</sup>
+	 * x<sup>a</sup> &middot; y<sup>a</sup> = (x &middot; y)<sup>a</sup>
 	 */
 	private MultiplyTransformButton multiplyCombineExponents_check() {
 
@@ -129,18 +115,18 @@ public class MultiplyTransformations {
 		}
 
 		if (left.getChildAt(1).isLike(right.getChildAt(1))) {
-			return new CombineExponentsTransform(this);
+			return new MultiplyCombineExponentsButton(this);
 		} else {
 			return null;
 		}
 	}
 
 	/**
-	 * x<sup>a</sup> · x<sup>b</sup> = x<sup>a+b</sup><br/>
+	 * x<sup>a</sup> &middot; x<sup>b</sup> = x<sup>a+b</sup><br/>
 	 * If either or both sides is not an exponential, it is encased and raised
 	 * to the power of 1 first <br/>
-	 * ex: x · x = x<sup>1+1</sup> <br/>
-	 * ex: x<sup>a</sup> · x = x<sup>a+1</sup>
+	 * ex: x &middot; x = x<sup>1+1</sup> <br/>
+	 * ex: x<sup>a</sup> &middot; x = x<sup>a+1</sup>
 	 */
 	private MultiplyTransformButton multiplyCombineBases_check() {
 
@@ -160,26 +146,26 @@ public class MultiplyTransformations {
 		}
 
 		if (leftBase.isLike(rightBase)) {
-			return new CombineBasesTransform(this);
+			return new MultiplyCombineBasesButton(this);
 		} else {
 			return null;
 		}
 	}
 
 	/**
-	 * x/y · a/b = (xa)/(yb)<br/>
-	 * x · a/b = (xa)/b
+	 * x/y &middot; a/b = (xa)/(yb)<br/>
+	 * x &middot; a/b = (xa)/b
 	 */
 	private MultiplyTransformButton multiplyFraction_check() {
 		if (TypeML.Fraction.equals(rightType)
 				&& TypeML.Fraction.equals(leftType)) {
-			return new MultiplyFractionsTransform(this);
+			return new MultiplyFractionsButton(this);
 		} else {
 			if (TypeML.Fraction.equals(rightType)) {
-				return new MultiplyWithFractionTransform(this, left, right,
+				return new MultiplyWithFractionButton(this, left, right,
 						true);
 			} else if (TypeML.Fraction.equals(leftType)) {
-				return new MultiplyWithFractionTransform(this, right, left,
+				return new MultiplyWithFractionButton(this, right, left,
 						false);
 			} else {
 				return null;
@@ -188,14 +174,14 @@ public class MultiplyTransformations {
 	}
 
 	/**
-	 * x · log<sub>b</sub>(a) = log<sub>b</sub>(a<sup>x</sup>)
+	 * x &middot; log<sub>b</sub>(a) = log<sub>b</sub>(a<sup>x</sup>)
 	 */
 	private MultiplyTransformButton logRule_check() {
 
 		if (TypeML.Log.equals(rightType)) {
-			return new LogRuleTransform(this);
-		} else if (TypeML.Log.equals(rightType)) {
-			return new LogRuleTransform(this);
+			return new MultiplyLogRuleButton(this, left, right);
+		} else if (TypeML.Log.equals(leftType)) {
+			return new MultiplyLogRuleButton(this, right, left);
 		} else {
 			return null;
 		}
@@ -218,15 +204,19 @@ class MultiplyTransformButton extends Button {
 		this.right = context.right;
 		this.operation = context.operation;
 		this.parent = operation.getParent();
+
+		left.highlight();
+		operation.highlight();
+		right.highlight();
 	}
 }
 
 /**
- * 0 · x = 0<br/>
- * x · 0 = 0
+ * 0 &middot; x = 0<br/>
+ * x &middot; 0 = 0
  */
-class MultiplyZeroTransform extends MultiplyTransformButton {
-	MultiplyZeroTransform(MultiplyTransformations context,
+class MultiplyZeroButton extends MultiplyTransformButton {
+	MultiplyZeroButton(MultiplyTransformations context,
 			final MathNode other, final MathNode zero) {
 		super(context, "x·0=0");
 
@@ -234,9 +224,6 @@ class MultiplyZeroTransform extends MultiplyTransformButton {
 			@Override
 			public void onClick(ClickEvent arg0) {
 
-				zero.highlight();
-				operation.highlight();
-				other.highlight();
 
 				String otherSymbol = other.getSymbol();
 
@@ -269,21 +256,17 @@ class MultiplyZeroTransform extends MultiplyTransformButton {
 }
 
 /**
- * x · 1 = x<br/>
- * 1 · x = x
+ * x &middot; 1 = x<br/>
+ * 1 &middot; x = x
  */
-class MultiplyOneTransform extends MultiplyTransformButton {
-	MultiplyOneTransform(MultiplyTransformations context, final MathNode other,
+class MultiplyOneButton extends MultiplyTransformButton {
+	MultiplyOneButton(MultiplyTransformations context, final MathNode other,
 			final MathNode one) {
 		super(context, "x·1=x");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-
-				other.highlight();
-				operation.highlight();
-				one.highlight();
 
 				String otherSymbol = other.getSymbol();
 
@@ -301,21 +284,17 @@ class MultiplyOneTransform extends MultiplyTransformButton {
 }
 
 /**
- * x · -1 = -x<br/>
- * -1 · x = -x
+ * x &middot; -1 = -x<br/>
+ * -1 &middot; x = -x
  */
-class MultiplyNegOneTransform extends MultiplyTransformButton {
-	MultiplyNegOneTransform(MultiplyTransformations context,
+class MultiplyNegOneButton extends MultiplyTransformButton {
+	MultiplyNegOneButton(MultiplyTransformations context,
 			final MathNode other, final MathNode negOne) {
 		super(context, "-1·x=-x");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-
-				other.highlight();
-				operation.highlight();
-				negOne.highlight();
 
 				String otherSymbol = other.getSymbol();
 
@@ -338,8 +317,8 @@ class MultiplyNegOneTransform extends MultiplyTransformButton {
  * Prompt for product or automatically multiply if user skill level is high
  * enough
  */
-class MultiplyNumbersTransform extends MultiplyTransformButton {
-	MultiplyNumbersTransform(MultiplyTransformations context) {
+class MultiplyNumbersButton extends MultiplyTransformButton {
+	MultiplyNumbersButton(MultiplyTransformations context) {
 		super(context, "# · #");
 
 		addClickHandler(new ClickHandler() {
@@ -375,10 +354,6 @@ class MultiplyNumbersTransform extends MultiplyTransformButton {
 
 	void multiplyNumbers(MathNode left, MathNode right, BigDecimal totalValue,
 			BigDecimal leftValue, BigDecimal rightValue) {
-
-		right.highlight();
-		operation.highlight();
-		left.highlight();
 
 		totalValue = totalValue.stripTrailingZeros();
 
@@ -416,19 +391,16 @@ class MultiplyNumbersTransform extends MultiplyTransformButton {
 }
 
 /**
- * x · (y+z) = xy + xz
+ * x &middot; (y+z) = xy + xz
  */
-class MultiplyDistributionTransform extends MultiplyTransformButton {
-	MultiplyDistributionTransform(MultiplyTransformations context,
+class MultiplyDistributionButton extends MultiplyTransformButton {
+	MultiplyDistributionButton(MultiplyTransformations context,
 			final MathNode dist, final MathNode sum, final boolean isRightSum) {
 		super(context, "x·(y+z)=xy+xz");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-
-				dist.highlight();
-				operation.highlight();
 
 				for (MathNode sumChild : sum.getChildren()) {
 					if (!TypeML.Operation.equals(sumChild.getType())) {
@@ -455,18 +427,15 @@ class MultiplyDistributionTransform extends MultiplyTransformButton {
 }
 
 /**
- * x<sup>a</sup> · y<sup>a</sup> = (x·y)<sup>a</sup>
+ * x<sup>a</sup> &middot; y<sup>a</sup> = (x &middot; y)<sup>a</sup>
  */
-class CombineExponentsTransform extends MultiplyTransformButton {
-	CombineExponentsTransform(MultiplyTransformations context) {
+class MultiplyCombineExponentsButton extends MultiplyTransformButton {
+	MultiplyCombineExponentsButton(MultiplyTransformations context) {
 		super(context, "<sup>a</sup>·y<sup>a</sup>=(x·y)<sup>a</sup>");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				left.getChildAt(0).highlight();
-				operation.highlight();
-				right.getChildAt(0).highlight();
 
 				MathNode leftBase = left.getChildAt(0);
 				MathNode rightBase = right.getChildAt(0);
@@ -489,22 +458,19 @@ class CombineExponentsTransform extends MultiplyTransformButton {
 }
 
 /**
- * x<sup>a</sup> · x<sup>b</sup> = x<sup>a+b</sup><br/>
+ * x<sup>a</sup> &middot; x<sup>b</sup> = x<sup>a+b</sup><br/>
  * If either or both sides is not an exponential, it is encased and raised to
  * the power of 1 first <br/>
- * ex: x · x = x<sup>1+1</sup> <br/>
- * ex: x<sup>a</sup> · x = x<sup>a+1</sup>
+ * ex: x &middot; x = x<sup>1+1</sup> <br/>
+ * ex: x<sup>a</sup> &middot; x = x<sup>a+1</sup>
  */
-class CombineBasesTransform extends MultiplyTransformButton {
-	CombineBasesTransform(MultiplyTransformations context) {
+class MultiplyCombineBasesButton extends MultiplyTransformButton {
+	MultiplyCombineBasesButton(MultiplyTransformations context) {
 		super(context, "x<sup>a</sup>·x<sup>b</sup>=x<sup>a+b</sup>");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				left.highlight();
-				operation.highlight();
-				right.highlight();
 
 				MathNode leftExponential = left;
 				MathNode rightExponential = right;
@@ -539,10 +505,10 @@ class CombineBasesTransform extends MultiplyTransformButton {
 }
 
 /**
- * x · a/b = (xa)/b
+ * x &middot; a/b = (xa)/b
  */
-class MultiplyWithFractionTransform extends MultiplyTransformButton {
-	MultiplyWithFractionTransform(MultiplyTransformations context,
+class MultiplyWithFractionButton extends MultiplyTransformButton {
+	MultiplyWithFractionButton(MultiplyTransformations context,
 			final MathNode nonFrac, final MathNode fraction,
 			final boolean isRightFraction) {
 		super(context, "x·a/b=(xa)/b");
@@ -550,9 +516,6 @@ class MultiplyWithFractionTransform extends MultiplyTransformButton {
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				fraction.highlight();
-				operation.highlight();
-				nonFrac.highlight();
 
 				MathNode numerator = fraction.getChildAt(0);
 				numerator = numerator.encase(TypeML.Term);
@@ -571,19 +534,15 @@ class MultiplyWithFractionTransform extends MultiplyTransformButton {
 }
 
 /**
- * x/y · a/b = (xa)/(yb)
+ * x/y &middot; a/b = (xa)/(yb)
  */
-class MultiplyFractionsTransform extends MultiplyTransformButton {
-	MultiplyFractionsTransform(MultiplyTransformations context) {
+class MultiplyFractionsButton extends MultiplyTransformButton {
+	MultiplyFractionsButton(MultiplyTransformations context) {
 		super(context, "x/y·a/b=(xa)/(yb)");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-
-				left.highlight();
-				operation.highlight();
-				right.highlight();
 
 				MathNode numerator = right.getChildAt(0);
 				numerator = numerator.encase(TypeML.Term);
@@ -608,17 +567,25 @@ class MultiplyFractionsTransform extends MultiplyTransformButton {
 }
 
 /**
- * x · log<sub>b</sub>(a) = log<sub>b</sub>(a<sup>x</sup>)
+ * x &middot; log<sub>b</sub>(a) = log<sub>b</sub>(a<sup>x</sup>)
  */
-class LogRuleTransform extends MultiplyTransformButton {
-	LogRuleTransform(MultiplyTransformations context) {
+class MultiplyLogRuleButton extends MultiplyTransformButton {
+	MultiplyLogRuleButton(MultiplyTransformations context, final MathNode other, final MathNode log) {
 		super(context, "x·log<sub>b</sub>(a)=log<sub>b</sub>(a<sup>x</sup>)");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				// TODO Auto-generated method stub
+				
+				MathNode exp = log.getFirstChild().encase(TypeML.Exponential);
+				exp.append(other);
+				
+				operation.remove();
 
+				parent.decase();
+
+				AlgebraActivity.reloadEquationPanel("Log Power Rule",
+						Rule.LOGARITHM);
 			}
 		});
 	}

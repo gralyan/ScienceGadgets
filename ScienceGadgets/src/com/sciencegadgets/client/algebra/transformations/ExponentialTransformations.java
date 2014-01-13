@@ -3,73 +3,103 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitUtil;
 
-public class ExponentialTransformations {
+public class ExponentialTransformations extends Transformations{
 
-	public static void assign(MathNode exponentialNode) {
-		try {
-			MathNode exponential = exponentialNode;
-			MathNode base = exponential.getChildAt(0);
-			MathNode exponent = exponential.getChildAt(1);
-			TypeML baseType = base.getType();
-			TypeML exponentType = exponent.getType();
+	MathNode exponential;
+	MathNode base;
+	MathNode exponent;
+	TypeML baseType;
+	TypeML exponentType;
+	
+	public ExponentialTransformations(MathNode exponentialNode) {
+		exponential = exponentialNode;
+		base = exponential.getChildAt(0);
+		exponent = exponential.getChildAt(1);
+		baseType = base.getType();
+		exponentType = exponent.getType();
+		
+		check(exponentialExpand_check());
+		check(exponentialEvaluate_check());
+		check(exponentialExponentiate_check());
+		check(exponentialFraction_check());
+		check(exponentialFlip_check());
 
-			base: switch (baseType) {
-			case Exponential:
-				// TODO
-				break;
-			case Fraction:
-				// TODO
-
-				break;
-			}
-
-			exp: switch (exponentType) {
-			case Number:
-
-				expandExponential_check(base, exponent, exponential);
-
-				base: switch (baseType) {
-				case Number:
-					AlgebraActivity.addTransformation(new EvaluateExponential_Button(
-							base, exponent, exponential));
-					break base;
-				}
-				break exp;
-
-			}
-
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			JSNICalls
-					.error("A number node couldn't be parsed: " + e.toString());
-		}
+		addButtons();
 	}
 
-	private static void expandExponential_check(MathNode base,
-			MathNode exponent, MathNode exponential) {
-		try {
-			int exp = Integer.parseInt(exponent.getSymbol());
-			// Integer from 0-10 inclusive, more than 10 is just too many
-			if (exp < 10 && exp >= 0) {
-				AlgebraActivity.addTransformation(new ExpandExponential_Button(
-						(int) exp, base, exponent, exponential));
-			}
-		} catch (NumberFormatException e) {
-			return;
+	private ExponentialTransformButton exponentialEvaluate_check() {
+		if (TypeML.Number.equals(baseType)
+				&& TypeML.Number.equals(exponentType)) {
+			return new ExponentialEvaluateButton(this);
 		}
+		return null;
+	}
+	
+	private ExponentialTransformButton exponentialExponentiate_check() {
+		if (TypeML.Exponential.equals(baseType)) {
+			return new ExponentialExponentialeButton(this);
+		}
+		return null;
+	}
+	private ExponentialTransformButton exponentialFraction_check() {
+		if (TypeML.Fraction.equals(baseType)) {
+			return new ExponentialFractionButton(this);
+		}
+		return null;
+	}
+	private ExponentialTransformButton exponentialFlip_check() {
+		if (TypeML.Number.equals(exponentType) || TypeML.Variable.equals(exponentType)) {
+			if(exponent.getSymbol().startsWith(Operator.MINUS.getSign())) {
+			return new ExponentialFlipButton(this);
+			}
+		}
+		return null;
+	}
 
+	private ExponentialTransformButton exponentialExpand_check() {
+		if (TypeML.Number.equals(exponentType)) {
+			try {
+				int exp = Integer.parseInt(exponent.getSymbol());
+				// Integer from 0-10 inclusive, more than 10 is just too many
+				if (exp < 10 && exp >= 0) {
+					return new ExponentialExpandButton(this, (int) exp);
+				}
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+}
+
+// ////////////////////////////////////////////////
+// Transform buttons
+// ///////////////////////////////////////////////
+class ExponentialTransformButton extends Button {
+	final MathNode exponential;
+	final MathNode base;
+	final MathNode exponent;
+
+	ExponentialTransformButton(ExponentialTransformations context, String html) {
+		super(html);
+		this.exponential = context.exponential;
+		this.base = context.base;
+		this.exponent = context.exponent;
+		
+		exponential.highlight();
 	}
 }
 
@@ -77,17 +107,10 @@ public class ExponentialTransformations {
  * b<sup>a</sup> = b.pow(a)<br/>
  * ex: 2<sup>3</sup> = 8
  */
-class EvaluateExponential_Button extends Button {
-	private MathNode base, exponent, exponential;
+class ExponentialEvaluateButton extends ExponentialTransformButton {
 
-	public EvaluateExponential_Button(final MathNode base,
-			final MathNode exponent, final MathNode exponential) {
-		super();
-		this.base = base;
-		this.exponent = exponent;
-		this.exponential = exponential;
-
-		setHTML("Evaluate Exponential");
+	public ExponentialEvaluateButton(ExponentialTransformations context) {
+		super(context, "Evaluate Exponential");
 
 		addClickHandler(new ClickHandler() {
 
@@ -130,8 +153,6 @@ class EvaluateExponential_Button extends Button {
 	private void evaluateExponential(BigDecimal baseValue, int expValue,
 			BigDecimal totalValue, LinkedHashMap<String, Integer> newUnitMap) {
 
-		exponential.highlight();
-
 		MathNode evaluated = exponential.replace(TypeML.Number, totalValue
 				.stripTrailingZeros().toEngineeringString());
 		String newUnit = UnitUtil.getUnitAttribute(newUnitMap);
@@ -148,21 +169,13 @@ class EvaluateExponential_Button extends Button {
 }
 
 /**
- * x<sup>a</sup> = x·x·...x<sub>a</sub><br/>
- * ex: (y-1)<sup>5</sup> = (y-1)·(y-1)·(y-1)·(y-1)·(y-1)
+ * x<sup>a</sup> = x &middot; x &middot; ... x<sub>a</sub><br/>
+ * ex: (y-1)<sup>2</sup> = (y-1) &middot; (y-1)
  */
-class ExpandExponential_Button extends Button {
-	private MathNode base, exponent, exponential;
-	private int exp;
+class ExponentialExpandButton extends ExponentialTransformButton {
 
-	ExpandExponential_Button(final int exp, final MathNode base,
-			MathNode exponent, final MathNode exponential) {
-		this.exp = exp;
-		this.base = base;
-		this.exponent = exponent;
-		this.exponential = exponential;
-
-		setHTML("Expand Exponential");
+	ExponentialExpandButton(ExponentialTransformations context, final int exp) {
+		super(context, "Expand Exponential");
 
 		addClickHandler(new ClickHandler() {
 
@@ -170,11 +183,15 @@ class ExpandExponential_Button extends Button {
 			public void onClick(ClickEvent event) {
 
 				if (exp == 0) {
-					if (!"0".equals(base.getSymbol())) {
+					if(TypeML.Number.equals(base.getType())) {
+						if ("0".equals(base.getSymbol())) {
+							exponential.replace(TypeML.Number, "0");
+						}else {
+							exponential.replace(TypeML.Number, "1");
+						}
+					}else {
 						Window.alert("Warning: You are now assuming that the base is not equivalent to 0");
 						exponential.replace(TypeML.Number, "1");
-					} else {
-						exponential.replace(TypeML.Number, "0");
 					}
 
 				} else if (exp == 1) {
@@ -183,11 +200,11 @@ class ExpandExponential_Button extends Button {
 				} else if (exp > 1) {
 					MathNode term = exponential.encase(TypeML.Term);
 					int exponIndex = exponential.getIndex();
-					term.addAfter(exponIndex, base);
+					term.addBefore(exponIndex, base);
 					for (int i = 1; i < exp; i++) {
-						term.addAfter(exponIndex, TypeML.Operation,
+						term.addBefore(exponIndex, TypeML.Operation,
 								TypeML.Operator.getMultiply().getSign());
-						term.addAfter(exponIndex + 1, base.clone());
+						term.addBefore(exponIndex, base.clone());
 					}
 					exponential.remove();
 				}
@@ -198,4 +215,91 @@ class ExpandExponential_Button extends Button {
 		});
 	}
 
+}
+/**
+ * (x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>
+ */
+class ExponentialExponentialeButton extends ExponentialTransformButton {
+	
+	ExponentialExponentialeButton(ExponentialTransformations context) {
+		super(context, "(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>");
+		
+		addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				MathNode innerBase = base.getChildAt(0);
+				MathNode innerExp = base.getChildAt(1);
+				
+				MathNode expTerm = exponent.encase(TypeML.Term);
+				expTerm.addBefore(0,TypeML.Operation, Operator.getMultiply().getSign());
+				expTerm.addBefore(0, innerExp);
+				
+				base.replace(innerBase);
+				
+				AlgebraActivity.reloadEquationPanel("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
+						Rule.EXPONENT_PROPERTIES);
+			}
+		});
+	}
+	
+}
+/**
+ * (x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)
+ */
+class ExponentialFractionButton extends ExponentialTransformButton {
+	
+	ExponentialFractionButton(ExponentialTransformations context) {
+		super(context, "(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)");
+		
+		addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				MathNode numerator = base.getChildAt(0).encase(TypeML.Exponential);
+				MathNode denominator = base.getChildAt(1).encase(TypeML.Exponential);
+				
+				numerator.append(exponent.clone());
+				denominator.append(exponent);
+				
+				exponential.replace(base);
+				
+				AlgebraActivity.reloadEquationPanel("(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)",
+						Rule.EXPONENT_PROPERTIES);
+			}
+		});
+	}
+	
+}
+/**
+ * (x/y)<sup>-b</sup> = (y/x)<sup>b</sup><br/>
+ * x<sup>-b</sup> = (1/x)<sup>b</sup>
+ */
+class ExponentialFlipButton extends ExponentialTransformButton {
+	
+	ExponentialFlipButton(ExponentialTransformations context) {
+		super(context, "x<sup>-b</sup> = (1/x)<sup>b</sup>");
+		
+		addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				if(TypeML.Fraction.equals(base.getType())) {
+					base.append(base.getFirstChild());
+				}else {
+					MathNode frac = base.encase(TypeML.Fraction);
+					frac.addBefore(0, TypeML.Number, "1");
+				}
+				
+				exponent.setSymbol(exponent.getSymbol().replace(Operator.MINUS.getSign(), ""));
+				
+				AlgebraActivity.reloadEquationPanel("x<sup>-b</sup> = (1/x)<sup>b</sup>",
+						Rule.EXPONENT_PROPERTIES);
+			}
+		});
+	}
+	
 }

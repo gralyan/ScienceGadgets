@@ -36,6 +36,7 @@ import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformation
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeML.TrigFunctions;
 import com.sciencegadgets.shared.UnitUtil;
 
 public class MathTree {
@@ -212,7 +213,6 @@ public class MathTree {
 	 * Gets all nodes by specified type, use null for all nodes
 	 * 
 	 * @param type
-	 * @return
 	 */
 	public ArrayList<MathNode> getNodesByType(TypeML type) {
 		ArrayList<MathNode> nodes = new ArrayList<MathNode>();
@@ -255,8 +255,8 @@ public class MathTree {
 		 * getMlNode()
 		 * </p>
 		 * 
-		 * @param tag
-		 *            - MathML tag
+		 * @param type
+		 *            - The {@link TypeML}
 		 * @param symbol
 		 *            - inner text
 		 */
@@ -297,8 +297,8 @@ public class MathTree {
 		 * Adds a node between this node and its parent, encasing this branch of
 		 * the tree in a new node. <br/>
 		 * 
-		 * @param tag
-		 *            - the tag of the new node
+		 * @param type
+		 *            - the type of the new node
 		 * @return - encasing node
 		 */
 		public MathNode encase(TypeML type) {
@@ -534,7 +534,6 @@ public class MathTree {
 		 *            <p>
 		 *            ex:</br>-1 for previous </br>1 for next
 		 *            </p>
-		 * @return
 		 */
 		private MathNode getSibling(int indexesAway) {
 			MathNode parent = this.getParent();
@@ -734,7 +733,7 @@ public class MathTree {
 		}
 
 		/**
-		 * This should only be done after {@link MathTree#reloadDisplay()}
+		 * This should only be done after {@link MathTree#reloadDisplay(boolean)}
 		 * 
 		 * @return The current HTML element associated with this node
 		 */
@@ -829,9 +828,13 @@ public class MathTree {
 		}
 
 		/**
-		 * Validates the proper number of children, numbers can be parsed, no
-		 * sums within sums or terms within terms, and collects nodes to
-		 * decorate with {@link #decorateWithAesthetics()}
+		 * Validates the structure of the node, looks at:<br/>
+		 * · proper number of children<br/>
+		 * · numbers can be parsed<br/>
+		 * · no sums within sums<br/>
+		 * · no terms within terms<br/>
+		 * · log must have base attribute<br/>
+		 * · trig must have function attribute<br/>
 		 */
 		private void validate() {
 
@@ -919,6 +922,17 @@ public class MathTree {
 					}
 				}
 				break;
+		case Trig:// Confirm the function attribute exists
+			if (!inEditMode) {
+					if ("".equals(getAttribute(MathAttribute.Function))) {
+						JSNICalls
+						.error("Trig functiond must have function attribute: "
+								+ getParent().toString());
+						// Damage control
+						setAttribute(MathAttribute.Function, TrigFunctions.sin.toString());
+					}
+				}
+			break;
 			}
 		}
 

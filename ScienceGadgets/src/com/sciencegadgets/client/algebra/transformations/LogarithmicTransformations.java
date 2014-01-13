@@ -5,67 +5,90 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
-public class LogarithmicTransformations {
-	static MathNode log;
-	static MathNode logChild;
-	static String base;
+public class LogarithmicTransformations extends Transformations {
+	MathNode log;
+	MathNode logChild;
+	String base;
+	TypeML logChildType;
 
 	static LogBaseSpecification logBaseSpec = null;
 
-	public static void assign(MathNode logNode) {
-		try {
-			log = logNode;
-			logChild = logNode.getFirstChild();
-			base = log.getAttribute(MathAttribute.LogBase);
-			TypeML logChildType = logChild.getType();
+	public LogarithmicTransformations(MathNode logNode) {
+		log = logNode;
+		logChild = logNode.getFirstChild();
+		base = log.getAttribute(MathAttribute.LogBase);
+		logChildType = logChild.getType();
 
-			changeBaseRule();
+		transformations.add(new LogChangeBaseButton(this));
 
-			switch (logChildType) {
-			case Term:
-				logProductRule();
-				break;
-			case Fraction:
-				logQuotientRule();
-				break;
-			case Exponential:
-				logPowerRule();
-				break;
-			}
+		check(logChildCheck());
 
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			JSNICalls
-					.error("A number node couldn't be parsed: " + e.toString());
-		}
+		addButtons();
 	}
 
-	/**
-	 * log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(y)
-	 */
-	private static void changeBaseRule() {
-		ClickHandler changeBaseHandler = new ClickHandler() {
+	private LogTransformButton logChildCheck() {
+		switch (logChildType) {
+		case Term:
+			return new LogProductButton(this);
+		case Fraction:
+			return new LogQuotientButton(this);
+		case Exponential:
+			return new LogPowerButton(this);
+		case Number:
+			if ("1".equals(logChild.getSymbol())) {
+				return new LogOneButton(this);
+			} else if (base.equals(logChild.getSymbol())) {
+				return new LogSameBaseAsArgumentButton(this);
+			}
+		}
+		return null;
+	}
+}
+
+// ////////////////////////////////////////////////
+// Transform buttons
+// ///////////////////////////////////////////////
+class LogTransformButton extends Button {
+	final MathNode log;
+	final MathNode logChild;
+	final String base;
+
+	LogTransformButton(LogarithmicTransformations context, String html) {
+		super(html);
+		this.log = context.log;
+		this.logChild = context.logChild;
+		this.base = context.base;
+		
+		log.highlight();
+	}
+}
+
+/**
+ * log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(y)
+ */
+class LogChangeBaseButton extends LogTransformButton {
+	LogChangeBaseButton(LogarithmicTransformations context) {
+		super(context, "Change base");
+
+		addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (logBaseSpec == null) {
-					logBaseSpec = new LogBaseSpecification() {
+				if (LogarithmicTransformations.logBaseSpec == null) {
+					LogarithmicTransformations.logBaseSpec = new LogBaseSpecification() {
 						@Override
 						public void onSpecify(String newBase) {
 							super.onSpecify(newBase);
 
-							log.highlight();
-
 							MathNode fraction = log.encase(TypeML.Fraction);
 							log.setAttribute(MathAttribute.LogBase, newBase);
-							
+
 							MathNode denom = fraction.append(TypeML.Log, "");
 							denom.append(TypeML.Number, base);
 							denom.setAttribute(MathAttribute.LogBase, newBase);
@@ -77,25 +100,25 @@ public class LogarithmicTransformations {
 						}
 					};
 				}
-				logBaseSpec.reload();
+				LogarithmicTransformations.logBaseSpec.reload();
 			}
-		};
-
-		AlgebraActivity.addTransformation(new Button("Change base",
-				changeBaseHandler));
+		});
 
 	}
 
-	/**
-	 * log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)
-	 */
-	private static void logProductRule() {
-		ClickHandler expandTermHandler = new ClickHandler() {
+}
+
+/**
+ * log<sub>b</sub>(x &middot; y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)
+ */
+class LogProductButton extends LogTransformButton {
+	LogProductButton(LogarithmicTransformations context) {
+		super(context, "Log Product");
+
+		addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-
-				log.highlight();
 
 				MathNode sum = log.encase(TypeML.Sum);
 				int logIndex = log.getIndex();
@@ -121,22 +144,21 @@ public class LogarithmicTransformations {
 								"log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)",
 								Rule.LOGARITHM);
 			}
-		};
-
-		AlgebraActivity.addTransformation(new Button("Log Product",
-				expandTermHandler));
+		});
 	}
+}
 
-	/**
-	 * log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)
-	 */
-	private static void logQuotientRule() {
-		ClickHandler expandFractionHandler = new ClickHandler() {
+/**
+ * log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)
+ */
+class LogQuotientButton extends LogTransformButton {
+	LogQuotientButton(LogarithmicTransformations context) {
+		super(context, "Log Quotient");
+
+		addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-
-				log.highlight();
 
 				MathNode sum = log.encase(TypeML.Sum);
 
@@ -163,22 +185,22 @@ public class LogarithmicTransformations {
 								"log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)",
 								Rule.LOGARITHM);
 			}
-		};
-
-		AlgebraActivity.addTransformation(new Button("Log Quotient",
-				expandFractionHandler));
+		});
 	}
 
-	/**
-	 * log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)
-	 */
-	private static void logPowerRule() {
-		ClickHandler expandFractionHandler = new ClickHandler() {
+}
+
+/**
+ * log<sub>b</sub>(x<sup>y</sup>) = y &middot; log<sub>b</sub>(x)
+ */
+class LogPowerButton extends LogTransformButton {
+	LogPowerButton(LogarithmicTransformations context) {
+		super(context, "Log Power");
+
+		addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-
-				log.highlight();
 
 				MathNode term = log.encase(TypeML.Term);
 
@@ -196,9 +218,53 @@ public class LogarithmicTransformations {
 								"log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)",
 								Rule.LOGARITHM);
 			}
-		};
-
-		AlgebraActivity.addTransformation(new Button("Log Power",
-				expandFractionHandler));
+		});
 	}
+
+}
+/**
+ * log<sub>b</sub>(1) = 0
+ */
+class LogOneButton extends LogTransformButton {
+	LogOneButton(LogarithmicTransformations context) {
+		super(context, "Log of One");
+		
+		addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				log.replace(TypeML.Number, "0");
+				
+				AlgebraActivity
+				.reloadEquationPanel(
+						"log<sub>b</sub>(1) = 0",
+						Rule.LOGARITHM);
+			}
+		});
+	}
+	
+}
+/**
+ * log<sub>b</sub>(b) = 1
+ */
+class LogSameBaseAsArgumentButton extends LogTransformButton {
+	LogSameBaseAsArgumentButton(LogarithmicTransformations context) {
+		super(context, "log<sub>b</sub>(b) = 1");
+		
+		addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				log.replace(TypeML.Number, "1");
+				
+				AlgebraActivity
+				.reloadEquationPanel(
+						"log<sub>b</sub>(b) = 1",
+						Rule.LOGARITHM);
+			}
+		});
+	}
+	
 }

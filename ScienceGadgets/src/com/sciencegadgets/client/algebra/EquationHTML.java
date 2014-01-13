@@ -81,7 +81,6 @@ public class EquationHTML extends HTML {
 	 * <br/>
 	 *            and adds it to<br/>
 	 * @param displayParentEl
-	 * @return
 	 */
 	private Element makeHTMLNode(Element mlNode, Element displayParentEl) {
 		Element mlParent = mlNode.getParentElement();
@@ -244,8 +243,8 @@ public class EquationHTML extends HTML {
 	}
 
 	/**
-	 * Matches the heights of all the children of an {@link TypeML.Equation},
-	 * {@link TypeML.Term} or {@link TypeML.Sum} by:<br/>
+	 * Matches the heights of all the children of an {@link TypeML#Equation},
+	 * {@link TypeML#Term} or {@link TypeML#Sum} by:<br/>
 	 * 1.Lifting centers to the tallest denominator using padding-bottom<br/>
 	 * 2.Matching tops to tallest height with padding-top<br/>
 	 * <b>Note:</b> All children of these nodes are initially aligned at their

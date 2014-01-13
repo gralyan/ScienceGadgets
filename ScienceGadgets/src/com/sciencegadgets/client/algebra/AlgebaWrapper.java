@@ -51,9 +51,6 @@ public class AlgebaWrapper extends ZoomWrapper {
 	 * Highlights the selected wrapper and joiner as well as all the drop
 	 * targets associated with the selected
 	 * 
-	 * @param wrapper
-	 * @param select
-	 *            - selects if true, unselects if false
 	 */
 	public void select() {
 		super.select();
@@ -66,16 +63,19 @@ public class AlgebaWrapper extends ZoomWrapper {
 
 			switch (node.getType()) {
 			case Exponential:
-				ExponentialTransformations.assign(node);
 				AlgebraicTransformations.unravelExpLog_check(node);
+				new ExponentialTransformations(node);
 				break;
 			case Fraction:
+				AlgebraicTransformations.denominatorFlip_check(node);
+				break;
 			case Sum:
+				break;
 			case Term:
 				break;
 			case Operation:
 				AlgebraicTransformations.operation(node);
-				return;
+				break;
 			case Number:
 				AlgebraicTransformations.separateNegative_check(node);
 				AlgebraicTransformations.factorizeNumbers_check(node);
@@ -87,20 +87,14 @@ public class AlgebaWrapper extends ZoomWrapper {
 				break;
 			case Log:
 				AlgebraicTransformations.unravelLogExp_check(node);
-				LogarithmicTransformations.assign(node);
+				new LogarithmicTransformations(node);
 				break;
 			case Trig:
 				AlgebraicTransformations.inverseTrig_check(node);
+				break;
 				
 			}
 
-			switch (node.getParentType()) {
-			case Fraction:
-				if (node.getIndex() == 1) {
-					AlgebraicTransformations.denominatorFlip_check(node);
-				}
-				break;
-			}
 		}
 	}
 
