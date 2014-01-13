@@ -69,6 +69,7 @@ public enum TypeML {
 
 	public ChildRequirement childRequirement() {
 		return childRequirement;
+		
 	}
 
 	public static TypeML getType(String tag) throws NoSuchElementException {

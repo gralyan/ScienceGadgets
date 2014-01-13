@@ -37,8 +37,6 @@ public class InterFractionDrop extends AbstractDropController {
 
 		this.dropType = dropType;
 		response.getElement().getStyle().setBackgroundColor("white");
-		
-		dropHTML = "<div style=\"display:inline-block;\"><div>"+target.getHTMLString()+"</div><div>"+drag.getHTMLString()+"</div><div>";
 
 		switch (dropType) {
 		case CANCEL:
@@ -60,6 +58,8 @@ public class InterFractionDrop extends AbstractDropController {
 		super.onDrop(context);
 		drag = ((AlgebaWrapper) context.draggable).getNode();
 		target = ((AlgebaWrapper) getDropTarget()).getNode();
+		
+		dropHTML = "<div style=\"display:inline-block;\"><div>"+target.getHTMLString()+"</div><div>"+drag.getHTMLString()+"</div><div>";
 
 		switch (dropType) {
 		case CANCEL:
