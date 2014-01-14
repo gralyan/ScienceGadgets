@@ -124,7 +124,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			node.replace(TypeML.Variable, NOT_SET);
 			break;
 		}
-		AlgebraActivity.reloadEquationPanel(null, null);
+		Moderator.reloadEquationPanel(null, null);
 	}
 
 	// //////////////////////////////////////////
@@ -148,7 +148,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 						super.onSpecify(base);
 						MathNode log = node.encase(TypeML.Log);
 						log.setAttribute(MathAttribute.LogBase, base);
-						AlgebraActivity.reloadEquationPanel(null, null);
+						Moderator.reloadEquationPanel(null, null);
 					}
 				};
 			}
@@ -162,7 +162,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 						super.onSpecify(function);
 						MathNode func = node.encase(TypeML.Trig);
 						func.setAttribute(MathAttribute.Function, function);
-						AlgebraActivity.reloadEquationPanel(null, null);
+						Moderator.reloadEquationPanel(null, null);
 					}
 				};
 			}
@@ -225,7 +225,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			newNode.append(TypeML.Variable, NOT_SET);
 			break;
 		}
-		AlgebraActivity.reloadEquationPanel(null, null);
+		Moderator.reloadEquationPanel(null, null);
 
 	}
 

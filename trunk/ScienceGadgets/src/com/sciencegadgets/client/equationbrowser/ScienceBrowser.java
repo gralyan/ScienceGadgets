@@ -30,9 +30,11 @@ public class ScienceBrowser extends FlowPanel {
 	private HashMap<TextBox, Element> inputBinding = new HashMap<TextBox, Element>();
 	private Button sumButton = new Button("Use");
 	public static HTML labelSumEq = new HTML("");
+	private EquationBrowser equationBrowser;
 
-	public ScienceBrowser() {
+	public ScienceBrowser(final EquationBrowser equationBrowser) {
 		super();
+		this.equationBrowser = equationBrowser;
 		getElement().setId("sciBrowser");
 
 		// (1) First box, Variable list
@@ -57,7 +59,7 @@ public class ScienceBrowser extends FlowPanel {
 					// XMLParser.parse(mathmlStr).getDocumentElement();
 					Element mathml = (Element) (new HTML(mathmlStr)
 							.getElement().getFirstChildElement());
-					Moderator.switchToAlgebra(mathml);
+					Moderator.makeAlgebra(mathml, equationBrowser.inEditMode);
 				}
 			}
 		});
@@ -244,8 +246,8 @@ public class ScienceBrowser extends FlowPanel {
 					}
 				}
 			}
-			Moderator.switchToAlgebra(labelSumEq.getElement()
-					.getFirstChildElement());
+			Moderator.makeAlgebra(labelSumEq.getElement()
+					.getFirstChildElement(), equationBrowser.inEditMode);
 		}
 
 	}

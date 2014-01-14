@@ -11,7 +11,7 @@ import com.sciencegadgets.client.entities.Equation;
 
 public class AlgebraBrowser extends SelectionPanel {
 
-	public AlgebraBrowser() {
+	public AlgebraBrowser(final EquationBrowser equationBrowser) {
 		super("Algebra Practice", new SelectionHandler() {
 
 			@Override
@@ -21,7 +21,7 @@ public class AlgebraBrowser extends SelectionPanel {
 //					Element mathml = (Element) XMLParser.parse(mathmlStr).getDocumentElement();
 					Element mathml = (Element) (new HTML(mathmlStr)
 							.getElement().getFirstChildElement());
-					Moderator.switchToAlgebra(mathml);
+					Moderator.makeAlgebra(mathml, equationBrowser.inEditMode);
 				}
 			}
 		});

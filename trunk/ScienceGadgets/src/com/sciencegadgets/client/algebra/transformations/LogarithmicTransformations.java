@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -12,6 +13,9 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
 public class LogarithmicTransformations extends Transformations {
+	
+	private static final long serialVersionUID = -1226259041452624481L;
+	
 	MathNode log;
 	MathNode logChild;
 	String base;
@@ -25,11 +29,9 @@ public class LogarithmicTransformations extends Transformations {
 		base = log.getAttribute(MathAttribute.LogBase);
 		logChildType = logChild.getType();
 
-		transformations.add(new LogChangeBaseButton(this));
+		add(new LogChangeBaseButton(this));
+		add(logChildCheck());
 
-		check(logChildCheck());
-
-		addButtons();
 	}
 
 	private LogTransformButton logChildCheck() {
@@ -93,7 +95,7 @@ class LogChangeBaseButton extends LogTransformButton {
 							denom.append(TypeML.Number, base);
 							denom.setAttribute(MathAttribute.LogBase, newBase);
 
-							AlgebraActivity
+							Moderator
 									.reloadEquationPanel(
 											"log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(y)",
 											Rule.LOGARITHM);
@@ -139,7 +141,7 @@ class LogProductButton extends LogTransformButton {
 
 				log.remove();
 
-				AlgebraActivity
+				Moderator
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)",
 								Rule.LOGARITHM);
@@ -180,7 +182,7 @@ class LogQuotientButton extends LogTransformButton {
 
 				log.remove();
 
-				AlgebraActivity
+				Moderator
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)",
 								Rule.LOGARITHM);
@@ -213,7 +215,7 @@ class LogPowerButton extends LogTransformButton {
 
 				logChild.replace(logChild.getFirstChild());
 
-				AlgebraActivity
+				Moderator
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)",
 								Rule.LOGARITHM);
@@ -236,7 +238,7 @@ class LogOneButton extends LogTransformButton {
 				
 				log.replace(TypeML.Number, "0");
 				
-				AlgebraActivity
+				Moderator
 				.reloadEquationPanel(
 						"log<sub>b</sub>(1) = 0",
 						Rule.LOGARITHM);
@@ -259,7 +261,7 @@ class LogSameBaseAsArgumentButton extends LogTransformButton {
 				
 				log.replace(TypeML.Number, "1");
 				
-				AlgebraActivity
+				Moderator
 				.reloadEquationPanel(
 						"log<sub>b</sub>(b) = 1",
 						Rule.LOGARITHM);

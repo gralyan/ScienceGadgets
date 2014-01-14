@@ -53,7 +53,7 @@ public class AlgebraicTransformations {
 	 * @param opNode
 	 *            - operation to perform
 	 */
-	public static void operation(MathNode opNode) {
+	public static Transformations operation(MathNode opNode) {
 		MathNode left, right = null;
 
 		left = opNode.getPrevSibling();
@@ -64,16 +64,14 @@ public class AlgebraicTransformations {
 			case CROSS:
 			case DOT:
 			case SPACE:
-				new MultiplyTransformations(left, opNode, right);
-				break;
+				return new MultiplyTransformations(left, opNode, right);
 			case MINUS:
-				new AdditionTransformations(left, opNode, right, false);
-				break;
+				return new AdditionTransformations(left, opNode, right, false);
 			case PLUS:
-				new AdditionTransformations(left, opNode, right, true);
-				break;
+				return new AdditionTransformations(left, opNode, right, true);
 			}
 		}
+		return null;
 	}
 
 	/**
@@ -122,13 +120,15 @@ public class AlgebraicTransformations {
 		}
 	}
 
-	public static void isolatedVariable_check(MathNode isolatedVar) {
+	public static LinkedList<Button> isolatedVariable_check(MathNode isolatedVar) {
 		if (TypeML.Equation.equals(isolatedVar.getParentType())) {
-			AlgebraActivity.addTransformation(new EvaluatePromptButton(
+			Transformations list = new Transformations();
+			list.add(new EvaluatePromptButton(
 					isolatedVar));
-			AlgebraActivity
-					.addTransformation(new SubstituteButton(isolatedVar));
+			list.add(new SubstituteButton(isolatedVar));
+			return list;
 		}
+		return null;
 	}
 
 	/**
@@ -138,11 +138,12 @@ public class AlgebraicTransformations {
 	 * @param negNode
 	 *            - node of negative number
 	 */
-	public static void separateNegative_check(MathNode negNode) {
+	public static Button separateNegative_check(MathNode negNode) {
 		if (negNode.getSymbol().startsWith(TypeML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
-			AlgebraActivity.addTransformation(new SeperateNegButton(negNode));
+			return new SeperateNegButton(negNode);
 		}
+		return null;
 	}
 
 	/**
@@ -253,19 +254,19 @@ public class AlgebraicTransformations {
 	 * 
 	 * @param node
 	 */
-	public static void factorizeNumbers_check(MathNode node) {
+	public static Button factorizeNumbers_check(MathNode node) {
 		Integer number;
 		try {
 			number = Integer.parseInt(node.getSymbol());
 		} catch (NumberFormatException e) {
-			return;
+			return null;
 		}
 		if (number == 1) {
-			return;
+			return null;
 		}
 
-		AlgebraActivity.addTransformation(new FactorNumberPromptButton(number,
-				node));
+		return new FactorNumberPromptButton(number,
+				node);
 	}
 
 	/**
@@ -273,21 +274,22 @@ public class AlgebraicTransformations {
 	 * 
 	 * @param node
 	 */
-	public static void unitConversion_check(MathNode node) {
+	public static Button unitConversion_check(MathNode node) {
 		if (!"".equals(node.getUnitAttribute())) {
-			AlgebraActivity.addTransformation(new UnitConversionButton(node));
+			return new UnitConversionButton(node);
 		}
+		return null;
 	}
 
-	public static void denominatorFlip_check(MathNode node) {
-		AlgebraActivity.addTransformation(new DenominatorFlipButton(node.getChildAt(1)));
+	public static Button denominatorFlip_check(MathNode node) {
+		return new DenominatorFlipButton(node.getChildAt(1));
 	}
 
 	/**
 	 * Check if: (log base = exponential base)<br/>
 	 * log<sub>b</sub>(b<sup>x</sup>) = x
 	 */
-	public static void unravelLogExp_check(MathNode log) {
+	public static Button unravelLogExp_check(MathNode log) {
 		MathNode exponential = log.getFirstChild();
 		if (TypeML.Exponential.equals(exponential.getType())) {
 			MathNode exponentialBase = exponential.getFirstChild();
@@ -295,28 +297,30 @@ public class AlgebraicTransformations {
 					&& exponentialBase.getSymbol().equals(
 							log.getAttribute(MathAttribute.LogBase))) {
 				MathNode exponentialExp = exponential.getChildAt(1);
-				AlgebraActivity.addTransformation(new UnravelButton(log,
-						exponentialExp, Rule.LOGARITHM));
+				return new UnravelButton(log,
+						exponentialExp, Rule.LOGARITHM);
 			}
 		}
+		return null;
 	}
 
 	/**
 	 * Check if: (log base = exponential base)<br/>
 	 * b<sup>log<sub>b</sub>(x)</sup> = x
 	 */
-	public static void unravelExpLog_check(MathNode exponential) {
+	public static Button unravelExpLog_check(MathNode exponential) {
 		MathNode log = exponential.getChildAt(1);
 		if (TypeML.Log.equals(log.getType())) {
 			String logBase = log.getAttribute(MathAttribute.LogBase);
 			MathNode exponentialBase = exponential.getFirstChild();
 			if (TypeML.Number.equals(exponentialBase.getType())
 					&& exponentialBase.getSymbol().equals(logBase)) {
-				AlgebraActivity.addTransformation(new UnravelButton(
-						exponential, log.getFirstChild(), Rule.LOGARITHM));
+				return new UnravelButton(
+						exponential, log.getFirstChild(), Rule.LOGARITHM);
 
 			}
 		}
+		return null;
 	}
 
 	/**
@@ -324,7 +328,7 @@ public class AlgebraicTransformations {
 	 * sin(arcsin(x)) = x<br/>
 	 * arcsin(sin(x)) = x<br/>
 	 */
-	public static void inverseTrig_check(MathNode trig) {
+	public static Button inverseTrig_check(MathNode trig) {
 		MathNode trigChild = trig.getFirstChild();
 		if (TypeML.Trig.equals(trigChild.getType())) {
 			String trigChildFunc = trigChild
@@ -333,11 +337,12 @@ public class AlgebraicTransformations {
 					.getInverse(trigChildFunc);
 			String trigFunc = trig.getAttribute(MathAttribute.Function);
 			if (trigFunc.equals(trigChildFuncInverse)) {
-				AlgebraActivity.addTransformation(new UnravelButton(trig,
+				return new UnravelButton(trig,
 						trigChild.getFirstChild(),
-						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS));
+						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
 			}
 		}
+		return null;
 	}
 
 }
@@ -445,7 +450,7 @@ class FactorNumberPromptButton extends Button {
 
 					node.setSymbol(factored + "");
 
-					AlgebraActivity.reloadEquationPanel(original + " = "
+					Moderator.reloadEquationPanel(original + " = "
 							+ factor + " " + Operator.getMultiply().getSign()
 							+ " " + factored, Rule.INTEGER_FACTORIZATION);
 
@@ -492,7 +497,7 @@ class SeperateNegButton extends Button {
 							TypeML.Operator.getMultiply().getSign());
 					parent.addBefore(nodeIndex, TypeML.Number, "-1");
 				}
-				AlgebraActivity.reloadEquationPanel("-" + newSymbol + " = -1"
+				Moderator.reloadEquationPanel("-" + newSymbol + " = -1"
 						+ Operator.getMultiply().getSign() + newSymbol, null);
 			}
 		});
@@ -537,7 +542,7 @@ class DenominatorFlipButton extends Button {
 
 				parentFraction.remove();
 
-				AlgebraActivity.reloadEquationPanel("Multiply by Resiprocal",
+				Moderator.reloadEquationPanel("Multiply by Resiprocal",
 						Rule.FRACTION_DIVISION);
 			}
 		});
@@ -637,13 +642,11 @@ class EvaluatePromptButton extends Button {
 										.replaceAll((String) "\\.0$", "");
 								String unit = varSpec.unit;
 
-								MathNode quantityPlugIn = Moderator.mathTree
-										.NEW_NODE(TypeML.Number, value);
+								MathNode quantityPlugIn =varSpec.mathNode.replace(TypeML.Number, value);
 								quantityPlugIn.setAttribute(MathAttribute.Unit,
 										unit);
-								varSpec.mathNode.replace(quantityPlugIn);
 							}
-							AlgebraActivity.reloadEquationPanel(null, null);
+							Moderator.reloadEquationPanel(null, null);
 						}
 
 					}
@@ -760,7 +763,7 @@ class SubstituteButton extends Button {
 			} else {
 				subParent.replaceChild(substitute, possibleSub);
 			}
-			Moderator.switchToAlgebra(subIntoEqEl);
+			Moderator.makeAlgebra(subIntoEqEl, false);
 			break;
 
 		}
@@ -787,7 +790,7 @@ class UnravelButton extends Button {
 				String changeComment = toReplace.getHTMLString() + " = "
 						+ replacement.getHTMLString();
 				toReplace.replace(replacement);
-				AlgebraActivity.reloadEquationPanel(changeComment, rule);
+				Moderator.reloadEquationPanel(changeComment, rule);
 			}
 		});
 	}

@@ -180,7 +180,7 @@ public abstract class QuantitySpecification extends Prompt {
 						dataUnit);
 			}
 			disappear();
-			AlgebraActivity.reloadEquationPanel(null, null);
+			Moderator.reloadEquationPanel(null, null);
 		}
 	}
 

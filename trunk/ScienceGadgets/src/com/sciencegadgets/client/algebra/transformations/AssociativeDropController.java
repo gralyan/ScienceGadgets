@@ -3,6 +3,7 @@ package com.sciencegadgets.client.algebra.transformations;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Wrapper;
@@ -71,21 +72,21 @@ public class AssociativeDropController extends AbstractDropController {
 			parent.addBefore(dropIndex, drag);
 
 		}
-		AlgebraActivity.reloadEquationPanel("Associative Property", Rule.COMMUNATIVE_PROPERTY);
+		Moderator.reloadEquationPanel("Associative Property", Rule.COMMUNATIVE_PROPERTY);
 	}
 
 	@Override
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
 		getDropTarget().addStyleName("selectedDropWrapper");
-		AlgebraActivity.algTransformMenu.clear();
-		AlgebraActivity.algTransformMenu.add(switchResponse);
+		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
+		Moderator.getCurrentAlgebraActivity().lowerEqArea.add(switchResponse);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		super.onLeave(context);
 		getDropTarget().removeStyleName("selectedDropWrapper");
-		AlgebraActivity.algTransformMenu.remove(switchResponse);
+		Moderator.getCurrentAlgebraActivity().lowerEqArea.remove(switchResponse);
 	}
 }

@@ -15,11 +15,18 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.thirdparty.javascript.rhino.jstype.AllType;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CommunistPanel;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
 import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
+import com.sciencegadgets.client.algebra.transformations.Transformations;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -30,7 +37,7 @@ import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformati
  */
 public class AlgebaWrapper extends ZoomWrapper {
 
-	private BothSidesMenu bothSidesMenu;
+	private CommunistPanel algTransformMenu;
 
 	/**
 	 * Wrapper for symbols which allow for user interaction
@@ -43,8 +50,6 @@ public class AlgebaWrapper extends ZoomWrapper {
 	public AlgebaWrapper(MathNode node, EquationPanel eqPanel, Element element) {
 		super(node, eqPanel, element);
 
-		bothSidesMenu = new BothSidesMenu(node, element.getOffsetWidth() + "px");
-//		menu = new FlowPanel();
 	}
 
 	/**
@@ -56,52 +61,69 @@ public class AlgebaWrapper extends ZoomWrapper {
 		super.select();
 
 		if (this.equals(EquationPanel.selectedWrapper)) {
-			AlgebraActivity.bothSidesButtonMenu.clear();
-			AlgebraActivity.bothSidesButtonMenu.add(bothSidesMenu);
-			
-			AlgebraActivity.algTransformMenu.clear();
 
-			switch (node.getType()) {
-			case Exponential:
-				AlgebraicTransformations.unravelExpLog_check(node);
-				new ExponentialTransformations(node);
-				break;
-			case Fraction:
-				AlgebraicTransformations.denominatorFlip_check(node);
-				break;
-			case Sum:
-				break;
-			case Term:
-				break;
-			case Operation:
-				AlgebraicTransformations.operation(node);
-				break;
-			case Number:
-				AlgebraicTransformations.separateNegative_check(node);
-				AlgebraicTransformations.factorizeNumbers_check(node);
-				AlgebraicTransformations.unitConversion_check(node);
-				break;
-			case Variable:
-				AlgebraicTransformations.separateNegative_check(node);
-				AlgebraicTransformations.isolatedVariable_check(node);
-				break;
-			case Log:
-				AlgebraicTransformations.unravelLogExp_check(node);
-				new LogarithmicTransformations(node);
-				break;
-			case Trig:
-				AlgebraicTransformations.inverseTrig_check(node);
-				break;
+			if (algTransformMenu == null) {
 				
-			}
+				algTransformMenu = new CommunistPanel(true);
+				algTransformMenu.addStyleName("layoutRow");
+				algTransformMenu.setSize("100%", "100%");
 
+				Transformations transorms = new Transformations();
+
+				transorms.addAll(new BothSidesTransformations(node));
+
+				switch (node.getType()) {
+				case Exponential:
+					transorms.add(AlgebraicTransformations
+							.unravelExpLog_check(node));
+					transorms.addAll(new ExponentialTransformations(node));
+					break;
+				case Fraction:
+					transorms.add(AlgebraicTransformations
+							.denominatorFlip_check(node));
+					break;
+				case Sum:
+					break;
+				case Term:
+					break;
+				case Operation:
+					transorms.addAll(AlgebraicTransformations.operation(node));
+					break;
+				case Number:
+					transorms.add(AlgebraicTransformations
+							.separateNegative_check(node));
+					transorms.add(AlgebraicTransformations
+							.factorizeNumbers_check(node));
+					transorms.add(AlgebraicTransformations
+							.unitConversion_check(node));
+					break;
+				case Variable:
+					transorms.add(AlgebraicTransformations
+							.separateNegative_check(node));
+					transorms.addAll(AlgebraicTransformations
+							.isolatedVariable_check(node));
+					break;
+				case Log:
+					transorms.add(AlgebraicTransformations
+							.unravelLogExp_check(node));
+					transorms.addAll(new LogarithmicTransformations(node));
+					break;
+				case Trig:
+					transorms.add(AlgebraicTransformations
+							.inverseTrig_check(node));
+					break;
+				}
+
+				 algTransformMenu.addAll(transorms);
+			}
+			Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
+			Moderator.getCurrentAlgebraActivity().lowerEqArea.add(algTransformMenu);
 		}
 	}
 
 	public void unselect() {
 		super.unselect();
-		AlgebraActivity.algTransformMenu.clear();
-		AlgebraActivity.bothSidesButtonMenu.clear();
+		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
 	}
 
 }

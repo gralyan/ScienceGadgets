@@ -14,6 +14,7 @@
  */
 package com.sciencegadgets.client;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -25,45 +26,48 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
+import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 
 public class Moderator implements EntryPoint {
 
 	private static int historyCount = 0;
-	public static MathTree mathTree = null;
 	private int SGAWidth;
 	private static int SGAHeight;
 	public static RandomSpecPanel randomSpec = null;
 	public static AbsolutePanel scienceGadgetArea = RootPanel
 			.get("scienceGadgetArea");
-	private EquationBrowser browserPanel = null;
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
-	private static ConversionActivity conversionActivity;
-	private static AlgebraActivity algebraActivity;
+	private static Widget currentActivity = null;
+	private static AlgebraActivity currentAlgebraActivity;
 
-	private static Activity currentActivity = null;
-	public static LinkedList<Prompt> prompts = new LinkedList<Prompt>();
+	private static final HashMap<String, Widget> algebraActivityMap = new HashMap<String, Widget>();
+
+	private static ActivityType currentActivityType = null;
+	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
+	public static boolean isInEasyMode = false;
+	public static final String HISTORY_DELIMITER = "_";
 
 	@Override
 	public void onModuleLoad() {
+		History.addValueChangeHandler(new HistoryChange<String>());
+
 		// // Resize area when window resizes
 		fitWindow();
 		Window.addResizeHandler(new ResizeAreaHandler());
-
-		History.addValueChangeHandler(new HistoryChange<String>());
 
 		detectTouch();
 
@@ -82,62 +86,70 @@ public class Moderator implements EntryPoint {
 
 	}
 
-	public enum Activity {
-		browser, algebra, random_spec, insert_symbol, conversion, ;
+	public enum ActivityType {
+		browser, algebra, conversion;
 	}
 
-	public static void setActivity(Activity activity) {
-		if (!activity.equals(currentActivity)) {
-			currentActivity = activity;
-			History.newItem(activity.toString() + "_" + historyCount++);
-		}
+	public static void setActivity(ActivityType activityType, Widget activity) {
+		// if (!activity.equals(currentActivity)) {
+		currentActivityType = activityType;
+		String tolken = activityType.toString() + HISTORY_DELIMITER
+				+ historyCount++;
+		algebraActivityMap.put(tolken, activity);
+		History.newItem(tolken);
+		// }
 	}
 
-	public static void switchToAlgebra(Element mathML) {
-		setActivity(Activity.algebra);
+	public static AlgebraActivity getCurrentAlgebraActivity() {
+		return currentAlgebraActivity;
+	}
+
+	public static MathTree getCurrentMathTree() {
+		return currentAlgebraActivity.getMathTree();
+	}
+
+	public static void reloadEquationPanel(String changeComment, Rule rule) {
+		currentAlgebraActivity.reloadEquationPanel(changeComment, rule);
+	}
+
+	public static void makeAlgebra(Element mathML, boolean inEditMode) {
+		currentAlgebraActivity = new AlgebraActivity(mathML, inEditMode);
+		currentActivity = currentAlgebraActivity;
+		
+		switchToAlgebra();
+	}
+	public static void switchToAlgebra() {
+
 		scienceGadgetArea.clear();
+		scienceGadgetArea.add(currentAlgebraActivity);
 
-		algebraActivity = new AlgebraActivity();
-		scienceGadgetArea.add(algebraActivity);
+//		reloadEquationPanel(null, null);
 
-		if (mathML != null) {
-			mathTree = new MathTree(mathML, AlgebraActivity.inEditMode);
-			AlgebraActivity.reloadEquationPanel(null, null);
-		}
-	}
-
-	public static void reloadAlgebraActivity() {
-		setActivity(Activity.algebra);
-
-		AlgebraActivity.eqPanelHolder.clear();
-
-		scienceGadgetArea.clear();
-		scienceGadgetArea.add(algebraActivity);
-		AlgebraActivity.reloadEquationPanel(null, null);
+		setActivity(ActivityType.algebra, currentAlgebraActivity);
 	}
 
 	public static void switchToConversion(MathNode node) {
-		setActivity(Activity.conversion);
-		scienceGadgetArea.clear();
 
-		if (conversionActivity == null) {
-			conversionActivity = new ConversionActivity();
-			conversionActivity.getElement().setAttribute("id",
-					"conversionActivity");
+		ConversionActivity conversionActivity = new ConversionActivity();
+		currentActivity = conversionActivity;
+		currentActivity.getElement().setAttribute("id", "conversionActivity");
 
-		}
 		conversionActivity.load(node);
-		scienceGadgetArea.add(conversionActivity);
+
+		scienceGadgetArea.clear();
+		scienceGadgetArea.add(currentActivity);
+
+		setActivity(ActivityType.conversion, currentActivity);
 	}
 
 	public void switchToBrowser() {
-		setActivity(Activity.browser);
-		scienceGadgetArea.clear();
 
-		if (browserPanel == null) {
-			browserPanel = new EquationBrowser();
-		}
-		scienceGadgetArea.add(browserPanel);
+		currentActivity = new EquationBrowser();
+
+		scienceGadgetArea.clear();
+		scienceGadgetArea.add(currentActivity);
+
+		setActivity(ActivityType.browser, currentActivity);
 	}
 
 	class ResizeAreaHandler implements ResizeHandler {
@@ -145,8 +157,8 @@ public class Moderator implements EntryPoint {
 			@Override
 			public void run() {
 				fitWindow();
-				if (Activity.algebra.equals(currentActivity)) {
-					AlgebraActivity.reloadEquationPanel(null, null);
+				if (ActivityType.algebra.equals(currentActivityType)) {
+					reloadEquationPanel(null, null);
 				}
 				for (Prompt prompt : prompts) {
 					prompt.resize();
@@ -166,8 +178,6 @@ public class Moderator implements EntryPoint {
 
 		// Fill up the window
 		scienceGadgetArea.setSize(SGAWidth + "px", SGAHeight + "px");
-		// Window.scrollTo(0, scienceGadgetArea.getAbsoluteTop());
-
 	}
 
 	private void detectTouch() {
@@ -196,41 +206,31 @@ public class Moderator implements EntryPoint {
 
 		@Override
 		public void onValueChange(ValueChangeEvent<String> event) {
-			Activity newActivity;
-			newActivity = Activity
-					.valueOf(((java.lang.String) event.getValue()).split("_")[0]);
+			// ActivityType newActivity;
+			// newActivity = ActivityType
+			// .valueOf(token.split(HISTORY_DELIMITER)[0]);
 
-			if (AlgebraActivity.eqPanel != null) {
-				AlgebraActivity.eqPanel.removeFromParent();
+			java.lang.String token = ((java.lang.String) event.getValue());
+
+			if ("".equals(token)) {
+				return;
 			}
 
-			switch (newActivity) {
-			case browser:
-				// switchToBrowser();
-				if (browserPanel != null) {
-					scienceGadgetArea.clear();
-					scienceGadgetArea.add(browserPanel);
-				}
-				break;
-			case algebra:
-				if (algebraActivity != null) {
-					scienceGadgetArea.clear();
-					scienceGadgetArea.add(algebraActivity);
-					AlgebraActivity.reloadEquationPanel(null, null);
-				}
-				break;
-			case insert_symbol:
-				break;
-			case random_spec:
-				break;
-			case conversion:
-				if (conversionActivity != null) {
-					scienceGadgetArea.clear();
-					scienceGadgetArea.add(conversionActivity);
-				}
-				break;
+			Widget activity = algebraActivityMap.get(token);
 
+			if (activity != null) {
+				if (currentActivity == activity) {
+				} else {
+					scienceGadgetArea.clear();
+					scienceGadgetArea.add(activity);
+					currentActivity = activity;
+
+				}
 			}
+			if (currentActivity instanceof AlgebraActivity) {
+				reloadEquationPanel(null, null);
+			}
+			
 		}
 	}
 

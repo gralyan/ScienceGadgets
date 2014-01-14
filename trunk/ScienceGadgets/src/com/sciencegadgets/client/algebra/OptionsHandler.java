@@ -20,13 +20,16 @@ public class OptionsHandler implements ClickHandler {
 	Button closeOption = new Button("Close",new CloseClickHandler());
 	ToggleSlide easyHardOption;
 	ToggleSlide editSolveOption;
+	AlgebraActivity algebraActivity;
 
-	public OptionsHandler() {
+	public OptionsHandler(AlgebraActivity algebraActivity) {
+		this.algebraActivity = algebraActivity;
+		
 		optionsPopup.clear();
 
 		AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
 
-		int optionsButtonHeight = AlgebraActivity.upperEqArea.getOffsetHeight();
+		int optionsButtonHeight = algebraActivity.upperEqArea.getOffsetHeight();
 		optionsPopup.getElement().getStyle().setBackgroundColor("white");
 		optionsPopup.setPixelSize(mainPanel.getOffsetWidth() / 4,
 				mainPanel.getOffsetHeight() - optionsButtonHeight);
@@ -47,12 +50,12 @@ public class OptionsHandler implements ClickHandler {
 		
 		optionsPanel.add(closeOption);
 
-		if (!AlgebraActivity.inEditMode) {
-			easyHardOption = new ToggleSlide("Easy", "Hard", AlgebraActivity.isInEasyMode, new EasyHardClickHandler());
+		if (!algebraActivity.inEditMode) {
+			easyHardOption = new ToggleSlide("Easy", "Hard", Moderator.isInEasyMode, new EasyHardClickHandler());
 			optionsPanel.add(easyHardOption);
 		}
 		
-		editSolveOption = new ToggleSlide("Edit", "Solve", AlgebraActivity.inEditMode, new EditSolveClickHandler());
+		editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.inEditMode, new EditSolveClickHandler(algebraActivity));
 		optionsPanel.add(editSolveOption);
 		
 		optionsPopup.show();
@@ -81,17 +84,20 @@ class EasyHardClickHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent event) {
 		OptionsHandler.optionsPopup.hide();
-		AlgebraActivity.isInEasyMode = !AlgebraActivity.isInEasyMode;
-		AlgebraActivity.reloadEquationPanel(null, null);
+		Moderator.isInEasyMode = !Moderator.isInEasyMode;
+		Moderator.reloadEquationPanel(null, null);
 	}
 
 }
 
 class EditSolveClickHandler implements ClickHandler {
-
+	AlgebraActivity algebraActivity;
+	EditSolveClickHandler(AlgebraActivity algebraActivity){
+		this.algebraActivity = algebraActivity;
+	}
 	@Override
 	public void onClick(ClickEvent event) {
-		String equation = Moderator.mathTree.getRoot().toString();
+		String equation = algebraActivity.getMathTree().getRoot().toString();
 		if (equation.contains(ChangeNodeMenu.NOT_SET)) {
 			Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 					+ ") must be set or removed before solving");
@@ -102,8 +108,7 @@ class EditSolveClickHandler implements ClickHandler {
 		if (EquationPanel.selectedWrapper != null) {
 			EquationPanel.selectedWrapper.unselect();
 		}
-		AlgebraActivity.inEditMode = !AlgebraActivity.inEditMode;
-		Moderator.switchToAlgebra(Moderator.mathTree.getMathMLClone());
+		Moderator.makeAlgebra(Moderator.getCurrentMathTree().getMathMLClone(), !algebraActivity.inEditMode);
 	}
 
 }

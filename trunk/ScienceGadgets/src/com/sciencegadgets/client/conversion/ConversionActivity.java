@@ -93,10 +93,9 @@ public class ConversionActivity extends AbsolutePanel {
 			}
 			unitAttribute = unitAttribute.replaceFirst(
 					UnitUtil.BASE_DELIMITER_REGEX, "");
-			System.out.println(unitAttribute);
 			node.setSymbol(totalNode.getSymbol());
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
-			Moderator.reloadAlgebraActivity();
+			Moderator.switchToAlgebra();
 		}
 	}
 
@@ -114,6 +113,7 @@ public class ConversionActivity extends AbsolutePanel {
 		Element dummySide = DOM.createElement(TypeML.Number.getTag());
 		Element eq = DOM.createElement(TypeML.Operation.getTag());
 		eq.setInnerText("=");
+		dummySide.setAttribute(MathAttribute.Value.getName(), "1");
 		dummySide.setInnerText("1");
 		root.appendChild(dummySide);
 		root.appendChild(eq);
@@ -191,17 +191,24 @@ public class ConversionActivity extends AbsolutePanel {
 
 		dimensionalAnalysisArea.add(eqHTML);
 
-		// Move left side of equation into wrapper area, resize
+		// Move left side of equation into wrapper area
 		NodeList<Node> children = wrapperArea.getElement().getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			children.getItem(i).removeFromParent();
 		}
-		String size = eqHTML.getElement().getStyle().getFontSize();
+		//Resize working area
+		//TODO still dependent on parent equation
 		Element workingHTML = mTree.getLeftSide().getHTML();
-		workingHTML.getStyle().setFontSize(
-				Double.parseDouble(size.replace("%", "")),
-				com.google.gwt.dom.client.Style.Unit.PCT);
 		wrapperArea.getElement().appendChild(workingHTML);
+		double widthRatio = (double) wrapperArea.getOffsetWidth()/ workingHTML.getOffsetWidth();
+		double heightRatio = (double) wrapperArea.getOffsetHeight()/ workingHTML.getOffsetHeight();
+
+		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
+				: widthRatio;
+		// *95 for looser fit, *100 for percent
+		double fontPercent = smallerRatio * 95;
+		workingHTML.getStyle().setFontSize(fontPercent,
+				com.google.gwt.dom.client.Style.Unit.PCT);
 
 		// No need for equals sign either
 		mTree.getEquals().getHTML().removeFromParent();
@@ -218,19 +225,20 @@ public class ConversionActivity extends AbsolutePanel {
 				mTree.getWrappers().add(
 						new ConversionWrapper(unitDisplay, wrapperArea, this));
 			} else {
-				unitDisplay.wrappedNode.getHTML().getStyle().setDisplay(Display.NONE);
+				unitDisplay.wrappedNode.getHTML().getStyle()
+						.setDisplay(Display.NONE);
 				if (TypeML.Number.equals(jointNode.getType())) {
 					Element[] units = jointNode.getHTMLofUnits();
 					for (Element unit : units) {
-//						Style style = unit.getStyle();
-//						style.setTextDecoration(TextDecoration.LINE_THROUGH);
-//						style.setColor("red");
+						// Style style = unit.getStyle();
+						// style.setTextDecoration(TextDecoration.LINE_THROUGH);
+						// style.setColor("red");
 						unit.addClassName("lineThrough");
 					}
 				} else {
-//					Style style = jointNode.getHTML().getStyle();
-//					style.setTextDecoration(TextDecoration.LINE_THROUGH);
-//					style.setColor("red");
+					// Style style = jointNode.getHTML().getStyle();
+					// style.setTextDecoration(TextDecoration.LINE_THROUGH);
+					// style.setColor("red");
 					jointNode.getHTML().addClassName("lineThrough");
 				}
 			}
@@ -339,9 +347,11 @@ public class ConversionActivity extends AbsolutePanel {
 		totalNode.setSymbol(total.stripTrailingZeros().toEngineeringString());
 
 		selectedWrapper.getUnitDisplay().isCanceled = true;
-		
-		unitDisplays.add(new UnitDisplay(numWrap, numNode, !selectIsNumerator, true));
-		unitDisplays.add(new UnitDisplay(denWrap, denNode, selectIsNumerator, false));
+
+		unitDisplays.add(new UnitDisplay(numWrap, numNode, !selectIsNumerator,
+				true));
+		unitDisplays.add(new UnitDisplay(denWrap, denNode, selectIsNumerator,
+				false));
 
 		selectedWrapper.unselect();
 		reloadEquation();

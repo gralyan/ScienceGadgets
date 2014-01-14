@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.Moderator.Activity;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class RandomSpecPanel extends FlowPanel {

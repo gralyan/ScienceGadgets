@@ -237,8 +237,9 @@ public class EquationHTML extends HTML {
 
 		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
 				: widthRatio;
-		double fontPercent = smallerRatio * 95;// *95 for looser fit, *100 for
-												// percent
+		// *95 for looser fit, *100 for percent
+		double fontPercent = smallerRatio * 95;
+		
 		this.getElement().getStyle().setFontSize((fontPercent), Unit.PCT);
 	}
 

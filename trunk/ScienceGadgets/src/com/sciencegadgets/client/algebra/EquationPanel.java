@@ -29,6 +29,7 @@ public class EquationPanel extends AbsolutePanel {
 	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
 	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
 	private ArrayList<AlgebaWrapper> mathWrappers = new ArrayList<AlgebaWrapper>();
+	private AlgebraActivity algebraActivity;
 
 	public static final String OF_LAYER = "-ofLayer-";
 
@@ -38,9 +39,10 @@ public class EquationPanel extends AbsolutePanel {
 
 	// Width of equation compared to panel
 
-	public EquationPanel(MathTree mathTree) {
+	public EquationPanel(AlgebraActivity algebraActivity) {
 
-		this.mathTree = mathTree;
+		this.algebraActivity = algebraActivity;
+		this.mathTree = algebraActivity.getMathTree();
 
 		setStyleName("eqPanel");
 		// zIndex eqPanel=1 wrapper=2 menu=3
@@ -84,7 +86,7 @@ public class EquationPanel extends AbsolutePanel {
 		modelEqLayer = new EquationLayer(null, mathTree.getDisplayClone());
 		this.add(modelEqLayer);
 
-		if (!AlgebraActivity.inEditMode) {
+		if (!algebraActivity.inEditMode) {
 			findRootLayerMergingNodes(rootNode);
 			findFractionMergingNodes();
 		}
@@ -92,7 +94,7 @@ public class EquationPanel extends AbsolutePanel {
 
 		modelEqLayer.removeFromParent();
 
-		if (!AlgebraActivity.inEditMode) {
+		if (!algebraActivity.inEditMode) {
 			// Seperately place into root layer, skipped in draw()
 			for (MathNode merge : mergeRootNodes) {
 				placeNextEqWrappers(merge, rootLayer);
@@ -113,7 +115,7 @@ public class EquationPanel extends AbsolutePanel {
 		}
 
 		// Initialize focus to previous focus before reload
-		focusLayer = setFocus(AlgebraActivity.focusLayerId);
+		focusLayer = setFocus(algebraActivity.focusLayerId);
 		if (focusLayer == null) {
 			focusLayer = eqLayerMap.get(rootNode);
 		}
@@ -170,10 +172,10 @@ public class EquationPanel extends AbsolutePanel {
 	private void draw(MathNode node, EquationLayer parentLayer) {
 
 		EquationLayer eqLayer;
-		if (!AlgebraActivity.inEditMode && mergeFractionNodes.contains(node)) {
+		if (!algebraActivity.inEditMode && mergeFractionNodes.contains(node)) {
 			eqLayer = parentLayer;
 
-		} else if (!AlgebraActivity.inEditMode && mergeRootNodes.contains(node)) {
+		} else if (!algebraActivity.inEditMode && mergeRootNodes.contains(node)) {
 			eqLayer = rootLayer;
 
 		} else {
@@ -217,7 +219,7 @@ public class EquationPanel extends AbsolutePanel {
 				continue;
 			}
 			
-			if (!AlgebraActivity.inEditMode) {
+			if (!algebraActivity.inEditMode) {
 				if (mergeRootNodes.contains(node)
 						|| mergeFractionNodes.contains(node)) {
 					continue;
@@ -232,7 +234,7 @@ public class EquationPanel extends AbsolutePanel {
 					.getElementById(node.getId() + OF_LAYER
 							+ parentNode.getId());
 
-			if (AlgebraActivity.inEditMode) {// Edit Mode
+			if (algebraActivity.inEditMode) {// Edit Mode
 				EditWrapper wrap = new EditWrapper(node, this, layerNode);
 				eqLayer.addWrapper(wrap);
 			} else {// Solver Mode
@@ -283,7 +285,7 @@ public class EquationPanel extends AbsolutePanel {
 		fade.run(300, Duration.currentTimeMillis() - 100);
 
 		focusLayer = newFocus;
-		AlgebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
+		algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
 				"id");
 
 	}

@@ -28,7 +28,7 @@ public class EditWrapper extends ZoomWrapper {
 			}
 		}else{
 			changeNodeMenu.setNode(node);
-			AlgebraActivity.lowerEqArea.add(changeNodeMenu);
+			Moderator.getCurrentAlgebraActivity().lowerEqArea.add(changeNodeMenu);
 			changeNodeMenu.setVisible(false);
 		}
 	}

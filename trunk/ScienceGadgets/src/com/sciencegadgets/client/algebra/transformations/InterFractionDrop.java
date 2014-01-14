@@ -2,17 +2,16 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebaWrapper;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.AlgebaWrapper;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -91,7 +90,7 @@ public class InterFractionDrop extends AbstractDropController {
 			final BigDecimal total = targetNumber.divide(dragNumber,
 					MathContext.DECIMAL32);
 
-			if (AlgebraActivity.isInEasyMode) {
+			if (Moderator.isInEasyMode) {
 				divide(total);
 
 			} else {// prompt
@@ -215,20 +214,20 @@ public class InterFractionDrop extends AbstractDropController {
 
 		switch (dropType) {
 		case CANCEL:
-			AlgebraActivity.reloadEquationPanel("Cancellation",
+			Moderator.reloadEquationPanel("Cancellation",
 					Rule.CANCELLING_FRACTIONS);
 			break;
 		case DIVIDE:
-			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.DIVISION);
+			Moderator.reloadEquationPanel(dropHTML, Rule.DIVISION);
 			break;
 		case EXPONENTIAL:
-			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.EXPONENT_PROPERTIES);
+			Moderator.reloadEquationPanel(dropHTML, Rule.EXPONENT_PROPERTIES);
 			break;
 		case LOG_COMBINE:
-			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.LOGARITHM);
+			Moderator.reloadEquationPanel(dropHTML, Rule.LOGARITHM);
 			break;
 		case TRIG_COMBINE:
-			AlgebraActivity.reloadEquationPanel(dropHTML, Rule.TRIGONOMETRIC_FUNCTIONS);
+			Moderator.reloadEquationPanel(dropHTML, Rule.TRIGONOMETRIC_FUNCTIONS);
 			break;
 		}
 	}
@@ -263,15 +262,15 @@ public class InterFractionDrop extends AbstractDropController {
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
 		getDropTarget().addStyleName("selectedDropWrapper");
-		AlgebraActivity.algTransformMenu.clear();
-		AlgebraActivity.algTransformMenu.add(response);
+		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
+		Moderator.getCurrentAlgebraActivity().lowerEqArea.add(response);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		super.onLeave(context);
 		getDropTarget().removeStyleName("selectedDropWrapper");
-		AlgebraActivity.algTransformMenu.remove(response);
+		Moderator.getCurrentAlgebraActivity().lowerEqArea.remove(response);
 	}
 
 }

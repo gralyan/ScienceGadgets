@@ -9,7 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -18,6 +18,8 @@ import com.sciencegadgets.shared.TypeML.Operator;
 
 public class AdditionTransformations extends Transformations{
 
+	private static final long serialVersionUID = 1L;
+	
 	MathNode left;
 	MathNode operation;
 	MathNode right;
@@ -49,15 +51,14 @@ public class AdditionTransformations extends Transformations{
 			this.leftType = left.getType();
 			this.rightType = right.getType();
 
-			check(addNumbers_check());
-			check(addSimilar_check());
-			check(factorLikeTerms_check());
-			check(factorWithBase_check());
-			check(factorWithTermChild_check());
-			check(addFractions_check());
-			check(logCombination_check());
+			add(addNumbers_check());
+			add(addSimilar_check());
+			add(factorLikeTerms_check());
+			add(factorWithBase_check());
+			add(factorWithTermChild_check());
+			add(addFractions_check());
+			add(logCombination_check());
 
-			addButtons();
 	}
 
 	private AddTransformButton addNumbers_check() {
@@ -294,7 +295,7 @@ class AddZeroButton extends AddTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel(other.getHTML() + " + 0 = "
+				Moderator.reloadEquationPanel(other.getHTML() + " + 0 = "
 						+ other.getHTML(), Rule.ADDITION);
 
 			}
@@ -335,7 +336,7 @@ class AddNumbersButton extends AddTransformButton {
 				}
 				final BigDecimal totalValue = total;
 
-				if (AlgebraActivity.isInEasyMode) {
+				if (Moderator.isInEasyMode) {
 					addNumbers(left, right, totalValue, leftValue, rightValue);
 
 				} else {// prompt
@@ -373,7 +374,7 @@ class AddNumbersButton extends AddTransformButton {
 		operation.remove();
 		parent.decase();
 
-		AlgebraActivity.reloadEquationPanel(leftValue.stripTrailingZeros()
+		Moderator.reloadEquationPanel(leftValue.stripTrailingZeros()
 				.toEngineeringString()
 				+ " "
 				+ operation.toString()
@@ -465,7 +466,7 @@ class FactorLikeTermsButton extends AddTransformButton {
 				leftRemaining.decase();
 				rightRemaining.decase();
 
-				AlgebraActivity.reloadEquationPanel("Factor Like Terms",
+				Moderator.reloadEquationPanel("Factor Like Terms",
 						Rule.COMBINING_LIKE_TERMS);
 			}
 		});
@@ -500,7 +501,7 @@ class FactorBaseButton extends AddTransformButton {
 				exp.append(TypeML.Operation, Operator.MINUS.getSign());
 				exp.append(TypeML.Number, "1");
 
-				AlgebraActivity.reloadEquationPanel("Factor with Base",
+				Moderator.reloadEquationPanel("Factor with Base",
 						Rule.FACTORIZATION);
 
 			}
@@ -559,7 +560,7 @@ class FactorWithTermChildButton extends AddTransformButton {
 
 				term.decase();
 
-				AlgebraActivity.reloadEquationPanel("Factor",
+				Moderator.reloadEquationPanel("Factor",
 						Rule.FACTORIZATION);
 			}
 		});
@@ -594,7 +595,7 @@ class AddFractionsButton extends AddTransformButton {
 				left.remove();
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Add Fractions",
+				Moderator.reloadEquationPanel("Add Fractions",
 						Rule.FRACTION_ADDITION);
 			}
 		});
@@ -633,7 +634,7 @@ class AddLogsButton extends AddTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Combine Log",
+				Moderator.reloadEquationPanel("Combine Log",
 						Rule.LOGARITHM);
 			}
 		});
@@ -685,7 +686,7 @@ class AddSimilarButton extends AddTransformButton {
 				operation.remove();
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Add similar",
+				Moderator.reloadEquationPanel("Add similar",
 						Rule.COMBINING_LIKE_TERMS);
 			}
 		});

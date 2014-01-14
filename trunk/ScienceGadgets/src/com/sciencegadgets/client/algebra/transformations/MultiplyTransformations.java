@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -18,6 +19,8 @@ import com.sciencegadgets.shared.UnitUtil;
 
 public class MultiplyTransformations extends Transformations {
 
+	private static final long serialVersionUID = 3127633894356779264L;
+	
 	MathNode left;
 	MathNode operation;
 	MathNode right;
@@ -36,24 +39,21 @@ public class MultiplyTransformations extends Transformations {
 		this.leftType = left.getType();
 		this.rightType = right.getType();
 
-		check(multiplyNumbers_check());
-		check(multiplyFraction_check());
-		check(multiplyDistribution_check());
-		check(multiplyCombineBases_check());
-		check(multiplyCombineExponents_check());
-		check(logRule_check());
-
-		addButtons();
+		add(multiplySpecialNumber_check());
+		add(multiplyNumbers_check());
+		add(multiplyFraction_check());
+		add(multiplyDistribution_check());
+		add(multiplyCombineBases_check());
+		add(multiplyCombineExponents_check());
+		add(logRule_check());
 
 	}
 	/**
-	 * Four button possibilities depending if either of the nodes is -1, 0 1 or
-	 * everything else. -1, 0 and 1 happen automatically. Everything else
-	 * prompts for the product unless the user skill level is high enough
+	 * Multiplying by one of the specially designated numbers (-1, 0 1)
 	 */
-	private MultiplyTransformButton multiplyNumbers_check() {
+	private MultiplyTransformButton multiplySpecialNumber_check() {
 
-		if (!TypeML.Number.equals(leftType) || !TypeML.Number.equals(rightType)) {
+		if (!TypeML.Number.equals(leftType) && !TypeML.Number.equals(rightType)) {
 			return null;
 		}
 
@@ -80,12 +80,29 @@ public class MultiplyTransformations extends Transformations {
 			} else if (leftValue.compareTo(negOne) == same) {
 				return new MultiplyNegOneButton(this, right, left);
 			}
-
-			return new MultiplyNumbersButton(this);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			JSNICalls
 					.error("A number node couldn't be parsed: " + e.toString());
+			return null;
+		}
+		return null;
+	}
+	/**
+	 * Multiply two numbers, prompts for the product unless the user skill level is high enough
+	 */
+	private MultiplyTransformButton multiplyNumbers_check() {
+		
+		if (!(TypeML.Number.equals(leftType) && TypeML.Number.equals(rightType))) {
+			return null;
+		}
+		
+		try {
+			return new MultiplyNumbersButton(this);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			JSNICalls
+			.error("A number node couldn't be parsed: " + e.toString());
 			return null;
 		}
 	}
@@ -248,7 +265,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel(otherSymbol + " "
+				Moderator.reloadEquationPanel(otherSymbol + " "
 						+ operation.toString() + " 0 = 0", Rule.MULTIPLICATION);
 			}
 		});
@@ -275,7 +292,7 @@ class MultiplyOneButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel(otherSymbol + " "
+				Moderator.reloadEquationPanel(otherSymbol + " "
 						+ operation.toString() + " 1 = " + otherSymbol,
 						Rule.MULTIPLICATION);
 			}
@@ -305,7 +322,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel(otherSymbol + " "
+				Moderator.reloadEquationPanel(otherSymbol + " "
 						+ operation.toString() + " -1 = -" + otherSymbol,
 						Rule.MULTIPLICATION);
 			}
@@ -328,7 +345,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 				final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 				final BigDecimal totalValue = leftValue.multiply(rightValue);
 
-				if (AlgebraActivity.isInEasyMode) {
+				if (Moderator.isInEasyMode) {
 					multiplyNumbers(left, right, totalValue, leftValue,
 							rightValue);
 
@@ -378,7 +395,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		AlgebraActivity.reloadEquationPanel(leftValue.stripTrailingZeros()
+		Moderator.reloadEquationPanel(leftValue.stripTrailingZeros()
 				.toEngineeringString()
 				+ " "
 				+ operation.toString()
@@ -419,7 +436,7 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Distribute",
+				Moderator.reloadEquationPanel("Distribute",
 						Rule.DISTRIBUTIVE_PROPERTY);
 			}
 		});
@@ -449,7 +466,7 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Combine Exponents",
+				Moderator.reloadEquationPanel("Combine Exponents",
 						Rule.EXPONENT_PROPERTIES);
 
 			}
@@ -497,7 +514,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Combine Bases",
+				Moderator.reloadEquationPanel("Combine Bases",
 						Rule.EXPONENT_PROPERTIES);
 			}
 		});
@@ -526,7 +543,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Multiply with Fraction",
+				Moderator.reloadEquationPanel("Multiply with Fraction",
 						Rule.FRACTION_MULTIPLICATION);
 			}
 		});
@@ -559,7 +576,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Multiply Fractions",
+				Moderator.reloadEquationPanel("Multiply Fractions",
 						Rule.FRACTION_MULTIPLICATION);
 			}
 		});
@@ -584,7 +601,7 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				AlgebraActivity.reloadEquationPanel("Log Power Rule",
+				Moderator.reloadEquationPanel("Log Power Rule",
 						Rule.LOGARITHM);
 			}
 		});

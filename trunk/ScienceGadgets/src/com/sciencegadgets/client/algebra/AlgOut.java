@@ -26,9 +26,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
 public class AlgOut extends FlowPanel {
+
+	private AlgebraActivity algebraActivity;
 
 	boolean expanded = false;
 	public String origionalHeightStr;
@@ -36,10 +39,11 @@ public class AlgOut extends FlowPanel {
 	FlowPanel firstRow = new FlowPanel();
 	public static final String UP_ARROW = "\u2191";
 
-	public AlgOut() {
+	public AlgOut(AlgebraActivity algebraActivity) {
+		this.algebraActivity = algebraActivity;
 		addStyleName("algOut");
 
-		origionalHeightStr = AlgebraActivity.upperEqArea.getElement()
+		origionalHeightStr = algebraActivity.upperEqArea.getElement()
 				.getStyle().getHeight();
 
 		if (Moderator.isTouch) {
@@ -74,15 +78,14 @@ public class AlgOut extends FlowPanel {
 
 		add(new AlgOutRow(changeComment, rule, mathTree));
 
-		if (changeComment.contains(BothSidesMenu.BOTH_SIDES)) {
-			add(new AlgOutRow(changeComment.replace(BothSidesMenu.BOTH_SIDES,
+		if (changeComment.contains(BothSidesTransformations.BOTH_SIDES)) {
+			add(new AlgOutRow(changeComment.replace(BothSidesTransformations.BOTH_SIDES,
 					UP_ARROW)));
 		}
 
-		scrollToBottom();
 	}
 
-	private void scrollToBottom() {
+	void scrollToBottom() {
 		getElement()
 				.setScrollTop(
 						getElement().getScrollHeight()
@@ -140,7 +143,7 @@ public class AlgOut extends FlowPanel {
 
 	class AlgOutSlide extends Animation {
 
-		private FlowPanel alg = AlgebraActivity.upperEqArea;;
+		private FlowPanel alg = algebraActivity.upperEqArea;;
 		int heightDiff = 0;
 		private int direction;
 		private int startingHeight;

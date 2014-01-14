@@ -21,6 +21,7 @@ import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.Moderator;
 
 public class WrapDragController extends PickupDragController {
 
@@ -47,7 +48,7 @@ public class WrapDragController extends PickupDragController {
 	@Override
 	public void dragStart() {
 		super.dragStart();
-		if (AlgebraActivity.isInEasyMode) {
+		if (Moderator.isInEasyMode) {
 			for (DropController dropC : dropControllers) {
 				Widget target = dropC.getDropTarget();
 				if(!(target instanceof AbsolutePanel)){
