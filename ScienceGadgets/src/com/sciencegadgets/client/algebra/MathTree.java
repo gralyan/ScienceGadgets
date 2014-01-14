@@ -14,6 +14,8 @@
  */
 package com.sciencegadgets.client.algebra;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -267,11 +269,13 @@ public class MathTree {
 			com.google.gwt.user.client.Element newNode = DOM.createElement(tag);
 			newNode.setAttribute("id", createId());
 
+			this.mlNode = newNode;
+
 			if (!"".equals(symbol)) {
-				newNode.setInnerText(symbol);
+				setSymbol(symbol);
+//				newNode.setInnerText(symbol);
 			}
 
-			this.mlNode = newNode;
 		}
 
 		/**
@@ -408,7 +412,7 @@ public class MathTree {
 				for (int i = children.size(); i > 0; i--) {
 					addBefore(index, children.get(i - 1));
 				}
-				
+
 				node.remove();
 
 			} else {
@@ -597,29 +601,38 @@ public class MathTree {
 		}
 
 		public void setSymbol(String symbol) {
-			mlNode.setInnerText(symbol);
 
-			for (Element similar : getSimilarHTMLFromAllLayers()) {
-				similar.setInnerText(symbol);
+			if (TypeML.Number.equals(getType())) {
+				setAttribute(MathAttribute.Value, symbol);
+				String roundedValue = new BigDecimal(symbol).round(
+						new MathContext(2)).toString();
+				String tilda = symbol.equals(roundedValue) ? "" : "~";
+				mlNode.setInnerText(tilda + roundedValue);
+			} else {
+				mlNode.setInnerText(symbol);
 			}
-		}
-
-		public ArrayList<Element> getSimilarHTMLFromAllLayers() {
-			String id = getMLNode().getAttribute("id");
-			ArrayList<Element> similar = new ArrayList<Element>();
-			for (int i = 0; i < wrappers.size(); i++) {
-				Element possible = Document.get().getElementById(
-						id + EquationPanel.OF_LAYER + "ML" + i);
-				if (possible != null) {
-					similar.add(possible);
-				}
-			}
-			return similar;
 		}
 
 		public String getSymbol() {
-			return mlNode.getInnerText();
+			if (TypeML.Number.equals(getType())) {
+				return getAttribute(MathAttribute.Value);
+			} else {
+				return mlNode.getInnerText();
+			}
 		}
+
+		// public ArrayList<Element> getSimilarHTMLFromAllLayers() {
+		// String id = getMLNode().getAttribute("id");
+		// ArrayList<Element> similar = new ArrayList<Element>();
+		// for (int i = 0; i < wrappers.size(); i++) {
+		// Element possible = Document.get().getElementById(
+		// id + EquationPanel.OF_LAYER + "ML" + i);
+		// if (possible != null) {
+		// similar.add(possible);
+		// }
+		// }
+		// return similar;
+		// }
 
 		public Wrapper wrap(Wrapper wrap) {
 			wrapper = wrap;
@@ -733,7 +746,8 @@ public class MathTree {
 		}
 
 		/**
-		 * This should only be done after {@link MathTree#reloadDisplay(boolean)}
+		 * This should only be done after
+		 * {@link MathTree#reloadDisplay(boolean)}
 		 * 
 		 * @return The current HTML element associated with this node
 		 */
@@ -922,17 +936,18 @@ public class MathTree {
 					}
 				}
 				break;
-		case Trig:// Confirm the function attribute exists
-			if (!inEditMode) {
+			case Trig:// Confirm the function attribute exists
+				if (!inEditMode) {
 					if ("".equals(getAttribute(MathAttribute.Function))) {
 						JSNICalls
-						.error("Trig functiond must have function attribute: "
-								+ getParent().toString());
+								.error("Trig functiond must have function attribute: "
+										+ getParent().toString());
 						// Damage control
-						setAttribute(MathAttribute.Function, TrigFunctions.sin.toString());
+						setAttribute(MathAttribute.Function,
+								TrigFunctions.sin.toString());
 					}
 				}
-			break;
+				break;
 			}
 		}
 

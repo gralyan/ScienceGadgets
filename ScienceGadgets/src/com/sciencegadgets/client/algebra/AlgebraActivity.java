@@ -1,17 +1,16 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
@@ -26,55 +25,52 @@ public class AlgebraActivity extends Composite {
 			.create(AlgebraUiBinder.class);
 
 	@UiField
-	static FlowPanel upperEqArea;
+	FlowPanel upperEqArea;
 	@UiField
-	public static Button optionsButton;
+	public Button optionsButton;
 	@UiField
-	public static FlowPanel upperRightEqArea;
+	public FlowPanel upperRightEqArea;
 
 	@UiField
-	public static SimplePanel eqPanelHolder;
+	public SimplePanel eqPanelHolder;
 
 	@UiField
-	public static FlowPanel lowerEqArea;
+	public FlowPanel lowerEqArea;
 	
-	public static EquationPanel eqPanel = null;
+	public EquationPanel eqPanel = null;
 
-	public static FlowPanel algTransformMenu = new CommunistPanel(true);
-	public static FlowPanel bothSidesButtonMenu = new FlowPanel();
-	public static AlgOut algOut = null;
+	public AlgOut algOut = null;
 	
 	private static Button saveEquationButton = new Button("Save Equation",
 			new SaveButtonHandler());
 
-	public static String focusLayerId = null;
-	public static boolean isInEasyMode = false;
-	public static boolean inEditMode = false;
+	public String focusLayerId = null;
+	public boolean inEditMode = false;
 	public static VariableSpecification varSpec;
 	public static NumberSpecification numSpec;
+	private MathTree mathTree = null;
 
-	public AlgebraActivity() {
+	public AlgebraActivity(Element mathML, boolean inEditMode) {
 		initWidget(algebraUiBinder.createAndBindUi(this));
+		
+		this.inEditMode = inEditMode;
+		mathTree = new MathTree(mathML, inEditMode);
 
-		optionsButton.addClickHandler(new OptionsHandler());
+		optionsButton.addClickHandler(new OptionsHandler(this));
 
 		if (inEditMode) {
 			saveEquationButton.setStyleName("saveEquationButton");
 			upperRightEqArea.add(saveEquationButton);
 		} else {
-			algOut = new AlgOut();
+			algOut = new AlgOut(this);
 			upperRightEqArea.add(algOut);
-			
-			algTransformMenu.addStyleName("layoutRow");
-			algTransformMenu.setSize("30%", "100%");
-			lowerEqArea.add(algTransformMenu);
-			
-			bothSidesButtonMenu.addStyleName("layoutRow");
-			bothSidesButtonMenu.setSize("70%", "100%");
-			lowerEqArea.add(bothSidesButtonMenu);
 		}
 		
 
+	}
+	
+	public MathTree getMathTree() {
+		return mathTree;
 	}
 
 	/**
@@ -83,26 +79,29 @@ public class AlgebraActivity extends Composite {
 	 * @param changeComment
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
-	public static void reloadEquationPanel(String changeComment, Rule rule) {
+	public void reloadEquationPanel(String changeComment, Rule rule) {
 		if (changeComment != null) {
 			algOut.updateAlgOut(changeComment, rule,
-					Moderator.mathTree);
+					mathTree);
 		}
 		eqPanelHolder.clear();
 
-		Moderator.mathTree.validateTree();
-		Moderator.mathTree.reloadDisplay(true);
-		eqPanel = new EquationPanel(Moderator.mathTree);
+		mathTree.validateTree();
+		mathTree.reloadDisplay(true);
+		eqPanel = new EquationPanel(this);
 		eqPanelHolder.add(eqPanel);
 
 		if (!inEditMode) {
-			algTransformMenu.clear();
-			bothSidesButtonMenu.clear();
+			lowerEqArea.clear();
+			algOut.scrollToBottom();
 		}
 
 	}
-	
-	public static void addTransformation(Button transformationButton) {
-		algTransformMenu.add(transformationButton);
+
+	@Override
+	protected void onDetach() {
+		eqPanelHolder.clear();
+		super.onDetach();
 	}
+	
 }

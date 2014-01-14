@@ -4,7 +4,13 @@
 	<ui:style>
 		.workPanel {
 			height: 100%;
-			width: 33%;
+			width: 25%;
+			display: inline-block;
+			vertical-align: top;
+		}
+		.workPanelMain {
+			height: 100%;
+			width: 50%;
 			display: inline-block;
 			vertical-align: top;
 		}
@@ -24,9 +30,10 @@
 			<g:FlowPanel ui:field="unitSelectionArea" addStyleNames="{style.workPanel}"></g:FlowPanel>
 
 			<g:AbsolutePanel ui:field="wrapperArea"
-				addStyleNames="{style.workPanel}"></g:AbsolutePanel>
+				addStyleNames="{style.workPanelMain}"></g:AbsolutePanel>
 
 			<g:Button ui:field="convertButton" text="Convert" addStyleNames="{style.workPanel}"></g:Button>
+			
 		</g:FlowPanel>
 
 

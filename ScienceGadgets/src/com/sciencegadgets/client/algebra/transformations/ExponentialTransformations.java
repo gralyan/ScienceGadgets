@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -17,7 +18,9 @@ import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitUtil;
 
 public class ExponentialTransformations extends Transformations{
-
+	
+	private static final long serialVersionUID = -4899066857084144484L;
+	
 	MathNode exponential;
 	MathNode base;
 	MathNode exponent;
@@ -31,13 +34,11 @@ public class ExponentialTransformations extends Transformations{
 		baseType = base.getType();
 		exponentType = exponent.getType();
 		
-		check(exponentialExpand_check());
-		check(exponentialEvaluate_check());
-		check(exponentialExponentiate_check());
-		check(exponentialFraction_check());
-		check(exponentialFlip_check());
-
-		addButtons();
+		add(exponentialExpand_check());
+		add(exponentialEvaluate_check());
+		add(exponentialExponentiate_check());
+		add(exponentialFraction_check());
+		add(exponentialFlip_check());
 	}
 
 	private ExponentialTransformButton exponentialEvaluate_check() {
@@ -129,7 +130,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 							* expValue);
 				}
 
-				if (AlgebraActivity.isInEasyMode) {
+				if (Moderator.isInEasyMode) {
 					evaluateExponential(baseValue, expValue, totalValue,
 							totalUnitMap);
 
@@ -158,7 +159,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 		String newUnit = UnitUtil.getUnitAttribute(newUnitMap);
 		evaluated.setAttribute(MathAttribute.Unit, newUnit);
 
-		AlgebraActivity.reloadEquationPanel(baseValue.stripTrailingZeros()
+		Moderator.reloadEquationPanel(baseValue.stripTrailingZeros()
 				.toEngineeringString()
 				+ " ^ "
 				+ expValue
@@ -209,7 +210,7 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 					exponential.remove();
 				}
 
-				AlgebraActivity.reloadEquationPanel("Expand",
+				Moderator.reloadEquationPanel("Expand",
 						Rule.EXPONENT_PROPERTIES);
 			}
 		});
@@ -238,7 +239,7 @@ class ExponentialExponentialeButton extends ExponentialTransformButton {
 				
 				base.replace(innerBase);
 				
-				AlgebraActivity.reloadEquationPanel("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
+				Moderator.reloadEquationPanel("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
 						Rule.EXPONENT_PROPERTIES);
 			}
 		});
@@ -266,7 +267,7 @@ class ExponentialFractionButton extends ExponentialTransformButton {
 				
 				exponential.replace(base);
 				
-				AlgebraActivity.reloadEquationPanel("(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)",
+				Moderator.reloadEquationPanel("(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)",
 						Rule.EXPONENT_PROPERTIES);
 			}
 		});
@@ -296,7 +297,7 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 				
 				exponent.setSymbol(exponent.getSymbol().replace(Operator.MINUS.getSign(), ""));
 				
-				AlgebraActivity.reloadEquationPanel("x<sup>-b</sup> = (1/x)<sup>b</sup>",
+				Moderator.reloadEquationPanel("x<sup>-b</sup> = (1/x)<sup>b</sup>",
 						Rule.EXPONENT_PROPERTIES);
 			}
 		});

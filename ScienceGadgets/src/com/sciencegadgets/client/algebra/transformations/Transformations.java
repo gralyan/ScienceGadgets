@@ -1,27 +1,37 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 import com.google.gwt.user.client.ui.Button;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 
-public class Transformations {
-	
-	LinkedList<Button> transformations = new LinkedList<Button>();
-	
-	void addButtons() {
-		if (AlgebraActivity.isInEasyMode && transformations.size() == 1) {
-			transformations.getFirst().click();
-		} else {
-			for (Button transform : transformations) {
-				AlgebraActivity.addTransformation(transform);
-			}
-		}
-	}
+public class Transformations extends LinkedList<Button> {
 
-	protected void check(Button tButt) {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3043410062241803505L;
+
+	@Override
+	public boolean add(Button tButt) {
 		if (tButt != null) {
-			transformations.add(tButt);
+			super.add(tButt);
+			return true;
 		}
+		return false;
 	}
+
+	@Override
+	public boolean addAll(Collection<? extends Button> c) {
+		if (c != null) {
+			for (Button b : c) {
+				if (b == null) {
+					remove(b);
+				}
+			}
+			return super.addAll(c);
+		}
+		return false;
+	}
+
 }

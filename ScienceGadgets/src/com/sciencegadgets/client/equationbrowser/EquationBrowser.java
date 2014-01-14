@@ -25,13 +25,14 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 //
 public class EquationBrowser extends FlowPanel {
 
-	ScienceBrowser scienceBrowser = new ScienceBrowser();
-	AlgebraBrowser algebraBrowser = new AlgebraBrowser();
+	ScienceBrowser scienceBrowser = new ScienceBrowser(this);
+	AlgebraBrowser algebraBrowser = new AlgebraBrowser(this);
 	private RadioButton modeAlg = new RadioButton("mode", "Algebra");
 	private RadioButton modeSci = new RadioButton("mode", "Science");
 	private RadioButton modeEdit = new RadioButton("mode2", "Edit");
 	private RadioButton modeSolve = new RadioButton("mode2", "Solve");
 	EquationBrowser equationBrowser = this;
+	public boolean inEditMode;
 
 	public EquationBrowser() {
 
@@ -55,11 +56,7 @@ public class EquationBrowser extends FlowPanel {
 		modeSolve.addClickHandler(new ModeSelectHandler(Mode.solve));
 
 		modeAlg.setValue(true, true);
-		if (AlgebraActivity.inEditMode) {
-			modeEdit.setValue(true, true);
-		} else {
 			modeSolve.setValue(true, true);
-		}
 		this.add(algebraBrowser);
 	}
 
@@ -89,10 +86,10 @@ public class EquationBrowser extends FlowPanel {
 				equationBrowser.add(scienceBrowser);
 				break;
 			case edit:
-				AlgebraActivity.inEditMode = true;
+				inEditMode = true;
 				break;
 			case solve:
-				AlgebraActivity.inEditMode = false;
+				inEditMode = false;
 				break;
 
 			}

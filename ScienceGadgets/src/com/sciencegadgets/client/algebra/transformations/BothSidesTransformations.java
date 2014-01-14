@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.algebra;
+package com.sciencegadgets.client.algebra.transformations;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -7,15 +7,20 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
-import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
-public class BothSidesMenu extends CommunistPanel {
+public class BothSidesTransformations extends Transformations{
+	
+	private static final long serialVersionUID = 1L;
+	
 	private MathNode node;
 	private MathNode parentNode;
 	private MathTree tree;
@@ -33,20 +38,16 @@ public class BothSidesMenu extends CommunistPanel {
 			.getSign();
 	private static final String DIVIDE = TypeML.Operator.DIVIDE.getSign();
 
-	public BothSidesMenu(MathNode node, String width) {
-		super(true);
+	public BothSidesTransformations(MathNode node) {
+
+		TypeML type = node.getType();
+		if (TypeML.Operation.equals(type)) {
+			return;
+		}
 
 		this.node = node;
 		tree = node.getTree();
 		parentNode = node.getParent();
-		TypeML type = node.getType();
-		if (TypeML.Operation.equals(node.getType())) {
-			return;
-		}
-
-		// zIndex eqPanel=1 wrapper=2 menu=3
-		this.getElement().getStyle().setZIndex(3);
-		this.addStyleName("fillParent");
 
 		if (parentNode.isLeftSide() || parentNode.isRightSide()) {
 			switch (type) {
@@ -267,7 +268,7 @@ public class BothSidesMenu extends CommunistPanel {
 
 			oldParent.decase();
 
-			AlgebraActivity.reloadEquationPanel(changeComment,
+			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
@@ -321,7 +322,7 @@ public class BothSidesMenu extends CommunistPanel {
 
 			oldParent.decase();
 
-			AlgebraActivity.reloadEquationPanel(changeComment,
+			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
@@ -374,7 +375,7 @@ public class BothSidesMenu extends CommunistPanel {
 						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
 			}
 
-			AlgebraActivity.reloadEquationPanel(changeComment,
+			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
@@ -427,7 +428,7 @@ public class BothSidesMenu extends CommunistPanel {
 			// clean source side
 			oldParent.replace(oldParent.getFirstChild());
 
-			AlgebraActivity.reloadEquationPanel(changeComment,
+			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
 	}
@@ -461,7 +462,7 @@ public class BothSidesMenu extends CommunistPanel {
 			// clean source side
 			node.replace(node.getFirstChild());
 
-			AlgebraActivity.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
 		}
 	}
 
@@ -488,7 +489,7 @@ public class BothSidesMenu extends CommunistPanel {
 			// clean source side
 			oldParent.replace(oldParent.getChildAt(1));
 
-			AlgebraActivity.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
 		}
 	}
 
@@ -520,7 +521,7 @@ public class BothSidesMenu extends CommunistPanel {
 			// clean source side
 			node.replace(node.getFirstChild());
 
-			AlgebraActivity.reloadEquationPanel(changeComment,
+			Moderator.reloadEquationPanel(changeComment,
 					Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
 		}
 	}

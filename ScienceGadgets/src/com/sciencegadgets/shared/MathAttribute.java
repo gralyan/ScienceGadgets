@@ -2,7 +2,7 @@ package com.sciencegadgets.shared;
 
 public enum MathAttribute {
 
-	Randomness("data-randomness"), Unit("data-unit"), Function("data-function"), LogBase("data-base");
+	Randomness("data-randomness"), Unit("data-unit"), Function("data-function"), LogBase("data-base"), Value("data-value");
 	
 	String name;
 	
