@@ -1,9 +1,5 @@
 package com.sciencegadgets.shared;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
@@ -87,14 +83,12 @@ public class UnitUtil {
 			}
 
 			Element symbolDiv = DOM.createDiv();
-			symbolDiv.addClassName(TypeML.Exponential
-					.asChild(true));
+			symbolDiv.addClassName(TypeML.Exponential.asChild(true));
 			symbolDiv.setInnerText(symbol);
 			unitDiv.appendChild(symbolDiv);
 
 			Element expDiv = DOM.createDiv();
-			expDiv.addClassName(TypeML.Exponential
-					.asChild(false));
+			expDiv.addClassName(TypeML.Exponential.asChild(false));
 			expDiv.setInnerText(exponent);
 			unitDiv.appendChild(expDiv);
 		}
@@ -102,10 +96,8 @@ public class UnitUtil {
 		if (denominator.getChildCount() > 0) {
 			Element frac = DOM.createDiv();
 			frac.addClassName(TypeML.Term.asChild());
-			numerator.addClassName(TypeML.Fraction
-					.asChild(true));
-			denominator.addClassName(TypeML.Fraction
-					.asChild(false));
+			numerator.addClassName(TypeML.Fraction.asChild(true));
+			denominator.addClassName(TypeML.Fraction.asChild(false));
 			frac.appendChild(numerator);
 			frac.appendChild(denominator);
 			frac.addClassName(UNIT_CLASSNAME);
@@ -162,50 +154,19 @@ public class UnitUtil {
 		return att.split(BASE_DELIMITER_REGEX);
 	}
 
-	public static LinkedHashMap<String, Integer> getUnitMap(MathNode mNode) {
-		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
-		if (!"".equals(mNode.getUnitAttribute())) {
-			String[] basics = getUnits(mNode);
-			for (String basic : basics) {
-				String[] baseAndExp = basic.split(EXP_DELIMITER_REGEX);
-				map.put(baseAndExp[0], Integer.parseInt(baseAndExp[1]));
-			}
-		}
-		return map;
-	}
-
-	public static String getUnitAttribute(HashMap<String, Integer> unitMap) {
-
-		String dataUnitAttribute = "";
-		for (Entry<String, Integer> unitEntry : unitMap.entrySet()) {
-			if(unitEntry.getValue() != 0) {
-			dataUnitAttribute = dataUnitAttribute + UnitUtil.BASE_DELIMITER
-					+ unitEntry.getKey() + UnitUtil.EXP_DELIMITER
-					+ unitEntry.getValue();
-			}
-		}
-		dataUnitAttribute = dataUnitAttribute.replaceFirst(UnitUtil.BASE_DELIMITER_REGEX,
-				"");
-		return dataUnitAttribute;
-	}
 	/**
 	 * Compares the units of two nodes
-	 * @return <b>true</b> if units are arrangements of the same base units<br/><b>false</b> if the base units are different
+	 * 
+	 * @return <b>true</b> if units are arrangements of the same base units<br/>
+	 *         <b>false</b> if the base units are different
 	 */
-	public static boolean compaereUnits(MathNode first, MathNode second) {
-		if (!first.getUnitAttribute().equals(second.getUnitAttribute())) {
-			LinkedHashMap<String, Integer> firstUnitMap = getUnitMap(first);
-			LinkedHashMap<String, Integer> secondUnitMap = getUnitMap(second);
-			if(firstUnitMap.size() != secondUnitMap.size()) {
-				return false;
-			}
-			for(Entry<String, Integer> firstUnitEntry : firstUnitMap.entrySet()) {
-				Integer secondUnitExp = secondUnitMap.get(firstUnitEntry.getKey());
-				if(!firstUnitEntry.getValue().equals(secondUnitExp)) {
-					return false;
-				}
-			}
+	public static boolean compareUnits(MathNode first, MathNode second) {
+		if (first.getUnitAttribute().equals(second.getUnitAttribute())) {
+			return true;
+		} else if (new UnitMap(first).equals(new UnitMap(second))) {
+			return false;
+		} else {
+			return false;
 		}
-		return true;
 	}
 }

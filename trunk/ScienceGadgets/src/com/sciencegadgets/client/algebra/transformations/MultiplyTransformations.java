@@ -1,21 +1,17 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Set;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitMap;
 
 public class MultiplyTransformations extends Transformations {
 
@@ -377,17 +373,8 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 		right.setSymbol(totalValue.stripTrailingZeros().toEngineeringString());
 
 		// Combine Units
-		HashMap<String, Integer> leftUnitMap = UnitUtil.getUnitMap(left);
-		HashMap<String, Integer> rightUnitMap = UnitUtil.getUnitMap(right);
-		Set<String> rightKeySet = rightUnitMap.keySet();
-		for (String untBase : leftUnitMap.keySet()) {
-			Integer newRightExp = leftUnitMap.get(untBase);
-			if (rightKeySet.contains(untBase)) {
-				newRightExp += rightUnitMap.get(untBase);
-			}
-			rightUnitMap.put(untBase, newRightExp);
-		}
-		String combinedUnit = UnitUtil.getUnitAttribute(rightUnitMap);
+		UnitMap combinedmap = new UnitMap(left).getMultiple(new UnitMap(right));
+		String combinedUnit = combinedmap.getUnitAttribute();
 		right.setAttribute(MathAttribute.Unit, combinedUnit);
 
 		left.remove();

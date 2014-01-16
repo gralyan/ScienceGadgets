@@ -2,20 +2,17 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitMap;
 
 public class ExponentialTransformations extends Transformations{
 	
@@ -121,14 +118,9 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 				final BigDecimal baseValue = new BigDecimal(base.getSymbol());
 				final int expValue = Integer.parseInt(exponent.getSymbol());
 				final BigDecimal totalValue = baseValue.pow(expValue,
-						MathContext.DECIMAL32);
+						MathContext.DECIMAL128);
 
-				final LinkedHashMap<String, Integer> totalUnitMap = UnitUtil
-						.getUnitMap(base);
-				for (String unit : totalUnitMap.keySet()) {
-					totalUnitMap.put(unit, ((Integer) totalUnitMap.get(unit))
-							* expValue);
-				}
+				final UnitMap totalUnitMap = new UnitMap(base).getExponential(expValue);
 
 				if (Moderator.isInEasyMode) {
 					evaluateExponential(baseValue, expValue, totalValue,
@@ -152,11 +144,11 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 	}
 
 	private void evaluateExponential(BigDecimal baseValue, int expValue,
-			BigDecimal totalValue, LinkedHashMap<String, Integer> newUnitMap) {
+			BigDecimal totalValue, UnitMap newUnitMap) {
 
 		MathNode evaluated = exponential.replace(TypeML.Number, totalValue
 				.stripTrailingZeros().toEngineeringString());
-		String newUnit = UnitUtil.getUnitAttribute(newUnitMap);
+		String newUnit = newUnitMap.getUnitAttribute();
 		evaluated.setAttribute(MathAttribute.Unit, newUnit);
 
 		Moderator.reloadEquationPanel(baseValue.stripTrailingZeros()

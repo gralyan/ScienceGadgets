@@ -235,10 +235,10 @@ public class EquationPanel extends AbsolutePanel {
 							+ parentNode.getId());
 
 			if (algebraActivity.inEditMode) {// Edit Mode
-				EditWrapper wrap = new EditWrapper(node, this, layerNode);
+				EditWrapper wrap = new EditWrapper(node, algebraActivity, layerNode);
 				eqLayer.addWrapper(wrap);
 			} else {// Solver Mode
-				AlgebaWrapper wrap = new AlgebaWrapper(node, this, layerNode);
+				AlgebaWrapper wrap = new AlgebaWrapper(node, algebraActivity, layerNode);
 				eqLayer.addWrapper(wrap);
 				mathWrappers.add(wrap);
 			}

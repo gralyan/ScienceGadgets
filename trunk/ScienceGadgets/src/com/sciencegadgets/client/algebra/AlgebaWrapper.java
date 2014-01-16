@@ -47,8 +47,8 @@ public class AlgebaWrapper extends ZoomWrapper {
 	 * {@link AbsolutePanel}</b>
 	 * </p>
 	 */
-	public AlgebaWrapper(MathNode node, EquationPanel eqPanel, Element element) {
-		super(node, eqPanel, element);
+	public AlgebaWrapper(MathNode node, AlgebraActivity algebraActivity, Element element) {
+		super(node, algebraActivity, element);
 
 	}
 
