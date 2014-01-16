@@ -6,11 +6,6 @@ import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -65,6 +60,8 @@ public class ConversionActivity extends AbsolutePanel {
 
 	private MathNode totalNode;
 	private MathNode wrapperFraction;
+
+	private Element workingHTML;
 
 	public ConversionActivity() {
 
@@ -187,35 +184,36 @@ public class ConversionActivity extends AbsolutePanel {
 		// Make and add entire equation before moving left
 		dimensionalAnalysisArea.clear();
 		EquationHTML eqHTML = mTree.reloadDisplay(false);
-		eqHTML.autoFillParent = true;
-
-		dimensionalAnalysisArea.add(eqHTML);
-
-		// Move left side of equation into wrapper area
-		NodeList<Node> children = wrapperArea.getElement().getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			children.getItem(i).removeFromParent();
-		}
-		//Resize working area
-		//TODO still dependent on parent equation
-		Element workingHTML = mTree.getLeftSide().getHTML();
-		wrapperArea.getElement().appendChild(workingHTML);
-		double widthRatio = (double) wrapperArea.getOffsetWidth()/ workingHTML.getOffsetWidth();
-		double heightRatio = (double) wrapperArea.getOffsetHeight()/ workingHTML.getOffsetHeight();
-
-		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
-				: widthRatio;
-		// *95 for looser fit, *100 for percent
-		double fontPercent = smallerRatio * 95;
-		workingHTML.getStyle().setFontSize(fontPercent,
-				com.google.gwt.dom.client.Style.Unit.PCT);
-
-		// No need for equals sign either
-		mTree.getEquals().getHTML().removeFromParent();
 
 		// Recreate wrappers
 		placeWrappers();
 
+		// Place entire equation in history area first
+		eqHTML.autoFillParent = true;
+		dimensionalAnalysisArea.add(eqHTML);
+
+		// No need for equals sign
+		mTree.getEquals().getHTML().removeFromParent();
+
+		// Move left side of equation into wrapper area
+		Element newWorkingHTML = mTree.getLeftSide().getHTML();
+		if (workingHTML == null) {
+			wrapperArea.getElement().appendChild(newWorkingHTML);
+		} else {
+			wrapperArea.getElement().replaceChild(newWorkingHTML, workingHTML);
+		}
+		workingHTML = newWorkingHTML;
+
+		// Resize working area
+		double widthRatio = (double) wrapperArea.getOffsetWidth()
+				/ workingHTML.getOffsetWidth();
+		double heightRatio = (double) wrapperArea.getOffsetHeight()
+				/ workingHTML.getOffsetHeight();
+		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
+				: widthRatio;
+		double fontPercent = smallerRatio * 95;// *95 for looser fit
+		workingHTML.getStyle().setFontSize(fontPercent,
+				com.google.gwt.dom.client.Style.Unit.PCT);
 	}
 
 	private void placeWrappers() {
@@ -225,20 +223,14 @@ public class ConversionActivity extends AbsolutePanel {
 				mTree.getWrappers().add(
 						new ConversionWrapper(unitDisplay, wrapperArea, this));
 			} else {
-				unitDisplay.wrappedNode.getHTML().getStyle()
-						.setDisplay(Display.NONE);
+				unitDisplay.wrappedNode.getHTML().removeFromParent();
+
 				if (TypeML.Number.equals(jointNode.getType())) {
 					Element[] units = jointNode.getHTMLofUnits();
 					for (Element unit : units) {
-						// Style style = unit.getStyle();
-						// style.setTextDecoration(TextDecoration.LINE_THROUGH);
-						// style.setColor("red");
 						unit.addClassName("lineThrough");
 					}
 				} else {
-					// Style style = jointNode.getHTML().getStyle();
-					// style.setTextDecoration(TextDecoration.LINE_THROUGH);
-					// style.setColor("red");
 					jointNode.getHTML().addClassName("lineThrough");
 				}
 			}
@@ -340,9 +332,9 @@ public class ConversionActivity extends AbsolutePanel {
 		BigDecimal total = new BigDecimal(totalNode.getSymbol());
 		for (int i = 0; i < expAbs; i++) {
 			total = total.multiply(new BigDecimal(numNode.getSymbol()),
-					MathContext.DECIMAL32);
+					MathContext.DECIMAL128);
 			total = total.divide(new BigDecimal(denNode.getSymbol()),
-					MathContext.DECIMAL32);
+					MathContext.DECIMAL128);
 		}
 		totalNode.setSymbol(total.stripTrailingZeros().toEngineeringString());
 

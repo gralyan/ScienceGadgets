@@ -2,7 +2,6 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.LinkedHashMap;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
@@ -10,14 +9,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebaWrapper;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.TypeML.TrigFunctions;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitMap;
 
 public class InterFractionDrop extends AbstractDropController {
 
@@ -88,7 +86,7 @@ public class InterFractionDrop extends AbstractDropController {
 			BigDecimal targetNumber = new BigDecimal(target.getSymbol());
 			BigDecimal dragNumber = new BigDecimal(drag.getSymbol());
 			final BigDecimal total = targetNumber.divide(dragNumber,
-					MathContext.DECIMAL32);
+					MathContext.DECIMAL128);
 
 			if (Moderator.isInEasyMode) {
 				divide(total);
@@ -114,21 +112,11 @@ public class InterFractionDrop extends AbstractDropController {
 
 	private void divide(BigDecimal total) {
 
-		// Combine units by subtracting exponent of the drop map units from
-		// matching target units
-		LinkedHashMap<String, Integer> targetMap = target.getUnitMap();
-		LinkedHashMap<String, Integer> dragMap = drag.getUnitMap();
-		for (String dragName : dragMap.keySet()) {
-			Integer targetExp = targetMap.get(dragName);
-			if (targetExp == null) {
-				targetExp = new Integer(0);
-			}
-			targetMap.put(dragName, targetExp - dragMap.get(dragName));
-		}
+		UnitMap combinedMap = target.getUnitMap().getDivision(drag.getUnitMap());
 
 		MathNode division = target.replace(TypeML.Number, total
 				.stripTrailingZeros().toEngineeringString());
-		String divisionUnits = UnitUtil.getUnitAttribute(targetMap);
+		String divisionUnits = combinedMap.getUnitAttribute();
 		division.setAttribute(MathAttribute.Unit, divisionUnits);
 
 		complete();

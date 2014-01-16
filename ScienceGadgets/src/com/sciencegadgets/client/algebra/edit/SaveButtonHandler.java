@@ -9,6 +9,7 @@ import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.EquationValidator;
 
 public class SaveButtonHandler implements ClickHandler {
 
@@ -22,6 +23,9 @@ public class SaveButtonHandler implements ClickHandler {
 			if (mathML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
+				return;
+			}
+			if(!new EquationValidator().validateQuantityKinds(Moderator.getCurrentMathTree())) {
 				return;
 			}
 

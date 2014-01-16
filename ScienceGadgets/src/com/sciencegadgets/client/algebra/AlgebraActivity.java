@@ -9,8 +9,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.sciencegadgets.client.CommunistPanel;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
@@ -29,8 +27,10 @@ public class AlgebraActivity extends Composite {
 	@UiField
 	public Button optionsButton;
 	@UiField
-	public FlowPanel upperRightEqArea;
-
+	public FlowPanel upperMidEqArea;
+	@UiField
+	public FlowPanel selectionDetails;
+ 
 	@UiField
 	public SimplePanel eqPanelHolder;
 
@@ -60,10 +60,10 @@ public class AlgebraActivity extends Composite {
 
 		if (inEditMode) {
 			saveEquationButton.setStyleName("saveEquationButton");
-			upperRightEqArea.add(saveEquationButton);
+			upperMidEqArea.add(saveEquationButton);
 		} else {
 			algOut = new AlgOut(this);
-			upperRightEqArea.add(algOut);
+			upperMidEqArea.add(algOut);
 		}
 		
 
@@ -85,6 +85,7 @@ public class AlgebraActivity extends Composite {
 					mathTree);
 		}
 		eqPanelHolder.clear();
+		selectionDetails.clear();
 
 		mathTree.validateTree();
 		mathTree.reloadDisplay(true);

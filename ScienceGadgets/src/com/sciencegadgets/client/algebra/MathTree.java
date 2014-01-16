@@ -18,27 +18,24 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import com.google.gwt.core.client.JavaScriptException;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
+import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.shared.UnitUtil;
 
 public class MathTree {
@@ -53,6 +50,7 @@ public class MathTree {
 	private EquationHTML eqHTML;
 	private boolean inEditMode;
 	private int idCounter = 0;
+	private EquationValidator eqValidator;
 
 	/**
 	 * A tree representation of an equation.
@@ -77,6 +75,10 @@ public class MathTree {
 	// public MathNode getMathNode(String id) {
 	// return idMap.get(id);
 	// }
+
+	public boolean isInEditMode() {
+		return inEditMode;
+	}
 
 	public Element getMathMLClone() {
 		return (Element) mathML.cloneNode(true);
@@ -113,7 +115,7 @@ public class MathTree {
 		return root.getChildAt(1);
 	}
 
-	private void checkSideForm() {
+	void checkSideForm() {
 		if (root.getChildCount() != 3) {
 			JSNICalls.error("root has too many children, not side=side: "
 					+ getMathMLClone().getString());
@@ -185,11 +187,19 @@ public class MathTree {
 	}
 
 	public void validateTree() {
-
-		for (MathNode node : idMap.values()) {
-			node.validate();
+		
+		if(eqValidator == null) {
+			eqValidator = new EquationValidator();
 		}
-
+ 
+		for (MathNode node : idMap.values()) {
+			eqValidator.validateMathNode(node);
+		}
+		
+		if(!inEditMode) {
+			eqValidator.validateQuantityKinds(this);
+		}
+		
 		if (idMap.size() != idMLMap.size()) {
 			JSNICalls
 					.error("The binding maps must have the same size: idMap.size()="
@@ -601,8 +611,8 @@ public class MathTree {
 		}
 
 		public void setSymbol(String symbol) {
-
-			if (TypeML.Number.equals(getType())) {
+			
+			if (TypeML.Number.equals(getType()) && !ChangeNodeMenu.NOT_SET.equals(symbol)) {
 				setAttribute(MathAttribute.Value, symbol);
 				String roundedValue = new BigDecimal(symbol).round(
 						new MathContext(2)).toString();
@@ -667,8 +677,8 @@ public class MathTree {
 			return mlNode.getAttribute(attribute.getName());
 		}
 
-		public LinkedHashMap<String, Integer> getUnitMap() {
-			return UnitUtil.getUnitMap(this);
+		public UnitMap getUnitMap() {
+			return new UnitMap(this);
 		}
 
 		public void setAttribute(MathAttribute attribute, String value) {
@@ -826,7 +836,7 @@ public class MathTree {
 					return true;
 				}
 			case Number:
-				if (!UnitUtil.compaereUnits(this, another)) {
+				if (!UnitUtil.compareUnits(this, another)) {
 					return false;
 				}
 				// fall through
@@ -841,115 +851,6 @@ public class MathTree {
 			}
 		}
 
-		/**
-		 * Validates the structure of the node, looks at:<br/>
-		 * · proper number of children<br/>
-		 * · numbers can be parsed<br/>
-		 * · no sums within sums<br/>
-		 * · no terms within terms<br/>
-		 * · log must have base attribute<br/>
-		 * · trig must have function attribute<br/>
-		 */
-		private void validate() {
-
-			int childCount = getChildCount();
-			boolean isWrongChildren = false;
-
-			// Confirm the correct number of children
-			switch (getType().childRequirement()) {
-			case EQUATION:
-				if (childCount != 3)
-					isWrongChildren = true;
-				break;
-			case TERMINAL:
-				if (childCount != 1
-						|| getMLNode().getChild(0).getNodeType() != Node.TEXT_NODE) {
-					isWrongChildren = true;
-				}
-				break;
-			case UNARY:
-				if (childCount != 1)
-					isWrongChildren = true;
-				break;
-			case BINARY:
-				if (childCount != 2)
-					isWrongChildren = true;
-				break;
-			case SEQUENCE:
-				if (childCount < 3) {
-					isWrongChildren = true;
-				}
-				break;
-			}
-
-			if (isWrongChildren) {
-				String errorMerrage = "Wrong number of children, type: "
-						+ getType() + " can't have (" + childCount
-						+ ") children: " + toString();
-				JSNICalls.error(errorMerrage);
-				// Damage control
-				Window.alert("Error, see log");
-				return;
-			}
-
-			switch (getType()) {
-			case Number:
-				// Confirm that the symbol is a number in solve mode
-				if (!inEditMode) {
-					try {
-						Double.parseDouble(getSymbol());
-					} catch (NumberFormatException e) {
-						JSNICalls.warn("The number node " + toString()
-								+ " must have a number");
-						// Damage control
-						setSymbol("1");
-					}
-				}
-				break;
-			case Sum:
-			case Term:// Confirm that there are < 3 children
-				if (getType().equals(getParent().getType())) {
-					if (TypeML.Term.equals(getType())) {
-						JSNICalls.error("There shouldn't be a term in a term"
-								+ getParent().toString());
-					} else if (TypeML.Sum.equals(getType())) {
-						JSNICalls.error("There shouldn't be a sum in a sum: "
-								+ getParent().toString());
-					}
-				}
-				break;
-			case Equation:
-				checkSideForm();
-				break;
-			case Log:// Confirm the base is a number
-				if (!inEditMode) {
-					try {
-						Double.parseDouble(getAttribute(MathAttribute.LogBase));
-					} catch (NumberFormatException e) {
-						if (!"e".equals(getAttribute(MathAttribute.LogBase))) {
-							JSNICalls
-									.error("The base of a log must be a number: "
-											+ getParent().toString());
-							// Damage control
-							setAttribute(MathAttribute.LogBase, "10");
-						}
-					}
-				}
-				break;
-			case Trig:// Confirm the function attribute exists
-				if (!inEditMode) {
-					if ("".equals(getAttribute(MathAttribute.Function))) {
-						JSNICalls
-								.error("Trig functiond must have function attribute: "
-										+ getParent().toString());
-						// Damage control
-						setAttribute(MathAttribute.Function,
-								TrigFunctions.sin.toString());
-					}
-				}
-				break;
-			}
-		}
 
 	}
 

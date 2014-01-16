@@ -16,8 +16,8 @@ public class EditWrapper extends ZoomWrapper {
 
 	public ChangeNodeMenu changeNodeMenu = new ChangeNodeMenu();
 
-	public EditWrapper(MathNode node, EquationPanel eqPanel, Element element) {
-		super(node, eqPanel, element);
+	public EditWrapper(MathNode node, AlgebraActivity algebraActivity, Element element) {
+		super(node, algebraActivity, element);
 		
 		
 		if(TypeML.Operation.equals(node.getType())) {

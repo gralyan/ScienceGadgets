@@ -6,27 +6,42 @@
 			display: inline-block;
 			vertical-align: top;
 		}
+		
+		.selectionDetails {
+			background-color: white;
+			overflow: auto;
+		}
+		.lowerEqArea{
+			background-image: url('CSStyles/images/wood_shelf.jpg');
+			background-repeat: no-repeat;
+			background-size: 100% 100%;
+		}
 	</ui:style>
-	
+
 	<g:AbsolutePanel width="100%" height="100%">
 
 		<g:FlowPanel ui:field="upperEqArea" width="100%" height="15%">
 
-			<g:Button ui:field="optionsButton" text="Options" addStyleNames='{style.row}'
-				width="10%" height="100%"></g:Button>
+			<g:Button ui:field="optionsButton" text="Options"
+				addStyleNames='{style.row}' width="10%" height="100%"></g:Button>
 
-			<!-- save button added in edit mode, algOut in solve mode -->
-			<g:FlowPanel ui:field="upperRightEqArea" addStyleNames='{style.row}'
-				width="90%" height="100%"></g:FlowPanel>
+			<!-- save button in edit mode, algOut in solve mode -->
+			<g:FlowPanel ui:field="upperMidEqArea" addStyleNames='{style.row}'
+				width="80%" height="100%"></g:FlowPanel>
+
+			<g:FlowPanel ui:field="selectionDetails"
+				addStyleNames='{style.row} {style.selectionDetails}' width="10%"
+				height="100%"></g:FlowPanel>
 
 		</g:FlowPanel>
 
 		<g:FlowPanel width="100%" height="10%"></g:FlowPanel><!--gap -->
 
-		<g:SimplePanel ui:field="eqPanelHolder" width="100%" height="60%"></g:SimplePanel>
+		<g:SimplePanel ui:field="eqPanelHolder" width="100%"
+			height="60%"></g:SimplePanel>
 
-		<g:FlowPanel ui:field="lowerEqArea" width="100%" height="15%"></g:FlowPanel>
-		
+		<g:FlowPanel ui:field="lowerEqArea" addStyleNames='{style.lowerEqArea}' width="100%" height="15%"></g:FlowPanel>
+
 	</g:AbsolutePanel>
-	
+
 </ui:UiBinder> 
