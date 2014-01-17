@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -53,7 +55,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			TypeML toType = (TypeML) type[0];
 			Button changeButton = new Button((String) type[1]);
 			if (Moderator.isTouch) {
-				changeButton.addTouchStartHandler(new ChangeNodeTouch(toType));
+				changeButton.addTouchEndHandler(new ChangeNodeTouch(toType));
 			} else {
 				changeButton.addClickHandler(new ChangeNodeClick(toType));
 			}
@@ -260,7 +262,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 		}
 	}
 
-	private class ChangeNodeTouch implements TouchStartHandler {
+	private class ChangeNodeTouch implements TouchEndHandler {
 		TypeML toType;
 
 		ChangeNodeTouch(TypeML toType) {
@@ -268,7 +270,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 		}
 
 		@Override
-		public void onTouchStart(TouchStartEvent event) {
+		public void onTouchEnd(TouchEndEvent arg0) {
 			changeNode(toType);
 		}
 	}
