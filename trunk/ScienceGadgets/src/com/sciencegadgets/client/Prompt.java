@@ -1,28 +1,25 @@
 package com.sciencegadgets.client;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * A common method of presenting a user with a window without creating an
+ * entirely new activity. Prompts are particularly useful for inquiring for a
+ * specification on an action requiring user input.<br/>
+ * <b>Do not launch with a {@link TouchStartHandler} because some browsers
+ * autoHide the Prompt immediately after appearing</b><br/>
+ * Launch with {@link Prompt#appear()}<br/>
+ * Remove with {@link Prompt#disappear()}<br/>
+ */
 public class Prompt extends DialogBox {
 
 	private static final double HEIGHT_FRACTION = 0.7;
@@ -47,7 +44,7 @@ public class Prompt extends DialogBox {
 		super.add(mainPanel);
 
 		setGlassEnabled(true);
-		setAnimationEnabled(true);
+		setAnimationEnabled(false);
 
 		flowPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 
@@ -81,13 +78,16 @@ public class Prompt extends DialogBox {
 	}
 
 	public void disappear() {
-		hide();
+		super.hide();
 		removeFromParent();
+		Moderator.prompts.remove(this);
+
 	}
 
 	public void appear() {
 		resize();
-		center();
+		super.center();
+		Moderator.prompts.add(this);
 
 	}
 
@@ -99,14 +99,12 @@ public class Prompt extends DialogBox {
 
 	@Override
 	public void hide() {
-		super.hide();
-		Moderator.prompts.remove(this);
+		disappear();
 	}
 
 	@Override
 	public void center() {
-		super.center();
-		Moderator.prompts.add(this);
+		appear();
 	}
 
 }
