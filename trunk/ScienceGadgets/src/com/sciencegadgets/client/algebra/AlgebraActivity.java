@@ -80,7 +80,7 @@ public class AlgebraActivity extends Composite {
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
 	public void reloadEquationPanel(String changeComment, Rule rule) {
-		if (changeComment != null) {
+		if (!inEditMode && changeComment != null) {
 			algOut.updateAlgOut(changeComment, rule,
 					mathTree);
 		}

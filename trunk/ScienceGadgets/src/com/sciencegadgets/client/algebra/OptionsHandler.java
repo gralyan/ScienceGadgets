@@ -8,8 +8,10 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 
@@ -18,8 +20,6 @@ public class OptionsHandler implements ClickHandler {
 	public static PopupPanel optionsPopup = new PopupPanel();
 	OptionsPanel optionsPanel = new OptionsPanel();
 	Button closeOption = new Button("Close",new CloseClickHandler());
-	ToggleSlide easyHardOption;
-	ToggleSlide editSolveOption;
 	AlgebraActivity algebraActivity;
 
 	public OptionsHandler(AlgebraActivity algebraActivity) {
@@ -50,12 +50,16 @@ public class OptionsHandler implements ClickHandler {
 		
 		optionsPanel.add(closeOption);
 
-		if (!algebraActivity.inEditMode) {
-			easyHardOption = new ToggleSlide("Easy", "Hard", Moderator.isInEasyMode, new EasyHardClickHandler());
+		if (algebraActivity.inEditMode) {
+			//TODO Equation HTML requires CSS to display
+//			Button exportOption = new Button("Export", new ExportClickHandler(algebraActivity));
+//			optionsPanel.add(exportOption);
+		}else {
+			ToggleSlide easyHardOption = new ToggleSlide("Easy", "Hard", Moderator.isInEasyMode, new EasyHardClickHandler());
 			optionsPanel.add(easyHardOption);
 		}
 		
-		editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.inEditMode, new EditSolveClickHandler(algebraActivity));
+		ToggleSlide editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.inEditMode, new EditSolveClickHandler(algebraActivity));
 		optionsPanel.add(editSolveOption);
 		
 		optionsPopup.show();
@@ -112,3 +116,25 @@ class EditSolveClickHandler implements ClickHandler {
 	}
 
 }
+
+//class ExportClickHandler implements ClickHandler {
+//	AlgebraActivity algebraActivity;
+//	ExportClickHandler(AlgebraActivity algebraActivity){
+//		this.algebraActivity = algebraActivity;
+//	}
+//	@Override
+//	public void onClick(ClickEvent event) {
+//		OptionsHandler.optionsPopup.hide();
+//		
+//		EquationHTML html = algebraActivity.getMathTree().reloadDisplay(true);
+//		
+//		Prompt prompt = new Prompt();
+//		TextBox text = new TextBox();
+//		text.setSize("100%", "100%");
+//		text.setText(html.getHTML());
+//		prompt.add(text);
+//		prompt.appear();
+//		
+//	}
+//	
+//}

@@ -2,9 +2,8 @@ package com.sciencegadgets.server;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -89,7 +88,7 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Equation[] getEquationsWithQuantities(List<String> quantityKinds)
+	public Equation[] getEquationsWithQuantities(ArrayList<String> quantityKinds)
 			throws IllegalArgumentException {
 		ArrayList<Key<QuantityKind>> qkindKeys = new ArrayList<Key<QuantityKind>>();
 		for (String quantityKind : quantityKinds) {
@@ -102,15 +101,15 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Set<String> getQuantityKinds() {
+	public LinkedList<String> getQuantityKinds() {
 		List<QuantityKind> list = ObjectifyService.ofy().load()
 				.type(QuantityKind.class).order("id").list();
 
-		Set<String> set = new LinkedHashSet<String>();
+		LinkedList<String> linkedList = new LinkedList<String>();
 		for (QuantityKind qKind : list) {
-			set.add(qKind.getId());
+			linkedList.add(qKind.getId());
 		}
-		return set;
+		return linkedList;
 	}
 
 	@Override

@@ -177,8 +177,10 @@ public class EquationValidator {
 					sumMap = childMap;
 				} else if (!sumMap.equals(childMap)) {
 					throw new IllegalStateException(
-							"All sums and equations must contain equivalent derived quantity kinds for all of it's children. This one is different: \n"
-									+ "attribute: "
+							"All sums and equations must contain equivalent derived quantity kinds for all of it's children: \n"
+									+ "first: "
+									+ sumMap
+									+ "\ndiffernent: "
 									+ childMap
 									+ "\nof node: "
 									+ child,

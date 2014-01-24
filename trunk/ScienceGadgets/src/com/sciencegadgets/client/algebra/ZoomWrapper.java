@@ -43,7 +43,7 @@ public class ZoomWrapper extends Wrapper {
 
 				String unit = node.getAttribute(MathAttribute.Unit);
 				if(!"".equals(unit)) {
-					quantity.getElement().appendChild(UnitUtil.element_From_attribute(unit, null , false));
+					quantity.getElement().appendChild(UnitUtil.element_From_attribute(unit));
 				}
 				
 				details.add(quantity);

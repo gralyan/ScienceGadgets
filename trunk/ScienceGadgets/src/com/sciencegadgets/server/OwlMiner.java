@@ -42,7 +42,7 @@ public class OwlMiner {
 				.type(QuantityKind.class).list();
 		ArrayList<Key<Unit>> unitKeys = new ArrayList<Key<Unit>>();
 		ArrayList<String> qKindsNames = new ArrayList<String>(qKinds.size());
-	
+
 		for (QuantityKind q : qKinds) {
 			qKindsNames.add(q.getId());
 
@@ -165,8 +165,10 @@ public class OwlMiner {
 			String qKind = null;
 
 			String label = extractProperty(node, "rdfs:label");
-			if (label.equals("Millimeter of Mercury")) {// Not actually prefixed
-
+			if (label.equals("Millimeter of Mercury")) {
+				// Not actually prefixed
+			} else if (label.equals("Kilogram")) {
+				// Don't exclude, SI base unit
 			} else if (label.equals("Yotta") || label.equals("Zetta")
 					|| label.equals("Exa") || label.equals("Peta")
 					|| label.equals("Tera") || label.equals("Giga")
@@ -410,13 +412,11 @@ public class OwlMiner {
 
 			// System.out.println(qKind + "_" + symbolFixed + "," + label + ","
 			// + multiplier);
-			
-			 Key<QuantityKind> qKindKey = Key.create(QuantityKind.class,
-			 qKind);
-			 Unit unit = new Unit(qKind + "_" + symbolFixed, qKindKey, label,
-			 extractProperty(
-			 node, "qudt:description"), multiplier);
-			 ObjectifyService.ofy().save().entity(unit);
+
+			Key<QuantityKind> qKindKey = Key.create(QuantityKind.class, qKind);
+			Unit unit = new Unit(qKind + "_" + symbolFixed, qKindKey, label,
+					extractProperty(node, "qudt:description"), multiplier);
+			ObjectifyService.ofy().save().entity(unit);
 
 			// mark quantity kind as used as a parent
 			String oldDim = map.get(qKind);
@@ -426,11 +426,11 @@ public class OwlMiner {
 		for (String quantity : map.keySet()) {
 			// If used as parent, save quantity kind
 			if (map.get(quantity).contains("_")) {
-				 ObjectifyService
-				 .ofy()
-				 .save()
-				 .entity(new QuantityKind(quantity, map.get(quantity)
-				 .replace("_", ","))).now();
+				ObjectifyService
+						.ofy()
+						.save()
+						.entity(new QuantityKind(quantity, map.get(quantity)
+								.replace("_", ","))).now();
 
 				// System.out.println(quantity);
 			}
