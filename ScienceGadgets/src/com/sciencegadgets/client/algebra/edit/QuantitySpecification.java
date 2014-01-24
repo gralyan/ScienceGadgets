@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.shared.UnitMap;
@@ -57,7 +58,7 @@ public abstract class QuantitySpecification extends Prompt {
 		add(uiBinder.createAndBindUi(this));
 
 		if (Moderator.isTouch) {
-			// Unit Display Touch
+			// Unit Display Touch - clear
 			unitDisplay.addDomHandler(new TouchStartHandler() {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
@@ -67,9 +68,16 @@ public abstract class QuantitySpecification extends Prompt {
 					unitMap.clear();
 				}
 			}, TouchStartEvent.getType());
+			
+			//Symbol Display on Touch - clear
+			symbolDisplay.addTouchStartHandler(new TouchStartHandler() {
+				@Override
+				public void onTouchStart(TouchStartEvent event) {
+					symbolDisplay.setText("");
+				}
+			});
 		} else {
-
-			// Unit Display Click
+			// Unit Display Click - clear
 			unitDisplay.addDomHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -79,6 +87,14 @@ public abstract class QuantitySpecification extends Prompt {
 					unitMap.clear();
 				}
 			}, ClickEvent.getType());
+
+			//Symbol Display on Click - clear
+			symbolDisplay.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					symbolDisplay.setText("");
+				}
+			});
 		}
 
 		unitReciprocalToggle

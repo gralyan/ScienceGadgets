@@ -10,6 +10,7 @@ import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationValidator;
+import com.sciencegadgets.shared.TypeML;
 
 public class SaveButtonHandler implements ClickHandler {
 
@@ -19,10 +20,14 @@ public class SaveButtonHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent arg0) {
 		try {
-			final String mathML = Moderator.getCurrentMathTree().getRoot().toString();
+			final String mathML = JSNICalls.elementToString(Moderator.getCurrentMathTree().getMathMLClone());
 			if (mathML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
+				return;
+			}
+			if (!mathML.contains("<"+TypeML.Variable.getTag())) {
+				Window.alert("The equation must contain at least one variable");
 				return;
 			}
 			if(!new EquationValidator().validateQuantityKinds(Moderator.getCurrentMathTree())) {
@@ -49,7 +54,7 @@ public class SaveButtonHandler implements ClickHandler {
 				@Override
 				public void onFailure(Throwable caught) {
 					Window.alert("Save didn't work");
-					JSNICalls.error("Save Failed: "
+					JSNICalls.error("Save RPC Failed: "
 							+ caught.getCause().toString());
 				}
 			});

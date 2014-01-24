@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -25,7 +27,7 @@ public class SelectionPanel extends FlowPanel {
 
 		labelAlg.setText(title);
 		labelAlg.setStylePrimaryName("rowHeader");
-		add(labelAlg);
+		super.add(labelAlg);
 	}
 
 	public SelectionPanel(String title, SelectionHandler selectionHandler) {
@@ -96,14 +98,8 @@ public class SelectionPanel extends FlowPanel {
 			this.value = value;
 			this.entity = entity;
 			
-			if(Moderator.isTouch) {
-				this.addTouchStartHandler(new TouchStartHandler() {
-					@Override
-					public void onTouchStart(TouchStartEvent event) {
-						select((Cell) event.getSource());
-					}
-				});
-			}else {
+			addStyleName("selectionPanelCell");
+			
 				this.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -111,7 +107,7 @@ public class SelectionPanel extends FlowPanel {
 					}
 				});
 			}
-		}
+		
 		private void select(Cell selection) {
 			if (selectedCell != null) {
 				selectedCell.removeStyleName("selectedCell");

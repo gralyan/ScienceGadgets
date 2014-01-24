@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
+import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.MathTree;
@@ -43,11 +44,17 @@ public class ConversionActivity extends AbsolutePanel {
 	@UiField
 	FlowPanel unitSelectionArea;
 	@UiField
+	FlowPanel unitSelectionToggleArea;
+	@UiField
 	AbsolutePanel wrapperArea;
 	@UiField
 	Button convertButton;
 
-	final UnitSelection unitSelection = new UnitSelection(false, true, false);
+	static final UnitSelection unitSelection = new UnitSelection(false, true,
+			false);
+	static final DerivedSIUnits derivedUnitsSelection = new DerivedSIUnits();
+	static final ToggleSlide unitSelectionToggle = new ToggleSlide("Convert",
+			"Definitions", true);
 	private MathTree mTree = null;
 	private MathNode node;
 
@@ -68,12 +75,27 @@ public class ConversionActivity extends AbsolutePanel {
 		add(conversionUiBinder.createAndBindUi(this));
 
 		getElement().setAttribute("id", "conversionActivity");
+		
+//		wrapperArea.setHeight("100%");
+//		wrapperArea.addStyleName("fillParent");
 
 		unitSelection.unitBox.addSelectionHandler(new ConvertSelectHandler());
 		unitSelection.addStyleName("fillParent");
 		unitSelectionArea.add(unitSelection);
 
-		wrapperArea.addStyleName("fillParent");
+		unitSelectionToggle.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				unitSelectionArea.clear();
+				if (unitSelectionToggle.isFistSelected()) {
+					unitSelectionArea.add(derivedUnitsSelection);
+				} else {
+					unitSelectionArea.add(unitSelection);
+				}
+			}
+		});
+		derivedUnitsSelection.addStyleName("fillParent");
+		unitSelectionToggleArea.add(unitSelectionToggle);
 
 		convertButton.addClickHandler(new ConvertClickHandler());
 	}

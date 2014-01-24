@@ -16,7 +16,7 @@ import com.sciencegadgets.shared.UnitMap;
 public class MultiplyTransformations extends Transformations {
 
 	private static final long serialVersionUID = 3127633894356779264L;
-	
+
 	MathNode left;
 	MathNode operation;
 	MathNode right;
@@ -24,7 +24,7 @@ public class MultiplyTransformations extends Transformations {
 
 	TypeML leftType;
 	TypeML rightType;
-	
+
 	public MultiplyTransformations(MathNode left, MathNode multiplyNode,
 			MathNode right) {
 
@@ -44,6 +44,7 @@ public class MultiplyTransformations extends Transformations {
 		add(logRule_check());
 
 	}
+
 	/**
 	 * Multiplying by one of the specially designated numbers (-1, 0 1)
 	 */
@@ -84,21 +85,23 @@ public class MultiplyTransformations extends Transformations {
 		}
 		return null;
 	}
+
 	/**
-	 * Multiply two numbers, prompts for the product unless the user skill level is high enough
+	 * Multiply two numbers, prompts for the product unless the user skill level
+	 * is high enough
 	 */
 	private MultiplyTransformButton multiplyNumbers_check() {
-		
+
 		if (!(TypeML.Number.equals(leftType) && TypeML.Number.equals(rightType))) {
 			return null;
 		}
-		
+
 		try {
 			return new MultiplyNumbersButton(this);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			JSNICalls
-			.error("A number node couldn't be parsed: " + e.toString());
+					.error("A number node couldn't be parsed: " + e.toString());
 			return null;
 		}
 	}
@@ -175,11 +178,9 @@ public class MultiplyTransformations extends Transformations {
 			return new MultiplyFractionsButton(this);
 		} else {
 			if (TypeML.Fraction.equals(rightType)) {
-				return new MultiplyWithFractionButton(this, left, right,
-						true);
+				return new MultiplyWithFractionButton(this, left, right, true);
 			} else if (TypeML.Fraction.equals(leftType)) {
-				return new MultiplyWithFractionButton(this, right, left,
-						false);
+				return new MultiplyWithFractionButton(this, right, left, false);
 			} else {
 				return null;
 			}
@@ -229,14 +230,13 @@ class MultiplyTransformButton extends Button {
  * x &middot; 0 = 0
  */
 class MultiplyZeroButton extends MultiplyTransformButton {
-	MultiplyZeroButton(MultiplyTransformations context,
-			final MathNode other, final MathNode zero) {
+	MultiplyZeroButton(MultiplyTransformations context, final MathNode other,
+			final MathNode zero) {
 		super(context, "x·0=0");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-
 
 				String otherSymbol = other.getSymbol();
 
@@ -261,8 +261,9 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel(otherSymbol + " "
-						+ operation.toString() + " 0 = 0", Rule.MULTIPLICATION);
+				Moderator.reloadEquationPanel(
+						otherSymbol + " " + operation.toString() + " 0 = 0",
+						Rule.MULTIPLICATION);
 			}
 		});
 	}
@@ -288,9 +289,9 @@ class MultiplyOneButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel(otherSymbol + " "
-						+ operation.toString() + " 1 = " + otherSymbol,
-						Rule.MULTIPLICATION);
+				Moderator.reloadEquationPanel(
+						otherSymbol + " " + operation.toString() + " 1 = "
+								+ otherSymbol, Rule.MULTIPLICATION);
 			}
 		});
 	}
@@ -301,8 +302,8 @@ class MultiplyOneButton extends MultiplyTransformButton {
  * -1 &middot; x = -x
  */
 class MultiplyNegOneButton extends MultiplyTransformButton {
-	MultiplyNegOneButton(MultiplyTransformations context,
-			final MathNode other, final MathNode negOne) {
+	MultiplyNegOneButton(MultiplyTransformations context, final MathNode other,
+			final MathNode negOne) {
 		super(context, "-1·x=-x");
 
 		addClickHandler(new ClickHandler() {
@@ -318,9 +319,9 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel(otherSymbol + " "
-						+ operation.toString() + " -1 = -" + otherSymbol,
-						Rule.MULTIPLICATION);
+				Moderator.reloadEquationPanel(
+						otherSymbol + " " + operation.toString() + " -1 = -"
+								+ otherSymbol, Rule.MULTIPLICATION);
 			}
 		});
 	}
@@ -490,11 +491,24 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 				MathNode leftExp = leftExponential.getChildAt(1);
 				MathNode rightExp = rightExponential.getChildAt(1);
 
-				MathNode rightCasing = rightExp.encase(TypeML.Sum);
+				if (Moderator.isInEasyMode
+						&& TypeML.Number.equals(leftExp.getType())
+						&& TypeML.Number.equals(rightExp.getType())) {
+					BigDecimal leftValue = new BigDecimal(
+							left.getAttribute(MathAttribute.Value));
+					BigDecimal rightValue = new BigDecimal(
+							left.getAttribute(MathAttribute.Value));
+					BigDecimal combinedValue = leftValue.add(rightValue);
+					rightExp.replace(TypeML.Number,
+							combinedValue.toPlainString());
 
-				rightCasing.addBefore(0, TypeML.Operation,
-						Operator.PLUS.getSign());
-				rightCasing.addBefore(0, leftExp);
+				} else {
+					MathNode rightCasing = rightExp.encase(TypeML.Sum);
+
+					rightCasing.addBefore(0, TypeML.Operation,
+							Operator.PLUS.getSign());
+					rightCasing.addBefore(0, leftExp);
+				}
 
 				leftExponential.remove();
 				operation.remove();
@@ -574,22 +588,22 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
  * x &middot; log<sub>b</sub>(a) = log<sub>b</sub>(a<sup>x</sup>)
  */
 class MultiplyLogRuleButton extends MultiplyTransformButton {
-	MultiplyLogRuleButton(MultiplyTransformations context, final MathNode other, final MathNode log) {
+	MultiplyLogRuleButton(MultiplyTransformations context,
+			final MathNode other, final MathNode log) {
 		super(context, "x·log<sub>b</sub>(a)=log<sub>b</sub>(a<sup>x</sup>)");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				
+
 				MathNode exp = log.getFirstChild().encase(TypeML.Exponential);
 				exp.append(other);
-				
+
 				operation.remove();
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Log Power Rule",
-						Rule.LOGARITHM);
+				Moderator.reloadEquationPanel("Log Power Rule", Rule.LOGARITHM);
 			}
 		});
 	}

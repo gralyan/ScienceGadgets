@@ -19,7 +19,6 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	public UnitMap(MathNode mNode, boolean isOnlyQuantityKind) {
 		this();
 
-
 		if (isOnlyQuantityKind) {
 			UnitMap unitMap = new UnitMap(mNode);
 			for (Entry<String, Integer> entry : unitMap.entrySet()) {
@@ -64,7 +63,7 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	 * @return The resulting UnitMap
 	 */
 	public UnitMap getMultiple(UnitMap otherUnitMap) {
-		return combineUnits(otherUnitMap, false);
+		return combineUnits(otherUnitMap, true);
 	}
 
 	/**
@@ -74,23 +73,27 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	 * 
 	 * @param exponent
 	 *            - Integer exponent of this exponential base
+	 * @param isAdditive
+	 *            - combine directly by increasing unit count if true, or
+	 *            combine inversely by decreasing unit count if false
 	 * @return The resulting UnitMap
 	 */
 	public UnitMap getDivision(UnitMap denominatorUnitMap) {
 		return combineUnits(denominatorUnitMap, false);
 	}
 
-	private UnitMap combineUnits(UnitMap otherUnitMap, boolean directly) {
+	private UnitMap combineUnits(UnitMap otherUnitMap, boolean isAdditive) {
 		UnitMap combinedMap = new UnitMap();
-		int direction = directly ? 1 : -1;
+		combinedMap.putAll(this);
+		int direction = isAdditive ? 1 : -1;
 
 		for (Entry<String, Integer> otherEntry : otherUnitMap.entrySet()) {
 			Integer thisValue = this.get(otherEntry.getKey());
 			if (thisValue == null) {
 				thisValue = 0;
 			}
-			combinedMap.put(otherEntry.getKey(),
-					thisValue + (direction * otherEntry.getValue()));
+			combinedMap.put(otherEntry.getKey(), thisValue
+					+ (direction * otherEntry.getValue()));
 		}
 		return combinedMap;
 	}
@@ -128,5 +131,18 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 				UnitUtil.BASE_DELIMITER_REGEX, "");
 		return dataUnitAttribute;
 	}
-
+//	
+//	public Integer[] getDimension() {
+//		DataModerator.
+//		return null;
+//		
+//	}
+//
+//	 public boolean equals(UnitMap otherMap) {
+//		 String thisDimension = "";
+//		 for(Entry<String, Integer> entry : this.entrySet()) {
+//			 
+//		 }
+//	 return super.equals(o);
+//	 }
 }

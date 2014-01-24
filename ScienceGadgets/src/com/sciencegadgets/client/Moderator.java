@@ -15,6 +15,7 @@
 package com.sciencegadgets.client;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -83,7 +84,6 @@ public class Moderator implements EntryPoint {
 		// } catch (Exception e) {
 		// e.printStackTrace();
 		// }
-
 	}
 
 	public enum ActivityType {

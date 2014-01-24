@@ -56,7 +56,7 @@ public class KeyPadNumerical extends FlowPanel {
 		this.add(exp);
 
 		if (Moderator.isTouch) {
-			//Clear Display on Touch
+			//Clear Display on Touch - clear
 			symbolDisplay.addTouchStartHandler(new TouchStartHandler() {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
@@ -72,7 +72,7 @@ public class KeyPadNumerical extends FlowPanel {
 				}
 			});
 		} else {
-			//Clear Display on Click
+			//Clear Display on Click - clear
 			symbolDisplay.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {

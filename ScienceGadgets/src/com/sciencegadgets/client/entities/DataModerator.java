@@ -2,9 +2,11 @@ package com.sciencegadgets.client.entities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
@@ -29,7 +31,7 @@ public class DataModerator {
 	/**
 	 * Holds all every QuantityKind once it has been queried for
 	 */
-	private static Set<String> quantityKinds = null;
+	private static LinkedList<String> quantityKinds = null;
 
 	// //////////////////////////////////////////////////////////////////
 	// UnitsByQuantity
@@ -55,6 +57,9 @@ public class DataModerator {
 
 			@Override
 			public void onSuccess(Unit[] units) {
+				for(Unit u : units) {
+				System.out.println(u.getName());
+				}
 				unitsQuantity.put(quantityKind, units);
 				populate_UnitsByQuantity(unitBox, units);
 			}
@@ -87,9 +92,9 @@ public class DataModerator {
 
 	private static void query_EquationsByQuantities(
 			final SelectionPanel equationBox, final String quantityKinds) {
-		ArrayList<String> qk = new ArrayList<String>();
-		qk.add(quantityKinds);
-		database.getEquationsWithQuantities(qk,
+		ArrayList<String> qkinds = new ArrayList<String>();
+		qkinds.add(quantityKinds);
+		database.getEquationsWithQuantities(qkinds,
 				new AsyncCallback<Equation[]>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -130,13 +135,18 @@ public class DataModerator {
 	}
 
 	private static void query_Quantities(final SelectionPanel quantityBox) {
-		database.getQuantityKinds(new AsyncCallback<Set<String>>() {
+		database.getQuantityKinds(new AsyncCallback<LinkedList<String>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 			}
 
 			@Override
-			public void onSuccess(Set<String> qKinds) {
+			public void onSuccess(LinkedList<String> qKinds) {
+				
+				//Prefix should be first
+				qKinds.remove("Prefix");
+				qKinds.addFirst("Prefix");
+				
 				quantityKinds = qKinds;
 				populate_Quantities(quantityBox);
 				for (SelectionPanel quantityBoxes : toPopulate) {
@@ -151,6 +161,9 @@ public class DataModerator {
 		for (String quantityKind : quantityKinds) {
 			quantityBox.add(quantityKind, quantityKind);
 		}
+
+		//The Prefix quantity is special, should stand out
+		quantityBox.getWidget(1).addStyleName("quantityKindPrefix");
 	}
 
 

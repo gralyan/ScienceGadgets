@@ -28,7 +28,7 @@ public class EquationPanel extends AbsolutePanel {
 	public static Wrapper selectedWrapper;
 	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
 	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
-	private ArrayList<AlgebaWrapper> mathWrappers = new ArrayList<AlgebaWrapper>();
+	private ArrayList<ZoomWrapper> mathWrappers = new ArrayList<ZoomWrapper>();
 	private AlgebraActivity algebraActivity;
 
 	public static final String OF_LAYER = "-ofLayer-";
@@ -102,11 +102,11 @@ public class EquationPanel extends AbsolutePanel {
 			for (MathNode merge : mergeFractionNodes) {
 				placeNextEqWrappers(merge, eqLayerMap.get(merge.getParent()));
 			}
-			for (AlgebaWrapper wrap : mathWrappers) {
+			for (ZoomWrapper wrap : mathWrappers) {
 				AlgebraicTransformations.interFractionDrop_check(wrap.getNode());
 			}
 		}
-		for (AlgebaWrapper wrap : mathWrappers) {
+		for (ZoomWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
 		}
 
@@ -237,6 +237,7 @@ public class EquationPanel extends AbsolutePanel {
 			if (algebraActivity.inEditMode) {// Edit Mode
 				EditWrapper wrap = new EditWrapper(node, algebraActivity, layerNode);
 				eqLayer.addWrapper(wrap);
+				mathWrappers.add(wrap);
 			} else {// Solver Mode
 				AlgebaWrapper wrap = new AlgebaWrapper(node, algebraActivity, layerNode);
 				eqLayer.addWrapper(wrap);

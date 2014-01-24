@@ -610,12 +610,19 @@ public class MathTree {
 			}
 		}
 
+		/**
+		 * Inserts the symbol into the node. If the node is a number, the symbol
+		 * will be saved as the node's value attribute and the displaying symbol
+		 * may be shortened for formatting purposes
+		 * 
+		 * @param symbol
+		 */
 		public void setSymbol(String symbol) {
 			
 			if (TypeML.Number.equals(getType()) && !ChangeNodeMenu.NOT_SET.equals(symbol)) {
 				setAttribute(MathAttribute.Value, symbol);
 				String roundedValue = new BigDecimal(symbol).round(
-						new MathContext(2)).toString();
+						new MathContext(4)).toString();
 				String tilda = symbol.equals(roundedValue) ? "" : "~";
 				mlNode.setInnerText(tilda + roundedValue);
 			} else {

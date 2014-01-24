@@ -2,19 +2,6 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		.workPanel {
-			height: 100%;
-			width: 25%;
-			display: inline-block;
-			vertical-align: top;
-		}
-		.workPanelMain {
-			height: 100%;
-			width: 50%;
-			display: inline-block;
-			vertical-align: top;
-		}
-		
 		.dimensionalAnalysisArea {
 			background-color: silver;
 		}
@@ -22,20 +9,31 @@
 
 	<g:FlowPanel height="100%">
 
-		<g:FlowPanel ui:field="dimensionalAnalysisArea" height="50%"
-			styleName="{style.dimensionalAnalysisArea}"></g:FlowPanel>
+		<g:FlowPanel addStyleNames="layoutRow" width="75%" height="100%">
 
-		<g:FlowPanel ui:field="workArea" height="50%">
+			<g:FlowPanel ui:field="dimensionalAnalysisArea" height="50%"
+				styleName="{style.dimensionalAnalysisArea}"></g:FlowPanel>
 
-			<g:FlowPanel ui:field="unitSelectionArea" addStyleNames="{style.workPanel}"></g:FlowPanel>
+			<g:FlowPanel ui:field="workArea" height="50%">
 
-			<g:AbsolutePanel ui:field="wrapperArea"
-				addStyleNames="{style.workPanelMain}"></g:AbsolutePanel>
+				<g:Button ui:field="convertButton" text="Convert"
+					addStyleNames="layoutRow" width="20%" height="100%"></g:Button>
 
-			<g:Button ui:field="convertButton" text="Convert" addStyleNames="{style.workPanel}"></g:Button>
-			
+				<g:AbsolutePanel ui:field="wrapperArea" width="80%" height="100%" addStyleNames="layoutRow"></g:AbsolutePanel>
+
+			</g:FlowPanel>
 		</g:FlowPanel>
 
+		<g:FlowPanel addStyleNames="layoutRow" width="25%" height="100%">
+
+			<g:FlowPanel ui:field="unitSelectionArea" height="80%">
+			</g:FlowPanel>
+
+			<g:FlowPanel ui:field="unitSelectionToggleArea" height="20%">
+			</g:FlowPanel>
+
+		</g:FlowPanel>
+		
 
 	</g:FlowPanel>
 
