@@ -11,6 +11,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationValidator;
 import com.sciencegadgets.shared.TypeML;
+import com.sun.org.apache.regexp.internal.recompile;
 
 public class SaveButtonHandler implements ClickHandler {
 
@@ -20,22 +21,25 @@ public class SaveButtonHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent arg0) {
 		try {
-			final String mathML = JSNICalls.elementToString(Moderator.getCurrentMathTree().getMathMLClone());
+			final String mathML = Moderator.getCurrentMathTree()
+					.getMathMLString();
+
 			if (mathML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
 				return;
 			}
-			if (!mathML.contains("<"+TypeML.Variable.getTag())) {
+			if (!mathML.contains("<" + TypeML.Variable.getTag())) {
 				Window.alert("The equation must contain at least one variable");
 				return;
 			}
-			if(!new EquationValidator().validateQuantityKinds(Moderator.getCurrentMathTree())) {
+			if (!new EquationValidator().validateQuantityKinds(Moderator
+					.getCurrentMathTree())) {
 				return;
 			}
 
-			String html = JSNICalls.elementToString(Moderator.getCurrentMathTree()
-					.getDisplayClone().getElement());
+			String html = JSNICalls.elementToString(Moderator
+					.getCurrentMathTree().getDisplayClone().getElement());
 
 			dataBase.saveEquation(mathML, html, new AsyncCallback<String>() {
 

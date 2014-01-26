@@ -233,9 +233,12 @@ public class OwlMiner {
 							.replaceFirst(
 									"http://data.nasa.gov/qudt/owl/quantity#",
 									"");
+					//Rename quantity Kinds
 					if (qKind.equals("LiquidVolume")
 							|| qKind.equals("DryVolume")) {
 						qKind = "Volume";
+					} else if (qKind.equals("PlaneAngle")) {
+						qKind = "Angle";
 					} else if (qKind.equals("HeatFlowRate")) {
 						qKind = "Power";
 					} else if (qKind.equals("MolecularMass")) {
@@ -255,9 +258,17 @@ public class OwlMiner {
 						qKind = "SpecificEnergy";
 					} else if (qKind.equals("ThermalEnergy")) {
 						qKind = "EnergyAndWork";
+						
+						//No need for these quantity kinds
 					} else if (qKind.equals("MassAmountOfSubstance")) {
 						continue;
 					} else if (qKind.equals("ForcePerElectricCharge")) {
+						continue;
+					} else if (qKind.equals("MassPerLength")) {
+						continue;
+					} else if (qKind.equals("Permeability")) {
+						continue;
+					} else if (qKind.equals("Permittivity")) {
 						continue;
 					}
 				} else {

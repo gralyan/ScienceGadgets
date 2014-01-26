@@ -42,14 +42,13 @@ public class NumberSpecification extends QuantitySpecification {
 		symbolCaseToggle.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				boolean isRandom = symbolCaseToggle.isFistSelected();
-				if (isRandom) {
-					randSpec.setVisible(false);
-					numPad.setVisible(true);
-
-				} else {
+				if (symbolCaseToggle.isFistSelected()) {
 					randSpec.setVisible(true);
 					numPad.setVisible(false);
+
+				} else {
+					randSpec.setVisible(false);
+					numPad.setVisible(true);
 				}
 			}
 		});

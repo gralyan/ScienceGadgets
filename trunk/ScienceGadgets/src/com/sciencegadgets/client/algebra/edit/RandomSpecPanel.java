@@ -24,6 +24,7 @@ public class RandomSpecPanel extends FlowPanel {
 	public static final String ALWAYS = "A";
 	public static final String SOMETIMES = "S";
 	public static final String NEVER = "N";
+	
 	public static final String RANDOM_SYMBOL = "?";
 	public static final String DELIMITER = "_";
 

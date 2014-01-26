@@ -46,7 +46,7 @@ public class ScienceBrowser extends FlowPanel {
 						sciBrowseEq);
 			}
 		});
-		DataModerator.fill_Quantities(sciBrowseVar);
+//		DataModerator.fill_Quantities(sciBrowseVar);
 
 		// (2) Second box, Equation list
 		sciBrowseEq.addSelectionHandler(new SelectionHandler() {

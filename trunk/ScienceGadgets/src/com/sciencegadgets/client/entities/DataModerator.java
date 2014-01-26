@@ -11,6 +11,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.SelectionPanel;
+import com.sciencegadgets.client.UnitSelection;
+import com.sciencegadgets.shared.UnitUtil;
 
 public class DataModerator {
 
@@ -18,7 +20,7 @@ public class DataModerator {
 			.create(DatabaseHelper.class);
 
 	private static boolean quantityKindsQueried = false;
-	private static ArrayList<SelectionPanel> toPopulate = new ArrayList<SelectionPanel>();
+	private static ArrayList<UnitSelection> toPopulate = new ArrayList<UnitSelection>();
 
 	/**
 	 * Holds only previously queried Unit groups by parent QuantityKind
@@ -57,9 +59,6 @@ public class DataModerator {
 
 			@Override
 			public void onSuccess(Unit[] units) {
-				for(Unit u : units) {
-				System.out.println(u.getName());
-				}
 				unitsQuantity.put(quantityKind, units);
 				populate_UnitsByQuantity(unitBox, units);
 			}
@@ -119,22 +118,22 @@ public class DataModerator {
 	// //////////////////////////////////////////////////////////////////
 	// Quantities
 	// //////////////////////////////////////////////////////////////////
-	public static void fill_Quantities(SelectionPanel quantityBox) {
+	public static void fill_Quantities(UnitSelection unitSelection) {
 
 		if (!quantityKindsQueried) {
 			// If no local, try to get from database by RPC first
 			quantityKindsQueried = true;
-			query_Quantities(quantityBox);
+			query_Quantities(unitSelection);
 		} else {
 			if (quantityKinds != null) {// already available
-				populate_Quantities(quantityBox);
+				populate_Quantities(unitSelection);
 			} else {// still waiting
-				toPopulate.add(quantityBox);
+				toPopulate.add(unitSelection);
 			}
 		}
 	}
 
-	private static void query_Quantities(final SelectionPanel quantityBox) {
+	private static void query_Quantities(final UnitSelection unitSelection) {
 		database.getQuantityKinds(new AsyncCallback<LinkedList<String>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -142,29 +141,37 @@ public class DataModerator {
 
 			@Override
 			public void onSuccess(LinkedList<String> qKinds) {
-				
-				//Prefix should be first
-				qKinds.remove("Prefix");
-				qKinds.addFirst("Prefix");
-				
+
+				// Prefix should be first
+				qKinds.remove(UnitUtil.PREFIXBINARY_QUANTITY_KIND);
+				qKinds.addFirst(UnitUtil.PREFIXBINARY_QUANTITY_KIND);
+				qKinds.remove(UnitUtil.PREFIX_QUANTITY_KIND);
+				qKinds.addFirst(UnitUtil.PREFIX_QUANTITY_KIND);
+
 				quantityKinds = qKinds;
-				populate_Quantities(quantityBox);
-				for (SelectionPanel quantityBoxes : toPopulate) {
+				populate_Quantities(unitSelection);
+				for (UnitSelection quantityBoxes : toPopulate) {
 					populate_Quantities(quantityBoxes);
 				}
 			}
 		});
 	}
 
-	private static void populate_Quantities(SelectionPanel quantityBox) {
-		quantityBox.clear();
+	private static void populate_Quantities(UnitSelection unitSelection) {
+		SelectionPanel qBox = unitSelection.quantityBox;
+		qBox.clear();
 		for (String quantityKind : quantityKinds) {
-			quantityBox.add(quantityKind, quantityKind);
+			qBox.add(quantityKind, quantityKind);
 		}
 
-		//The Prefix quantity is special, should stand out
-		quantityBox.getWidget(1).addStyleName("quantityKindPrefix");
+		// The Prefix quantity is special, should stand out
+		if (unitSelection.isQuantityOnly()) {
+			qBox.getWidget(1).removeFromParent();
+			qBox.getWidget(2).removeFromParent();
+		}else {
+			qBox.getWidget(1).addStyleName("quantityKindPrefix");
+			qBox.getWidget(2).addStyleName("quantityKindPrefix");
+		}
 	}
-
 
 }

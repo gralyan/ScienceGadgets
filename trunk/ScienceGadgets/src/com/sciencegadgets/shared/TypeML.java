@@ -3,26 +3,37 @@ package com.sciencegadgets.shared;
 import java.util.NoSuchElementException;
 
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 /**
  * <em><b>TypeML - tag - attributes</b></em></br> Number - mn -
- * data-randomness</br> Number - mn - data-unit</br> TrigFunction- trig -
- * data-function</br>
+ * data-randomness</br> Number - mn - data-unit</br> Trig- trig -
+ * data-function</br> Log- log -
+ * data-base</br>
  * 
  */
 
 public enum TypeML {
-	Equation("math", ChildRequirement.EQUATION), //
-	Number("mn", ChildRequirement.TERMINAL), //
-	Variable("mi", ChildRequirement.TERMINAL), //
-	Operation("mo", ChildRequirement.TERMINAL), //
-	Term("mrow", ChildRequirement.SEQUENCE), //
-	Sum("mfenced", ChildRequirement.SEQUENCE), //
-	Fraction("mfrac", ChildRequirement.BINARY), //
-	Exponential("msup", ChildRequirement.BINARY), //
-	Log("log", ChildRequirement.UNARY), //
-	Trig("trig", ChildRequirement.UNARY);
+	Equation("sgmt:equation", ChildRequirement.EQUATION), //
+	Number("sgmt:num", ChildRequirement.TERMINAL), //
+	Variable("sgmt:var", ChildRequirement.TERMINAL), //
+	Operation("sgmt:op", ChildRequirement.TERMINAL), //
+	Term("sgmt:term", ChildRequirement.SEQUENCE), //
+	Sum("sgmt:sum", ChildRequirement.SEQUENCE), //
+	Fraction("sgmt:frac", ChildRequirement.BINARY), //
+	Exponential("sgmt:exp", ChildRequirement.BINARY), //
+	Log("sgmt:log", ChildRequirement.UNARY), //
+	Trig("sgmt:trig", ChildRequirement.UNARY);
+
+//	Equation("math", ChildRequirement.EQUATION), //
+//	Number("mn", ChildRequirement.TERMINAL), //
+//	Variable("mi", ChildRequirement.TERMINAL), //
+//	Operation("mo", ChildRequirement.TERMINAL), //
+//	Term("mrow", ChildRequirement.SEQUENCE), //
+//	Sum("mfenced", ChildRequirement.SEQUENCE), //
+//	Fraction("mfrac", ChildRequirement.BINARY), //
+//	Exponential("msup", ChildRequirement.BINARY), //
+//	Log("log", ChildRequirement.UNARY), //
+//	Trig("trig", ChildRequirement.UNARY);
 
 	private String tag;
 	private ChildRequirement childRequirement;
