@@ -26,6 +26,8 @@ public class UnitUtil {
 	public static final String EXP_DELIMITER = "^";
 	public static final String EXP_DELIMITER_REGEX = "\\^";
 	public static final String NAME_DELIMITER = "_";
+	public static final String PREFIX_QUANTITY_KIND = "Prefix";
+	public static final String PREFIXBINARY_QUANTITY_KIND = "PrefixBinary";
 
 	public static Element element_From_MathNode(MathNode mathNode) {
 		return element_From_attribute(mathNode.getUnitAttribute());

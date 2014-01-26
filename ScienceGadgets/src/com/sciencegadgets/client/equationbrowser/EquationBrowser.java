@@ -38,11 +38,11 @@ public class EquationBrowser extends FlowPanel {
 
 		this.getElement().setId("equationBrowser");
 
-		Grid modes = new Grid(1, 2);
-		modes.setWidget(0, 0, modeAlg);
-		modes.setWidget(0, 1, modeSci);
-		modes.setStyleName("modes");
-		this.add(modes);
+//		Grid modes = new Grid(1, 2);
+//		modes.setWidget(0, 0, modeAlg);
+//		modes.setWidget(0, 1, modeSci);
+//		modes.setStyleName("modes");
+//		this.add(modes);
 
 		Grid modes2 = new Grid(1, 2);
 		modes2.setWidget(0, 0, modeSolve);

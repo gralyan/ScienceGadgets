@@ -10,8 +10,8 @@ import com.sciencegadgets.shared.TypeML.TrigFunctions;
 import com.sciencegadgets.shared.UnitMap;
 
 public class EquationValidator {
-	
-	private static final String ANGLE ="PlaneAngle";
+
+	private static final String ANGLE = "Angle";
 
 	/**
 	 * Validates the structure of the node, looks at:<br/>
@@ -148,13 +148,12 @@ public class EquationValidator {
 		}
 	}
 
-	private UnitMap getQuantityKind(MathNode node)
-			throws IllegalStateException {
+	private UnitMap getQuantityKind(MathNode node) throws IllegalStateException {
 
 		switch (node.getType()) {
 		case Number:
 		case Variable:
-			return new UnitMap(node, true);
+			return new UnitMap(node).getQuantityKindMap();
 		case Term:
 			UnitMap termMap = new UnitMap();
 			for (MathNode child : node.getChildren()) {
@@ -175,17 +174,16 @@ public class EquationValidator {
 				UnitMap childMap = getQuantityKind(child);
 				if (sumMap == null) {
 					sumMap = childMap;
-				} else if (!sumMap.equals(childMap)) {
+				} else if (!sumMap.isConvertableTo(childMap)) {
 					throw new IllegalStateException(
 							"All sums and equations must contain equivalent derived quantity kinds for all of it's children: \n"
 									+ "first: "
 									+ sumMap
 									+ "\ndiffernent: "
-									+ childMap
-									+ "\nof node: "
-									+ child,
+									+ childMap + "\nof node: " + child,
 							new Throwable(
-									"Units must be similar in sides of the equation and in sums"));
+									"Units must be similar in sides of the equation and in sums, these are not convertable:\n"
+											+ sumMap + "\n" + childMap));
 				}
 			}
 			return sumMap;
@@ -230,12 +228,12 @@ public class EquationValidator {
 		case Fraction:
 			MathNode numerator = node.getChildAt(0);
 			MathNode denominator = node.getChildAt(1);
-			UnitMap divisionMap = getQuantityKind(numerator).getDivision(getQuantityKind(denominator));
+			UnitMap divisionMap = getQuantityKind(numerator).getDivision(
+					getQuantityKind(denominator));
 
 			return divisionMap;
 		case Log:
-			UnitMap logArgumentMap = getQuantityKind(node
-					.getChildAt(0));
+			UnitMap logArgumentMap = getQuantityKind(node.getChildAt(0));
 			if (logArgumentMap.size() == 0) {
 				return logArgumentMap;
 			} else {
@@ -247,17 +245,18 @@ public class EquationValidator {
 			}
 			// unreachable
 		case Trig:
-			UnitMap trigArgumentMap = getQuantityKind(node
-					.getChildAt(0));
+			UnitMap trigArgumentMap = getQuantityKind(node.getChildAt(0));
 			UnitMap comparison = new UnitMap();
-			comparison.put(ANGLE , 1);
-			if(comparison.equals(trigArgumentMap)) {
+			comparison.put(ANGLE, 1);
+			if (comparison.equals(trigArgumentMap)) {
 				break;
-			}else {
+			} else {
 				throw new IllegalStateException(
-						"The child of a trig function doesn't have units of "+ANGLE+": \n" + trigArgumentMap
+						"The child of a trig function doesn't have units of "
+								+ ANGLE + ": \n" + trigArgumentMap
 								+ "\nof node: " + node, new Throwable(
-								"The argument of a trigonometric function must have the unit type of "+ANGLE));
+								"The argument of a trigonometric function must have the unit type of "
+										+ ANGLE));
 			}
 		}
 		return new UnitMap();

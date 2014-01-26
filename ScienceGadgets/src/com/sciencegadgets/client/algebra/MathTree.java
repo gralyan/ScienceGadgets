@@ -31,6 +31,7 @@ import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
+import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -82,6 +83,15 @@ public class MathTree {
 
 	public Element getMathMLClone() {
 		return (Element) mathML.cloneNode(true);
+	}
+
+	public String getMathMLString() {
+		String mlString = JSNICalls.elementToString(mathML);
+		// TODO test
+		mlString = mlString.replace(
+				" xmlns=\"http://www.w3.org/1998/Math/MathML\"", "").replace(
+				" xmlns=\"http://www.w3.org/1999/xhtml\"", "");
+		return mlString;
 	}
 
 	public EquationHTML getDisplayClone() {
@@ -187,19 +197,19 @@ public class MathTree {
 	}
 
 	public void validateTree() {
-		
-		if(eqValidator == null) {
+
+		if (eqValidator == null) {
 			eqValidator = new EquationValidator();
 		}
- 
+
 		for (MathNode node : idMap.values()) {
 			eqValidator.validateMathNode(node);
 		}
-		
-		if(!inEditMode) {
+
+		if (!inEditMode) {
 			eqValidator.validateQuantityKinds(this);
 		}
-		
+
 		if (idMap.size() != idMLMap.size()) {
 			JSNICalls
 					.error("The binding maps must have the same size: idMap.size()="
@@ -283,7 +293,7 @@ public class MathTree {
 
 			if (!"".equals(symbol)) {
 				setSymbol(symbol);
-//				newNode.setInnerText(symbol);
+				// newNode.setInnerText(symbol);
 			}
 
 		}
@@ -618,11 +628,12 @@ public class MathTree {
 		 * @param symbol
 		 */
 		public void setSymbol(String symbol) {
-			
-			if (TypeML.Number.equals(getType()) && !ChangeNodeMenu.NOT_SET.equals(symbol)) {
+
+			if (TypeML.Number.equals(getType())
+					&& !ChangeNodeMenu.NOT_SET.equals(symbol)&& !RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 				setAttribute(MathAttribute.Value, symbol);
 				String roundedValue = new BigDecimal(symbol).round(
-						new MathContext(4)).toString();
+						new MathContext(3)).toString();
 				String tilda = symbol.equals(roundedValue) ? "" : "~";
 				mlNode.setInnerText(tilda + roundedValue);
 			} else {
@@ -857,7 +868,6 @@ public class MathTree {
 				return false;
 			}
 		}
-
 
 	}
 

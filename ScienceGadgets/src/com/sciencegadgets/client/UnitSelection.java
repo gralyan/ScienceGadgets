@@ -18,7 +18,7 @@ public class UnitSelection extends CommunistPanel {
 		super.onLoad();
 		if (!quantityFilled && !unitOnly) {
 			quantityFilled = true;
-			DataModerator.fill_Quantities(quantityBox);
+			DataModerator.fill_Quantities(this);
 		}
 
 	}
@@ -75,5 +75,12 @@ public class UnitSelection extends CommunistPanel {
 			DataModerator.fill_UnitsByQuantity(quantityKind, unitBox);
 		}
 
+	}
+
+	public boolean isQuantityOnly() {
+		return quantityOnly;
+	}
+	public boolean isUnitsOnly() {
+		return unitOnly;
 	}
 }

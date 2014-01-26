@@ -18,7 +18,8 @@ public class AlgebraBrowser extends SelectionPanel {
 			public void onSelect(Cell selected) {
 				String mathmlStr = selected.getValue();
 				if (mathmlStr != null) {
-//					Element mathml = (Element) XMLParser.parse(mathmlStr).getDocumentElement();
+					// Element mathml = (Element)
+					// XMLParser.parse(mathmlStr).getDocumentElement();
 					Element mathml = (Element) (new HTML(mathmlStr)
 							.getElement().getFirstChildElement());
 					Moderator.makeAlgebra(mathml, equationBrowser.inEditMode);
@@ -39,7 +40,7 @@ public class AlgebraBrowser extends SelectionPanel {
 						if (size == 0) {
 							// Display default a=a if no other equations
 							add("<div>a=a<div>",
-									"<math><mi>a</mi><mo>=</mo><mi>a</mi></math>");
+									"<sgmt:equation><sgmt:var>a</sgmt:var><sgmt:op>=</sgmt:op><sgmt:var>a</sgmt:var></sgmt:equation>");
 						} else {
 							for (int i = 0; i < size; i++) {
 								Equation equation = eqList[i];

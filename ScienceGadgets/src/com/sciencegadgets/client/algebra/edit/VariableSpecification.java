@@ -45,13 +45,13 @@ public class VariableSpecification extends QuantitySpecification {
 			@Override
 			public void onClick(ClickEvent event) {
 				boolean isLower = symbolCaseToggle.isFistSelected();
-				int latinDiff = isLower ? 'a' - 'A' : 'A' - 'a';
+				int latinDiff = isLower ? 'A' - 'a' : 'a' - 'A';
 				for (SymbolButton button : latinButtons) {
 
 					int changed = button.getText().toCharArray()[0] + latinDiff;
 					button.setText("" + (char) changed);
 				}
-				int greekDiff = isLower ? 'α' - 'Α' : 'Α' - 'α';
+				int greekDiff = isLower ?  'Α' - 'α': 'α' - 'Α';
 				for (SymbolButton button : greekButtons) {
 
 					int changed = button.getText().toCharArray()[0] + greekDiff;
