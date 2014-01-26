@@ -290,7 +290,7 @@ public class ConversionActivity extends AbsolutePanel {
 				+ UnitUtil.EXP_DELIMITER + 1);
 		fromHistoryNode.setAttribute(MathAttribute.Unit, selectedUnit.getName()
 				+ UnitUtil.EXP_DELIMITER + 1);
-
+		
 		MathNode numHistoryNode, denHistoryNode = null;
 		String numUnitName, denUnitName = null;
 		boolean selectIsNumerator = selectedWrapper.getUnitDisplay().inNumerator;
