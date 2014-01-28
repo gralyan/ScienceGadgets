@@ -1,5 +1,6 @@
 body {
-	
+	margin: 0px;
+	padding: 0px;
 }
 
 .center {
@@ -17,11 +18,15 @@ body {
 }
 
 #scienceGadgetArea {
+	background-image: url('images/chalkboard2.jpeg');
 	background-color: #ADD850;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 	margin: auto;
 }
 
-.equationBrowser {
+/*---------------Browsers---------------*/
+#equationBrowser {
 	margin: auto;
 	height: 100%;
 }
@@ -32,91 +37,164 @@ body {
 	height: 10%;
 }
 
-.browserPanel {
-	height: 80%;
-}
-
-.gridBox {
-	margin: auto;
-	border: 1px solid silver;
-	background-color: white;
-	padding: 2px;
-	width: 30%;
-	cursor: default;
-	height: 100%;
-}
-
 .rowHeader {
 	border-bottom-color: silver;
 	border-bottom-style: solid;
 	border-bottom-width: thin;
 	background-color: #eeeeee;
 	text-align: center;
-	height: 10%;
 }
 
-.selection {
-	cursor: pointer;
-	overflow: scroll;
-	height: 90%;
-}
-
-#algOut {
+#algBrowser {
+	width: 30%;
+	height: 70%;
 	text-align: center;
-	height: 100%;
-	width: 100%;
+	margin: auto;
 }
 
-#algOutScroll {
+#sciBrowser {
+	margin: auto;
+	height: 100%;
+	text-align: center;
+}
+
+#sciBrowseVar {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 80%;
+}
+
+#sciBrowseEq {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 80%;
+}
+
+#sciBrowseSum {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 80%;
+}
+
+/*---------------ConversionActivity---------------*/
+#conversionActivity {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+}
+/*---------------SelectionPanel---------------*/
+.selectionPanel {
+	overflow-y: scroll;
+	background-color: white;
+	cursor: pointer;
+}
+
+.selectionPanelCell {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	}
+.selectedCell {
+	background-color: #9999ff;
+}
+
+.quantityKindPrefix{
+	border: medium solid green;
+}
+
+/*---------------AlgOut---------------*/
+.algOut {
+	text-align: center;
 	height: 100%;
 	width: 100%;
 	overflow-y: scroll;
 	overflow-x: hidden;
+	z-index: 10;
 }
 
-.algOutChangeRow {
-	background-color: green;
+.algOutRow {
+	border-top: thin solid blue;
+	background-color: white;
+}
+
+.algOutEqRow {
+	display: inline-block;
+	vertical-align: top;
+	width: 68%;
+	height: 100%;
+	border-right: thin solid red;
+}
+
+.algOutEqLeft {
+	float:left;
+	text-align: right;
+	display: inline-block;
+	vertical-align: top;
+	height: 100%;
+	width: 50%;
+}
+
+.algOutEqEquals {
+	float:left;
+	display: inline-block;
+	vertical-align: top;
+	height: 100%;
+}
+.algOutEqRight {
+	float:left;
+	text-align: left;
+	display: inline-block;
+	vertical-align: top;
+	height: 100%;
+}
+
+.algOutChangeRow{
+	color:red;
+	background-color: #FFFF99;
+}
+
+.algOutRuleRow {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 100%;
+	color: red;
 }
 
 .inputGrid {
 	width: 60em;
 }
 
-.selectedVar {
-	background-color: #9999ff;
+/*---------------changes---------------*/
+.highlight{
+	color:red;
 }
-
-#selectedVar {
-	background-color: #9999ff;
+.lineThrough {
+	color:red;
+	text-decoration: line-through;
 }
-
-#selectedEq {
-	background-color: #9999ff;
-}
-
+/*---------------wrappers---------------*/
 .selectedWrapper {
 	opacity: 0.5;
+	box-shadow: 10px 10px 5px #888888;
 }
 
 .selectedDropWrapper {
-	border-style: solid;
-	border-color: fuchsia;
+	box-shadow: 10px 10px 5px #888888 inset;
+}
+
+.conversionWrapper{
+	border: medium solid black;
+	background-color: lime;
+	cursor: move;
 }
 
 .dropDescriptor {
 	background-color: white;
 	border-color: fuchsia;
 	border-style: inset;
-}
-
-.var {
-	opacity: .3;
-	background-color: #FFFFFF;
-	text-align: center;
-}
-
-.varName {
-	background-color: #0000FF;
 }
 
 .wrap {
@@ -134,5 +212,80 @@ body {
 .eqPanel {
 	width: 100%;
 	height: 100%;
+}
+
+.eqLayer {
+	width: 100%;
+	height: 100%;
 	text-align: center;
+}
+
+.layoutRow {
+	display: inline-block;
+	vertical-align: top;
+}
+
+/*---------------popups---------------*/
+.popupGlass {
+	background-color: white;
+	opacity: 0.8;
+	z-index: 9;
+}
+
+.gwt-DialogBox {
+	text-align: center;
+	background-color: #E6E6FA;
+	z-index: 100;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.gwt-PopupPanelGlass {
+	background-color: #000;
+	opacity: 0.6;
+	filter: alpha(opacity =       30);
+}
+
+/*---------------toggle---------------*/
+.toggleSlide {
+	background-color: gray;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	height: 100%;
+}
+
+.toggleOption {
+	width: 50%;
+	height: 100%;
+	text-align: center;
+	display: inline-block;
+}
+
+.toggleOptionSelected {
+	background-color: orange;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+
+/*---------------prompts---------------*/
+.numberDisplay {
+	text-align: center;
+	background-color: lime;
+	border: thin solid darkGreen;
+	min-width: 3px;
+	min-height: 1.5em
+}
+
+.promptMain {
+	overflow-y: scroll;
+	border: solid darkGreen medium;
+	background-color: white;
+}
+
+.keyPadNumerical {
+	background-color: lightGray;
+	padding: 20px;
 }
