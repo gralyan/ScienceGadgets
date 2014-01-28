@@ -9,15 +9,17 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.UnitUtil;
 
-public class ZoomWrapper extends Wrapper {
+public class EquationWrapper extends Wrapper {
 	protected EquationPanel eqPanel;
 	protected AlgebraActivity algebraActivity;
 
-	public ZoomWrapper(MathNode node, AlgebraActivity algebraActivity,
+	public EquationWrapper(MathNode node, AlgebraActivity algebraActivity,
 			Element element) {
 		super(node, algebraActivity.eqPanel, element);
 		this.eqPanel = algebraActivity.eqPanel;
 		this.algebraActivity = algebraActivity;
+		
+		this.addStyleName("displayWrapper");
 	}
 
 	public EquationLayer getEqLayer() {

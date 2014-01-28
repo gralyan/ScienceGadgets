@@ -15,6 +15,7 @@ import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
+import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -30,7 +31,7 @@ public abstract class QuantitySpecification extends Prompt {
 			.create(VariableSpecUiBinder.class);
 
 	@UiField
-	Label symbolDisplay;
+	SymbolDisplay symbolDisplay;
 	@UiField
 	FlowPanel unitDisplay;
 	@UiField

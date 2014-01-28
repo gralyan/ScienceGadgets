@@ -5,14 +5,17 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.KeyPadNumerical;
+import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.Prompt;
 
 public class LogBaseSpecification extends Prompt {
 	public final String[] bases = { "2", "10", "e" };
-	private Label symbolDisplay = new Label();
+	private SymbolDisplay symbolDisplay;
+	KeyPadNumerical keyPad = new KeyPadNumerical();
 
 	public LogBaseSpecification() {
 		super();
+		symbolDisplay = keyPad.getSymbolDisplay();
 		add(new Label("What base?"));
 		add(symbolDisplay);
 		
@@ -28,7 +31,6 @@ public class LogBaseSpecification extends Prompt {
 			baseButton.addStyleName("mediumButton");
 			add(baseButton);
 		}
-		KeyPadNumerical keyPad = new KeyPadNumerical(symbolDisplay);
 		add(keyPad);
 		
 		addOkHandler(new ClickHandler() {

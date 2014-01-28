@@ -14,23 +14,23 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitMap;
 
-public class ExponentialTransformations extends Transformations{
-	
+public class ExponentialTransformations extends Transformations {
+
 	private static final long serialVersionUID = -4899066857084144484L;
-	
+
 	MathNode exponential;
 	MathNode base;
 	MathNode exponent;
 	TypeML baseType;
 	TypeML exponentType;
-	
+
 	public ExponentialTransformations(MathNode exponentialNode) {
 		exponential = exponentialNode;
 		base = exponential.getChildAt(0);
 		exponent = exponential.getChildAt(1);
 		baseType = base.getType();
 		exponentType = exponent.getType();
-		
+
 		add(exponentialExpand_check());
 		add(exponentialEvaluate_check());
 		add(exponentialExponentiate_check());
@@ -45,23 +45,26 @@ public class ExponentialTransformations extends Transformations{
 		}
 		return null;
 	}
-	
+
 	private ExponentialTransformButton exponentialExponentiate_check() {
 		if (TypeML.Exponential.equals(baseType)) {
 			return new ExponentialExponentialeButton(this);
 		}
 		return null;
 	}
+
 	private ExponentialTransformButton exponentialFraction_check() {
 		if (TypeML.Fraction.equals(baseType)) {
 			return new ExponentialFractionButton(this);
 		}
 		return null;
 	}
+
 	private ExponentialTransformButton exponentialFlip_check() {
-		if (TypeML.Number.equals(exponentType) || TypeML.Variable.equals(exponentType)) {
-			if(exponent.getSymbol().startsWith(Operator.MINUS.getSign())) {
-			return new ExponentialFlipButton(this);
+		if (TypeML.Number.equals(exponentType)
+				|| TypeML.Variable.equals(exponentType)) {
+			if (exponent.getSymbol().startsWith(Operator.MINUS.getSign())) {
+				return new ExponentialFlipButton(this);
 			}
 		}
 		return null;
@@ -96,7 +99,7 @@ class ExponentialTransformButton extends Button {
 		this.exponential = context.exponential;
 		this.base = context.base;
 		this.exponent = context.exponent;
-		
+
 		exponential.highlight();
 	}
 }
@@ -120,7 +123,8 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 				final BigDecimal totalValue = baseValue.pow(expValue,
 						MathContext.DECIMAL128);
 
-				final UnitMap totalUnitMap = new UnitMap(base).getExponential(expValue);
+				final UnitMap totalUnitMap = new UnitMap(base)
+						.getExponential(expValue);
 
 				if (Moderator.isInEasyMode) {
 					evaluateExponential(baseValue, expValue, totalValue,
@@ -176,13 +180,13 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 			public void onClick(ClickEvent event) {
 
 				if (exp == 0) {
-					if(TypeML.Number.equals(base.getType())) {
+					if (TypeML.Number.equals(base.getType())) {
 						if ("0".equals(base.getSymbol())) {
 							exponential.replace(TypeML.Number, "0");
-						}else {
+						} else {
 							exponential.replace(TypeML.Number, "1");
 						}
-					}else {
+					} else {
 						Window.alert("Warning: You are now assuming that the base is not equivalent to 0");
 						exponential.replace(TypeML.Number, "1");
 					}
@@ -209,90 +213,138 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 	}
 
 }
+
 /**
  * (x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>
  */
 class ExponentialExponentialeButton extends ExponentialTransformButton {
-	
+
 	ExponentialExponentialeButton(ExponentialTransformations context) {
 		super(context, "(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>");
-		
+
 		addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
+
 				MathNode innerBase = base.getChildAt(0);
 				MathNode innerExp = base.getChildAt(1);
-				
+
 				MathNode expTerm = exponent.encase(TypeML.Term);
-				expTerm.addBefore(0,TypeML.Operation, Operator.getMultiply().getSign());
+				expTerm.addBefore(0, TypeML.Operation, Operator.getMultiply()
+						.getSign());
 				expTerm.addBefore(0, innerExp);
-				
+
 				base.replace(innerBase);
-				
-				Moderator.reloadEquationPanel("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
-						Rule.EXPONENT_PROPERTIES);
+
+				Moderator
+						.reloadEquationPanel(
+								"(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
+								Rule.EXPONENT_PROPERTIES);
 			}
 		});
 	}
-	
+
 }
+
 /**
  * (x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)
  */
 class ExponentialFractionButton extends ExponentialTransformButton {
-	
+
 	ExponentialFractionButton(ExponentialTransformations context) {
 		super(context, "(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)");
-		
+
 		addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				MathNode numerator = base.getChildAt(0).encase(TypeML.Exponential);
-				MathNode denominator = base.getChildAt(1).encase(TypeML.Exponential);
-				
+
+				MathNode numerator = base.getChildAt(0).encase(
+						TypeML.Exponential);
+				MathNode denominator = base.getChildAt(1).encase(
+						TypeML.Exponential);
+
 				numerator.append(exponent.clone());
 				denominator.append(exponent);
-				
+
 				exponential.replace(base);
-				
-				Moderator.reloadEquationPanel("(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)",
+
+				Moderator.reloadEquationPanel(
+						"(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)",
 						Rule.EXPONENT_PROPERTIES);
 			}
 		});
 	}
-	
+
 }
+
 /**
  * (x/y)<sup>-b</sup> = (y/x)<sup>b</sup><br/>
  * x<sup>-b</sup> = (1/x)<sup>b</sup>
  */
 class ExponentialFlipButton extends ExponentialTransformButton {
-	
+
 	ExponentialFlipButton(ExponentialTransformations context) {
 		super(context, "x<sup>-b</sup> = (1/x)<sup>b</sup>");
-		
+
 		addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				if(TypeML.Fraction.equals(base.getType())) {
+				MathNode parent = exponential.getParent();
+
+				if (TypeML.Fraction.equals(base.getType())) {
 					base.append(base.getFirstChild());
-				}else {
+					
+				} else if (TypeML.Fraction.equals(parent.getType())) {
+					
+					boolean inNumerator = exponential.getIndex() == 0;
+					int otherSideIndex = inNumerator ? 1 : 0;
+					MathNode otherSide = parent.getChildAt(otherSideIndex).encase(TypeML.Term);
+					
+					otherSide.append(TypeML.Operation, Operator.getMultiply().getSign());
+					otherSide.append(exponential);
+					
+					if (inNumerator) {
+						parent.addBefore(0, TypeML.Number, "1");
+					} else {
+						parent.replace(otherSide);
+					}
+					
+				} else if (TypeML.Term.equals(parent.getType())
+						&& TypeML.Fraction.equals(parent.getParentType())) {
+					
+					boolean inNumerator = parent.getIndex() == 0;
+					int otherSideIndex = inNumerator ? 1 : 0;
+					
+					if(exponential.getIndex()==0) {
+						exponential.getNextSibling().remove();
+					}else {
+						exponential.getPrevSibling().remove();
+					}
+
+					MathNode otherSide = parent.getParent().getChildAt(otherSideIndex)
+							.encase(TypeML.Term);
+					otherSide.append(TypeML.Operation, Operator.getMultiply()
+							.getSign());
+					otherSide.append(exponential);
+					
+					parent.decase();
+					
+				} else {
 					MathNode frac = base.encase(TypeML.Fraction);
 					frac.addBefore(0, TypeML.Number, "1");
 				}
-				
-				exponent.setSymbol(exponent.getSymbol().replace(Operator.MINUS.getSign(), ""));
-				
-				Moderator.reloadEquationPanel("x<sup>-b</sup> = (1/x)<sup>b</sup>",
+
+				exponent.setSymbol(exponent.getSymbol().replace(
+						Operator.MINUS.getSign(), ""));
+
+				Moderator.reloadEquationPanel(
+						"x<sup>-b</sup> = (1/x)<sup>b</sup>",
 						Rule.EXPONENT_PROPERTIES);
 			}
 		});
 	}
-	
+
 }

@@ -38,9 +38,29 @@ public class SelectionPanel extends FlowPanel {
 	public ArrayList<Cell> getCells(){
 		return cells;
 	}
+	
+	/**
+	 * Removes the cell from the panel and cell list if found
+	 * @param value of the cell to be removed
+	 * @return - true if cell is found
+	 */
+	public boolean removeCell(String value) {
+		System.out.println("v "+value);
+		System.out.println("c "+cells);
+		for(Cell cell : getCells()) {
+			if(value.equals(cell.value)) {
+				cells.remove(cell);
+				cell.removeFromParent();
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public void clear() {
 		super.clear();
+		cells.clear();
 		add(labelAlg);
 	}
 
@@ -57,8 +77,13 @@ public class SelectionPanel extends FlowPanel {
 	}
 	public void add(String html, String value, Serializable entity) {
 		Cell cell = new Cell(html, value, entity);
-		super.add(cell);
 		cells .add(cell);
+		super.add(cell);
+	}
+	public void insert(int index, String html, String value, Serializable entity) {
+		Cell cell = new Cell(html, value, entity);
+		cells .add(cell);
+		super.insert(cell, index+1);
 	}
 
 	public String getSelectedText() {
@@ -91,9 +116,9 @@ public class SelectionPanel extends FlowPanel {
 
 	public class Cell extends HTML {
 		private String value;
-		private Serializable entity;
+		private Object entity;
 
-		Cell(String html, final String value, Serializable entity) {
+		Cell(String html, final String value, Object entity) {
 			super(html);
 			this.value = value;
 			this.entity = entity;
@@ -123,7 +148,7 @@ public class SelectionPanel extends FlowPanel {
 		public String getValue() {
 			return value;
 		}
-		public Serializable getEntity() {
+		public Object getEntity() {
 			return entity;
 		}
 	}

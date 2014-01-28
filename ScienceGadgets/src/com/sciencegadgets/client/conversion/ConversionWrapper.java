@@ -1,26 +1,29 @@
 package com.sciencegadgets.client.conversion;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.shared.UnitUtil;
 
-class ConversionWrapper extends Wrapper {
+public class ConversionWrapper extends Wrapper {
 
-	ConversionActivity conversionAvtivity = null;
+	ConversionActivity conversionActivity = null;
 	private UnitDisplay unitDisplay;
 
 	ConversionWrapper(UnitDisplay unitDisplay, AbsolutePanel panel, ConversionActivity conversionAvtivity) {
 		super(unitDisplay.wrappedNode, panel, unitDisplay.wrappedNode.getHTML());
-		this.conversionAvtivity = conversionAvtivity;
+		this.conversionActivity = conversionAvtivity;
 		this.unitDisplay = unitDisplay;
+		
+		this.addStyleName("conversionWrapper");
 	}
 	
 	public UnitDisplay getUnitDisplay() {
 		return unitDisplay;
+	}
+	
+	public ConversionActivity getConversionActivity() {
+		return conversionActivity;
 	}
 
 	@Override
@@ -30,7 +33,7 @@ class ConversionWrapper extends Wrapper {
 		}
 
 		String unitName = UnitUtil.getUnitNames(node)[0];
-		conversionAvtivity.fillUnitSelection(unitName);
+		conversionActivity.fillUnitSelection(unitName);
 
 		if (ConversionActivity.selectedWrapper != null) {
 			ConversionActivity.selectedWrapper.unselect();
@@ -42,7 +45,8 @@ class ConversionWrapper extends Wrapper {
 	@Override
 	public void unselect() {
 		super.unselect();
-		conversionAvtivity.unitSelection.unitBox.clear();
+		ConversionActivity.unitSelection.unitBox.clear();
+		ConversionActivity.derivedUnitsSelection.clear();
 		ConversionActivity.selectedWrapper = null;
 	}
 

@@ -14,12 +14,13 @@ public class NumberSpecification extends QuantitySpecification {
 
 	String randomness = "";
 	RandomSpecPanel randSpec = new RandomSpecPanel();
-	KeyPadNumerical numPad = new KeyPadNumerical(symbolDisplay);
+	KeyPadNumerical numPad;
 
 	public NumberSpecification(MathNode mathNode) {
 		super(mathNode);
 
 		//Number Pad
+		numPad = new KeyPadNumerical(symbolDisplay);
 		symbolPalette.add(numPad);
 		
 		//Randomness Spec

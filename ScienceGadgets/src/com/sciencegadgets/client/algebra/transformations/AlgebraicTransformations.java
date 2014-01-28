@@ -282,7 +282,7 @@ public class AlgebraicTransformations {
 	}
 
 	public static Button denominatorFlip_check(MathNode node) {
-		return new DenominatorFlipButton(node.getChildAt(1));
+		return new DenominatorFlipButton(node);
 	}
 
 	/**

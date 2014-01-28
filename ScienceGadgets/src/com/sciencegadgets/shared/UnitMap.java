@@ -16,8 +16,12 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	}
 
 	public UnitMap(MathNode mNode) {
-		if (!"".equals(mNode.getUnitAttribute())) {
-			String[] basics = UnitUtil.getUnits(mNode);
+		this(mNode.getUnitAttribute());
+	}
+	
+	public UnitMap(String unitAttribute) {
+		if (!"".equals(unitAttribute)) {
+			String[] basics = unitAttribute.split(UnitUtil.BASE_DELIMITER_REGEX);
 			for (String basic : basics) {
 				String[] baseAndExp = basic
 						.split(UnitUtil.EXP_DELIMITER_REGEX);

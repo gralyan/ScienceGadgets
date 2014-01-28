@@ -14,7 +14,7 @@ import com.sciencegadgets.client.entities.Unit;
 @RemoteServiceRelativePath("greet")
 public interface DatabaseHelper extends RemoteService {
 	Equation[] getAlgebraEquations() throws IllegalArgumentException;
-	Unit[] getUnitsByQuantity(String quantityKind)
+	LinkedList<Unit> getUnitsByQuantity(String quantityKind)
 			throws IllegalArgumentException;
 	LinkedList<String> getQuantityKinds();
 	String saveEquation(String mathML, String html)

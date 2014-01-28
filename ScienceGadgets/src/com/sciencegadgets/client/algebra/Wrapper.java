@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.LinkedList;
 
+import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,6 +15,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
+import com.sciencegadgets.client.conversion.ConversionWrapper;
+import com.sciencegadgets.client.conversion.ReorderDropController;
 import com.sciencegadgets.shared.TypeML;
 
 public class Wrapper extends HTML implements HasHandlers {
@@ -22,7 +25,8 @@ public class Wrapper extends HTML implements HasHandlers {
 	protected AbsolutePanel parentPanel;
 	private WrapDragController dragController = null;
 
-	public Wrapper(MathNode node, final AbsolutePanel parentPanel, Element element) {
+	public Wrapper(MathNode node, final AbsolutePanel parentPanel,
+			Element element) {
 		super(element);
 
 		this.node = node;
@@ -31,8 +35,6 @@ public class Wrapper extends HTML implements HasHandlers {
 		onAttach();
 
 		node.wrap(this);
-
-		this.addStyleName("displayWrapper");
 
 		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(2);
@@ -44,10 +46,10 @@ public class Wrapper extends HTML implements HasHandlers {
 		}
 
 	}
+
 	public MathNode getNode() {
 		return node;
 	}
-
 
 	public Wrapper getNextSiblingWrapper() throws IndexOutOfBoundsException {
 		return node.getNextSibling().getWrapper();
@@ -94,10 +96,19 @@ public class Wrapper extends HTML implements HasHandlers {
 			LinkedList<MathNode> siblings = node.getParent().getChildren();
 			siblings.remove(node);
 			for (MathNode dropNode : siblings) {
-				if (!TypeML.Operation.equals(dropNode.getType()))
-					dragController
-							.registerDropController(new AssociativeDropController(
-									dropNode.getWrapper()));
+				if (!TypeML.Operation.equals(dropNode.getType())) {
+					DropController controller = null;
+					Wrapper dropWraper = dropNode.getWrapper();
+					if (dropWraper instanceof ConversionWrapper) {
+						controller = new ReorderDropController(
+								(ConversionWrapper) dropWraper);
+					} else if (dropWraper instanceof EquationWrapper) {
+						controller = new AssociativeDropController((EquationWrapper)dropWraper);
+					} else {
+						continue;
+					}
+					dragController.registerDropController(controller);
+				}
 			}
 		}
 	}
@@ -124,8 +135,8 @@ public class Wrapper extends HTML implements HasHandlers {
 	}
 
 	public void removeDropTargets() {
-		if(dragController != null) {
-		dragController.unregisterDropControllers();
+		if (dragController != null) {
+			dragController.unregisterDropControllers();
 		}
 	}
 
@@ -147,10 +158,9 @@ public class Wrapper extends HTML implements HasHandlers {
 		public void onTouchStart(TouchStartEvent event) {
 			event.preventDefault();
 			event.stopPropagation();
-			
+
 			select();
 		}
 	}
-
 
 }
