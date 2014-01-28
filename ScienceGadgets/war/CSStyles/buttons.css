@@ -1,8 +1,10 @@
 @CHARSET "UTF-8";
 
-
-.saveEquationButton{
-	
+button{
+	color:black;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa
 		), color-stop(1, #80b5ea) );
 	background: -moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
@@ -13,81 +15,48 @@
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa',
 		endColorstr='#80b5ea', GradientType=0 );
 	background-color: #50faa8;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
 }
-
-.changeNodeButton {
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa
-		), color-stop(1, #80b5ea) );
-	background: -moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -webkit-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -o-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -ms-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa',
-		endColorstr='#80b5ea', GradientType=0 );
-	background-color: #50faa8;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-}
-
-.changeNodeButton:disabled {
+button:disabled{
 	color: gray;
 	font-weight: lighter;
+	
 }
-
-.changeNodeButton:hover {
+.button:hover {
 	text-shadow: 1px 3px 4px #528ecc;
 }
 
-.changeNodeButton:active {
+.button:active {
 	position: relative;
 	top: 1px;
+}
+.saveEquationButton{
+	width: 100%;
+	height: 100%
+}
+
+.changeNodeButton {
+	vertical-align: top;
+}
+
+.specButton {
+	color: green;
+	font-weight: bolder;
 }
 
 .bothSidesButton {
 	height: 100%;
 	width: 100%;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	font-weight: bold;
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa
-		), color-stop(1, #80b5ea) );
-	background: -moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -webkit-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -o-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -ms-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa',
-		endColorstr='#80b5ea', GradientType=0 );
-	background-color: #50faa8;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
 }
 
 .bothSidesButtonHalf {
 	height: 100%;
 	width: 50%;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	font-weight: bold;
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa
-		), color-stop(1, #80b5ea) );
-	background: -moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -webkit-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -o-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: -ms-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background: linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa',
-		endColorstr='#80b5ea', GradientType=0 );
-	background-color: #50faa8;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
+}
+.smallestButton{
+	height: 50px;
+	width:50px;
+}
+.mediumButton{
+	height: 70px;
+	width:70px;
 }
