@@ -3,9 +3,11 @@ package com.sciencegadgets.client.conversion;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -15,19 +17,23 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Wrapper;
+import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.shared.UnitUtil;
 
 public class ConversionActivity extends AbsolutePanel {
@@ -44,7 +50,7 @@ public class ConversionActivity extends AbsolutePanel {
 	@UiField
 	FlowPanel unitSelectionArea;
 	@UiField
-	FlowPanel unitSelectionToggleArea;
+	FlowPanel deriveUnitArea;
 	@UiField
 	AbsolutePanel wrapperArea;
 	@UiField
@@ -52,9 +58,8 @@ public class ConversionActivity extends AbsolutePanel {
 
 	static final UnitSelection unitSelection = new UnitSelection(false, true,
 			false);
-	static final DerivedUnitSelection derivedUnitsSelection = new DerivedUnitSelection();
-	static final ToggleSlide unitSelectionToggle = new ToggleSlide("Convert",
-			"Definitions", true);
+	static final SelectionPanel derivedUnitsSelection = new SelectionPanel(
+			"Base Units");
 	private MathTree mTree = null;
 	private MathNode node;
 
@@ -80,39 +85,11 @@ public class ConversionActivity extends AbsolutePanel {
 		unitSelection.addStyleName("fillParent");
 		unitSelectionArea.add(unitSelection);
 
-		unitSelectionToggle.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-				unitSelectionArea.clear();
-				if (unitSelectionToggle.isFistSelected()) {
-					unitSelectionArea.add(derivedUnitsSelection);
-				} else {
-					unitSelectionArea.add(unitSelection);
-				}
-			}
-		});
+		derivedUnitsSelection.addSelectionHandler(new DeriveSelectHandler());
 		derivedUnitsSelection.addStyleName("fillParent");
-		unitSelectionToggleArea.add(unitSelectionToggle);
+		deriveUnitArea.add(derivedUnitsSelection);
 
 		convertButton.addClickHandler(new ConvertClickHandler());
-	}
-
-	class ConvertClickHandler implements ClickHandler {
-		@Override
-		public void onClick(ClickEvent event) {
-			String unitAttribute = "";
-			for (UnitDisplay unitDisplay : unitDisplays) {
-				if (!unitDisplay.isCanceled) {
-					unitAttribute = unitAttribute + "*"
-							+ unitDisplay.wrappedNode.getUnitAttribute();
-				}
-			}
-			unitAttribute = unitAttribute.replaceFirst(
-					UnitUtil.BASE_DELIMITER_REGEX, "");
-			node.setSymbol(totalNode.getSymbol());
-			node.setAttribute(MathAttribute.Unit, unitAttribute);
-			Moderator.switchToAlgebra();
-		}
 	}
 
 	public void load(MathNode node) {
@@ -233,11 +210,14 @@ public class ConversionActivity extends AbsolutePanel {
 	}
 
 	private void placeWrappers() {
+		LinkedList<Wrapper> wrappers = mTree.getWrappers();
+		wrappers.clear();
+
 		for (UnitDisplay unitDisplay : unitDisplays) {
 			MathNode jointNode = unitDisplay.historyNode;
 			if (!unitDisplay.isCanceled) {
-				mTree.getWrappers().add(
-						new ConversionWrapper(unitDisplay, wrapperArea, this));
+				wrappers.add(new ConversionWrapper(unitDisplay, wrapperArea,
+						this));
 			} else {
 				unitDisplay.wrappedNode.getHTML().removeFromParent();
 
@@ -252,6 +232,10 @@ public class ConversionActivity extends AbsolutePanel {
 			}
 		}
 
+		 for (Wrapper wrap : wrappers) {
+		 wrap.addAssociativeDragDrop();
+		 AlgebraicTransformations.interFractionDrop_check(wrap.getNode());
+		 }
 	}
 
 	void fillUnitSelection(final String unitName) {
@@ -264,115 +248,128 @@ public class ConversionActivity extends AbsolutePanel {
 			@Override
 			public void onSuccess(Unit result) {
 				selectedUnit = result;
-				unitSelection.reloadUnitBox(selectedUnit.getQuantityKindName());
+				String quantityKind = selectedUnit.getQuantityKindName();
+				String excludedUnitName = selectedUnit.getName();
+
+				unitSelection.reloadUnitBox(quantityKind, excludedUnitName);
 			}
 		});
+
+		derivedUnitsSelection.clear();
+
+		try {// Deconstruct option for derived units
+			DerivedUnit derivedUnit = DerivedUnit.valueOf(unitName);
+			String dataUnitAttribute = derivedUnit.getDerivedMap()
+					.getUnitAttribute();
+			Element derivedUnitElement = UnitUtil.element_From_attribute(
+					dataUnitAttribute, null, false);
+			derivedUnitElement.getStyle()
+					.setVerticalAlign(VerticalAlign.MIDDLE);
+			String derivedUnitHTML = JSNICalls
+					.elementToString(derivedUnitElement);
+
+			derivedUnitsSelection.add(derivedUnit.getSymbol() + "="
+					+ derivedUnit.getConversionMultiplier() + derivedUnitHTML,
+					derivedUnit.getUnitName(), derivedUnit);
+		} catch (IllegalArgumentException e) {
+		}
 	}
 
-	private void convert(Unit toUnit) {
+	private void convert(UnitMap toMap, String toMultiplier) {
 
 		// Keep unit exponent constant, all get cancelled
 		String exp = UnitUtil.getExponent(selectedWrapper.getNode()
 				.getUnitAttribute());
 		int expAbs = Math.abs(Integer.parseInt(exp));
 
-		// Update History area
+		UnitMap fromMap = new UnitMap(selectedUnit.getName()
+				+ UnitUtil.EXP_DELIMITER + 1);
+		String fromMultiplier = selectedUnit.getConversionMultiplier();
+		toMap = toMap.getExponential(expAbs);
+		fromMap = fromMap.getExponential(expAbs);
+
+		boolean isSelectNum = selectedWrapper.getUnitDisplay().inNumerator;
+		UnitMap newUnitMap = isSelectNum ? toMap.getDivision(fromMap) : fromMap
+				.getDivision(toMap);
+		String numMultiplier = isSelectNum ? fromMultiplier : toMultiplier;
+		String denMultiplier = !isSelectNum ? fromMultiplier : toMultiplier;
+
+		// History fraction of multipliers
 		mTree.getRightSide().append(TypeML.Operation,
 				Operator.getMultiply().getSign());
+		MathNode newHistoryFrac = mTree.getRightSide().append(TypeML.Fraction,
+				"");
+		MathNode newHistoryNum = newHistoryFrac.append(TypeML.Sum, "");
+		MathNode newHistoryDen = newHistoryFrac.append(TypeML.Sum, "");
 
-		MathNode newHistoryFrac = mTree.getRightSide().append(TypeML.Fraction, "");
-		MathNode fromHistoryNode = mTree.NEW_NODE(TypeML.Number,
-				toUnit.getConversionMultiplier());
-		MathNode toHistoryNode = mTree.NEW_NODE(TypeML.Number,
-				selectedUnit.getConversionMultiplier());
-
-		toHistoryNode.setAttribute(MathAttribute.Unit, toUnit.getName()
-				+ UnitUtil.EXP_DELIMITER + 1);
-		fromHistoryNode.setAttribute(MathAttribute.Unit, selectedUnit.getName()
-				+ UnitUtil.EXP_DELIMITER + 1);
-		
-		MathNode numHistoryNode, denHistoryNode = null;
-		String numUnitName, denUnitName = null;
-		boolean selectIsNumerator = selectedWrapper.getUnitDisplay().inNumerator;
-		if (selectIsNumerator) {
-			numHistoryNode = toHistoryNode;
-			denHistoryNode = fromHistoryNode;
-			numUnitName = toUnit.getName();
-			denUnitName = selectedUnit.getName();
-		} else {
-			numHistoryNode = fromHistoryNode;
-			denHistoryNode = toHistoryNode;
-			numUnitName = selectedUnit.getName();
-			denUnitName = toUnit.getName();
-		}
+		MathNode numMultiplierNode = mTree.NEW_NODE(TypeML.Number,
+				numMultiplier);
+		MathNode denMultiplierNode = mTree.NEW_NODE(TypeML.Number,
+				denMultiplier);
 
 		if (expAbs == 1) {
-			newHistoryFrac.append(numHistoryNode);
-			newHistoryFrac.append(denHistoryNode);
+			newHistoryNum.append(numMultiplierNode);
+			newHistoryDen.append(denMultiplierNode);
 		} else {
-			MathNode num = newHistoryFrac.append(TypeML.Exponential, "");
-			MathNode den = newHistoryFrac.append(TypeML.Exponential, "");
-			num.append(numHistoryNode);
-			den.append(denHistoryNode);
-			num.append(TypeML.Number, expAbs + "");
-			den.append(TypeML.Number, expAbs + "");
+			MathNode numExp = newHistoryNum.append(TypeML.Exponential, "");
+			MathNode denExp = newHistoryDen.append(TypeML.Exponential, "");
+			numExp.append(numMultiplierNode);
+			denExp.append(denMultiplierNode);
+			numExp.append(TypeML.Number, expAbs + "");
+			denExp.append(TypeML.Number, expAbs + "");
 		}
 
 		// Update Working area
-		String numSymbol = UnitUtil.getSymbol(numUnitName);
-		String denSymbol = UnitUtil.getSymbol(denUnitName);
+		System.out.println(newUnitMap);
+		int selectedIndex = selectedWrapper.getNode().getIndex();
+		selectedIndex = newUnitMap.size() == 2 ? selectedIndex : -1;
+		for (Entry<String, Integer> entry : newUnitMap.entrySet()) {
+			String untiName = entry.getKey();
+			Integer unitExp = entry.getValue();
+			Integer unitExpAbs = Math.abs(unitExp);
+			boolean inNum = unitExp > 0;
 
-		MathNode numWrap = mTree.NEW_NODE(TypeML.Variable, numSymbol);
-		MathNode denWrap = mTree.NEW_NODE(TypeML.Variable, denSymbol);
-		if (expAbs > 1) {
-			MathNode numWrapExp = mTree.NEW_NODE(TypeML.Exponential, "");
-			MathNode denWrapExp = mTree.NEW_NODE(TypeML.Exponential, "");
-			numWrapExp.append(numWrap);
-			denWrapExp.append(denWrap);
-			numWrapExp.append(TypeML.Number, "" + expAbs);
-			denWrapExp.append(TypeML.Number, "" + expAbs);
-			numWrap = numWrapExp;
-			denWrap = denWrapExp;
+			String numSymbol = UnitUtil.getSymbol(untiName);
+
+			MathNode workingNode = mTree.NEW_NODE(TypeML.Variable, numSymbol);
+			if (unitExp > 1 || unitExp < -1) {
+				MathNode workingExp = mTree.NEW_NODE(TypeML.Exponential, "");
+				workingExp.append(workingNode);
+				workingExp.append(TypeML.Number, "" + unitExpAbs);
+				workingNode = workingExp;
+			}
+			workingNode.setAttribute(MathAttribute.Unit, untiName
+					+ UnitUtil.EXP_DELIMITER + unitExpAbs);
+			MathNode historyNode = workingNode.clone();
+
+			int numOrDen = inNum ? 0 : 1;
+			wrapperFraction.getChildAt(numOrDen).addBefore(selectedIndex,
+					workingNode);
+			newHistoryFrac.getChildAt(numOrDen).append(historyNode);
+
+			unitDisplays.add(new UnitDisplay(workingNode, historyNode, fromMap
+					.containsKey(untiName), inNum));
 		}
 
-		numWrap.setAttribute(MathAttribute.Unit, numUnitName
-				+ UnitUtil.EXP_DELIMITER + exp);
-		denWrap.setAttribute(MathAttribute.Unit, denUnitName
-				+ UnitUtil.EXP_DELIMITER + exp);
-
-		int selectedIndex = selectedWrapper.getNode().getIndex();
-		int numIndex = selectIsNumerator ? selectedIndex : -1;
-		int denIndex = !selectIsNumerator ? selectedIndex : -1;
-		wrapperFraction.getChildAt(0).addBefore(numIndex, numWrap);
-		wrapperFraction.getChildAt(1).addBefore(denIndex, denWrap);
-
-		unitDisplays.add(new UnitDisplay(numWrap, numHistoryNode, !selectIsNumerator,
-				true));
-		unitDisplays.add(new UnitDisplay(denWrap, denHistoryNode, selectIsNumerator,
-				false));
-		
 		// Calculate conversion
 		BigDecimal total = new BigDecimal(totalNode.getSymbol());
 		for (int i = 0; i < expAbs; i++) {
-			total = total.multiply(new BigDecimal(numHistoryNode.getSymbol()),
+			total = total.multiply(new BigDecimal(numMultiplier),
 					MathContext.DECIMAL128);
-			total = total.divide(new BigDecimal(denHistoryNode.getSymbol()),
+			total = total.divide(new BigDecimal(denMultiplier),
 					MathContext.DECIMAL128);
 		}
 		totalNode.setSymbol(total.stripTrailingZeros().toEngineeringString());
-		
+
 		selectedWrapper.getUnitDisplay().isCanceled = true;
 		selectedWrapper.unselect();
-		
+
 		reloadEquation();
 	}
 
-	class ConvertSelectHandler implements SelectionHandler {
-		@Override
-		public void onSelect(Cell selected) {
-			convert((Unit) selected.getEntity());
-		}
-	}
+	// /////////////////////////////////////////////////////
+	// InnerClasses
+	// /////////////////////////////////////////////////////
 
 	class UnitDisplay {
 		MathNode wrappedNode;
@@ -387,6 +384,48 @@ public class ConversionActivity extends AbsolutePanel {
 			this.historyNode = historyNode;
 			this.isCanceled = isCanceled;
 			this.inNumerator = inNumerator;
+		}
+	}
+
+	class DeriveSelectHandler implements SelectionHandler {
+		@Override
+		public void onSelect(Cell selected) {
+			Object selectedEntity = selected.getEntity();
+			if (selectedEntity instanceof DerivedUnit) {
+				DerivedUnit deriveUnit = (DerivedUnit) selectedEntity;
+				convert(deriveUnit.getDerivedMap(),
+						deriveUnit.getConversionMultiplier());
+			}
+		}
+	}
+
+	class ConvertSelectHandler implements SelectionHandler {
+		@Override
+		public void onSelect(Cell selected) {
+			Object selectedEntity = selected.getEntity();
+			if (selectedEntity instanceof Unit) {
+				Unit toUnit = (Unit) selectedEntity;
+				convert(new UnitMap(toUnit.getName() + UnitUtil.EXP_DELIMITER
+						+ 1), toUnit.getConversionMultiplier());
+			}
+		}
+	}
+
+	class ConvertClickHandler implements ClickHandler {
+		@Override
+		public void onClick(ClickEvent event) {
+			String unitAttribute = "";
+			for (UnitDisplay unitDisplay : unitDisplays) {
+				if (!unitDisplay.isCanceled) {
+					unitAttribute = unitAttribute + "*"
+							+ unitDisplay.wrappedNode.getUnitAttribute();
+				}
+			}
+			unitAttribute = unitAttribute.replaceFirst(
+					UnitUtil.BASE_DELIMITER_REGEX, "");
+			node.setSymbol(totalNode.getSymbol());
+			node.setAttribute(MathAttribute.Unit, unitAttribute);
+			Moderator.switchToAlgebra();
 		}
 	}
 }

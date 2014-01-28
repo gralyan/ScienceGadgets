@@ -29,7 +29,7 @@
 			<g:FlowPanel ui:field="unitSelectionArea" height="80%">
 			</g:FlowPanel>
 
-			<g:FlowPanel ui:field="unitSelectionToggleArea" height="20%">
+			<g:FlowPanel ui:field="deriveUnitArea" height="20%">
 			</g:FlowPanel>
 
 		</g:FlowPanel>

@@ -152,8 +152,10 @@ public class UnitUtil {
 	}
 
 	public static String[] getUnits(MathNode mNode) {
-		String att = mNode.getUnitAttribute();
-		return att.split(BASE_DELIMITER_REGEX);
+		return getUnits(mNode.getUnitAttribute());
+	}
+	public static String[] getUnits(String dataUnit_attribute) {
+		return dataUnit_attribute.split(BASE_DELIMITER_REGEX);
 	}
 
 	/**

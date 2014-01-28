@@ -13,7 +13,7 @@ public interface DatabaseHelperAsync {
 			throws IllegalArgumentException;
 	void getEquationsWithQuantities(ArrayList<String> quantityKinds, AsyncCallback<Equation[]> callback)
 			throws IllegalArgumentException;
-	void getUnitsByQuantity(String quantityKind, AsyncCallback<Unit[]> callback)
+	void getUnitsByQuantity(String quantityKind, AsyncCallback<LinkedList<Unit>> callback)
 			throws IllegalArgumentException;
 	void getQuantityKinds(AsyncCallback<LinkedList<String>> callback);
 	

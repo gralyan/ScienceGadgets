@@ -27,6 +27,7 @@ import com.sciencegadgets.client.algebra.transformations.BothSidesTransformation
 import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
 import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
 import com.sciencegadgets.client.algebra.transformations.Transformations;
+import com.sciencegadgets.shared.TypeML;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -35,7 +36,7 @@ import com.sciencegadgets.client.algebra.transformations.Transformations;
  * @author John Gralyan
  * 
  */
-public class AlgebaWrapper extends ZoomWrapper {
+public class AlgebaWrapper extends EquationWrapper {
 
 	private CommunistPanel algTransformMenu;
 
@@ -47,7 +48,8 @@ public class AlgebaWrapper extends ZoomWrapper {
 	 * {@link AbsolutePanel}</b>
 	 * </p>
 	 */
-	public AlgebaWrapper(MathNode node, AlgebraActivity algebraActivity, Element element) {
+	public AlgebaWrapper(MathNode node, AlgebraActivity algebraActivity,
+			Element element) {
 		super(node, algebraActivity, element);
 
 	}
@@ -63,7 +65,7 @@ public class AlgebaWrapper extends ZoomWrapper {
 		if (this.equals(EquationPanel.selectedWrapper)) {
 
 			if (algTransformMenu == null) {
-				
+
 				algTransformMenu = new CommunistPanel(true);
 				algTransformMenu.addStyleName("layoutRow");
 				algTransformMenu.setSize("100%", "100%");
@@ -77,14 +79,6 @@ public class AlgebaWrapper extends ZoomWrapper {
 					transorms.add(AlgebraicTransformations
 							.unravelExpLog_check(node));
 					transorms.addAll(new ExponentialTransformations(node));
-					break;
-				case Fraction:
-					transorms.add(AlgebraicTransformations
-							.denominatorFlip_check(node));
-					break;
-				case Sum:
-					break;
-				case Term:
 					break;
 				case Operation:
 					transorms.addAll(AlgebraicTransformations.operation(node));
@@ -112,12 +106,26 @@ public class AlgebaWrapper extends ZoomWrapper {
 					transorms.add(AlgebraicTransformations
 							.inverseTrig_check(node));
 					break;
+				case Fraction:
+				case Sum:
+				case Term:
+					// These wrappers shouldn't have transformations because
+					// they are merged into the top layer if direct child of the
+					// root
+					break;
 				}
 
-				 algTransformMenu.addAll(transorms);
+				if (TypeML.Fraction.equals(node.getParentType())
+						&& node.getIndex() == 1) {
+					transorms.add(AlgebraicTransformations
+							.denominatorFlip_check(node));
+				}
+
+				algTransformMenu.addAll(transorms);
 			}
 			Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
-			Moderator.getCurrentAlgebraActivity().lowerEqArea.add(algTransformMenu);
+			Moderator.getCurrentAlgebraActivity().lowerEqArea
+					.add(algTransformMenu);
 		}
 	}
 

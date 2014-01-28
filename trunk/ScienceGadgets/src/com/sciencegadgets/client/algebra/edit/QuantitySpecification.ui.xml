@@ -38,8 +38,8 @@
 		<!-- current value displays -->
 		<g:FlowPanel height="20%">
 
-			<g:Label ui:field="symbolDisplay" addStyleNames="{style.display} numberDisplay"
-				title="Variable Symbol"></g:Label>
+			<sg:SymbolDisplay ui:field="symbolDisplay" addStyleNames="{style.display} numberDisplay"
+				title="Variable Symbol"></sg:SymbolDisplay>
 			<sg:ToggleSlide ui:field="symbolCaseToggle"
 				addStyleNames="{style.toggle}"></sg:ToggleSlide>
 

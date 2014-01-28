@@ -55,7 +55,7 @@ public class UnitSelection extends CommunistPanel {
 			quantityBox.addSelectionHandler(new SelectionHandler() {
 				@Override
 				public void onSelect(Cell selection) {
-					reloadUnitBox(quantityBox.getSelectedText());
+					reloadUnitBox(quantityBox.getSelectedText(), null);
 				}
 			});
 		}
@@ -65,14 +65,14 @@ public class UnitSelection extends CommunistPanel {
 		super(false);
 
 		this.add(unitBox);
-		reloadUnitBox(quantityKind);
+		reloadUnitBox(quantityKind, null);
 
 	}
 
-	public void reloadUnitBox(String quantityKind) {
+	public void reloadUnitBox(String quantityKind, String excludedUnitName) {
 		unitBox.clear();
 		if (quantityKind != null && !quantityKind.equals("")) {
-			DataModerator.fill_UnitsByQuantity(quantityKind, unitBox);
+			DataModerator.fill_UnitsByQuantity(quantityKind, unitBox, excludedUnitName);
 		}
 
 	}

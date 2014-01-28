@@ -55,8 +55,10 @@ public class InterFractionDrop extends AbstractDropController {
 		super.onDrop(context);
 		drag = ((AlgebaWrapper) context.draggable).getNode();
 		target = ((AlgebaWrapper) getDropTarget()).getNode();
-		
-		dropHTML = "<div style=\"display:inline-block;\"><div>"+target.getHTMLString()+"</div><div>"+drag.getHTMLString()+"</div><div>";
+
+		dropHTML = "<div style=\"display:inline-block;\"><div>"
+				+ target.getHTMLString() + "</div><div>" + drag.getHTMLString()
+				+ "</div><div>";
 
 		switch (dropType) {
 		case CANCEL:
@@ -77,6 +79,7 @@ public class InterFractionDrop extends AbstractDropController {
 		}
 
 	}
+
 	/**
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of type {@link TypeML#Number}<br/>
@@ -112,7 +115,8 @@ public class InterFractionDrop extends AbstractDropController {
 
 	private void divide(BigDecimal total) {
 
-		UnitMap combinedMap = target.getUnitMap().getDivision(drag.getUnitMap());
+		UnitMap combinedMap = target.getUnitMap()
+				.getDivision(drag.getUnitMap());
 
 		MathNode division = target.replace(TypeML.Number, total
 				.stripTrailingZeros().toEngineeringString());
@@ -125,7 +129,8 @@ public class InterFractionDrop extends AbstractDropController {
 	/**
 	 * sin(x) / cos(x) = tan(x)<br/>
 	 * cos(x) / sin(x) = cot(x)<br/>
-	 * Always target / drag<br/><br/>
+	 * Always target / drag<br/>
+	 * <br/>
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of type {@link TypeML#Trig}<br/>
 	 * 2. One of the nodes(drag or target) is Sin and the other is Cos<br/>
@@ -154,8 +159,9 @@ public class InterFractionDrop extends AbstractDropController {
 
 	/**
 	 * log<sub>a</sub>(x) / log<sub>a</sub>(y) = log<sub>y</sub>(x)<br/>
-	 * Always target / drag<br/><br/>
-	  * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
+	 * Always target / drag<br/>
+	 * <br/>
+	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of type {@link TypeML#Log}<br/>
 	 * 2. The bases of both nodes (drag and target) are the same<br/>
 	 * 3. The drag's child is a number<br/>
@@ -164,28 +170,38 @@ public class InterFractionDrop extends AbstractDropController {
 		String newBase = drag.getFirstChild().getSymbol();
 
 		target.setAttribute(MathAttribute.LogBase, newBase);
-		
+
 		complete();
 	}
+
 	/**
 	 * b<sup>x</sup> / b<sup>y</sup> = b<sup>x-y</sup><br/>
-	 * Always target / drag<br/><br/>
+	 * Always target / drag<br/>
+	 * <br/>
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of type {@link TypeML#Exponential}<br/>
 	 * 2. The bases of both nodes (drag and target) are the same<br/>
 	 */
 	private void exponentialDrop() {
 		MathNode dragExp = drag.getChildAt(1);
-		MathNode targetExp = target.getChildAt(1).encase(TypeML.Sum);
-		
-		targetExp.append(TypeML.Operation, Operator.MINUS.getSign());
-		targetExp.append(dragExp);
-		
+		MathNode targetExp = target.getChildAt(1);
+		if (Moderator.isInEasyMode && TypeML.Number.equals(dragExp.getType())
+				&& TypeML.Number.equals(targetExp.getType())) {
+			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
+			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
+			BigDecimal total = targetValue.subtract(dragValue);
+			targetExp.setSymbol(total+"");
+		} else {
+			targetExp = targetExp.encase(TypeML.Sum);
+
+			targetExp.append(TypeML.Operation, Operator.MINUS.getSign());
+			targetExp.append(dragExp);
+		}
 		complete();
 	}
 
 	private void complete() {
-		
+
 		switch (dropType) {
 		case CANCEL:
 			cleanSide(target);
@@ -215,7 +231,8 @@ public class InterFractionDrop extends AbstractDropController {
 			Moderator.reloadEquationPanel(dropHTML, Rule.LOGARITHM);
 			break;
 		case TRIG_COMBINE:
-			Moderator.reloadEquationPanel(dropHTML, Rule.TRIGONOMETRIC_FUNCTIONS);
+			Moderator.reloadEquationPanel(dropHTML,
+					Rule.TRIGONOMETRIC_FUNCTIONS);
 			break;
 		}
 	}

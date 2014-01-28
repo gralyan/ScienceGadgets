@@ -34,11 +34,13 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Unit getUnit(String unitName){
+	public Unit getUnit(String unitName) {
 		String parent = UnitUtil.getQuantityKind(unitName);
 		Key<QuantityKind> parentKey = Key.create(QuantityKind.class, parent);
-		return ObjectifyService.ofy().load().type(Unit.class).parent(parentKey).id(unitName).now();
+		return ObjectifyService.ofy().load().type(Unit.class).parent(parentKey)
+				.id(unitName).now();
 	}
+
 	@Override
 	public String saveEquation(String mathML, String html)
 			throws IllegalArgumentException {
@@ -80,11 +82,13 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Unit[] getUnitsByQuantity(String quantityKind)
+	public LinkedList<Unit> getUnitsByQuantity(String quantityKind)
 			throws IllegalArgumentException {
 		List<Unit> list = ObjectifyService.ofy().load().type(Unit.class)
 				.ancestor(Key.create(QuantityKind.class, quantityKind)).list();
-		return list.toArray(new Unit[list.size()]);
+		LinkedList<Unit> linkedList = new LinkedList<Unit>();
+		linkedList.addAll(list);
+		return linkedList;
 	}
 
 	@Override

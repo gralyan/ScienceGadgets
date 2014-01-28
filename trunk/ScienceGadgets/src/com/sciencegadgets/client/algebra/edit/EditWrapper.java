@@ -9,10 +9,10 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.client.algebra.ZoomWrapper;
+import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.shared.TypeML;
 
-public class EditWrapper extends ZoomWrapper {
+public class EditWrapper extends EquationWrapper {
 
 	public ChangeNodeMenu changeNodeMenu = new ChangeNodeMenu();
 

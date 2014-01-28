@@ -4,9 +4,9 @@ import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Wrapper;
+import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
@@ -14,7 +14,7 @@ public class AssociativeDropController extends AbstractDropController {
 	
 	Label switchResponse = new Label("Switch");
 
-	public AssociativeDropController(Wrapper dropWrapper) {
+	public AssociativeDropController(EquationWrapper dropWrapper) {
 		super(dropWrapper);
 	}
 

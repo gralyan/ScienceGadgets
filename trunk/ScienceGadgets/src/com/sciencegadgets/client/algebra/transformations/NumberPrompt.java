@@ -7,11 +7,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.KeyPadNumerical;
+import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.Prompt;
 
 public abstract class NumberPrompt extends Prompt {
 
 	private static final int same = 0;
+	final KeyPadNumerical keyPad = new KeyPadNumerical();
+	final SymbolDisplay display = keyPad.getSymbolDisplay();
 
 	NumberPrompt(String question, final BigDecimal totalValue) {
 
@@ -19,10 +22,7 @@ public abstract class NumberPrompt extends Prompt {
 		questionDisplay.addStyleName("layoutRow");
 		add(questionDisplay);
 
-		final Label display = new Label();
 		display.addStyleName("layoutRow");
-
-		final KeyPadNumerical keyPad = new KeyPadNumerical(display);
 
 		add(display);
 		add(keyPad);

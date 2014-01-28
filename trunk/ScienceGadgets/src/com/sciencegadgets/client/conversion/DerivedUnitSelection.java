@@ -10,25 +10,25 @@ public class DerivedUnitSelection extends SelectionPanel {
 
 	public DerivedUnitSelection() {
 		super("Derived Units");
-
-		for (DerivedUnit derivedUnit : DerivedUnit.values()) {
-
-			String dataUnitAttribute = derivedUnit.getDerivedMap()
-					.getUnitAttribute();
-			Element derivedUnitElement = UnitUtil.element_From_attribute(
-					dataUnitAttribute, null, false);
-			derivedUnitElement.getStyle()
-					.setVerticalAlign(VerticalAlign.MIDDLE);
-			String derivedUnitHTML = JSNICalls
-					.elementToString(derivedUnitElement);
-
-			String conversionAttribute = dataUnitAttribute
-					+ UnitUtil.BASE_DELIMITER + derivedUnit.getName()
-					+ UnitUtil.EXP_DELIMITER + "-1";
-
-			add("("+derivedUnit+") "+derivedUnit.getSymbol() + "=" +derivedUnit.getConversionMultiplier()+ derivedUnitHTML,
-					conversionAttribute);
-		}
+//
+//		for (DerivedUnit derivedUnit : DerivedUnit.values()) {
+//
+//			String dataUnitAttribute = derivedUnit.getDerivedMap()
+//					.getUnitAttribute();
+//			Element derivedUnitElement = UnitUtil.element_From_attribute(
+//					dataUnitAttribute, null, false);
+//			derivedUnitElement.getStyle()
+//					.setVerticalAlign(VerticalAlign.MIDDLE);
+//			String derivedUnitHTML = JSNICalls
+//					.elementToString(derivedUnitElement);
+//
+//			String conversionAttribute = dataUnitAttribute
+//					+ UnitUtil.BASE_DELIMITER + derivedUnit.getName()
+//					+ UnitUtil.EXP_DELIMITER + "-1";
+//
+//			add("("+derivedUnit+") "+derivedUnit.getSymbol() + "=" +derivedUnit.getConversionMultiplier()+ derivedUnitHTML,
+//					conversionAttribute);
+//		}
 	}
 
 }

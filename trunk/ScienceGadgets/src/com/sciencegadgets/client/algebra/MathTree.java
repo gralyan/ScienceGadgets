@@ -718,7 +718,7 @@ public class MathTree {
 		}
 
 		public TypeML.Operator getOperation() {
-			if ("mo".equalsIgnoreCase(getTag())) {
+			if (TypeML.Operation.equals(getType())) {
 				String symbol = getSymbol();
 
 				for (TypeML.Operator op : TypeML.Operator.values()) {
