@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
  * A common method of presenting a user with a window without creating an
  * entirely new activity. Prompts are particularly useful for inquiring for a
  * specification on an action requiring user input.<br/>
- * <b>Do not launch with a {@link TouchStartHandler} because some browsers
+ * <b>Do not launch with a {@link com.google.gwt.event.dom.client.TouchStartHandler} because some browsers
  * autoHide the Prompt immediately after appearing</b><br/>
  * Launch with {@link Prompt#appear()}<br/>
  * Remove with {@link Prompt#disappear()}<br/>

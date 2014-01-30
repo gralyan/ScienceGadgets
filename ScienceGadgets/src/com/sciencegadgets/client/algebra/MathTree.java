@@ -293,7 +293,6 @@ public class MathTree {
 
 			if (!"".equals(symbol)) {
 				setSymbol(symbol);
-				// newNode.setInnerText(symbol);
 			}
 
 		}
@@ -621,32 +620,57 @@ public class MathTree {
 		}
 
 		/**
-		 * Inserts the symbol into the node. If the node is a number, the symbol
-		 * will be saved as the node's value attribute and the displaying symbol
-		 * may be shortened for formatting purposes
+		 * Depending on the node type:<br/>
+		 * <b>Variable and Operation</b> - Inserts the symbol into the node.<br/>
+		 * <b>Number</b> - The symbol will be saved as the node's value
+		 * attribute and the displaying symbol may be shortened for formatting
+		 * purposes<br/>
+		 * <b>Trig</b> - Symbol is the function stored as an attribute
+		 * <b>Log</b> -Symbol is the log base stored as an attribute
 		 * 
 		 * @param symbol
 		 */
 		public void setSymbol(String symbol) {
 
-			if (TypeML.Number.equals(getType())
-					&& !ChangeNodeMenu.NOT_SET.equals(symbol)&& !RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
-				setAttribute(MathAttribute.Value, symbol);
-				String roundedValue = new BigDecimal(symbol).round(
-						new MathContext(3)).toString();
-				String tilda = symbol.equals(roundedValue) ? "" : "~";
-				mlNode.setInnerText(tilda + roundedValue);
-			} else {
-				mlNode.setInnerText(symbol);
+			if (!"".equals(symbol)) {
+				switch (getType()) {
+				case Number:
+					if (!ChangeNodeMenu.NOT_SET.equals(symbol)
+							&& !RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
+						setAttribute(MathAttribute.Value, symbol);
+						String roundedValue = new BigDecimal(symbol).round(
+								new MathContext(3)).toString();
+						String tilda = symbol.equals(roundedValue) ? "" : "~";
+						mlNode.setInnerText(tilda + roundedValue);
+						break;
+					}
+				case Variable:
+				case Operation:
+					mlNode.setInnerText(symbol);
+					break;
+				case Trig:
+					setAttribute(MathAttribute.Function, symbol);
+					break;
+				case Log:
+					setAttribute(MathAttribute.LogBase, symbol);
+					break;
+				}
 			}
 		}
 
 		public String getSymbol() {
-			if (TypeML.Number.equals(getType())) {
+			switch (getType()) {
+			case Number:
 				return getAttribute(MathAttribute.Value);
-			} else {
+			case Variable:
+			case Operation:
 				return mlNode.getInnerText();
+			case Trig:
+				return getAttribute(MathAttribute.Function);
+			case Log:
+				return getAttribute(MathAttribute.LogBase);
 			}
+			return "";
 		}
 
 		// public ArrayList<Element> getSimilarHTMLFromAllLayers() {

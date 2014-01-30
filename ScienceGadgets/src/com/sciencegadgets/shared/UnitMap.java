@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.conversion.DerivedUnit;
-import com.sciencegadgets.client.conversion.DerivedUnitSelection;
 
 public class UnitMap extends LinkedHashMap<String, Integer> {
 	
@@ -35,18 +34,9 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 		for (Entry<String, Integer> entry : this.entrySet()) {
 				String entryQuantityKind = UnitUtil.getQuantityKind(entry
 						.getKey());
-				qkMap.changeValue(entryQuantityKind, entry.getValue());
+				qkMap.put(entryQuantityKind, entry.getValue());
 			}
 		return qkMap;
-	}
-
-	@Override
-	public Integer put(String key, Integer value) {
-		if (value == 0) {
-			return remove(key);
-		} else {
-			return super.put(key, value);
-		}
 	}
 
 	/**
@@ -55,14 +45,20 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	 * @param key
 	 * @param change
 	 *            - positive to increase, negative to decrease value
-	 * @return
 	 */
-	public Integer changeValue(String key, Integer change) {
+	@Override
+	public Integer put(String key, Integer change) {
 		Integer thisValue = this.get(key);
 		if (thisValue == null) {
 			thisValue = 0;
 		}
-		return this.put(key, thisValue + change);
+		Integer newValue = thisValue + change;
+		if (newValue == 0) {
+			remove(key);
+			return 0;
+		} else {
+			return super.put(key, newValue);
+		}
 	}
 
 	/**
@@ -83,11 +79,9 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	 * by the value of the similar entry from the parameter map. This is useful
 	 * when evaluating units of a division
 	 * 
-	 * @param exponent
-	 *            - Integer exponent of this exponential base
-	 * @param isAdditive
-	 *            - combine directly by increasing unit count if true, or
-	 *            combine inversely by decreasing unit count if false
+	 * @param denominatorUnitMap
+	 *            - UnitMap to divide by
+	 *            
 	 * @return The resulting UnitMap
 	 */
 	public UnitMap getDivision(UnitMap denominatorUnitMap) {
@@ -101,7 +95,7 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 
 		for (Entry<String, Integer> otherEntry : otherUnitMap.entrySet()) {
 
-			combinedMap.changeValue(otherEntry.getKey(),
+			combinedMap.put(otherEntry.getKey(),
 					direction * otherEntry.getValue());
 		}
 		return combinedMap;
@@ -142,9 +136,15 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	}
 
 	/**
-	 * Replaces each derived unit of this map with its base units
-	 * 
-	 * @return
+	 * Breaks down all derived units into their base units before comparing
+	 * @param otherMap
+	 */
+	public boolean isConvertableTo(UnitMap otherMap) {
+		return this.getBaseQKMap().equals(otherMap.getBaseQKMap());
+	}
+	
+	/**
+	 * Returns a map with only simple base units. This is useful when complex derived units are unwanted.
 	 */
 	public UnitMap getBaseQKMap() {
 		UnitMap baseQKMap = new UnitMap();
@@ -155,6 +155,7 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 			for(DerivedUnit derivedUnit :DerivedUnit.values()) {
 				if (derivedUnit.getQuantityKind().equals(entry.getKey())) {
 					UnitMap derivedQKMap = derivedUnit.getDerivedMap().getQuantityKindMap();
+					derivedQKMap = derivedQKMap.getExponential(entry.getValue());
 					baseQKMap = baseQKMap.getMultiple(derivedQKMap);
 					continue a;
 				}
@@ -165,12 +166,4 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 		return baseQKMap;
 	}
 
-	/**
-	 * Breaks down all derived units into their base units before comparing
-	 * @param otherMap
-	 * @return
-	 */
-	public boolean isConvertableTo(UnitMap otherMap) {
-		return this.getBaseQKMap().equals(otherMap.getBaseQKMap());
-	}
 }

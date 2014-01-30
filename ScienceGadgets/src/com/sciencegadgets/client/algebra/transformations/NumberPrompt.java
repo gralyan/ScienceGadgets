@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
@@ -19,10 +20,11 @@ public abstract class NumberPrompt extends Prompt {
 	NumberPrompt(String question, final BigDecimal totalValue) {
 
 		Label questionDisplay = new HTML(question);
-		questionDisplay.addStyleName("layoutRow");
+		questionDisplay.addStyleName("layoutRow doubleFontSize");
 		add(questionDisplay);
 
-		display.addStyleName("layoutRow");
+		display.addStyleName("layoutRow doubleFontSize");
+		display.setWidth("3em");
 
 		add(display);
 		add(keyPad);

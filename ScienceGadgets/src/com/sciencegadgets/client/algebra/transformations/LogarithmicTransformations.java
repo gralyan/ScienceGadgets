@@ -12,7 +12,7 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
-public class LogarithmicTransformations extends Transformations {
+public class LogarithmicTransformations extends TransformationList {
 	
 	private static final long serialVersionUID = -1226259041452624481L;
 	
@@ -56,7 +56,7 @@ public class LogarithmicTransformations extends Transformations {
 // ////////////////////////////////////////////////
 // Transform buttons
 // ///////////////////////////////////////////////
-class LogTransformButton extends Button {
+class LogTransformButton extends TransformationButton {
 	final MathNode log;
 	final MathNode logChild;
 	final String base;

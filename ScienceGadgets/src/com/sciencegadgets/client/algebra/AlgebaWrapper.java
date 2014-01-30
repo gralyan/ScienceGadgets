@@ -26,7 +26,8 @@ import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformation
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
 import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
-import com.sciencegadgets.client.algebra.transformations.Transformations;
+import com.sciencegadgets.client.algebra.transformations.TransformationList;
+import com.sciencegadgets.client.algebra.transformations.TrigTransformations;
 import com.sciencegadgets.shared.TypeML;
 
 /**
@@ -70,7 +71,7 @@ public class AlgebaWrapper extends EquationWrapper {
 				algTransformMenu.addStyleName("layoutRow");
 				algTransformMenu.setSize("100%", "100%");
 
-				Transformations transorms = new Transformations();
+				TransformationList transorms = new TransformationList();
 
 				transorms.addAll(new BothSidesTransformations(node));
 
@@ -105,6 +106,7 @@ public class AlgebaWrapper extends EquationWrapper {
 				case Trig:
 					transorms.add(AlgebraicTransformations
 							.inverseTrig_check(node));
+					transorms.addAll(new TrigTransformations(node));
 					break;
 				case Fraction:
 				case Sum:

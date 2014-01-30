@@ -11,10 +11,10 @@
 
 		<g:FlowPanel addStyleNames="layoutRow" width="75%" height="100%">
 
-			<g:FlowPanel ui:field="dimensionalAnalysisArea" height="50%"
+			<g:FlowPanel ui:field="dimensionalAnalysisArea" height="30%"
 				styleName="{style.dimensionalAnalysisArea}"></g:FlowPanel>
 
-			<g:FlowPanel ui:field="workArea" height="50%">
+			<g:FlowPanel ui:field="workArea" height="70%">
 
 				<g:Button ui:field="convertButton" text="Convert"
 					addStyleNames="layoutRow" width="20%" height="100%"></g:Button>

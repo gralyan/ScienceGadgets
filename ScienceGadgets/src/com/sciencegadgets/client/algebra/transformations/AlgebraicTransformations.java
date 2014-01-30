@@ -53,7 +53,7 @@ public class AlgebraicTransformations {
 	 * @param opNode
 	 *            - operation to perform
 	 */
-	public static Transformations operation(MathNode opNode) {
+	public static TransformationList operation(MathNode opNode) {
 		MathNode left, right = null;
 
 		left = opNode.getPrevSibling();
@@ -120,11 +120,64 @@ public class AlgebraicTransformations {
 		}
 	}
 
+	/**
+	 * Reciprocates the given node and simplifies in one of two ways:<br/>
+	 * 1) If the node is in a fraction or a term in a fraction, it is moved over
+	 * to the other side of the fraction.<br/>
+	 * 2) Encases the node in a fraction and adds the number one to the
+	 * numerator
+	 */
+	public static void reciprocate(MathNode toReciprocate) {
+
+		MathNode parent = toReciprocate.getParent();
+
+		if (TypeML.Fraction.equals(parent.getType())) {
+
+			boolean inNumerator = toReciprocate.getIndex() == 0;
+			MathNode otherSide = inNumerator ? toReciprocate.getNextSibling()
+					: toReciprocate.getPrevSibling();
+			otherSide = otherSide.encase(TypeML.Term);
+
+			otherSide
+					.append(TypeML.Operation, Operator.getMultiply().getSign());
+			otherSide.append(toReciprocate);
+
+			if (inNumerator) {
+				parent.addBefore(0, TypeML.Number, "1");
+			} else {
+				parent.replace(otherSide);
+			}
+
+		} else if (TypeML.Term.equals(parent.getType())
+				&& TypeML.Fraction.equals(parent.getParentType())) {
+
+			if (toReciprocate.getIndex() == 0) {
+				toReciprocate.getNextSibling().remove();
+			} else {
+				toReciprocate.getPrevSibling().remove();
+			}
+
+			boolean inNumerator = parent.getIndex() == 0;
+			MathNode otherSide = inNumerator ? parent.getNextSibling() : parent
+					.getPrevSibling();
+
+			otherSide = otherSide.encase(TypeML.Term);
+			otherSide
+					.append(TypeML.Operation, Operator.getMultiply().getSign());
+			otherSide.append(toReciprocate);
+
+			parent.decase();
+
+		} else {
+			MathNode frac = toReciprocate.encase(TypeML.Fraction);
+			frac.addBefore(0, TypeML.Number, "1");
+		}
+	}
+
 	public static LinkedList<Button> isolatedVariable_check(MathNode isolatedVar) {
 		if (TypeML.Equation.equals(isolatedVar.getParentType())) {
-			Transformations list = new Transformations();
-			list.add(new EvaluatePromptButton(
-					isolatedVar));
+			TransformationList list = new TransformationList();
+			list.add(new EvaluatePromptButton(isolatedVar));
 			list.add(new SubstituteButton(isolatedVar));
 			return list;
 		}
@@ -196,7 +249,7 @@ public class AlgebraicTransformations {
 			WrapDragController dragController = node.getWrapper()
 					.addDragController();
 			for (Entry<MathNode, DropType> dropTarget : dropTargets.entrySet()) {
-				
+
 				dragController.registerDropController(new InterFractionDrop(
 						(AlgebaWrapper) dropTarget.getKey().getWrapper(),
 						dropTarget.getValue()));
@@ -265,8 +318,7 @@ public class AlgebraicTransformations {
 			return null;
 		}
 
-		return new FactorNumberPromptButton(number,
-				node);
+		return new FactorNumberPromptButton(number, node);
 	}
 
 	/**
@@ -297,8 +349,7 @@ public class AlgebraicTransformations {
 					&& exponentialBase.getSymbol().equals(
 							log.getAttribute(MathAttribute.LogBase))) {
 				MathNode exponentialExp = exponential.getChildAt(1);
-				return new UnravelButton(log,
-						exponentialExp, Rule.LOGARITHM);
+				return new UnravelButton(log, exponentialExp, Rule.LOGARITHM);
 			}
 		}
 		return null;
@@ -315,8 +366,8 @@ public class AlgebraicTransformations {
 			MathNode exponentialBase = exponential.getFirstChild();
 			if (TypeML.Number.equals(exponentialBase.getType())
 					&& exponentialBase.getSymbol().equals(logBase)) {
-				return new UnravelButton(
-						exponential, log.getFirstChild(), Rule.LOGARITHM);
+				return new UnravelButton(exponential, log.getFirstChild(),
+						Rule.LOGARITHM);
 
 			}
 		}
@@ -334,11 +385,10 @@ public class AlgebraicTransformations {
 			String trigChildFunc = trigChild
 					.getAttribute(MathAttribute.Function);
 			String trigChildFuncInverse = TrigFunctions
-					.getInverse(trigChildFunc);
+					.getInverseName(trigChildFunc);
 			String trigFunc = trig.getAttribute(MathAttribute.Function);
 			if (trigFunc.equals(trigChildFuncInverse)) {
-				return new UnravelButton(trig,
-						trigChild.getFirstChild(),
+				return new UnravelButton(trig, trigChild.getFirstChild(),
 						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
 			}
 		}
@@ -371,15 +421,15 @@ class VariableEvaluateSpec extends FlowPanel {
 	}
 }
 
-// /////////////////////////////////////////////////////////////////////
-// Button choices
-// //////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////
+// Transformation Buttons
+// ////////////////////////////////////////////////////////////
 
 /**
  * Decompose
  * 
  */
-class FactorNumberPromptButton extends Button {
+class FactorNumberPromptButton extends TransformationButton {
 	public FactorNumberPromptButton(final Integer number, final MathNode node) {
 		setHTML("Factor");
 
@@ -425,7 +475,7 @@ class FactorNumberPromptButton extends Button {
 		return factors;
 	}
 
-	class FactorNumberButton extends Button {
+	class FactorNumberButton extends TransformationButton {
 		FactorNumberButton(final int factor, final int cofactor,
 				final MathNode node, final Prompt prompt) {
 
@@ -450,9 +500,9 @@ class FactorNumberPromptButton extends Button {
 
 					node.setSymbol(factored + "");
 
-					Moderator.reloadEquationPanel(original + " = "
-							+ factor + " " + Operator.getMultiply().getSign()
-							+ " " + factored, Rule.INTEGER_FACTORIZATION);
+					Moderator.reloadEquationPanel(original + " = " + factor
+							+ " " + Operator.getMultiply().getSign() + " "
+							+ factored, Rule.INTEGER_FACTORIZATION);
 
 					prompt.disappear();
 				}
@@ -465,7 +515,7 @@ class FactorNumberPromptButton extends Button {
  * -x = -1 &middot; x
  * 
  */
-class SeperateNegButton extends Button {
+class SeperateNegButton extends TransformationButton {
 	SeperateNegButton(final MathNode negNode) {
 
 		setHTML("Seperate (-)");
@@ -508,7 +558,7 @@ class SeperateNegButton extends Button {
  * x / (y/z) = x &middot; (z/y)<br/>
  * x / y = x &middot; (1/y)
  */
-class DenominatorFlipButton extends Button {
+class DenominatorFlipButton extends TransformationButton {
 	DenominatorFlipButton(final MathNode node) {
 
 		setHTML("Flip Denominator");
@@ -553,7 +603,7 @@ class DenominatorFlipButton extends Button {
  * Switches to unit conversion mode
  * 
  */
-class UnitConversionButton extends Button {
+class UnitConversionButton extends TransformationButton {
 	UnitConversionButton(final MathNode node) {
 
 		setHTML("Convert Units");
@@ -572,7 +622,7 @@ class UnitConversionButton extends Button {
  * appropriate variables
  * 
  */
-class EvaluatePromptButton extends Button {
+class EvaluatePromptButton extends TransformationButton {
 	final static HashSet<VariableEvaluateSpec> varSpecs = new HashSet<VariableEvaluateSpec>();
 
 	EvaluatePromptButton(final MathNode isolatedVar) {
@@ -642,7 +692,8 @@ class EvaluatePromptButton extends Button {
 										.replaceAll((String) "\\.0$", "");
 								String unit = varSpec.unit;
 
-								MathNode quantityPlugIn =varSpec.mathNode.replace(TypeML.Number, value);
+								MathNode quantityPlugIn = varSpec.mathNode
+										.replace(TypeML.Number, value);
 								quantityPlugIn.setAttribute(MathAttribute.Unit,
 										unit);
 							}
@@ -664,7 +715,7 @@ class EvaluatePromptButton extends Button {
  * the same quantity kind
  * 
  */
-class SubstituteButton extends Button {
+class SubstituteButton extends TransformationButton {
 	SubstituteButton(final MathNode isolatedVar) {
 
 		setHTML("Substitute");
@@ -777,10 +828,11 @@ class SubstituteButton extends Button {
  * log<sub>b</sub>(b<sup>x</sup>) = x<br/>
  * b<sup>log<sub>b</sub>(x)</sup> = x<br/>
  */
-class UnravelButton extends Button {
+class UnravelButton extends TransformationButton {
 
 	public UnravelButton(final MathNode toReplace, final MathNode replacement,
 			final Rule rule) {
+		super();
 
 		setHTML(replacement.getHTMLString());
 

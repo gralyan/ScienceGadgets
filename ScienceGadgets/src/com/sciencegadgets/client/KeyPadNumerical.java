@@ -24,14 +24,18 @@ public class KeyPadNumerical extends FlowPanel {
 	public KeyPadNumerical(SymbolDisplay symbolDisplay) {
 		super();
 		symbolDisplay.setKeyPad(this);
-		initialize(symbolDisplay);
+		initialize(symbolDisplay, false);
+	}
+	public KeyPadNumerical(boolean numbersOnly) {
+		super();
+		initialize(new SymbolDisplay(this), numbersOnly);
 	}
 	public KeyPadNumerical() {
 		super();
-		initialize(new SymbolDisplay(this));
+		initialize(new SymbolDisplay(this), false);
 	}
 	
-	private void initialize(SymbolDisplay symbolDisplay) {
+	private void initialize(SymbolDisplay symbolDisplay, boolean numbersOnly) {
 		addStyleName("keyPadNumerical");
 
 		this.symbolDisplay = symbolDisplay;
@@ -46,6 +50,7 @@ public class KeyPadNumerical extends FlowPanel {
 		// separate numbers from special characters with a div
 		this.add(new FlowPanel());
 
+		if(!numbersOnly) {
 		negButton.setTitle("negative");
 		buttons.add(negButton);
 		this.add(negButton);
@@ -61,6 +66,7 @@ public class KeyPadNumerical extends FlowPanel {
 		expButton.setTitle("exponent");
 		buttons.add(expButton);
 		this.add(expButton);
+		}
 
 		if (Moderator.isTouch) {
 			// Clear Display on Touch - clear

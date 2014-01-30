@@ -13,7 +13,7 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitMap;
 
-public class MultiplyTransformations extends Transformations {
+public class MultiplyTransformations extends TransformationList {
 
 	private static final long serialVersionUID = 3127633894356779264L;
 
@@ -206,7 +206,7 @@ public class MultiplyTransformations extends Transformations {
 // ////////////////////////////////////////////////
 // Transform buttons
 // ///////////////////////////////////////////////
-class MultiplyTransformButton extends Button {
+class MultiplyTransformButton extends TransformationButton {
 	final MathNode left;
 	final MathNode right;
 	final MathNode operation;

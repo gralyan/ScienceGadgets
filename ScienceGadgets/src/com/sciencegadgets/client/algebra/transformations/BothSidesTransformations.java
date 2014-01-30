@@ -17,7 +17,7 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
-public class BothSidesTransformations extends Transformations{
+public class BothSidesTransformations extends TransformationList{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -137,7 +137,7 @@ public class BothSidesTransformations extends Transformations{
 		ADD, SUBTRACT, MULTIPLY, DIVIDE, INVERSE_EXPONENT, RAISE, LOG, INVERSE_TRIG
 	}
 
-	class BothSidesButton extends Button {
+	class BothSidesButton extends TransformationButton {
 
 		BothSidesButton(Math operation) {
 			// addMouseDownHandler(new AlternativeHTML(operation,
@@ -176,7 +176,7 @@ public class BothSidesTransformations extends Transformations{
 				break;
 			case INVERSE_TRIG:
 				String func = node.getAttribute(MathAttribute.Function);
-				String inverseFunc = TrigFunctions.getInverse(func);
+				String inverseFunc = TrigFunctions.getInverseName(func);
 				setHTML(inverseFunc + "(" + BOTH_SIDES + ")");
 				addClickHandler(new InverseTrigBothHandler(inverseFunc));
 				break;

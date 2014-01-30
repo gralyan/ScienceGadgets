@@ -35,7 +35,7 @@ public class OwlMiner {
 	 * ObjectifyService.ofy().load().type(Unit
 	 * .class).ancestor(Key.create(QuantityKind.class, qKind)).list();
 	 */
-	public String[] getUnitsFromOwl() throws IllegalArgumentException {
+	public void recreateUnitsFromOwl() throws IllegalArgumentException {
 
 		// Delete all
 		List<QuantityKind> qKinds = ObjectifyService.ofy().load()
@@ -59,7 +59,7 @@ public class OwlMiner {
 		ObjectifyService.ofy().delete().keys(unitKeys).now();
 		ObjectifyService.ofy().delete().type(QuantityKind.class)
 				.ids(qKindsNames).now();
-
+		
 		// ///////////////////////////////
 		// Mine owl for QuatityKinds
 		// ///////////////////////////////
@@ -136,7 +136,7 @@ public class OwlMiner {
 		}
 		map.put("Prefix", "1,0,0,0,0,0,0,0");
 		map.put("PrefixBinary", "1,0,0,0,0,0,0,0");
-		map.put("PlaneAngle", "1,0,0,0,0,0,0,0");
+		map.put("Angle", "1,0,0,0,0,0,0,0");
 		map.put("SolidAngle", "2,0,0,0,0,0,0,0");
 		map.remove("AreaPerTime");
 		map.put("KinematicViscosity", "0,2,0,-1,0,0,0,0");
@@ -446,8 +446,6 @@ public class OwlMiner {
 				// System.out.println(quantity);
 			}
 		}
-
-		return null;
 	}
 
 	private String extractProperty(Element node, String property) {
