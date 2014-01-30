@@ -64,13 +64,15 @@ public abstract class QuantitySpecification extends Prompt {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
 					dataUnit = "";
-					unitHTML.removeFromParent();
-					unitHTML = null;
 					unitMap.clear();
+					if (unitHTML != null) {
+						unitHTML.removeFromParent();
+						unitHTML = null;
+					}
 				}
 			}, TouchStartEvent.getType());
-			
-			//Symbol Display on Touch - clear
+
+			// Symbol Display on Touch - clear
 			symbolDisplay.addTouchStartHandler(new TouchStartHandler() {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
@@ -83,13 +85,15 @@ public abstract class QuantitySpecification extends Prompt {
 				@Override
 				public void onClick(ClickEvent event) {
 					dataUnit = "";
-					unitHTML.removeFromParent();
-					unitHTML = null;
 					unitMap.clear();
+					if (unitHTML != null) {
+						unitHTML.removeFromParent();
+						unitHTML = null;
+					}
 				}
 			}, ClickEvent.getType());
 
-			//Symbol Display on Click - clear
+			// Symbol Display on Click - clear
 			symbolDisplay.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -154,15 +158,9 @@ public abstract class QuantitySpecification extends Prompt {
 
 			String name = selected.getValue();
 
-			int exp = 0;
-			if (unitMap.containsKey(name)) {
-				Integer prevExp = unitMap.get(name);
-				exp = isReciprocal ? --prevExp : ++prevExp;
-			} else {
-				exp = isReciprocal ? -1 : 1;
-			}
-			unitMap.put(name, exp);
-			
+			int direction = isReciprocal ? -1 : 1;
+			unitMap.put(name, direction);
+
 			dataUnit = unitMap.getUnitAttribute();
 			if (unitHTML != null) {
 				unitHTML.removeFromParent();

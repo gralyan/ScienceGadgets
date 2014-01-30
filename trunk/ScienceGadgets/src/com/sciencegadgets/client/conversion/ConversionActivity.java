@@ -27,7 +27,6 @@ import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.shared.MathAttribute;
@@ -56,10 +55,8 @@ public class ConversionActivity extends AbsolutePanel {
 	@UiField
 	Button convertButton;
 
-	static final UnitSelection unitSelection = new UnitSelection(false, true,
-			false);
-	static final SelectionPanel derivedUnitsSelection = new SelectionPanel(
-			"Base Units");
+	static final UnitSelection unitSelection = new UnitSelection(false, true,false);
+	static final SelectionPanel derivedUnitsSelection = new SelectionPanel("Base Units");
 	private MathTree mTree = null;
 	private MathNode node;
 
@@ -85,11 +82,11 @@ public class ConversionActivity extends AbsolutePanel {
 		unitSelection.addStyleName("fillParent");
 		unitSelectionArea.add(unitSelection);
 
-		derivedUnitsSelection.addSelectionHandler(new DeriveSelectHandler());
+		derivedUnitsSelection.addSelectionHandler(new ConvertSelectHandler());
 		derivedUnitsSelection.addStyleName("fillParent");
 		deriveUnitArea.add(derivedUnitsSelection);
 
-		convertButton.addClickHandler(new ConvertClickHandler());
+		convertButton.addClickHandler(new ConvertCompleteClickHandler());
 	}
 
 	public void load(MathNode node) {
@@ -140,7 +137,7 @@ public class ConversionActivity extends AbsolutePanel {
 				unitNode.append(TypeML.Variable, symbol);
 				unitNode.append(TypeML.Number, exp);
 			}
-			unitNode.setAttribute(MathAttribute.Unit, base);
+			unitNode.setAttribute(MathAttribute.Unit, base.replace("-", ""));
 			MathNode unitNodeClone = unitNode.clone();
 
 			if (negExp) {
@@ -216,8 +213,7 @@ public class ConversionActivity extends AbsolutePanel {
 		for (UnitDisplay unitDisplay : unitDisplays) {
 			MathNode jointNode = unitDisplay.historyNode;
 			if (!unitDisplay.isCanceled) {
-				wrappers.add(new ConversionWrapper(unitDisplay, wrapperArea,
-						this));
+				new ConversionWrapper(unitDisplay, wrapperArea, this);
 			} else {
 				unitDisplay.wrappedNode.getHTML().removeFromParent();
 
@@ -232,10 +228,10 @@ public class ConversionActivity extends AbsolutePanel {
 			}
 		}
 
-		 for (Wrapper wrap : wrappers) {
-		 wrap.addAssociativeDragDrop();
-		 AlgebraicTransformations.interFractionDrop_check(wrap.getNode());
-		 }
+		for (Wrapper wrap : wrappers) {
+			wrap.addAssociativeDragDrop();
+			((ConversionWrapper) wrap).addUnitCancelDropControllers();
+		}
 	}
 
 	void fillUnitSelection(final String unitName) {
@@ -320,7 +316,6 @@ public class ConversionActivity extends AbsolutePanel {
 		}
 
 		// Update Working area
-		System.out.println(newUnitMap);
 		int selectedIndex = selectedWrapper.getNode().getIndex();
 		selectedIndex = newUnitMap.size() == 2 ? selectedIndex : -1;
 		for (Entry<String, Integer> entry : newUnitMap.entrySet()) {
@@ -387,7 +382,7 @@ public class ConversionActivity extends AbsolutePanel {
 		}
 	}
 
-	class DeriveSelectHandler implements SelectionHandler {
+	class ConvertSelectHandler implements SelectionHandler {
 		@Override
 		public void onSelect(Cell selected) {
 			Object selectedEntity = selected.getEntity();
@@ -395,15 +390,7 @@ public class ConversionActivity extends AbsolutePanel {
 				DerivedUnit deriveUnit = (DerivedUnit) selectedEntity;
 				convert(deriveUnit.getDerivedMap(),
 						deriveUnit.getConversionMultiplier());
-			}
-		}
-	}
-
-	class ConvertSelectHandler implements SelectionHandler {
-		@Override
-		public void onSelect(Cell selected) {
-			Object selectedEntity = selected.getEntity();
-			if (selectedEntity instanceof Unit) {
+			}else if (selectedEntity instanceof Unit) {
 				Unit toUnit = (Unit) selectedEntity;
 				convert(new UnitMap(toUnit.getName() + UnitUtil.EXP_DELIMITER
 						+ 1), toUnit.getConversionMultiplier());
@@ -411,14 +398,18 @@ public class ConversionActivity extends AbsolutePanel {
 		}
 	}
 
-	class ConvertClickHandler implements ClickHandler {
+	class ConvertCompleteClickHandler implements ClickHandler {
 		@Override
 		public void onClick(ClickEvent event) {
 			String unitAttribute = "";
 			for (UnitDisplay unitDisplay : unitDisplays) {
 				if (!unitDisplay.isCanceled) {
-					unitAttribute = unitAttribute + "*"
-							+ unitDisplay.wrappedNode.getUnitAttribute();
+					String unitAtt = unitDisplay.wrappedNode.getUnitAttribute();
+					if (!unitDisplay.inNumerator && !unitAtt.contains("-")) {
+						String exp = UnitUtil.getExponent(unitAtt);
+						unitAtt = unitAtt.replace(exp, "-" + exp);
+					}
+					unitAttribute = unitAttribute + "*" + unitAtt;
 				}
 			}
 			unitAttribute = unitAttribute.replaceFirst(

@@ -11,12 +11,12 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationValidator;
 import com.sciencegadgets.shared.TypeML;
-import com.sun.org.apache.regexp.internal.recompile;
 
 public class SaveButtonHandler implements ClickHandler {
 
 	private final DatabaseHelperAsync dataBase = GWT
 			.create(DatabaseHelper.class);
+	private static final String RE_CREATE_UNITS = "recreateunits";
 
 	@Override
 	public void onClick(ClickEvent arg0) {
@@ -27,6 +27,7 @@ public class SaveButtonHandler implements ClickHandler {
 			if (mathML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
+				reCreateUnitsCheck(mathML);
 				return;
 			}
 			if (!mathML.contains("<" + TypeML.Variable.getTag())) {
@@ -65,6 +66,23 @@ public class SaveButtonHandler implements ClickHandler {
 		} catch (Exception e) {
 			Window.alert("Could not save equation");
 			JSNICalls.log("Save Fail: " + e.toString());
+		}
+	}
+
+	private void reCreateUnitsCheck(String mathML) {
+
+		// Simple method of re-creating the entire set of units
+		if (mathML.contains(RE_CREATE_UNITS)) {
+			dataBase.reCreateUnits(new AsyncCallback<Void>() {
+				@Override
+				public void onFailure(Throwable arg0) {
+					Window.alert("Re-creation FAILED");
+				}
+				@Override
+				public void onSuccess(Void arg0) {
+					Window.alert("Re-creation success!");
+				}
+			});
 		}
 	}
 }

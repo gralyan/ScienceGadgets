@@ -24,4 +24,5 @@ public interface DatabaseHelper extends RemoteService {
 	Unit getUnit(String unitName);
 	
 	String getBlobURL();
+	void reCreateUnits();
 }

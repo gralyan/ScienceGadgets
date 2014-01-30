@@ -120,5 +120,9 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	public String getBlobURL() {
 		return BlobstoreUtil.getUrl();
 	}
+	@Override
+	public void reCreateUnits() {
+		new OwlMiner().recreateUnitsFromOwl();
+	}
 
 }

@@ -11,7 +11,7 @@ import com.sciencegadgets.client.Prompt;
 public class LogBaseSpecification extends Prompt {
 	public final String[] bases = { "2", "10", "e" };
 	private SymbolDisplay symbolDisplay;
-	KeyPadNumerical keyPad = new KeyPadNumerical();
+	KeyPadNumerical keyPad = new KeyPadNumerical(true);
 
 	public LogBaseSpecification() {
 		super();

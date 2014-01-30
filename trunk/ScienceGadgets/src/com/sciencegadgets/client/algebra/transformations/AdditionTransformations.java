@@ -16,7 +16,7 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
-public class AdditionTransformations extends Transformations{
+public class AdditionTransformations extends TransformationList{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -252,7 +252,7 @@ public class AdditionTransformations extends Transformations{
 // ////////////////////////////////////////////////
 // Transform buttons
 // ///////////////////////////////////////////////
-class AddTransformButton extends Button {
+class AddTransformButton extends TransformationButton {
 	final MathNode left;
 	final MathNode right;
 	final MathNode operation;

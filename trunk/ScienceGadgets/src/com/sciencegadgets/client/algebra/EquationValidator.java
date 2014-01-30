@@ -168,7 +168,8 @@ public class EquationValidator {
 		case Sum:
 			UnitMap sumMap = null;
 			for (MathNode child : node.getChildren()) {
-				if (TypeML.Operation.equals(child.getType())) {
+				if (TypeML.Operation.equals(child.getType())
+						|| "0".equals(child.getAttribute(MathAttribute.Value))) {
 					continue;
 				}
 				UnitMap childMap = getQuantityKind(child);
@@ -186,7 +187,11 @@ public class EquationValidator {
 											+ sumMap + "\n" + childMap));
 				}
 			}
-			return sumMap;
+			if (sumMap == null) {
+				return new UnitMap();
+			} else {
+				return sumMap;
+			}
 		case Exponential:
 			MathNode base = node.getChildAt(0);
 			MathNode exp = node.getChildAt(1);

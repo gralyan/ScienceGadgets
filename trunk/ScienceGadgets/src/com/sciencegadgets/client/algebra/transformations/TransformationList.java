@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.user.client.ui.Button;
 
-public class Transformations extends LinkedList<Button> {
+public class TransformationList extends LinkedList<Button> {
 
 	/**
 	 * 

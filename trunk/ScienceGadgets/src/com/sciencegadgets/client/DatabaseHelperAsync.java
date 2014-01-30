@@ -19,5 +19,6 @@ public interface DatabaseHelperAsync {
 	
 	void getBlobURL(AsyncCallback<String> callback);
 	void getUnit(String unitName, AsyncCallback<Unit> callback);
+	void reCreateUnits(AsyncCallback<Void> callback);
 
 }
