@@ -174,7 +174,7 @@ public class AlgebraicTransformations {
 		}
 	}
 
-	public static LinkedList<Button> isolatedVariable_check(MathNode isolatedVar) {
+	public static LinkedList<TransformationButton> isolatedVariable_check(MathNode isolatedVar) {
 		if (TypeML.Equation.equals(isolatedVar.getParentType())) {
 			TransformationList list = new TransformationList();
 			list.add(new EvaluatePromptButton(isolatedVar));
@@ -191,7 +191,7 @@ public class AlgebraicTransformations {
 	 * @param negNode
 	 *            - node of negative number
 	 */
-	public static Button separateNegative_check(MathNode negNode) {
+	public static TransformationButton separateNegative_check(MathNode negNode) {
 		if (negNode.getSymbol().startsWith(TypeML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
 			return new SeperateNegButton(negNode);
@@ -295,8 +295,8 @@ public class AlgebraicTransformations {
 				TrigFunctions cos = TrigFunctions.cos;
 				if ((sin.equals(dragFunc) && cos.equals(targetfunc))
 						|| (cos.equals(dragFunc) && sin.equals(targetfunc))) {
+					dropTargets.put(target, DropType.TRIG_COMBINE);
 				}
-				dropTargets.put(target, DropType.TRIG_COMBINE);
 			}
 			break;
 		}
@@ -307,7 +307,7 @@ public class AlgebraicTransformations {
 	 * 
 	 * @param node
 	 */
-	public static Button factorizeNumbers_check(MathNode node) {
+	public static TransformationButton factorizeNumbers_check(MathNode node) {
 		Integer number;
 		try {
 			number = Integer.parseInt(node.getSymbol());
@@ -326,14 +326,14 @@ public class AlgebraicTransformations {
 	 * 
 	 * @param node
 	 */
-	public static Button unitConversion_check(MathNode node) {
+	public static TransformationButton unitConversion_check(MathNode node) {
 		if (!"".equals(node.getUnitAttribute())) {
 			return new UnitConversionButton(node);
 		}
 		return null;
 	}
 
-	public static Button denominatorFlip_check(MathNode node) {
+	public static TransformationButton denominatorFlip_check(MathNode node) {
 		return new DenominatorFlipButton(node);
 	}
 
@@ -341,7 +341,7 @@ public class AlgebraicTransformations {
 	 * Check if: (log base = exponential base)<br/>
 	 * log<sub>b</sub>(b<sup>x</sup>) = x
 	 */
-	public static Button unravelLogExp_check(MathNode log) {
+	public static TransformationButton unravelLogExp_check(MathNode log) {
 		MathNode exponential = log.getFirstChild();
 		if (TypeML.Exponential.equals(exponential.getType())) {
 			MathNode exponentialBase = exponential.getFirstChild();
@@ -359,7 +359,7 @@ public class AlgebraicTransformations {
 	 * Check if: (log base = exponential base)<br/>
 	 * b<sup>log<sub>b</sub>(x)</sup> = x
 	 */
-	public static Button unravelExpLog_check(MathNode exponential) {
+	public static TransformationButton unravelExpLog_check(MathNode exponential) {
 		MathNode log = exponential.getChildAt(1);
 		if (TypeML.Log.equals(log.getType())) {
 			String logBase = log.getAttribute(MathAttribute.LogBase);
@@ -379,7 +379,7 @@ public class AlgebraicTransformations {
 	 * sin(arcsin(x)) = x<br/>
 	 * arcsin(sin(x)) = x<br/>
 	 */
-	public static Button inverseTrig_check(MathNode trig) {
+	public static TransformationButton inverseTrig_check(MathNode trig) {
 		MathNode trigChild = trig.getFirstChild();
 		if (TypeML.Trig.equals(trigChild.getType())) {
 			String trigChildFunc = trigChild

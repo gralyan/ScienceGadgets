@@ -100,7 +100,7 @@ class TrigDefineButton extends TrigTransformButton {
 					term.addAfter(trigIndex, TypeML.Operation, Operator.getMultiply().getSign());
 				}else {
 					MathNode frac = trig.encase(TypeML.Fraction);
-					otherTrig = frac.addAfter(0, TypeML.Trig, funcDef[1].toString());
+					otherTrig = frac.addAfter(0, TypeML.Trig, funcDef[2].toString());
 				}
 				otherTrig.append(argument.clone());
 

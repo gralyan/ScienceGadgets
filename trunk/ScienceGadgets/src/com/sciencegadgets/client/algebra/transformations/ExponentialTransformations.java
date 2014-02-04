@@ -40,7 +40,12 @@ public class ExponentialTransformations extends TransformationList {
 	private ExponentialTransformButton exponentialEvaluate_check() {
 		if (TypeML.Number.equals(baseType)
 				&& TypeML.Number.equals(exponentType)) {
-			return new ExponentialEvaluateButton(this);
+			try {
+				int exp = Integer.parseInt(exponent.getSymbol());
+					return new ExponentialEvaluateButton(this, (int) exp);
+			} catch (NumberFormatException e) {
+				return null;
+			}
 		}
 		return null;
 	}
@@ -109,7 +114,7 @@ class ExponentialTransformButton extends TransformationButton {
  */
 class ExponentialEvaluateButton extends ExponentialTransformButton {
 
-	public ExponentialEvaluateButton(ExponentialTransformations context) {
+	public ExponentialEvaluateButton(ExponentialTransformations context, final int exp) {
 		super(context, "Evaluate Exponential");
 
 		addClickHandler(new ClickHandler() {
@@ -118,15 +123,14 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 			public void onClick(ClickEvent event) {
 
 				final BigDecimal baseValue = new BigDecimal(base.getSymbol());
-				final int expValue = Integer.parseInt(exponent.getSymbol());
-				final BigDecimal totalValue = baseValue.pow(expValue,
+				final BigDecimal totalValue = baseValue.pow(exp,
 						MathContext.DECIMAL128);
 
 				final UnitMap totalUnitMap = new UnitMap(base)
-						.getExponential(expValue);
+						.getExponential(exp);
 
 				if (Moderator.isInEasyMode) {
-					evaluateExponential(baseValue, expValue, totalValue,
+					evaluateExponential(baseValue, exp, totalValue,
 							totalUnitMap);
 
 				} else {// prompt
@@ -135,7 +139,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 					NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 						@Override
 						void onCorrect() {
-							evaluateExponential(baseValue, expValue,
+							evaluateExponential(baseValue, exp,
 									totalValue, totalUnitMap);
 						}
 					};
