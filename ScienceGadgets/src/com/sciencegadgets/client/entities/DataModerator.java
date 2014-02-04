@@ -170,7 +170,7 @@ public class DataModerator {
 		// The Prefix quantity is special, should stand out
 		if (unitSelection.isQuantityOnly()) {
 			qBox.getWidget(1).removeFromParent();
-			qBox.getWidget(2).removeFromParent();
+			qBox.getWidget(1).removeFromParent();
 		} else {
 			qBox.getWidget(1).addStyleName("quantityKindPrefix");
 			qBox.getWidget(2).addStyleName("quantityKindPrefix");

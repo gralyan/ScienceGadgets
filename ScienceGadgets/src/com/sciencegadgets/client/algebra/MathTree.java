@@ -72,6 +72,25 @@ public class MathTree {
 
 		reloadDisplay(true);
 	}
+	
+	public MathTree(TypeML leftType, String leftSymbol,TypeML rightType, String righSymbol, boolean inEditMode) {
+		this(newDummyElement(), inEditMode);
+		getLeftSide().replace(leftType, leftSymbol);
+		getRightSide().replace(rightType, righSymbol);
+	}
+	
+	private static Element newDummyElement() {
+		Element root = DOM.createElement(TypeML.Equation.getTag());
+
+		Element dummySide = DOM.createElement(TypeML.Variable.getTag());
+		Element eq = DOM.createElement(TypeML.Operation.getTag());
+		eq.setInnerText("=");
+		dummySide.setInnerText("a");
+		root.appendChild(dummySide);
+		root.appendChild(eq);
+		root.appendChild(dummySide.cloneNode(true));
+		return root;
+	}
 
 	// public MathNode getMathNode(String id) {
 	// return idMap.get(id);

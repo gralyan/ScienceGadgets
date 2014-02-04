@@ -16,10 +16,10 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
-public class AdditionTransformations extends TransformationList{
+public class AdditionTransformations extends TransformationList {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	MathNode left;
 	MathNode operation;
 	MathNode right;
@@ -33,31 +33,30 @@ public class AdditionTransformations extends TransformationList{
 	boolean isMinusBeforeLeft = false;
 
 	public AdditionTransformations(MathNode left, MathNode operation,
-			MathNode right,
-			boolean isPlusSign) {
+			MathNode right, boolean isPlusSign) {
 
-			this.left = left;
-			this.operation = operation;
-			this.right = right;
-			this.parent = operation.getParent();
-			isMinus = !isPlusSign;
+		this.left = left;
+		this.operation = operation;
+		this.right = right;
+		this.parent = operation.getParent();
+		isMinus = !isPlusSign;
 
-			MathNode leftPrev = left.getPrevSibling();
-			if (leftPrev != null && "-".equals(leftPrev.getSymbol())
-					&& TypeML.Operation.equals(leftPrev.getType())) {
-				isMinusBeforeLeft = true;
-			}
+		MathNode leftPrev = left.getPrevSibling();
+		if (leftPrev != null && "-".equals(leftPrev.getSymbol())
+				&& TypeML.Operation.equals(leftPrev.getType())) {
+			isMinusBeforeLeft = true;
+		}
 
-			this.leftType = left.getType();
-			this.rightType = right.getType();
+		this.leftType = left.getType();
+		this.rightType = right.getType();
 
-			add(addNumbers_check());
-			add(addSimilar_check());
-			add(factorLikeTerms_check());
-			add(factorWithBase_check());
-			add(factorWithTermChild_check());
-			add(addFractions_check());
-			add(logCombination_check());
+		add(addNumbers_check());
+		add(addSimilar_check());
+		add(factorLikeTerms_check());
+		add(factorWithBase_check());
+		add(factorWithTermChild_check());
+		add(addFractions_check());
+		add(logCombination_check());
 
 	}
 
@@ -134,8 +133,7 @@ public class AdditionTransformations extends TransformationList{
 			factorString.concat(fact.getHTMLString());
 		}
 
-		return new FactorLikeTermsButton(this, leftTerm, rightTerm,
-				likeTerms);
+		return new FactorLikeTermsButton(this, leftTerm, rightTerm, likeTerms);
 	}
 
 	private AddTransformButton factorWithBase_check() {
@@ -213,21 +211,53 @@ public class AdditionTransformations extends TransformationList{
 			inBinomialFirst = inBinomialB;
 			inBinomialSecond = inBinomialA;
 		}
+		
+		if(inBinomialFirst.getChildCount() == 1) {
+			inBinomialFirst = inBinomialFirst.getFirstChild();
+			inBinomialFirst.getParent().decase();
+		}
+		if(inBinomialSecond.getChildCount() == 1) {
+			inBinomialSecond = inBinomialSecond.getFirstChild();
+			inBinomialSecond.getParent().decase();
+		}
 
 		MathNode termCasing = operation.getParent().addBefore(
 				operation.getIndex(), TypeML.Term, "");
+		
+		System.out.println(inBinomialFirst);
+		System.out.println(inBinomialSecond);
 
-		for (MathNode factor : factors) {
-			termCasing.append(factor);
-			termCasing.append(TypeML.Operation, Operator.getMultiply()
-					.getSign());
+		if (Moderator.isInEasyMode
+				&& TypeML.Number.equals(inBinomialFirst.getType())
+				&& TypeML.Number.equals(inBinomialSecond.getType())) {
+
+			BigDecimal firstValue = new BigDecimal(inBinomialFirst.getSymbol());
+			BigDecimal secondValue = new BigDecimal(inBinomialSecond.getSymbol());
+			BigDecimal total = firstValue.add(secondValue);
+			
+			termCasing.append(TypeML.Number, ""+total);
+			
+			inBinomialFirst.remove();
+			operation.remove();
+			inBinomialSecond.remove();
+
+			for (MathNode factor : factors) {
+				termCasing.append(TypeML.Operation, Operator.getMultiply()
+						.getSign());
+				termCasing.append(factor);
+			}
+		} else {
+			
+			for (MathNode factor : factors) {
+				termCasing.append(factor);
+				termCasing.append(TypeML.Operation, Operator.getMultiply()
+						.getSign());
+			}
+			MathNode binomialCasing = termCasing.append(TypeML.Sum, "");
+			binomialCasing.append(inBinomialFirst);
+			binomialCasing.append(operation);
+			binomialCasing.append(inBinomialSecond);
 		}
-
-		MathNode binomialCasing = termCasing.append(TypeML.Sum, "");
-		binomialCasing.append(inBinomialFirst);
-		binomialCasing.append(operation);
-		binomialCasing.append(inBinomialSecond);
-
 		parent.decase();
 	}
 
@@ -272,6 +302,7 @@ class AddTransformButton extends TransformationButton {
 		this.isMinusBeforeLeft = context.isMinusBeforeLeft;
 	}
 }
+
 /**
  * x + 0 = x<br/>
  * 0 + x = x
@@ -302,6 +333,7 @@ class AddZeroButton extends AddTransformButton {
 		});
 	}
 }
+
 /**
  * Numerical Addition, prompt for answer first or just execute if skills are
  * high enough<br/>
@@ -414,9 +446,8 @@ class FactorLikeTermsButton extends AddTransformButton {
 				MathNode leftRemaining = leftTerm;
 				// Remove operation on like term
 				if (likeTerms.size() * 2 - 1 == leftTerm.getChildCount()) {
-					leftRemaining = leftTerm.replace(TypeML.Term, "");// will
-																		// be
-																		// MathNode.decase[d]
+					// will be MathNode.decase[d]
+					leftRemaining = leftTerm.replace(TypeML.Term, "");
 					leftRemaining.append(TypeML.Number, "1");
 				} else {
 					for (MathNode extraFactor : likeTerms.keySet()) {
@@ -461,10 +492,10 @@ class FactorLikeTermsButton extends AddTransformButton {
 					}
 				}
 
-				context.factor(factors, leftTerm, rightTerm);
-
-				leftRemaining.decase();
-				rightRemaining.decase();
+				context.factor(factors, leftRemaining, rightRemaining);
+//
+//				leftRemaining.decase();
+//				rightRemaining.decase();
 
 				Moderator.reloadEquationPanel("Factor Like Terms",
 						Rule.COMBINING_LIKE_TERMS);
@@ -558,10 +589,9 @@ class FactorWithTermChildButton extends AddTransformButton {
 				factors.add(termChild);
 				context.factor(factors, inBinomialA, inBinomialB);
 
-				term.decase();
+//				term.decase();
 
-				Moderator.reloadEquationPanel("Factor",
-						Rule.FACTORIZATION);
+				Moderator.reloadEquationPanel("Factor", Rule.FACTORIZATION);
 			}
 		});
 	}
@@ -634,8 +664,7 @@ class AddLogsButton extends AddTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Combine Log",
-						Rule.LOGARITHM);
+				Moderator.reloadEquationPanel("Combine Log", Rule.LOGARITHM);
 			}
 		});
 	}

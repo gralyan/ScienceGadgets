@@ -94,22 +94,8 @@ public class ConversionActivity extends AbsolutePanel {
 		unitDisplays.clear();
 		selectedUnit = null;
 		selectedWrapper = null;
-
-		Element root = DOM.createElement(TypeML.Equation.getTag());
-
-		Element dummySide = DOM.createElement(TypeML.Number.getTag());
-		Element eq = DOM.createElement(TypeML.Operation.getTag());
-		eq.setInnerText("=");
-		dummySide.setAttribute(MathAttribute.Value.getName(), "1");
-		dummySide.setInnerText("1");
-		root.appendChild(dummySide);
-		root.appendChild(eq);
-		root.appendChild(dummySide.cloneNode(true));
-
-		mTree = new MathTree(root, false);
-
-		mTree.getRightSide().replace(TypeML.Term, "");
-		mTree.getLeftSide().replace(TypeML.Term, "");
+		
+		mTree = new MathTree(TypeML.Term,"",TypeML.Term,"", false);
 
 		totalNode = mTree.getLeftSide().append(TypeML.Number, node.getSymbol());
 		mTree.getRightSide().append(totalNode.clone());

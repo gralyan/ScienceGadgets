@@ -68,7 +68,10 @@ public class MultiplyTransformations extends TransformationList {
 			} else if (rightValue.compareTo(negOne) == same) {
 				return new MultiplyNegOneButton(this, left, right);
 			}
+		} catch (NumberFormatException e) {
+		}
 
+		try {
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
 			if (leftValue.compareTo(zero) == same) {
 				return new MultiplyZeroButton(this, right, left);
@@ -78,10 +81,6 @@ public class MultiplyTransformations extends TransformationList {
 				return new MultiplyNegOneButton(this, right, left);
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			JSNICalls
-					.error("A number node couldn't be parsed: " + e.toString());
-			return null;
 		}
 		return null;
 	}
@@ -571,7 +570,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 				denominator = denominator.encase(TypeML.Term);
 				denominator.addBefore(0, TypeML.Operation,
 						operation.getSymbol());
-				denominator.addBefore(0, left.getChildAt(1));
+				denominator.addBefore(0, left.getChildAt(0));
 
 				left.remove();
 

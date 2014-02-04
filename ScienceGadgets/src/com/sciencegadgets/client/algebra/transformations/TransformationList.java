@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.user.client.ui.Button;
 
-public class TransformationList extends LinkedList<Button> {
+public class TransformationList extends LinkedList<TransformationButton> {
 
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class TransformationList extends LinkedList<Button> {
 	private static final long serialVersionUID = -3043410062241803505L;
 
 	@Override
-	public boolean add(Button tButt) {
+	public boolean add(TransformationButton tButt) {
 		if (tButt != null) {
 			super.add(tButt);
 			return true;
@@ -22,9 +22,9 @@ public class TransformationList extends LinkedList<Button> {
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends Button> c) {
+	public boolean addAll(Collection<? extends TransformationButton> c) {
 		if (c != null) {
-			for (Button b : c) {
+			for (TransformationButton b : c) {
 				if (b == null) {
 					remove(b);
 				}
