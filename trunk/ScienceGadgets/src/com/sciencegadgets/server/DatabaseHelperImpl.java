@@ -55,7 +55,7 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 			for (int i = 0; i < variables.getLength(); i++) {
 				Element var = (Element) variables.item(i);
 				String quantityKind = var.getAttribute(MathAttribute.Unit
-						.getName());
+						.getAttributeName());
 				if (quantityKind != null && !"".equals(quantityKind)) {
 					Key<QuantityKind> qKey = Key.create(QuantityKind.class,
 							quantityKind);

@@ -11,7 +11,7 @@ public enum MathAttribute {
 		this.name = name;
 	}
 
-	public String getName() {
+	public String getAttributeName() {
 		return name;
 	}
 }

@@ -21,6 +21,7 @@ import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TypeML.TrigFunctions;
 import com.sciencegadgets.shared.UnitUtil;
 
 public abstract class QuantitySpecification extends Prompt {
@@ -121,7 +122,7 @@ public abstract class QuantitySpecification extends Prompt {
 		// OK button
 		addOkHandler(new OkHandler());
 
-		reload(mathNode,clearDisplays);
+		reload(mathNode, clearDisplays);
 	}
 
 	public void reload(MathNode mathNode, boolean clearDisplays) {
@@ -151,20 +152,27 @@ public abstract class QuantitySpecification extends Prompt {
 			dataUnit = node.getUnitAttribute();
 			unitMap = new UnitMap(node);
 		}
-		
-		if(canHaveUnits(node)) {
+
+		if (canHaveUnits(node)) {
 			unitArea.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
-		}else {
+		} else {
 			unitArea.getElement().getStyle().setDisplay(Display.NONE);
 		}
 
 	}
-	
+
 	private boolean canHaveUnits(MathNode mNode) {
 		switch (mNode.getParentType()) {
 		case Exponential:
-			if(mNode.getIndex() == 1) {
-			return false;
+			if (mNode.getIndex() == 1) {
+				return false;
+			}
+			break;
+		case Trig:
+			String func = mNode.getParent()
+					.getAttribute(MathAttribute.Function);
+			if (func.contains(TrigFunctions.ARC)) {
+				return false;
 			}
 			break;
 		case Log:
@@ -208,9 +216,9 @@ public abstract class QuantitySpecification extends Prompt {
 			setNode(symbol);
 
 			if (dataUnit == null || "".equals(dataUnit)) {
-				node.getMLNode().removeAttribute(MathAttribute.Unit.getName());
+				node.getXMLNode().removeAttribute(MathAttribute.Unit.getAttributeName());
 			} else {
-				node.getMLNode().setAttribute(MathAttribute.Unit.getName(),
+				node.getXMLNode().setAttribute(MathAttribute.Unit.getAttributeName(),
 						dataUnit);
 			}
 			disappear();

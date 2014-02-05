@@ -186,7 +186,7 @@ public class EquationHTML extends HTML {
 			}
 			// falls through
 		case Variable:
-			String text = mNode.getSymbol();
+			String text = mNode.getXMLNode().getInnerText();
 			if (text.startsWith(Operator.MINUS.getSign())) {
 				nodeHtml = fence(nodeHtml, container);
 			}

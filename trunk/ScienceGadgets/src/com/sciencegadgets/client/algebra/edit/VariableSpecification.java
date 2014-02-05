@@ -118,6 +118,6 @@ public class VariableSpecification extends QuantitySpecification {
 
 	@Override
 	void setNode(String symbol) {
-		node.replace(TypeML.Variable, symbol);
+		node = node.replace(TypeML.Variable, symbol);
 	}
 }

@@ -43,7 +43,7 @@ public class EquationValidator {
 			break;
 		case TERMINAL:
 			if (childCount != 1
-					|| node.getMLNode().getChild(0).getNodeType() != Node.TEXT_NODE) {
+					|| node.getXMLNode().getChild(0).getNodeType() != Node.TEXT_NODE) {
 				isWrongChildren = true;
 			}
 			break;

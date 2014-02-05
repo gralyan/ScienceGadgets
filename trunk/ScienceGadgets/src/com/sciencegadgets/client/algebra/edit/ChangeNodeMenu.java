@@ -188,7 +188,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			case Variable:
 				boolean clearDisplayz = true;
 				if (isSameTypeNode && !NOT_SET.equals(node.getSymbol())) {
-					clearDisplays = false;
+					clearDisplayz = false;
 				}
 				if (AlgebraActivity.varSpec == null) {
 					AlgebraActivity.varSpec = new VariableSpecification(node, clearDisplayz);

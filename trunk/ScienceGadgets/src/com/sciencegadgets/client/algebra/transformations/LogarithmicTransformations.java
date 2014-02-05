@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -7,17 +8,18 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
 public class LogarithmicTransformations extends TransformationList {
-	
+
 	private static final long serialVersionUID = -1226259041452624481L;
-	
+
 	MathNode log;
-	MathNode logChild;
+	MathNode argument;
 	String base;
 	TypeML logChildType;
 
@@ -25,13 +27,25 @@ public class LogarithmicTransformations extends TransformationList {
 
 	public LogarithmicTransformations(MathNode logNode) {
 		log = logNode;
-		logChild = logNode.getFirstChild();
+		argument = logNode.getFirstChild();
 		base = log.getAttribute(MathAttribute.LogBase);
-		logChildType = logChild.getType();
+		logChildType = argument.getType();
 
 		add(new LogChangeBaseButton(this));
 		add(logChildCheck());
+		add(logEvaluateCheck());
 
+	}
+
+	private LogTransformButton logEvaluateCheck() {
+		if (TypeML.Number.equals(argument.getType())) {
+			try {
+				Double argValue = Double.parseDouble(argument.getSymbol());
+				return new LogEvaluateButton(this, argValue);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return null;
 	}
 
 	private LogTransformButton logChildCheck() {
@@ -43,9 +57,9 @@ public class LogarithmicTransformations extends TransformationList {
 		case Exponential:
 			return new LogPowerButton(this);
 		case Number:
-			if ("1".equals(logChild.getSymbol())) {
+			if ("1".equals(argument.getSymbol())) {
 				return new LogOneButton(this);
-			} else if (base.equals(logChild.getSymbol())) {
+			} else if (base.equals(argument.getSymbol())) {
 				return new LogSameBaseAsArgumentButton(this);
 			}
 		}
@@ -64,11 +78,48 @@ class LogTransformButton extends TransformationButton {
 	LogTransformButton(LogarithmicTransformations context, String html) {
 		super(html);
 		this.log = context.log;
-		this.logChild = context.logChild;
+		this.logChild = context.argument;
 		this.base = context.base;
-		
+
 		log.highlight();
 	}
+}
+
+/**
+ * Evaluate
+ */
+class LogEvaluateButton extends LogTransformButton {
+	LogEvaluateButton(LogarithmicTransformations context, final Double argValue) {
+		super(context, "Evaluate");
+
+		addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+
+				Double total;
+
+				if (MathTree.E.equals(base)) {
+					total = Math.log(argValue);
+				} else if ("10".equals(base)) {
+					total = Math.log10(argValue);
+				} else {
+					try {
+						Double baseValue = Double.parseDouble(base);
+						total = Math.log(argValue) / Math.log(baseValue);
+					} catch (Exception e) {
+						return;
+					}
+				}
+
+				log.replace(TypeML.Number, total + "");
+
+				Moderator.reloadEquationPanel("log<sub>" + base + "</sub>("
+						+ argValue + ") = " + total, Rule.LOGARITHM);
+			}
+		});
+	}
+
 }
 
 /**
@@ -224,49 +275,47 @@ class LogPowerButton extends LogTransformButton {
 	}
 
 }
+
 /**
  * log<sub>b</sub>(1) = 0
  */
 class LogOneButton extends LogTransformButton {
 	LogOneButton(LogarithmicTransformations context) {
 		super(context, "Log of One");
-		
+
 		addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
+
 				log.replace(TypeML.Number, "0");
-				
-				Moderator
-				.reloadEquationPanel(
-						"log<sub>b</sub>(1) = 0",
+
+				Moderator.reloadEquationPanel("log<sub>b</sub>(1) = 0",
 						Rule.LOGARITHM);
 			}
 		});
 	}
-	
+
 }
+
 /**
  * log<sub>b</sub>(b) = 1
  */
 class LogSameBaseAsArgumentButton extends LogTransformButton {
 	LogSameBaseAsArgumentButton(LogarithmicTransformations context) {
 		super(context, "log<sub>b</sub>(b) = 1");
-		
+
 		addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
+
 				log.replace(TypeML.Number, "1");
-				
-				Moderator
-				.reloadEquationPanel(
-						"log<sub>b</sub>(b) = 1",
+
+				Moderator.reloadEquationPanel("log<sub>b</sub>(b) = 1",
 						Rule.LOGARITHM);
 			}
 		});
 	}
-	
+
 }

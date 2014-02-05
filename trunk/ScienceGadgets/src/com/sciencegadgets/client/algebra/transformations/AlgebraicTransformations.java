@@ -743,10 +743,10 @@ class SubstituteButton extends TransformationButton {
 						Element substitute = null;
 						if (isolatedVar.isLeftSide()) {
 							substitute = isolatedVar.getTree().getRightSide()
-									.getMLNode();
+									.getXMLNode();
 						} else if (isolatedVar.isRightSide()) {
 							substitute = isolatedVar.getTree().getLeftSide()
-									.getMLNode();
+									.getXMLNode();
 						} else {
 							JSNICalls
 									.error("Could not find the element to substitute"
@@ -782,7 +782,7 @@ class SubstituteButton extends TransformationButton {
 		findSub: for (int j = 0; j < possibleSubs.getLength(); j++) {
 			Element possibleSub = possibleSubs.getItem(j);
 			if (!isolatedVar.getUnitAttribute().equals(
-					possibleSub.getAttribute(MathAttribute.Unit.getName()))) {
+					possibleSub.getAttribute(MathAttribute.Unit.getAttributeName()))) {
 				continue findSub;
 			}
 			Element subParent = possibleSub.getParentElement();
