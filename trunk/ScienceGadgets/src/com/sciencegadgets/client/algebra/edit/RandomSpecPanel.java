@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
@@ -48,7 +49,7 @@ public class RandomSpecPanel extends FlowPanel {
 		ScrollPanel scrollPanel = new ScrollPanel(mainPanel);
 
 		Label label1 = new Label("Negativity");
-		label1.setStyleName("rowHeader");
+		label1.setStyleName(CSS.ROW_HEADER);
 		mainPanel.add(label1);
 
 		neverNeg = new RadioButton("neg", "Never");
@@ -61,7 +62,7 @@ public class RandomSpecPanel extends FlowPanel {
 		mainPanel.add(negativeSelection);
 
 		Label label2 = new Label("Range");
-		label2.setStyleName("rowHeader");
+		label2.setStyleName(CSS.ROW_HEADER);
 		label2.getElement().getStyle().setMarginTop(5, Unit.PX);
 		mainPanel.add(label2);
 
@@ -75,7 +76,7 @@ public class RandomSpecPanel extends FlowPanel {
 
 		Label label3 = new Label(
 				"Decimal places (0-integers, 1-tenths place...)");
-		label3.setStyleName("rowHeader");
+		label3.setStyleName(CSS.ROW_HEADER);
 		label3.getElement().getStyle().setMarginTop(5, Unit.PX);
 		mainPanel.add(label3);
 

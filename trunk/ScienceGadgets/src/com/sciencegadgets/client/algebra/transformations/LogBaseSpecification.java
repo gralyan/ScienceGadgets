@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.Prompt;
@@ -28,7 +29,7 @@ public class LogBaseSpecification extends Prompt {
 
 		for (String base : bases) {
 			Button baseButton = new Button(base, baseClick);
-			baseButton.addStyleName("mediumButton");
+			baseButton.addStyleName(CSS.MEDIUM_BUTTON);
 			add(baseButton);
 		}
 		add(keyPad);

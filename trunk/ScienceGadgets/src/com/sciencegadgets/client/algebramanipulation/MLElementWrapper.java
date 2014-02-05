@@ -20,6 +20,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Wrapper;
 import com.sciencegadgets.client.Wrapper.WrapperMouseOutHandler;
 import com.sciencegadgets.client.algebramanipulation.dropcontrollers.AbstractMathDropController;
@@ -175,7 +176,7 @@ public class MLElementWrapper extends Wrapper {
 //			// Highlights drop targets
 //			MLElementWrapper dropCwrap = ((MLElementWrapper) dropC
 //					.getDropTarget());
-//			dropC.getDropTarget().setStyleName("selectedDropWrapper");
+//			dropC.getDropTarget().setStyleName(CSS.SELECTED_DROP_WRAPPER);
 //
 //			// Descriptors
 //			HTML dropDesc = dropCwrap.getDropDescriptor();
@@ -197,7 +198,7 @@ public class MLElementWrapper extends Wrapper {
 //					.getDropTarget();
 //
 //			for (String style : styles) {
-//				if (style.startsWith("selectedDropWrapper")) {
+//				if (style.startsWith(CSS.SELECTED_DROP_WRAPPER)) {
 //					dropCwrap.removeStyleName(style);
 //					// dropCwrap.getJoinedWrapper().removeStyleName(style);
 //				}

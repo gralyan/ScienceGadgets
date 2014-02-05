@@ -4,9 +4,9 @@
 
 	<ui:style>
 		.spec {
-			margin: 1%;
-			height: 98%;
-			width: 47%;
+			margin-top: 1%;
+			height: 96%;
+			width: 96%;
 			display: inline-block;
 			vertical-align: top;
 			border: thin solid darkGreen;
@@ -15,17 +15,22 @@
 		.display {
 			display: inline-block;
 			vertical-align: top;
-			width: 37%;
+			width: 78%;
 			height: 100%;
-			margin-left: 1%;
+		}
+		.specHalf {
+			display: inline-block;
+			vertical-align: top;
+			width: 48%;
+			height: 100%;
+			margin-right: 2%;
 		}
 		
 		.toggle {
 			vertical-align: top;
 			display: inline-block;
-			width: 10%;
+			width: 20%;
 			height: 100%;
-			margin-right: 1%;
 		}
 		
 		.symbolPalette {
@@ -35,31 +40,49 @@
 
 	<g:FlowPanel height="100%">
 
-		<!-- current value displays -->
-		<g:FlowPanel height="20%">
+			<!-- symbol area -->
+		<g:FlowPanel styleName="{style.specHalf}">
+			<!-- symbol display -->
+			<g:FlowPanel height="20%">
 
-			<sg:SymbolDisplay ui:field="symbolDisplay" addStyleNames="{style.display} numberDisplay"
-				title="Variable Symbol"></sg:SymbolDisplay>
-			<sg:ToggleSlide ui:field="symbolCaseToggle"
-				addStyleNames="{style.toggle}"></sg:ToggleSlide>
+				<sg:SymbolDisplay ui:field="symbolDisplay"
+					addStyleNames="{style.display} numberDisplay" title="Variable Symbol"></sg:SymbolDisplay>
+				<sg:ToggleSlide ui:field="symbolCaseToggle"
+					addStyleNames="{style.toggle}"></sg:ToggleSlide>
+			</g:FlowPanel>
 
-			<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display} numberDisplay"
-				title="Variable Unit"></g:FlowPanel>
-			<sg:ToggleSlide ui:field="unitReciprocalToggle"
-				addStyleNames="{style.toggle}"></sg:ToggleSlide>
+			<!-- symbol input box -->
+			<g:FlowPanel height="80%">
+
+				<g:FlowPanel ui:field="symbolPalette"
+					addStyleNames="{style.spec} {style.symbolPalette}"></g:FlowPanel>
+
+			</g:FlowPanel>
 		</g:FlowPanel>
 
-		<!-- input boxes -->
-		<g:FlowPanel height="80%">
 
-			<g:FlowPanel ui:field="symbolPalette"
-				addStyleNames="{style.spec} {style.symbolPalette}"></g:FlowPanel>
 
-			<g:FlowPanel ui:field="unitSelectionHolder"
-				addStyleNames="{style.spec}"></g:FlowPanel>
+			<!-- unit area -->
+		<g:FlowPanel ui:field="unitArea" styleName="{style.specHalf}">
+
+			<!-- unit display -->
+			<g:FlowPanel height="20%">
+
+				<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display} numberDisplay"
+					title="Variable Unit"></g:FlowPanel>
+				<sg:ToggleSlide ui:field="unitReciprocalToggle"
+					addStyleNames="{style.toggle}"></sg:ToggleSlide>
+			</g:FlowPanel>
+
+			<!-- unit input boxes -->
+			<g:FlowPanel height="80%">
+
+				<g:FlowPanel ui:field="unitSelectionHolder"
+					addStyleNames="{style.spec}"></g:FlowPanel>
+
+			</g:FlowPanel>
 
 		</g:FlowPanel>
-
 	</g:FlowPanel>
 
 </ui:UiBinder> 

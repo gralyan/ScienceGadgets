@@ -33,10 +33,10 @@ public class ToggleSlide extends FlowPanel implements HasClickHandlers, HasTouch
 	 */
 	public ToggleSlide() {
 		
-		this.addStyleName("toggleSlide");
+		this.addStyleName(CSS.TOGGLE_SLIDE);
 
-		firstOption.addStyleName("toggleOption");
-		secondOption.addStyleName("toggleOption");
+		firstOption.addStyleName(CSS.TOGGLE_OPTION);
+		secondOption.addStyleName(CSS.TOGGLE_OPTION);
 
 		this.add(firstOption);
 		this.add(secondOption);
@@ -66,12 +66,12 @@ public class ToggleSlide extends FlowPanel implements HasClickHandlers, HasTouch
 			public void execute() {
 				if(firstOption.equals(selectedOption)){
 			selectedOption = secondOption;
-			secondOption.addStyleName("toggleOptionSelected");
-			firstOption.removeStyleName("toggleOptionSelected");
+			secondOption.addStyleName(CSS.TOGGLE_OPTION_SELECTED);
+			firstOption.removeStyleName(CSS.TOGGLE_OPTION_SELECTED);
 		}else{
 			selectedOption = firstOption;
-			firstOption.addStyleName("toggleOptionSelected");
-			secondOption.removeStyleName("toggleOptionSelected");
+			firstOption.addStyleName(CSS.TOGGLE_OPTION_SELECTED);
+			secondOption.removeStyleName(CSS.TOGGLE_OPTION_SELECTED);
 			
 		}
 			}
@@ -100,10 +100,10 @@ public class ToggleSlide extends FlowPanel implements HasClickHandlers, HasTouch
 
 		if(firstIsSelected){
 			selectedOption = firstOption;
-			firstOption.addStyleName("toggleOptionSelected");
+			firstOption.addStyleName(CSS.TOGGLE_OPTION_SELECTED);
 		}else{
 			selectedOption = secondOption;
-			secondOption.addStyleName("toggleOptionSelected");
+			secondOption.addStyleName(CSS.TOGGLE_OPTION_SELECTED);
 		}
 	}
 	

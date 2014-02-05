@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -44,7 +45,7 @@ public class EquationPanel extends AbsolutePanel {
 		this.algebraActivity = algebraActivity;
 		this.mathTree = algebraActivity.getMathTree();
 
-		setStyleName("eqPanel");
+		setStyleName(CSS.EQ_PANEL);
 		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(1);
 
@@ -185,13 +186,13 @@ public class EquationPanel extends AbsolutePanel {
 //			AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
 //			menuPanel.getElement().setAttribute("id",
 //					"menuLayer-" + node.getId());
-//			menuPanel.addStyleName("fillParent");
+//			menuPanel.addStyleName(CSS.FILL_PARENT);
 //			this.add(menuPanel, 0, 0);
 
 			eqLayer.setParentLayer(parentLayer);
 			eqLayerMap.put(node, eqLayer);
 			eqLayer.getElement().setAttribute("id", "eqLayer-" + node.getId());
-			eqLayer.addStyleName("interactiveEquation");
+			eqLayer.addStyleName(CSS.INTERACTIVE_EQUATION);
 			this.add(eqLayer, 0, 0);
 
 			if (parentLayer == null) {

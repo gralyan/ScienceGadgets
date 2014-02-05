@@ -36,10 +36,10 @@ public class KeyPadNumerical extends FlowPanel {
 	}
 	
 	private void initialize(SymbolDisplay symbolDisplay, boolean numbersOnly) {
-		addStyleName("keyPadNumerical");
+		addStyleName(CSS.KEY_PAD_NUMERICAL);
 
 		this.symbolDisplay = symbolDisplay;
-		this.symbolDisplay.addStyleName("numberDisplay");
+		this.symbolDisplay.addStyleName(CSS.NUMBER_DISPLAY);
 		this.symbolDisplay.setText("");
 
 		for (int i = 0; i < 10; i++) {
@@ -141,6 +141,6 @@ public class KeyPadNumerical extends FlowPanel {
 class NumberButton extends Button {
 	public NumberButton(String string) {
 		super(string);
-		addStyleName("smallestButton");
+		addStyleName(CSS.SMALLEST_BUTTON);
 	}
 }

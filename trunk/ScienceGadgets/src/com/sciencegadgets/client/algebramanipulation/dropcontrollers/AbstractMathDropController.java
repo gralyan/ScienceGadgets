@@ -18,6 +18,7 @@ import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Wrapper;
 import com.sciencegadgets.client.algebramanipulation.MLElementWrapper;
 import com.sciencegadgets.client.equationtree.MathMLBindingTree;
@@ -72,8 +73,8 @@ public abstract class AbstractMathDropController extends AbstractDropController 
 
 		// Clean wrappers
 		for (Wrapper wrap : tree.getWrappers()) {
-			wrap.removeStyleName("selectedDropWrapper");
-//			wrap.getJoinedWrapper().removeStyleName("selectedDropWrapper");
+			wrap.removeStyleName(CSS.SELECTED_DROP_WRAPPER);
+//			wrap.getJoinedWrapper().removeStyleName(CSS.SELECTED_DROP_WRAPPER);
 		}
 
 		// Updates

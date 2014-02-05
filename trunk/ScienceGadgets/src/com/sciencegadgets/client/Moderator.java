@@ -48,7 +48,7 @@ public class Moderator implements EntryPoint {
 	private static int SGAHeight;
 	public static RandomSpecPanel randomSpec = null;
 	public static AbsolutePanel scienceGadgetArea = RootPanel
-			.get("scienceGadgetArea");
+			.get(CSS.SCIENCE_GADGET_AREA);
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
@@ -132,7 +132,7 @@ public class Moderator implements EntryPoint {
 
 		ConversionActivity conversionActivity = new ConversionActivity();
 		currentActivity = conversionActivity;
-		currentActivity.getElement().setAttribute("id", "conversionActivity");
+		currentActivity.getElement().setAttribute("id", CSS.CONVERSION_ACTIVITY);
 
 		conversionActivity.load(node);
 
@@ -206,10 +206,6 @@ public class Moderator implements EntryPoint {
 
 		@Override
 		public void onValueChange(ValueChangeEvent<String> event) {
-			// ActivityType newActivity;
-			// newActivity = ActivityType
-			// .valueOf(token.split(HISTORY_DELIMITER)[0]);
-
 			java.lang.String token = ((java.lang.String) event.getValue());
 
 			if ("".equals(token)) {

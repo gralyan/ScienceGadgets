@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Prompt;
@@ -409,9 +410,9 @@ class VariableEvaluateSpec extends FlowPanel {
 		unitSelect = new UnitSelection(mathNode.getUnitAttribute());
 		Label symbol = new Label(mathNode.getSymbol() + " =");
 
-		symbol.addStyleName("layoutRow");
-		valueInput.addStyleName("layoutRow");
-		unitSelect.addStyleName("layoutRow");
+		symbol.addStyleName(CSS.LAYOUT_ROW);
+		valueInput.addStyleName(CSS.LAYOUT_ROW);
+		unitSelect.addStyleName(CSS.LAYOUT_ROW);
 		unitSelect.setWidth("50%");
 
 		add(symbol);
@@ -729,7 +730,7 @@ class SubstituteButton extends TransformationButton {
 					return;
 				}
 				final DialogBox dialog = new DialogBox(true, true);
-				SelectionPanel eqSelect = new SelectionPanel("Equation");
+				SelectionPanel eqSelect = new SelectionPanel(CSS.EQUATION);
 				dialog.add(eqSelect);
 				DataModerator
 						.fill_EquationsByQuantities(quantityKind, eqSelect);

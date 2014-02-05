@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.SelectionPanel;
@@ -172,8 +173,8 @@ public class DataModerator {
 			qBox.getWidget(1).removeFromParent();
 			qBox.getWidget(1).removeFromParent();
 		} else {
-			qBox.getWidget(1).addStyleName("quantityKindPrefix");
-			qBox.getWidget(2).addStyleName("quantityKindPrefix");
+			qBox.getWidget(1).addStyleName(CSS.QUANTITY_KIND_PREFIX);
+			qBox.getWidget(2).addStyleName(CSS.QUANTITY_KIND_PREFIX);
 		}
 	}
 

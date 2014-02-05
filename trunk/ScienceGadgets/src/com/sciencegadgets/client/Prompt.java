@@ -48,8 +48,9 @@ public class Prompt extends DialogBox {
 
 		flowPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 
-		getElement().getStyle().setBackgroundColor("#ADD850");
-		okButton.addStyleName("smallestButton");
+//		getElement().getStyle().setBackgroundColor("#ADD850");
+		addStyleName(CSS.PROMPT_MAIN);
+		okButton.addStyleName(CSS.SMALLEST_BUTTON);
 
 		addDomHandler(new KeyDownHandler() {
 			@Override

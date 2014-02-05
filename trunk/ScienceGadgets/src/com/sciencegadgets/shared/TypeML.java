@@ -2,6 +2,7 @@ package com.sciencegadgets.shared;
 
 import java.util.NoSuchElementException;
 
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 
 /**
@@ -12,16 +13,16 @@ import com.sciencegadgets.client.JSNICalls;
  */
 
 public enum TypeML {
-	Equation("sgmt:equation", ChildRequirement.EQUATION), //
-	Number("sgmt:num", ChildRequirement.TERMINAL), //
-	Variable("sgmt:var", ChildRequirement.TERMINAL), //
-	Operation("sgmt:op", ChildRequirement.TERMINAL), //
-	Term("sgmt:term", ChildRequirement.SEQUENCE), //
-	Sum("sgmt:sum", ChildRequirement.SEQUENCE), //
-	Fraction("sgmt:frac", ChildRequirement.BINARY), //
-	Exponential("sgmt:exp", ChildRequirement.BINARY), //
-	Log("sgmt:log", ChildRequirement.UNARY), //
-	Trig("sgmt:trig", ChildRequirement.UNARY);
+	Equation("sgmt:equation",CSS.EQUATION, ChildRequirement.EQUATION), //
+	Number("sgmt:num",CSS.NUMBER, ChildRequirement.TERMINAL), //
+	Variable("sgmt:var",CSS.VARIABLE, ChildRequirement.TERMINAL), //
+	Operation("sgmt:op",CSS.OPERATION, ChildRequirement.TERMINAL), //
+	Term("sgmt:term",CSS.TERM, ChildRequirement.SEQUENCE), //
+	Sum("sgmt:sum",CSS.SUM, ChildRequirement.SEQUENCE), //
+	Fraction("sgmt:frac",CSS.FRACTION, ChildRequirement.BINARY), //
+	Exponential("sgmt:exp",CSS.EXPONENTIAL, ChildRequirement.BINARY), //
+	Log("sgmt:log",CSS.LOG, ChildRequirement.UNARY), //
+	Trig("sgmt:trig",CSS.TRIG, ChildRequirement.UNARY);
 
 	// Equation("math", ChildRequirement.EQUATION), //
 	// Number("mn", ChildRequirement.TERMINAL), //
@@ -35,12 +36,14 @@ public enum TypeML {
 	// Trig("trig", ChildRequirement.UNARY);
 
 	private String tag;
+	private String cssClassName;
 	private ChildRequirement childRequirement;
 	public static final String IN_PREFIX = "in-";
 
-	TypeML(String tag, ChildRequirement childRequirement) {
+	TypeML(String tag,String cssClassName, ChildRequirement childRequirement) {
 		this.tag = tag;
 		this.childRequirement = childRequirement;
+		this.cssClassName = cssClassName;
 	}
 
 	public String asChild() {
@@ -92,6 +95,11 @@ public enum TypeML {
 		}
 		JSNICalls.error("There is no type for the tag: " + tag);
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		return cssClassName;
 	}
 
 	/**

@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -19,7 +20,7 @@ public class EquationWrapper extends Wrapper {
 		this.eqPanel = algebraActivity.eqPanel;
 		this.algebraActivity = algebraActivity;
 		
-		this.addStyleName("displayWrapper");
+		this.addStyleName(CSS.DISPLAY_WRAPPER);
 	}
 
 	public EquationLayer getEqLayer() {
@@ -33,9 +34,9 @@ public class EquationWrapper extends Wrapper {
 		FlowPanel details = algebraActivity.selectionDetails;
 		
 		TypeML type = node.getType();
-		Label typeLabel = new Label(type.toString());
+		Label typeLabel = new Label(type.name());
 		typeLabel.addStyleName(type.toString());
-		typeLabel.addStyleName("displayWrapper");
+		typeLabel.addStyleName(CSS.DISPLAY_WRAPPER);
 		details.add(typeLabel);
 		
 			switch (type) {

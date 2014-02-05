@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
@@ -83,12 +84,12 @@ public class UnitCancelDropController extends AbstractDropController {
 	@Override
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
-		getDropTarget().addStyleName("selectedDropWrapper");
+		getDropTarget().addStyleName(CSS.SELECTED_DROP_WRAPPER);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		super.onLeave(context);
-		getDropTarget().removeStyleName("selectedDropWrapper");
+		getDropTarget().removeStyleName(CSS.SELECTED_DROP_WRAPPER);
 	}
 }

@@ -5,17 +5,18 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.CSS;
 
 public class TransformationButton extends HTML {
 
 	public TransformationButton() {
 		super();
-		addStyleName("transformationButton");
+		addStyleName(CSS.TRANSFORMATION_BUTTON);
 	}
 
 	public TransformationButton(String html) {
 		super(html);
-		addStyleName("transformationButton");
+		addStyleName(CSS.TRANSFORMATION_BUTTON);
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class TransformationButton extends HTML {
 			double fontPercent = smallerRatio * 85;
 
 			buttonElement.getStyle().setFontSize((fontPercent), Unit.PCT);
-			addStyleName("layoutRow");
+			addStyleName(CSS.LAYOUT_ROW);
 		}
 	}
 }

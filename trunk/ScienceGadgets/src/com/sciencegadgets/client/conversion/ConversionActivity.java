@@ -17,6 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.SelectionPanel;
@@ -76,14 +77,14 @@ public class ConversionActivity extends AbsolutePanel {
 
 		add(conversionUiBinder.createAndBindUi(this));
 
-		getElement().setAttribute("id", "conversionActivity");
+		getElement().setAttribute("id", CSS.CONVERSION_ACTIVITY);
 
 		unitSelection.unitBox.addSelectionHandler(new ConvertSelectHandler());
-		unitSelection.addStyleName("fillParent");
+		unitSelection.addStyleName(CSS.FILL_PARENT);
 		unitSelectionArea.add(unitSelection);
 
 		derivedUnitsSelection.addSelectionHandler(new ConvertSelectHandler());
-		derivedUnitsSelection.addStyleName("fillParent");
+		derivedUnitsSelection.addStyleName(CSS.FILL_PARENT);
 		deriveUnitArea.add(derivedUnitsSelection);
 
 		convertButton.addClickHandler(new ConvertCompleteClickHandler());
