@@ -19,6 +19,7 @@ import com.google.gwt.thirdparty.javascript.rhino.jstype.AllType;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
@@ -68,7 +69,7 @@ public class AlgebaWrapper extends EquationWrapper {
 			if (algTransformMenu == null) {
 
 				algTransformMenu = new CommunistPanel(true);
-				algTransformMenu.addStyleName("layoutRow");
+				algTransformMenu.addStyleName(CSS.LAYOUT_ROW);
 				algTransformMenu.setSize("100%", "100%");
 
 				TransformationList transorms = new TransformationList();

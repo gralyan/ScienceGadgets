@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.Prompt;
@@ -20,10 +21,10 @@ public abstract class NumberPrompt extends Prompt {
 	NumberPrompt(String question, final BigDecimal totalValue) {
 
 		Label questionDisplay = new HTML(question);
-		questionDisplay.addStyleName("layoutRow doubleFontSize");
+		questionDisplay.addStyleName(CSS.LAYOUT_ROW+" "+CSS.DOUBLE_FONT_SIZE);
 		add(questionDisplay);
 
-		display.addStyleName("layoutRow doubleFontSize");
+		display.addStyleName(CSS.LAYOUT_ROW+" "+CSS.DOUBLE_FONT_SIZE);
 		display.setWidth("3em");
 
 		add(display);

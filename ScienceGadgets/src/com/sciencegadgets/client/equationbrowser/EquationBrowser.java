@@ -19,6 +19,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 
 //Uncomment to use as gadget////////////////////////////////////
@@ -36,18 +37,18 @@ public class EquationBrowser extends FlowPanel {
 
 	public EquationBrowser() {
 
-		this.getElement().setId("equationBrowser");
+		this.getElement().setId(CSS.EQUATION_BROWSER);
 
 //		Grid modes = new Grid(1, 2);
 //		modes.setWidget(0, 0, modeAlg);
 //		modes.setWidget(0, 1, modeSci);
-//		modes.setStyleName("modes");
+//		modes.setStyleName(CSS.MODES);
 //		this.add(modes);
 
 		Grid modes2 = new Grid(1, 2);
 		modes2.setWidget(0, 0, modeSolve);
 		modes2.setWidget(0, 1, modeEdit);
-		modes2.setStyleName("modes");
+		modes2.setStyleName(CSS.MODES);
 		this.add(modes2);
 
 		modeAlg.addClickHandler(new ModeSelectHandler(Mode.algebra));

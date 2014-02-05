@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.SelectionPanel.Cell;
@@ -35,7 +36,7 @@ public class ScienceBrowser extends FlowPanel {
 	public ScienceBrowser(final EquationBrowser equationBrowser) {
 		super();
 		this.equationBrowser = equationBrowser;
-		getElement().setId("sciBrowser");
+		getElement().setId(CSS.SCI_BROWSER);
 
 		// (1) First box, Variable list
 		sciBrowseVar.addSelectionHandler(new SelectionHandler() {
@@ -64,9 +65,9 @@ public class ScienceBrowser extends FlowPanel {
 			}
 		});
 
-		sciBrowseVar.getElement().setId("sciBrowseVar");
-		sciBrowseEq.getElement().setId("sciBrowseEq");
-		sciBrowseSum.getElement().setId("sciBrowseSum");
+		sciBrowseVar.getElement().setId(CSS.SCI_BROWSER_VAR);
+		sciBrowseEq.getElement().setId(CSS.SCI_BROWSER_EQ);
+		sciBrowseSum.getElement().setId(CSS.SCI_BROWSER_SUM);
 
 		// Assemble browserPanel
 		this.add(sciBrowseVar);

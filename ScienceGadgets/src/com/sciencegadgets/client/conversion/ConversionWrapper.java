@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.conversion;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.Wrapper;
@@ -20,7 +21,7 @@ public class ConversionWrapper extends Wrapper {
 		this.conversionActivity = conversionAvtivity;
 		this.unitDisplay = unitDisplay;
 
-		this.addStyleName("conversionWrapper");
+		this.addStyleName(CSS.CONVERSION_WRAPPER);
 	}
 
 	public UnitDisplay getUnitDisplay() {

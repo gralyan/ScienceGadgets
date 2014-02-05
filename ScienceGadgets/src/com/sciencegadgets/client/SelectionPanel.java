@@ -23,10 +23,10 @@ public class SelectionPanel extends FlowPanel {
 
 	public SelectionPanel(String title) {
 		super();
-		setStylePrimaryName("selectionPanel");
+		setStylePrimaryName(CSS.SELECTION_PANEL);
 
 		labelAlg.setText(title);
-		labelAlg.setStylePrimaryName("rowHeader");
+		labelAlg.setStylePrimaryName(CSS.ROW_HEADER);
 		super.add(labelAlg);
 	}
 
@@ -65,7 +65,7 @@ public class SelectionPanel extends FlowPanel {
 	}
 
 	public void centerText() {
-		addStyleName("textCenter");
+		addStyleName(CSS.TEXT_CENTER);
 	}
 
 	public void add(String html) {
@@ -123,7 +123,7 @@ public class SelectionPanel extends FlowPanel {
 			this.value = value;
 			this.entity = entity;
 			
-			addStyleName("selectionPanelCell");
+			addStyleName(CSS.SELECTION_PANEL_CELL);
 			
 				this.addClickHandler(new ClickHandler() {
 					@Override
@@ -135,11 +135,11 @@ public class SelectionPanel extends FlowPanel {
 		
 		private void select(Cell selection) {
 			if (selectedCell != null) {
-				selectedCell.removeStyleName("selectedCell");
+				selectedCell.removeStyleName(CSS.SELECTED_CELL);
 			}
 			
 			selectedCell = selection;
-			selectedCell.addStyleName("selectedCell");
+			selectedCell.addStyleName(CSS.SELECTED_CELL);
 			if (selectionHandler != null) {
 				selectionHandler.onSelect(selectedCell);
 			}

@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.Rule;
@@ -41,7 +42,7 @@ public class AlgOut extends FlowPanel {
 
 	public AlgOut(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
-		addStyleName("algOut");
+		addStyleName(CSS.ALG_OUT);
 
 		origionalHeightStr = algebraActivity.upperEqArea.getElement()
 				.getStyle().getHeight();
@@ -54,14 +55,14 @@ public class AlgOut extends FlowPanel {
 		}
 
 		Label firstRowEq = new Label("Solve");
-		firstRowEq.addStyleName("algOutEqRow");
+		firstRowEq.addStyleName(CSS.ALG_OUT_EQ_ROW);
 		firstRow.add(firstRowEq);
 
 		Label firstRowRule = new Label();
-		firstRowRule.addStyleName("algOutRuleRow");
+		firstRowRule.addStyleName(CSS.ALG_OUT_RULE_ROW);
 		firstRow.add(firstRowRule);
 
-		firstRow.addStyleName("algOutRow");
+		firstRow.addStyleName(CSS.ALG_OUT_ROW);
 
 		add(firstRow);
 	}
@@ -100,7 +101,7 @@ public class AlgOut extends FlowPanel {
 		AlgOutRow(String changeComment) {
 			this(changeComment, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", changeComment);
 
-			addStyleName("algOutChangeRow");
+			addStyleName(CSS.ALG_OUT_CHANGE_ROW);
 
 		}
 
@@ -119,23 +120,23 @@ public class AlgOut extends FlowPanel {
 		}
 
 		private AlgOutRow(String leftStr, String middleStr, String rightStr) {
-			addStyleName("algOutRow");
+			addStyleName(CSS.ALG_OUT_ROW);
 
-			eqSide.addStyleName("algOutEqRow");
+			eqSide.addStyleName(CSS.ALG_OUT_EQ_ROW);
 			add(eqSide);
 
 			HTML left = new HTML(leftStr);
 			HTML equals = new HTML(middleStr);
 			HTML right = new HTML(rightStr);
 
-			left.addStyleName("algOutEqLeft");
-			equals.addStyleName("algOutEqEquals");
-			right.addStyleName("algOutEqRight");
+			left.addStyleName(CSS.ALG_OUT_EQ_LEFT);
+			equals.addStyleName(CSS.ALG_OUT_EQ_EQUALS);
+			right.addStyleName(CSS.ALG_OUT_EQ_RIGHT);
 			eqSide.add(left);
 			eqSide.add(equals);
 			eqSide.add(right);
 
-			ruleSide.addStyleName("algOutRuleRow");
+			ruleSide.addStyleName(CSS.ALG_OUT_RULE_ROW);
 			add(ruleSide);
 
 		}

@@ -6,6 +6,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 public class EquationLayer extends SimplePanel {
@@ -25,7 +26,7 @@ public class EquationLayer extends SimplePanel {
 		if(mathNode != null) {
 		layerId=mathNode.getId();
 		replaceChildsId(eqHTML.getElement());
-		addStyleName("eqLayer");
+		addStyleName(CSS.EQ_LAYER);
 		eqHTML.autoFillParent = true;
 		}else {
 			eqHTML.pilot = true;

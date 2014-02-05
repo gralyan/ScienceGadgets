@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.edit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.shared.UnitMap;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
@@ -38,6 +40,8 @@ public abstract class QuantitySpecification extends Prompt {
 	ToggleSlide symbolCaseToggle;
 	@UiField
 	ToggleSlide unitReciprocalToggle;
+	@UiField
+	FlowPanel unitArea;
 
 	@UiField
 	FlowPanel symbolPalette;
@@ -52,7 +56,7 @@ public abstract class QuantitySpecification extends Prompt {
 	private String dataUnit = "";
 	private Element unitHTML;
 
-	public QuantitySpecification(MathNode mathNode) {
+	public QuantitySpecification(MathNode mathNode, boolean clearDisplays) {
 		super();
 		this.node = mathNode;
 
@@ -117,10 +121,10 @@ public abstract class QuantitySpecification extends Prompt {
 		// OK button
 		addOkHandler(new OkHandler());
 
-		reload(mathNode);
+		reload(mathNode,clearDisplays);
 	}
 
-	public void reload(MathNode mathNode) {
+	public void reload(MathNode mathNode, boolean clearDisplays) {
 
 		node = mathNode;
 
@@ -133,7 +137,7 @@ public abstract class QuantitySpecification extends Prompt {
 
 		// Symbol Display
 		String oldSymbol = node.getSymbol();
-		if (ChangeNodeMenu.NOT_SET.equals(oldSymbol)) {
+		if (clearDisplays) {
 			symbolDisplay.setText("");
 
 		} else {
@@ -141,13 +145,34 @@ public abstract class QuantitySpecification extends Prompt {
 
 			// Unit Display
 			unitHTML = UnitUtil.element_From_MathNode(node, null, false);
-			unitHTML.addClassName("fillParent");
+			unitHTML.addClassName(CSS.FILL_PARENT);
 			unitDisplay.getElement().appendChild(unitHTML);
 
 			dataUnit = node.getUnitAttribute();
 			unitMap = new UnitMap(node);
 		}
+		
+		if(canHaveUnits(node)) {
+			unitArea.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		}else {
+			unitArea.getElement().getStyle().setDisplay(Display.NONE);
+		}
 
+	}
+	
+	private boolean canHaveUnits(MathNode mNode) {
+		switch (mNode.getParentType()) {
+		case Exponential:
+			if(mNode.getIndex() == 1) {
+			return false;
+			}
+			break;
+		case Log:
+			return false;
+		case Equation:
+			return true;
+		}
+		return canHaveUnits(mNode.getParent());
 	}
 
 	class UnitSelectionHandler implements SelectionHandler {
@@ -166,7 +191,7 @@ public abstract class QuantitySpecification extends Prompt {
 				unitHTML.removeFromParent();
 			}
 			unitHTML = UnitUtil.element_From_attribute(dataUnit, null, false);
-			unitHTML.addClassName("fillParent");
+			unitHTML.addClassName(CSS.FILL_PARENT);
 			unitDisplay.getElement().appendChild(unitHTML);
 		}
 	}
@@ -180,7 +205,7 @@ public abstract class QuantitySpecification extends Prompt {
 			if (symbol == null) {
 				return;
 			}
-			setSymbol(symbol);
+			setNode(symbol);
 
 			if (dataUnit == null || "".equals(dataUnit)) {
 				node.getMLNode().removeAttribute(MathAttribute.Unit.getName());
@@ -193,7 +218,7 @@ public abstract class QuantitySpecification extends Prompt {
 		}
 	}
 
-	abstract void setSymbol(String symbol);
+	abstract void setNode(String symbol);
 
 	abstract String extractSymbol();
 }

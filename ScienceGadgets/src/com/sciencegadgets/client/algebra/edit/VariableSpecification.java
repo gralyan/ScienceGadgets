@@ -9,9 +9,11 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.shared.TypeML;
 
 public class VariableSpecification extends QuantitySpecification {
 
@@ -21,8 +23,8 @@ public class VariableSpecification extends QuantitySpecification {
 	SymbolClickHandler symbolClick = new SymbolClickHandler();
 	SymbolTouchHandler symbolTouch = new SymbolTouchHandler();
 
-	public VariableSpecification(MathNode mathNode) {
-		super(mathNode);
+	public VariableSpecification(MathNode mathNode, boolean clearDisplays) {
+		super(mathNode, clearDisplays);
 
 		// Symbol Selection
 		symbolPalette.add(new Label("Latin"));
@@ -63,7 +65,7 @@ public class VariableSpecification extends QuantitySpecification {
 		// QuantityKind Selection
 		UnitSelection quantityBox = new UnitSelection(true, false, false);
 		unitSelectionHolder.add(quantityBox);
-		quantityBox.addStyleName("fillParent");
+		quantityBox.addStyleName(CSS.FILL_PARENT);
 		quantityBox.quantityBox.addSelectionHandler(new UnitSelectionHandler());
 
 	}
@@ -76,7 +78,7 @@ public class VariableSpecification extends QuantitySpecification {
 			}else {
 				addClickHandler(symbolClick);
 			}
-			addStyleName("smallestButton");
+			addStyleName(CSS.SMALLEST_BUTTON);
 		}
 	}
 
@@ -101,21 +103,21 @@ public class VariableSpecification extends QuantitySpecification {
 		String inputString = symbolDisplay.getText();
 
 		if (inputString == null || inputString.equals("")) {
-			// symbolDisplay.getElement().getStyle().setBackgroundColor("red");
+			symbolDisplay.addStyleName(CSS.INVALID_INPUT);
 			Window.alert("Variable cannot be empty");
 			return null;
 		} else if (inputString.matches(".*\\d.*")) {
-			// symbolDisplay.getElement().getStyle().setBackgroundColor("red");
+			symbolDisplay.addStyleName(CSS.INVALID_INPUT);
 			Window.alert("Variable cannot contain numbers");
 			return null;
 		} else {
-			// symbolDisplay.getElement().getStyle().clearBackgroundColor();
+			symbolDisplay.removeStyleName(CSS.INVALID_INPUT);
 			return inputString;
 		}
 	}
 
 	@Override
-	void setSymbol(String symbol) {
-		node.setSymbol(symbol);
+	void setNode(String symbol) {
+		node.replace(TypeML.Variable, symbol);
 	}
 }

@@ -6,6 +6,7 @@ import java.math.MathContext;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebaWrapper;
@@ -266,7 +267,7 @@ public class InterFractionDrop extends AbstractDropController {
 	@Override
 	public void onEnter(DragContext context) {
 		super.onEnter(context);
-		getDropTarget().addStyleName("selectedDropWrapper");
+		getDropTarget().addStyleName(CSS.SELECTED_DROP_WRAPPER);
 		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
 		Moderator.getCurrentAlgebraActivity().lowerEqArea.add(response);
 	}
@@ -274,7 +275,7 @@ public class InterFractionDrop extends AbstractDropController {
 	@Override
 	public void onLeave(DragContext context) {
 		super.onLeave(context);
-		getDropTarget().removeStyleName("selectedDropWrapper");
+		getDropTarget().removeStyleName(CSS.SELECTED_DROP_WRAPPER);
 		Moderator.getCurrentAlgebraActivity().lowerEqArea.remove(response);
 	}
 

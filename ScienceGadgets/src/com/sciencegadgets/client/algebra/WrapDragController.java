@@ -21,6 +21,7 @@ import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 
 public class WrapDragController extends PickupDragController {
@@ -41,7 +42,7 @@ public class WrapDragController extends PickupDragController {
 		super.dragEnd();
 
 		for (DropController dropC : dropControllers) {
-			dropC.getDropTarget().removeStyleName("selectedWrapper");
+			dropC.getDropTarget().removeStyleName(CSS.SELECTED_WRAPPER);
 		}
 	}
 
@@ -52,7 +53,7 @@ public class WrapDragController extends PickupDragController {
 			for (DropController dropC : dropControllers) {
 				Widget target = dropC.getDropTarget();
 				if(!(target instanceof AbsolutePanel)){
-					target.addStyleName("selectedWrapper");
+					target.addStyleName(CSS.SELECTED_WRAPPER);
 				}
 			}
 		}

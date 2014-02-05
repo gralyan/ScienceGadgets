@@ -3,6 +3,7 @@ package com.sciencegadgets.shared;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 
 /**
@@ -17,7 +18,7 @@ import com.sciencegadgets.client.algebra.MathTree.MathNode;
  */
 public class UnitUtil {
 
-	public static final String UNIT_CLASSNAME = "unit";
+	public static final String UNIT_CLASSNAME = CSS.UNIT;
 	public static final String UNIT_NODE_DELIMITER = "-unitNode-";
 	private static final double UNIT_SIZE_SMALL = 40;// %
 

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
@@ -38,7 +39,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 	public ChangeNodeMenu() {
 		super(true);
-		addStyleName("fillParent");
+		addStyleName(CSS.FILL_PARENT);
 
 		LinkedList<Widget> allButtons = new LinkedList<Widget>();
 
@@ -47,8 +48,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 			TypeML toType = (TypeML) type[0];
 			TransformationButton changeButton = new TransformationButton(
 					(String) type[1]);
+			changeButton.addStyleName(CSS.DISPLAY_WRAPPER);
+			changeButton.addStyleName(toType.toString());
 			changeButton.addClickHandler(new ChangeNodeClick(toType));
-			changeButton.addStyleName("changeNodeButton");
+			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON);
 			allButtons.add(changeButton);
 		}
 
@@ -171,27 +174,29 @@ public class ChangeNodeMenu extends CommunistPanel {
 				trigFuncSpec.reload();
 				return;
 			case Number:
-				if (!isSameTypeNode || NOT_SET.equals(node.getSymbol())) {
-					node = node.replace(toType, NOT_SET);
+				boolean clearDisplays = true;
+				if (isSameTypeNode && !NOT_SET.equals(node.getSymbol())) {
+					clearDisplays = false;
 				}
 				if (AlgebraActivity.numSpec == null) {
-					AlgebraActivity.numSpec = new NumberSpecification(node);
+					AlgebraActivity.numSpec = new NumberSpecification(node, clearDisplays);
 				} else {
-					AlgebraActivity.numSpec.reload(node);
+					AlgebraActivity.numSpec.reload(node, clearDisplays);
 				}
 				AlgebraActivity.numSpec.appear();
-				break;
+				return;
 			case Variable:
-				if (!isSameTypeNode || NOT_SET.equals(node.getSymbol())) {
-					node = node.replace(toType, NOT_SET);
+				boolean clearDisplayz = true;
+				if (isSameTypeNode && !NOT_SET.equals(node.getSymbol())) {
+					clearDisplays = false;
 				}
 				if (AlgebraActivity.varSpec == null) {
-					AlgebraActivity.varSpec = new VariableSpecification(node);
+					AlgebraActivity.varSpec = new VariableSpecification(node, clearDisplayz);
 				} else {
-					AlgebraActivity.varSpec.reload(node);
+					AlgebraActivity.varSpec.reload(node, clearDisplayz);
 				}
 				AlgebraActivity.varSpec.appear();
-				break;
+				return;
 
 			case Sum:
 				operator = TypeML.Operator.PLUS;

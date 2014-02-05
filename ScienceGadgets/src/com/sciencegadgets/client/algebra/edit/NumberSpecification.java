@@ -5,10 +5,12 @@ import java.math.BigDecimal;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TypeML;
 
 public class NumberSpecification extends QuantitySpecification {
 
@@ -16,8 +18,8 @@ public class NumberSpecification extends QuantitySpecification {
 	RandomSpecPanel randSpec = new RandomSpecPanel();
 	KeyPadNumerical numPad;
 
-	public NumberSpecification(MathNode mathNode) {
-		super(mathNode);
+	public NumberSpecification(MathNode mathNode, boolean clearDisplays) {
+		super(mathNode, clearDisplays);
 
 		//Number Pad
 		numPad = new KeyPadNumerical(symbolDisplay);
@@ -57,7 +59,7 @@ public class NumberSpecification extends QuantitySpecification {
 		// Unit Selection
 		UnitSelection unitBox = new UnitSelection(true);
 		unitSelectionHolder.add(unitBox);
-		unitBox.addStyleName("fillParent");
+		unitBox.addStyleName(CSS.FILL_PARENT);
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
 
 	}
@@ -68,22 +70,27 @@ public class NumberSpecification extends QuantitySpecification {
 	String extractSymbol() {
 		String inputString = null;
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbolDisplay.getText())) {
+			symbolDisplay.removeStyleName(CSS.INVALID_INPUT);
 			return RandomSpecPanel.RANDOM_SYMBOL;
 		} else {
 			try {
 				BigDecimal value = new BigDecimal(symbolDisplay.getText());
 				inputString = value.toString();
+				symbolDisplay.removeStyleName(CSS.INVALID_INPUT);
 				return inputString;
 
 			} catch (NumberFormatException e) {
 				Window.alert("The input must be a number\nyou can also change this to a variable if necessary");
+				symbolDisplay.addStyleName(CSS.INVALID_INPUT);
 				return null;
 			}
 		}
 	}
 
 	@Override
-	void setSymbol(String symbol) {
+	void setNode(String symbol) {
+		
+		node.replace(TypeML.Number, symbol);
 
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 			node.getMLNode().setAttribute(MathAttribute.Randomness.getName(),
@@ -92,8 +99,6 @@ public class NumberSpecification extends QuantitySpecification {
 			node.getMLNode()
 					.removeAttribute(MathAttribute.Randomness.getName());
 		}
-
-		node.setSymbol(symbol);
 
 	}
 

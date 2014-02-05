@@ -28,6 +28,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -114,7 +115,7 @@ public class MathTree {
 	}
 
 	public EquationHTML getDisplayClone() {
-		return new EquationHTML(mathML);
+		return new EquationHTML(this);
 	}
 
 	public Element getLeftDisplay() {
@@ -168,7 +169,7 @@ public class MathTree {
 		}
 		wrappers.clear();
 
-		eqHTML = new EquationHTML(mathML, hasSmallUnits);
+		eqHTML = new EquationHTML(this, hasSmallUnits);
 
 		NodeList<Element> allElements = eqHTML.getElement()
 				.getElementsByTagName("*");
@@ -841,11 +842,11 @@ public class MathTree {
 		}
 
 		public void highlight() {
-			getHTML().addClassName("highlight");
+			getHTML().addClassName(CSS.HIGHLIGHT);
 		}
 
 		public void lineThrough() {
-			getHTML().addClassName("lineThrough");
+			getHTML().addClassName(CSS.LINE_THROUGH);
 		}
 
 		public boolean isLike(MathNode another) {

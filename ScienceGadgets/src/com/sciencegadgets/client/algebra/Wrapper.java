@@ -12,6 +12,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
@@ -65,12 +66,12 @@ public class Wrapper extends HTML implements HasHandlers {
 
 	public void select() {
 		EquationPanel.selectedWrapper = this;
-		this.getElement().addClassName("selectedWrapper");
+		this.getElement().addClassName(CSS.SELECTED_WRAPPER);
 	}
 
 	public void unselect() {
 		EquationPanel.selectedWrapper = null;
-		this.getElement().removeClassName("selectedWrapper");
+		this.getElement().removeClassName(CSS.SELECTED_WRAPPER);
 	}
 
 	@Override

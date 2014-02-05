@@ -4,6 +4,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.entities.DataModerator;
@@ -26,7 +27,7 @@ public class AlgebraBrowser extends SelectionPanel {
 				}
 			}
 		});
-		getElement().setId("algBrowser");
+		getElement().setId(CSS.ALG_BROWSER);
 
 		DataModerator.database
 				.getAlgebraEquations(new AsyncCallback<Equation[]>() {

@@ -100,8 +100,8 @@ public class NavigationPanelEntry implements EntryPoint {
 
 	ScrollPanel makeContacts() {
 		Grid grid = new Grid(2,2);
-		grid.getCellFormatter().setStyleName(0,0, "rowHeader");
-		grid.getCellFormatter().setStyleName(1,0, "rowHeader");
+		grid.getCellFormatter().setStyleName(0,0, CSS.ROW_HEADER);
+		grid.getCellFormatter().setStyleName(1,0, CSS.ROW_HEADER);
 		grid.setWidget(0, 0, new Label("E-mail"));
 		grid.setWidget(0, 1, new Label("john.gralyan@gmail.com"));
 		grid.setWidget(1, 0, new Label("LinkedIn"));

@@ -87,7 +87,7 @@ public class DragDropTesting implements EntryPoint {
 
 	class ElementOverHandler implements MouseOverHandler {
 		public void onMouseOver(MouseOverEvent event) {
-			((HTML) event.getSource()).getElement().setId("selectedWrapper");
+			((HTML) event.getSource()).getElement().setId(CSS.SELECTED_WRAPPER);
 		}
 	}
 
