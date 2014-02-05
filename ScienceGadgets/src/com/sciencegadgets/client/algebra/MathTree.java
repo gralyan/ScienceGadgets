@@ -48,11 +48,14 @@ public class MathTree {
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private HashMap<Element, String> idUnitHTMLMap = new HashMap<Element, String>();
-	private Element mathML;
+	private Element mathXML;
 	private EquationHTML eqHTML;
 	private boolean inEditMode;
 	private int idCounter = 0;
 	private EquationValidator eqValidator;
+
+	public static final String PI = "π";
+	public static final String E = "e";
 
 	/**
 	 * A tree representation of an equation.
@@ -63,23 +66,24 @@ public class MathTree {
 	 *            - true if intended for edit mode, false if for solving mode
 	 * @throws TopNodesNotFoundException
 	 */
-	public MathTree(Element mathML, boolean inEditMode) {
-		mathML = EquationRandomizer.randomizeNumbers(mathML, !inEditMode);
+	public MathTree(Element mathXML, boolean inEditMode) {
+		mathXML = EquationRandomizer.randomizeNumbers(mathXML, !inEditMode);
 
-		this.mathML = mathML;
+		this.mathXML = mathXML;
 		this.inEditMode = inEditMode;
 
-		bindMLtoNodes(mathML);
+		bindXMLtoNodes(mathXML);
 
 		reloadDisplay(true);
 	}
-	
-	public MathTree(TypeML leftType, String leftSymbol,TypeML rightType, String righSymbol, boolean inEditMode) {
+
+	public MathTree(TypeML leftType, String leftSymbol, TypeML rightType,
+			String righSymbol, boolean inEditMode) {
 		this(newDummyElement(), inEditMode);
 		getLeftSide().replace(leftType, leftSymbol);
 		getRightSide().replace(rightType, righSymbol);
 	}
-	
+
 	private static Element newDummyElement() {
 		Element root = DOM.createElement(TypeML.Equation.getTag());
 
@@ -101,12 +105,12 @@ public class MathTree {
 		return inEditMode;
 	}
 
-	public Element getMathMLClone() {
-		return (Element) mathML.cloneNode(true);
+	public Element getMathXMLClone() {
+		return (Element) mathXML.cloneNode(true);
 	}
 
-	public String getMathMLString() {
-		String mlString = JSNICalls.elementToString(mathML);
+	public String getMathXMLString() {
+		String mlString = JSNICalls.elementToString(mathXML);
 		// TODO test
 		mlString = mlString.replace(
 				" xmlns=\"http://www.w3.org/1998/Math/MathML\"", "").replace(
@@ -148,12 +152,12 @@ public class MathTree {
 	void checkSideForm() {
 		if (root.getChildCount() != 3) {
 			JSNICalls.error("root has too many children, not side=side: "
-					+ getMathMLClone().getString());
+					+ getMathXMLClone().getString());
 		}
 		if (!"=".equals(root.getChildAt(1).getSymbol())) {
 			JSNICalls
 					.error("<mo>=</mo> isn't the root's second child, not side=side "
-							+ getMathMLClone().getString());
+							+ getMathXMLClone().getString());
 		}
 	}
 
@@ -198,7 +202,7 @@ public class MathTree {
 		MathNode node = idMap.get(id);
 		if (node == null) {
 			JSNICalls.error("Can't get node by id: " + id + "\n"
-					+ getMathMLClone().getString());
+					+ getMathXMLClone().getString());
 			throw new NoSuchElementException("Can't get node by id: " + id);
 		}
 		return node;
@@ -247,7 +251,7 @@ public class MathTree {
 		// add node to binding map
 		if (!idMap.containsKey(id)) {
 			idMap.put(id, node);
-			idMLMap.put(id, node.getMLNode());
+			idMLMap.put(id, node.getXMLNode());
 		}
 	}
 
@@ -262,7 +266,7 @@ public class MathTree {
 		if (type != null) {
 			tag = type.getTag();
 		}
-		NodeList<Element> elements = root.getMLNode().getElementsByTagName(tag);
+		NodeList<Element> elements = root.getXMLNode().getElementsByTagName(tag);
 		for (int i = 0; i < elements.getLength(); i++) {
 			String id = elements.getItem(i).getAttribute("id");
 			nodes.add(idMap.get(id));
@@ -275,7 +279,7 @@ public class MathTree {
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class MathNode {
-		private Element mlNode;
+		private Element xmlNode;
 		private Wrapper wrapper;
 
 		/**
@@ -287,7 +291,7 @@ public class MathTree {
 				mlNode.setAttribute("id", createId());
 			}
 
-			this.mlNode = mlNode;
+			this.xmlNode = mlNode;
 		}
 
 		/**
@@ -309,7 +313,7 @@ public class MathTree {
 			com.google.gwt.user.client.Element newNode = DOM.createElement(tag);
 			newNode.setAttribute("id", createId());
 
-			this.mlNode = newNode;
+			this.xmlNode = newNode;
 
 			if (!"".equals(symbol)) {
 				setSymbol(symbol);
@@ -321,7 +325,7 @@ public class MathTree {
 		 * Returns a copy of this node
 		 */
 		public MathNode clone() {
-			Element newEl = (Element) mlNode.cloneNode(true);
+			Element newEl = (Element) xmlNode.cloneNode(true);
 			newEl.removeAttribute("id");
 			MathNode top = new MathNode(newEl);
 			AddToMaps(top);
@@ -455,17 +459,17 @@ public class MathTree {
 				node.remove();
 
 			} else {
-				Element elementNode = node.getMLNode();
+				Element elementNode = node.getXMLNode();
 
 				// Add node to DOM tree
-				if (index < 0 || index >= mlNode.getChildCount()) {
-					mlNode.appendChild(elementNode);
+				if (index < 0 || index >= xmlNode.getChildCount()) {
+					xmlNode.appendChild(elementNode);
 				} else if (after) {
-					Node referenceChild = mlNode.getChild(index);
-					mlNode.insertAfter(elementNode, referenceChild);
+					Node referenceChild = xmlNode.getChild(index);
+					xmlNode.insertAfter(elementNode, referenceChild);
 				} else {
-					Node referenceChild = mlNode.getChild(index);
-					mlNode.insertBefore(elementNode, referenceChild);
+					Node referenceChild = xmlNode.getChild(index);
+					xmlNode.insertBefore(elementNode, referenceChild);
 				}
 
 				AddToMaps(node);
@@ -524,7 +528,7 @@ public class MathTree {
 		}
 
 		public LinkedList<MathNode> getChildren() {
-			NodeList<Node> childrenNodesList = getMLNode().getChildNodes();
+			NodeList<Node> childrenNodesList = getXMLNode().getChildNodes();
 			LinkedList<MathNode> childrenNodes = new LinkedList<MathNode>();
 
 			for (int i = 0; i < childrenNodesList.getLength(); i++) {
@@ -540,7 +544,7 @@ public class MathTree {
 		}
 
 		public MathNode getChildAt(int index) {
-			Node node = getMLNode().getChildNodes().getItem(index);
+			Node node = getXMLNode().getChildNodes().getItem(index);
 			String id = ((Element) node).getAttribute("id");
 			return getNodeById(id);
 		}
@@ -550,7 +554,7 @@ public class MathTree {
 		}
 
 		public int getChildCount() {
-			return mlNode.getChildCount();
+			return xmlNode.getChildCount();
 		}
 
 		/**
@@ -596,7 +600,7 @@ public class MathTree {
 			String id = getId();
 			idMap.remove(id);
 			idMLMap.remove(id);
-			mlNode.removeFromParent();
+			xmlNode.removeFromParent();
 			wrappers.remove(wrapper);
 		}
 
@@ -621,21 +625,21 @@ public class MathTree {
 						"Can't get the parent of a math tag because it's the root:\n"
 								+ toString());
 			}
-			Element parentElement = getMLNode().getParentElement();
+			Element parentElement = getXMLNode().getParentElement();
 			String parentId = parentElement.getAttribute("id");
 			MathNode parentNode = getNodeById(parentId);
 			return parentNode;
 		}
 
-		public Element getMLNode() {
-			return mlNode;
+		public Element getXMLNode() {
+			return xmlNode;
 		}
 
 		public String toString() {
-			if (mlNode.getString() != null) {
-				return mlNode.getString();
+			if (xmlNode.getString() != null) {
+				return xmlNode.getString();
 			} else {
-				return JSNICalls.elementToString(mlNode);
+				return JSNICalls.elementToString(xmlNode);
 			}
 		}
 
@@ -655,18 +659,20 @@ public class MathTree {
 			if (!"".equals(symbol)) {
 				switch (getType()) {
 				case Number:
-					if (!ChangeNodeMenu.NOT_SET.equals(symbol)
-							&& !RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
-						setAttribute(MathAttribute.Value, symbol);
-						String roundedValue = new BigDecimal(symbol).round(
-								new MathContext(3)).toString();
-						String tilda = symbol.equals(roundedValue) ? "" : "~";
-						mlNode.setInnerText(tilda + roundedValue);
+					if (ChangeNodeMenu.NOT_SET.equals(symbol)
+						|| RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
+						xmlNode.setInnerText(symbol);
+					}else {
+						BigDecimal value = new BigDecimal(symbol);
+						BigDecimal roundedValue = value.round(new MathContext(3));
+						String tilda = value.equals(roundedValue) ? "" : "~";
+						xmlNode.setInnerText(tilda + roundedValue.stripTrailingZeros());
+						setAttribute(MathAttribute.Value, value.stripTrailingZeros().toString());
 						break;
 					}
 				case Variable:
 				case Operation:
-					mlNode.setInnerText(symbol);
+					xmlNode.setInnerText(symbol);
 					break;
 				case Trig:
 					setAttribute(MathAttribute.Function, symbol);
@@ -681,10 +687,17 @@ public class MathTree {
 		public String getSymbol() {
 			switch (getType()) {
 			case Number:
-				return getAttribute(MathAttribute.Value);
+				String value = getAttribute(MathAttribute.Value);
+				if (PI.equals(value)) {
+					return Math.PI + "";
+				} else if (E.equals(value)) {
+					return Math.E + "";
+				} else {
+					return value;
+				}
 			case Variable:
 			case Operation:
-				return mlNode.getInnerText();
+				return xmlNode.getInnerText();
 			case Trig:
 				return getAttribute(MathAttribute.Function);
 			case Log:
@@ -693,18 +706,6 @@ public class MathTree {
 			return "";
 		}
 
-		// public ArrayList<Element> getSimilarHTMLFromAllLayers() {
-		// String id = getMLNode().getAttribute("id");
-		// ArrayList<Element> similar = new ArrayList<Element>();
-		// for (int i = 0; i < wrappers.size(); i++) {
-		// Element possible = Document.get().getElementById(
-		// id + EquationPanel.OF_LAYER + "ML" + i);
-		// if (possible != null) {
-		// similar.add(possible);
-		// }
-		// }
-		// return similar;
-		// }
 
 		public Wrapper wrap(Wrapper wrap) {
 			wrapper = wrap;
@@ -717,10 +718,10 @@ public class MathTree {
 		}
 
 		/**
-		 * @return Tag of MathML DOM node in <b>Lower Case</b>
+		 * @return Tag of XML DOM node in <b>Lower Case</b>
 		 */
 		public String getTag() {
-			return mlNode.getTagName().toLowerCase();
+			return xmlNode.getTagName().toLowerCase();
 		}
 
 		public MathTree getTree() {
@@ -728,15 +729,15 @@ public class MathTree {
 		}
 
 		public String getId() {
-			return getMLNode().getAttribute("id");
+			return getXMLNode().getAttribute("id");
 		}
 
 		public String getUnitAttribute() {
-			return mlNode.getAttribute(MathAttribute.Unit.getName());
+			return xmlNode.getAttribute(MathAttribute.Unit.getAttributeName());
 		}
 
 		public String getAttribute(MathAttribute attribute) {
-			return mlNode.getAttribute(attribute.getName());
+			return xmlNode.getAttribute(attribute.getAttributeName());
 		}
 
 		public UnitMap getUnitMap() {
@@ -744,7 +745,7 @@ public class MathTree {
 		}
 
 		public void setAttribute(MathAttribute attribute, String value) {
-			mlNode.setAttribute(attribute.getName(), value);
+			xmlNode.setAttribute(attribute.getAttributeName(), value);
 		}
 
 		public boolean isLeftSide() {
@@ -797,7 +798,7 @@ public class MathTree {
 		}
 
 		public TypeML getParentType() {
-			Element parentEl = getMLNode().getParentElement();
+			Element parentEl = getXMLNode().getParentElement();
 			if (parentEl == null) {
 				return null;
 			}
@@ -915,16 +916,16 @@ public class MathTree {
 
 	}
 
-	private void bindMLtoNodes(Node mathMLequation) {
-		Element rootNode = (Element) mathMLequation;
+	private void bindXMLtoNodes(Node mathXMLequation) {
+		Element rootNode = (Element) mathXMLequation;
 		root = new MathNode(rootNode);
 
-		addRecursively(rootNode);
+		bindXMLtoNodeRecursive(rootNode);
 
 		validateTree();
 	}
 
-	private void addRecursively(Element mathMLNode) {
+	private void bindXMLtoNodeRecursive(Element mathMLNode) {
 		String id = createId();
 
 		mathMLNode.setAttribute("id", id);
@@ -938,7 +939,7 @@ public class MathTree {
 
 			// Nodes with no children are either inner text or formatting only
 			if (currentNode.getChildCount() > 0) {
-				addRecursively((Element) currentNode);
+				bindXMLtoNodeRecursive((Element) currentNode);
 			}
 		}
 	}

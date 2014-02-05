@@ -90,14 +90,14 @@ public class NumberSpecification extends QuantitySpecification {
 	@Override
 	void setNode(String symbol) {
 		
-		node.replace(TypeML.Number, symbol);
+		node = node.replace(TypeML.Number, symbol);
 
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
-			node.getMLNode().setAttribute(MathAttribute.Randomness.getName(),
+			node.getXMLNode().setAttribute(MathAttribute.Randomness.getAttributeName(),
 					randomness);
 		} else {
-			node.getMLNode()
-					.removeAttribute(MathAttribute.Randomness.getName());
+			node.getXMLNode()
+					.removeAttribute(MathAttribute.Randomness.getAttributeName());
 		}
 
 	}

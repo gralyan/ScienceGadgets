@@ -21,16 +21,16 @@ public class SaveButtonHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent arg0) {
 		try {
-			final String mathML = Moderator.getCurrentMathTree()
-					.getMathMLString();
+			final String mathXML = Moderator.getCurrentMathTree()
+					.getMathXMLString();
 
-			if (mathML.contains(ChangeNodeMenu.NOT_SET)) {
+			if (mathXML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 						+ ") must be set or removed before saving");
-				reCreateUnitsCheck(mathML);
+				reCreateUnitsCheck(mathXML);
 				return;
 			}
-			if (!mathML.contains("<" + TypeML.Variable.getTag())) {
+			if (!mathXML.contains("<" + TypeML.Variable.getTag())) {
 				Window.alert("The equation must contain at least one variable");
 				return;
 			}
@@ -42,7 +42,7 @@ public class SaveButtonHandler implements ClickHandler {
 			String html = JSNICalls.elementToString(Moderator
 					.getCurrentMathTree().getDisplayClone().getElement());
 
-			dataBase.saveEquation(mathML, html, new AsyncCallback<String>() {
+			dataBase.saveEquation(mathXML, html, new AsyncCallback<String>() {
 
 				@Override
 				public void onSuccess(String result) {
@@ -52,7 +52,7 @@ public class SaveButtonHandler implements ClickHandler {
 					} else {
 						Window.alert("Save didn't work");
 						JSNICalls.error("Save Failed, MathML not well formed: "
-								+ mathML);
+								+ mathXML);
 					}
 				}
 

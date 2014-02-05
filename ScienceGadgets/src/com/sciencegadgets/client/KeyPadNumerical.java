@@ -40,7 +40,6 @@ public class KeyPadNumerical extends FlowPanel {
 
 		this.symbolDisplay = symbolDisplay;
 		this.symbolDisplay.addStyleName(CSS.NUMBER_DISPLAY);
-		this.symbolDisplay.setText("");
 
 		for (int i = 0; i < 10; i++) {
 			NumberButton b = new NumberButton(i + "");

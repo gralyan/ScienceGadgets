@@ -112,7 +112,7 @@ class EditSolveClickHandler implements ClickHandler {
 		if (EquationPanel.selectedWrapper != null) {
 			EquationPanel.selectedWrapper.unselect();
 		}
-		Moderator.makeAlgebra(Moderator.getCurrentMathTree().getMathMLClone(), !algebraActivity.inEditMode);
+		Moderator.makeAlgebra(Moderator.getCurrentMathTree().getMathXMLClone(), !algebraActivity.inEditMode);
 	}
 
 }

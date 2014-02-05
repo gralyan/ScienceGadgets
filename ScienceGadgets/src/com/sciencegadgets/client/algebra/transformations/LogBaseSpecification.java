@@ -8,9 +8,10 @@ import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.Prompt;
+import com.sciencegadgets.client.algebra.MathTree;
 
 public class LogBaseSpecification extends Prompt {
-	public final String[] bases = { "2", "10", "e" };
+	public final String[] bases = { "2", "10", MathTree.E };
 	private SymbolDisplay symbolDisplay;
 	KeyPadNumerical keyPad = new KeyPadNumerical(true);
 

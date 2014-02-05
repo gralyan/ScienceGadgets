@@ -126,6 +126,8 @@ public enum TypeML {
 
 		arccosh, arccoth, arccsch, //
 		arcsech, arcsinh, arctanh;
+		
+		public static final String ARC = "arc";
 
 		public static String getInverseName(String function) {
 			if (function.startsWith("arc")) {
@@ -136,7 +138,7 @@ public enum TypeML {
 		}
 
 		public boolean isArc() {
-			return toString().contains("arc");
+			return toString().contains(ARC);
 		}
 
 		public TrigFunctions getReciprocal() {
