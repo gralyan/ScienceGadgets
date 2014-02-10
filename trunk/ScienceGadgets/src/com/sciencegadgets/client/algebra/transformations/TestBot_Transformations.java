@@ -2,9 +2,9 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
 public class TestBot_Transformations {
 

@@ -2,12 +2,13 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
 public class TrigTransformations extends TransformationList {
 
@@ -22,7 +23,7 @@ public class TrigTransformations extends TransformationList {
 		trig = trigNode;
 		argument = trigNode.getChildAt(0);
 		argumentType = argument.getType();
-		function = TypeML.TrigFunctions.valueOf(trigNode
+		function = TrigFunctions.valueOf(trigNode
 				.getAttribute(MathAttribute.Function));
 
 		add(trigReciprocal_check());
@@ -55,6 +56,7 @@ class TrigTransformButton extends TransformationButton {
 
 	TrigTransformButton(TrigTransformations context) {
 		super();
+		addStyleName(CSS.TRIG +" "+CSS.DISPLAY_WRAPPER);
 		this.trig = context.trig;
 		this.argument = context.argument;
 		this.argumentType = context.argumentType;

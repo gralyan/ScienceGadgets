@@ -13,9 +13,9 @@ import com.sciencegadgets.client.algebra.AlgebaWrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
 import com.sciencegadgets.shared.UnitMap;
 
 public class InterFractionDrop extends AbstractDropController {
@@ -57,12 +57,19 @@ public class InterFractionDrop extends AbstractDropController {
 		drag = ((AlgebaWrapper) context.draggable).getNode();
 		target = ((AlgebaWrapper) getDropTarget()).getNode();
 
-		dropHTML = "<div style=\"display:inline-block;\"><div>"
-				+ target.getHTMLString() + "</div><div>" + drag.getHTMLString()
-				+ "</div><div>";
+		dropHTML = "<div style=\"display:inline-block; vertical-align:middle;\">" +
+		
+				"<div style=\"border-bottom:1px solid;\">"
+				+ target.getHTMLString()+ "</div>" +
+				
+				"<div>"+ drag.getHTMLString()	+ "</div>" +
+				
+				"</div>";
 
 		switch (dropType) {
 		case CANCEL:
+			setDropHTMLTotal("1");
+			cleanSide(target);
 			complete();
 			break;
 		case DIVIDE:
@@ -79,6 +86,12 @@ public class InterFractionDrop extends AbstractDropController {
 			break;
 		}
 
+	}
+
+	private void setDropHTMLTotal(String total) {
+		dropHTML = dropHTML
+				+ "<div style=\"display:inline-block; vertical-align:middle;\">="
+				+ total + "</div>";
 	}
 
 	/**
@@ -119,10 +132,12 @@ public class InterFractionDrop extends AbstractDropController {
 		UnitMap combinedMap = target.getUnitMap()
 				.getDivision(drag.getUnitMap());
 
-		MathNode division = target.replace(TypeML.Number, total
-				.stripTrailingZeros().toEngineeringString());
+		String totalString = total.stripTrailingZeros().toEngineeringString();
+		MathNode division = target.replace(TypeML.Number, totalString);
 		String divisionUnits = combinedMap.getUnitAttribute();
 		division.setAttribute(MathAttribute.Unit, divisionUnits);
+
+		setDropHTMLTotal(totalString);
 
 		complete();
 	}
@@ -153,7 +168,11 @@ public class InterFractionDrop extends AbstractDropController {
 			return;
 		}
 
-		target.setAttribute(MathAttribute.Function, finalFunction.toString());
+		String finalFunctionString = finalFunction.toString();
+
+		target.setAttribute(MathAttribute.Function, finalFunctionString);
+
+		setDropHTMLTotal(finalFunctionString);
 
 		complete();
 	}
@@ -171,6 +190,8 @@ public class InterFractionDrop extends AbstractDropController {
 		String newBase = drag.getFirstChild().getSymbol();
 
 		target.setAttribute(MathAttribute.LogBase, newBase);
+
+		setDropHTMLTotal(newBase);
 
 		complete();
 	}
@@ -191,28 +212,24 @@ public class InterFractionDrop extends AbstractDropController {
 			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
 			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
 			BigDecimal total = targetValue.subtract(dragValue);
-			targetExp.setSymbol(total+"");
+			targetExp.setSymbol(total + "");
 		} else {
-			targetExp = targetExp.encase(TypeML.Sum);
+			MathNode targetExpSum = targetExp.encase(TypeML.Sum);
 
-			targetExp.append(TypeML.Operation, Operator.MINUS.getSign());
-			targetExp.append(dragExp);
+			targetExpSum.append(TypeML.Operation, Operator.MINUS.getSign());
+			targetExpSum.append(dragExp);
 		}
+
+		setDropHTMLTotal(target.getHTMLString() + "<sup>("
+				+ targetExp.getHTMLString() + "-" + dragExp.getHTMLString()
+				+ ")</sup>");
+
 		complete();
 	}
 
 	private void complete() {
 
-		switch (dropType) {
-		case CANCEL:
-			cleanSide(target);
-		case DIVIDE:
-		case EXPONENTIAL:
-		case LOG_COMBINE:
-		case TRIG_COMBINE:
-			cleanSide(drag);
-			break;
-		}
+		cleanSide(drag);
 
 		drag.lineThrough();
 		target.highlight();

@@ -41,7 +41,6 @@ public static final String UNIT = "unit";
 //ScienceGadgets.css
 //////////////////////////////////////////////
 
-//public static final String CENTER = "center";
 public static final String TEXT_CENTER = "textCenter";
 public static final String FILL_PARENT = "fillParent";
 public static final String SCIENCE_GADGET_AREA = "scienceGadgetArea";
@@ -70,7 +69,6 @@ public static final String ALG_OUT_EQ_EQUALS = "algOutEqEquals";
 public static final String ALG_OUT_EQ_RIGHT = "algOutEqRight";
 public static final String ALG_OUT_CHANGE_ROW = "algOutChangeRow";
 public static final String ALG_OUT_RULE_ROW = "algOutRuleRow";
-//public static final String INPUT_GRID = "inputGrid";
 /*---------------changes---------------*/
 public static final String HIGHLIGHT = "highlight";
 public static final String LINE_THROUGH = "lineThrough";
@@ -78,14 +76,10 @@ public static final String LINE_THROUGH = "lineThrough";
 public static final String SELECTED_WRAPPER = "selectedWrapper";
 public static final String SELECTED_DROP_WRAPPER = "selectedDropWrapper";
 public static final String CONVERSION_WRAPPER = "conversionWrapper";
-//public static final String DROP_DESCRIPTOR = "dropDescriptor";
-//public static final String WRAP = "wrap";
-//public static final String MOUSE_OVERLAY = "mouseOverlay";
 public static final String EQ_PANEL = "eqPanel";
 public static final String EQ_LAYER = "eqLayer";
 public static final String LAYOUT_ROW = "layoutRow";
 /*---------------popups---------------*/
-//public static final String POPUP_GLASS = "popupGlass";
 //public static final String DIALOG_BOX = "gwt-DialogBox";
 //public static final String POPUP_PANEL_GLASS = "gwt-PopupPanelGlass";
 /*---------------toggle---------------*/
@@ -107,9 +101,7 @@ public static final String INVALID_INPUT = "invalidInput";
 public static final String TRANSFORMATION_BUTTON = "transformationButton";
 public static final String SAVE_EQUATION_BUTTON = "saveEquationButton";
 public static final String CHANGE_NODE_BUTTON = "changeNodeButton";
-//public static final String SPEC_BUTTON = "specButton";
-//public static final String BOTH_SIDES_BUTTON = "bothSidesButton";
-//public static final String BOTH_SIDES_BUTTON_HALF = "bothSidesButtonHalf";
+public static final String BOTH_SIDES_BUTTON = "bothSidesButton";
 public static final String SMALLEST_BUTTON = "smallestButton";
 public static final String MEDIUM_BUTTON = "mediumButton";
 

@@ -32,6 +32,7 @@ public class EquationPanel extends AbsolutePanel {
 	private ArrayList<EquationWrapper> mathWrappers = new ArrayList<EquationWrapper>();
 	private AlgebraActivity algebraActivity;
 
+	public static final String EQ_OF_LAYER = "Equation-ofLayer-";
 	public static final String OF_LAYER = "-ofLayer-";
 
 	private MathNode rootNode;
@@ -85,7 +86,11 @@ public class EquationPanel extends AbsolutePanel {
 		rootNode = mathTree.getRoot();
 		
 		modelEqLayer = new EquationLayer(null, mathTree.getDisplayClone());
+//		modelEqLayer = new EquationLayer(null, mathTree.getDisplay());
 		this.add(modelEqLayer);
+		//TODO update display in MathTree after it has been loaded
+//		mathTree.setDisplay(modelEqLayer.eqHTML);
+//		mathTree.eqHTML = modelEqLayer.eqHTML;
 
 		if (!algebraActivity.inEditMode) {
 			findRootLayerMergingNodes(rootNode);
@@ -93,6 +98,7 @@ public class EquationPanel extends AbsolutePanel {
 		}
 		draw(rootNode, null);
 
+		
 		modelEqLayer.removeFromParent();
 
 		if (!algebraActivity.inEditMode) {
@@ -216,7 +222,26 @@ public class EquationPanel extends AbsolutePanel {
 			if(parentNode.equals(mathTree.getRoot())) {
 				childNodes.remove(1);
 			}
-
+			
+			if (mergeRootNodes.contains(parentNode)) {
+				parentNode = rootNode;
+			} else if (mergeFractionNodes.contains(parentNode)) {
+				parentNode = parentNode.getParent();
+			}
+			
+			String parentId = parentNode.getId();
+			
+			com.google.gwt.user.client.Element layerParentNode = DOM
+					.getElementById(parentId + OF_LAYER
+							+ parentId);
+			if(layerParentNode != null) {
+				layerParentNode.addClassName(CSS.DISPLAY_WRAPPER);
+			}else if(TypeML.Equation.equals(parentNode.getType())){
+				com.google.gwt.user.client.Element layerEqNode = DOM
+						.getElementById(EQ_OF_LAYER	+ parentId);
+				layerEqNode.addClassName(CSS.DISPLAY_WRAPPER);
+			}
+				
 		for (MathNode node : childNodes) {
 			
 			if (!algebraActivity.inEditMode) {
@@ -224,15 +249,10 @@ public class EquationPanel extends AbsolutePanel {
 						|| mergeFractionNodes.contains(node)) {
 					continue;
 				}
-				if (mergeRootNodes.contains(parentNode)) {
-					parentNode = rootNode;
-				} else if (mergeFractionNodes.contains(parentNode)) {
-					parentNode = parentNode.getParent();
-				}
 			}
 			com.google.gwt.user.client.Element layerNode = DOM
 					.getElementById(node.getId() + OF_LAYER
-							+ parentNode.getId());
+							+ parentId);
 
 			if (algebraActivity.inEditMode) {// Edit Mode
 				EditWrapper wrap = new EditWrapper(node, algebraActivity, layerNode);

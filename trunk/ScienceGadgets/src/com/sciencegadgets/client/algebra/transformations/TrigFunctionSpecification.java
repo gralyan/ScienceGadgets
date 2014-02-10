@@ -6,8 +6,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Prompt;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
+import com.sciencegadgets.shared.TrigFunctions;
 
 public class TrigFunctionSpecification extends Prompt {
 	public TrigFunctionSpecification() {
@@ -21,7 +20,7 @@ public class TrigFunctionSpecification extends Prompt {
 			}
 		};
 
-		for (TrigFunctions function : TypeML.TrigFunctions.values()) {
+		for (TrigFunctions function : TrigFunctions.values()) {
 			Button funcButton = new Button(function.toString(), funcClick);
 			funcButton.addStyleName(CSS.MEDIUM_BUTTON);
 			add(funcButton);

@@ -21,7 +21,7 @@ import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.UnitUtil;
 
 public abstract class QuantitySpecification extends Prompt {

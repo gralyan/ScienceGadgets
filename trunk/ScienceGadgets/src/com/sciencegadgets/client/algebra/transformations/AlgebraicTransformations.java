@@ -35,9 +35,9 @@ import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.transformations.InterFractionDrop.DropType;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
 /**
  * This class contains the set of static methods used to perform algebraic

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
@@ -77,6 +78,7 @@ class LogTransformButton extends TransformationButton {
 
 	LogTransformButton(LogarithmicTransformations context, String html) {
 		super(html);
+		addStyleName(CSS.LOG +" "+CSS.DISPLAY_WRAPPER);
 		this.log = context.log;
 		this.logChild = context.argument;
 		this.base = context.base;
