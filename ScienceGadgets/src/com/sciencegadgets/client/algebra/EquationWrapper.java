@@ -20,7 +20,9 @@ public class EquationWrapper extends Wrapper {
 		this.eqPanel = algebraActivity.eqPanel;
 		this.algebraActivity = algebraActivity;
 		
-		this.addStyleName(CSS.DISPLAY_WRAPPER);
+//		element.getParentElement().addClassName(CSS.DISPLAY_WRAPPER);
+//		this.addStyleName(CSS.DISPLAY_WRAPPER);
+		
 	}
 
 	public EquationLayer getEqLayer() {
@@ -77,6 +79,12 @@ public class EquationWrapper extends Wrapper {
 			if (EquationPanel.selectedWrapper != null) {
 				EquationPanel.selectedWrapper.unselect();
 			}
+			
+			this.addStyleName(CSS.DISPLAY_WRAPPER);
+			if(TypeML.Operation.equals(node.getType())) {
+				node.getPrevSibling().getWrapper().addStyleName(CSS.DISPLAY_WRAPPER);
+				node.getNextSibling().getWrapper().addStyleName(CSS.DISPLAY_WRAPPER);
+			}
 
 			fillSelectionDetails();
 
@@ -88,5 +96,11 @@ public class EquationWrapper extends Wrapper {
 	public void unselect() {
 		super.unselect();
 		algebraActivity.selectionDetails.clear();
+
+		this.removeStyleName(CSS.DISPLAY_WRAPPER);
+		if(TypeML.Operation.equals(node.getType())) {
+			node.getPrevSibling().getWrapper().removeStyleName(CSS.DISPLAY_WRAPPER);
+			node.getNextSibling().getWrapper().removeStyleName(CSS.DISPLAY_WRAPPER);
+		}
 	}
 }

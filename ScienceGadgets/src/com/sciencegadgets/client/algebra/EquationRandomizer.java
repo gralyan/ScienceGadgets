@@ -1,10 +1,10 @@
 package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Random;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -18,82 +18,64 @@ public class EquationRandomizer {
 	 * Negativity - (A)lways, (S)ometimes, or (N)ever <br/>
 	 * Lower Bound <br/>
 	 * Upper Bound <br/>
-	 * Decimals - how accurate
+	 * Decimals - how many decimal places
 	 * 
-	 * @param mathML
 	 * @param randomize
 	 *            - true to generate random number, false to revert to the
 	 *            random symbol
 	 * @return
 	 */
-	public static Element randomizeNumbers(Element mathXML, boolean randomize) {
-		System.out.println("b "+mathXML.getString());
+	public static void randomizeNumbers(MathTree mTree, boolean randomize) {
 
-		NodeList<com.google.gwt.dom.client.Element> variables = mathXML
-				.getElementsByTagName(TypeML.Number.getTag());
+		ArrayList<MathNode> variables = mTree.getNodesByType(TypeML.Number);
 
-		for (int i = 0; i < variables.getLength(); i++) {
-			com.google.gwt.dom.client.Element var = variables.getItem(i);
-			String varRandomness = var.getAttribute(MathAttribute.Randomness
-					.getAttributeName());
+		for (MathNode var : variables) {
+			String varRandomness = var.getAttribute(MathAttribute.Randomness);
 
 			if (varRandomness.contains(RandomSpecPanel.DELIMITER)) {
 				if (randomize) {
-					randomizeNumbers(var, varRandomness);
+					String randonNumber = getRandomNumber(varRandomness);
+					var.setSymbol(randonNumber);
 				} else {
-					unrandomizeNumbers(var);
+					var.setSymbol(RandomSpecPanel.RANDOM_SYMBOL);
 				}
 			}
 		} 
-		System.out.println("r "+mathXML.getString());
-		return mathXML;
 	}
 
-	private static void randomizeNumbers(Element var, String varRandomness) {
+	private static String getRandomNumber(String varRandomness) {
 
 		// negative_lowerBound_upperBound_decimal place
 		String[] specs = varRandomness.split(RandomSpecPanel.DELIMITER);
-System.out.println("specs "+specs);
 		try {
 			String negativity = specs[0];
 			double lowerBound = Double.parseDouble(specs[1]);
 			double upperBound = Double.parseDouble(specs[2]);
 			int decPlace = Integer.parseInt(specs[3]);
-			System.out.println("0 "+negativity);
-			System.out.println("1 "+lowerBound);
-			System.out.println("2 "+upperBound);
-			System.out.println("3 "+decPlace);
 
 			// Randomize within bounds
 			double randomNumber = (Math.random() * (upperBound - lowerBound))
 					+ lowerBound;
 
-			System.out.println("randomNumber "+randomNumber);
 			// Make negative
 			if (RandomSpecPanel.ALWAYS.equals(negativity)
 					|| RandomSpecPanel.SOMETIMES.equals(negativity)
 					&& Random.nextBoolean()) {
 				randomNumber *= -1;
 			}
-			System.out.println("randomNumber+- "+randomNumber);
 
 			BigDecimal randomBigD = new BigDecimal(randomNumber);
 			randomBigD = randomBigD.setScale(decPlace, BigDecimal.ROUND_DOWN);
-			System.out.println("randomBigD "+randomBigD);
 
-			var.setInnerText(randomBigD.toString());
+			return randomBigD.toString();
 
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-			var.setInnerText(((int) (Math.random() * 10) + 1) + "");
+			return ((int) (Math.random() * 10) + 1) + "";
 		} catch (ArithmeticException e) {
 			e.printStackTrace();
-			var.setInnerText(((int) (Math.random() * 10) + 1) + "");
+			return ((int) (Math.random() * 10) + 1) + "";
 		}
-	}
-
-	private static void unrandomizeNumbers(Element var) {
-		var.setInnerText(RandomSpecPanel.RANDOM_SYMBOL);
 	}
 
 }

@@ -6,6 +6,7 @@ import java.math.MathContext;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -100,6 +101,7 @@ class ExponentialTransformButton extends TransformationButton {
 
 	ExponentialTransformButton(ExponentialTransformations context, String html) {
 		super(html);
+		addStyleName(CSS.EXPONENTIAL +" "+CSS.DISPLAY_WRAPPER);
 		this.exponential = context.exponential;
 		this.base = context.base;
 		this.exponent = context.exponent;

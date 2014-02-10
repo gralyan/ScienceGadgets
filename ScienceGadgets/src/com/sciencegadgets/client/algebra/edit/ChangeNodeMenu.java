@@ -48,10 +48,9 @@ public class ChangeNodeMenu extends CommunistPanel {
 			TypeML toType = (TypeML) type[0];
 			TransformationButton changeButton = new TransformationButton(
 					(String) type[1]);
-			changeButton.addStyleName(CSS.DISPLAY_WRAPPER);
-			changeButton.addStyleName(toType.toString());
+			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON + " "
+					+ toType.toString() + " " + CSS.DISPLAY_WRAPPER);
 			changeButton.addClickHandler(new ChangeNodeClick(toType));
-			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON);
 			allButtons.add(changeButton);
 		}
 
@@ -179,7 +178,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 					clearDisplays = false;
 				}
 				if (AlgebraActivity.numSpec == null) {
-					AlgebraActivity.numSpec = new NumberSpecification(node, clearDisplays);
+					AlgebraActivity.numSpec = new NumberSpecification(node,
+							clearDisplays);
 				} else {
 					AlgebraActivity.numSpec.reload(node, clearDisplays);
 				}
@@ -191,7 +191,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 					clearDisplayz = false;
 				}
 				if (AlgebraActivity.varSpec == null) {
-					AlgebraActivity.varSpec = new VariableSpecification(node, clearDisplayz);
+					AlgebraActivity.varSpec = new VariableSpecification(node,
+							clearDisplayz);
 				} else {
 					AlgebraActivity.varSpec.reload(node, clearDisplayz);
 				}

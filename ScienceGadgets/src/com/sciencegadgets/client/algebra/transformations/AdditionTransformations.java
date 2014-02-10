@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
@@ -293,6 +294,7 @@ class AddTransformButton extends TransformationButton {
 
 	AddTransformButton(AdditionTransformations context, String html) {
 		super(html);
+		addStyleName(CSS.SUM +" "+CSS.DISPLAY_WRAPPER);
 		this.left = context.left;
 		this.right = context.right;
 		this.operation = context.operation;

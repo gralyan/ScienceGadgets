@@ -5,8 +5,8 @@ import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
 import com.sciencegadgets.shared.UnitMap;
 
 public class EquationValidator {

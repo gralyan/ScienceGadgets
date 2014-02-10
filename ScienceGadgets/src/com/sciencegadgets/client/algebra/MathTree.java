@@ -67,12 +67,12 @@ public class MathTree {
 	 * @throws TopNodesNotFoundException
 	 */
 	public MathTree(Element mathXML, boolean inEditMode) {
-		mathXML = EquationRandomizer.randomizeNumbers(mathXML, !inEditMode);
-
 		this.mathXML = mathXML;
 		this.inEditMode = inEditMode;
 
 		bindXMLtoNodes(mathXML);
+
+		EquationRandomizer.randomizeNumbers(this, !inEditMode);
 
 		reloadDisplay(true);
 	}
@@ -97,10 +97,6 @@ public class MathTree {
 		return root;
 	}
 
-	// public MathNode getMathNode(String id) {
-	// return idMap.get(id);
-	// }
-
 	public boolean isInEditMode() {
 		return inEditMode;
 	}
@@ -116,18 +112,6 @@ public class MathTree {
 				" xmlns=\"http://www.w3.org/1998/Math/MathML\"", "").replace(
 				" xmlns=\"http://www.w3.org/1999/xhtml\"", "");
 		return mlString;
-	}
-
-	public EquationHTML getDisplayClone() {
-		return new EquationHTML(this);
-	}
-
-	public Element getLeftDisplay() {
-		return eqHTML.getLeft();
-	}
-
-	public Element getRightDisplay() {
-		return eqHTML.getRight();
 	}
 
 	public MathNode getRoot() {
@@ -161,7 +145,24 @@ public class MathTree {
 		}
 	}
 
-	public EquationHTML reloadDisplay(boolean hasSmallUnits) {
+	public String getLeftDisplay() {
+		System.out.println(JSNICalls.elementToString(eqHTML.getLeft()));
+		System.out.println(eqHTML.getHTML());
+		return JSNICalls.elementToString(eqHTML.getLeft());
+	}
+
+	public String getRightDisplay() {
+		return JSNICalls.elementToString(eqHTML.getRight());
+	}
+	
+	public EquationHTML getDisplayClone() {
+		return new EquationHTML(this);
+	}
+	public EquationHTML getDisplay() {
+		return eqHTML;
+	}
+	
+	public void setDisplay(EquationHTML equationHTML) {
 		for (Wrapper w : wrappers) {
 			if (w instanceof EditWrapper) {
 				((EditWrapper) w).onUnload();
@@ -172,8 +173,8 @@ public class MathTree {
 			w.getElement().removeFromParent();
 		}
 		wrappers.clear();
-
-		eqHTML = new EquationHTML(this, hasSmallUnits);
+		
+		this.eqHTML = equationHTML;
 
 		NodeList<Element> allElements = eqHTML.getElement()
 				.getElementsByTagName("*");
@@ -191,7 +192,14 @@ public class MathTree {
 			}
 			el.removeAttribute("id");
 		}
-		return eqHTML;
+	}
+	
+	public EquationHTML reloadDisplay(boolean hasSmallUnits) {
+
+		EquationHTML equationHTML = new EquationHTML(this, hasSmallUnits);
+		equationHTML.pilot=true;
+		setDisplay(equationHTML);
+		return equationHTML;
 	}
 
 	public LinkedList<Wrapper> getWrappers() {

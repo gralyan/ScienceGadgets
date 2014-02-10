@@ -46,7 +46,7 @@ public class Prompt extends DialogBox {
 		setGlassEnabled(true);
 		setAnimationEnabled(false);
 
-		flowPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
+		flowPanel.getElement().getStyle().setOverflowY(Overflow.AUTO);
 
 //		getElement().getStyle().setBackgroundColor("#ADD850");
 		addStyleName(CSS.PROMPT_MAIN);

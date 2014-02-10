@@ -3,6 +3,7 @@ package com.sciencegadgets.client.algebra;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -10,6 +11,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
@@ -29,7 +31,7 @@ public class EquationHTML extends HTML {
 	public boolean pilot = false;
 	private Element left = null;
 	private Element right = null;
-	private HashMap<Element, MathNode> displayMap = new HashMap<Element, MathNode>();
+	HashMap<Element, MathNode> displayMap = new HashMap<Element, MathNode>();
 
 	public EquationHTML(MathTree mTree) {
 		this(mTree, true);
@@ -64,7 +66,7 @@ public class EquationHTML extends HTML {
 		super.onLoad();
 		if (pilot) {
 			matchHeightsAndAlign(this.getElement());
-		}
+		} 
 		if (autoFillParent) {
 			resizeEquation();
 		}
@@ -310,18 +312,21 @@ public class EquationHTML extends HTML {
 		}
 
 		// Find highest top and lowest bottom to match heights
-		int lowestBottom = 0;
-		int highestTop = 999999999;
-		for (Element child : childrenHorizontal) {
-			int childTop = child.getAbsoluteTop();
-			if (childTop < highestTop) {
-				highestTop = childTop;
-			}
-			int childBottom = child.getAbsoluteBottom();
-			if (childBottom > lowestBottom) {
-				lowestBottom = childBottom;
-			}
-		}
+//		int lowestBottom = 0;
+//		int highestTop = 999999999;
+//		for (Element child : childrenHorizontal) {
+//			int childTop = child.getAbsoluteTop();
+//			if (childTop < highestTop) {
+//				highestTop = childTop;
+//			}
+//			int childBottom = child.getAbsoluteBottom();
+//			if (childBottom > lowestBottom) {
+//				lowestBottom = childBottom;
+//			}
+//		}
+//		
+//		highestTop = curEl.getAbsoluteTop();
+//		lowestBottom = curEl.getAbsoluteBottom();
 
 		// Lift exponents of fraction bases to top
 		if (TypeML.Exponential.equals(curType)) {
@@ -332,23 +337,25 @@ public class EquationHTML extends HTML {
 
 			// Align inline siblings flush using padding at highest and lowest
 		} else {
-			for (Element child : childrenHorizontal) {
-				Style s = child.getStyle();
-
-				// Fractions with some padding don't need to be aligned
-				if (fractionChildrenHorizontal.contains(child)) {
-					if (!"0em".equals(s.getPaddingTop())
-							|| !"0em".equals(s.getPaddingBottom())) {
-						continue;
-					}
-				}
-
-				int childTopPad = child.getAbsoluteTop() - highestTop;
-				int childBottomPad = lowestBottom - child.getAbsoluteBottom();
-
+//			for (Element child : childrenHorizontal) {
+//				Style s = child.getStyle();
+//
+//				// Fractions with some padding don't need to be aligned
+//				if (fractionChildrenHorizontal.contains(child)) {
+//					if (!"0em".equals(s.getPaddingTop())
+//							|| !"0em".equals(s.getPaddingBottom())) {
+//						continue;
+//					}
+//				}else if(child.getClassName().contains(TypeML.Operation.toString())) {
+//					continue;
+//				}
+//
+//				int childTopPad = child.getAbsoluteTop() - highestTop;
+//				int childBottomPad = lowestBottom - child.getAbsoluteBottom();
+//
 //				s.setPaddingTop(childTopPad / pxPerEm, Unit.EM);
 //				s.setPaddingBottom(childBottomPad / pxPerEm, Unit.EM);
-			}
+//			}
 		}
 
 	}

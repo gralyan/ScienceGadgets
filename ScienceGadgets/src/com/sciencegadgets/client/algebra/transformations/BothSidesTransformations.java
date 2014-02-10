@@ -2,25 +2,23 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.CommunistPanel;
+import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
-import com.sciencegadgets.shared.TypeML.TrigFunctions;
 
-public class BothSidesTransformations extends TransformationList{
-	
+public class BothSidesTransformations extends TransformationList {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private MathNode node;
 	private MathNode parentNode;
 	private MathTree tree;
@@ -30,7 +28,7 @@ public class BothSidesTransformations extends TransformationList{
 	boolean isNestedInFraction = false;
 	boolean isSide = false;
 
-	public static final String BOTH_SIDES = " <b>both sides</b> ";
+	public static final String BOTH_SIDES = ChangeNodeMenu.NOT_SET;
 
 	private static final String PLUS = TypeML.Operator.PLUS.getSign();
 	private static final String MINUS = TypeML.Operator.MINUS.getSign();
@@ -140,8 +138,9 @@ public class BothSidesTransformations extends TransformationList{
 	class BothSidesButton extends TransformationButton {
 
 		BothSidesButton(Math operation) {
-			// addMouseDownHandler(new AlternativeHTML(operation,
-			// node.getHTMLString()));
+
+			addStyleName(CSS.BOTH_SIDES_BUTTON);
+
 			switch (operation) {
 			case ADD:
 				setHTML(BOTH_SIDES + PLUS + " " + node.getHTMLString());
@@ -237,13 +236,12 @@ public class BothSidesTransformations extends TransformationList{
 			// Prepare Target side
 			targetSide = targetSide.encase(TypeML.Sum);
 
-			// Leave 0 in old side if top node
-			if (isSide) {
-				node.getParent().addBefore(node.getIndex(), TypeML.Number, "0");
-			}
 			// take operation
+			MathNode operator = node.getPrevSibling();
 			if (node.getIndex() > 0 && !isSide) {
-				MathNode operator = node.getPrevSibling();
+				if (!Moderator.isInEasyMode) {
+					operator = operator.clone();
+				}
 				// Flip sign
 				if (MINUS.equals(operator.getSymbol())) {
 					operator.setSymbol(PLUS);
@@ -257,16 +255,34 @@ public class BothSidesTransformations extends TransformationList{
 				targetSide.append(TypeML.Operation, MINUS);
 			}
 
-			// move node to other side
-			targetSide.append(node);
+			if (Moderator.isInEasyMode) {
+				// Leave 0 in old side if top node
+				if (isSide) {
+					node.getParent().addBefore(node.getIndex(), TypeML.Number,
+							"0");
+				}
+				// move node to other side
+				targetSide.append(node);
 
-			// clean source side
-			MathNode oldFirstSib = oldParent.getFirstChild();
-			if (oldFirstSib != null && PLUS.equals(oldFirstSib.getSymbol())) {
-				oldFirstSib.remove();
+				// clean source side
+				MathNode oldFirstSib = oldParent.getFirstChild();
+				if (oldFirstSib != null && PLUS.equals(oldFirstSib.getSymbol())) {
+					oldFirstSib.remove();
+				}
+
+				oldParent.decase();
+
+			} else {
+				// create node on both sides
+				targetSide.append(node.clone());
+				oldParent.encase(TypeML.Sum);
+				if(operator!=null) {
+					oldParent.append(operator.clone());
+				}else {
+					oldParent.append(TypeML.Operation, MINUS);
+				}
+				oldParent.append(node.clone());
 			}
-
-			oldParent.decase();
 
 			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
@@ -277,20 +293,23 @@ public class BothSidesTransformations extends TransformationList{
 		@Override
 		public void onClick(ClickEvent event) {
 			super.onClick(event);
-			MathNode operator = null;
 
-			if (TypeML.Fraction.equals(oldParent.getType())) {
-				// leave 1 in numerator
-				oldParent.addBefore(0, TypeML.Number, "1");
-			} else if (isSide) {
-				// Leave 1 in old side if top node
-				oldParent.addBefore(node.getIndex(), TypeML.Number, "1");
-			} else {
-				// take operation
-				if (node.getIndex() > 0) {
-					operator = node.getPrevSibling();
+			MathNode operator = null;
+			
+			if (Moderator.isInEasyMode) {
+				if (TypeML.Fraction.equals(oldParent.getType())) {
+					// leave 1 in numerator
+					oldParent.addBefore(0, TypeML.Number, "1");
+				} else if (isSide) {
+					// Leave 1 in old side if top node
+					oldParent.addBefore(node.getIndex(), TypeML.Number, "1");
 				} else {
-					operator = node.getNextSibling();
+					// take operation
+					if (node.getIndex() > 0) {
+						operator = node.getPrevSibling();
+					} else {
+						operator = node.getNextSibling();
+					}
 				}
 			}
 
@@ -310,17 +329,30 @@ public class BothSidesTransformations extends TransformationList{
 				}
 			}
 
-			// move node to other side
-			targetSide.append(node);
+			if (Moderator.isInEasyMode) {
+				// move node to other side
+				targetSide.append(node);
 
-			// clean source side
-			MathNode oldFirstSib = oldParent.getFirstChild();
-			if (oldFirstSib != null
-					&& TypeML.Operation.equals(oldFirstSib.getType())) {
-				oldFirstSib.remove();
+				// clean source side
+				MathNode oldFirstSib = oldParent.getFirstChild();
+				if (oldFirstSib != null
+						&& TypeML.Operation.equals(oldFirstSib.getType())) {
+					oldFirstSib.remove();
+				}
+
+				oldParent.decase();
+
+			} else {
+				// create node on other side
+				targetSide.append(node.clone());
+				if(TypeML.Fraction.equals(oldParent.getType())) {
+					MathNode denominator = oldParent.getChildAt(1).encase(TypeML.Term);
+					denominator.append(node.clone());
+				}else {
+					oldParent= oldParent.encase(TypeML.Fraction);
+					oldParent.append(node.clone());
+				}
 			}
-
-			oldParent.decase();
 
 			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
@@ -332,10 +364,11 @@ public class BothSidesTransformations extends TransformationList{
 		@Override
 		public void onClick(ClickEvent event) {
 			super.onClick(event);
+
 			// Prepare Target side
 			targetSide = targetSide.encase(TypeML.Term);
 
-			if (isNestedInFraction) {
+			if (isNestedInFraction && Moderator.isInEasyMode) {
 				MathNode operation = null;
 				if (node.getIndex() == 0) {
 					operation = node.getNextSibling();
@@ -355,6 +388,13 @@ public class BothSidesTransformations extends TransformationList{
 								+ node.toString());
 			}
 
+			if (!Moderator.isInEasyMode) {
+				node = node.clone();
+				oldParent.encase(TypeML.Term);
+				oldParent.append(TypeML.Operation, Operator.getMultiply().getSign());
+				oldParent.append(node.clone());
+			}
+
 			if (TypeML.Term.equals(node.getType())) {// Termception
 				for (MathNode transplants : node.getChildren()) {
 					targetSide.append(transplants);
@@ -364,15 +404,17 @@ public class BothSidesTransformations extends TransformationList{
 				targetSide.append(node);
 			}
 
-			// clean source side
-			if (TypeML.Fraction.equals(oldParent.getType())) {
-				// remove unnecessary intermediate fraction
-				oldParent.replace(oldParent.getFirstChild());
-			} else if (TypeML.Term.equals(oldParent.getType())) {
-				oldParent.decase();
-			} else {
-				JSNICalls
-						.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
+			if (Moderator.isInEasyMode) {
+				// clean source side
+				if (TypeML.Fraction.equals(oldParent.getType())) {
+					// remove unnecessary intermediate fraction
+					oldParent.replace(oldParent.getFirstChild());
+				} else if (TypeML.Term.equals(oldParent.getType())) {
+					oldParent.decase();
+				} else {
+					JSNICalls
+							.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
+				}
 			}
 
 			Moderator.reloadEquationPanel(changeComment,
@@ -395,8 +437,8 @@ public class BothSidesTransformations extends TransformationList{
 		@Override
 		public void onClick(ClickEvent event) {
 			super.onClick(event);
-			// Prepare Target side
 
+			// Prepare Target side
 			MathNode target = null;
 			if (!TypeML.Exponential.equals(targetSide.getType())) {
 				targetSide = targetSide.encase(TypeML.Exponential);
@@ -407,6 +449,10 @@ public class BothSidesTransformations extends TransformationList{
 				targetExp.append(TypeML.Operation, Operator.getMultiply()
 						.getSign());
 				target = targetExp;
+			}
+
+			if (!Moderator.isInEasyMode) {
+				node = node.clone();
 			}
 
 			if (TypeML.Fraction.equals(node.getType())) {
@@ -425,9 +471,16 @@ public class BothSidesTransformations extends TransformationList{
 				frac.append(node);
 			}
 
-			// clean source side
-			oldParent.replace(oldParent.getFirstChild());
-
+			if (Moderator.isInEasyMode) {
+				// clean source side
+				oldParent.replace(oldParent.getFirstChild());
+			}else {
+				oldParent.encase(TypeML.Exponential);
+				MathNode frac = oldParent.append(TypeML.Fraction, "");
+				frac.append(TypeML.Number, "1");
+				frac.append(node.clone());
+			}
+			
 			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
@@ -459,8 +512,13 @@ public class BothSidesTransformations extends TransformationList{
 			MathNode targetExp = targetSide.encase(TypeML.Exponential);
 			targetExp.addBefore(0, TypeML.Number, base);
 
-			// clean source side
-			node.replace(node.getFirstChild());
+			if (Moderator.isInEasyMode) {
+				// clean source side
+				node.replace(node.getFirstChild());
+			}else {
+				MathNode fromExp = node.encase(TypeML.Exponential);
+				fromExp.addBefore(0, TypeML.Number, base);
+			}
 
 			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
 		}
@@ -486,8 +544,13 @@ public class BothSidesTransformations extends TransformationList{
 			MathNode targetLog = targetSide.encase(TypeML.Log);
 			targetLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 
-			// clean source side
-			oldParent.replace(oldParent.getChildAt(1));
+			if (Moderator.isInEasyMode) {
+				// clean source side
+				node.replace(node.getChildAt(1));
+			}else {
+				MathNode fromLog = node.encase(TypeML.Log);
+				fromLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
+			}
 
 			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
 		}
@@ -515,33 +578,19 @@ public class BothSidesTransformations extends TransformationList{
 			super.onClick(event);
 			// Prepare Target side
 
-			MathNode targetLog = targetSide.encase(TypeML.Trig);
-			targetLog.setAttribute(MathAttribute.Function, toFunction);
+			MathNode targetTrig = targetSide.encase(TypeML.Trig);
+			targetTrig.setAttribute(MathAttribute.Function, toFunction);
 
-			// clean source side
-			node.replace(node.getFirstChild());
+			if (Moderator.isInEasyMode) {
+				// clean source side
+				node.replace(node.getFirstChild());
+			}else {
+				MathNode fromTrig = node.encase(TypeML.Trig);
+				fromTrig.setAttribute(MathAttribute.Function, toFunction);
+			}
 
 			Moderator.reloadEquationPanel(changeComment,
 					Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
 		}
 	}
 }
-
-// class AlternativeHTML implements MouseDownHandler {
-// com.sciencegadgets.client.algebra.BothSidesMenu.Math math = null;
-// String html = null;
-//
-// public AlternativeHTML(
-// com.sciencegadgets.client.algebra.BothSidesMenu.Math math,
-// String htmlString) {
-// this.math = math;
-// this.html = htmlString;
-// }
-//
-// @Override
-// public void onMouseDown(MouseDownEvent event) {
-// ((Button) event.getSource())
-// .setHTML(html + "&nbsp;&nbsp;&nbsp;" + html);
-// }
-//
-// }

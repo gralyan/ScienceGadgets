@@ -25,6 +25,7 @@ public class EquationLayer extends SimplePanel {
 
 		if(mathNode != null) {
 		layerId=mathNode.getId();
+		eqHTML.getElement().setAttribute("id", EquationPanel.EQ_OF_LAYER + layerId);
 		replaceChildsId(eqHTML.getElement());
 		addStyleName(CSS.EQ_LAYER);
 		eqHTML.autoFillParent = true;
@@ -88,8 +89,8 @@ public class EquationLayer extends SimplePanel {
 				curEl.setAttribute("id", oldId.split(EquationPanel.OF_LAYER)[0] + EquationPanel.OF_LAYER + layerId);
 			}else if (oldId.contains("ML")) {
 				curEl.setAttribute("id", oldId + EquationPanel.OF_LAYER + layerId);
-			} else if (oldId.contains("Root")) {
-				curEl.setAttribute("id", "Root-ofLayer-" + layerId);
+//			} else if (oldId.contains("Root")) {
+//				curEl.setAttribute("id", "Root-ofLayer-" + layerId);
 			}
 		}
 

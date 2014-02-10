@@ -37,7 +37,7 @@ public class RandomSpecPanel extends FlowPanel {
 
 	private IntegerBox decPlace;
 	private Label response;
-	Button okButton = new Button("Set Random");
+	Button setRandonButton = new Button("Set Random");
 
 	RandomSpecPanel() {
 
@@ -75,7 +75,7 @@ public class RandomSpecPanel extends FlowPanel {
 		mainPanel.add(rangeSelection);
 
 		Label label3 = new Label(
-				"Decimal places (0-integers, 1-tenths place...)");
+				"Decimal places (0-integer, 1-tenths place...)");
 		label3.setStyleName(CSS.ROW_HEADER);
 		label3.getElement().getStyle().setMarginTop(5, Unit.PX);
 		mainPanel.add(label3);
@@ -83,7 +83,8 @@ public class RandomSpecPanel extends FlowPanel {
 		decPlace = new IntegerBox();
 		mainPanel.add(decPlace);
 
-		mainPanel.add(okButton);
+		setRandonButton.addStyleName(CSS.MEDIUM_BUTTON);
+		mainPanel.add(setRandonButton);
 
 		response = new Label("");
 		response.getElement().getStyle().setColor("red");
@@ -94,7 +95,7 @@ public class RandomSpecPanel extends FlowPanel {
 	}
 	
 	public void addOkClickHandler(ClickHandler handler) {
-		okButton.addClickHandler(handler);
+		setRandonButton.addClickHandler(handler);
 	}
 
 	public String getRandomness() {
@@ -125,13 +126,6 @@ public class RandomSpecPanel extends FlowPanel {
 				return null;
 			} else {
 				response.setText("");
-//				randSpec.hide();
-//				mlNode.setSymbol(RANDOM_SYMBOL);
-//				mlNode.getMLNode().setAttribute("data-randomness", neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
-//				numberInput.setText(RANDOM_SYMBOL);
-//				numberInput.setTitle(neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP);
-//				Moderator.reloadEquationPanel(null, null);
-//				Moderator.setActivity(Activity.algebra);
 				return neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP;
 			}
 

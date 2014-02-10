@@ -40,7 +40,7 @@ public class WrapDragController extends PickupDragController {
 	@Override
 	public void dragEnd() {
 		super.dragEnd();
-
+		
 		for (DropController dropC : dropControllers) {
 			dropC.getDropTarget().removeStyleName(CSS.SELECTED_WRAPPER);
 		}
@@ -49,6 +49,7 @@ public class WrapDragController extends PickupDragController {
 	@Override
 	public void dragStart() {
 		super.dragStart();
+		
 		if (Moderator.isInEasyMode) {
 			for (DropController dropC : dropControllers) {
 				Widget target = dropC.getDropTarget();
@@ -87,7 +88,7 @@ public class WrapDragController extends PickupDragController {
 	
 	
 	
-//	
+	
 //	@Override
 //	protected void restoreSelectedWidgetsLocation() {
 //		dragDummy.getParentElement().insertBefore(context.draggable.getElement(), dragDummy);
@@ -109,7 +110,7 @@ public class WrapDragController extends PickupDragController {
 //	    dragDummy.getStyle().setColor("#555555");
 //	    drag.getElement().getParentElement().insertBefore(dragDummy, drag.getElement());
 //	}
-//	
+	
 	
 
 }
