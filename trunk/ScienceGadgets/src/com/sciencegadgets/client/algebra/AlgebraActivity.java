@@ -84,6 +84,7 @@ public class AlgebraActivity extends Composite {
 			algOut.updateAlgOut(changeComment, rule,
 					mathTree);
 		}
+		
 		eqPanelHolder.clear();
 		selectionDetails.clear();
 

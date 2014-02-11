@@ -76,6 +76,7 @@ public static final String LINE_THROUGH = "lineThrough";
 public static final String SELECTED_WRAPPER = "selectedWrapper";
 public static final String SELECTED_DROP_WRAPPER = "selectedDropWrapper";
 public static final String CONVERSION_WRAPPER = "conversionWrapper";
+public static final String DROP_ENTER_RESPONSE = "dropEnterResponse";
 public static final String EQ_PANEL = "eqPanel";
 public static final String EQ_LAYER = "eqLayer";
 public static final String LAYOUT_ROW = "layoutRow";

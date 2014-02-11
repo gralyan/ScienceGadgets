@@ -19,10 +19,8 @@ public class EquationWrapper extends Wrapper {
 		super(node, algebraActivity.eqPanel, element);
 		this.eqPanel = algebraActivity.eqPanel;
 		this.algebraActivity = algebraActivity;
-		
-//		element.getParentElement().addClassName(CSS.DISPLAY_WRAPPER);
-//		this.addStyleName(CSS.DISPLAY_WRAPPER);
-		
+
+		this.addStyleName(CSS.DISPLAY_WRAPPER);
 	}
 
 	public EquationLayer getEqLayer() {
@@ -66,7 +64,7 @@ public class EquationWrapper extends Wrapper {
 	@Override
 	public void select() {
 
-		if (this.equals(EquationPanel.selectedWrapper)) {
+		if (this.equals(eqPanel.selectedWrapper)) {
 
 			// If this was already selected, focus in on it
 			if (node.hasChildElements()) {
@@ -76,17 +74,13 @@ public class EquationWrapper extends Wrapper {
 		} else {
 
 			// If there is another selection, unselect it
-			if (EquationPanel.selectedWrapper != null) {
-				EquationPanel.selectedWrapper.unselect();
-			}
-			
-			this.addStyleName(CSS.DISPLAY_WRAPPER);
-			if(TypeML.Operation.equals(node.getType())) {
-				node.getPrevSibling().getWrapper().addStyleName(CSS.DISPLAY_WRAPPER);
-				node.getNextSibling().getWrapper().addStyleName(CSS.DISPLAY_WRAPPER);
+			if (eqPanel.selectedWrapper != null) {
+				eqPanel.selectedWrapper.unselect();
 			}
 
 			fillSelectionDetails();
+			
+			eqPanel.selectedWrapper = this;
 
 			super.select();
 		}
@@ -95,12 +89,9 @@ public class EquationWrapper extends Wrapper {
 	@Override
 	public void unselect() {
 		super.unselect();
+		
+		eqPanel.selectedWrapper = null;
+		
 		algebraActivity.selectionDetails.clear();
-
-		this.removeStyleName(CSS.DISPLAY_WRAPPER);
-		if(TypeML.Operation.equals(node.getType())) {
-			node.getPrevSibling().getWrapper().removeStyleName(CSS.DISPLAY_WRAPPER);
-			node.getNextSibling().getWrapper().removeStyleName(CSS.DISPLAY_WRAPPER);
-		}
 	}
 }

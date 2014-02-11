@@ -15,10 +15,7 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.thirdparty.javascript.rhino.jstype.AllType;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
@@ -64,7 +61,7 @@ public class AlgebaWrapper extends EquationWrapper {
 	public void select() {
 		super.select();
 
-		if (this.equals(EquationPanel.selectedWrapper)) {
+		if (this.equals(eqPanel.selectedWrapper)) {
 
 			if (algTransformMenu == null) {
 

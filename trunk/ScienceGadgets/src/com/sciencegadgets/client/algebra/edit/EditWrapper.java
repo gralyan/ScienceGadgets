@@ -45,7 +45,7 @@ public class EditWrapper extends EquationWrapper {
 	public void select() {
 		super.select();
 
-		if (this.equals(EquationPanel.selectedWrapper)) {
+		if (this.equals(eqPanel.selectedWrapper)) {
 			if (changeNodeMenu != null) {
 				changeNodeMenu.setVisible(true);
 			}
@@ -58,9 +58,6 @@ public class EditWrapper extends EquationWrapper {
 		changeNodeMenu.setVisible(false);
 		}
 		
-		// for (TypeML type : TypeML.values()) {
-		// changeNodeMenu.setEnable(type, true);
-		// }
 		super.unselect();
 	}
 	

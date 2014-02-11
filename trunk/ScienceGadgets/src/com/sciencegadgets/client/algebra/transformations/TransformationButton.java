@@ -1,54 +1,42 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.CSS;
+import com.sciencegadgets.client.FitParentHTML;
 
-public class TransformationButton extends HTML {
+public class TransformationButton extends SimplePanel implements
+		HasClickHandlers {
+
+	FitParentHTML buttonHTML;
 
 	public TransformationButton() {
 		super();
-		addStyleName(CSS.TRANSFORMATION_BUTTON);
+		addStyleName(CSS.TRANSFORMATION_BUTTON + " " + CSS.LAYOUT_ROW);
 	}
 
 	public TransformationButton(String html) {
-		super(html);
-		addStyleName(CSS.TRANSFORMATION_BUTTON);
+		this();
+		setHTML(html);
 	}
 
-	@Override
 	public void setHTML(String html) {
-		html = "<div style=\"display:inline-block;\">" + html + "</div>";
-		super.setHTML(html);
+		clear();
+		buttonHTML = new FitParentHTML(html);
+		buttonHTML.percentOfParent = 85;
+		add(buttonHTML);
+	}
 
+	public String getHTML() {
+		return buttonHTML.getHTML();
 	}
 
 	@Override
-	protected void onAttach() {
-		super.onAttach();
-
-		Element buttonElement = this.getElement();
-
-		if ("".equals(buttonElement.getStyle().getFontSize())) {
-
-			Element htmlElement = (Element) buttonElement.getFirstChild();
-
-			double widthRatio = (double) buttonElement.getOffsetWidth()
-					/(double) htmlElement.getOffsetWidth();
-			double heightRatio = (double) buttonElement.getOffsetHeight()
-					/(double) htmlElement.getOffsetHeight();
-
-			
-			double smallerRatio = (widthRatio > heightRatio) ? heightRatio
-					: widthRatio;
-			// *85 for looser fit, *100 for percent
-			double fontPercent = smallerRatio * 85;
-
-			buttonElement.getStyle().setFontSize((fontPercent), Unit.PCT);
-			addStyleName(CSS.LAYOUT_ROW);
-		}
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		return addDomHandler(handler, ClickEvent.getType());
 	}
 }

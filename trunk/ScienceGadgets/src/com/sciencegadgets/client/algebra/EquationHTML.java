@@ -309,6 +309,8 @@ public class EquationHTML extends HTML {
 			s.setPaddingTop((tallestFracChild - numHeight) / pxPerEm, Unit.EM);
 			s.setPaddingBottom((tallestFracChild - denHeight) / pxPerEm,
 					Unit.EM);
+//			s.setBottom((tallestFracChild - denHeight) / pxPerEm,
+//					Unit.EM);
 		}
 
 		// Find highest top and lowest bottom to match heights
@@ -360,7 +362,7 @@ public class EquationHTML extends HTML {
 
 	}
 
-	private double getPxPerEm(Element element) {
+	public static double getPxPerEm(Element element) {
 		Element dummy = DOM.createDiv();
 		element.appendChild(dummy);
 		dummy.getStyle().setHeight(1000, Unit.EM);

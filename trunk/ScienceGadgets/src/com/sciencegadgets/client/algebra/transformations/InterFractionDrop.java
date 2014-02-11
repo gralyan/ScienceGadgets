@@ -18,9 +18,8 @@ import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitMap;
 
-public class InterFractionDrop extends AbstractDropController {
+public class InterFractionDrop extends TransformationDropController {
 
-	Label response = new Label();
 	private DropType dropType;
 	private MathNode drag;
 	private MathNode target;
@@ -34,7 +33,6 @@ public class InterFractionDrop extends AbstractDropController {
 		super(dropTarget);
 
 		this.dropType = dropType;
-		response.getElement().getStyle().setBackgroundColor("white");
 
 		switch (dropType) {
 		case CANCEL:
@@ -279,21 +277,6 @@ public class InterFractionDrop extends AbstractDropController {
 			side.remove();
 			sideParent.decase();
 		}
-	}
-
-	@Override
-	public void onEnter(DragContext context) {
-		super.onEnter(context);
-		getDropTarget().addStyleName(CSS.SELECTED_DROP_WRAPPER);
-		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
-		Moderator.getCurrentAlgebraActivity().lowerEqArea.add(response);
-	}
-
-	@Override
-	public void onLeave(DragContext context) {
-		super.onLeave(context);
-		getDropTarget().removeStyleName(CSS.SELECTED_DROP_WRAPPER);
-		Moderator.getCurrentAlgebraActivity().lowerEqArea.remove(response);
 	}
 
 }

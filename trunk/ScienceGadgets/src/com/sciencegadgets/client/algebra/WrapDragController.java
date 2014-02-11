@@ -16,101 +16,112 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.LinkedList;
 
+import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
+import com.allen_sauer.gwt.dnd.client.util.DragClientBundle;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.Moderator;
 
 public class WrapDragController extends PickupDragController {
 
 	LinkedList<DropController> dropControllers = null;
-	Element dragDummy;
+	private SimplePanel proxy;
+	private int moveCounter = 0;
 
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
 		super(boundaryPanel, allowDroppingOnBoundaryPanel);
 
-		this.setBehaviorDragStartSensitivity(5);
+		this.setBehaviorDragStartSensitivity(2);
 		this.setBehaviorDragProxy(true);
-	}
-
-	@Override
-	public void dragEnd() {
-		super.dragEnd();
-		
-		for (DropController dropC : dropControllers) {
-			dropC.getDropTarget().removeStyleName(CSS.SELECTED_WRAPPER);
-		}
 	}
 
 	@Override
 	public void dragStart() {
 		super.dragStart();
+
+		proxy.getElement().getStyle().setOpacity(0);
 		
-		if (Moderator.isInEasyMode) {
-			for (DropController dropC : dropControllers) {
-				Widget target = dropC.getDropTarget();
-				if(!(target instanceof AbsolutePanel)){
-					target.addStyleName(CSS.SELECTED_WRAPPER);
-				}
-			}
-		}
+		((Wrapper)context.draggable).moved = true;
+
+		proxy.addStyleName(CSS.SELECTED_DROP_WRAPPER);
+//		for (DropController dropC : dropControllers) {
+//			Widget target = dropC.getDropTarget();
+//			if (!(target instanceof AbsolutePanel)) {
+//				target.addStyleName(CSS.SELECTED_DROP_WRAPPER);
+//			}
+//		}
 	}
 
 	@Override
-	public void registerDropController(DropController dropC) {
-		super.registerDropController(dropC);
-		if (dropControllers == null) {
-			dropControllers = new LinkedList<DropController>();
+	public void dragMove() {
+		super.dragMove();
+		
+		if(moveCounter == 2) {
+			proxy.getElement().getStyle().setOpacity(1);
+			context.draggable.getElement().getStyle().setOpacity(0);
 		}
-		dropControllers.add(dropC);
+		moveCounter++;
+	}
+	
+	@Override
+	public void dragEnd() {
+		super.dragEnd();
+
+		moveCounter=0;
+		
+		proxy.removeStyleName(CSS.SELECTED_DROP_WRAPPER);
+//		for (DropController dropC : dropControllers) {
+//			dropC.getDropTarget().removeStyleName(CSS.SELECTED_DROP_WRAPPER);
+//		}
+		
+		proxy.getElement().getStyle().clearOpacity();
+		context.draggable.getElement().getStyle().clearOpacity();
 	}
 
 	@Override
-	public void unregisterDropControllers() {
-		super.unregisterDropControllers();
-		if (dropControllers != null) {
-			dropControllers.clear();
-		}
+	protected Widget newDragProxy(DragContext context) {
+		Element selectedElement = context.draggable.getElement();
+		Node dragEl = selectedElement.cloneNode(true);
+		double pxPerEm = EquationHTML.getPxPerEm(selectedElement);
+
+		proxy = new SimplePanel();
+		proxy.addStyleName(DragClientBundle.INSTANCE.css().movablePanel());
+		proxy.getElement().getStyle().setFontSize(pxPerEm, Unit.PX);
+		proxy.getElement().appendChild(dragEl);
+
+		return proxy;
 	}
 
-	@Override
-	public void unregisterDropController(DropController dropC) {
-		super.unregisterDropController(dropC);
-		if (dropControllers != null) {
-			dropControllers.remove(dropC);
-		}
-	}
-
-	
-	
-	
-	
 //	@Override
-//	protected void restoreSelectedWidgetsLocation() {
-//		dragDummy.getParentElement().insertBefore(context.draggable.getElement(), dragDummy);
-//	    dragDummy.removeFromParent();
+//	public void registerDropController(DropController dropC) {
+//		super.registerDropController(dropC);
+//		if (dropControllers == null) {
+//			dropControllers = new LinkedList<DropController>();
+//		}
+//		dropControllers.add(dropC);
 //	}
 //
 //	@Override
-//	protected void restoreSelectedWidgetsStyle() {
-////	    for (Widget widget : context.selectedWidgets) {
-////	        SavedWidgetInfo info = savedWidgetInfoMap.get(widget);
-////	        widget.getElement().getStyle().setProperty("margin", info.initialDraggableMargin);
-////	      }
+//	public void unregisterDropControllers() {
+//		super.unregisterDropControllers();
+//		if (dropControllers != null) {
+//			dropControllers.clear();
+//		}
 //	}
 //
 //	@Override
-//	protected void saveSelectedWidgetsLocationAndStyle() {
-//	    Widget drag = context.selectedWidgets.get(0);
-//	    dragDummy = ((Element)drag.getElement().cloneNode(true));
-//	    dragDummy.getStyle().setColor("#555555");
-//	    drag.getElement().getParentElement().insertBefore(dragDummy, drag.getElement());
+//	public void unregisterDropController(DropController dropC) {
+//		super.unregisterDropController(dropC);
+//		if (dropControllers != null) {
+//			dropControllers.remove(dropC);
+//		}
 //	}
-	
-	
 
 }
