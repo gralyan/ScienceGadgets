@@ -379,7 +379,7 @@ public class BothSidesTransformations extends TransformationList {
 						&& TypeML.Operation.equals(operation.getType())) {
 					targetSide.append(operation);
 				}
-			} else if (isTopLevel) {
+			} else if (isTopLevel || !Moderator.isInEasyMode) {
 				targetSide.append(TypeML.Operation, TypeML.Operator
 						.getMultiply().getSign());
 			} else {
@@ -390,7 +390,7 @@ public class BothSidesTransformations extends TransformationList {
 
 			if (!Moderator.isInEasyMode) {
 				node = node.clone();
-				oldParent.encase(TypeML.Term);
+				oldParent=oldParent.encase(TypeML.Term);
 				oldParent.append(TypeML.Operation, Operator.getMultiply().getSign());
 				oldParent.append(node.clone());
 			}

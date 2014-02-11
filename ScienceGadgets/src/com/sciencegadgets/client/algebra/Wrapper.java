@@ -6,11 +6,12 @@ import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.HasTouchEndHandlers;
+import com.google.gwt.event.dom.client.HasTouchStartHandlers;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
@@ -20,11 +21,13 @@ import com.sciencegadgets.client.conversion.ConversionWrapper;
 import com.sciencegadgets.client.conversion.ReorderDropController;
 import com.sciencegadgets.shared.TypeML;
 
-public class Wrapper extends HTML implements HasHandlers {
+public class Wrapper extends HTML implements HasClickHandlers,
+		HasTouchStartHandlers, HasTouchEndHandlers {
 
 	protected MathNode node;
 	protected AbsolutePanel parentPanel;
-	private WrapDragController dragController = null;
+	protected WrapDragController dragController = null;
+	public boolean moved = false;
 
 	public Wrapper(MathNode node, final AbsolutePanel parentPanel,
 			Element element) {
@@ -41,7 +44,7 @@ public class Wrapper extends HTML implements HasHandlers {
 		this.getElement().getStyle().setZIndex(2);
 
 		if (Moderator.isTouch) {
-			addTouchStartHandler(new WrapperTouchStartHandler());
+			addTouchEndHandler(new WrapperTouchEndHandler());
 		} else {
 			addClickHandler(new WrapperClickHandler());
 		}
@@ -65,12 +68,10 @@ public class Wrapper extends HTML implements HasHandlers {
 	}
 
 	public void select() {
-		EquationPanel.selectedWrapper = this;
 		this.getElement().addClassName(CSS.SELECTED_WRAPPER);
 	}
 
 	public void unselect() {
-		EquationPanel.selectedWrapper = null;
 		this.getElement().removeClassName(CSS.SELECTED_WRAPPER);
 	}
 
@@ -104,7 +105,8 @@ public class Wrapper extends HTML implements HasHandlers {
 						controller = new ReorderDropController(
 								(ConversionWrapper) dropWraper);
 					} else if (dropWraper instanceof EquationWrapper) {
-						controller = new AssociativeDropController((EquationWrapper)dropWraper);
+						controller = new AssociativeDropController(
+								(EquationWrapper) dropWraper);
 					} else {
 						continue;
 					}
@@ -145,22 +147,21 @@ public class Wrapper extends HTML implements HasHandlers {
 	// Inner Classes
 	// ////////////////////////////////////////////////////////////////////
 	public class WrapperClickHandler implements ClickHandler {
-
 		@Override
 		public void onClick(ClickEvent event) {
-			event.preventDefault();
 			event.stopPropagation();
 			select();
 		}
 	}
-
-	class WrapperTouchStartHandler implements TouchStartHandler {
+	
+	class WrapperTouchEndHandler implements TouchEndHandler {
 		@Override
-		public void onTouchStart(TouchStartEvent event) {
-			event.preventDefault();
+		public void onTouchEnd(TouchEndEvent event) {
 			event.stopPropagation();
-
-			select();
+			if(!moved) {
+				select();
+			}
+			moved = false;
 		}
 	}
 

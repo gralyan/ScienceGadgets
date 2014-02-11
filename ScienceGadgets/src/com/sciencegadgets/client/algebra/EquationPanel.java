@@ -8,12 +8,12 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Duration;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.CSS;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -26,7 +26,7 @@ public class EquationPanel extends AbsolutePanel {
 	private MathTree mathTree;
 	private EquationLayer rootLayer;
 	private static EquationLayer focusLayer;
-	public static Wrapper selectedWrapper;
+	public Wrapper selectedWrapper;
 	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
 	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
 	private ArrayList<EquationWrapper> mathWrappers = new ArrayList<EquationWrapper>();
@@ -51,9 +51,9 @@ public class EquationPanel extends AbsolutePanel {
 		this.getElement().getStyle().setZIndex(1);
 
 		if (Moderator.isTouch) {
-			this.addDomHandler(new TouchStartHandler() {
+			this.addDomHandler(new TouchEndHandler() {
 				@Override
-				public void onTouchStart(TouchStartEvent event) {
+				public void onTouchEnd(TouchEndEvent event) {
 					if (OptionsHandler.optionsPopup.isShowing()) {
 						event.preventDefault();
 						event.stopPropagation();
@@ -62,7 +62,7 @@ public class EquationPanel extends AbsolutePanel {
 						setFocusOut();
 					}
 				}
-			}, TouchStartEvent.getType());
+			}, TouchEndEvent.getType());
 		} else {
 			this.addDomHandler(new ClickHandler() {
 				@Override
@@ -86,11 +86,7 @@ public class EquationPanel extends AbsolutePanel {
 		rootNode = mathTree.getRoot();
 		
 		modelEqLayer = new EquationLayer(null, mathTree.getDisplayClone());
-//		modelEqLayer = new EquationLayer(null, mathTree.getDisplay());
 		this.add(modelEqLayer);
-		//TODO update display in MathTree after it has been loaded
-//		mathTree.setDisplay(modelEqLayer.eqHTML);
-//		mathTree.eqHTML = modelEqLayer.eqHTML;
 
 		if (!algebraActivity.inEditMode) {
 			findRootLayerMergingNodes(rootNode);

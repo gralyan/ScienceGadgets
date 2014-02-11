@@ -62,11 +62,12 @@ public class MultiplyTransformations extends TransformationList {
 
 		try {
 			BigDecimal rightValue = new BigDecimal(right.getSymbol());
+			String rightUnits = right.getUnitAttribute();
 			if (rightValue.compareTo(zero) == same) {
 				return new MultiplyZeroButton(this, left, right);
-			} else if (rightValue.compareTo(one) == same) {
+			} else if (rightValue.compareTo(one) == same && "".equals(rightUnits)) {
 				return new MultiplyOneButton(this, left, right);
-			} else if (rightValue.compareTo(negOne) == same) {
+			} else if (rightValue.compareTo(negOne) == same && "".equals(rightUnits)) {
 				return new MultiplyNegOneButton(this, left, right);
 			}
 		} catch (NumberFormatException e) {
@@ -74,11 +75,12 @@ public class MultiplyTransformations extends TransformationList {
 
 		try {
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
+			String leftUnits = right.getUnitAttribute();
 			if (leftValue.compareTo(zero) == same) {
 				return new MultiplyZeroButton(this, right, left);
-			} else if (leftValue.compareTo(one) == same) {
+			} else if (leftValue.compareTo(one) == same && "".equals(leftUnits)) {
 				return new MultiplyOneButton(this, right, left);
-			} else if (leftValue.compareTo(negOne) == same) {
+			} else if (leftValue.compareTo(negOne) == same && "".equals(leftUnits)) {
 				return new MultiplyNegOneButton(this, right, left);
 			}
 		} catch (NumberFormatException e) {

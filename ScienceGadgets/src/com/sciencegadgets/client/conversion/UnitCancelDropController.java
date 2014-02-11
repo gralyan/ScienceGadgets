@@ -1,12 +1,10 @@
 package com.sciencegadgets.client.conversion;
 
-import java.util.LinkedList;
-
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;

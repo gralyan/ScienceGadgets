@@ -6,17 +6,18 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
-public class AssociativeDropController extends AbstractDropController {
+public class AssociativeDropController extends TransformationDropController {
 	
-	Label switchResponse = new Label("Switch");
-
 	public AssociativeDropController(EquationWrapper dropWrapper) {
 		super(dropWrapper);
+		
+		response.setText(ResponseNote.Switch.toString());
 	}
 
 	@Override
@@ -76,18 +77,4 @@ public class AssociativeDropController extends AbstractDropController {
 		Moderator.reloadEquationPanel("Associative Property", Rule.COMMUNATIVE_PROPERTY);
 	}
 
-	@Override
-	public void onEnter(DragContext context) {
-		super.onEnter(context);
-		getDropTarget().addStyleName(CSS.SELECTED_DROP_WRAPPER);
-		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
-		Moderator.getCurrentAlgebraActivity().lowerEqArea.add(switchResponse);
-	}
-
-	@Override
-	public void onLeave(DragContext context) {
-		super.onLeave(context);
-		getDropTarget().removeStyleName(CSS.SELECTED_DROP_WRAPPER);
-		Moderator.getCurrentAlgebraActivity().lowerEqArea.remove(switchResponse);
-	}
 }
