@@ -67,7 +67,7 @@ public class EquationWrapper extends Wrapper {
 		if (this.equals(eqPanel.selectedWrapper)) {
 
 			// If this was already selected, focus in on it
-			if (node.hasChildElements()) {
+			if (node.hasChildElements() && (dragController==null || !dragController.isDragging())) {
 				unselect();
 				eqPanel.setFocus(getEqLayer());
 			}
