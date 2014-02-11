@@ -68,8 +68,6 @@ public class ConversionWrapper extends Wrapper {
 				String targetUnitAttribute = targetNode.getAttribute(MathAttribute.Unit);
 				String nodeUnitName = UnitUtil.getUnitNames(nodeUnitAttribute)[0];
 				String targetUnitName = UnitUtil.getUnitNames(targetUnitAttribute)[0];
-				System.out.println("at "+nodeUnitAttribute);
-				System.out.println("n "+nodeUnitName);
 				if(nodeUnitName.equals(targetUnitName)) {
 					ConversionWrapper targetWrapper = (ConversionWrapper) targetNode.getWrapper();
 					UnitCancelDropController dropController = new UnitCancelDropController(targetWrapper, targetUnitAttribute,nodeUnitAttribute, nodeUnitName );

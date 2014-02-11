@@ -33,6 +33,7 @@ public class WrapDragController extends PickupDragController {
 	LinkedList<DropController> dropControllers = null;
 	private SimplePanel proxy;
 	private int moveCounter = 0;
+	private boolean isDragging = false;
 
 	public WrapDragController(AbsolutePanel boundaryPanel,
 			boolean allowDroppingOnBoundaryPanel) {
@@ -41,28 +42,32 @@ public class WrapDragController extends PickupDragController {
 		this.setBehaviorDragStartSensitivity(2);
 		this.setBehaviorDragProxy(true);
 	}
+	
+	public boolean isDragging() {
+		return isDragging;
+	}
 
 	@Override
 	public void dragStart() {
+		
+		isDragging = true;
+		
+		
+		((Wrapper)context.draggable).moved = true;
+		((Wrapper)context.draggable).select();
+
 		super.dragStart();
 
 		proxy.getElement().getStyle().setOpacity(0);
-		
-		((Wrapper)context.draggable).moved = true;
 
-		proxy.addStyleName(CSS.SELECTED_DROP_WRAPPER);
-//		for (DropController dropC : dropControllers) {
-//			Widget target = dropC.getDropTarget();
-//			if (!(target instanceof AbsolutePanel)) {
-//				target.addStyleName(CSS.SELECTED_DROP_WRAPPER);
-//			}
-//		}
+		//		proxy.addStyleName(CSS.SELECTED_DROP_WRAPPER);
 	}
 
 	@Override
 	public void dragMove() {
 		super.dragMove();
 		
+		// Wait a bit to avoid flicker
 		if(moveCounter == 2) {
 			proxy.getElement().getStyle().setOpacity(1);
 			context.draggable.getElement().getStyle().setOpacity(0);
@@ -76,13 +81,12 @@ public class WrapDragController extends PickupDragController {
 
 		moveCounter=0;
 		
-		proxy.removeStyleName(CSS.SELECTED_DROP_WRAPPER);
-//		for (DropController dropC : dropControllers) {
-//			dropC.getDropTarget().removeStyleName(CSS.SELECTED_DROP_WRAPPER);
-//		}
+//		proxy.removeStyleName(CSS.SELECTED_DROP_WRAPPER);
 		
 		proxy.getElement().getStyle().clearOpacity();
 		context.draggable.getElement().getStyle().clearOpacity();
+		
+		isDragging = false;
 	}
 
 	@Override
