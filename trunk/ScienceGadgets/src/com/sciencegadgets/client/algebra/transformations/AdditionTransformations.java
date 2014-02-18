@@ -8,10 +8,9 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -268,8 +267,8 @@ public class AdditionTransformations extends TransformationList {
 	private MathNode getTerm(MathNode node) {
 		switch (node.getType()) {
 		case Fraction:
-			if (TypeML.Term.equals(left.getChildAt(0).getType())) {
-				return left.getChildAt(0);
+			if (TypeML.Term.equals(node.getChildAt(0).getType())) {
+				return node.getChildAt(0);
 			}
 			return null;
 		case Term:
@@ -673,7 +672,10 @@ class AddLogsButton extends AddTransformButton {
 }
 
 /**
- * x+x = 2x
+ * x+x = 2x<br/>
+ * -x-x = -2x<br/>
+ * x-x = 0<br/>
+ * -x+x = 0<br/>
  */
 class AddSimilarButton extends AddTransformButton {
 	AddSimilarButton(AdditionTransformations context) {

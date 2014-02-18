@@ -6,11 +6,15 @@ import com.google.gwt.user.client.ui.TextBox;
 public class Admin implements EntryPoint {
 
 	TextBox inputBox = new TextBox();
-	AppEngineData data = new AppEngineData();
+//	AppEngineData data = new AppEngineData();
 
 
 	@Override
 	public void onModuleLoad() {
+		
+		TestBot_Transformations testBot = new TestBot_Transformations();
+		
+		testBot.testAddition_scenario();
 		
 //		try {
 //			TestBot_Addition.deployTestBot();

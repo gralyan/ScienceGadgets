@@ -69,57 +69,7 @@ public class AlgebaWrapper extends EquationWrapper {
 				algTransformMenu.addStyleName(CSS.LAYOUT_ROW);
 				algTransformMenu.setSize("100%", "100%");
 
-				TransformationList transorms = new TransformationList();
-
-				transorms.addAll(new BothSidesTransformations(node));
-
-				switch (node.getType()) {
-				case Exponential:
-					transorms.add(AlgebraicTransformations
-							.unravelExpLog_check(node));
-					transorms.addAll(new ExponentialTransformations(node));
-					break;
-				case Operation:
-					transorms.addAll(AlgebraicTransformations.operation(node));
-					break;
-				case Number:
-					transorms.add(AlgebraicTransformations
-							.separateNegative_check(node));
-					transorms.add(AlgebraicTransformations
-							.factorizeNumbers_check(node));
-					transorms.add(AlgebraicTransformations
-							.unitConversion_check(node));
-					break;
-				case Variable:
-					transorms.add(AlgebraicTransformations
-							.separateNegative_check(node));
-					transorms.addAll(AlgebraicTransformations
-							.isolatedVariable_check(node));
-					break;
-				case Log:
-					transorms.add(AlgebraicTransformations
-							.unravelLogExp_check(node));
-					transorms.addAll(new LogarithmicTransformations(node));
-					break;
-				case Trig:
-					transorms.add(AlgebraicTransformations
-							.inverseTrig_check(node));
-					transorms.addAll(new TrigTransformations(node));
-					break;
-				case Fraction:
-				case Sum:
-				case Term:
-					// These wrappers shouldn't have transformations because
-					// they are merged into the top layer if direct child of the
-					// root
-					break;
-				}
-
-				if (TypeML.Fraction.equals(node.getParentType())
-						&& node.getIndex() == 1) {
-					transorms.add(AlgebraicTransformations
-							.denominatorFlip_check(node));
-				}
+				TransformationList transorms = new TransformationList(node);
 
 				algTransformMenu.addAll(transorms);
 			}
