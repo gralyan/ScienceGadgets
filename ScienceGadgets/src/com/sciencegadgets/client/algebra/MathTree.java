@@ -30,6 +30,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
@@ -84,17 +85,32 @@ public class MathTree {
 		getRightSide().replace(rightType, righSymbol);
 	}
 
-	private static Element newDummyElement() {
-		Element root = DOM.createElement(TypeML.Equation.getTag());
+	public MathTree(boolean inEditMode) {
+		this(newDummyElement(), inEditMode);
+	}
 
-		Element dummySide = DOM.createElement(TypeML.Variable.getTag());
+	private static Element newDummyElement() {
 		Element eq = DOM.createElement(TypeML.Operation.getTag());
 		eq.setInnerText("=");
-		dummySide.setInnerText("a");
-		root.appendChild(dummySide);
+		eq.setAttribute("id", "dummyNodeEquals");
+		
+		Element dummyLeft = DOM.createElement(TypeML.Variable.getTag());
+		dummyLeft.setInnerText("a");
+		dummyLeft.setAttribute("id", "dummyNodeLeft");
+
+		Element dummyRight  = DOM.createElement(TypeML.Variable.getTag());
+		dummyRight.setInnerText("a");
+		dummyRight.setAttribute("id", "dummyNodeRight");
+		
+		Element root = DOM.createElement(TypeML.Equation.getTag());
+		root.appendChild(dummyLeft);
 		root.appendChild(eq);
-		root.appendChild(dummySide.cloneNode(true));
+		root.appendChild(dummyRight);
 		return root;
+	}
+
+	public MathTree clone() {
+		return new MathTree(getMathXMLClone(), isInEditMode());
 	}
 
 	public boolean isInEditMode() {
@@ -107,7 +123,6 @@ public class MathTree {
 
 	public String getMathXMLString() {
 		String mlString = JSNICalls.elementToString(mathXML);
-		// TODO test
 		mlString = mlString.replace(
 				" xmlns=\"http://www.w3.org/1998/Math/MathML\"", "").replace(
 				" xmlns=\"http://www.w3.org/1999/xhtml\"", "");
@@ -146,22 +161,21 @@ public class MathTree {
 	}
 
 	public String getLeftDisplay() {
-		System.out.println(JSNICalls.elementToString(eqHTML.getLeft()));
-		System.out.println(eqHTML.getHTML());
 		return JSNICalls.elementToString(eqHTML.getLeft());
 	}
 
 	public String getRightDisplay() {
 		return JSNICalls.elementToString(eqHTML.getRight());
 	}
-	
+
 	public EquationHTML getDisplayClone() {
 		return new EquationHTML(this);
 	}
+
 	public EquationHTML getDisplay() {
 		return eqHTML;
 	}
-	
+
 	public void setDisplay(EquationHTML equationHTML) {
 		for (Wrapper w : wrappers) {
 			if (w instanceof EditWrapper) {
@@ -173,7 +187,7 @@ public class MathTree {
 			w.getElement().removeFromParent();
 		}
 		wrappers.clear();
-		
+
 		this.eqHTML = equationHTML;
 
 		NodeList<Element> allElements = eqHTML.getElement()
@@ -193,11 +207,11 @@ public class MathTree {
 			el.removeAttribute("id");
 		}
 	}
-	
+
 	public EquationHTML reloadDisplay(boolean hasSmallUnits) {
 
 		EquationHTML equationHTML = new EquationHTML(this, hasSmallUnits);
-		equationHTML.pilot=true;
+		equationHTML.pilot = true;
 		setDisplay(equationHTML);
 		return equationHTML;
 	}
@@ -207,6 +221,9 @@ public class MathTree {
 	}
 
 	public MathNode getNodeById(String id) throws NoSuchElementException {
+		for (Entry<String, MathNode> a : idMap.entrySet()) {
+		}
+
 		MathNode node = idMap.get(id);
 		if (node == null) {
 			JSNICalls.error("Can't get node by id: " + id + "\n"
@@ -216,16 +233,34 @@ public class MathTree {
 		return node;
 	}
 
-	public MathNode NEW_NODE(Element mlNode) {
-		return new MathNode(mlNode);
+	public MathNode NEW_NODE(Element xmlNode) {
+		MathNode newNode = new MathNode(xmlNode);
+		AddToMaps(newNode);
+
+		NodeList<Element> descendants = xmlNode.getElementsByTagName("*");
+		for (int i = 0; i < descendants.getLength(); i++) {
+			Element descendantEl = descendants.getItem(i);
+			AddToMaps(new MathNode(descendantEl));
+		}
+
+		return newNode;
 	}
 
 	public MathNode NEW_NODE(TypeML type, String symbol) {
-		return new MathNode(type, symbol);
+		MathNode newNode = new MathNode(type, symbol);
+		AddToMaps(newNode);
+		return newNode;
 	}
 
-	private String createId() {
-		return "ML" + idCounter++;
+	private String createId(String prevId) {
+		if (!"".equals(prevId) && !idMap.containsKey(prevId)) {
+			return prevId;
+		}
+		String id = "ML" + idCounter++;
+		while (idMap.containsKey(id)) {
+			id = "ML" + idCounter++;
+		}
+		return id;
 	}
 
 	public void validateTree() {
@@ -253,9 +288,8 @@ public class MathTree {
 
 	private void AddToMaps(MathNode node) {
 		String id = node.getId();
-		if (id == "") {
-			id = createId();
-		}
+		id = createId(id);
+
 		// add node to binding map
 		if (!idMap.containsKey(id)) {
 			idMap.put(id, node);
@@ -274,7 +308,8 @@ public class MathTree {
 		if (type != null) {
 			tag = type.getTag();
 		}
-		NodeList<Element> elements = root.getXMLNode().getElementsByTagName(tag);
+		NodeList<Element> elements = root.getXMLNode()
+				.getElementsByTagName(tag);
 		for (int i = 0; i < elements.getLength(); i++) {
 			String id = elements.getItem(i).getAttribute("id");
 			nodes.add(idMap.get(id));
@@ -295,9 +330,9 @@ public class MathTree {
 		 */
 		public MathNode(Element mlNode) {
 
-			if ("".equals(mlNode.getAttribute("id"))) {
-				mlNode.setAttribute("id", createId());
-			}
+			String id = mlNode.getAttribute("id");
+			id = createId(id);
+			mlNode.setAttribute("id", id);
 
 			this.xmlNode = mlNode;
 		}
@@ -319,7 +354,7 @@ public class MathTree {
 			String tag = type.getTag();
 
 			com.google.gwt.user.client.Element newNode = DOM.createElement(tag);
-			newNode.setAttribute("id", createId());
+			newNode.setAttribute("id", createId(""));
 
 			this.xmlNode = newNode;
 
@@ -609,6 +644,13 @@ public class MathTree {
 			idMap.remove(id);
 			idMLMap.remove(id);
 			xmlNode.removeFromParent();
+
+			if (wrapper instanceof EditWrapper) {
+				((EditWrapper) wrapper).onUnload();
+
+			} else if (wrapper instanceof AlgebaWrapper) {
+				((AlgebaWrapper) wrapper).onUnload();
+			}
 			wrappers.remove(wrapper);
 		}
 
@@ -668,14 +710,17 @@ public class MathTree {
 				switch (getType()) {
 				case Number:
 					if (ChangeNodeMenu.NOT_SET.equals(symbol)
-						|| RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
+							|| RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 						xmlNode.setInnerText(symbol);
-					}else {
+					} else {
 						BigDecimal value = new BigDecimal(symbol);
-						BigDecimal roundedValue = value.round(new MathContext(3));
+						BigDecimal roundedValue = value
+								.round(new MathContext(3));
 						String tilda = value.equals(roundedValue) ? "" : "~";
-						xmlNode.setInnerText(tilda + roundedValue.stripTrailingZeros());
-						setAttribute(MathAttribute.Value, value.stripTrailingZeros().toString());
+						xmlNode.setInnerText(tilda
+								+ roundedValue.stripTrailingZeros());
+						setAttribute(MathAttribute.Value, value
+								.stripTrailingZeros().toString());
 						break;
 					}
 				case Variable:
@@ -713,7 +758,6 @@ public class MathTree {
 			}
 			return "";
 		}
-
 
 		public Wrapper wrap(Wrapper wrap) {
 			wrapper = wrap;
@@ -835,7 +879,10 @@ public class MathTree {
 		public Element getHTML() {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
-				JSNICalls.warn("No HTML for node: " + toString());
+				getTree().reloadDisplay(true);
+				Element el2 = idHTMLMap.get(getId());
+				JSNICalls.error("No HTML for node: " + toString());
+				return (Element) el2;
 			}
 			return (Element) el;
 		}
@@ -926,30 +973,31 @@ public class MathTree {
 
 	private void bindXMLtoNodes(Node mathXMLequation) {
 		Element rootNode = (Element) mathXMLequation;
-		root = new MathNode(rootNode);
 
-		bindXMLtoNodeRecursive(rootNode);
+		root = bindXMLtoNodeRecursive(rootNode);
 
-		validateTree();
+		// TODO
+		// validateTree();
 	}
 
-	private void bindXMLtoNodeRecursive(Element mathMLNode) {
-		String id = createId();
+	private MathNode bindXMLtoNodeRecursive(Element mathMLNode) {
 
+		String id = createId(mathMLNode.getAttribute("id"));
 		mathMLNode.setAttribute("id", id);
 
+		MathNode mathNode = new MathNode(mathMLNode);
+		idMap.put(id, mathNode);
 		idMLMap.put(id, mathMLNode);
-		idMap.put(id, new MathNode(mathMLNode));
 
 		NodeList<Node> mathMLChildren = mathMLNode.getChildNodes();
 		for (int i = 0; i < mathMLChildren.getLength(); i++) {
 			Element currentNode = (Element) mathMLChildren.getItem(i);
 
-			// Nodes with no children are either inner text or formatting only
-			if (currentNode.getChildCount() > 0) {
+			if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
 				bindXMLtoNodeRecursive((Element) currentNode);
 			}
 		}
+		return mathNode;
 	}
 
 }

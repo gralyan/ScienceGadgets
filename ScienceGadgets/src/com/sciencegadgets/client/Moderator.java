@@ -64,16 +64,18 @@ public class Moderator implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		History.addValueChangeHandler(new HistoryChange<String>());
+//		History.addValueChangeHandler(new HistoryChange<String>());
+//
+//		// // Resize area when window resizes
+//		fitWindow();
+//		Window.addResizeHandler(new ResizeAreaHandler());
+//
+//		detectTouch();
+//
+//		switchToBrowser();
 
-		// // Resize area when window resizes
-		fitWindow();
-		Window.addResizeHandler(new ResizeAreaHandler());
-
-		detectTouch();
-
-		switchToBrowser();
-
+		
+		
 		// Blobs
 		// scienceGadgetArea.add(new UploadButton());
 

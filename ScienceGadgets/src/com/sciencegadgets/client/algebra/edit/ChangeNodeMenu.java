@@ -27,7 +27,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 	private static final Object[][] types = {//
 	{ TypeML.Number, "#" }, //
-			{ TypeML.Variable, "x" },//
+			{ TypeML.Variable, "a" },//
 			{ TypeML.Sum, NOT_SET + "+" + NOT_SET },//
 			{ TypeML.Term, NOT_SET + Operator.DOT.getSign() + NOT_SET },//
 			{ TypeML.Fraction, "<div style='border-bottom: thin solid;'>"//
