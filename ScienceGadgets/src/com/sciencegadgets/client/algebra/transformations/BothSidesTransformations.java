@@ -37,7 +37,8 @@ public class BothSidesTransformations extends TransformationList {
 	private static final String DIVIDE = TypeML.Operator.DIVIDE.getSign();
 
 	public BothSidesTransformations(MathNode node) {
-
+		super(node);
+		
 		TypeML type = node.getType();
 		if (TypeML.Operation.equals(type)) {
 			return;
@@ -67,20 +68,20 @@ public class BothSidesTransformations extends TransformationList {
 				if (node.getIndex() > 0) {
 					String opNode = node.getPrevSibling().getSymbol();
 					if (MINUS.equals(opNode)) {
-						this.add(new BothSidesButton(Math.ADD));
+						this.add(new BothSidesButton(Math.ADD, this));
 					} else if (PLUS.equals(opNode)) {
-						this.add(new BothSidesButton(Math.SUBTRACT));
+						this.add(new BothSidesButton(Math.SUBTRACT, this));
 					} else {
 						JSNICalls.warn("The opperator should be + or -");
 					}
 				} else {
-					this.add(new BothSidesButton(Math.SUBTRACT));
+					this.add(new BothSidesButton(Math.SUBTRACT, this));
 				}
 			}
 			break parent;
 		case Term:
 			if (isTopLevel) {
-				this.add(new BothSidesButton(Math.DIVIDE));
+				this.add(new BothSidesButton(Math.DIVIDE, this));
 			}
 			if (TypeML.Fraction.equals(parentNode.getParent().getType())
 					&& !TypeML.Operation.equals(node.getType())) {
@@ -89,9 +90,9 @@ public class BothSidesTransformations extends TransformationList {
 
 					isNestedInFraction = true;
 					if (parentNode.getIndex() == 0) {
-						this.add(new BothSidesButton(Math.DIVIDE));
+						this.add(new BothSidesButton(Math.DIVIDE, this));
 					} else {
-						this.add(new BothSidesButton(Math.MULTIPLY));
+						this.add(new BothSidesButton(Math.MULTIPLY, this));
 					}
 				}
 			}
@@ -99,31 +100,31 @@ public class BothSidesTransformations extends TransformationList {
 		case Fraction:
 			if (isTopLevel) {
 				if (node.getIndex() == 0) {
-					this.add(new BothSidesButton(Math.DIVIDE));
+					this.add(new BothSidesButton(Math.DIVIDE, this));
 				} else {
-					this.add(new BothSidesButton(Math.MULTIPLY));
+					this.add(new BothSidesButton(Math.MULTIPLY, this));
 				}
 			}
 			break parent;
 		case Exponential:
 			if (isTopLevel) {
 				if (node.getIndex() == 1) {
-					this.add(new BothSidesButton(Math.INVERSE_EXPONENT));
+					this.add(new BothSidesButton(Math.INVERSE_EXPONENT, this));
 				} else if (node.getIndex() == 0 && TypeML.Number.equals(type)) {
-					this.add(new BothSidesButton(Math.LOG));
+					this.add(new BothSidesButton(Math.LOG, this));
 				}
 			}
 			break parent;
 		case Equation:
 			isSide = true;
-			this.add(new BothSidesButton(Math.SUBTRACT));
-			this.add(new BothSidesButton(Math.DIVIDE));
+			this.add(new BothSidesButton(Math.SUBTRACT, this));
+			this.add(new BothSidesButton(Math.DIVIDE, this));
 			eq: switch (type) {
 			case Log:
-				this.add(new BothSidesButton(Math.RAISE));
+				this.add(new BothSidesButton(Math.RAISE, this));
 				break eq;
 			case Trig:
-				this.add(new BothSidesButton(Math.INVERSE_TRIG));
+				this.add(new BothSidesButton(Math.INVERSE_TRIG, this));
 				break eq;
 			}
 			break parent;
@@ -137,7 +138,8 @@ public class BothSidesTransformations extends TransformationList {
 
 	class BothSidesButton extends TransformationButton {
 
-		BothSidesButton(Math operation) {
+		BothSidesButton(Math operation, TransformationList context) {
+			super(context);
 
 			addStyleName(CSS.BOTH_SIDES_BUTTON);
 

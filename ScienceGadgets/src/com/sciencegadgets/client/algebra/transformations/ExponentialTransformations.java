@@ -25,6 +25,8 @@ public class ExponentialTransformations extends TransformationList {
 	TypeML exponentType;
 
 	public ExponentialTransformations(MathNode exponentialNode) {
+		super(exponentialNode);
+		
 		exponential = exponentialNode;
 		base = exponential.getChildAt(0);
 		exponent = exponential.getChildAt(1);
@@ -36,6 +38,7 @@ public class ExponentialTransformations extends TransformationList {
 		add(exponentialExponentiate_check());
 		add(exponentialPropagate_check());
 		add(exponentialFlip_check());
+		add(unravelExpLog_check());
 	}
 
 	private ExponentialTransformButton exponentialEvaluate_check() {
@@ -89,6 +92,26 @@ public class ExponentialTransformations extends TransformationList {
 		}
 		return null;
 	}
+	
+
+	/**
+	 * Check if: (log base = exponential base)<br/>
+	 * b<sup>log<sub>b</sub>(x)</sup> = x
+	 */
+	public TransformationButton unravelExpLog_check() {
+		MathNode log = exponential.getChildAt(1);
+		if (TypeML.Log.equals(log.getType())) {
+			String logBase = log.getAttribute(MathAttribute.LogBase);
+			MathNode exponentialBase = exponential.getFirstChild();
+			if (TypeML.Number.equals(exponentialBase.getType())
+					&& exponentialBase.getSymbol().equals(logBase)) {
+				return new UnravelButton(exponential, log.getFirstChild(),
+						Rule.LOGARITHM, this);
+
+			}
+		}
+		return null;
+	}
 }
 
 // ////////////////////////////////////////////////
@@ -100,7 +123,7 @@ class ExponentialTransformButton extends TransformationButton {
 	final MathNode exponent;
 
 	ExponentialTransformButton(ExponentialTransformations context, String html) {
-		super(html);
+		super(html, context);
 		addStyleName(CSS.EXPONENTIAL +" "+CSS.DISPLAY_WRAPPER);
 		this.exponential = context.exponential;
 		this.base = context.base;

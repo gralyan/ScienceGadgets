@@ -26,12 +26,14 @@ public class MultiplyTransformations extends TransformationList {
 	TypeML leftType;
 	TypeML rightType;
 
-	public MultiplyTransformations(MathNode left, MathNode multiplyNode,
-			MathNode right) {
+	public MultiplyTransformations(MathNode multiplyNode) {
+		super(multiplyNode);
 
-		this.left = left;
+		this.parent = multiplyNode.getParent();
+
+		this.left = multiplyNode.getPrevSibling();
 		this.operation = multiplyNode;
-		this.right = right;
+		this.right = multiplyNode.getNextSibling();
 
 		this.leftType = left.getType();
 		this.rightType = right.getType();
@@ -42,14 +44,14 @@ public class MultiplyTransformations extends TransformationList {
 		add(multiplyDistribution_check());
 		add(multiplyCombineBases_check());
 		add(multiplyCombineExponents_check());
-		add(logRule_check());
+		add(multiplyLogRule_check());
 
 	}
 
 	/**
 	 * Multiplying by one of the specially designated numbers (-1, 0 1)
 	 */
-	private MultiplyTransformButton multiplySpecialNumber_check() {
+	MultiplyTransformButton multiplySpecialNumber_check() {
 
 		if (!TypeML.Number.equals(leftType) && !TypeML.Number.equals(rightType)) {
 			return null;
@@ -65,9 +67,11 @@ public class MultiplyTransformations extends TransformationList {
 			String rightUnits = right.getUnitAttribute();
 			if (rightValue.compareTo(zero) == same) {
 				return new MultiplyZeroButton(this, left, right);
-			} else if (rightValue.compareTo(one) == same && "".equals(rightUnits)) {
+			} else if (rightValue.compareTo(one) == same
+					&& "".equals(rightUnits)) {
 				return new MultiplyOneButton(this, left, right);
-			} else if (rightValue.compareTo(negOne) == same && "".equals(rightUnits)) {
+			} else if (rightValue.compareTo(negOne) == same
+					&& "".equals(rightUnits)) {
 				return new MultiplyNegOneButton(this, left, right);
 			}
 		} catch (NumberFormatException e) {
@@ -80,7 +84,8 @@ public class MultiplyTransformations extends TransformationList {
 				return new MultiplyZeroButton(this, right, left);
 			} else if (leftValue.compareTo(one) == same && "".equals(leftUnits)) {
 				return new MultiplyOneButton(this, right, left);
-			} else if (leftValue.compareTo(negOne) == same && "".equals(leftUnits)) {
+			} else if (leftValue.compareTo(negOne) == same
+					&& "".equals(leftUnits)) {
 				return new MultiplyNegOneButton(this, right, left);
 			}
 		} catch (NumberFormatException e) {
@@ -92,7 +97,7 @@ public class MultiplyTransformations extends TransformationList {
 	 * Multiply two numbers, prompts for the product unless the user skill level
 	 * is high enough
 	 */
-	private MultiplyTransformButton multiplyNumbers_check() {
+	MultiplyTransformButton multiplyNumbers_check() {
 
 		if (!(TypeML.Number.equals(leftType) && TypeML.Number.equals(rightType))) {
 			return null;
@@ -111,7 +116,7 @@ public class MultiplyTransformations extends TransformationList {
 	/**
 	 * x &middot; (y+z) = xy + xz
 	 */
-	private MultiplyTransformButton multiplyDistribution_check() {
+	MultiplyTransformButton multiplyDistribution_check() {
 
 		if (TypeML.Sum.equals(rightType)) {
 			return new MultiplyDistributionButton(this, left, right, true);
@@ -125,7 +130,7 @@ public class MultiplyTransformations extends TransformationList {
 	/**
 	 * x<sup>a</sup> &middot; y<sup>a</sup> = (x &middot; y)<sup>a</sup>
 	 */
-	private MultiplyTransformButton multiplyCombineExponents_check() {
+	MultiplyTransformButton multiplyCombineExponents_check() {
 
 		if (!TypeML.Exponential.equals(leftType)
 				|| !TypeML.Exponential.equals(rightType)) {
@@ -146,7 +151,7 @@ public class MultiplyTransformations extends TransformationList {
 	 * ex: x &middot; x = x<sup>1+1</sup> <br/>
 	 * ex: x<sup>a</sup> &middot; x = x<sup>a+1</sup>
 	 */
-	private MultiplyTransformButton multiplyCombineBases_check() {
+	MultiplyTransformButton multiplyCombineBases_check() {
 
 		// May not already be in exponent eg. a = a^1
 		// could factor out entire side rather than just base
@@ -174,7 +179,7 @@ public class MultiplyTransformations extends TransformationList {
 	 * x/y &middot; a/b = (xa)/(yb)<br/>
 	 * x &middot; a/b = (xa)/b
 	 */
-	private MultiplyTransformButton multiplyFraction_check() {
+	MultiplyTransformButton multiplyFraction_check() {
 		if (TypeML.Fraction.equals(rightType)
 				&& TypeML.Fraction.equals(leftType)) {
 			return new MultiplyFractionsButton(this);
@@ -192,7 +197,7 @@ public class MultiplyTransformations extends TransformationList {
 	/**
 	 * x &middot; log<sub>b</sub>(a) = log<sub>b</sub>(a<sup>x</sup>)
 	 */
-	private MultiplyTransformButton logRule_check() {
+	MultiplyTransformButton multiplyLogRule_check() {
 
 		if (TypeML.Log.equals(rightType)) {
 			return new MultiplyLogRuleButton(this, left, right);
@@ -209,22 +214,35 @@ public class MultiplyTransformations extends TransformationList {
 // Transform buttons
 // ///////////////////////////////////////////////
 class MultiplyTransformButton extends TransformationButton {
-	final MathNode left;
-	final MathNode right;
-	final MathNode operation;
-	final MathNode parent;
+	MathNode left;
+	MathNode right;
+	MathNode operation;
+	MathNode parent;
+
+	protected boolean reloadAlgebraActivity;
+	protected MultiplyTransformations previewContext;
 
 	MultiplyTransformButton(MultiplyTransformations context, String html) {
-		super(html);
-		addStyleName(CSS.TERM +" "+CSS.DISPLAY_WRAPPER);
+		super(context);
+		addStyleName(CSS.TERM + " " + CSS.DISPLAY_WRAPPER);
+
 		this.left = context.left;
 		this.right = context.right;
 		this.operation = context.operation;
-		this.parent = operation.getParent();
+		this.parent = context.parent;
 
+		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
+		
 		left.highlight();
 		operation.highlight();
 		right.highlight();
+	}
+
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		previewContext = new MultiplyTransformations(operation);
+		previewContext.reloadAlgebraActivity = false;
+		return null;
 	}
 }
 
@@ -264,11 +282,20 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel(
-						otherSymbol + " " + operation.toString() + " 0 = 0",
-						Rule.MULTIPLICATION);
+				if (reloadAlgebraActivity) {
+					Moderator
+							.reloadEquationPanel(
+									otherSymbol + " " + operation.toString()
+											+ " 0 = 0", Rule.MULTIPLICATION);
+
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplySpecialNumber_check();
 	}
 }
 
@@ -292,11 +319,19 @@ class MultiplyOneButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel(
-						otherSymbol + " " + operation.toString() + " 1 = "
-								+ otherSymbol, Rule.MULTIPLICATION);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel(
+							otherSymbol + " " + operation.toString() + " 1 = "
+									+ otherSymbol, Rule.MULTIPLICATION);
+
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplySpecialNumber_check();
 	}
 }
 
@@ -322,11 +357,20 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel(
-						otherSymbol + " " + operation.toString() + " -1 = -"
-								+ otherSymbol, Rule.MULTIPLICATION);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel(
+							otherSymbol + " " + operation.toString()
+									+ " -1 = -" + otherSymbol,
+							Rule.MULTIPLICATION);
+
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplySpecialNumber_check();
 	}
 }
 
@@ -348,6 +392,9 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 				if (Moderator.isInEasyMode) {
 					multiplyNumbers(left, right, totalValue, leftValue,
 							rightValue);
+
+				}else if(!reloadAlgebraActivity) {
+					parent.replace(TypeML.Variable, "# · #");
 
 				} else {// prompt
 
@@ -386,15 +433,22 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		Moderator.reloadEquationPanel(leftValue.stripTrailingZeros()
-				.toEngineeringString()
-				+ " "
-				+ operation.toString()
-				+ " "
-				+ rightValue.stripTrailingZeros().toEngineeringString()
-				+ " = "
-				+ totalValue.stripTrailingZeros().toEngineeringString(),
-				Rule.MULTIPLICATION);
+		if (reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel(leftValue.stripTrailingZeros()
+					.toEngineeringString()
+					+ " "
+					+ operation.toString()
+					+ " "
+					+ rightValue.stripTrailingZeros().toEngineeringString()
+					+ " = "
+					+ totalValue.stripTrailingZeros().toEngineeringString(),
+					Rule.MULTIPLICATION);
+		}
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplyNumbers_check();
 	}
 }
 
@@ -409,6 +463,7 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
+				
 
 				for (MathNode sumChild : sum.getChildren()) {
 					if (!TypeML.Operation.equals(sumChild.getType())) {
@@ -427,10 +482,18 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Distribute",
-						Rule.DISTRIBUTIVE_PROPERTY);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Distribute",
+							Rule.DISTRIBUTIVE_PROPERTY);
+
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplyDistribution_check();
 	}
 }
 
@@ -457,11 +520,18 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Combine Exponents",
-						Rule.EXPONENT_PROPERTIES);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Combine Exponents",
+							Rule.EXPONENT_PROPERTIES);
 
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplyCombineExponents_check();
 	}
 }
 
@@ -518,10 +588,18 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Combine Bases",
-						Rule.EXPONENT_PROPERTIES);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Combine Bases",
+							Rule.EXPONENT_PROPERTIES);
+
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplyCombineBases_check();
 	}
 }
 
@@ -547,10 +625,18 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Multiply with Fraction",
-						Rule.FRACTION_MULTIPLICATION);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Multiply with Fraction",
+							Rule.FRACTION_MULTIPLICATION);
+
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplyFraction_check();
 	}
 }
 
@@ -580,10 +666,18 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Multiply Fractions",
-						Rule.FRACTION_MULTIPLICATION);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Multiply Fractions",
+							Rule.FRACTION_MULTIPLICATION);
+
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplyFraction_check();
 	}
 }
 
@@ -606,8 +700,16 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel("Log Power Rule", Rule.LOGARITHM);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Log Power Rule",
+							Rule.LOGARITHM);
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.multiplyLogRule_check();
 	}
 }

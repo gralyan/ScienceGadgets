@@ -1,10 +1,7 @@
 package com.sciencegadgets.client.algebra.edit;
 
-import java.util.LinkedList;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
@@ -12,6 +9,7 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.LogBaseSpecification;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
+import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.TrigFunctionSpecification;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -41,13 +39,13 @@ public class ChangeNodeMenu extends CommunistPanel {
 		super(true);
 		addStyleName(CSS.FILL_PARENT);
 
-		LinkedList<Widget> allButtons = new LinkedList<Widget>();
+		TransformationList allButtons = new TransformationList(node);
 
 		// Change buttons
 		for (Object[] type : types) {
 			TypeML toType = (TypeML) type[0];
 			TransformationButton changeButton = new TransformationButton(
-					(String) type[1]);
+					(String) type[1], allButtons);
 			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON + " "
 					+ toType.toString() + " " + CSS.DISPLAY_WRAPPER);
 			changeButton.addClickHandler(new ChangeNodeClick(toType));
@@ -55,7 +53,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 		}
 
 		// Remove button
-		this.removeButton = new TransformationButton("Remove");
+		this.removeButton = new TransformationButton("Remove", allButtons);
 		removeButton.addClickHandler(new RemoveNodeClick());
 
 		removeButton.getElement().getStyle().setColor("red");

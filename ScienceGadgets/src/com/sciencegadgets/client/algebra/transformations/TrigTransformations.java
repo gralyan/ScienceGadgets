@@ -20,6 +20,8 @@ public class TrigTransformations extends TransformationList {
 	TrigFunctions function;
 
 	public TrigTransformations(MathNode trigNode) {
+		super(trigNode);
+		
 		trig = trigNode;
 		argument = trigNode.getChildAt(0);
 		argumentType = argument.getType();
@@ -28,6 +30,7 @@ public class TrigTransformations extends TransformationList {
 
 		add(trigReciprocal_check());
 		add(trigDefinition_check());
+		add(inverseTrig_check());
 	}
 
 	private TrigReciprocalButton trigReciprocal_check() {
@@ -43,6 +46,26 @@ public class TrigTransformations extends TransformationList {
 		return null;
 	}
 
+	/**
+	 * Check if function within its inverse function or function of its inverse<br/>
+	 * sin(arcsin(x)) = x<br/>
+	 * arcsin(sin(x)) = x<br/>
+	 */
+	private TransformationButton inverseTrig_check() {
+		MathNode trigChild = trig.getFirstChild();
+		if (TypeML.Trig.equals(trigChild.getType())) {
+			String trigChildFunc = trigChild
+					.getAttribute(MathAttribute.Function);
+			String trigChildFuncInverse = TrigFunctions
+					.getInverseName(trigChildFunc);
+			String trigFunc = trig.getAttribute(MathAttribute.Function);
+			if (trigFunc.equals(trigChildFuncInverse)) {
+				return new UnravelButton(trig, trigChild.getFirstChild(),
+						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS, this);
+			}
+		}
+		return null;
+	}
 }
 
 // ////////////////////////////////////////////////
@@ -55,7 +78,7 @@ class TrigTransformButton extends TransformationButton {
 	final TrigFunctions function;
 
 	TrigTransformButton(TrigTransformations context) {
-		super();
+		super(context);
 		addStyleName(CSS.TRIG +" "+CSS.DISPLAY_WRAPPER);
 		this.trig = context.trig;
 		this.argument = context.argument;

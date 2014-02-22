@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.LinkedList;
 
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,7 +24,7 @@ import com.sciencegadgets.shared.TypeML;
 
 public class Wrapper extends HTML implements HasClickHandlers,
 		HasTouchStartHandlers, HasTouchEndHandlers {
-
+	
 	protected MathNode node;
 	protected AbsolutePanel parentPanel;
 	protected WrapDragController dragController = null;

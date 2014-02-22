@@ -69,9 +69,11 @@ public class AlgebaWrapper extends EquationWrapper {
 				algTransformMenu.addStyleName(CSS.LAYOUT_ROW);
 				algTransformMenu.setSize("100%", "100%");
 
-				TransformationList transorms = new TransformationList(node);
+				TransformationList[] transorms = TransformationList.FIND_ALL(node);
 
-				algTransformMenu.addAll(transorms);
+				algTransformMenu.addAll(transorms[0]);
+				algTransformMenu.addAll(transorms[1]);
+				algTransformMenu.addAll(transorms[2]);
 			}
 			Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
 			Moderator.getCurrentAlgebraActivity().lowerEqArea

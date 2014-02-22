@@ -3,72 +3,73 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.google.gwt.user.client.ui.Button;
+import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.TypeML;
 
 public class TransformationList extends LinkedList<TransformationButton> {
+	private static final long serialVersionUID = -3043410062241803505L;
+	private MathNode contextNode;
+	MathTree beforeAfterTree = null;
+	boolean reloadAlgebraActivity = true;
 
-	public TransformationList() {
+	public TransformationList(MathNode contextNode) {
 		super();
+		this.contextNode = contextNode;
 	}
-	public TransformationList(MathNode node) {
-		this();
 
-		this.addAll(new BothSidesTransformations(node));
+	public MathNode getNode() {
+		return contextNode;
+	}
+
+	public static TransformationList[] FIND_ALL(MathNode node) {
+		TransformationList typeSpecific = new TransformationList(node);
+		TransformationList toBothSides = new TransformationList(node);
+		TransformationList general = new TransformationList(node);
+		TransformationList[] lists = { typeSpecific, toBothSides, general };
+
+		toBothSides = new BothSidesTransformations(node);
 
 		switch (node.getType()) {
 		case Exponential:
-			this.add(AlgebraicTransformations
-					.unravelExpLog_check(node));
-			this.addAll(new ExponentialTransformations(node));
+			typeSpecific.addAll(new ExponentialTransformations(node));
 			break;
 		case Operation:
-			this.addAll(AlgebraicTransformations.operation(node));
+			typeSpecific.addAll(AlgebraicTransformations.operation(node));
 			break;
 		case Number:
-			this.add(AlgebraicTransformations
-					.separateNegative_check(node));
-			this.add(AlgebraicTransformations
-					.factorizeNumbers_check(node));
-			this.add(AlgebraicTransformations
-					.unitConversion_check(node));
+			general.add(AlgebraicTransformations.separateNegative_check(node,
+					general));
+			typeSpecific.addAll(new NumberTransformations(node));
 			break;
 		case Variable:
-			this.add(AlgebraicTransformations
-					.separateNegative_check(node));
-			this.addAll(AlgebraicTransformations
-					.isolatedVariable_check(node));
+			general.add(AlgebraicTransformations.separateNegative_check(node,
+					general));
+			typeSpecific.addAll(new VariableTransformations(node));
 			break;
 		case Log:
-			this.add(AlgebraicTransformations
-					.unravelLogExp_check(node));
-			this.addAll(new LogarithmicTransformations(node));
+			typeSpecific.addAll(new LogarithmicTransformations(node));
 			break;
 		case Trig:
-			this.add(AlgebraicTransformations
-					.inverseTrig_check(node));
-			this.addAll(new TrigTransformations(node));
+			typeSpecific.addAll(new TrigTransformations(node));
 			break;
 		case Fraction:
 		case Sum:
 		case Term:
-			// These wrappers shouldn't have transformations because
-			// they are merged into the top layer if direct child of the
+			// *Note - These wrappers shouldn't have transformations because
+			// they would be merged into the top layer if direct children of the
 			// root
 			break;
 		}
 
 		if (TypeML.Fraction.equals(node.getParentType())
 				&& node.getIndex() == 1) {
-			this.add(AlgebraicTransformations
-					.denominatorFlip_check(node));
+			general.add(AlgebraicTransformations.denominatorFlip_check(node,
+					general));
 		}
+
+		return lists;
 	}
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3043410062241803505L;
 
 	@Override
 	public boolean add(TransformationButton tButt) {

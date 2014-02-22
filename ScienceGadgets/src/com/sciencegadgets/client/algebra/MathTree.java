@@ -187,13 +187,13 @@ public class MathTree {
 			w.getElement().removeFromParent();
 		}
 		wrappers.clear();
+		
+		idHTMLMap.clear();
 
 		this.eqHTML = equationHTML;
 
 		NodeList<Element> allElements = eqHTML.getElement()
 				.getElementsByTagName("*");
-
-		idHTMLMap.clear();
 
 		for (int i = 0; i < allElements.getLength(); i++) {
 			Element el = (Element) allElements.getItem(i);
@@ -221,8 +221,6 @@ public class MathTree {
 	}
 
 	public MathNode getNodeById(String id) throws NoSuchElementException {
-		for (Entry<String, MathNode> a : idMap.entrySet()) {
-		}
 
 		MathNode node = idMap.get(id);
 		if (node == null) {
@@ -476,9 +474,10 @@ public class MathTree {
 			}
 		}
 
-		public void replace(MathNode replacement) {
+		public MathNode replace(MathNode replacement) {
 			this.getParent().addBefore(this.getIndex(), replacement);
 			this.remove();
+			return replacement;
 		}
 
 		public MathNode replace(TypeML type, String symbol) {
@@ -588,6 +587,10 @@ public class MathTree {
 
 		public MathNode getChildAt(int index) {
 			Node node = getXMLNode().getChildNodes().getItem(index);
+			if(node == null) {
+				String response = "No children at position: "+index+" in: "+toString();
+				throw new IllegalArgumentException(response);
+			}
 			String id = ((Element) node).getAttribute("id");
 			return getNodeById(id);
 		}
@@ -628,11 +631,15 @@ public class MathTree {
 		private MathNode getSibling(int indexesAway) {
 			MathNode parent = this.getParent();
 			int siblingIndex = getIndex() + indexesAway;
+			
+			if(siblingIndex < 0) {
+				return null;
+			}
 
 			try {
 				MathNode sibling = parent.getChildAt(siblingIndex);
 				return sibling;
-			} catch (JavaScriptException e) {
+			} catch (IllegalArgumentException e) {
 				return null;
 			}
 		}
@@ -683,6 +690,10 @@ public class MathTree {
 
 		public Element getXMLNode() {
 			return xmlNode;
+		}
+		
+		public Element getXMLClone() {
+			return (Element) xmlNode.cloneNode(true);
 		}
 
 		public String toString() {
@@ -881,7 +892,7 @@ public class MathTree {
 			if (el == null) {
 				getTree().reloadDisplay(true);
 				Element el2 = idHTMLMap.get(getId());
-				JSNICalls.error("No HTML for node: " + toString());
+				JSNICalls.warn("No HTML for node: " + toString());
 				return (Element) el2;
 			}
 			return (Element) el;

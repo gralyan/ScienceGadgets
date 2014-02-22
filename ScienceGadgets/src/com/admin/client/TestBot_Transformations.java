@@ -11,7 +11,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
+import com.sciencegadgets.client.algebra.transformations.MultiplyTransformations;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
+import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
@@ -19,31 +21,42 @@ import com.sciencegadgets.shared.TypeML.Operator;
 
 public class TestBot_Transformations {
 	
-	static final String buttonPrefix = "com.sciencegadgets.client.algebra.transformations.";
+	private static final String buttonPrefix = "com.sciencegadgets.client.algebra.transformations.";
+	private MathTree mTree= new MathTree(false);
+	private boolean showsEmptyRows;
 
 	TestBot_Transformations() {
-	}
-
-	public void testAddition(MathTree mTree) {
 
 	}
 
-	public void testAddition_scenario() {
+	public void deploy(boolean showsEmptyRows) {
+		this.showsEmptyRows=showsEmptyRows;
+		testAddition_scenario(false, false);
+		testAddition_scenario(false, true);
+		testAddition_scenario(true, false);
+		testAddition_scenario(true, true);
+//		testMultiplication_scenario();
+		
+	}
 
-		MathTree mTree = new MathTree(TypeML.Number, "1", TypeML.Number, "1",
-				false);
+	public void testAddition_scenario(boolean isMinusBeforeLeft, boolean isMinus) {
 
-		MathNode leftSide = mTree.getLeftSide();
-
-		leftSide = leftSide.replace(TypeML.Sum, "");
+		MathNode leftSide = mTree.getLeftSide().replace(TypeML.Sum, "");
 
 		ArrayList<MathNode> firstBranches = addBranches(leftSide, true, false);
 
 		ArrayList<MathNode> binaryBranches = new ArrayList<MathNode>();
 		for (MathNode branch : firstBranches) {
 			MathNode branchParent = branch.getParent();
-			MathNode operation = branchParent.append(TypeML.Operation,
-					Operator.PLUS.getSign());
+
+			if(isMinusBeforeLeft) {
+			branchParent.addBefore(0,TypeML.Operation,
+					Operator.MINUS.getSign());
+			}
+			Operator sign = isMinus?Operator.MINUS : Operator.PLUS;
+			branchParent.append(TypeML.Operation,
+					sign.getSign());
+			
 			ArrayList<MathNode> rightBranches = addBranches(branchParent, true,
 					false);
 			binaryBranches.addAll(rightBranches);
@@ -60,7 +73,6 @@ public class TestBot_Transformations {
 		tButtonMap.put("AddSimilarButton", 8);
 		
 		FlexTable table = new FlexTable();
-		RowFormatter rowFormat = table.getRowFormatter();
 		RootPanel.get().add(table);
 
 		//First row of table
@@ -72,35 +84,90 @@ public class TestBot_Transformations {
 
 		for (int i = 0 ; i<binaryBranches.size(); i++) {
 			MathNode node = binaryBranches.get(i);
-			int row = i+1;
+			AdditionTransformations transformList = new AdditionTransformations(
+					node.getPrevSibling());
 			
-			MathTree tree = node.getTree();
-			HTML testCase = new HTML();
-			tree.reloadDisplay(true);
-			testCase.setHTML(tree.getLeftDisplay());
-			table.setWidget(row, 0, testCase);
-			
-			AdditionTransformations addT = new AdditionTransformations(node.getPrevSibling().getPrevSibling(),
-					node.getPrevSibling(), node, true);
-			
-			for(TransformationButton tButton : addT) {
-				String tButtonName = tButton.getClass().getName();
-				int column = tButtonMap.get(tButtonName.replace(buttonPrefix, ""));
-				
-				HTML testCaseTransformation = new HTML();
-				tree.reloadDisplay(true);
-				testCaseTransformation.setHTML(tree.getLeftDisplay());
-				table.setWidget(row, 0, testCaseTransformation);
+			fillRow(transformList, tButtonMap, table, node);
+		}
+	}
+	
+	public void testMultiplication_scenario() {
+		
 
-//				tButton.setNode(node.getPrevSibling());
-//				tButton.getPreview();
-				table.setText(row, column, "1");
-			}
-
-			rowFormat.getElement(row).getStyle().setBackgroundColor("lightBlue");
+		MathNode leftSide = mTree.getLeftSide().replace(TypeML.Term, "");
+		
+		ArrayList<MathNode> firstBranches = addBranches(leftSide, true, false);
+		
+		ArrayList<MathNode> binaryBranches = new ArrayList<MathNode>();
+		for (MathNode branch : firstBranches) {
+			MathNode branchParent = branch.getParent();
+			branchParent.append(TypeML.Operation,
+					Operator.getMultiply().getSign());
+			ArrayList<MathNode> rightBranches = addBranches(branchParent, true,
+					false);
+			binaryBranches.addAll(rightBranches);
+		}
+		
+		HashMap<String, Integer> tButtonMap =  new HashMap<String, Integer>();
+		tButtonMap.put("MultiplyZeroButton", 1);
+		tButtonMap.put("MultiplyOneButton", 2);
+		tButtonMap.put("MultiplyNegOneButton", 3);
+		tButtonMap.put("MultiplyNumbersButton", 4);
+		tButtonMap.put("MultiplyDistributionButton", 5);
+		tButtonMap.put("MultiplyCombineExponentsButton", 6);
+		tButtonMap.put("MultiplyCombineBasesButton", 7);
+		tButtonMap.put("MultiplyWithFractionButton", 8);
+		tButtonMap.put("MultiplyFractionsButton", 9);
+		tButtonMap.put("MultiplyLogRuleButton", 10);
+		
+		FlexTable table = new FlexTable();
+		RootPanel.get().add(table);
+		
+		//First row of table
+		table.setText(0, 0, "Multiplication");
+		for(Entry<String, Integer> tButtonEntry : tButtonMap.entrySet()) {
+			table.setText(0, tButtonEntry.getValue(), tButtonEntry.getKey());
+			
+		}
+		
+		for (int i = 0 ; i<binaryBranches.size(); i++) {
+			MathNode node = binaryBranches.get(i);
+			MultiplyTransformations transformList = new MultiplyTransformations(
+					node.getPrevSibling());
+			
+			fillRow(transformList, tButtonMap, table, node);
 		}
 	}
 
+	private void fillRow(TransformationList transformList, HashMap<String, Integer> tButtonMap, FlexTable table, MathNode node) {
+		
+		if(!showsEmptyRows && transformList.isEmpty()) {
+			return;
+		}
+
+		int row = table.getRowCount()+1;
+		
+		MathTree tree = node.getTree();
+		HTML testCase = new HTML();
+		tree.reloadDisplay(true);
+		testCase.setHTML(tree.getLeftDisplay());
+		table.setWidget(row, 0, testCase);
+		
+		for(TransformationButton tButton : transformList) {
+			String tButtonName = tButton.getClass().getName();
+			int column = tButtonMap.get(tButtonName.replace(buttonPrefix, ""));
+			
+			HTML testCaseTransformation = new HTML();
+			tree.reloadDisplay(true);
+			testCaseTransformation.setHTML(tree.getLeftDisplay());
+			table.setWidget(row, 0, testCaseTransformation);
+
+			HTML preview = new HTML(tButton.getPreview());
+			table.setWidget(row, column, preview);
+		}
+
+		table.getRowFormatter().getElement(row).getStyle().setBackgroundColor("lightBlue");
+	}
 	/**
 	 * Creates a new MathTree for each variation branch
 	 * 
@@ -157,33 +224,33 @@ public class TestBot_Transformations {
 			branch.setSymbol("5");
 			break;
 		case Variable:
-			branch.setSymbol("x");
+			branch.setSymbol("a");
 			break;
 		case Sum:
-			branch.append(TypeML.Variable, "sumArg1");
+			branch.append(TypeML.Variable, "a");
 			branch.append(TypeML.Operation, Operator.PLUS.getSign());
-			branch.append(TypeML.Variable, "sumArg2");
+			branch.append(TypeML.Variable, "a");
 			break;
 		case Term:
-			branch.append(TypeML.Variable, "termArg1");
+			branch.append(TypeML.Variable, "a");
 			branch.append(TypeML.Operation, Operator.getMultiply().getSign());
-			branch.append(TypeML.Variable, "termArg2");
+			branch.append(TypeML.Variable, "a");
 			break;
 		case Fraction:
-			branch.append(TypeML.Variable, "num");
-			branch.append(TypeML.Variable, "den");
+			branch.append(TypeML.Variable, "a");
+			branch.append(TypeML.Variable, "a");
 			break;
 		case Exponential:
-			branch.append(TypeML.Variable, "base");
-			branch.append(TypeML.Variable, "exp");
+			branch.append(TypeML.Variable, "a");
+			branch.append(TypeML.Variable, "a");
 			break;
 		case Trig:
-			branch.append(TypeML.Variable, "trigArg");
+			branch.append(TypeML.Variable, "a");
 			branch.setAttribute(MathAttribute.Function,
 					TrigFunctions.sin.toString());
 			break;
 		case Log:
-			branch.append(TypeML.Variable, "logArg");
+			branch.append(TypeML.Variable, "a");
 			branch.setAttribute(MathAttribute.LogBase, "10");
 			break;
 
