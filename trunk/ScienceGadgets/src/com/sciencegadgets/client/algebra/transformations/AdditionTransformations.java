@@ -14,6 +14,7 @@ import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.ChildRequirement;
 import com.sciencegadgets.shared.TypeML.Operator;
 
 public class AdditionTransformations extends TransformationList {
@@ -32,35 +33,38 @@ public class AdditionTransformations extends TransformationList {
 	boolean isMinus;
 	boolean isMinusBeforeLeft = false;
 
-	public AdditionTransformations(MathNode left, MathNode operation,
-			MathNode right, boolean isPlusSign) {
+	public AdditionTransformations(MathNode operation) {
+		super(operation);
 
-		this.left = left;
-		this.operation = operation;
-		this.right = right;
 		this.parent = operation.getParent();
-		isMinus = !isPlusSign;
+		
+		this.left = operation.getPrevSibling();
+		this.operation = operation;
+		this.right = operation.getNextSibling();
+		
+		this.leftType = left.getType();
+		this.rightType = right.getType();
+
+		isMinus = Operator.MINUS.getSign().equals(operation.getSymbol());
 
 		MathNode leftPrev = left.getPrevSibling();
-		if (leftPrev != null && "-".equals(leftPrev.getSymbol())
+		if (leftPrev != null
+				&& Operator.MINUS.getSign().equals(leftPrev.getSymbol())
 				&& TypeML.Operation.equals(leftPrev.getType())) {
 			isMinusBeforeLeft = true;
 		}
 
-		this.leftType = left.getType();
-		this.rightType = right.getType();
-
 		add(addNumbers_check());
 		add(addSimilar_check());
+		add(addFractions_check());
+		add(addLogs_check());
 		add(factorLikeTerms_check());
 		add(factorWithBase_check());
 		add(factorWithTermChild_check());
-		add(addFractions_check());
-		add(logCombination_check());
 
 	}
 
-	private AddTransformButton addNumbers_check() {
+	AddTransformButton addNumbers_check() {
 
 		if (!TypeML.Number.equals(leftType) || !TypeML.Number.equals(rightType)) {
 			return null;
@@ -79,7 +83,7 @@ public class AdditionTransformations extends TransformationList {
 		return new AddNumbersButton(this);
 	}
 
-	private AddTransformButton addSimilar_check() {
+	AddTransformButton addSimilar_check() {
 		if (leftType != rightType) {
 			return null;
 		}
@@ -90,11 +94,35 @@ public class AdditionTransformations extends TransformationList {
 		}
 	}
 
+	AddTransformButton addFractions_check() {
+		// Common denominators
+		if (!TypeML.Fraction.equals(leftType) || !TypeML.Fraction.equals(right)) {
+			return null;
+		}
+		if (left.getChildAt(1).isLike(right.getChildAt(1))) {
+			return new AddFractionsButton(this);
+		} else {
+			return null;
+		}
+	}
+
+	AddTransformButton addLogs_check() {
+		if (!TypeML.Log.equals(leftType) || !TypeML.Log.equals(rightType)) {
+			return null;
+		}
+		if (left.getAttribute(MathAttribute.LogBase).equals(
+				right.getAttribute(MathAttribute.LogBase))) {
+			return new AddLogsButton(this);
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * xy + xz = x(y + z)<br/>
 	 * Factors out all like entities within the term or numerator<br/>
 	 */
-	private AddTransformButton factorLikeTerms_check() {
+	AddTransformButton factorLikeTerms_check() {
 
 		// If sides are fractions, like terms come from numerators
 		MathNode leftTerm = getTerm(left);
@@ -136,7 +164,7 @@ public class AdditionTransformations extends TransformationList {
 		return new FactorLikeTermsButton(this, leftTerm, rightTerm, likeTerms);
 	}
 
-	private AddTransformButton factorWithBase_check() {
+	AddTransformButton factorWithBase_check() {
 
 		if (TypeML.Exponential.equals(leftType)) {
 			if (right.isLike(left.getChildAt(0))) {
@@ -150,7 +178,7 @@ public class AdditionTransformations extends TransformationList {
 		return null;
 	}
 
-	private AddTransformButton factorWithTermChild_check() {
+	AddTransformButton factorWithTermChild_check() {
 		MathNode term, other;
 
 		// If sides are fractions, like terms come from numerators
@@ -175,30 +203,6 @@ public class AdditionTransformations extends TransformationList {
 		return null;
 	}
 
-	private AddTransformButton addFractions_check() {
-		// Common denominators
-		if (!TypeML.Fraction.equals(leftType) || !TypeML.Fraction.equals(right)) {
-			return null;
-		}
-		if (left.getChildAt(1).isLike(right.getChildAt(1))) {
-			return new AddFractionsButton(this);
-		} else {
-			return null;
-		}
-	}
-
-	private AddTransformButton logCombination_check() {
-		if (!TypeML.Log.equals(leftType) || !TypeML.Log.equals(rightType)) {
-			return null;
-		}
-		if (left.getAttribute(MathAttribute.LogBase).equals(
-				right.getAttribute(MathAttribute.LogBase))) {
-			return new AddLogsButton(this);
-		} else {
-			return null;
-		}
-	}
-
 	/**
 	 * Sub routine to be used at the end of the other factor methods
 	 */
@@ -211,32 +215,30 @@ public class AdditionTransformations extends TransformationList {
 			inBinomialFirst = inBinomialB;
 			inBinomialSecond = inBinomialA;
 		}
-		
-		if(inBinomialFirst.getChildCount() == 1) {
+
+		if (inBinomialFirst.getChildCount() == 1 && !ChildRequirement.TERMINAL.equals(inBinomialFirst.getType().childRequirement())) {
 			inBinomialFirst = inBinomialFirst.getFirstChild();
 			inBinomialFirst.getParent().decase();
 		}
-		if(inBinomialSecond.getChildCount() == 1) {
+		if (inBinomialSecond.getChildCount() == 1 && !ChildRequirement.TERMINAL.equals(inBinomialSecond.getType().childRequirement())) {
 			inBinomialSecond = inBinomialSecond.getFirstChild();
 			inBinomialSecond.getParent().decase();
 		}
 
 		MathNode termCasing = operation.getParent().addBefore(
 				operation.getIndex(), TypeML.Term, "");
-		
-		System.out.println(inBinomialFirst);
-		System.out.println(inBinomialSecond);
 
 		if (Moderator.isInEasyMode
 				&& TypeML.Number.equals(inBinomialFirst.getType())
 				&& TypeML.Number.equals(inBinomialSecond.getType())) {
 
 			BigDecimal firstValue = new BigDecimal(inBinomialFirst.getSymbol());
-			BigDecimal secondValue = new BigDecimal(inBinomialSecond.getSymbol());
+			BigDecimal secondValue = new BigDecimal(
+					inBinomialSecond.getSymbol());
 			BigDecimal total = firstValue.add(secondValue);
-			
-			termCasing.append(TypeML.Number, ""+total);
-			
+
+			termCasing.append(TypeML.Number, "" + total);
+
 			inBinomialFirst.remove();
 			operation.remove();
 			inBinomialSecond.remove();
@@ -247,7 +249,7 @@ public class AdditionTransformations extends TransformationList {
 				termCasing.append(factor);
 			}
 		} else {
-			
+
 			for (MathNode factor : factors) {
 				termCasing.append(factor);
 				termCasing.append(TypeML.Operation, Operator.getMultiply()
@@ -264,7 +266,7 @@ public class AdditionTransformations extends TransformationList {
 	/**
 	 * If the node is of type fraction, numerators are considered the term
 	 */
-	private MathNode getTerm(MathNode node) {
+	MathNode getTerm(MathNode node) {
 		switch (node.getType()) {
 		case Fraction:
 			if (TypeML.Term.equals(node.getChildAt(0).getType())) {
@@ -283,24 +285,38 @@ public class AdditionTransformations extends TransformationList {
 // Transform buttons
 // ///////////////////////////////////////////////
 class AddTransformButton extends TransformationButton {
-	final MathNode left;
-	final MathNode right;
-	final MathNode operation;
-	final MathNode parent;
-	final MathNode grandParent;
+	MathNode left;
+	MathNode right;
+	MathNode operation;
+	MathNode parent;
+	MathNode grandParent;
 	final boolean isMinus;
 	final boolean isMinusBeforeLeft;
 
+	protected boolean reloadAlgebraActivity;
+	protected AdditionTransformations previewContext;
+
 	AddTransformButton(AdditionTransformations context, String html) {
-		super(html);
-		addStyleName(CSS.SUM +" "+CSS.DISPLAY_WRAPPER);
+		super(context);
+		addStyleName(CSS.SUM + " " + CSS.DISPLAY_WRAPPER);
+
+		this.isMinus = context.isMinus;
+		this.isMinusBeforeLeft = context.isMinusBeforeLeft;
+
 		this.left = context.left;
 		this.right = context.right;
 		this.operation = context.operation;
-		this.parent = operation.getParent();
-		this.grandParent = parent.getParent();
-		this.isMinus = context.isMinus;
-		this.isMinusBeforeLeft = context.isMinusBeforeLeft;
+		this.parent = context.parent;
+		this.grandParent = this.parent.getParent();
+		
+		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
+	}
+
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		previewContext = new AdditionTransformations(operation);
+		previewContext.reloadAlgebraActivity = false;
+		return null;
 	}
 }
 
@@ -327,11 +343,18 @@ class AddZeroButton extends AddTransformButton {
 
 				parent.decase();
 
-				Moderator.reloadEquationPanel(other.getHTML() + " + 0 = "
-						+ other.getHTML(), Rule.ADDITION);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel(other.getHTML() + " + 0 = "
+							+ other.getHTML(), Rule.ADDITION);
+				}
 
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.addNumbers_check();
 	}
 }
 
@@ -372,8 +395,10 @@ class AddNumbersButton extends AddTransformButton {
 				if (Moderator.isInEasyMode) {
 					addNumbers(left, right, totalValue, leftValue, rightValue);
 
-				} else {// prompt
+				} else if (!reloadAlgebraActivity) {
+					parent.replace(TypeML.Variable, "# + #");
 
+				} else {// prompt
 					String question = leftValue.toString() + " "
 							+ operation.getSymbol() + " "
 							+ rightValue.toString() + " = ";
@@ -407,15 +432,172 @@ class AddNumbersButton extends AddTransformButton {
 		operation.remove();
 		parent.decase();
 
-		Moderator.reloadEquationPanel(leftValue.stripTrailingZeros()
-				.toEngineeringString()
-				+ " "
-				+ operation.toString()
-				+ " "
-				+ rightValue.stripTrailingZeros().toEngineeringString()
-				+ " = "
-				+ totalValue.stripTrailingZeros().toEngineeringString(),
-				Rule.ADDITION);
+		if (reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel(leftValue.stripTrailingZeros()
+					.toEngineeringString()
+					+ " "
+					+ operation.toString()
+					+ " "
+					+ rightValue.stripTrailingZeros().toEngineeringString()
+					+ " = "
+					+ totalValue.stripTrailingZeros().toEngineeringString(),
+					Rule.ADDITION);
+		}
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.addNumbers_check();
+	}
+}
+
+/**
+ * x+x = 2x<br/>
+ * -x-x = -2x<br/>
+ * x-x = 0<br/>
+ * -x+x = 0<br/>
+ */
+class AddSimilarButton extends AddTransformButton {
+	AddSimilarButton(AdditionTransformations context) {
+		super(context, "x+x = 2x");
+
+		addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+
+				right.highlight();
+				operation.highlight();
+				left.highlight();
+
+				if (!isMinus && !isMinusBeforeLeft) {
+					MathNode casing = right.encase(TypeML.Term);
+					casing.addBefore(0, TypeML.Operation, Operator
+							.getMultiply().getSign());
+					casing.addBefore(0, TypeML.Number, "2");
+				} else if (isMinus && isMinusBeforeLeft) {
+					MathNode casing = right.encase(TypeML.Term);
+					casing.addBefore(0, TypeML.Operation, Operator
+							.getMultiply().getSign());
+					casing.addBefore(0, TypeML.Number, "-2");
+				} else if ((isMinus && !isMinusBeforeLeft)
+						|| (!isMinus && isMinusBeforeLeft)) {
+					// Remove residual operations
+					MathNode leftOp = left.getPrevSibling();
+					MathNode rightNext = right.getNextSibling();
+					if (leftOp != null
+							&& TypeML.Operation.equals(leftOp.getType())) {
+						leftOp.remove();
+					} else if (rightNext != null
+							&& TypeML.Operation.equals(rightNext.getType())) {
+						rightNext.remove();
+					}
+
+					right.remove();
+				}
+
+				left.remove();
+				operation.remove();
+				parent.decase();
+
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Add similar",
+							Rule.COMBINING_LIKE_TERMS);
+				}
+			}
+		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.addSimilar_check();
+	}
+}
+
+/**
+ * a/b +c/b = (a+c)/b
+ */
+class AddFractionsButton extends AddTransformButton {
+	AddFractionsButton(AdditionTransformations context) {
+		super(context, "a/b +c/b = (a+c)/b");
+
+		addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+
+				right.highlight();
+				operation.highlight();
+				left.highlight();
+
+				if (isMinusBeforeLeft) {
+					left.getPrevSibling().setSymbol(Operator.PLUS.getSign());
+					AlgebraicTransformations.propagateNegative(left);
+				}
+
+				MathNode numeratorCasing = right.getChildAt(0).encase(
+						TypeML.Sum);
+				numeratorCasing.addBefore(0, operation);
+				numeratorCasing.addBefore(0, left.getChildAt(0));
+
+				left.remove();
+				parent.decase();
+
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Add Fractions",
+							Rule.FRACTION_ADDITION);
+				}
+			}
+		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.addFractions_check();
+	}
+}
+
+/**
+ * log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x &middot; y)<br/>
+ * log<sub>b</sub>(x) - log<sub>b</sub>(y) = log<sub>b</sub>(x/y)
+ */
+class AddLogsButton extends AddTransformButton {
+	AddLogsButton(AdditionTransformations context) {
+		super(context,
+				"log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)");
+
+		addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+
+				left.highlight();
+				right.highlight();
+
+				MathNode newLogChild;
+				MathNode leftChild = left.getFirstChild();
+				if (isMinus) {
+					newLogChild = leftChild.encase(TypeML.Fraction);
+				} else {
+					newLogChild = leftChild.encase(TypeML.Term);
+					newLogChild.append(TypeML.Operation, Operator.getMultiply()
+							.getSign());
+				}
+				newLogChild.append(right.getFirstChild());
+
+				right.remove();
+				operation.remove();
+
+				parent.decase();
+
+				if (reloadAlgebraActivity) {
+					Moderator
+							.reloadEquationPanel("Combine Log", Rule.LOGARITHM);
+				}
+			}
+		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.addLogs_check();
 	}
 }
 
@@ -494,14 +676,18 @@ class FactorLikeTermsButton extends AddTransformButton {
 				}
 
 				context.factor(factors, leftRemaining, rightRemaining);
-//
-//				leftRemaining.decase();
-//				rightRemaining.decase();
 
-				Moderator.reloadEquationPanel("Factor Like Terms",
-						Rule.COMBINING_LIKE_TERMS);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Factor Like Terms",
+							Rule.COMBINING_LIKE_TERMS);
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.factorLikeTerms_check();
 	}
 }
 
@@ -520,6 +706,7 @@ class FactorBaseButton extends AddTransformButton {
 				other.highlight();
 				operation.highlight();
 				exponential.getChildAt(0).highlight();
+				
 
 				MathNode inBinomialB = exponential;
 				MathNode inBinomialA = other.getParent().addBefore(
@@ -533,11 +720,18 @@ class FactorBaseButton extends AddTransformButton {
 				exp.append(TypeML.Operation, Operator.MINUS.getSign());
 				exp.append(TypeML.Number, "1");
 
-				Moderator.reloadEquationPanel("Factor with Base",
-						Rule.FACTORIZATION);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Factor with Base",
+							Rule.FACTORIZATION);
+				}
 
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.factorWithBase_check();
 	}
 }
 
@@ -583,145 +777,23 @@ class FactorWithTermChildButton extends AddTransformButton {
 				// exp.add(Type.Number, "1");
 				// } else {
 				inBinomialA = other.replace(TypeML.Number, "1");
-				other.remove();
 				// }
 
 				LinkedList<MathNode> factors = new LinkedList<MathNode>();
 				factors.add(termChild);
 				context.factor(factors, inBinomialA, inBinomialB);
 
-//				term.decase();
+				// term.decase();
 
-				Moderator.reloadEquationPanel("Factor", Rule.FACTORIZATION);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Factor", Rule.FACTORIZATION);
+				}
 			}
 		});
 	}
-}
-
-/**
- * a/b +c/b = (a+c)/b
- */
-class AddFractionsButton extends AddTransformButton {
-	AddFractionsButton(AdditionTransformations context) {
-		super(context, "a/b +c/b = (a+c)/b");
-
-		addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-
-				right.highlight();
-				operation.highlight();
-				left.highlight();
-
-				if (isMinusBeforeLeft) {
-					left.getPrevSibling().setSymbol(Operator.PLUS.getSign());
-					AlgebraicTransformations.propagateNegative(left);
-				}
-
-				MathNode numeratorCasing = right.getChildAt(0).encase(
-						TypeML.Sum);
-				numeratorCasing.addBefore(0, operation);
-				numeratorCasing.addBefore(0, left.getChildAt(0));
-
-				left.remove();
-				parent.decase();
-
-				Moderator.reloadEquationPanel("Add Fractions",
-						Rule.FRACTION_ADDITION);
-			}
-		});
-	}
-}
-
-/**
- * log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x &middot; y)<br/>
- * log<sub>b</sub>(x) - log<sub>b</sub>(y) = log<sub>b</sub>(x/y)
- */
-class AddLogsButton extends AddTransformButton {
-	AddLogsButton(AdditionTransformations context) {
-		super(context,
-				"log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)");
-
-		addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-
-				left.highlight();
-				right.highlight();
-
-				MathNode newLogChild;
-				MathNode leftChild = left.getFirstChild();
-				if (isMinus) {
-					newLogChild = leftChild.encase(TypeML.Fraction);
-				} else {
-					newLogChild = leftChild.encase(TypeML.Term);
-					newLogChild.append(TypeML.Operation, Operator.getMultiply()
-							.getSign());
-				}
-				newLogChild.append(right.getFirstChild());
-
-				right.remove();
-				operation.remove();
-
-				parent.decase();
-
-				Moderator.reloadEquationPanel("Combine Log", Rule.LOGARITHM);
-			}
-		});
-	}
-}
-
-/**
- * x+x = 2x<br/>
- * -x-x = -2x<br/>
- * x-x = 0<br/>
- * -x+x = 0<br/>
- */
-class AddSimilarButton extends AddTransformButton {
-	AddSimilarButton(AdditionTransformations context) {
-		super(context, "x+x = 2x");
-
-		addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-
-				right.highlight();
-				operation.highlight();
-				left.highlight();
-
-				if (!isMinus && !isMinusBeforeLeft) {
-					MathNode casing = right.encase(TypeML.Term);
-					casing.addBefore(0, TypeML.Operation, Operator
-							.getMultiply().getSign());
-					casing.addBefore(0, TypeML.Number, "2");
-				} else if (isMinus && isMinusBeforeLeft) {
-					MathNode casing = right.encase(TypeML.Term);
-					casing.addBefore(0, TypeML.Operation, Operator
-							.getMultiply().getSign());
-					casing.addBefore(0, TypeML.Number, "-2");
-				} else if ((isMinus && !isMinusBeforeLeft)
-						|| (!isMinus && isMinusBeforeLeft)) {
-					// Remove residual operations
-					MathNode leftOp = left.getPrevSibling();
-					MathNode rightNext = right.getNextSibling();
-					if (leftOp != null
-							&& TypeML.Operation.equals(leftOp.getType())) {
-						leftOp.remove();
-					} else if (rightNext != null
-							&& TypeML.Operation.equals(rightNext.getType())) {
-						rightNext.remove();
-					}
-
-					right.remove();
-				}
-
-				left.remove();
-				operation.remove();
-				parent.decase();
-
-				Moderator.reloadEquationPanel("Add similar",
-						Rule.COMBINING_LIKE_TERMS);
-			}
-		});
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.factorWithTermChild_check();
 	}
 }

@@ -1,14 +1,11 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -27,6 +24,8 @@ public class LogarithmicTransformations extends TransformationList {
 	static LogBaseSpecification logBaseSpec = null;
 
 	public LogarithmicTransformations(MathNode logNode) {
+		super(logNode);
+		
 		log = logNode;
 		argument = logNode.getFirstChild();
 		base = log.getAttribute(MathAttribute.LogBase);
@@ -35,6 +34,7 @@ public class LogarithmicTransformations extends TransformationList {
 		add(new LogChangeBaseButton(this));
 		add(logChildCheck());
 		add(logEvaluateCheck());
+		add(unravelLogExp_check());
 
 	}
 
@@ -66,6 +66,25 @@ public class LogarithmicTransformations extends TransformationList {
 		}
 		return null;
 	}
+	
+	/**
+	 * Check if: (log base = exponential base)<br/>
+	 * log<sub>b</sub>(b<sup>x</sup>) = x
+	 */
+	public TransformationButton unravelLogExp_check() {
+		MathNode exponential = log.getFirstChild();
+		if (TypeML.Exponential.equals(exponential.getType())) {
+			MathNode exponentialBase = exponential.getFirstChild();
+			if (TypeML.Number.equals(exponentialBase.getType())
+					&& exponentialBase.getSymbol().equals(
+							log.getAttribute(MathAttribute.LogBase))) {
+				MathNode exponentialExp = exponential.getChildAt(1);
+				return new UnravelButton(log, exponentialExp, Rule.LOGARITHM, this);
+			}
+		}
+		return null;
+	}
+
 }
 
 // ////////////////////////////////////////////////
@@ -77,7 +96,7 @@ class LogTransformButton extends TransformationButton {
 	final String base;
 
 	LogTransformButton(LogarithmicTransformations context, String html) {
-		super(html);
+		super(html, context);
 		addStyleName(CSS.LOG +" "+CSS.DISPLAY_WRAPPER);
 		this.log = context.log;
 		this.logChild = context.argument;
