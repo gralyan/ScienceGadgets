@@ -21,17 +21,19 @@ public class ExponentialTransformations extends TransformationList {
 	MathNode exponential;
 	MathNode base;
 	MathNode exponent;
+
 	TypeML baseType;
 	TypeML exponentType;
 
 	public ExponentialTransformations(MathNode exponentialNode) {
 		super(exponentialNode);
-		
-		exponential = exponentialNode;
-		base = exponential.getChildAt(0);
-		exponent = exponential.getChildAt(1);
-		baseType = base.getType();
-		exponentType = exponent.getType();
+
+		this.exponential = exponentialNode;
+		this.base = exponential.getChildAt(0);
+		this.exponent = exponential.getChildAt(1);
+
+		this.baseType = base.getType();
+		this.exponentType = exponent.getType();
 
 		add(exponentialExpand_check());
 		add(exponentialEvaluate_check());
@@ -41,12 +43,12 @@ public class ExponentialTransformations extends TransformationList {
 		add(unravelExpLog_check());
 	}
 
-	private ExponentialTransformButton exponentialEvaluate_check() {
+	ExponentialTransformButton exponentialEvaluate_check() {
 		if (TypeML.Number.equals(baseType)
 				&& TypeML.Number.equals(exponentType)) {
 			try {
 				int exp = Integer.parseInt(exponent.getSymbol());
-					return new ExponentialEvaluateButton(this, (int) exp);
+				return new ExponentialEvaluateButton(this, (int) exp);
 			} catch (NumberFormatException e) {
 				return null;
 			}
@@ -54,21 +56,21 @@ public class ExponentialTransformations extends TransformationList {
 		return null;
 	}
 
-	private ExponentialTransformButton exponentialExponentiate_check() {
+	ExponentialTransformButton exponentialExponentiate_check() {
 		if (TypeML.Exponential.equals(baseType)) {
-			return new ExponentialExponentialeButton(this);
+			return new ExponentialExponentiateButton(this);
 		}
 		return null;
 	}
 
-	private ExponentialTransformButton exponentialPropagate_check() {
+	ExponentialTransformButton exponentialPropagate_check() {
 		if (TypeML.Fraction.equals(baseType) || TypeML.Term.equals(baseType)) {
 			return new ExponentialPropagateButton(this);
 		}
 		return null;
 	}
 
-	private ExponentialTransformButton exponentialFlip_check() {
+	ExponentialTransformButton exponentialFlip_check() {
 		if (TypeML.Number.equals(exponentType)
 				|| TypeML.Variable.equals(exponentType)) {
 			if (exponent.getSymbol().startsWith(Operator.MINUS.getSign())) {
@@ -78,7 +80,7 @@ public class ExponentialTransformations extends TransformationList {
 		return null;
 	}
 
-	private ExponentialTransformButton exponentialExpand_check() {
+	ExponentialTransformButton exponentialExpand_check() {
 		if (TypeML.Number.equals(exponentType)) {
 			try {
 				int exp = Integer.parseInt(exponent.getSymbol());
@@ -92,13 +94,12 @@ public class ExponentialTransformations extends TransformationList {
 		}
 		return null;
 	}
-	
 
 	/**
 	 * Check if: (log base = exponential base)<br/>
 	 * b<sup>log<sub>b</sub>(x)</sup> = x
 	 */
-	public TransformationButton unravelExpLog_check() {
+	TransformationButton unravelExpLog_check() {
 		MathNode log = exponential.getChildAt(1);
 		if (TypeML.Log.equals(log.getType())) {
 			String logBase = log.getAttribute(MathAttribute.LogBase);
@@ -122,14 +123,27 @@ class ExponentialTransformButton extends TransformationButton {
 	final MathNode base;
 	final MathNode exponent;
 
+	protected boolean reloadAlgebraActivity;
+	protected ExponentialTransformations previewContext;
+
 	ExponentialTransformButton(ExponentialTransformations context, String html) {
-		super(html, context);
-		addStyleName(CSS.EXPONENTIAL +" "+CSS.DISPLAY_WRAPPER);
+		super(context);
+		addStyleName(CSS.EXPONENTIAL + " " + CSS.DISPLAY_WRAPPER);
+
 		this.exponential = context.exponential;
 		this.base = context.base;
 		this.exponent = context.exponent;
 
+		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
+
 		exponential.highlight();
+	}
+
+	@Override
+	TransformationButton getPreviewButton(MathNode exponential) {
+		previewContext = new ExponentialTransformations(exponential);
+		previewContext.reloadAlgebraActivity = false;
+		return null;
 	}
 }
 
@@ -139,7 +153,8 @@ class ExponentialTransformButton extends TransformationButton {
  */
 class ExponentialEvaluateButton extends ExponentialTransformButton {
 
-	public ExponentialEvaluateButton(ExponentialTransformations context, final int exp) {
+	public ExponentialEvaluateButton(ExponentialTransformations context,
+			final int exp) {
 		super(context, "Evaluate Exponential");
 
 		addClickHandler(new ClickHandler() {
@@ -158,14 +173,17 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 					evaluateExponential(baseValue, exp, totalValue,
 							totalUnitMap);
 
+				} else if (!reloadAlgebraActivity) {
+					exponential.replace(TypeML.Variable, "# ^ #");
+
 				} else {// prompt
 
 					String question = exponential.getHTMLString() + " = ";
 					NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 						@Override
 						void onCorrect() {
-							evaluateExponential(baseValue, exp,
-									totalValue, totalUnitMap);
+							evaluateExponential(baseValue, exp, totalValue,
+									totalUnitMap);
 						}
 					};
 					prompt.appear();
@@ -183,13 +201,20 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 		String newUnit = newUnitMap.getUnitAttribute();
 		evaluated.setAttribute(MathAttribute.Unit, newUnit);
 
-		Moderator.reloadEquationPanel(baseValue.stripTrailingZeros()
-				.toEngineeringString()
-				+ " ^ "
-				+ expValue
-				+ " = "
-				+ totalValue.stripTrailingZeros().toEngineeringString(),
-				Rule.EXPONENT_PROPERTIES);
+		if (reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel(baseValue.stripTrailingZeros()
+					.toEngineeringString()
+					+ " ^ "
+					+ expValue
+					+ " = "
+					+ totalValue.stripTrailingZeros().toEngineeringString(),
+					Rule.EXPONENT_PROPERTIES);
+		}
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.exponentialEvaluate_check();
 	}
 }
 
@@ -234,20 +259,26 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 					exponential.remove();
 				}
 
-				Moderator.reloadEquationPanel("Expand",
-						Rule.EXPONENT_PROPERTIES);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("Expand",
+							Rule.EXPONENT_PROPERTIES);
+				}
 			}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.exponentialExpand_check();
+	}
 }
 
 /**
  * (x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>
  */
-class ExponentialExponentialeButton extends ExponentialTransformButton {
+class ExponentialExponentiateButton extends ExponentialTransformButton {
 
-	ExponentialExponentialeButton(ExponentialTransformations context) {
+	ExponentialExponentiateButton(ExponentialTransformations context) {
 		super(context, "(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>");
 
 		addClickHandler(new ClickHandler() {
@@ -265,14 +296,20 @@ class ExponentialExponentialeButton extends ExponentialTransformButton {
 
 				base.replace(innerBase);
 
-				Moderator
-						.reloadEquationPanel(
-								"(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
-								Rule.EXPONENT_PROPERTIES);
+				if (reloadAlgebraActivity) {
+					Moderator
+							.reloadEquationPanel(
+									"(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
+									Rule.EXPONENT_PROPERTIES);
+				}
 			}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.exponentialExponentiate_check();
+	}
 }
 
 /**
@@ -298,11 +335,18 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 				}
 				exponential.replace(base);
 
-				Moderator.reloadEquationPanel(
-						"(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>",
-						Rule.EXPONENT_PROPERTIES);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel(
+							"(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>",
+							Rule.EXPONENT_PROPERTIES);
+				}
 			}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.exponentialPropagate_check();
 	}
 }
 
@@ -319,7 +363,6 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				MathNode parent = exponential.getParent();
 
 				if (TypeML.Fraction.equals(base.getType())) {
 					base.append(base.getFirstChild());
@@ -332,11 +375,17 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 				exponent.setSymbol(exponent.getSymbol().replace(
 						Operator.MINUS.getSign(), ""));
 
-				Moderator.reloadEquationPanel(
-						"x<sup>-b</sup> = (1/x)<sup>b</sup>",
-						Rule.EXPONENT_PROPERTIES);
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel(
+							"x<sup>-b</sup> = (1/x)<sup>b</sup>",
+							Rule.EXPONENT_PROPERTIES);
+				}
 			}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.exponentialFlip_check();
+	}
 }
