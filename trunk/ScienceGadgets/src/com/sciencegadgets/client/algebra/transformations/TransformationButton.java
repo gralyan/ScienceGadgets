@@ -1,12 +1,9 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import javax.swing.RootPaneContainer;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.FitParentHTML;
@@ -48,7 +45,7 @@ public class TransformationButton extends SimplePanel implements
 	/**
 	 * @return The HTML display version of the transformation
 	 */
-	public String getPreview() {
+	public MathTree getPreview() {
 
 		if (context.beforeAfterTree == null) {
 			MathTree mTree = context.beforeAfterTree = new MathTree(false);
@@ -92,21 +89,18 @@ public class TransformationButton extends SimplePanel implements
 
 		TransformationButton previewButton = this.getPreviewButton(previewContextNode);
 
-		// TODO Moderator.reload for each addition transformation
-		// TODO console error
-
 //		try {
 //			System.out.println("");
 //			System.out.println(mTree.getRoot().getXMLNode().getInnerText());
 			previewButton.fireEvent(new ClickEvent() {});
 //			System.out.println(mTree.getRoot().getXMLNode().getInnerText());
 			mTree.reloadDisplay(true);
-			return mTree.getRightDisplay();
+			return mTree;
 //		} catch (Exception e) {
 //			System.out.println(e);
 //		}
 
-//		return "click error";
+//		return null;
 	}
 
 	@Override

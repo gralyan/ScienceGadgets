@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
-import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -30,13 +29,13 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeML.ChildRequirement;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.shared.UnitUtil;
@@ -75,7 +74,7 @@ public class MathTree {
 
 		EquationRandomizer.randomizeNumbers(this, !inEditMode);
 
-		reloadDisplay(true);
+//		reloadDisplay(true);
 	}
 
 	public MathTree(TypeML leftType, String leftSymbol, TypeML rightType,
@@ -586,6 +585,11 @@ public class MathTree {
 		}
 
 		public MathNode getChildAt(int index) {
+
+			if(index < 0 || index > getChildCount()-1 || ChildRequirement.TERMINAL.equals(getType().childRequirement())) {
+				return null;
+			}
+			
 			Node node = getXMLNode().getChildNodes().getItem(index);
 			if(node == null) {
 				String response = "No children at position: "+index+" in: "+toString();
@@ -631,10 +635,6 @@ public class MathTree {
 		private MathNode getSibling(int indexesAway) {
 			MathNode parent = this.getParent();
 			int siblingIndex = getIndex() + indexesAway;
-			
-			if(siblingIndex < 0) {
-				return null;
-			}
 
 			try {
 				MathNode sibling = parent.getChildAt(siblingIndex);

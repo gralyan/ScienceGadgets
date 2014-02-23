@@ -16,7 +16,9 @@ public class TrigTransformations extends TransformationList {
 
 	MathNode trig;
 	MathNode argument;
+	
 	TypeML argumentType;
+	
 	TrigFunctions function;
 
 	public TrigTransformations(MathNode trigNode) {
@@ -24,7 +26,9 @@ public class TrigTransformations extends TransformationList {
 		
 		trig = trigNode;
 		argument = trigNode.getChildAt(0);
+		
 		argumentType = argument.getType();
+		
 		function = TrigFunctions.valueOf(trigNode
 				.getAttribute(MathAttribute.Function));
 
@@ -33,13 +37,14 @@ public class TrigTransformations extends TransformationList {
 		add(inverseTrig_check());
 	}
 
-	private TrigReciprocalButton trigReciprocal_check() {
+	TrigReciprocalButton trigReciprocal_check() {
 		if (!function.isArc()) {
 			return new TrigReciprocalButton(this);
 		}
 		return null;
 	}
-	private TrigDefineButton trigDefinition_check() {
+	
+	TrigDefineButton trigDefinition_check() {
 		if (!function.isArc()) {
 			return new TrigDefineButton(this);
 		}
@@ -51,7 +56,7 @@ public class TrigTransformations extends TransformationList {
 	 * sin(arcsin(x)) = x<br/>
 	 * arcsin(sin(x)) = x<br/>
 	 */
-	private TransformationButton inverseTrig_check() {
+	TransformationButton inverseTrig_check() {
 		MathNode trigChild = trig.getFirstChild();
 		if (TypeML.Trig.equals(trigChild.getType())) {
 			String trigChildFunc = trigChild
@@ -74,18 +79,32 @@ public class TrigTransformations extends TransformationList {
 class TrigTransformButton extends TransformationButton {
 	final MathNode trig;
 	final MathNode argument;
+	
 	final TypeML argumentType;
 	final TrigFunctions function;
+
+	protected boolean reloadAlgebraActivity;
+	protected TrigTransformations previewContext;
 
 	TrigTransformButton(TrigTransformations context) {
 		super(context);
 		addStyleName(CSS.TRIG +" "+CSS.DISPLAY_WRAPPER);
+		
 		this.trig = context.trig;
 		this.argument = context.argument;
 		this.argumentType = context.argumentType;
 		this.function = context.function;
 
+		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
+
 		trig.highlight();
+	}
+
+	@Override
+	TransformationButton getPreviewButton(MathNode trig) {
+		previewContext = new TrigTransformations(trig);
+		previewContext.reloadAlgebraActivity = false;
+		return null;
 	}
 }
 
@@ -129,9 +148,15 @@ class TrigDefineButton extends TrigTransformButton {
 				}
 				otherTrig.append(argument.clone());
 
+				if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel(getHTML(), Rule.TRIGONOMETRIC_FUNCTIONS);
-			}
+			}}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.trigDefinition_check();
 	}
 }
 
@@ -165,8 +190,14 @@ class TrigReciprocalButton extends TrigTransformButton {
 				trig.setAttribute(MathAttribute.Function,
 						reciprocalFunction.toString());
 
+				if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel(getHTML(), Rule.TRIGONOMETRIC_FUNCTIONS);
-			}
+			}}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.trigReciprocal_check();
 	}
 }

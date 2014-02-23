@@ -19,6 +19,7 @@ public class LogarithmicTransformations extends TransformationList {
 	MathNode log;
 	MathNode argument;
 	String base;
+	
 	TypeML logChildType;
 
 	static LogBaseSpecification logBaseSpec = null;
@@ -29,16 +30,20 @@ public class LogarithmicTransformations extends TransformationList {
 		log = logNode;
 		argument = logNode.getFirstChild();
 		base = log.getAttribute(MathAttribute.LogBase);
+		
 		logChildType = argument.getType();
 
-		add(new LogChangeBaseButton(this));
+		add(logChangeBase_check());
 		add(logChildCheck());
 		add(logEvaluateCheck());
 		add(unravelLogExp_check());
 
 	}
 
-	private LogTransformButton logEvaluateCheck() {
+	LogTransformButton logChangeBase_check() {
+		return new LogChangeBaseButton(this);
+	}
+	LogTransformButton logEvaluateCheck() {
 		if (TypeML.Number.equals(argument.getType())) {
 			try {
 				Double argValue = Double.parseDouble(argument.getSymbol());
@@ -49,7 +54,7 @@ public class LogarithmicTransformations extends TransformationList {
 		return null;
 	}
 
-	private LogTransformButton logChildCheck() {
+	LogTransformButton logChildCheck() {
 		switch (logChildType) {
 		case Term:
 			return new LogProductButton(this);
@@ -71,7 +76,7 @@ public class LogarithmicTransformations extends TransformationList {
 	 * Check if: (log base = exponential base)<br/>
 	 * log<sub>b</sub>(b<sup>x</sup>) = x
 	 */
-	public TransformationButton unravelLogExp_check() {
+	TransformationButton unravelLogExp_check() {
 		MathNode exponential = log.getFirstChild();
 		if (TypeML.Exponential.equals(exponential.getType())) {
 			MathNode exponentialBase = exponential.getFirstChild();
@@ -95,14 +100,27 @@ class LogTransformButton extends TransformationButton {
 	final MathNode logChild;
 	final String base;
 
+	protected boolean reloadAlgebraActivity;
+	protected LogarithmicTransformations previewContext;
+
 	LogTransformButton(LogarithmicTransformations context, String html) {
-		super(html, context);
+		super(context);
 		addStyleName(CSS.LOG +" "+CSS.DISPLAY_WRAPPER);
+		
 		this.log = context.log;
 		this.logChild = context.argument;
 		this.base = context.base;
 
+		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
+
 		log.highlight();
+	}
+
+	@Override
+	TransformationButton getPreviewButton(MathNode log) {
+		previewContext = new LogarithmicTransformations(log);
+		previewContext.reloadAlgebraActivity = false;
+		return null;
 	}
 }
 
@@ -135,16 +153,21 @@ class LogEvaluateButton extends LogTransformButton {
 
 				log.replace(TypeML.Number, total + "");
 
+				if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel("log<sub>" + base + "</sub>("
 						+ argValue + ") = " + total, Rule.LOGARITHM);
-			}
+			}}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.logEvaluateCheck();
+	}
 }
 
 /**
- * log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(y)
+ * log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)
  */
 class LogChangeBaseButton extends LogTransformButton {
 	LogChangeBaseButton(LogarithmicTransformations context) {
@@ -154,6 +177,10 @@ class LogChangeBaseButton extends LogTransformButton {
 
 			@Override
 			public void onClick(ClickEvent event) {
+
+			if (!reloadAlgebraActivity) {
+				log.replace(TypeML.Variable, "Change Base");
+			}else {
 				if (LogarithmicTransformations.logBaseSpec == null) {
 					LogarithmicTransformations.logBaseSpec = new LogBaseSpecification() {
 						@Override
@@ -167,19 +194,24 @@ class LogChangeBaseButton extends LogTransformButton {
 							denom.append(TypeML.Number, base);
 							denom.setAttribute(MathAttribute.LogBase, newBase);
 
+							if (reloadAlgebraActivity) {
 							Moderator
 									.reloadEquationPanel(
-											"log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(y)",
+											"log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)",
 											Rule.LOGARITHM);
-						}
+						}}
 					};
 				}
 				LogarithmicTransformations.logBaseSpec.reload();
-			}
+			}}
 		});
 
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.logChangeBase_check();
+	}
 }
 
 /**
@@ -213,12 +245,18 @@ class LogProductButton extends LogTransformButton {
 
 				log.remove();
 
+				if (reloadAlgebraActivity) {
 				Moderator
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)",
 								Rule.LOGARITHM);
-			}
+			}}
 		});
+	}
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.logChildCheck();
 	}
 }
 
@@ -254,14 +292,19 @@ class LogQuotientButton extends LogTransformButton {
 
 				log.remove();
 
+				if (reloadAlgebraActivity) {
 				Moderator
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)",
 								Rule.LOGARITHM);
-			}
+			}}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.logChildCheck();
+	}
 }
 
 /**
@@ -287,14 +330,19 @@ class LogPowerButton extends LogTransformButton {
 
 				logChild.replace(logChild.getFirstChild());
 
+				if (reloadAlgebraActivity) {
 				Moderator
 						.reloadEquationPanel(
 								"log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)",
 								Rule.LOGARITHM);
-			}
+			}}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.logChildCheck();
+	}
 }
 
 /**
@@ -311,12 +359,17 @@ class LogOneButton extends LogTransformButton {
 
 				log.replace(TypeML.Number, "0");
 
+				if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel("log<sub>b</sub>(1) = 0",
 						Rule.LOGARITHM);
-			}
+			}}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.logChildCheck();
+	}
 }
 
 /**
@@ -333,10 +386,15 @@ class LogSameBaseAsArgumentButton extends LogTransformButton {
 
 				log.replace(TypeML.Number, "1");
 
+				if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel("log<sub>b</sub>(b) = 1",
 						Rule.LOGARITHM);
-			}
+			}}
 		});
 	}
-
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.logChildCheck();
+	}
 }
