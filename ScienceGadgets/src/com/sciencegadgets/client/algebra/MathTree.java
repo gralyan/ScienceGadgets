@@ -414,6 +414,15 @@ public class MathTree {
 		 * moved and both this and the child are removed. <br/>
 		 */
 		public void decase() {
+			
+			//This method is only useful for terms and sums
+			switch (getType()) {
+			case Term:
+			case Sum:
+				break;
+			default:
+				return;
+			}
 
 			// Propagate leading minus sign or remove leading plus
 			if (getChildCount() != 0) {
@@ -604,6 +613,10 @@ public class MathTree {
 		}
 
 		public int getChildCount() {
+			//Terminal nodes have text nodes in xml
+			if(ChildRequirement.TERMINAL.equals(getType().childRequirement())) {
+				return 0;
+			}
 			return xmlNode.getChildCount();
 		}
 
@@ -836,8 +849,6 @@ public class MathTree {
 					}
 				}
 			}
-			// throw new
-			// InvalidParameterException("Can't getOperation for this node: "+toString());
 			return null;
 		}
 
@@ -971,6 +982,18 @@ public class MathTree {
 				// fall through
 			case Variable:
 				if (getSymbol().equals(another.getSymbol())) {
+					return true;
+				} else {
+					return false;
+				}
+			case Log:
+				if(getAttribute(MathAttribute.LogBase).equals(another.getAttribute(MathAttribute.LogBase)) && getChildAt(0).isLike(another.getChildAt(0))) {
+					return true;
+				} else {
+					return false;
+				}
+			case Trig:
+				if(getAttribute(MathAttribute.Function).equals(another.getAttribute(MathAttribute.Function)) && getChildAt(0).isLike(another.getChildAt(0))) {
 					return true;
 				} else {
 					return false;

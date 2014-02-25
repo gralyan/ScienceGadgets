@@ -179,17 +179,19 @@ public class MultiplyTransformations extends TransformationList {
 	 * x &middot; a/b = (xa)/b
 	 */
 	MultiplyTransformButton multiplyFraction_check() {
-		if (TypeML.Fraction.equals(rightType)
-				&& TypeML.Fraction.equals(leftType)) {
+		boolean isLeftFraction = TypeML.Fraction.equals(leftType);
+		boolean isRightFraction = TypeML.Fraction.equals(rightType);
+
+		if (!isRightFraction && !isLeftFraction) {
+			return null;
+		} else if (isRightFraction && isLeftFraction) {
 			return new MultiplyFractionsButton(this);
+		} else if (isRightFraction) {
+			return new MultiplyWithFractionButton(this, left, right, true);
+		} else if (isLeftFraction) {
+			return new MultiplyWithFractionButton(this, right, left, false);
 		} else {
-			if (TypeML.Fraction.equals(rightType)) {
-				return new MultiplyWithFractionButton(this, left, right, true);
-			} else if (TypeML.Fraction.equals(leftType)) {
-				return new MultiplyWithFractionButton(this, right, left, false);
-			} else {
-				return null;
-			}
+			return null;
 		}
 	}
 
@@ -231,7 +233,7 @@ class MultiplyTransformButton extends TransformationButton {
 		this.parent = context.parent;
 
 		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
-		
+
 		left.highlight();
 		operation.highlight();
 		right.highlight();
@@ -291,6 +293,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -327,6 +330,7 @@ class MultiplyOneButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -366,6 +370,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -392,7 +397,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 					multiplyNumbers(left, right, totalValue, leftValue,
 							rightValue);
 
-				}else if(!reloadAlgebraActivity) {
+				} else if (!reloadAlgebraActivity) {
 					parent.replace(TypeML.Variable, "# · #");
 
 				} else {// prompt
@@ -444,6 +449,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 					Rule.MULTIPLICATION);
 		}
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -462,7 +468,6 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				
 
 				for (MathNode sumChild : sum.getChildren()) {
 					if (!TypeML.Operation.equals(sumChild.getType())) {
@@ -489,6 +494,7 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -527,6 +533,7 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -595,6 +602,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -632,6 +640,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -673,6 +682,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -706,6 +716,7 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
