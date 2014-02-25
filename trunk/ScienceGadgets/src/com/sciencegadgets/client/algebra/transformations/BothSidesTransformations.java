@@ -116,6 +116,9 @@ public class BothSidesTransformations extends TransformationList {
 			}
 			break parent;
 		case Equation:
+			if("0".equals(node.getSymbol())) {
+				break;
+			}
 			isSide = true;
 			this.add(new BothSidesButton(Math.SUBTRACT, this));
 			this.add(new BothSidesButton(Math.DIVIDE, this));

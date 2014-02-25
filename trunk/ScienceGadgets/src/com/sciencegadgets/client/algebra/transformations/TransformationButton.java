@@ -41,7 +41,6 @@ public class TransformationButton extends SimplePanel implements
 		return buttonHTML.getHTML();
 	}
 
-
 	/**
 	 * @return The HTML display version of the transformation
 	 */
@@ -78,36 +77,29 @@ public class TransformationButton extends SimplePanel implements
 		}
 
 		MathTree mTree = context.beforeAfterTree;
-		mTree.getRightSide().replace(
-				mTree.getLeftSide().clone());
+		mTree.getRightSide().replace(mTree.getLeftSide().clone());
 		MathNode previewContextNode = mTree.getRightSide();
 		if (TypeML.Sum.equals(previewContextNode.getType())
 				|| TypeML.Term.equals(previewContextNode.getType())) {
-			int operationIndex = previewContextNode.getChildCount() == 3 ? 1 : 2;
+			int operationIndex = previewContextNode.getChildCount() == 3 ? 1
+					: 2;
 			previewContextNode = previewContextNode.getChildAt(operationIndex);
 		}
 
-		TransformationButton previewButton = this.getPreviewButton(previewContextNode);
+		TransformationButton previewButton = this
+				.getPreviewButton(previewContextNode);
 
-//		try {
-//			System.out.println("");
-//			System.out.println(mTree.getRoot().getXMLNode().getInnerText());
-			previewButton.fireEvent(new ClickEvent() {});
-//			System.out.println(mTree.getRoot().getXMLNode().getInnerText());
-			mTree.reloadDisplay(true);
-			return mTree;
-//		} catch (Exception e) {
-//			System.out.println(e);
-//		}
-
-//		return null;
+		previewButton.fireEvent(new ClickEvent() {
+		});
+		mTree.reloadDisplay(true);
+		return mTree;
 	}
 
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return addDomHandler(handler, ClickEvent.getType());
 	}
-	
+
 	TransformationButton getPreviewButton(MathNode newNode) {
 		return null;
 	}

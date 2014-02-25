@@ -83,7 +83,18 @@ public class AlgebraicTransformations {
 			break;
 		case Sum:
 			for (MathNode sumChild : toNegate.getChildren()) {
-				propagateNegative(sumChild);
+				if (TypeML.Operation.equals(sumChild.getType())) {
+					continue;
+				}
+				MathNode prevOp = sumChild.getPrevSibling();
+				if (prevOp != null && TypeML.Operation.equals(prevOp.getType())) {
+					Operator opValue = prevOp.getOperation();
+					opValue = Operator.PLUS.equals(opValue) ? Operator.MINUS
+							: Operator.PLUS;
+					prevOp.setSymbol(opValue.getSign());
+				} else {
+					propagateNegative(sumChild);
+				}
 			}
 			break;
 		case Fraction:
@@ -239,7 +250,9 @@ public class AlgebraicTransformations {
 
 		switch (target.getType()) {
 		case Number:
-			dropTargets.put(target, DropType.DIVIDE);
+			if (!"0".equals(drag.getSymbol())) {
+				dropTargets.put(target, DropType.DIVIDE);
+			}
 			break;
 		case Exponential:
 			if (drag.getFirstChild().isLike(target.getFirstChild())) {
@@ -289,7 +302,7 @@ public class AlgebraicTransformations {
 class SeperateNegButton extends TransformationButton {
 	SeperateNegButton(final MathNode negNode, TransformationList context) {
 		super(context);
-		
+
 		setHTML("Seperate (-)");
 
 		this.addClickHandler(new ClickHandler() {
@@ -384,7 +397,7 @@ class UnravelButton extends TransformationButton {
 	public UnravelButton(final MathNode toReplace, final MathNode replacement,
 			final Rule rule, TransformationList context) {
 		super(context);
-		
+
 		setHTML(replacement.getHTMLString());
 
 		this.addClickHandler(new ClickHandler() {
@@ -392,7 +405,9 @@ class UnravelButton extends TransformationButton {
 			public void onClick(ClickEvent event) {
 				String changeComment = toReplace.getHTMLString() + " = "
 						+ replacement.getHTMLString();
+				
 				toReplace.replace(replacement);
+				
 				Moderator.reloadEquationPanel(changeComment, rule);
 			}
 		});

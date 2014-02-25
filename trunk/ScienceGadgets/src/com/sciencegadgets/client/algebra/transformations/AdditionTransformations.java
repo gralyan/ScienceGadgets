@@ -36,11 +36,11 @@ public class AdditionTransformations extends TransformationList {
 		super(operation);
 
 		this.parent = operation.getParent();
-		
+
 		this.left = operation.getPrevSibling();
 		this.operation = operation;
 		this.right = operation.getNextSibling();
-		
+
 		this.leftType = left.getType();
 		this.rightType = right.getType();
 
@@ -53,6 +53,9 @@ public class AdditionTransformations extends TransformationList {
 			isMinusBeforeLeft = true;
 		}
 
+		if (add(addZero_check())) {
+			return;
+		}
 		add(addNumbers_check());
 		add(addSimilar_check());
 		add(addFractions_check());
@@ -63,21 +66,32 @@ public class AdditionTransformations extends TransformationList {
 
 	}
 
-	AddTransformButton addNumbers_check() {
+	AddTransformButton addZero_check() {
 
-		if (!TypeML.Number.equals(leftType) || !TypeML.Number.equals(rightType)) {
+		if (!TypeML.Number.equals(leftType) && !TypeML.Number.equals(rightType)) {
 			return null;
 		}
 
 		final int same = 0;
 
-		BigDecimal leftValue = new BigDecimal(left.getSymbol());
-		if (leftValue.compareTo(new BigDecimal(0)) == same) {
-			return new AddZeroButton(this, right, left);
+		if (TypeML.Number.equals(leftType)) {
+			BigDecimal leftValue = new BigDecimal(left.getSymbol());
+			if (leftValue.compareTo(new BigDecimal(0)) == same) {
+				return new AddZeroButton(this, right, left);
+			}
+		} else if (TypeML.Number.equals(rightType)) {
+			BigDecimal rightValue = new BigDecimal(right.getSymbol());
+			if (rightValue.compareTo(new BigDecimal(0)) == same) {
+				return new AddZeroButton(this, left, right);
+			}
 		}
-		BigDecimal rightValue = new BigDecimal(right.getSymbol());
-		if (rightValue.compareTo(new BigDecimal(0)) == same) {
-			return new AddZeroButton(this, left, right);
+		return null;
+	}
+
+	AddTransformButton addNumbers_check() {
+
+		if (!TypeML.Number.equals(leftType) || !TypeML.Number.equals(rightType)) {
+			return null;
 		}
 		return new AddNumbersButton(this);
 	}
@@ -94,18 +108,34 @@ public class AdditionTransformations extends TransformationList {
 	}
 
 	AddTransformButton addFractions_check() {
-		// Common denominators
-		if (!TypeML.Fraction.equals(leftType) || !TypeML.Fraction.equals(right)) {
+		boolean isLeftFraction = TypeML.Fraction.equals(leftType);
+		boolean isRightFraction = TypeML.Fraction.equals(rightType);
+
+		if (!isRightFraction && !isLeftFraction) {
 			return null;
-		}
-		if (left.getChildAt(1).isLike(right.getChildAt(1))) {
-			return new AddFractionsButton(this);
+
+		} else if (isRightFraction && isLeftFraction) {
+			if (left.getChildAt(1).isLike(right.getChildAt(1))) {
+				return new AddFractionsButton(this);// Common denominators
+			} else {
+				return new ToCommonDenominatorButton(this);
+			}
+
+		} else if (isRightFraction) {//
+			return new ToCommonDenominatorButton(this, left, right);
+
+		} else if (isLeftFraction) {
+			return new ToCommonDenominatorButton(this, right, left);
+
 		} else {
 			return null;
 		}
 	}
 
 	AddTransformButton addLogs_check() {
+		if (isMinusBeforeLeft) {
+			return null;
+		}
 		if (!TypeML.Log.equals(leftType) || !TypeML.Log.equals(rightType)) {
 			return null;
 		}
@@ -206,7 +236,7 @@ public class AdditionTransformations extends TransformationList {
 	 * Sub routine to be used at the end of the other factor methods
 	 */
 	void factor(Collection<MathNode> factors, MathNode inBinomialA,
-			MathNode inBinomialB) {
+			MathNode inBinomialB, MathNode minusBeforeLeft) {
 
 		MathNode inBinomialFirst = inBinomialA;
 		MathNode inBinomialSecond = inBinomialB;
@@ -215,11 +245,15 @@ public class AdditionTransformations extends TransformationList {
 			inBinomialSecond = inBinomialA;
 		}
 
-		if (inBinomialFirst.getChildCount() == 1 && !ChildRequirement.TERMINAL.equals(inBinomialFirst.getType().childRequirement())) {
+		if (inBinomialFirst.getChildCount() == 1
+				&& !ChildRequirement.TERMINAL.equals(inBinomialFirst.getType()
+						.childRequirement())) {
 			inBinomialFirst = inBinomialFirst.getFirstChild();
 			inBinomialFirst.getParent().decase();
 		}
-		if (inBinomialSecond.getChildCount() == 1 && !ChildRequirement.TERMINAL.equals(inBinomialSecond.getType().childRequirement())) {
+		if (inBinomialSecond.getChildCount() == 1
+				&& !ChildRequirement.TERMINAL.equals(inBinomialSecond.getType()
+						.childRequirement())) {
 			inBinomialSecond = inBinomialSecond.getFirstChild();
 			inBinomialSecond.getParent().decase();
 		}
@@ -254,12 +288,23 @@ public class AdditionTransformations extends TransformationList {
 				termCasing.append(TypeML.Operation, Operator.getMultiply()
 						.getSign());
 			}
+
 			MathNode binomialCasing = termCasing.append(TypeML.Sum, "");
+
+			if (minusBeforeLeft != null) {
+				if (minusBeforeLeft.getIndex() != 0) {
+					minusBeforeLeft.getParent().addBefore(
+							minusBeforeLeft.getIndex(), TypeML.Operation,
+							Operator.PLUS.getSign());
+				}
+				binomialCasing.append(minusBeforeLeft);
+			}
 			binomialCasing.append(inBinomialFirst);
 			binomialCasing.append(operation);
 			binomialCasing.append(inBinomialSecond);
 		}
-		parent.decase();
+		inBinomialFirst.decase();
+		inBinomialSecond.decase();
 	}
 
 	/**
@@ -289,6 +334,7 @@ class AddTransformButton extends TransformationButton {
 	MathNode operation;
 	MathNode parent;
 	MathNode grandParent;
+	MathNode minusBeforeLeft;
 	final boolean isMinus;
 	final boolean isMinusBeforeLeft;
 
@@ -302,12 +348,16 @@ class AddTransformButton extends TransformationButton {
 		this.isMinus = context.isMinus;
 		this.isMinusBeforeLeft = context.isMinusBeforeLeft;
 
+		if (isMinusBeforeLeft) {
+			minusBeforeLeft = context.left.getPrevSibling();
+		}
+
 		this.left = context.left;
 		this.right = context.right;
 		this.operation = context.operation;
 		this.parent = context.parent;
 		this.grandParent = this.parent.getParent();
-		
+
 		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
 	}
 
@@ -350,10 +400,11 @@ class AddZeroButton extends AddTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
-		return previewContext.addNumbers_check();
+		return previewContext.addZero_check();
 	}
 }
 
@@ -395,7 +446,8 @@ class AddNumbersButton extends AddTransformButton {
 					addNumbers(left, right, totalValue, leftValue, rightValue);
 
 				} else if (!reloadAlgebraActivity) {
-					parent.replace(TypeML.Variable, "# + #");
+					parent.replace(TypeML.Variable,
+							"# " + operation.getSymbol() + " #");
 
 				} else {// prompt
 					String question = leftValue.toString() + " "
@@ -443,6 +495,7 @@ class AddNumbersButton extends AddTransformButton {
 					Rule.ADDITION);
 		}
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -478,6 +531,12 @@ class AddSimilarButton extends AddTransformButton {
 					casing.addBefore(0, TypeML.Operation, Operator
 							.getMultiply().getSign());
 					casing.addBefore(0, TypeML.Number, "-2");
+					MathNode minusBeforeLeft = left.getPrevSibling();
+					if (minusBeforeLeft != null
+							&& Operator.MINUS.getSign().equals(
+									minusBeforeLeft.getSymbol())) {
+						minusBeforeLeft.remove();
+					}
 				} else if ((isMinus && !isMinusBeforeLeft)
 						|| (!isMinus && isMinusBeforeLeft)) {
 					// Remove residual operations
@@ -505,10 +564,93 @@ class AddSimilarButton extends AddTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.addSimilar_check();
+	}
+}
+
+/**
+ * x + a/b = xb/b + a/b<br/>
+ * a/b + x = a/b + xb/b<br/>
+ * a/b + x/y = ay/by + xb/by<br/>
+ */
+class ToCommonDenominatorButton extends AddTransformButton {
+	MathNode nonFrac = null;
+	MathNode fraction = null;
+
+	ToCommonDenominatorButton(AdditionTransformations context,
+			MathNode nonFrac, MathNode fraction) {
+		this(context);
+		this.nonFrac = nonFrac;
+		this.fraction = fraction;
+	}
+
+	ToCommonDenominatorButton(AdditionTransformations context) {
+		super(context, "Common Denominator");
+		addClickHandler(new ToCommonDenominatorClickHandler());
+	}
+
+	class ToCommonDenominatorClickHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+
+			if (nonFrac != null && fraction != null) {// One Fraction
+				nonFrac.highlight();
+
+				MathNode commonDenominator = fraction.getChildAt(1);
+
+				MathNode nonFracTerm = nonFrac.encase(TypeML.Term);
+				nonFracTerm.append(TypeML.Operation, Operator.getMultiply()
+						.getSign());
+				nonFracTerm.append(commonDenominator.clone());
+
+				MathNode nonFracFraction = nonFracTerm.encase(TypeML.Fraction);
+				nonFracFraction.append(commonDenominator.clone());
+
+			} else {// Both left and right are fractions
+				left.highlight();
+				right.highlight();
+
+				MathNode commonLeft = left.getChildAt(1).clone();
+				MathNode commonRight = right.getChildAt(1).clone();
+
+				MathNode leftNumTerm = left.getChildAt(0).encase(TypeML.Term);
+				leftNumTerm.append(TypeML.Operation, Operator.getMultiply()
+						.getSign());
+				leftNumTerm.append(commonRight.clone());
+
+				MathNode rightNumTerm = right.getChildAt(0).encase(TypeML.Term);
+				rightNumTerm.append(TypeML.Operation, Operator.getMultiply()
+						.getSign());
+				rightNumTerm.append(commonLeft.clone());
+
+				MathNode leftDenTerm = left.getChildAt(1).encase(TypeML.Term);
+				leftDenTerm.append(TypeML.Operation, Operator.getMultiply()
+						.getSign());
+				leftDenTerm.append(commonRight);
+
+				MathNode rightDenTerm = right.getChildAt(1).encase(TypeML.Term);
+				rightDenTerm.append(TypeML.Operation, Operator.getMultiply()
+						.getSign());
+				rightDenTerm.append(commonLeft);
+			}
+
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel("Common Denominator",
+						Rule.FRACTION_ADDITION);
+			}
+		}
+
+	}
+
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.addFractions_check();
 	}
 }
 
@@ -547,6 +689,7 @@ class AddFractionsButton extends AddTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -593,6 +736,7 @@ class AddLogsButton extends AddTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -674,7 +818,8 @@ class FactorLikeTermsButton extends AddTransformButton {
 					}
 				}
 
-				context.factor(factors, leftRemaining, rightRemaining);
+				context.factor(factors, leftRemaining, rightRemaining,
+						minusBeforeLeft);
 
 				if (reloadAlgebraActivity) {
 					Moderator.reloadEquationPanel("Factor Like Terms",
@@ -683,6 +828,7 @@ class FactorLikeTermsButton extends AddTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -705,7 +851,6 @@ class FactorBaseButton extends AddTransformButton {
 				other.highlight();
 				operation.highlight();
 				exponential.getChildAt(0).highlight();
-				
 
 				MathNode inBinomialB = exponential;
 				MathNode inBinomialA = other.getParent().addBefore(
@@ -713,11 +858,19 @@ class FactorBaseButton extends AddTransformButton {
 
 				LinkedList<MathNode> factors = new LinkedList<MathNode>();
 				factors.add(other);
-				context.factor(factors, inBinomialA, inBinomialB);
+				context.factor(factors, inBinomialA, inBinomialB,
+						minusBeforeLeft);
 
-				MathNode exp = exponential.getChildAt(1).encase(TypeML.Sum);
-				exp.append(TypeML.Operation, Operator.MINUS.getSign());
-				exp.append(TypeML.Number, "1");
+				MathNode exp = exponential.getChildAt(1);
+				if (TypeML.Number.equals(exp.getType())
+						&& Moderator.isInEasyMode) {
+					BigDecimal expValue = new BigDecimal(exp.getSymbol());
+					exp.setSymbol(expValue.subtract(new BigDecimal("1")) + "");
+				} else {
+					exp = exp.encase(TypeML.Sum);
+					exp.append(TypeML.Operation, Operator.MINUS.getSign());
+					exp.append(TypeML.Number, "1");
+				}
 
 				if (reloadAlgebraActivity) {
 					Moderator.reloadEquationPanel("Factor with Base",
@@ -727,6 +880,7 @@ class FactorBaseButton extends AddTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -766,21 +920,15 @@ class FactorWithTermChildButton extends AddTransformButton {
 					}
 				}
 
-				// Idea: factor a single multiple of a base, other must be
-				// base
+				// TODO The case where a term child and an exponential base
+				// would be factored out together
 
-				// if (Type.Exponential.equals(other.getParentType())) {
-				// inBinomialA = other.getParent();
-				// MathNode exp = other.getNextSibling().encase(Type.Sum);
-				// exp.add(Type.Operation, Operator.MINUS.getSign());
-				// exp.add(Type.Number, "1");
-				// } else {
 				inBinomialA = other.replace(TypeML.Number, "1");
-				// }
 
 				LinkedList<MathNode> factors = new LinkedList<MathNode>();
 				factors.add(termChild);
-				context.factor(factors, inBinomialA, inBinomialB);
+				context.factor(factors, inBinomialA, inBinomialB,
+						minusBeforeLeft);
 
 				// term.decase();
 
@@ -790,6 +938,7 @@ class FactorWithTermChildButton extends AddTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
