@@ -8,7 +8,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
@@ -28,60 +28,55 @@ public class TestBot_Transformations {
 	private static final String buttonPrefix = "com.sciencegadgets.client.algebra.transformations.";
 	private MathTree mTree = new MathTree(false);
 	private boolean showsEmptyRows = false;
+	private boolean showsEmptyColumns = false;
 
 	TestBot_Transformations() {
-
+//		 this.showsEmptyRows = true;
+//		 this.showsEmptyColumns = true;
+		
+		Moderator.isInEasyMode = true;
 	}
 
-	public void deploy(boolean showsEmptyRows) {
-//		this.showsEmptyRows = showsEmptyRows;
+	public void deploy() {
 		testAddition_scenario(false, false);
-//		testAddition_scenario(false, true);
-//		testAddition_scenario(true, false);
-//		testAddition_scenario(true, true);
-//		testMultiplication_scenario();
-//		testExponential_scenario();
-//		testLog_scenario();
-//		testTrig_scenario();
-
+		testAddition_scenario(false, true);
+		testAddition_scenario(true, false);
+		testAddition_scenario(true, true);
+		testMultiplication_scenario();
+		testExponential_scenario();
+		testLog_scenario();
+		testTrig_scenario();
 	}
 
 	public void testAddition_scenario(boolean isMinusBeforeLeft, boolean isMinus) {
 
-		MathNode leftSide = mTree.getLeftSide().replace(TypeML.Sum, "");
+		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
+		ArrayList<MathNode> branches = new ArrayList<MathNode>();
 
 		// Binary Branch cases
 		Operator sign = isMinus ? Operator.MINUS : Operator.PLUS;
-		ArrayList<MathNode> binaryBranches = getBinaryArgumentBranches(
-				leftSide, sign);
+
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), sign, false));
+
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), sign, true));
 
 		// Special cases
-		 MathTree specialCasesTree = new MathTree(false);
-		 MathNode specialCasesLeftSide = specialCasesTree.getLeftSide().replace(TypeML.Sum, "");
-		 MathNode leftDummy = specialCasesLeftSide.append(TypeML.Variable, "toReplace");
-		
-		 ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
-		 specialCases.add(new NodeCase(TypeML.Number, "-1"));
-		 specialCases.add(new NodeCase(TypeML.Number, "0"));
-		 specialCases.add(new NodeCase(TypeML.Number, "1"));
-		 specialCases.add(new NodeCase(TypeML.Variable, "a"));
-		 ArrayList<MathNode> leftCases = makeCases(specialCases, leftDummy,false);
-		 for(MathNode leftCase : leftCases) {
-			 MathNode caseParent = leftCase.getParent();
-			 caseParent.append(TypeML.Operation, Operator.PLUS.getSign());
-			 MathNode rightCases = caseParent.append(TypeML.Variable, "toReplace");
-			 ArrayList<MathNode> functionBranches = makeCases(specialCases, rightCases,false);
-			 binaryBranches.addAll(functionBranches);
-		 }
-		 
-		 
+		ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
+		specialCases.add(new NodeCase(TypeML.Variable, "a"));
+		specialCases.add(new NodeCase(TypeML.Number, "-1"));
+		specialCases.add(new NodeCase(TypeML.Number, "0"));
+		specialCases.add(new NodeCase(TypeML.Number, "1"));
+
+		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(), specialCases, Operator.PLUS));
 
 		if (isMinusBeforeLeft) {
-			for (MathNode child : binaryBranches) {
+			for (MathNode child : branches) {
 				child.getParent().addBefore(0, TypeML.Operation,
 						Operator.MINUS.getSign());
 			}
 		}
+
+		// ~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~
 
 		HashMap<String, Integer> tButtonMap = new HashMap<String, Integer>();
 		tButtonMap.put("AddZeroButton", 1);
@@ -96,8 +91,8 @@ public class TestBot_Transformations {
 
 		FlexTable table = makeTable(tButtonMap, "Add");
 
-		for (int i = 0; i < binaryBranches.size(); i++) {
-			MathNode node = binaryBranches.get(i);
+		for (int i = 0; i < branches.size(); i++) {
+			MathNode node = branches.get(i);
 			AdditionTransformations transformList = new AdditionTransformations(
 					node.getPrevSibling());
 
@@ -107,13 +102,26 @@ public class TestBot_Transformations {
 
 	public void testMultiplication_scenario() {
 
-		MathNode leftSide = mTree.getLeftSide().replace(TypeML.Term, "");
-
+		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
+		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+		
 		// Binary Branch cases
-		ArrayList<MathNode> binaryBranches = getBinaryArgumentBranches(
-				leftSide, Operator.getMultiply());
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(),
+				Operator.getMultiply(), false));
+		
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(),
+				Operator.getMultiply(), true));
 
 		// Special cases
+		ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
+		specialCases.add(new NodeCase(TypeML.Variable, "a"));
+		specialCases.add(new NodeCase(TypeML.Number, "-1"));
+		specialCases.add(new NodeCase(TypeML.Number, "0"));
+		specialCases.add(new NodeCase(TypeML.Number, "1"));
+
+		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(), specialCases, Operator.getMultiply()));
+
+		// ~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~
 
 		HashMap<String, Integer> tButtonMap = new HashMap<String, Integer>();
 		tButtonMap.put("MultiplyZeroButton", 1);
@@ -129,8 +137,8 @@ public class TestBot_Transformations {
 
 		FlexTable table = makeTable(tButtonMap, "Multiplication");
 
-		for (int i = 0; i < binaryBranches.size(); i++) {
-			MathNode node = binaryBranches.get(i);
+		for (int i = 0; i < branches.size(); i++) {
+			MathNode node = branches.get(i);
 			MultiplyTransformations transformList = new MultiplyTransformations(
 					node.getPrevSibling());
 
@@ -140,13 +148,26 @@ public class TestBot_Transformations {
 
 	public void testExponential_scenario() {
 
-		MathNode leftSide = mTree.getLeftSide().replace(TypeML.Exponential, "");
+		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
+		ArrayList<MathNode> branches = new ArrayList<MathNode>();
 
 		// Binary Branch cases
-		ArrayList<MathNode> binaryBranches = getBinaryArgumentBranches(
-				leftSide, null);
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), null, false));
+		
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), null, true));
 
 		// Special cases
+		ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
+		specialCases.add(new NodeCase(TypeML.Variable, "a"));
+		specialCases.add(new NodeCase(TypeML.Number, "-1"));
+		specialCases.add(new NodeCase(TypeML.Number, "0"));
+		specialCases.add(new NodeCase(TypeML.Number, "1"));
+		specialCases.add(new NodeCase(TypeML.Number, "2"));
+		specialCases.add(new NodeCase(TypeML.Number, "3"));
+
+		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(), specialCases, null));
+		
+		// ~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~
 
 		HashMap<String, Integer> tButtonMap = new HashMap<String, Integer>();
 		tButtonMap.put("ExponentialEvaluateButton", 1);
@@ -154,11 +175,12 @@ public class TestBot_Transformations {
 		tButtonMap.put("ExponentialExponentiateButton", 3);
 		tButtonMap.put("ExponentialPropagateButton", 4);
 		tButtonMap.put("ExponentialFlipButton", 5);
+		tButtonMap.put("ZeroBaseButton", 6);
 
 		FlexTable table = makeTable(tButtonMap, "Exponential");
 
-		for (int i = 0; i < binaryBranches.size(); i++) {
-			MathNode node = binaryBranches.get(i);
+		for (int i = 0; i < branches.size(); i++) {
+			MathNode node = branches.get(i);
 			ExponentialTransformations transformList = new ExponentialTransformations(
 					node.getParent());
 
@@ -170,11 +192,15 @@ public class TestBot_Transformations {
 
 		MathNode leftSide = mTree.getLeftSide().replace(TypeML.Log, "2");
 
+		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
+		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+
 		// Branch cases
-		ArrayList<MathNode> argBranches = getArgumentBranches(leftSide, true,
-				false);
+		branches.addAll(getArgumentBranches(leftSide, true, false));
 
 		// Special cases
+
+		// ~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~
 
 		HashMap<String, Integer> tButtonMap = new HashMap<String, Integer>();
 		tButtonMap.put("LogEvaluateButton", 1);
@@ -187,8 +213,8 @@ public class TestBot_Transformations {
 
 		FlexTable table = makeTable(tButtonMap, "Log");
 
-		for (int i = 0; i < argBranches.size(); i++) {
-			MathNode node = argBranches.get(i);
+		for (int i = 0; i < branches.size(); i++) {
+			MathNode node = branches.get(i);
 			LogarithmicTransformations transformList = new LogarithmicTransformations(
 					node.getParent());
 
@@ -198,29 +224,29 @@ public class TestBot_Transformations {
 
 	public void testTrig_scenario() {
 
-		// Branch cases
+		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
+		ArrayList<MathNode> branches = new ArrayList<MathNode>();
 
 		// Function cases
-		MathNode leftSide = mTree.getLeftSide()
-				.replace(TypeML.Variable, "case");
-
 		ArrayList<NodeCase> cases = new ArrayList<NodeCase>();
 		for (TrigFunctions func : TrigFunctions.values()) {
 			cases.add(new NodeCase(TypeML.Trig, func.toString()));
 		}
 
-		ArrayList<MathNode> functionBranches = makeCases(cases, leftSide, true);
+		branches.addAll(makeCases(cases, mTree.getLeftSide(), true, false));
 
+		// Branch cases
 		// Special cases
 
+		// ~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~
 		HashMap<String, Integer> tButtonMap = new HashMap<String, Integer>();
 		tButtonMap.put("TrigDefineButton", 1);
 		tButtonMap.put("TrigReciprocalButton", 2);
 
 		FlexTable table = makeTable(tButtonMap, "Trig");
 
-		for (int i = 0; i < functionBranches.size(); i++) {
-			MathNode node = functionBranches.get(i);
+		for (int i = 0; i < branches.size(); i++) {
+			MathNode node = branches.get(i);
 			TrigTransformations transformList = new TrigTransformations(node);
 
 			fillRow(transformList, tButtonMap, table, node);
@@ -236,11 +262,15 @@ public class TestBot_Transformations {
 		// First row of table
 		table.setText(0, 0, title);
 		table.getRowFormatter().getElement(0).getStyle().setHeight(70, Unit.PX);
+		if(showsEmptyColumns) {
 		for (Entry<String, Integer> tButtonEntry : tButtonMap.entrySet()) {
 			table.setText(0, tButtonEntry.getValue(), tButtonEntry.getKey());
-
+		}
 		}
 
+		if(!showsEmptyColumns) {
+			return null;
+		}
 		return table;
 	}
 
@@ -249,6 +279,11 @@ public class TestBot_Transformations {
 
 		if (!showsEmptyRows && transformList.isEmpty()) {
 			return;
+		}
+		
+		if(table == null) {
+			table = new FlexTable();
+			RootPanel.get().add(table);
 		}
 
 		int row = table.getRowCount() + 1;
@@ -260,8 +295,8 @@ public class TestBot_Transformations {
 		table.setWidget(row, 0, testCase);
 
 		for (TransformationButton tButton : transformList) {
-			String tButtonName = tButton.getClass().getName();
-			int column = tButtonMap.get(tButtonName.replace(buttonPrefix, ""));
+			String tButtonName = tButton.getClass().getName().replace(buttonPrefix, "");
+			int column = tButtonMap.get(tButtonName);
 
 			HTML testCaseTransformation = new HTML();
 			tree.reloadDisplay(true);
@@ -273,7 +308,14 @@ public class TestBot_Transformations {
 				table.setText(row, column, "error");
 			} else {
 				HTML preview = new HTML(previewEq.getRightDisplay());
-				table.setWidget(row, column, preview);
+				if(showsEmptyColumns) {
+					table.setWidget(row, column, preview);
+				}else {
+					int cellCount = table.getCellCount(row);
+					table.setText(row, cellCount, tButtonName);
+					table.getCellFormatter().getElement(row, cellCount).getStyle().setBackgroundColor("yellow");
+					table.setWidget(row, cellCount+1, preview);
+				}
 			}
 		}
 
@@ -282,18 +324,18 @@ public class TestBot_Transformations {
 	}
 
 	ArrayList<MathNode> makeCases(ArrayList<NodeCase> caseList,
-			MathNode toReplace, boolean isIncomplete) {
+			MathNode toReplace, boolean isIncomplete, boolean containsAllTypes) {
 		MathTree mTree = toReplace.getTree();
-		String parentId = toReplace.getId();
+		String toReplaceId = toReplace.getId();
 		ArrayList<MathNode> branches = new ArrayList<MathNode>();
 
 		for (NodeCase branchSpec : caseList) {
 			MathTree mTreeBranch = mTree.clone();
-			MathNode parentBranch = mTreeBranch.getNodeById(parentId);
-			MathNode branch = parentBranch.replace(branchSpec.type,
+			MathNode toReplaceBranch = mTreeBranch.getNodeById(toReplaceId);
+			MathNode branch = toReplaceBranch.replace(branchSpec.type,
 					branchSpec.symbol);
 			if (isIncomplete) {
-				completeBranch(branch);
+				completeBranch(branch, containsAllTypes);
 			}
 			branches.add(branch);
 		}
@@ -306,36 +348,42 @@ public class TestBot_Transformations {
 	 * @return - A list of the varied nodes in their own MathTree
 	 */
 	private ArrayList<MathNode> getArgumentBranches(MathNode parent,
-			boolean isIncomplete, boolean isTestedForSimilarities) {
+			boolean isIncomplete, boolean containsAllTypes) {
 
 		ArrayList<NodeCase> branchList = new ArrayList<NodeCase>();
 
 		switch (parent.getType()) {
 		case Sum:
-			branchList
-					.addAll(branchAllBut(TypeML.Sum, isTestedForSimilarities));
+			branchList.addAll(branchAllBut(TypeML.Sum));
 			break;
 		case Term:
-			branchList
-					.addAll(branchAllBut(TypeML.Term, isTestedForSimilarities));
+			branchList.addAll(branchAllBut(TypeML.Term));
 			break;
 		case Fraction:
 		case Exponential:
 		case Trig:
 		case Log:
-			branchList.addAll(branchAllBut(null, isTestedForSimilarities));
+			branchList.addAll(branchAllBut(null));
 			break;
 		}
 
-		return makeCases(branchList, parent.append(TypeML.Variable, "case"),
-				isIncomplete);
+		MathNode toReplace = parent.append(TypeML.Variable, "case");
+		return makeCases(branchList, toReplace, isIncomplete, containsAllTypes);
 	}
 
-	private ArrayList<MathNode> getBinaryArgumentBranches(MathNode parent,
-			Operator operator) {
+	private ArrayList<MathNode> getBinaryArgumentBranches(MathNode toReplace,
+			Operator operator, boolean containsAllTypes) {
+		
+		if(operator == null) {
+			toReplace = toReplace.replace(TypeML.Exponential, "");
+		}else if(operator.equals(Operator.PLUS) || operator.equals(Operator.MINUS)) {
+			toReplace = toReplace.replace(TypeML.Sum, "");
+		}else if(operator.equals(Operator.getMultiply())){
+			toReplace = toReplace.replace(TypeML.Term, "");
+		}
 
-		ArrayList<MathNode> firstBranches = getArgumentBranches(parent, true,
-				false);
+		ArrayList<MathNode> firstBranches = getArgumentBranches(toReplace, true,
+				containsAllTypes);
 
 		ArrayList<MathNode> binaryBranches = new ArrayList<MathNode>();
 		for (MathNode branch : firstBranches) {
@@ -344,10 +392,40 @@ public class TestBot_Transformations {
 				branchParent.append(TypeML.Operation, operator.getSign());
 			}
 			ArrayList<MathNode> rightBranches = getArgumentBranches(
-					branchParent, true, false);
+					branchParent, true, containsAllTypes);
 			binaryBranches.addAll(rightBranches);
 		}
 		return binaryBranches;
+	}
+
+	ArrayList<MathNode> getSpecialBinaryCases(MathNode toReplace, ArrayList<NodeCase> specialCases, Operator operator) {
+
+		if(operator == null) {
+			toReplace = toReplace.replace(TypeML.Exponential, "");
+		}else if(operator.equals(Operator.PLUS) || operator.equals(Operator.MINUS)) {
+			toReplace = toReplace.replace(TypeML.Sum, "");
+		}else if(operator.equals(Operator.getMultiply())){
+			toReplace = toReplace.replace(TypeML.Term, "");
+		}
+		
+		MathNode leftDummy = toReplace.append(TypeML.Variable,
+				"toReplace");
+
+		ArrayList<MathNode> leftCases = makeCases(specialCases, leftDummy,
+				false, false);
+		ArrayList<MathNode> binaryCases = new ArrayList<MathNode>();
+		for (MathNode leftCase : leftCases) {
+			MathNode caseParent = leftCase.getParent();
+			if(operator != null) {
+			caseParent.append(TypeML.Operation, operator.getSign());
+			}
+			MathNode rightDummy = caseParent.append(TypeML.Variable,
+					"toReplace");
+			ArrayList<MathNode> functionBranches = makeCases(specialCases,
+					rightDummy, false, false);
+			binaryCases.addAll(functionBranches);
+		}
+		return binaryCases;
 	}
 
 	/**
@@ -355,7 +433,7 @@ public class TestBot_Transformations {
 	 * 
 	 * @param branch
 	 */
-	void completeBranch(MathNode branch) {
+	void completeBranch(MathNode branch, boolean containsAllTypes) {
 		switch (branch.getType()) {
 		case Number:
 			branch.setSymbol("5");
@@ -364,22 +442,58 @@ public class TestBot_Transformations {
 			branch.setSymbol("a");
 			break;
 		case Sum:
-			branch.append(TypeML.Variable, "a");
-			branch.append(TypeML.Operation, Operator.PLUS.getSign());
-			branch.append(TypeML.Variable, "a");
+			if (containsAllTypes) {
+				ArrayList<NodeCase> nodeCases = branchAllBut(branch.getType());
+				for (int i = 0; i < nodeCases.size(); i++) {
+					NodeCase nCase = nodeCases.get(i);
+					if (i != 0) {
+						branch.append(TypeML.Operation, Operator.PLUS.getSign());
+					}
+					completeBranch(branch.append(nCase.type, nCase.symbol),
+							false);
+				}
+			} else {
+				branch.append(TypeML.Variable, "a");
+				branch.append(TypeML.Operation, Operator.PLUS.getSign());
+				branch.append(TypeML.Variable, "a");
+			}
 			break;
 		case Term:
-			branch.append(TypeML.Variable, "a");
-			branch.append(TypeML.Operation, Operator.getMultiply().getSign());
-			branch.append(TypeML.Variable, "a");
+			String multiply = Operator.getMultiply().getSign();
+			if (containsAllTypes) {
+				ArrayList<NodeCase> nodeCases = branchAllBut(branch.getType());
+				for (int i = 0; i < nodeCases.size(); i++) {
+					NodeCase nCase = nodeCases.get(i);
+					if (i != 0) {
+						branch.append(TypeML.Operation, Operator.getMultiply()
+								.getSign());
+					}
+					completeBranch(branch.append(nCase.type, nCase.symbol),
+							false);
+				}
+			} else {
+				branch.append(TypeML.Variable, "a");
+				branch.append(TypeML.Operation, multiply);
+				branch.append(TypeML.Variable, "a");
+			}
 			break;
 		case Fraction:
-			branch.append(TypeML.Variable, "a");
-			branch.append(TypeML.Variable, "a");
+			if (containsAllTypes) {
+				completeBranch(branch.append(TypeML.Term, ""), true);
+				completeBranch(branch.append(TypeML.Term, ""), true);
+			} else {
+				branch.append(TypeML.Variable, "a");
+				branch.append(TypeML.Variable, "a");
+			}
 			break;
 		case Exponential:
-			branch.append(TypeML.Variable, "a");
-			branch.append(TypeML.Variable, "a");
+			if (containsAllTypes) {
+				completeBranch(branch.append(TypeML.Term, ""), true);
+				branch.append(TypeML.Variable, "a");
+			} else {
+				branch.append(TypeML.Variable, "a");
+				branch.append(TypeML.Number, "2");
+			}
 			break;
 		case Trig:
 			branch.append(TypeML.Variable, "a");
@@ -394,29 +508,15 @@ public class TestBot_Transformations {
 				branch.setAttribute(MathAttribute.LogBase, "10");
 			}
 			break;
-
 		}
 	}
 
-	ArrayList<NodeCase> branchAllBut(TypeML excludedType,
-			boolean isTestedForSimilarities) {
+	ArrayList<NodeCase> branchAllBut(TypeML excludedType) {
 
 		ArrayList<NodeCase> branchMap = new ArrayList<NodeCase>();
 
-		if (isTestedForSimilarities) {
-			branchMap.add(new NodeCase(TypeML.Number, "-1"));
-			branchMap.add(new NodeCase(TypeML.Number, "0"));
-			branchMap.add(new NodeCase(TypeML.Number, "1"));
-
-			branchMap.add(new NodeCase(TypeML.Number, "-5"));
-			branchMap.add(new NodeCase(TypeML.Number, "7"));
-
-			branchMap.add(new NodeCase(TypeML.Variable, "a"));
-			branchMap.add(new NodeCase(TypeML.Variable, "b"));
-		} else {
-			branchMap.add(new NodeCase(TypeML.Number, "9"));
-			branchMap.add(new NodeCase(TypeML.Variable, "x"));
-		}
+		branchMap.add(new NodeCase(TypeML.Number, "9"));
+		branchMap.add(new NodeCase(TypeML.Variable, "x"));
 
 		if (!TypeML.Sum.equals(excludedType))
 			branchMap.add(new NodeCase(TypeML.Sum, ""));
