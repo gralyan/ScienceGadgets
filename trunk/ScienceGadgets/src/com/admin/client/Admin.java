@@ -14,7 +14,7 @@ public class Admin implements EntryPoint {
 		
 		TestBot_Transformations testBot = new TestBot_Transformations();
 		
-		testBot.deploy(false);
+		testBot.deploy();
 		
 //		Button saveButton = new Button("Save");
 //		RootPanel.get().add(inputBox);

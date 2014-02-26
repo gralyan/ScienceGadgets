@@ -37,7 +37,9 @@ public class MultiplyTransformations extends TransformationList {
 		this.leftType = left.getType();
 		this.rightType = right.getType();
 
-		add(multiplySpecialNumber_check());
+		if(add(multiplySpecialNumber_check())) {
+			return;
+		}
 		add(multiplyNumbers_check());
 		add(multiplyFraction_check());
 		add(multiplyDistribution_check());
@@ -574,9 +576,9 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 						&& TypeML.Number.equals(leftExp.getType())
 						&& TypeML.Number.equals(rightExp.getType())) {
 					BigDecimal leftValue = new BigDecimal(
-							left.getAttribute(MathAttribute.Value));
+							leftExp.getAttribute(MathAttribute.Value));
 					BigDecimal rightValue = new BigDecimal(
-							left.getAttribute(MathAttribute.Value));
+							rightExp.getAttribute(MathAttribute.Value));
 					BigDecimal combinedValue = leftValue.add(rightValue);
 					rightExp.replace(TypeML.Number,
 							combinedValue.toPlainString());

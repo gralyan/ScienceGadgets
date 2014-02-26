@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.LinkedList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,12 +36,22 @@ public class ExponentialTransformations extends TransformationList {
 		this.baseType = base.getType();
 		this.exponentType = exponent.getType();
 
+		if (add(zeroBase_check())) {
+			return;
+		}
 		add(exponentialExpand_check());
 		add(exponentialEvaluate_check());
 		add(exponentialExponentiate_check());
 		add(exponentialPropagate_check());
 		add(exponentialFlip_check());
 		add(unravelExpLog_check());
+	}
+
+	ExponentialTransformButton zeroBase_check() {
+		if (TypeML.Number.equals(baseType) && "0".equals(base.getSymbol())) {
+			return new ZeroBaseButton(this);
+		}
+		return null;
 	}
 
 	ExponentialTransformButton exponentialEvaluate_check() {
@@ -148,6 +159,36 @@ class ExponentialTransformButton extends TransformationButton {
 }
 
 /**
+ * 0<sup>x</sup> = 0
+ */
+class ZeroBaseButton extends ExponentialTransformButton {
+
+	ZeroBaseButton(ExponentialTransformations context) {
+		super(context, "0<sup>x</sup> = 0");
+
+		addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+
+				exponential.replace(base);
+
+				if (reloadAlgebraActivity) {
+					Moderator.reloadEquationPanel("0<sup>x</sup> = 0",
+							Rule.EXPONENT_PROPERTIES);
+				}
+			}
+		});
+	}
+
+	@Override
+	TransformationButton getPreviewButton(MathNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.zeroBase_check();
+	}
+}
+
+/**
  * b<sup>a</sup> = b.pow(a)<br/>
  * ex: 2<sup>3</sup> = 8
  */
@@ -211,6 +252,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 					Rule.EXPONENT_PROPERTIES);
 		}
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -240,6 +282,7 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 							exponential.replace(TypeML.Number, "1");
 						}
 					} else {
+						// Window.alert("Warning: You are now assuming that "+base.getHTMLString()+" is not equivalent to 0");
 						Window.alert("Warning: You are now assuming that the base is not equivalent to 0");
 						exponential.replace(TypeML.Number, "1");
 					}
@@ -248,15 +291,27 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 					exponential.replace(base);
 
 				} else if (exp > 1) {
-					MathNode term = exponential.encase(TypeML.Term);
-					int exponIndex = exponential.getIndex();
-					term.addBefore(exponIndex, base);
-					for (int i = 1; i < exp; i++) {
-						term.addBefore(exponIndex, TypeML.Operation,
-								TypeML.Operator.getMultiply().getSign());
-						term.addBefore(exponIndex, base.clone());
+					if (TypeML.Term.equals(base.getType())) {
+						LinkedList<MathNode> baseChildren = base.getChildren();
+						for(int i = 1; i < exp; i++) {
+							base.append(TypeML.Operation,
+									TypeML.Operator.getMultiply().getSign());
+							for(MathNode baseChild : baseChildren) {
+								base.append(baseChild.clone());
+							}
+						}
+						exponential.replace(base);
+					} else {
+						MathNode term = exponential.encase(TypeML.Term);
+						int exponIndex = exponential.getIndex();
+						term.addBefore(exponIndex, base);
+						for (int i = 1; i < exp; i++) {
+							term.addBefore(exponIndex, TypeML.Operation,
+									TypeML.Operator.getMultiply().getSign());
+							term.addBefore(exponIndex, base.clone());
+						}
+						exponential.remove();
 					}
-					exponential.remove();
 				}
 
 				if (reloadAlgebraActivity) {
@@ -266,6 +321,7 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -305,6 +361,7 @@ class ExponentialExponentiateButton extends ExponentialTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -343,6 +400,7 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
@@ -383,6 +441,7 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 			}
 		});
 	}
+
 	@Override
 	TransformationButton getPreviewButton(MathNode operation) {
 		super.getPreviewButton(operation);
