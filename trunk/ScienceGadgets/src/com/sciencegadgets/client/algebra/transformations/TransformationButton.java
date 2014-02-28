@@ -16,11 +16,11 @@ public class TransformationButton extends SimplePanel implements
 		HasClickHandlers {
 
 	FitParentHTML buttonHTML;
-	private TransformationList context;
+	private TransformationList transformList;
 
 	public TransformationButton(TransformationList context) {
 		super();
-		this.context = context;
+		this.transformList = context;
 
 		addStyleName(CSS.TRANSFORMATION_BUTTON + " " + CSS.LAYOUT_ROW);
 	}
@@ -40,18 +40,22 @@ public class TransformationButton extends SimplePanel implements
 	public String getHTML() {
 		return buttonHTML.getHTML();
 	}
+	
+	public TransformationList getTransformList() {
+		return transformList;
+	}
 
 	/**
 	 * @return The HTML display version of the transformation
 	 */
 	public MathTree getPreview() {
 
-		if (context.beforeAfterTree == null) {
-			MathTree mTree = context.beforeAfterTree = new MathTree(false);
+		if (transformList.beforeAfterTree == null) {
+			MathTree mTree = transformList.beforeAfterTree = new MathTree(false);
 
 			MathNode frame;
-			if (TypeML.Operation.equals(context.getNode().getType())) {
-				MathNode op = context.getNode();
+			if (TypeML.Operation.equals(transformList.getNode().getType())) {
+				MathNode op = transformList.getNode();
 				frame = mTree.getLeftSide().replace(op.getParentType(), "");
 
 				MathNode possibleMinus = op.getPrevSibling().getPrevSibling();
@@ -71,12 +75,12 @@ public class TransformationButton extends SimplePanel implements
 				frame.append(rightClone);
 
 			} else {
-				frame = mTree.NEW_NODE(context.getNode().getXMLClone());
+				frame = mTree.NEW_NODE(transformList.getNode().getXMLClone());
 				mTree.getLeftSide().replace(frame);
 			}
 		}
 
-		MathTree mTree = context.beforeAfterTree;
+		MathTree mTree = transformList.beforeAfterTree;
 		mTree.getRightSide().replace(mTree.getLeftSide().clone());
 		MathNode previewContextNode = mTree.getRightSide();
 		if (TypeML.Sum.equals(previewContextNode.getType())
@@ -89,6 +93,9 @@ public class TransformationButton extends SimplePanel implements
 		TransformationButton previewButton = this
 				.getPreviewButton(previewContextNode);
 
+		if(previewButton == null) {
+			return null;
+		}
 		previewButton.fireEvent(new ClickEvent() {
 		});
 		mTree.reloadDisplay(true);

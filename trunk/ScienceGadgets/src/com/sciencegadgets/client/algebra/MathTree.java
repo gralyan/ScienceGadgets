@@ -74,7 +74,7 @@ public class MathTree {
 
 		EquationRandomizer.randomizeNumbers(this, !inEditMode);
 
-//		reloadDisplay(true);
+		// reloadDisplay(true);
 	}
 
 	public MathTree(TypeML leftType, String leftSymbol, TypeML rightType,
@@ -92,15 +92,15 @@ public class MathTree {
 		Element eq = DOM.createElement(TypeML.Operation.getTag());
 		eq.setInnerText("=");
 		eq.setAttribute("id", "dummyNodeEquals");
-		
+
 		Element dummyLeft = DOM.createElement(TypeML.Variable.getTag());
 		dummyLeft.setInnerText("a");
 		dummyLeft.setAttribute("id", "dummyNodeLeft");
 
-		Element dummyRight  = DOM.createElement(TypeML.Variable.getTag());
+		Element dummyRight = DOM.createElement(TypeML.Variable.getTag());
 		dummyRight.setInnerText("a");
 		dummyRight.setAttribute("id", "dummyNodeRight");
-		
+
 		Element root = DOM.createElement(TypeML.Equation.getTag());
 		root.appendChild(dummyLeft);
 		root.appendChild(eq);
@@ -186,7 +186,7 @@ public class MathTree {
 			w.getElement().removeFromParent();
 		}
 		wrappers.clear();
-		
+
 		idHTMLMap.clear();
 
 		this.eqHTML = equationHTML;
@@ -414,8 +414,8 @@ public class MathTree {
 		 * moved and both this and the child are removed. <br/>
 		 */
 		public void decase() {
-			
-			//This method is only useful for terms and sums
+
+			// This method is only useful for terms and sums
 			switch (getType()) {
 			case Term:
 			case Sum:
@@ -456,23 +456,23 @@ public class MathTree {
 				this.replace(TypeML.Number, "0");
 				break;
 			case 1:
-				TypeML childType = getFirstChild().getType();
-				if (childType.equals(getParentType())
-						&& (TypeML.Sum.equals(childType) || TypeML.Term
-								.equals(childType))) {
-					LinkedList<MathNode> grandChildren = this.getFirstChild()
-							.getChildren();
-					for (int i = grandChildren.size(); i > 0; i--) {
-						getParent().addBefore(this.getIndex(),
-								grandChildren.get(i - 1));
-					}
-					this.getFirstChild().remove();
-					this.remove();
-				} else {
+//				TypeML childType = getFirstChild().getType();
+//				if (childType.equals(getParentType())
+//						&& (TypeML.Sum.equals(childType) || TypeML.Term
+//								.equals(childType))) {
+//					LinkedList<MathNode> grandChildren = this.getFirstChild()
+//							.getChildren();
+//					for (int i = grandChildren.size(); i > 0; i--) {
+//						getParent().addBefore(this.getIndex(),
+//								grandChildren.get(i - 1));
+//					}
+//					this.getFirstChild().remove();
+//					this.remove();
+//				} else {
 					getParent()
 							.addBefore(this.getIndex(), this.getFirstChild());
 					this.remove();
-				}
+//				}
 				break;
 			case 2:// Should only be sums with a negative in front
 				JSNICalls
@@ -497,14 +497,32 @@ public class MathTree {
 		private void add(int index, MathNode node, boolean after)
 				throws IllegalArgumentException {
 
+			boolean indexOutOfRange = index < 0 || index >= getChildCount();
+
 			// Don't add sum to sum or term to term, just add it's children
 			if (getType().equals(node.getType())
 					&& (TypeML.Sum.equals(node.getType()) || TypeML.Term
 							.equals(node.getType()))) {
 				LinkedList<MathNode> children = node.getChildren();
-				for (int i = children.size(); i > 0; i--) {
-					addBefore(index, children.get(i - 1));
+				JSNICalls.error(" ");
+				JSNICalls.error("adding ");
+				for (MathNode c : children) {
+					JSNICalls.error("add " + c.xmlNode.getInnerText());
 				}
+				if (indexOutOfRange) {
+					for (int i = 0; i < children.size(); i++) {
+						append(children.get(i));
+
+						JSNICalls.error("iter " + xmlNode.getInnerText());
+					}
+				} else {
+					for (int i = children.size(); i > 0; i--) {
+						addBefore(index, children.get(i - 1));
+
+						JSNICalls.error("iter " + xmlNode.getInnerText());
+					}
+				}
+				JSNICalls.error("result " + xmlNode.getInnerText());
 
 				node.remove();
 
@@ -512,7 +530,7 @@ public class MathTree {
 				Element elementNode = node.getXMLNode();
 
 				// Add node to DOM tree
-				if (index < 0 || index >= xmlNode.getChildCount()) {
+				if (indexOutOfRange) {
 					xmlNode.appendChild(elementNode);
 				} else if (after) {
 					Node referenceChild = xmlNode.getChild(index);
@@ -595,13 +613,17 @@ public class MathTree {
 
 		public MathNode getChildAt(int index) {
 
-			if(index < 0 || index > getChildCount()-1 || ChildRequirement.TERMINAL.equals(getType().childRequirement())) {
+			if (index < 0
+					|| index > getChildCount() - 1
+					|| ChildRequirement.TERMINAL.equals(getType()
+							.childRequirement())) {
 				return null;
 			}
-			
+
 			Node node = getXMLNode().getChildNodes().getItem(index);
-			if(node == null) {
-				String response = "No children at position: "+index+" in: "+toString();
+			if (node == null) {
+				String response = "No children at position: " + index + " in: "
+						+ toString();
 				throw new IllegalArgumentException(response);
 			}
 			String id = ((Element) node).getAttribute("id");
@@ -613,8 +635,8 @@ public class MathTree {
 		}
 
 		public int getChildCount() {
-			//Terminal nodes have text nodes in xml
-			if(ChildRequirement.TERMINAL.equals(getType().childRequirement())) {
+			// Terminal nodes have text nodes in xml
+			if (ChildRequirement.TERMINAL.equals(getType().childRequirement())) {
 				return 0;
 			}
 			return xmlNode.getChildCount();
@@ -704,7 +726,7 @@ public class MathTree {
 		public Element getXMLNode() {
 			return xmlNode;
 		}
-		
+
 		public Element getXMLClone() {
 			return (Element) xmlNode.cloneNode(true);
 		}
@@ -987,13 +1009,17 @@ public class MathTree {
 					return false;
 				}
 			case Log:
-				if(getAttribute(MathAttribute.LogBase).equals(another.getAttribute(MathAttribute.LogBase)) && getChildAt(0).isLike(another.getChildAt(0))) {
+				if (getAttribute(MathAttribute.LogBase).equals(
+						another.getAttribute(MathAttribute.LogBase))
+						&& getChildAt(0).isLike(another.getChildAt(0))) {
 					return true;
 				} else {
 					return false;
 				}
 			case Trig:
-				if(getAttribute(MathAttribute.Function).equals(another.getAttribute(MathAttribute.Function)) && getChildAt(0).isLike(another.getChildAt(0))) {
+				if (getAttribute(MathAttribute.Function).equals(
+						another.getAttribute(MathAttribute.Function))
+						&& getChildAt(0).isLike(another.getChildAt(0))) {
 					return true;
 				} else {
 					return false;

@@ -11,7 +11,7 @@ public class TransformationList extends LinkedList<TransformationButton> {
 	private static final long serialVersionUID = -3043410062241803505L;
 	private MathNode contextNode;
 	MathTree beforeAfterTree = null;
-	boolean reloadAlgebraActivity = true;
+	public boolean reloadAlgebraActivity = false;
 
 	public TransformationList(MathNode contextNode) {
 		super();

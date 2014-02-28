@@ -2,13 +2,16 @@ package com.admin.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
@@ -31,21 +34,21 @@ public class TestBot_Transformations {
 	private boolean showsEmptyColumns = false;
 
 	TestBot_Transformations() {
-//		 this.showsEmptyRows = true;
-//		 this.showsEmptyColumns = true;
-		
+		// this.showsEmptyRows = true;
+		// this.showsEmptyColumns = true;
+
 		Moderator.isInEasyMode = true;
 	}
 
 	public void deploy() {
 		testAddition_scenario(false, false);
-		testAddition_scenario(false, true);
-		testAddition_scenario(true, false);
-		testAddition_scenario(true, true);
-		testMultiplication_scenario();
-		testExponential_scenario();
-		testLog_scenario();
-		testTrig_scenario();
+		 testAddition_scenario(false, true);
+		 testAddition_scenario(true, false);
+		 testAddition_scenario(true, true);
+		// testMultiplication_scenario();
+		// testExponential_scenario();
+		// testLog_scenario();
+		// testTrig_scenario();
 	}
 
 	public void testAddition_scenario(boolean isMinusBeforeLeft, boolean isMinus) {
@@ -56,9 +59,11 @@ public class TestBot_Transformations {
 		// Binary Branch cases
 		Operator sign = isMinus ? Operator.MINUS : Operator.PLUS;
 
-		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), sign, false));
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), sign,
+				false));
 
-		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), sign, true));
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), sign,
+				true));
 
 		// Special cases
 		ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
@@ -67,7 +72,8 @@ public class TestBot_Transformations {
 		specialCases.add(new NodeCase(TypeML.Number, "0"));
 		specialCases.add(new NodeCase(TypeML.Number, "1"));
 
-		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(), specialCases, Operator.PLUS));
+		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(),
+				specialCases, Operator.PLUS));
 
 		if (isMinusBeforeLeft) {
 			for (MathNode child : branches) {
@@ -88,6 +94,8 @@ public class TestBot_Transformations {
 		tButtonMap.put("AddFractionsButton", 7);
 		tButtonMap.put("AddLogsButton", 8);
 		tButtonMap.put("AddSimilarButton", 9);
+		tButtonMap.put("FactorButton", 10);
+		tButtonMap.put("CombineLikeTermsButton", 11);
 
 		FlexTable table = makeTable(tButtonMap, "Add");
 
@@ -95,6 +103,19 @@ public class TestBot_Transformations {
 			MathNode node = branches.get(i);
 			AdditionTransformations transformList = new AdditionTransformations(
 					node.getPrevSibling());
+
+			// Don't f
+			LinkedList<TransformationButton> exclude = new LinkedList<TransformationButton>();
+			for (TransformationButton a : transformList) {
+				if (!a.getClass().getName().contains("FactorButton")
+						&& !a.getClass().getName()
+								.contains("CombineLikeTermsButton")) {
+					exclude.add(a);
+				}
+			}
+			for (TransformationButton ex : exclude) {
+				transformList.remove(ex);
+			}
 
 			fillRow(transformList, tButtonMap, table, node);
 		}
@@ -104,11 +125,11 @@ public class TestBot_Transformations {
 
 		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
 		ArrayList<MathNode> branches = new ArrayList<MathNode>();
-		
+
 		// Binary Branch cases
 		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(),
 				Operator.getMultiply(), false));
-		
+
 		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(),
 				Operator.getMultiply(), true));
 
@@ -119,7 +140,8 @@ public class TestBot_Transformations {
 		specialCases.add(new NodeCase(TypeML.Number, "0"));
 		specialCases.add(new NodeCase(TypeML.Number, "1"));
 
-		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(), specialCases, Operator.getMultiply()));
+		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(),
+				specialCases, Operator.getMultiply()));
 
 		// ~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~
 
@@ -152,9 +174,11 @@ public class TestBot_Transformations {
 		ArrayList<MathNode> branches = new ArrayList<MathNode>();
 
 		// Binary Branch cases
-		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), null, false));
-		
-		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), null, true));
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), null,
+				false));
+
+		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), null,
+				true));
 
 		// Special cases
 		ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
@@ -165,8 +189,9 @@ public class TestBot_Transformations {
 		specialCases.add(new NodeCase(TypeML.Number, "2"));
 		specialCases.add(new NodeCase(TypeML.Number, "3"));
 
-		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(), specialCases, null));
-		
+		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(),
+				specialCases, null));
+
 		// ~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~
 
 		HashMap<String, Integer> tButtonMap = new HashMap<String, Integer>();
@@ -262,13 +287,13 @@ public class TestBot_Transformations {
 		// First row of table
 		table.setText(0, 0, title);
 		table.getRowFormatter().getElement(0).getStyle().setHeight(70, Unit.PX);
-		if(showsEmptyColumns) {
-		for (Entry<String, Integer> tButtonEntry : tButtonMap.entrySet()) {
-			table.setText(0, tButtonEntry.getValue(), tButtonEntry.getKey());
-		}
+		if (showsEmptyColumns) {
+			for (Entry<String, Integer> tButtonEntry : tButtonMap.entrySet()) {
+				table.setText(0, tButtonEntry.getValue(), tButtonEntry.getKey());
+			}
 		}
 
-		if(!showsEmptyColumns) {
+		if (!showsEmptyColumns) {
 			return null;
 		}
 		return table;
@@ -280,8 +305,8 @@ public class TestBot_Transformations {
 		if (!showsEmptyRows && transformList.isEmpty()) {
 			return;
 		}
-		
-		if(table == null) {
+
+		if (table == null) {
 			table = new FlexTable();
 			RootPanel.get().add(table);
 		}
@@ -295,7 +320,8 @@ public class TestBot_Transformations {
 		table.setWidget(row, 0, testCase);
 
 		for (TransformationButton tButton : transformList) {
-			String tButtonName = tButton.getClass().getName().replace(buttonPrefix, "");
+			String tButtonName = tButton.getClass().getName()
+					.replace(buttonPrefix, "");
 			int column = tButtonMap.get(tButtonName);
 
 			HTML testCaseTransformation = new HTML();
@@ -304,23 +330,37 @@ public class TestBot_Transformations {
 			table.setWidget(row, 0, testCaseTransformation);
 
 			MathTree previewEq = tButton.getPreview();
-			if (previewEq == null) {
-				table.setText(row, column, "error");
+			HTML preview = null;
+			if (previewEq != null) {
+				preview = new HTML(previewEq.getRightDisplay());
 			} else {
-				HTML preview = new HTML(previewEq.getRightDisplay());
-				if(showsEmptyColumns) {
-					table.setWidget(row, column, preview);
-				}else {
-					int cellCount = table.getCellCount(row);
-					table.setText(row, cellCount, tButtonName);
-					table.getCellFormatter().getElement(row, cellCount).getStyle().setBackgroundColor("yellow");
-					table.setWidget(row, cellCount+1, preview);
-				}
+				preview = new HTML(tButton.getHTML());
+			}
+			
+			if (showsEmptyColumns) {
+				table.setWidget(row, column, preview);
+			} else {
+				int cellCount = table.getCellCount(row);
+				table.setText(row, cellCount, tButtonName);
+				table.getCellFormatter().getElement(row, cellCount).getStyle()
+						.setBackgroundColor("yellow");
+				table.setWidget(row, cellCount + 1, preview);
+				table.getCellFormatter().getElement(row, cellCount + 1)
+						.getStyle().setBackgroundColor("orange");
+
 			}
 		}
+		if (!showsEmptyColumns) {
+			TransformationButton oneOfTheButtons = transformList.get(0);
+			oneOfTheButtons.fireEvent(new ClickEvent() {
+			});
+			EquationHTML actualTree = oneOfTheButtons.getTransformList()
+					.getNode().getTree().getDisplayClone();
+			table.setWidget(row + 1, 1, actualTree);
 
-		table.getRowFormatter().getElement(row).getStyle()
-				.setBackgroundColor("lightBlue");
+			table.getRowFormatter().getElement(row).getStyle()
+					.setBackgroundColor("lightBlue");
+		}
 	}
 
 	ArrayList<MathNode> makeCases(ArrayList<NodeCase> caseList,
@@ -373,17 +413,18 @@ public class TestBot_Transformations {
 
 	private ArrayList<MathNode> getBinaryArgumentBranches(MathNode toReplace,
 			Operator operator, boolean containsAllTypes) {
-		
-		if(operator == null) {
+
+		if (operator == null) {
 			toReplace = toReplace.replace(TypeML.Exponential, "");
-		}else if(operator.equals(Operator.PLUS) || operator.equals(Operator.MINUS)) {
+		} else if (operator.equals(Operator.PLUS)
+				|| operator.equals(Operator.MINUS)) {
 			toReplace = toReplace.replace(TypeML.Sum, "");
-		}else if(operator.equals(Operator.getMultiply())){
+		} else if (operator.equals(Operator.getMultiply())) {
 			toReplace = toReplace.replace(TypeML.Term, "");
 		}
 
-		ArrayList<MathNode> firstBranches = getArgumentBranches(toReplace, true,
-				containsAllTypes);
+		ArrayList<MathNode> firstBranches = getArgumentBranches(toReplace,
+				true, containsAllTypes);
 
 		ArrayList<MathNode> binaryBranches = new ArrayList<MathNode>();
 		for (MathNode branch : firstBranches) {
@@ -393,39 +434,55 @@ public class TestBot_Transformations {
 			}
 			ArrayList<MathNode> rightBranches = getArgumentBranches(
 					branchParent, true, containsAllTypes);
+			for (MathNode rightBranch : rightBranches) {
+				MathNode parent = rightBranch.getParent();
+//				parent.addBefore(0, TypeML.Operation, operator.getSign());
+//				parent.addBefore(0, TypeML.Variable, "[");
+//				parent.append(TypeML.Operation, operator.getSign());
+//				parent.append(TypeML.Variable, "]");
+			}
 			binaryBranches.addAll(rightBranches);
+
 		}
 		return binaryBranches;
 	}
 
-	ArrayList<MathNode> getSpecialBinaryCases(MathNode toReplace, ArrayList<NodeCase> specialCases, Operator operator) {
+	ArrayList<MathNode> getSpecialBinaryCases(MathNode toReplace,
+			ArrayList<NodeCase> specialCases, Operator operator) {
 
-		if(operator == null) {
+		if (operator == null) {
 			toReplace = toReplace.replace(TypeML.Exponential, "");
-		}else if(operator.equals(Operator.PLUS) || operator.equals(Operator.MINUS)) {
+		} else if (operator.equals(Operator.PLUS)
+				|| operator.equals(Operator.MINUS)) {
 			toReplace = toReplace.replace(TypeML.Sum, "");
-		}else if(operator.equals(Operator.getMultiply())){
+		} else if (operator.equals(Operator.getMultiply())) {
 			toReplace = toReplace.replace(TypeML.Term, "");
 		}
-		
-		MathNode leftDummy = toReplace.append(TypeML.Variable,
-				"toReplace");
+
+		MathNode leftDummy = toReplace.append(TypeML.Variable, "toReplace");
 
 		ArrayList<MathNode> leftCases = makeCases(specialCases, leftDummy,
 				false, false);
-		ArrayList<MathNode> binaryCases = new ArrayList<MathNode>();
+		ArrayList<MathNode> binaryBranches = new ArrayList<MathNode>();
 		for (MathNode leftCase : leftCases) {
 			MathNode caseParent = leftCase.getParent();
-			if(operator != null) {
-			caseParent.append(TypeML.Operation, operator.getSign());
+			if (operator != null) {
+				caseParent.append(TypeML.Operation, operator.getSign());
 			}
 			MathNode rightDummy = caseParent.append(TypeML.Variable,
 					"toReplace");
-			ArrayList<MathNode> functionBranches = makeCases(specialCases,
+			ArrayList<MathNode> rightBranches = makeCases(specialCases,
 					rightDummy, false, false);
-			binaryCases.addAll(functionBranches);
+			for (MathNode rightBranch : rightBranches) {
+				MathNode parent = rightBranch.getParent();
+//				parent.addBefore(0, TypeML.Operation, operator.getSign());
+//				parent.addBefore(0, TypeML.Variable, "[");
+//				parent.append(TypeML.Operation, operator.getSign());
+//				parent.append(TypeML.Variable, "]");
+			}
+			binaryBranches.addAll(rightBranches);
 		}
-		return binaryCases;
+		return binaryBranches;
 	}
 
 	/**
@@ -436,14 +493,20 @@ public class TestBot_Transformations {
 	void completeBranch(MathNode branch, boolean containsAllTypes) {
 		switch (branch.getType()) {
 		case Number:
-			branch.setSymbol("5");
+			branch.setSymbol(Math.random()*10 +"");
 			break;
 		case Variable:
 			branch.setSymbol("a");
 			break;
 		case Sum:
 			if (containsAllTypes) {
-				ArrayList<NodeCase> nodeCases = branchAllBut(branch.getType());
+				// ArrayList<NodeCase> nodeCases =
+				// branchAllBut(branch.getType());
+				ArrayList<NodeCase> nodeCases = new ArrayList<NodeCase>();
+				nodeCases.add(new NodeCase(TypeML.Exponential, ""));
+				nodeCases.add(new NodeCase(TypeML.Fraction, ""));
+				nodeCases.add(new NodeCase(TypeML.Term, ""));
+
 				for (int i = 0; i < nodeCases.size(); i++) {
 					NodeCase nCase = nodeCases.get(i);
 					if (i != 0) {
@@ -453,15 +516,25 @@ public class TestBot_Transformations {
 							false);
 				}
 			} else {
+//				branch.append(TypeML.Variable, "{");
+//				branch.append(TypeML.Operation, Operator.PLUS.getSign());
 				branch.append(TypeML.Variable, "a");
 				branch.append(TypeML.Operation, Operator.PLUS.getSign());
 				branch.append(TypeML.Variable, "a");
+//				branch.append(TypeML.Operation, Operator.PLUS.getSign());
+//				branch.append(TypeML.Variable, "}");
 			}
 			break;
 		case Term:
 			String multiply = Operator.getMultiply().getSign();
 			if (containsAllTypes) {
-				ArrayList<NodeCase> nodeCases = branchAllBut(branch.getType());
+				// ArrayList<NodeCase> nodeCases =
+				// branchAllBut(branch.getType());
+				ArrayList<NodeCase> nodeCases = new ArrayList<NodeCase>();
+				nodeCases.add(new NodeCase(TypeML.Number, Math.random()*10 +""));
+				nodeCases.add(new NodeCase(TypeML.Exponential, ""));
+				nodeCases.add(new NodeCase(TypeML.Fraction, ""));
+				nodeCases.add(new NodeCase(TypeML.Sum, ""));
 				for (int i = 0; i < nodeCases.size(); i++) {
 					NodeCase nCase = nodeCases.get(i);
 					if (i != 0) {
@@ -472,9 +545,16 @@ public class TestBot_Transformations {
 							false);
 				}
 			} else {
+//				branch.append(TypeML.Variable, "{");
+//				branch.append(TypeML.Operation, multiply);
+//				branch.append(TypeML.Variable, "a");
+				branch.append(TypeML.Number, Math.random()*10 +"");
+				branch.append(TypeML.Operation, multiply);
 				branch.append(TypeML.Variable, "a");
 				branch.append(TypeML.Operation, multiply);
 				branch.append(TypeML.Variable, "a");
+//				branch.append(TypeML.Operation, multiply);
+//				branch.append(TypeML.Variable, "}");
 			}
 			break;
 		case Fraction:
@@ -487,13 +567,13 @@ public class TestBot_Transformations {
 			}
 			break;
 		case Exponential:
-			if (containsAllTypes) {
-				completeBranch(branch.append(TypeML.Term, ""), true);
-				branch.append(TypeML.Variable, "a");
-			} else {
-				branch.append(TypeML.Variable, "a");
-				branch.append(TypeML.Number, "2");
-			}
+			// if (containsAllTypes) {
+			// completeBranch(branch.append(TypeML.Term, ""), true);
+			// branch.append(TypeML.Variable, "a");
+			// } else {
+			branch.append(TypeML.Variable, "a");
+			branch.append(TypeML.Number, "2");
+			// }
 			break;
 		case Trig:
 			branch.append(TypeML.Variable, "a");
