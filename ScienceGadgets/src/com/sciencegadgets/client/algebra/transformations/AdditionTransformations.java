@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.CSS;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -26,11 +27,12 @@ public class AdditionTransformations extends TransformationList {
 
 	MathNode parent;
 
-	private TypeML leftType;
-	private TypeML rightType;
+	TypeML leftType;
+	TypeML rightType;
 
 	boolean isMinus;
 	boolean isMinusBeforeLeft = false;
+	MathNode minusBeforeLeft = null;
 
 	public AdditionTransformations(MathNode operation) {
 		super(operation);
@@ -51,18 +53,23 @@ public class AdditionTransformations extends TransformationList {
 				&& Operator.MINUS.getSign().equals(leftPrev.getSymbol())
 				&& TypeML.Operation.equals(leftPrev.getType())) {
 			isMinusBeforeLeft = true;
+			minusBeforeLeft = leftPrev;
 		}
 
 		if (add(addZero_check())) {
 			return;
 		}
 		add(addNumbers_check());
-		add(addSimilar_check());
 		add(addFractions_check());
 		add(addLogs_check());
-		add(factorLikeTerms_check());
-		add(factorWithBase_check());
-		add(factorWithTermChild_check());
+		if (add(addSimilar_check())) {
+			return;
+		}
+//		add(factorLikeTerms_check());
+//		add(factorWithBase_check());
+//		add(factorWithTermChild_check());
+
+		addAll(new FactorTransformations(this));
 
 	}
 
@@ -208,23 +215,39 @@ public class AdditionTransformations extends TransformationList {
 	}
 
 	AddTransformButton factorWithTermChild_check() {
+		// TODO the case where the factor matches the fraction numerator, but
+		// it's not in a term
+		// ex. a + a/b doesn't work here
+		// but a + (a x c)/b does work here
 		MathNode term, other;
-
+		JSNICalls.debug(" ");
+		JSNICalls.debug("Left " + left.getType()
+				+ left.getXMLNode().getInnerText() + " Right "
+				+ right.getType() + right.getXMLNode().getInnerText());
 		// If sides are fractions, like terms come from numerators
 		MathNode leftTerm = getTerm(left);
 		MathNode rightTerm = getTerm(right);
+		JSNICalls.debug("LeftTerm " + leftTerm);
+		JSNICalls.debug("RightTerm " + rightTerm);
 		if (leftTerm != null && rightTerm == null) {
+			JSNICalls.debug("LeftTerm " + leftTerm.getXMLNode().getInnerText());
 			term = leftTerm;
 			other = right;
 		} else if (leftTerm == null && rightTerm != null) {
+			JSNICalls.debug("RightTerm "
+					+ rightTerm.getXMLNode().getInnerText());
 			term = rightTerm;
 			other = left;
 		} else {
 			return null;
 		}
 
+		JSNICalls.debug("----Other " + other.getXMLNode().getInnerText());
 		for (final MathNode termChild : term.getChildren()) {
+			JSNICalls.debug("--TermChild "
+					+ termChild.getXMLNode().getInnerText());
 			if (termChild.isLike(other)) {
+				JSNICalls.debug("RETURNIJNG ");
 				return new FactorWithTermChildButton(this, other, term,
 						termChild);
 			}
@@ -235,7 +258,7 @@ public class AdditionTransformations extends TransformationList {
 	/**
 	 * Sub routine to be used at the end of the other factor methods
 	 */
-	void factor(Collection<MathNode> factors, MathNode inBinomialA,
+	void factor(LinkedList<MathNode> factors, MathNode inBinomialA,
 			MathNode inBinomialB, MathNode minusBeforeLeft) {
 
 		MathNode inBinomialFirst = inBinomialA;
@@ -342,15 +365,12 @@ class AddTransformButton extends TransformationButton {
 	protected AdditionTransformations previewContext;
 
 	AddTransformButton(AdditionTransformations context, String html) {
-		super(context);
+		super(html, context);
 		addStyleName(CSS.SUM + " " + CSS.DISPLAY_WRAPPER);
 
 		this.isMinus = context.isMinus;
 		this.isMinusBeforeLeft = context.isMinusBeforeLeft;
-
-		if (isMinusBeforeLeft) {
-			minusBeforeLeft = context.left.getPrevSibling();
-		}
+		this.minusBeforeLeft = context.minusBeforeLeft;
 
 		this.left = context.left;
 		this.right = context.right;
@@ -476,7 +496,7 @@ class AddNumbersButton extends AddTransformButton {
 		right.setSymbol(totalValue.stripTrailingZeros().toEngineeringString());
 
 		if (isMinusBeforeLeft) {
-			left.getPrevSibling().setSymbol(Operator.PLUS.getSign());
+			minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
 		}
 
 		left.remove();
@@ -531,12 +551,7 @@ class AddSimilarButton extends AddTransformButton {
 					casing.addBefore(0, TypeML.Operation, Operator
 							.getMultiply().getSign());
 					casing.addBefore(0, TypeML.Number, "-2");
-					MathNode minusBeforeLeft = left.getPrevSibling();
-					if (minusBeforeLeft != null
-							&& Operator.MINUS.getSign().equals(
-									minusBeforeLeft.getSymbol())) {
-						minusBeforeLeft.remove();
-					}
+					minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
 				} else if ((isMinus && !isMinusBeforeLeft)
 						|| (!isMinus && isMinusBeforeLeft)) {
 					// Remove residual operations
@@ -670,7 +685,7 @@ class AddFractionsButton extends AddTransformButton {
 				left.highlight();
 
 				if (isMinusBeforeLeft) {
-					left.getPrevSibling().setSymbol(Operator.PLUS.getSign());
+					minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
 					AlgebraicTransformations.propagateNegative(left);
 				}
 
