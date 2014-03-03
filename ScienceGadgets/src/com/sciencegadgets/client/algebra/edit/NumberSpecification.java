@@ -63,8 +63,6 @@ public class NumberSpecification extends QuantitySpecification {
 		unitBox.addStyleName(CSS.FILL_PARENT);
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
 
-		ToggleSlide constantToggle = new cons
-		add
 	}
 
 
