@@ -42,7 +42,7 @@ public class EquationValidator {
 				isWrongChildren = true;
 			break;
 		case TERMINAL:
-			if (childCount != 1
+			if (childCount != 0
 					|| node.getXMLNode().getChild(0).getNodeType() != Node.TEXT_NODE) {
 				isWrongChildren = true;
 			}

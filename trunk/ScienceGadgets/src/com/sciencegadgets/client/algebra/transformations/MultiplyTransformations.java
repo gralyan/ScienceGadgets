@@ -520,8 +520,8 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 
 				MathNode rightCasing = rightBase.encase(TypeML.Term);
 
-				rightCasing.addBefore(0, operation);
-				rightCasing.addBefore(0, leftBase);
+				rightCasing.addFirst(operation);
+				rightCasing.addFirst(leftBase);
 
 				left.remove();
 
@@ -586,9 +586,9 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 				} else {
 					MathNode rightCasing = rightExp.encase(TypeML.Sum);
 
-					rightCasing.addBefore(0, TypeML.Operation,
+					rightCasing.addFirst(TypeML.Operation,
 							Operator.PLUS.getSign());
-					rightCasing.addBefore(0, leftExp);
+					rightCasing.addFirst(leftExp);
 				}
 
 				leftExponential.remove();
@@ -663,14 +663,14 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 
 				MathNode numerator = right.getChildAt(0);
 				numerator = numerator.encase(TypeML.Term);
-				numerator.addBefore(0, operation);
-				numerator.addBefore(0, left.getChildAt(0));
+				numerator.addFirst(operation);
+				numerator.addFirst(left.getChildAt(0));
 
 				MathNode denominator = right.getChildAt(1);
 				denominator = denominator.encase(TypeML.Term);
-				denominator.addBefore(0, TypeML.Operation,
+				denominator.addFirst(TypeML.Operation,
 						operation.getSymbol());
-				denominator.addBefore(0, left.getChildAt(0));
+				denominator.addFirst(left.getChildAt(0));
 
 				left.remove();
 

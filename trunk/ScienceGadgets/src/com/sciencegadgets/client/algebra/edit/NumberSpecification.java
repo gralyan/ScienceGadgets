@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.KeyPadNumerical;
+import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
@@ -62,6 +63,8 @@ public class NumberSpecification extends QuantitySpecification {
 		unitBox.addStyleName(CSS.FILL_PARENT);
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
 
+		ToggleSlide constantToggle = new cons
+		add
 	}
 
 

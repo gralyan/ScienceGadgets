@@ -14,6 +14,8 @@
  */
 package com.sciencegadgets.client;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -40,6 +42,8 @@ import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
+import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TypeML;
 
 public class Moderator implements EntryPoint {
 
@@ -64,18 +68,86 @@ public class Moderator implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-//		History.addValueChangeHandler(new HistoryChange<String>());
-//
-//		// // Resize area when window resizes
-//		fitWindow();
-//		Window.addResizeHandler(new ResizeAreaHandler());
-//
-//		detectTouch();
-//
-//		switchToBrowser();
+		 History.addValueChangeHandler(new HistoryChange<String>());
+		
+		 // // Resize area when window resizes
+		 fitWindow();
+		 Window.addResizeHandler(new ResizeAreaHandler());
+		
+		 detectTouch();
+		
+		 switchToBrowser();
 
-		
-		
+//		String[] testNumbers = { ".00000010"//
+//				, ".000001230"//
+//				, ".00001230"//
+//				, ".0001230"//
+//				, ".001230"//
+//				, ".01230"//
+//				, ".1230"//
+//				, "1.23"//
+//				, "12.3"//
+//				, "123.0"//
+//				, "1230.0"//
+//				, "12300.0"//
+//				, "123000.0"//
+//				, "1230000.0"//
+//				, "12300000.0"//
+//				, ".0000001234567890"//
+//				, ".000001234567890"//
+//				, ".00001234567890"//
+//				, ".0001234567890"//
+//				, ".001234567890"//
+//				, ".01234567890"//
+//				, ".1234567890"//
+//				, "1.234567890"//
+//				, "12.34567890"//
+//				, "123.4567890"//
+//				, "1234.567890"//
+//				, "12345.67890"//
+//				, "123456.7890"//
+//				, "1234567.890"//
+//				, "12345678.90"//
+//				, "123456789.0"//
+//				, "1234567890.0"//
+//				, "12345678900.0"//
+//		};
+//		for (String symbol : testNumbers) {
+//			BigDecimal value = new BigDecimal(symbol);
+//			
+//			// Rounded display value stored as inner test
+//			String displayValue;
+//			if (value.compareTo(new BigDecimal("1000")) < 0
+//					&& value.remainder(new BigDecimal(".01")).compareTo(
+//							new BigDecimal(0)) == 0) {
+//				displayValue = value.stripTrailingZeros().toPlainString();
+//			}else {
+//				displayValue = "#";
+//			}
+////			xmlNode.setInnerText(displayValue);
+//			
+//			// Full value stored as attribute
+//			String fullValue = value.stripTrailingZeros().toString();
+////			setAttribute(MathAttribute.Value, fullValue);
+//
+//			System.out.println("D " + displayValue + "\tF " + fullValue);
+//		}
+//		// for (String symbol : testNumbers) {
+//		// BigDecimal value = new BigDecimal(symbol);
+//		// BigDecimal roundedValue = value.round(new MathContext(3));
+//		// String elipses = value.equals(roundedValue) ? "" : "...";
+//		// // Rounded display value stored as inner test
+//		// String displayValue = roundedValue.toPlainString()//
+//		// .stripTrailingZeros()
+//		// + elipses;
+//		// // xmlNode.setInnerText(displayValue);
+//		// // Full value stored as attribute
+//		// String fullValue = value.stripTrailingZeros().toString();
+//		// // setAttribute(MathAttribute.Value, fullValue);
+//		//
+//		// System.out.println("D " + displayValue + "\tF " + fullValue);
+//		// }
+
 		// Blobs
 		// scienceGadgetArea.add(new UploadButton());
 
@@ -117,15 +189,16 @@ public class Moderator implements EntryPoint {
 	public static void makeAlgebra(Element mathML, boolean inEditMode) {
 		currentAlgebraActivity = new AlgebraActivity(mathML, inEditMode);
 		currentActivity = currentAlgebraActivity;
-		
+
 		switchToAlgebra();
 	}
+
 	public static void switchToAlgebra() {
 
 		scienceGadgetArea.clear();
 		scienceGadgetArea.add(currentAlgebraActivity);
 
-//		reloadEquationPanel(null, null);
+		// reloadEquationPanel(null, null);
 
 		setActivity(ActivityType.algebra, currentAlgebraActivity);
 	}
@@ -134,7 +207,8 @@ public class Moderator implements EntryPoint {
 
 		ConversionActivity conversionActivity = new ConversionActivity();
 		currentActivity = conversionActivity;
-		currentActivity.getElement().setAttribute("id", CSS.CONVERSION_ACTIVITY);
+		currentActivity.getElement()
+				.setAttribute("id", CSS.CONVERSION_ACTIVITY);
 
 		conversionActivity.load(node);
 
@@ -228,7 +302,7 @@ public class Moderator implements EntryPoint {
 			if (currentActivity instanceof AlgebraActivity) {
 				reloadEquationPanel(null, null);
 			}
-			
+
 		}
 	}
 

@@ -304,7 +304,7 @@ public class BothSidesTransformations extends TransformationList {
 			if (Moderator.isInEasyMode) {
 				if (TypeML.Fraction.equals(oldParent.getType())) {
 					// leave 1 in numerator
-					oldParent.addBefore(0, TypeML.Number, "1");
+					oldParent.addFirst(TypeML.Number, "1");
 				} else if (isSide) {
 					// Leave 1 in old side if top node
 					oldParent.addBefore(node.getIndex(), TypeML.Number, "1");
@@ -515,14 +515,14 @@ public class BothSidesTransformations extends TransformationList {
 			// Prepare Target side
 
 			MathNode targetExp = targetSide.encase(TypeML.Exponential);
-			targetExp.addBefore(0, TypeML.Number, base);
+			targetExp.addFirst(TypeML.Number, base);
 
 			if (Moderator.isInEasyMode) {
 				// clean source side
 				node.replace(node.getFirstChild());
 			}else {
 				MathNode fromExp = node.encase(TypeML.Exponential);
-				fromExp.addBefore(0, TypeML.Number, base);
+				fromExp.addFirst(TypeML.Number, base);
 			}
 
 			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);

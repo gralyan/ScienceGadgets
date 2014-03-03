@@ -167,7 +167,7 @@ class FactorButton extends AddTransformButton {
 
 				if (isMinusBeforeLeft) {
 					minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
-					sum.addBefore(0, TypeML.Operation, Operator.MINUS.getSign());
+					sum.addFirst(TypeML.Operation, Operator.MINUS.getSign());
 				}
 
 				for (Match match : matches) {
@@ -193,8 +193,8 @@ class FactorButton extends AddTransformButton {
 						}
 						sum = sum.replace(TypeML.Number,
 								combinedValue.toString());
-						term.addBefore(0, sum.getPrevSibling());
-						term.addBefore(0, sum);
+						term.addFirst(sum.getPrevSibling());
+						term.addFirst(sum);
 					}
 				}
 

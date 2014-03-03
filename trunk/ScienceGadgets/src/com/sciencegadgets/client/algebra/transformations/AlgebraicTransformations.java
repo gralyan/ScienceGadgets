@@ -102,9 +102,9 @@ public class AlgebraicTransformations {
 			break;
 		default:
 			MathNode casing = toNegate.encase(TypeML.Term);
-			casing.addBefore(0, TypeML.Operation, Operator.getMultiply()
+			casing.addFirst(TypeML.Operation, Operator.getMultiply()
 					.getSign());
-			casing.addBefore(0, TypeML.Number, "-1");
+			casing.addFirst(TypeML.Number, "-1");
 			break;
 		}
 	}
@@ -132,7 +132,7 @@ public class AlgebraicTransformations {
 			otherSide.append(toReciprocate);
 
 			if (inNumerator) {
-				parent.addBefore(0, TypeML.Number, "1");
+				parent.addFirst(TypeML.Number, "1");
 			} else {
 				parent.replace(otherSide);
 			}
@@ -159,7 +159,7 @@ public class AlgebraicTransformations {
 
 		} else {
 			MathNode frac = toReciprocate.encase(TypeML.Fraction);
-			frac.addBefore(0, TypeML.Number, "1");
+			frac.addFirst(TypeML.Number, "1");
 		}
 	}
 

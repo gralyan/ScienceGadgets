@@ -57,8 +57,13 @@ public class ExponentialTransformations extends TransformationList {
 	ExponentialTransformButton exponentialEvaluate_check() {
 		if (TypeML.Number.equals(baseType)
 				&& TypeML.Number.equals(exponentType)) {
+			// 0 and 1 are taken care of in the expand transformation
+			String expValue = exponent.getSymbol();
+			if("0".equals(expValue) || "1".equals(expValue)) {
+				return null;
+			}
 			try {
-				int exp = Integer.parseInt(exponent.getSymbol());
+				int exp = Integer.parseInt(expValue);
 				return new ExponentialEvaluateButton(this, (int) exp);
 			} catch (NumberFormatException e) {
 				return null;
@@ -293,10 +298,10 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 				} else if (exp > 1) {
 					if (TypeML.Term.equals(base.getType())) {
 						LinkedList<MathNode> baseChildren = base.getChildren();
-						for(int i = 1; i < exp; i++) {
-							base.append(TypeML.Operation,
-									TypeML.Operator.getMultiply().getSign());
-							for(MathNode baseChild : baseChildren) {
+						for (int i = 1; i < exp; i++) {
+							base.append(TypeML.Operation, TypeML.Operator
+									.getMultiply().getSign());
+							for (MathNode baseChild : baseChildren) {
 								base.append(baseChild.clone());
 							}
 						}
@@ -346,9 +351,9 @@ class ExponentialExponentiateButton extends ExponentialTransformButton {
 				MathNode innerExp = base.getChildAt(1);
 
 				MathNode expTerm = exponent.encase(TypeML.Term);
-				expTerm.addBefore(0, TypeML.Operation, Operator.getMultiply()
+				expTerm.addFirst(TypeML.Operation, Operator.getMultiply()
 						.getSign());
-				expTerm.addBefore(0, innerExp);
+				expTerm.addFirst(innerExp);
 
 				base.replace(innerBase);
 
@@ -430,8 +435,13 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 					AlgebraicTransformations.reciprocate(exponential);
 				}
 
-				exponent.setSymbol(exponent.getSymbol().replace(
-						Operator.MINUS.getSign(), ""));
+				String expSymbol = exponent.getSymbol();
+				if (Moderator.isInEasyMode && "-1".equals(expSymbol)) {
+					exponential.replace(base);
+				} else {
+					exponent.setSymbol(expSymbol.replace(
+							Operator.MINUS.getSign(), ""));
+				}
 
 				if (reloadAlgebraActivity) {
 					Moderator.reloadEquationPanel(

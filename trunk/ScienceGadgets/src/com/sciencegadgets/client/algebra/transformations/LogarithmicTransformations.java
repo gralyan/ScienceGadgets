@@ -8,6 +8,7 @@ import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
@@ -138,7 +139,7 @@ class LogEvaluateButton extends LogTransformButton {
 
 				Double total;
 
-				if (MathTree.E.equals(base)) {
+				if (Constant.EULER.getSymbol().equals(base)) {
 					total = Math.log(argValue);
 				} else if ("10".equals(base)) {
 					total = Math.log10(argValue);

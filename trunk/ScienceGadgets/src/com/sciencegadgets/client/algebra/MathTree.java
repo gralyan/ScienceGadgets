@@ -33,6 +33,7 @@ import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
+import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.ChildRequirement;
@@ -53,9 +54,6 @@ public class MathTree {
 	private boolean inEditMode;
 	private int idCounter = 0;
 	private EquationValidator eqValidator;
-
-	public static final String PI = "π";
-	public static final String E = "e";
 
 	/**
 	 * A tree representation of an equation.
@@ -321,6 +319,7 @@ public class MathTree {
 	public class MathNode {
 		private Element xmlNode;
 		private Wrapper wrapper;
+		private String sy;
 
 		/**
 		 * Wrap existing MathML node
@@ -355,9 +354,7 @@ public class MathTree {
 
 			this.xmlNode = newNode;
 
-			if (!"".equals(symbol)) {
-				setSymbol(symbol);
-			}
+			setSymbol(symbol);
 
 		}
 
@@ -456,23 +453,22 @@ public class MathTree {
 				this.replace(TypeML.Number, "0");
 				break;
 			case 1:
-//				TypeML childType = getFirstChild().getType();
-//				if (childType.equals(getParentType())
-//						&& (TypeML.Sum.equals(childType) || TypeML.Term
-//								.equals(childType))) {
-//					LinkedList<MathNode> grandChildren = this.getFirstChild()
-//							.getChildren();
-//					for (int i = grandChildren.size(); i > 0; i--) {
-//						getParent().addBefore(this.getIndex(),
-//								grandChildren.get(i - 1));
-//					}
-//					this.getFirstChild().remove();
-//					this.remove();
-//				} else {
-					getParent()
-							.addBefore(this.getIndex(), this.getFirstChild());
-					this.remove();
-//				}
+				// TypeML childType = getFirstChild().getType();
+				// if (childType.equals(getParentType())
+				// && (TypeML.Sum.equals(childType) || TypeML.Term
+				// .equals(childType))) {
+				// LinkedList<MathNode> grandChildren = this.getFirstChild()
+				// .getChildren();
+				// for (int i = grandChildren.size(); i > 0; i--) {
+				// getParent().addBefore(this.getIndex(),
+				// grandChildren.get(i - 1));
+				// }
+				// this.getFirstChild().remove();
+				// this.remove();
+				// } else {
+				getParent().addBefore(this.getIndex(), this.getFirstChild());
+				this.remove();
+				// }
 				break;
 			case 2:// Should only be sums with a negative in front
 				JSNICalls
@@ -494,6 +490,27 @@ public class MathTree {
 			return replacement;
 		}
 
+		/**
+		 * Adds a child at the specified index.</br></br>If the node is already
+		 * in the tree, it is just repositioned. There is no need to remove it
+		 * first</br></br> Children of this node must reflect it's type</br>
+		 * <em>Requirements:</em></br> <b>Variable and Number</b> must have
+		 * <b>exactly 0</b> children</br> <b>Term and Sum</b> must have <b>at
+		 * least 2</b> children</br> <b>Fraction and Exponential</b> must have
+		 * <b>exactly 2</b> children</br></br> The order should be:</br> <b>Term
+		 * and Sum</b> - same as the order seen</br> <b>Fraction</b> - numerator
+		 * then denominator</br> <b>Exponent</b> - base then exponent
+		 * 
+		 * @param index
+		 *            - the placement of siblings
+		 * @param after
+		 *            - True if the node is to be added after the node at the
+		 *            specified index (to next index).<br/>
+		 *            False if the node is to be added before the node at the
+		 *            specified index (to this index)
+		 * @param node
+		 *            - the node to be added
+		 */
 		private void add(int index, MathNode node, boolean after)
 				throws IllegalArgumentException {
 
@@ -504,25 +521,15 @@ public class MathTree {
 					&& (TypeML.Sum.equals(node.getType()) || TypeML.Term
 							.equals(node.getType()))) {
 				LinkedList<MathNode> children = node.getChildren();
-				JSNICalls.error(" ");
-				JSNICalls.error("adding ");
-				for (MathNode c : children) {
-					JSNICalls.error("add " + c.xmlNode.getInnerText());
-				}
 				if (indexOutOfRange) {
 					for (int i = 0; i < children.size(); i++) {
 						append(children.get(i));
-
-						JSNICalls.error("iter " + xmlNode.getInnerText());
 					}
 				} else {
 					for (int i = children.size(); i > 0; i--) {
 						addBefore(index, children.get(i - 1));
-
-						JSNICalls.error("iter " + xmlNode.getInnerText());
 					}
 				}
-				JSNICalls.error("result " + xmlNode.getInnerText());
 
 				node.remove();
 
@@ -554,32 +561,10 @@ public class MathTree {
 			return newNode;
 		}
 
-		/**
-		 * Adds a child at the specified index.</br></br>If the node is already
-		 * in the tree, it is just repositioned. There is no need to remove it
-		 * first</br></br> Children of this node must reflect it's type</br>
-		 * <em>Requirements:</em></br> <b>Variable and Number</b> must have
-		 * <b>exactly 0</b> children</br> <b>Term and Sum</b> must have <b>at
-		 * least 2</b> children</br> <b>Fraction and Exponential</b> must have
-		 * <b>exactly 2</b> children</br></br> The order should be:</br> <b>Term
-		 * and Sum</b> - same as the order seen</br> <b>Fraction</b> - numerator
-		 * then denominator</br> <b>Exponent</b> - base then exponent
-		 * 
-		 * @param index
-		 *            - the placement of siblings
-		 * @param node
-		 *            - the node to be added
-		 */
 		public void addBefore(int index, MathNode node) {
 			add(index, node, false);
 		}
 
-		/**
-		 * Creates a node to add as a child at the specified index.
-		 * 
-		 * @return - The newly create child
-		 * @throws Exception
-		 */
 		public MathNode addBefore(int index, TypeML type, String symbol) {
 			MathNode newNode = new MathNode(type, symbol);
 			this.addBefore(index, newNode);
@@ -593,6 +578,15 @@ public class MathTree {
 
 		public MathNode append(TypeML type, String symbol) {
 			return addBefore(-1, type, symbol);
+		}
+
+		public MathNode addFirst(MathNode newNode) {
+			addBefore(0, newNode);
+			return newNode;
+		}
+
+		public MathNode addFirst(TypeML type, String symbol) {
+			return addBefore(0, type, symbol);
 		}
 
 		public LinkedList<MathNode> getChildren() {
@@ -635,7 +629,7 @@ public class MathTree {
 		}
 
 		public int getChildCount() {
-			// Terminal nodes have text nodes in xml
+			// Terminal nodes have text nodes in XML
 			if (ChildRequirement.TERMINAL.equals(getType().childRequirement())) {
 				return 0;
 			}
@@ -662,10 +656,9 @@ public class MathTree {
 		 * @param indexesAway
 		 *            - the number of indexes away from this sibling positive
 		 *            for siblings to the right, negative for siblings to the
-		 *            left
-		 *            <p>
-		 *            ex:</br>-1 for previous </br>1 for next
-		 *            </p>
+		 *            left <br/>
+		 *            ex:<br/>
+		 *            -1 for previous </br>1 for next
 		 */
 		private MathNode getSibling(int indexesAway) {
 			MathNode parent = this.getParent();
@@ -752,47 +745,63 @@ public class MathTree {
 		 */
 		public void setSymbol(String symbol) {
 
-			if (!"".equals(symbol)) {
-				switch (getType()) {
-				case Number:
-					if (ChangeNodeMenu.NOT_SET.equals(symbol)
-							|| RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
-						xmlNode.setInnerText(symbol);
-					} else {
-						BigDecimal value = new BigDecimal(symbol);
-						BigDecimal roundedValue = value
-								.round(new MathContext(3));
-						String tilda = value.equals(roundedValue) ? "" : "~";
-						xmlNode.setInnerText(tilda
-								+ roundedValue.stripTrailingZeros());
-						setAttribute(MathAttribute.Value, value
-								.stripTrailingZeros().toString());
-						break;
-					}
-				case Variable:
-				case Operation:
+			switch (getType()) {
+			case Number:
+				if (ChangeNodeMenu.NOT_SET.equals(symbol)
+						|| RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 					xmlNode.setInnerText(symbol);
-					break;
-				case Trig:
-					setAttribute(MathAttribute.Function, symbol);
-					break;
-				case Log:
-					setAttribute(MathAttribute.LogBase, symbol);
+					setAttribute(MathAttribute.Value, null);
+				} else {
+					BigDecimal value = new BigDecimal(symbol);
+
+					// Rounded display value stored as inner text
+					String displayValue;
+					if (value.compareTo(new BigDecimal("1000")) < 0
+							&& value.remainder(new BigDecimal(".01"))
+									.compareTo(new BigDecimal(0)) == 0) {
+						displayValue = value.stripTrailingZeros()
+								.toPlainString();
+					} else {
+						displayValue = "#";
+					}
+					xmlNode.setInnerText(displayValue);
+
+					// Full value stored as attribute
+					String fullValue = value.stripTrailingZeros().toString();
+					setAttribute(MathAttribute.Value, fullValue);
 					break;
 				}
+			case Variable:
+			case Operation:
+				xmlNode.setInnerText(symbol);
+				break;
+			case Trig:
+				setAttribute(MathAttribute.Function, symbol);
+				break;
+			case Log:
+				setAttribute(MathAttribute.LogBase, symbol);
+				break;
 			}
+		}
+
+		public void setConstant(Constant symbol) {
+			// Display
+			xmlNode.setInnerText(symbol.getSymbol());
+			// Value
+			setAttribute(MathAttribute.Value, symbol.name());
 		}
 
 		public String getSymbol() {
 			switch (getType()) {
 			case Number:
-				String value = getAttribute(MathAttribute.Value);
-				if (PI.equals(value)) {
-					return Math.PI + "";
-				} else if (E.equals(value)) {
-					return Math.E + "";
-				} else {
-					return value;
+				String valueAttr = getAttribute(MathAttribute.Value);
+				try {
+					return Constant.valueOf(valueAttr).getValue();
+				} catch (IllegalArgumentException e) {
+				}
+				try {
+					return new BigDecimal(valueAttr).toString();
+				} catch (NumberFormatException e) {
 				}
 			case Variable:
 			case Operation:
@@ -843,7 +852,11 @@ public class MathTree {
 		}
 
 		public void setAttribute(MathAttribute attribute, String value) {
-			xmlNode.setAttribute(attribute.getAttributeName(), value);
+			if (value == null || "".equals(value)) {
+				xmlNode.removeAttribute(attribute.getAttributeName());
+			} else {
+				xmlNode.setAttribute(attribute.getAttributeName(), value);
+			}
 		}
 
 		public boolean isLeftSide() {
@@ -1036,8 +1049,7 @@ public class MathTree {
 
 		root = bindXMLtoNodeRecursive(rootNode);
 
-		// TODO
-		// validateTree();
+		validateTree();
 	}
 
 	private MathNode bindXMLtoNodeRecursive(Element mathMLNode) {

@@ -151,9 +151,6 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		@Override
 		public void onClick(ClickEvent event) {
 			event.stopPropagation();
-			System.out.println(" ");
-			System.out.println("wrapper "+node.toString());
-			System.out.println(" ");
 			select();
 		}
 	}

@@ -4,6 +4,7 @@ import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.shared.UnitUtil;
 
 public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)
+
 	// SI definitions
 	/* Farad */Capacitance_F("1", -2, -1, 4, 2, 0, 0, 0),
 	/* Katal */CatalyticActivity_kat("1", 0, 0, -1, 0, 0, 1, 0),
@@ -43,11 +44,11 @@ public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)
 	/* BoardFoot */Volume_Bf("0.00235973722", 3, 0, 0, 0, 0, 0, 0),
 	/* Liter */Volume_L("0.001", 3, 0, 0, 0, 0, 0, 0);
 
-	private UnitMap derivedMap = new UnitMap();
-	private String unitName;
-	private String symbol;
-	private String quantityKind;
-	private String conversionMultiplier;
+	private final UnitMap derivedMap = new UnitMap();
+	private final String unitName;
+	private final String symbol;
+	private final String quantityKind;
+	private final String conversionMultiplier;
 
 	private DerivedUnit(String conversionMultiplier, int m, int kg, int s,
 			int A, int K, int mol, int cd) {
@@ -93,36 +94,4 @@ public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)
 		return conversionMultiplier;
 	}
 
-}
-
-enum BaseUnit {
-	m("Length", "m"), //
-	kg("Mass", "kg"), //
-	s("Time", "s"), //
-	A("ElectricCurrent", "A"), //
-	K("ThermodynamicTemperature", "K"), //
-	mol("AmountOfSubstance", "mol"), //
-	cd("LuminousIntensity", "cd");
-
-	private String name;
-	private String symbol;
-	private String quantityKind;
-
-	private BaseUnit(String quantityKind, String symbol) {
-		this.name = quantityKind + UnitUtil.NAME_DELIMITER + symbol;
-		this.quantityKind = quantityKind;
-		this.symbol = symbol;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getSymbol() {
-		return symbol;
-	}
-
-	public String getQuantityKind() {
-		return quantityKind;
-	}
 }

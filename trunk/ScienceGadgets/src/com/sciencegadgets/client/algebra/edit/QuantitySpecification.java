@@ -36,9 +36,10 @@ public abstract class QuantitySpecification extends Prompt {
 	@UiField
 	SymbolDisplay symbolDisplay;
 	@UiField
-	FlowPanel unitDisplay;
-	@UiField
 	ToggleSlide symbolCaseToggle;
+
+	@UiField
+	FlowPanel unitDisplay;
 	@UiField
 	ToggleSlide unitReciprocalToggle;
 	@UiField

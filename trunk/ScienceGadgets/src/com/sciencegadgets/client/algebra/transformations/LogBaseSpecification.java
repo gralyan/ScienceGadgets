@@ -9,9 +9,10 @@ import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.conversion.Constant;
 
 public class LogBaseSpecification extends Prompt {
-	public final String[] bases = { "2", "10", MathTree.E };
+	public final String[] bases = { "2", "10", Constant.EULER.getSymbol() };
 	private SymbolDisplay symbolDisplay;
 	KeyPadNumerical keyPad = new KeyPadNumerical(true);
 

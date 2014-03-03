@@ -543,14 +543,14 @@ class AddSimilarButton extends AddTransformButton {
 
 				if (!isMinus && !isMinusBeforeLeft) {
 					MathNode casing = right.encase(TypeML.Term);
-					casing.addBefore(0, TypeML.Operation, Operator
+					casing.addFirst(TypeML.Operation, Operator
 							.getMultiply().getSign());
-					casing.addBefore(0, TypeML.Number, "2");
+					casing.addFirst(TypeML.Number, "2");
 				} else if (isMinus && isMinusBeforeLeft) {
 					MathNode casing = right.encase(TypeML.Term);
-					casing.addBefore(0, TypeML.Operation, Operator
+					casing.addFirst(TypeML.Operation, Operator
 							.getMultiply().getSign());
-					casing.addBefore(0, TypeML.Number, "-2");
+					casing.addFirst(TypeML.Number, "-2");
 					minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
 				} else if ((isMinus && !isMinusBeforeLeft)
 						|| (!isMinus && isMinusBeforeLeft)) {
@@ -691,8 +691,8 @@ class AddFractionsButton extends AddTransformButton {
 
 				MathNode numeratorCasing = right.getChildAt(0).encase(
 						TypeML.Sum);
-				numeratorCasing.addBefore(0, operation);
-				numeratorCasing.addBefore(0, left.getChildAt(0));
+				numeratorCasing.addFirst(operation);
+				numeratorCasing.addFirst(left.getChildAt(0));
 
 				left.remove();
 				parent.decase();
