@@ -66,7 +66,7 @@ public class EquationHTML extends HTML {
 		super.onLoad();
 		if (pilot) {
 			matchHeightsAndAlign(this.getElement());
-		} 
+		}
 		if (autoFillParent) {
 			resizeEquation();
 		}
@@ -151,17 +151,18 @@ public class EquationHTML extends HTML {
 
 			// fall through
 		case Trig:
-			Element funcName = DOM.createDiv();
 			if (functionName == null) {
 				functionName = mNode.getAttribute(MathAttribute.Function);
 			}
-			funcName.setInnerText(functionName);
-			funcName.addClassName(CSS.FUNCTION_NAME);
-			nodeHtml.insertFirst(funcName);
-			// fall through
+			Element funcNameDisplay = DOM.createDiv();
+			funcNameDisplay.setInnerText(functionName);
+			funcNameDisplay.addClassName(CSS.FUNCTION_NAME);
+			nodeHtml.insertFirst(funcNameDisplay);
 			break;
 		case Fraction:
-			container.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+//			if (!(TypeML.Exponential.equals(parentType) && mNode.getIndex() == 1)) {
+//				container.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+//			}
 		}
 
 		// Addition to tree
@@ -309,26 +310,26 @@ public class EquationHTML extends HTML {
 			s.setPaddingTop((tallestFracChild - numHeight) / pxPerEm, Unit.EM);
 			s.setPaddingBottom((tallestFracChild - denHeight) / pxPerEm,
 					Unit.EM);
-//			s.setBottom((tallestFracChild - denHeight) / pxPerEm,
-//					Unit.EM);
+			// s.setBottom((tallestFracChild - denHeight) / pxPerEm,
+			// Unit.EM);
 		}
 
 		// Find highest top and lowest bottom to match heights
-//		int lowestBottom = 0;
-//		int highestTop = 999999999;
-//		for (Element child : childrenHorizontal) {
-//			int childTop = child.getAbsoluteTop();
-//			if (childTop < highestTop) {
-//				highestTop = childTop;
-//			}
-//			int childBottom = child.getAbsoluteBottom();
-//			if (childBottom > lowestBottom) {
-//				lowestBottom = childBottom;
-//			}
-//		}
-//		
-//		highestTop = curEl.getAbsoluteTop();
-//		lowestBottom = curEl.getAbsoluteBottom();
+		// int lowestBottom = 0;
+		// int highestTop = 999999999;
+		// for (Element child : childrenHorizontal) {
+		// int childTop = child.getAbsoluteTop();
+		// if (childTop < highestTop) {
+		// highestTop = childTop;
+		// }
+		// int childBottom = child.getAbsoluteBottom();
+		// if (childBottom > lowestBottom) {
+		// lowestBottom = childBottom;
+		// }
+		// }
+		//
+		// highestTop = curEl.getAbsoluteTop();
+		// lowestBottom = curEl.getAbsoluteBottom();
 
 		// Lift exponents of fraction bases to top
 		if (TypeML.Exponential.equals(curType)) {
@@ -339,25 +340,26 @@ public class EquationHTML extends HTML {
 
 			// Align inline siblings flush using padding at highest and lowest
 		} else {
-//			for (Element child : childrenHorizontal) {
-//				Style s = child.getStyle();
-//
-//				// Fractions with some padding don't need to be aligned
-//				if (fractionChildrenHorizontal.contains(child)) {
-//					if (!"0em".equals(s.getPaddingTop())
-//							|| !"0em".equals(s.getPaddingBottom())) {
-//						continue;
-//					}
-//				}else if(child.getClassName().contains(TypeML.Operation.toString())) {
-//					continue;
-//				}
-//
-//				int childTopPad = child.getAbsoluteTop() - highestTop;
-//				int childBottomPad = lowestBottom - child.getAbsoluteBottom();
-//
-//				s.setPaddingTop(childTopPad / pxPerEm, Unit.EM);
-//				s.setPaddingBottom(childBottomPad / pxPerEm, Unit.EM);
-//			}
+			// for (Element child : childrenHorizontal) {
+			// Style s = child.getStyle();
+			//
+			// // Fractions with some padding don't need to be aligned
+			// if (fractionChildrenHorizontal.contains(child)) {
+			// if (!"0em".equals(s.getPaddingTop())
+			// || !"0em".equals(s.getPaddingBottom())) {
+			// continue;
+			// }
+			// }else
+			// if(child.getClassName().contains(TypeML.Operation.toString())) {
+			// continue;
+			// }
+			//
+			// int childTopPad = child.getAbsoluteTop() - highestTop;
+			// int childBottomPad = lowestBottom - child.getAbsoluteBottom();
+			//
+			// s.setPaddingTop(childTopPad / pxPerEm, Unit.EM);
+			// s.setPaddingBottom(childBottomPad / pxPerEm, Unit.EM);
+			// }
 		}
 
 	}

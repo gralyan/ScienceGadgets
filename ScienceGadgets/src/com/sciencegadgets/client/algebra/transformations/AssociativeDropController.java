@@ -57,9 +57,9 @@ public class AssociativeDropController extends TransformationDropController {
 			
 			if(target.getIndex() == 0){
 				if(isSum){
-					parent.addBefore(0, TypeML.Operation, Operator.PLUS.getSign());
+					parent.addFirst(TypeML.Operation, Operator.PLUS.getSign());
 				}else{
-				parent.addBefore(0, TypeML.Operation, Operator.getMultiply().getSign());
+				parent.addFirst(TypeML.Operation, Operator.getMultiply().getSign());
 				}
 			}
 			int dropIndex = target.getPrevSibling().getIndex();

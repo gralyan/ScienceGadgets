@@ -13,6 +13,7 @@ import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
 import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.client.conversion.Constant;
 
 public class AlgebraActivity extends Composite {
 

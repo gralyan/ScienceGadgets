@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -13,6 +14,7 @@ import com.sciencegadgets.shared.UnitUtil;
 public class EquationWrapper extends Wrapper {
 	protected EquationPanel eqPanel;
 	protected AlgebraActivity algebraActivity;
+	protected Label value = new Label();
 
 	public EquationWrapper(MathNode node, AlgebraActivity algebraActivity,
 			Element element) {
@@ -23,42 +25,40 @@ public class EquationWrapper extends Wrapper {
 		this.addStyleName(CSS.DISPLAY_WRAPPER);
 	}
 
-	public EquationLayer getEqLayer() {
-		return eqPanel.eqLayerMap.get(node);
-	}
-
 	public EquationPanel getEqPanel() {
 		return eqPanel;
 	}
+
 	private void fillSelectionDetails() {
 		FlowPanel details = algebraActivity.selectionDetails;
-		
+
 		TypeML type = node.getType();
 		Label typeLabel = new Label(type.name());
 		typeLabel.addStyleName(type.toString());
 		typeLabel.addStyleName(CSS.DISPLAY_WRAPPER);
 		details.add(typeLabel);
-		
-			switch (type) {
-			case Number:
-				String fullValue = node.getAttribute(MathAttribute.Value);
-				HTML quantity = new HTML(fullValue);
 
-				String unit = node.getAttribute(MathAttribute.Unit);
-				if(!"".equals(unit)) {
-					quantity.getElement().appendChild(UnitUtil.element_From_attribute(unit));
-				}
-				
-				details.add(quantity);
-				
-				break;
-			case Variable:
-				String qKind = node.getAttribute(MathAttribute.Unit);
-				if(!"".equals(qKind)) {
-					details.add(new Label(qKind));
-				}
-				break;
+		switch (type) {
+		case Number:
+			String fullValue = node.getAttribute(MathAttribute.Value);
+			HTML quantity = new HTML(fullValue);
+
+			String unit = node.getAttribute(MathAttribute.Unit);
+			if (!"".equals(unit)) {
+				quantity.getElement().appendChild(
+						UnitUtil.element_From_attribute(unit));
 			}
+
+			details.add(quantity);
+
+			break;
+		case Variable:
+			String qKind = node.getAttribute(MathAttribute.Unit);
+			if (!"".equals(qKind)) {
+				details.add(new Label(qKind));
+			}
+			break;
+		}
 	}
 
 	@Override
@@ -67,9 +67,10 @@ public class EquationWrapper extends Wrapper {
 		if (this.equals(eqPanel.selectedWrapper)) {
 
 			// If this was already selected, focus in on it
-			if (node.hasChildElements() && (dragController==null || !dragController.isDragging())) {
+			if (node.hasChildElements()
+					&& (dragController == null || !dragController.isDragging())) {
 				unselect();
-				eqPanel.setFocus(getEqLayer());
+				eqPanel.setFocus(eqPanel.eqLayerMap.get(node));
 			}
 		} else {
 
@@ -79,7 +80,16 @@ public class EquationWrapper extends Wrapper {
 			}
 
 			fillSelectionDetails();
-			
+
+			String valueStr = node.getAttribute(MathAttribute.Value);
+			if (!"".equals(valueStr) && !valueStr.equals(node.getXMLNode().getInnerText())) {
+				value.setText(valueStr);
+				Style valueStyle = value.getElement().getStyle();
+				valueStyle.setBackgroundColor("white");
+				valueStyle.setZIndex(3);
+				eqPanel.add(value, this.getAbsoluteLeft()-eqPanel.getAbsoluteLeft(), this.getAbsoluteTop()-eqPanel.getAbsoluteTop());
+			}
+
 			eqPanel.selectedWrapper = this;
 
 			super.select();
@@ -89,9 +99,11 @@ public class EquationWrapper extends Wrapper {
 	@Override
 	public void unselect() {
 		super.unselect();
-		
+
 		eqPanel.selectedWrapper = null;
 		
+		value.removeFromParent();
+
 		algebraActivity.selectionDetails.clear();
 	}
 }
