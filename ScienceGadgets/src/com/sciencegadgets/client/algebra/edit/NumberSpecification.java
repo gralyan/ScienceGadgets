@@ -7,26 +7,31 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.KeyPadNumerical;
-import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.UnitSelection;
+import com.sciencegadgets.client.SelectionPanel.Cell;
+import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.conversion.Constant;
+import com.sciencegadgets.client.conversion.DerivedUnit;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 
 public class NumberSpecification extends QuantitySpecification {
 
-	String randomness = "";
-	RandomSpecPanel randSpec = new RandomSpecPanel();
 	KeyPadNumerical numPad;
+	RandomSpecPanel randSpec = new RandomSpecPanel();
+
+	String randomness = "";
+	Constant constantSeleced = null;
 
 	public NumberSpecification(MathNode mathNode, boolean clearDisplays) {
 		super(mathNode, clearDisplays);
 
-		//Number Pad
+		// Number Pad
 		numPad = new KeyPadNumerical(symbolDisplay);
 		symbolPalette.add(numPad);
-		
-		//Randomness Spec
+
+		// Randomness Spec
 		symbolPalette.add(randSpec);
 		randSpec.setVisible(false);
 		randSpec.addOkClickHandler((new ClickHandler() {
@@ -35,13 +40,13 @@ public class NumberSpecification extends QuantitySpecification {
 				randomness = randSpec.getRandomness();
 				if (randomness != null) {
 					symbolDisplay.setText(RandomSpecPanel.RANDOM_SYMBOL);
-				}else {
+				} else {
 					symbolDisplay.setText("");
 				}
 			}
 		}));
 
-		//Symbol Toggle - switch Number Pad and Randomness Spec
+		// Symbol Toggle - switch Number Pad and Randomness Spec
 		symbolCaseToggle.setOptions("#", "?", true);
 		symbolCaseToggle.addClickHandler(new ClickHandler() {
 			@Override
@@ -59,13 +64,32 @@ public class NumberSpecification extends QuantitySpecification {
 
 		// Unit Selection
 		UnitSelection unitBox = new UnitSelection(true);
-		unitSelectionHolder.add(unitBox);
+		unitPalette.add(unitBox);
 		unitBox.addStyleName(CSS.FILL_PARENT);
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
 
+		// Fill Established Selection
+//		for (DerivedUnit constant : DerivedUnit.values()) {
+//			System.out.println(constant.name() +" "+constant.getDerivedMap().getUnitAttribute());
+//		}
+		for (Constant constant : Constant.values()) {
+			establishedSelection.add(
+					constant.getSymbol() + " - " + constant.getName(), null,
+					constant);
+		}
+
+		// Handle Established Selection
+		establishedSelection.addSelectionHandler(new SelectionHandler() {
+			@Override
+			public void onSelect(Cell selected) {
+				constantSeleced = ((Constant) selected.getEntity());
+
+				symbolDisplay.setText(constantSeleced.getValue());
+
+				setUnit(constantSeleced.getUnitMap());
+			}
+		});
 	}
-
-
 
 	@Override
 	String extractSymbol() {
@@ -90,17 +114,22 @@ public class NumberSpecification extends QuantitySpecification {
 
 	@Override
 	void setNode(String symbol) {
-		
+
 		node = node.replace(TypeML.Number, symbol);
 
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
-			node.getXMLNode().setAttribute(MathAttribute.Randomness.getAttributeName(),
-					randomness);
+			node.getXMLNode().setAttribute(
+					MathAttribute.Randomness.getAttributeName(), randomness);
 		} else {
-			node.getXMLNode()
-					.removeAttribute(MathAttribute.Randomness.getAttributeName());
+			node.getXMLNode().removeAttribute(
+					MathAttribute.Randomness.getAttributeName());
 		}
 
+		if (constantSeleced != null
+				&& constantSeleced.getValue().equals(symbolDisplay.getText())
+				&& constantSeleced.getUnitMap().equals(unitMap)) {
+			node.setConstant(constantSeleced);
+		}
 	}
 
 }

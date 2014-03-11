@@ -8,6 +8,7 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.UnitMap;
+import com.sciencegadgets.shared.UnitName;
 
 public class EquationValidator {
 
@@ -252,7 +253,7 @@ public class EquationValidator {
 		case Trig:
 			UnitMap trigArgumentMap = getQuantityKind(node.getChildAt(0));
 			UnitMap comparison = new UnitMap();
-			comparison.put(ANGLE, 1);
+			comparison.put(new UnitName(ANGLE), 1);
 			if (comparison.equals(trigArgumentMap)) {
 				break;
 			} else {

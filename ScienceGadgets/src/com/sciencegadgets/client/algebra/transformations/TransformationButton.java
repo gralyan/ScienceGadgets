@@ -98,7 +98,7 @@ public class TransformationButton extends SimplePanel implements
 		}
 		previewButton.fireEvent(new ClickEvent() {
 		});
-		mTree.reloadDisplay(true);
+		mTree.reloadDisplay(true, true);
 		return mTree;
 	}
 

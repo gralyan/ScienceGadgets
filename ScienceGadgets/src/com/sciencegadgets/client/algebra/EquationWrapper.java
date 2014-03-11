@@ -9,7 +9,8 @@ import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.UnitHTML;
 
 public class EquationWrapper extends Wrapper {
 	protected EquationPanel eqPanel;
@@ -43,10 +44,10 @@ public class EquationWrapper extends Wrapper {
 			String fullValue = node.getAttribute(MathAttribute.Value);
 			HTML quantity = new HTML(fullValue);
 
-			String unit = node.getAttribute(MathAttribute.Unit);
+			UnitAttribute unit = node.getUnitAttribute();
 			if (!"".equals(unit)) {
 				quantity.getElement().appendChild(
-						UnitUtil.element_From_attribute(unit));
+						UnitHTML.create(unit));
 			}
 
 			details.add(quantity);

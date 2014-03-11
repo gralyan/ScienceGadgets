@@ -8,7 +8,10 @@ import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.UnitHTML;
+import com.sciencegadgets.shared.UnitMultiple;
+import com.sciencegadgets.shared.UnitName;
 
 public class ConversionWrapper extends Wrapper {
 
@@ -41,10 +44,13 @@ public class ConversionWrapper extends Wrapper {
 		if (ConversionActivity.selectedWrapper != null) {
 			ConversionActivity.selectedWrapper.unselect();
 		}
-		
-		String unitName = UnitUtil.getUnitNames(node)[0];
-		conversionActivity.fillUnitSelection(unitName);
-		
+
+		UnitMultiple[] mult = node.getUnitAttribute().getUnitMultiples();
+		if (mult.length > 0) {
+			String unitName = mult[0].getUnitName().toString();
+			conversionActivity.fillUnitSelection(unitName);
+		}
+
 		ConversionActivity.selectedWrapper = this;
 		super.select();
 	}
@@ -59,22 +65,32 @@ public class ConversionWrapper extends Wrapper {
 
 	public void addUnitCancelDropControllers() {
 		MathNode thisSide = node.getParent();
-		if (TypeML.Fraction.equals(thisSide.getParentType())) {
-			MathNode otherSide = thisSide.getIndex() == 0 ? thisSide
-					.getNextSibling() : thisSide.getPrevSibling();
+		if (!TypeML.Fraction.equals(thisSide.getParentType())) {
+			return;
+		}
+		MathNode otherSide = thisSide.getIndex() == 0 ? thisSide
+				.getNextSibling() : thisSide.getPrevSibling();
 
-			for (MathNode targetNode : otherSide.getChildren()) {
-				String nodeUnitAttribute = node.getAttribute(MathAttribute.Unit);
-				String targetUnitAttribute = targetNode.getAttribute(MathAttribute.Unit);
-				String nodeUnitName = UnitUtil.getUnitNames(nodeUnitAttribute)[0];
-				String targetUnitName = UnitUtil.getUnitNames(targetUnitAttribute)[0];
-				if(nodeUnitName.equals(targetUnitName)) {
-					ConversionWrapper targetWrapper = (ConversionWrapper) targetNode.getWrapper();
-					UnitCancelDropController dropController = new UnitCancelDropController(targetWrapper, targetUnitAttribute,nodeUnitAttribute, nodeUnitName );
-					WrapDragController dragC = addDragController();
-					dragC.registerDropController(dropController);
-				}
+		for (MathNode targetNode : otherSide.getChildren()) {
+			ConversionWrapper targetWrapper = (ConversionWrapper) targetNode
+					.getWrapper();
+			if (targetWrapper == null) {
+				continue;
 			}
+			UnitMultiple nodeUnitMultiple = node.getUnitAttribute()
+					.getUnitMultiples()[0];
+			UnitMultiple targetUnitMultiple = targetNode.getUnitAttribute()
+					.getUnitMultiples()[0];
+			UnitName nodeUnitName = nodeUnitMultiple.getUnitName();
+			UnitName targetUnitName = targetUnitMultiple.getUnitName();
+			if (!nodeUnitName.equals(targetUnitName)) {
+				continue;
+			}
+			UnitCancelDropController dropController = new UnitCancelDropController(
+					targetWrapper, targetUnitMultiple, nodeUnitMultiple,
+					nodeUnitName);
+			WrapDragController dragC = addDragController();
+			dragC.registerDropController(dropController);
 		}
 	}
 

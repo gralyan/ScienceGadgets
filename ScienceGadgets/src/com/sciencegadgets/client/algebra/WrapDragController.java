@@ -59,8 +59,6 @@ public class WrapDragController extends PickupDragController {
 		super.dragStart();
 
 		proxy.getElement().getStyle().setOpacity(0);
-
-		//		proxy.addStyleName(CSS.SELECTED_DROP_WRAPPER);
 	}
 
 	@Override
@@ -80,8 +78,6 @@ public class WrapDragController extends PickupDragController {
 		super.dragEnd();
 
 		moveCounter=0;
-		
-//		proxy.removeStyleName(CSS.SELECTED_DROP_WRAPPER);
 		
 		proxy.getElement().getStyle().clearOpacity();
 		context.draggable.getElement().getStyle().clearOpacity();

@@ -132,7 +132,7 @@ public class InterFractionDrop extends TransformationDropController {
 
 		String totalString = total.stripTrailingZeros().toEngineeringString();
 		MathNode division = target.replace(TypeML.Number, totalString);
-		String divisionUnits = combinedMap.getUnitAttribute();
+		String divisionUnits = combinedMap.getUnitAttribute().toString();
 		division.setAttribute(MathAttribute.Unit, divisionUnits);
 
 		setDropHTMLTotal(totalString);

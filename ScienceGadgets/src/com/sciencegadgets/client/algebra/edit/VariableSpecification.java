@@ -12,8 +12,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.UnitSelection;
+import com.sciencegadgets.client.SelectionPanel.Cell;
+import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.conversion.DerivedUnit;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.UnitMap;
 
 public class VariableSpecification extends QuantitySpecification {
 
@@ -64,9 +69,28 @@ public class VariableSpecification extends QuantitySpecification {
 
 		// QuantityKind Selection
 		UnitSelection quantityBox = new UnitSelection(true, false, false);
-		unitSelectionHolder.add(quantityBox);
+		unitPalette.add(quantityBox);
 		quantityBox.addStyleName(CSS.FILL_PARENT);
 		quantityBox.quantityBox.addSelectionHandler(new UnitSelectionHandler());
+		
+		// Established Selection
+		for (DerivedUnit unit : DerivedUnit.values()) {
+			establishedSelection.add(
+					unit.getName(), null,
+					unit);
+		}
+		// Handle Established Selection
+		establishedSelection.addSelectionHandler(new SelectionHandler() {
+			@Override
+			public void onSelect(Cell selected) {
+				DerivedUnit establishedUnit = ((DerivedUnit) selected
+						.getEntity());
+
+				symbolDisplay.setText(establishedUnit.getSymbol());
+
+				setUnit(new UnitMap(new UnitAttribute(establishedUnit.toString()+UnitAttribute.EXP_DELIMITER+"1")));
+			}
+		});
 
 	}
 

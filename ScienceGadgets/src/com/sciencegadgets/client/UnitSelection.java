@@ -40,6 +40,7 @@ public class UnitSelection extends CommunistPanel {
 			JSNICalls.error("Can't be quantityOnly and unitOnly");
 		}
 
+		unitBox.addStyleName(CSS.UNIT);
 		unitBox.addStyleName(CSS.LAYOUT_ROW);
 		quantityBox.addStyleName(CSS.LAYOUT_ROW);
 		

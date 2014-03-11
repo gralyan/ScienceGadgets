@@ -29,4 +29,5 @@ public class SymbolDisplay extends Label {
 	void setKeyPad(KeyPadNumerical keyPad) {
 		this.keyPad = keyPad;
 	}
+	
 }

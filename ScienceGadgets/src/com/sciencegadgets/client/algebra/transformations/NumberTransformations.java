@@ -46,7 +46,7 @@ public class NumberTransformations extends TransformationList {
 	 * Checks if there is a unit attribute
 	 */
 	private TransformationButton unitConversion_check() {
-		if (!"".equals(numberNode.getUnitAttribute())) {
+		if (!"".equals(numberNode.getUnitAttribute().toString())) {
 			return new UnitConversionButton(this);
 		}
 		return null;

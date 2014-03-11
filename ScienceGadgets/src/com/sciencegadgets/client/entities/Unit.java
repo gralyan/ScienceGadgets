@@ -7,7 +7,8 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
 import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitHTML;
+import com.sciencegadgets.shared.UnitName;
 
 @Entity
 public class Unit implements Serializable{
@@ -38,8 +39,8 @@ public class Unit implements Serializable{
 		return label;
 	}
 
-	public String getName() {
-		return name;
+	public UnitName getName() {
+		return new UnitName(name);
 	}
 
 	public Key<QuantityKind> getQuantityKindKey() {
@@ -58,7 +59,7 @@ public class Unit implements Serializable{
 	}
 
 	public String getSymbol() {
-		return UnitUtil.getSymbol(name);
+		return getName().getSymbol();
 	}
 
 }

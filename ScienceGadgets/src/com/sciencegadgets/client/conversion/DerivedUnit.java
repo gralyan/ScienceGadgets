@@ -1,80 +1,68 @@
 package com.sciencegadgets.client.conversion;
 
+import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitHTML;
+import com.sciencegadgets.shared.UnitName;
 
 public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)
 
 	// SI definitions
-	/* Farad */Capacitance_F("1", -2, -1, 4, 2, 0, 0, 0),
-	/* Katal */CatalyticActivity_kat("1", 0, 0, -1, 0, 0, 1, 0),
-	/* Coulomb */ElectricCharge_C("1", 0, 0, 1, 1, 0, 0, 0),
-	/* Siemens */ElectricConductivity_S("1", -2, -1, 3, 2, 0, 0, 0),
-	/* Joule */EnergyAndWork_J("1", 2, 1, -2, 0, 0, 0, 0),
-	/* Volt */EnergyPerElectricCharge_V("1", 2, 1, -3, -1, 0, 0, 0),
-	/* Newton */Force_N("1", 1, 1, -2, 0, 0, 0, 0),
-	/* Pascal */ForcePerArea_Pa("1", -1, 1, -2, 0, 0, 0, 0),
-	/* Hertz */Frequency_Hz("1", 0, 0, -1, 0, 0, 0, 0),
-	/* Henry */Inductance_H("1", 2, 1, -2, -2, 0, 0, 0),
-	/* Lumen */LuminousFlux_lm("1", 0, 0, 0, 0, 0, 0, 1),
-	/* Lux */LuminousFluxPerArea_lx("1", -2, 0, 0, 0, 0, 0, 1),
-	/* Tesla */MagneticField_T("1", 0, 1, -2, -1, 0, 0, 0),
-	/* Weber */MagneticFlux_Wb("1", 2, 1, -2, -1, 0, 0, 0),
-	/* Watt */Power_W("1", 2, 1, -3, 0, 0, 0, 0),
-	/* Becquerel */Radioactivity_Bq("1", 0, 0, -1, 0, 0, 0, 0),
-	/* Ohm */Resistance_ohm("1", 2, 1, -3, -2, 0, 0, 0),
-	/* Gray */SpecificEnergy_Gy("1", 2, 0, -2, 0, 0, 0, 0),
-	/* Sievert */SpecificEnergy_Sv("1", 2, 0, -2, 0, 0, 0, 0),
+	Capacitance_F("Farad","1", "Length_m^-2*Mass_kg^-1*Time_s^4*ElectricCurrent_A^2"),//
+	CatalyticActivity_kat("Katal","1", "Time_s^-1*AmountOfSubstance_mol^1"),//
+	ElectricCharge_C("Coulomb","1", "Time_s^1*ElectricCurrent_A^1"),//
+	ElectricConductivity_S("Siemens","1", "Length_m^-2*Mass_kg^-1*Time_s^3*ElectricCurrent_A^2"),//
+	EnergyAndWork_J("Joule","1", "Length_m^2*Mass_kg^1*Time_s^-2"),//
+	EnergyPerElectricCharge_V("Volt","1", "Length_m^2*Mass_kg^1*Time_s^-3*ElectricCurrent_A^-1"),//
+	Force_N("Newton","1", "Length_m^1*Mass_kg^1*Time_s^-2"),//
+	ForcePerArea_Pa("Pascal","1", "Length_m^-1*Mass_kg^1*Time_s^-2"),//
+	Frequency_Hz("Hertz","1", "Time_s^-1"),//
+	Inductance_H("Henry","1", "Length_m^2*Mass_kg^1*Time_s^-2*ElectricCurrent_A^-2"),//
+	LuminousFlux_lm("Lumen","1", "LuminousIntensity_cd^1"),//
+	LuminousFluxPerArea_lx("Lux","1", "Length_m^-2*LuminousIntensity_cd^1"),//
+	MagneticField_T("Tesla","1", "Mass_kg^1*Time_s^-2*ElectricCurrent_A^-1"),//
+	MagneticFlux_Wb("Weber","1", "Length_m^2*Mass_kg^1*Time_s^-2*ElectricCurrent_A^-1"),//
+	Power_W("Watt","1", "Length_m^2*Mass_kg^1*Time_s^-3"),//
+	Radioactivity_Bq("Becquerel","1", "Time_s^-1"),//
+	Resistance_ohm("Ohm","1", "Length_m^2*Mass_kg^1*Time_s^-3*ElectricCurrent_A^-2"),//
+	SpecificEnergy_Gy("Gray","1", "Length_m^2*Time_s^-2"),//
+	SpecificEnergy_Sv("Sievert","1", "Length_m^2*Time_s^-2"),//
 
 	// non-SI definitions
-	/* Are */Area_a("100", 2, 0, 0, 0, 0, 0, 0),
-	/* Barn */Area_b("1e-28", 2, 0, 0, 0, 0, 0, 0),
-	/* Hectare */Area_ha("10000", 2, 0, 0, 0, 0, 0, 0),
-	/* Oersted */AuxillaryMagneticField_Oe("79.5774715459424", -1, 0, 0, 1, 0,
-			0, 0),
-	/* Diopter */Curvature_D("1", -1, 0, 0, 0, 0, 0, 0),
-	/* Poise */DynamicViscosity_P("0.1", -1, 1, -1, 0, 0, 0, 0),
-	/* Reotgen */ElectricChargePerMass_R("2.58e−4", 0, -1, 1, 1, 0, 0, 0),
-	/* Stokes */KinematicViscosity_St("1e−4", 2, 0, -1, 0, 0, 0, 0),
-	/* Gravity */LinearAcceleration_G("9.80665", 1, 0, -2, 0, 0, 0, 0),
-	/* Knot */LinearVelocity_kn("0.514444444", 1, 0, -1, 0, 0, 0, 0),
-	/* Lambert */Luminance_L("3183.098862", -2, 0, 0, 0, 0, 0, 1),
-	/* Stilb */Luminance_sb("1e4", -2, 0, 0, 0, 0, 0, 1),
-	/* Clo */ThermalInsulance_clo("0.155", 0, -1, 3, 0, 1, 0, 0),
-	/* BoardFoot */Volume_Bf("0.00235973722", 3, 0, 0, 0, 0, 0, 0),
-	/* Liter */Volume_L("0.001", 3, 0, 0, 0, 0, 0, 0);
+	Area_a("Are","100", "Length_m^2"),//
+	Area_b("Barn","1e-28", "Length_m^2"),//
+	Area_ha("Hectare","10000", "Length_m^2"),//
+	AuxillaryMagneticField_Oe("Oersted","79.5774715459424", "Length_m^-1*ElectricCurrent_A^1"),//
+	Curvature_D("Diopter","1", "Length_m^-1"),//
+	DynamicViscosity_P("Poise","0.1", "Length_m^-1*Mass_kg^1*Time_s^-1"),//
+	ElectricChargePerMass_R("Reotgen","2.58e−4", "Mass_kg^-1*Time_s^1*ElectricCurrent_A^1"),//
+	KinematicViscosity_St("Stokes","1e−4", "Length_m^2*Time_s^-1"),//
+	LinearAcceleration_G("Gravity","9.80665", "Length_m^1*Time_s^-2"),//
+	LinearVelocity_kn("Knot","0.514444444", "Length_m^1*Time_s^-1"),//
+	Luminance_L("Lambert","3183.098862", "Length_m^-2*LuminousIntensity_cd^1"),//
+	Luminance_sb("Stilb","1e4", "Length_m^-2*LuminousIntensity_cd^1"),//
+	ThermalInsulance_clo("Clo","0.155", "Mass_kg^-1*Time_s^3*ThermodynamicTemperature_K^1"),//
+	Volume_Bf("BoardFoot","0.00235973722", "Length_m^3"),//
+	Volume_L("Liter","0.001", "Length_m^3");//
 
-	private final UnitMap derivedMap = new UnitMap();
-	private final String unitName;
+	private final UnitName unitName;
 	private final String symbol;
 	private final String quantityKind;
 	private final String conversionMultiplier;
+	private final String name;
+	private final String derivedUnitAttribute;
 
-	private DerivedUnit(String conversionMultiplier, int m, int kg, int s,
-			int A, int K, int mol, int cd) {
-		this.unitName = toString();
-		this.quantityKind = UnitUtil.getQuantityKind(unitName);
-		this.symbol = UnitUtil.getSymbol(unitName);
+	private DerivedUnit(String name, String conversionMultiplier, String derivedUnitAttribute) {
+		this.unitName = new UnitName(toString());
+		this.quantityKind = unitName.getQuantityKind();
+		this.symbol = unitName.getSymbol();
 		this.conversionMultiplier = conversionMultiplier;
-
-		if (m != 0)
-			derivedMap.put(BaseUnit.m.getName(), m);
-		if (kg != 0)
-			derivedMap.put(BaseUnit.kg.getName(), kg);
-		if (s != 0)
-			derivedMap.put(BaseUnit.s.getName(), s);
-		if (A != 0)
-			derivedMap.put(BaseUnit.A.getName(), A);
-		if (K != 0)
-			derivedMap.put(BaseUnit.K.getName(), K);
-		if (mol != 0)
-			derivedMap.put(BaseUnit.mol.getName(), mol);
-		if (cd != 0)
-			derivedMap.put(BaseUnit.cd.getName(), cd);
+		this.name = name;
+		this.derivedUnitAttribute = derivedUnitAttribute;
 	}
 
 	
-	 public String getUnitName() {
+	 public UnitName getUnitName() {
 	 return unitName;
 	 }
 	
@@ -87,11 +75,19 @@ public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)
 	}
 
 	public UnitMap getDerivedMap() {
-		return derivedMap;
+		return new UnitMap(getDerivedUnitAttribute());
+	}
+	
+	public UnitAttribute getDerivedUnitAttribute() {
+		return new UnitAttribute(derivedUnitAttribute);
 	}
 
 	public String getConversionMultiplier() {
 		return conversionMultiplier;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 }

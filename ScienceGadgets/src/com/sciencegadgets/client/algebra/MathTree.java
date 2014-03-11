@@ -36,10 +36,11 @@ import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformation
 import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.TypeML.ChildRequirement;
 import com.sciencegadgets.shared.TypeML.Operator;
 import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitHTML;
 
 public class MathTree {
 
@@ -195,8 +196,8 @@ public class MathTree {
 		for (int i = 0; i < allElements.getLength(); i++) {
 			Element el = (Element) allElements.getItem(i);
 			String elId = el.getAttribute("id");
-			if (elId.contains(UnitUtil.UNIT_NODE_DELIMITER)) {
-				String parentElId = elId.split(UnitUtil.UNIT_NODE_DELIMITER)[1];
+			if (elId.contains(UnitHTML.UNIT_NODE_DELIMITER)) {
+				String parentElId = elId.split(UnitHTML.UNIT_NODE_DELIMITER)[1];
 				idUnitHTMLMap.put(el, parentElId);
 			} else {
 				idHTMLMap.put(elId, el);
@@ -205,9 +206,11 @@ public class MathTree {
 		}
 	}
 
-	public EquationHTML reloadDisplay(boolean hasSmallUnits) {
+	public EquationHTML reloadDisplay(boolean hasSmallUnits,
+			boolean hasSubscripts) {
 
-		EquationHTML equationHTML = new EquationHTML(this, hasSmallUnits);
+		EquationHTML equationHTML = new EquationHTML(this, hasSmallUnits,
+				hasSubscripts);
 		equationHTML.pilot = true;
 		setDisplay(equationHTML);
 		return equationHTML;
@@ -788,7 +791,10 @@ public class MathTree {
 			// Display
 			xmlNode.setInnerText(symbol.getSymbol());
 			// Value
-			setAttribute(MathAttribute.Value, symbol.name());
+			setAttribute(MathAttribute.Value, symbol.getValue());
+			// Unit
+			setAttribute(MathAttribute.Unit, symbol.getUnitMap()
+					.getUnitAttribute().toString());
 		}
 
 		public String getSymbol() {
@@ -839,8 +845,9 @@ public class MathTree {
 			return getXMLNode().getAttribute("id");
 		}
 
-		public String getUnitAttribute() {
-			return xmlNode.getAttribute(MathAttribute.Unit.getAttributeName());
+		public UnitAttribute getUnitAttribute() {
+			return new UnitAttribute(xmlNode.getAttribute(MathAttribute.Unit
+					.getAttributeName()));
 		}
 
 		public String getAttribute(MathAttribute attribute) {
@@ -936,7 +943,7 @@ public class MathTree {
 		public Element getHTML() {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
-				getTree().reloadDisplay(true);
+				getTree().reloadDisplay(true, true);
 				Element el2 = idHTMLMap.get(getId());
 				JSNICalls.warn("No HTML for node: " + toString());
 				return (Element) el2;
@@ -1011,7 +1018,8 @@ public class MathTree {
 					return true;
 				}
 			case Number:
-				if (!UnitUtil.compareUnits(this, another)) {
+				if (!this.getUnitAttribute().equals(another.getUnitAttribute())
+						&& !new UnitMap(this).equals(new UnitMap(another))) {
 					return false;
 				}
 				// fall through

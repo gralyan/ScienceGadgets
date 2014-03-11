@@ -352,7 +352,7 @@ public class TestBot_Transformations {
 
 		MathTree tree = node.getTree();
 		HTML testCase = new HTML();
-		tree.reloadDisplay(true);
+		tree.reloadDisplay(true, true);
 		testCase.setHTML(tree.getLeftDisplay());
 		table.setWidget(row, 0, testCase);
 

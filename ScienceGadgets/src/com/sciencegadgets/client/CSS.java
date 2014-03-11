@@ -36,6 +36,7 @@ public static final String IN_LOG_BASE = "in-log-base";
 public static final String FENCED = "fenced";
 public static final String FUNCTION_NAME = "functionName";
 public static final String UNIT = "unit";
+public static final String SUBSCRIPT = "subscript";
 
 //////////////////////////////////////////////
 //ScienceGadgets.css
