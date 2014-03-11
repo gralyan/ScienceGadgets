@@ -8,7 +8,6 @@
 
 /* Note */
 /* There should be no spaces, auto-formatting adds space*/
-
 body {
 	font-family: math;
 }
@@ -16,8 +15,8 @@ body {
 .interactiveEquation {
 	/* 	gray out the background of the equation to make wrappers stand out */
 	color: #A0A0A0;
+	position: relative;
 }
-
 
 .displayWrapper {
 	color: black;
@@ -25,61 +24,63 @@ body {
 }
 
 /*---------------Wrappers---------------*/
-.displayWrapper.in-sum.Operation {/* +/- */
-	background-image: url('images/tile_sumOp.png');
-	background-repeat: no-repeat;
-	background-size: 100% 100%;
+.displayWrapper.in-sum.Operation { /* add/subtract(+/-) */
+/* 	background-image: url('images/tile_sumOp.png'); */
+/* 	background-repeat: no-repeat; */
+/* 	background-size: 100% 100%; */
 }
 
-.displayWrapper.Sum {
-	/* Note */
+.displayWrapper.Sum { /* Note */
+	/* 	background-image: url('images/tile_sumChild.png'); */
+	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
+	background-color: gold;
+}
+
+.displayWrapper>.fenced.Sum { /* Note */
 	background-image: url('images/tile_sumChild.png');
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 }
-.displayWrapper>.fenced.Sum {
-	/* Note */
-	background-image: url('images/tile_sumChild.png');
-	background-repeat: no-repeat;
-	background-size: 100% 100%;
+
+.displayWrapper.in-term.Operation { /* multiply(x) */
+/* 	background-image: url('images/tile_termOp.png'); */
+/* 	background-repeat: no-repeat; */
+/* 	background-size: 100% 100%; */
 }
 
-.displayWrapper.in-term.Operation {/* x */
-	background-image: url('images/tile_termOp.png');
-	background-repeat: no-repeat;
-	background-size: 100% 100%;
-}
-
-.displayWrapper.Term {
-	/* Note */
-	background-image: url('images/tile_termChild.png');
-	background-repeat: repeat;
+.displayWrapper.Term { /* Note */
+	/* 	background-image: url('images/tile_termChild.png'); */
+	/* 	background-repeat: repeat; */
+	background-color: red;
 }
 
 .displayWrapper.Fraction {
-	background-color: yellow;
+	background-color: orange;
 }
 
-.displayWrapper.Exponential
-	{
-	background-color: maroon;
+.displayWrapper.Exponential {
+	background-color: Maroon;
 }
 
 .displayWrapper.Log {
-	background-color: green;
+	background-color: SpringGreen;
 }
 
 .displayWrapper.Trig {
-	background-color: orange;
+	background-color: Peru; /* 	light brown */
 }
+
 .displayWrapper.Number {
-	background-color: purple;
+	background-color: SkyBlue;
 }
+
 .displayWrapper.Variable {
 	background-color: blue;
 }
+.displayWrapper.Equation {
+/* 	background-color: white; */
+}
 /*---------------EquationHTML (display)---------------*/
-
 .Equation {
 	font-family: math;
 	display: inline-block;
@@ -91,17 +92,17 @@ body {
 
 .in-equation {
 	display: inline-block;
-	position: relative;
+/* 	position: relative; */
 }
 
 .in-sum {
 	display: inline-block;
-	position: relative;
+/* 	position: relative; */
 }
 
 .in-term {
 	display: inline-block;
-	position: relative;
+/* 	position: relative; */
 }
 
 .in-exponential-base {
@@ -109,10 +110,17 @@ body {
 }
 
 .in-exponential-exponent {
-	font-size: 40%;
+/* 	font-size: 40%; */
 	display: inline-block;
 	vertical-align: super;
 	position: relative;
+}
+
+.in-exponential-exponent.Fraction{
+	font-size: 20%;
+}
+.in-exponential-exponent:not(.Fraction){
+	font-size: 40%;
 }
 
 .in-fraction-numerator {
@@ -133,7 +141,7 @@ body {
 
 .in-log {
 	display: inline-block;
-	position: relative;
+/* 	position: relative; */
 	border-right: solid .05em;
 	border-left: solid .05em;
 	border-radius: 1em;
@@ -144,7 +152,7 @@ body {
 
 .in-trig {
 	display: inline-block;
-	position: relative;
+/* 	position: relative; */
 	border-right: solid .05em;
 	border-left: solid .05em;
 	border-radius: 1em;
@@ -157,7 +165,7 @@ body {
 	font-size: 40%;
 	display: inline-block;
 	vertical-align: sub;
-	position: relative;
+/* 	position: relative; */
 }
 
 .fenced {
@@ -171,12 +179,18 @@ body {
 
 .functionName {
 	display: inline-block;
-	position: relative;
+/* 	position: relative; */
 	vertical-align: middle;
 }
 
 .unit {
-	
+	font-family: sans-serif;
+}
+
+.subscript{
+	vertical-align: sub;
+	display: inline-block;
+	font-size: 50%;
 }
 
 /* .displayWrapper.in-sum.Operation {+/- */
@@ -184,44 +198,44 @@ body {
 /* 	background-repeat: no-repeat; */
 /* 	background-size: 100% 100%; */
 /* } */
-
 /* .displayWrapper.in-sum:not(.Operation) { */
-/* 	/* Note */ */
+/* 	/* Note */
+*
+/
 /* 	background-image: url('images/tile_sumChild.png'); */
 /* 	background-repeat: no-repeat; */
 /* 	background-size: 100% 100%; */
 /* } */
-
 /* .displayWrapper.in-term.Operation {x */
 /* 	background-image: url('images/tile_termOp.png'); */
 /* 	background-repeat: no-repeat; */
 /* 	background-size: 100% 100%; */
 /* } */
-
 /* .displayWrapper.in-term:not(.Operation) { */
-/* 	/* Note */ */
+/* 	/* Note */
+ 
+*
+/
 /* 	background-image: url('images/tile_termChild.png'); */
 /* 	background-repeat: repeat; */
 /* } */
-
 /* .displayWrapper.in-equation:not(.Operation) { */
-/* 	/* Note */ */
+/* 	/* Note */
+ 
+*
+/
 /* 	background-color: teal; */
 /* } */
-
 /* .displayWrapper.in-exponential-base,.displayWrapper.in-exponential-exponent */
 /* 	{ */
 /* 	background-color: maroon; */
 /* } */
-
 /* .displayWrapper.in-log { */
 /* 	background-color: green; */
 /* } */
-
 /* .displayWrapper.in-trig { */
 /* 	background-color: blue; */
 /* } */
-
 /* .displayWrapper.in-fraction-numerator,.displayWrapper.in-fraction-denominator */
 /* 	{ */
 /* 	background-image: url('images/tile_termChild.png'); */
