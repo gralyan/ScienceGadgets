@@ -61,7 +61,8 @@ class VariableEvaluateSpec extends FlowPanel {
 
 	VariableEvaluateSpec(MathNode mathNode) {
 		this.mathNode = mathNode;
-		unitSelect = new UnitSelection(mathNode.getUnitAttribute());
+		String qKind = mathNode.getUnitAttribute().getUnitMultiples()[0].getUnitName().getQuantityKind();
+		unitSelect = new UnitSelection(qKind);
 		Label symbol = new Label(mathNode.getSymbol() + " =");
 
 		symbol.addStyleName(CSS.LAYOUT_ROW);
@@ -196,7 +197,7 @@ class SubstituteButton extends VariableTransformationButton {
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				String quantityKind = variableNode.getUnitAttribute();
+				String quantityKind = variableNode.getUnitAttribute().getUnitMultiples()[0].getUnitName().getQuantityKind();
 				if (quantityKind == null || quantityKind.equals("")) {
 					Window.alert("No similar other equations with similar variables available");
 					return;

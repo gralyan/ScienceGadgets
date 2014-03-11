@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -33,8 +34,11 @@ import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitHTML;
+import com.sciencegadgets.shared.UnitMultiple;
+import com.sciencegadgets.shared.UnitName;
 
 public class ConversionActivity extends AbsolutePanel {
 
@@ -101,7 +105,7 @@ public class ConversionActivity extends AbsolutePanel {
 		totalNode = mTree.getLeftSide().append(TypeML.Number, node.getSymbol());
 		mTree.getRightSide().append(totalNode.clone());
 
-		String[] bases = UnitUtil.getUnits(node);
+		UnitMultiple[] bases = node.getUnitAttribute().getUnitMultiples();
 
 		MathNode fracRight = mTree.NEW_NODE(TypeML.Fraction, "");
 		MathNode numerRight = fracRight.append(TypeML.Term, "");
@@ -111,10 +115,10 @@ public class ConversionActivity extends AbsolutePanel {
 		MathNode numerLeft = fracLeft.getChildAt(0);
 		MathNode denomLeft = fracLeft.getChildAt(1);
 
-		for (String base : bases) {
-			boolean negExp = base.contains("-");
-			String symbol = UnitUtil.getSymbol(UnitUtil.getUnitNames(base)[0]);
-			String exp = UnitUtil.getExponent(base).replace("-", "");
+		for (UnitMultiple base : bases) {
+			boolean negExp = base.toString().contains("-");
+			String symbol = base.getUnitName().getSymbol();
+			String exp = base.getUnitExponent().replace("-", "");
 
 			MathNode unitNode;
 			if ("1".equals(exp)) {
@@ -124,7 +128,7 @@ public class ConversionActivity extends AbsolutePanel {
 				unitNode.append(TypeML.Variable, symbol);
 				unitNode.append(TypeML.Number, exp);
 			}
-			unitNode.setAttribute(MathAttribute.Unit, base.replace("-", ""));
+			unitNode.setAttribute(MathAttribute.Unit, base.toString().replace("-", ""));
 			MathNode unitNodeClone = unitNode.clone();
 
 			if (negExp) {
@@ -160,7 +164,11 @@ public class ConversionActivity extends AbsolutePanel {
 	void reloadEquation() {
 		// Make and add entire equation before moving left
 		dimensionalAnalysisArea.clear();
-		EquationHTML eqHTML = mTree.reloadDisplay(false);
+		EquationHTML eqHTML = mTree.reloadDisplay(false, false);
+		
+		// Unit font
+		eqHTML.addStyleName(CSS.UNIT);
+		wrapperArea.addStyleName(CSS.UNIT);
 
 		// Recreate wrappers
 		placeWrappers();
@@ -232,7 +240,7 @@ public class ConversionActivity extends AbsolutePanel {
 			public void onSuccess(Unit result) {
 				selectedUnit = result;
 				String quantityKind = selectedUnit.getQuantityKindName();
-				String excludedUnitName = selectedUnit.getName();
+				String excludedUnitName = selectedUnit.getName().toString();
 
 				unitSelection.reloadUnitBox(quantityKind, excludedUnitName);
 			}
@@ -242,9 +250,9 @@ public class ConversionActivity extends AbsolutePanel {
 
 		try {// Deconstruct option for derived units
 			DerivedUnit derivedUnit = DerivedUnit.valueOf(unitName);
-			String dataUnitAttribute = derivedUnit.getDerivedMap()
+			UnitAttribute dataUnitAttribute = derivedUnit.getDerivedMap()
 					.getUnitAttribute();
-			Element derivedUnitElement = UnitUtil.element_From_attribute(
+			Element derivedUnitElement = UnitHTML.create(
 					dataUnitAttribute, null, false);
 			derivedUnitElement.getStyle()
 					.setVerticalAlign(VerticalAlign.MIDDLE);
@@ -253,7 +261,7 @@ public class ConversionActivity extends AbsolutePanel {
 
 			derivedUnitsSelection.add(derivedUnit.getSymbol() + "="
 					+ derivedUnit.getConversionMultiplier() + derivedUnitHTML,
-					derivedUnit.getUnitName(), derivedUnit);
+					derivedUnit.getUnitName().toString(), derivedUnit);
 		} catch (IllegalArgumentException e) {
 		}
 	}
@@ -261,12 +269,13 @@ public class ConversionActivity extends AbsolutePanel {
 	private void convert(UnitMap toMap, String toMultiplier) {
 
 		// Keep unit exponent constant, all get cancelled
-		String exp = UnitUtil.getExponent(selectedWrapper.getNode()
-				.getUnitAttribute());
+		String exp = selectedWrapper.getNode()
+				.getUnitAttribute().getUnitMultiples()[0].getUnitExponent();
 		int expAbs = Math.abs(Integer.parseInt(exp));
 
-		UnitMap fromMap = new UnitMap(selectedUnit.getName()
-				+ UnitUtil.EXP_DELIMITER + 1);
+		UnitAttribute fromUnitAttribute = new UnitAttribute(selectedUnit.getName()
+				+ UnitAttribute.EXP_DELIMITER + 1);
+		UnitMap fromMap = new UnitMap(fromUnitAttribute);
 		String fromMultiplier = selectedUnit.getConversionMultiplier();
 		toMap = toMap.getExponential(expAbs);
 		fromMap = fromMap.getExponential(expAbs);
@@ -305,13 +314,13 @@ public class ConversionActivity extends AbsolutePanel {
 		// Update Working area
 		int selectedIndex = selectedWrapper.getNode().getIndex();
 		selectedIndex = newUnitMap.size() == 2 ? selectedIndex : -1;
-		for (Entry<String, Integer> entry : newUnitMap.entrySet()) {
-			String untiName = entry.getKey();
+		for (Entry<UnitName, Integer> entry : newUnitMap.entrySet()) {
+			UnitName unitName = entry.getKey();
 			Integer unitExp = entry.getValue();
 			Integer unitExpAbs = Math.abs(unitExp);
 			boolean inNum = unitExp > 0;
 
-			String numSymbol = UnitUtil.getSymbol(untiName);
+			String numSymbol = unitName.getSymbol();
 
 			MathNode workingNode = mTree.NEW_NODE(TypeML.Variable, numSymbol);
 			if (unitExp > 1 || unitExp < -1) {
@@ -320,8 +329,8 @@ public class ConversionActivity extends AbsolutePanel {
 				workingExp.append(TypeML.Number, "" + unitExpAbs);
 				workingNode = workingExp;
 			}
-			workingNode.setAttribute(MathAttribute.Unit, untiName
-					+ UnitUtil.EXP_DELIMITER + unitExpAbs);
+			workingNode.setAttribute(MathAttribute.Unit, unitName
+					+ UnitAttribute.EXP_DELIMITER + unitExpAbs);
 			MathNode historyNode = workingNode.clone();
 
 			int numOrDen = inNum ? 0 : 1;
@@ -330,7 +339,7 @@ public class ConversionActivity extends AbsolutePanel {
 			newHistoryFrac.getChildAt(numOrDen).append(historyNode);
 
 			unitDisplays.add(new UnitDisplay(workingNode, historyNode, fromMap
-					.containsKey(untiName), inNum));
+					.containsKey(unitName), inNum));
 		}
 
 		// Calculate conversion
@@ -379,8 +388,8 @@ public class ConversionActivity extends AbsolutePanel {
 						deriveUnit.getConversionMultiplier());
 			}else if (selectedEntity instanceof Unit) {
 				Unit toUnit = (Unit) selectedEntity;
-				convert(new UnitMap(toUnit.getName() + UnitUtil.EXP_DELIMITER
-						+ 1), toUnit.getConversionMultiplier());
+				convert(new UnitMap(new UnitAttribute(toUnit.getName() + UnitAttribute.EXP_DELIMITER
+						+ 1)), toUnit.getConversionMultiplier());
 			}
 		}
 	}
@@ -391,16 +400,16 @@ public class ConversionActivity extends AbsolutePanel {
 			String unitAttribute = "";
 			for (UnitDisplay unitDisplay : unitDisplays) {
 				if (!unitDisplay.isCanceled) {
-					String unitAtt = unitDisplay.wrappedNode.getUnitAttribute();
-					if (!unitDisplay.inNumerator && !unitAtt.contains("-")) {
-						String exp = UnitUtil.getExponent(unitAtt);
-						unitAtt = unitAtt.replace(exp, "-" + exp);
+					UnitAttribute unitAtt = unitDisplay.wrappedNode.getUnitAttribute();
+					if (!unitDisplay.inNumerator && !unitAtt.toString().contains("-")) {
+						String exp = unitAtt.getUnitMultiples()[0].getUnitExponent();
+						unitAtt.setString(unitAtt.toString().replace(exp, "-" + exp));
 					}
 					unitAttribute = unitAttribute + "*" + unitAtt;
 				}
 			}
 			unitAttribute = unitAttribute.replaceFirst(
-					UnitUtil.BASE_DELIMITER_REGEX, "");
+					UnitAttribute.BASE_DELIMITER_REGEX, "");
 			node.setSymbol(totalNode.getSymbol());
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
 			Moderator.switchToAlgebra();

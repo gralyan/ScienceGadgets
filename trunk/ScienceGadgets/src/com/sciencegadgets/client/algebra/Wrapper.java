@@ -70,10 +70,18 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	public void select() {
 		this.getElement().addClassName(CSS.SELECTED_WRAPPER);
+		if(TypeML.Operation.equals(node.getType())) {
+			getNextSiblingWrapper().getElement().addClassName(CSS.SELECTED_WRAPPER);
+			getPrevSiblingWrapper().getElement().addClassName(CSS.SELECTED_WRAPPER);
+		}
 	}
 
 	public void unselect() {
 		this.getElement().removeClassName(CSS.SELECTED_WRAPPER);
+		if(TypeML.Operation.equals(node.getType())) {
+			getNextSiblingWrapper().getElement().removeClassName(CSS.SELECTED_WRAPPER);
+			getPrevSiblingWrapper().getElement().removeClassName(CSS.SELECTED_WRAPPER);
+		}
 	}
 
 	@Override

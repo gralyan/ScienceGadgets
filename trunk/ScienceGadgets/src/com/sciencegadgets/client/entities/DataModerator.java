@@ -11,7 +11,7 @@ import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.UnitSelection;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitAttribute;
 
 public class DataModerator {
 
@@ -70,7 +70,7 @@ public class DataModerator {
 			LinkedList<Unit> units, String excludedUnitName) {
 		unitBox.clear();
 		for (Unit unit : units) {
-			String unitName = unit.getName();
+			String unitName = unit.getName().toString();
 			if (!unitName.equals(excludedUnitName)) {
 				unitBox.add(unit.getLabel() + " (" + unit.getSymbol() + ")",
 						unitName, unit);
@@ -147,10 +147,10 @@ public class DataModerator {
 			public void onSuccess(LinkedList<String> qKinds) {
 
 				// Prefix should be first
-				qKinds.remove(UnitUtil.PREFIXBINARY_QUANTITY_KIND);
-				qKinds.addFirst(UnitUtil.PREFIXBINARY_QUANTITY_KIND);
-				qKinds.remove(UnitUtil.PREFIX_QUANTITY_KIND);
-				qKinds.addFirst(UnitUtil.PREFIX_QUANTITY_KIND);
+				qKinds.remove(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
+				qKinds.addFirst(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
+				qKinds.remove(UnitAttribute.PREFIX_QUANTITY_KIND);
+				qKinds.addFirst(UnitAttribute.PREFIX_QUANTITY_KIND);
 
 				quantityKinds = qKinds;
 				populate_Quantities(unitSelection);

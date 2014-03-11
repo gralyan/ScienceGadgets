@@ -9,20 +9,22 @@ import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Prompt;
+import com.sciencegadgets.client.SelectionPanel;
+import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.UnitHTML;
+import com.sciencegadgets.shared.UnitName;
 
 public abstract class QuantitySpecification extends Prompt {
 
@@ -37,39 +39,43 @@ public abstract class QuantitySpecification extends Prompt {
 	SymbolDisplay symbolDisplay;
 	@UiField
 	ToggleSlide symbolCaseToggle;
+	@UiField
+	FlowPanel symbolPalette;
 
+	@UiField
+	FlowPanel unitArea;
 	@UiField
 	FlowPanel unitDisplay;
 	@UiField
 	ToggleSlide unitReciprocalToggle;
 	@UiField
-	FlowPanel unitArea;
+	FlowPanel unitPalette;
 
 	@UiField
-	FlowPanel symbolPalette;
-	@UiField
-	FlowPanel unitSelectionHolder;
+	SelectionPanel establishedSelection;
+
+	FlowPanel mainPanel = uiBinder.createAndBindUi(this);
 
 	protected MathNode node;
 	private boolean isReciprocal = false;
 
 	// Stores the unit name and associated exponent
-	UnitMap unitMap = new UnitMap();
-	private String dataUnit = "";
-	private Element unitHTML;
+	protected UnitMap unitMap = new UnitMap();
+	protected UnitAttribute dataUnit = new UnitAttribute("");
+	protected Element unitHTML;
 
 	public QuantitySpecification(MathNode mathNode, boolean clearDisplays) {
 		super();
 		this.node = mathNode;
 
-		add(uiBinder.createAndBindUi(this));
+		add(mainPanel);
 
 		if (Moderator.isTouch) {
 			// Unit Display Touch - clear
 			unitDisplay.addDomHandler(new TouchStartHandler() {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
-					dataUnit = "";
+					dataUnit.setString("");
 					unitMap.clear();
 					if (unitHTML != null) {
 						unitHTML.removeFromParent();
@@ -90,7 +96,7 @@ public abstract class QuantitySpecification extends Prompt {
 			unitDisplay.addDomHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					dataUnit = "";
+					dataUnit.setString("");
 					unitMap.clear();
 					if (unitHTML != null) {
 						unitHTML.removeFromParent();
@@ -107,7 +113,7 @@ public abstract class QuantitySpecification extends Prompt {
 				}
 			});
 		}
-
+		
 		unitReciprocalToggle
 				.setOptionsHtml(
 						"<div><div style=\"border-bottom: thin solid;\">unit</div><div>1</div></div>",
@@ -130,7 +136,7 @@ public abstract class QuantitySpecification extends Prompt {
 
 		node = mathNode;
 
-		dataUnit = "";
+		dataUnit.setString("");
 		if (unitHTML != null) {
 			unitHTML.removeFromParent();
 			unitHTML = null;
@@ -146,7 +152,7 @@ public abstract class QuantitySpecification extends Prompt {
 			symbolDisplay.setText(oldSymbol);
 
 			// Unit Display
-			unitHTML = UnitUtil.element_From_MathNode(node, null, false);
+			unitHTML = UnitHTML.create(node, null, false);
 			unitHTML.addClassName(CSS.FILL_PARENT);
 			unitDisplay.getElement().appendChild(unitHTML);
 
@@ -173,6 +179,7 @@ public abstract class QuantitySpecification extends Prompt {
 			String func = mNode.getParent()
 					.getAttribute(MathAttribute.Function);
 			if (func.contains(TrigFunctions.ARC)) {
+				// TODO only allow units of PlaneAngle for trig arguments
 				return false;
 			}
 			break;
@@ -184,24 +191,30 @@ public abstract class QuantitySpecification extends Prompt {
 		return canHaveUnits(mNode.getParent());
 	}
 
+	protected void setUnit(UnitMap map) {
+
+		unitMap = map;
+		dataUnit = unitMap.getUnitAttribute();
+		if (unitHTML != null) {
+			unitHTML.removeFromParent();
+		}
+		unitHTML = UnitHTML.create(dataUnit, null, false);
+		unitHTML.addClassName(CSS.FILL_PARENT);
+		unitDisplay.getElement().appendChild(unitHTML);
+	}
+
 	class UnitSelectionHandler implements SelectionHandler {
 
 		@Override
-		public void onSelect(
-				com.sciencegadgets.client.SelectionPanel.Cell selected) {
+		public void onSelect(Cell selected) {
 
-			String name = selected.getValue();
+			UnitName name = new UnitName(selected.getValue());
 
 			int direction = isReciprocal ? -1 : 1;
 			unitMap.put(name, direction);
 
-			dataUnit = unitMap.getUnitAttribute();
-			if (unitHTML != null) {
-				unitHTML.removeFromParent();
-			}
-			unitHTML = UnitUtil.element_From_attribute(dataUnit, null, false);
-			unitHTML.addClassName(CSS.FILL_PARENT);
-			unitDisplay.getElement().appendChild(unitHTML);
+			setUnit(unitMap);
+
 		}
 	}
 
@@ -216,13 +229,10 @@ public abstract class QuantitySpecification extends Prompt {
 			}
 			setNode(symbol);
 
-			if (dataUnit == null || "".equals(dataUnit)) {
-				node.getXMLNode().removeAttribute(MathAttribute.Unit.getAttributeName());
-			} else {
-				node.getXMLNode().setAttribute(MathAttribute.Unit.getAttributeName(),
-						dataUnit);
-			}
-			disappear();
+				node.getXMLNode().setAttribute(
+						MathAttribute.Unit.getAttributeName(), dataUnit.toString());
+
+				disappear();
 			Moderator.reloadEquationPanel(null, null);
 		}
 	}

@@ -11,6 +11,7 @@ import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
 import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitMap;
 
 public class MultiplyTransformations extends TransformationList {
@@ -65,7 +66,7 @@ public class MultiplyTransformations extends TransformationList {
 
 		try {
 			BigDecimal rightValue = new BigDecimal(right.getSymbol());
-			String rightUnits = right.getUnitAttribute();
+			String rightUnits = right.getAttribute(MathAttribute.Unit);
 			if (rightValue.compareTo(zero) == same) {
 				return new MultiplyZeroButton(this, left, right);
 			} else if (rightValue.compareTo(one) == same
@@ -80,7 +81,7 @@ public class MultiplyTransformations extends TransformationList {
 
 		try {
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
-			String leftUnits = right.getUnitAttribute();
+			String leftUnits = right.getAttribute(MathAttribute.Unit);
 			if (leftValue.compareTo(zero) == same) {
 				return new MultiplyZeroButton(this, right, left);
 			} else if (leftValue.compareTo(one) == same && "".equals(leftUnits)) {
@@ -431,8 +432,8 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 
 		// Combine Units
 		UnitMap combinedmap = new UnitMap(left).getMultiple(new UnitMap(right));
-		String combinedUnit = combinedmap.getUnitAttribute();
-		right.setAttribute(MathAttribute.Unit, combinedUnit);
+		UnitAttribute combinedUnit = combinedmap.getUnitAttribute();
+		right.setAttribute(MathAttribute.Unit, combinedUnit.toString());
 
 		left.remove();
 		operation.remove();

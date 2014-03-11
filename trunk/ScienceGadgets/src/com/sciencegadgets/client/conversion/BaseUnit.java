@@ -1,6 +1,6 @@
 package com.sciencegadgets.client.conversion;
 
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitAttribute;
 
 public enum BaseUnit {
 	m("Length", "m"), //
@@ -16,7 +16,7 @@ public enum BaseUnit {
 	private final String quantityKind;
 
 	private BaseUnit(String quantityKind, String symbol) {
-		this.name = quantityKind + UnitUtil.NAME_DELIMITER + symbol;
+		this.name = quantityKind + UnitAttribute.NAME_DELIMITER + symbol;
 		this.quantityKind = quantityKind;
 		this.symbol = symbol;
 	}

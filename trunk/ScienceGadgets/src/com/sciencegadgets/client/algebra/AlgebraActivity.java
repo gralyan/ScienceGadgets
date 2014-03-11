@@ -90,7 +90,7 @@ public class AlgebraActivity extends Composite {
 		selectionDetails.clear();
 
 		mathTree.validateTree();
-		mathTree.reloadDisplay(true);
+		mathTree.reloadDisplay(true, true);
 		eqPanel = new EquationPanel(this);
 		eqPanelHolder.add(eqPanel);
 

@@ -244,7 +244,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 
 		MathNode evaluated = exponential.replace(TypeML.Number, totalValue
 				.stripTrailingZeros().toEngineeringString());
-		String newUnit = newUnitMap.getUnitAttribute();
+		String newUnit = newUnitMap.getUnitAttribute().toString();
 		evaluated.setAttribute(MathAttribute.Unit, newUnit);
 
 		if (reloadAlgebraActivity) {

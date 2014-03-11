@@ -1,24 +1,23 @@
 package com.sciencegadgets.client.algebra;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.TypeML.Operator;
 
 public class EquationHTML extends HTML {
@@ -28,19 +27,21 @@ public class EquationHTML extends HTML {
 	MathTree mTree;
 	public boolean autoFillParent = false;
 	private boolean hasSmallUnits = true;
+	private boolean hasSubscripts = true;
 	public boolean pilot = false;
 	private Element left = null;
 	private Element right = null;
 	HashMap<Element, MathNode> displayMap = new HashMap<Element, MathNode>();
 
 	public EquationHTML(MathTree mTree) {
-		this(mTree, true);
+		this(mTree, true, true);
 	}
 
-	public EquationHTML(MathTree mTree, boolean hasSmallUnits) {
+	public EquationHTML(MathTree mTree, boolean hasSmallUnits, boolean hasSubscripts) {
 		this.mTree = mTree;
 		this.setStyleName(CSS.EQUATION);
 		this.hasSmallUnits = hasSmallUnits;
+		this.hasSubscripts = hasSubscripts;
 
 		left = makeHTMLNode(mTree.getLeftSide(), this.getElement());
 		makeHTMLNode(mTree.getEquals(), this.getElement());
@@ -160,9 +161,10 @@ public class EquationHTML extends HTML {
 			nodeHtml.insertFirst(funcNameDisplay);
 			break;
 		case Fraction:
-//			if (!(TypeML.Exponential.equals(parentType) && mNode.getIndex() == 1)) {
-//				container.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
-//			}
+			// if (!(TypeML.Exponential.equals(parentType) && mNode.getIndex()
+			// == 1)) {
+			// container.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+			// }
 		}
 
 		// Addition to tree
@@ -182,18 +184,33 @@ public class EquationHTML extends HTML {
 			}
 			break;
 		case Number:
-			String unitName = mNode.getAttribute(MathAttribute.Unit);
+			UnitAttribute unitName = mNode.getUnitAttribute();
 			if (!"".equals(unitName)) {
-				unit = UnitUtil.element_From_attribute(unitName, id,
+				unit = UnitHTML.create(unitName, id,
 						hasSmallUnits);
 			}
 			// falls through
 		case Variable:
 			String text = mNode.getXMLNode().getInnerText();
-			if (text.startsWith(Operator.MINUS.getSign())) {
-				nodeHtml = fence(nodeHtml, container);
+			if (hasSubscripts && text.length() > 1) {
+				if (text.startsWith(Operator.MINUS.getSign())) {
+					nodeHtml = fence(nodeHtml, container);
+				}
+				try {
+					new BigDecimal(text);
+					nodeHtml.setInnerText(text);
+				} catch (NumberFormatException e) {
+					// non-numbers, characters after the first are subscripts
+					//note - constants are number nodes with character text
+					nodeHtml.setInnerText(text.substring(0, 1));
+					Element subscript = DOM.createDiv();
+					subscript.addClassName(CSS.SUBSCRIPT);
+					subscript.setInnerText(text.substring(1));
+					nodeHtml.appendChild(subscript);
+				}
+			} else {
+				nodeHtml.setInnerText(text);
 			}
-			nodeHtml.setInnerText(text);
 			break;
 		case Operation:
 			String txt = mNode.getSymbol();
@@ -239,8 +256,8 @@ public class EquationHTML extends HTML {
 
 		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
 				: widthRatio;
-		// *95 for looser fit, *100 for percent
-		double fontPercent = smallerRatio * 95;
+		// *90 for looser fit, *100 for percent
+		double fontPercent = smallerRatio * 90;
 
 		this.getElement().getStyle().setFontSize((fontPercent), Unit.PCT);
 	}

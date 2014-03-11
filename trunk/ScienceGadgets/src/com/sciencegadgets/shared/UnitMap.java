@@ -1,13 +1,14 @@
 package com.sciencegadgets.shared;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.conversion.DerivedUnit;
 
-public class UnitMap extends LinkedHashMap<String, Integer> {
-	
+public class UnitMap extends LinkedHashMap<UnitName, Integer> {
+
 	private static final long serialVersionUID = 6852786194775839979L;
 
 	public UnitMap() {
@@ -17,25 +18,23 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	public UnitMap(MathNode mNode) {
 		this(mNode.getUnitAttribute());
 	}
-	
-	public UnitMap(String unitAttribute) {
+
+	public UnitMap(UnitAttribute unitAttribute) {
 		if (!"".equals(unitAttribute)) {
-			String[] basics = unitAttribute.split(UnitUtil.BASE_DELIMITER_REGEX);
-			for (String basic : basics) {
-				String[] baseAndExp = basic
-						.split(UnitUtil.EXP_DELIMITER_REGEX);
-				this.put(baseAndExp[0], Integer.parseInt(baseAndExp[1]));
+			UnitMultiple[] unitMultiples = unitAttribute.getUnitMultiples();
+			for (UnitMultiple unitMultiple : unitMultiples) {
+				this.put(unitMultiple.getUnitName(),
+						Integer.parseInt(unitMultiple.getUnitExponent()));
 			}
 		}
 	}
-	
+
 	public UnitMap getQuantityKindMap() {
 		UnitMap qkMap = new UnitMap();
-		for (Entry<String, Integer> entry : this.entrySet()) {
-				String entryQuantityKind = UnitUtil.getQuantityKind(entry
-						.getKey());
-				qkMap.put(entryQuantityKind, entry.getValue());
-			}
+		for (Entry<UnitName, Integer> entry : this.entrySet()) {
+			String entryQuantityKind = entry.getKey().getQuantityKind();
+			qkMap.put(new UnitName(entryQuantityKind), entry.getValue());
+		}
 		return qkMap;
 	}
 
@@ -47,10 +46,15 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	 *            - positive to increase, negative to decrease value
 	 */
 	@Override
-	public Integer put(String key, Integer change) {
-		Integer thisValue = this.get(key);
-		if (thisValue == null) {
-			thisValue = 0;
+	public Integer put(UnitName key, Integer change) {
+		if("".equals(key.toString())) {
+			return 0;
+		}
+		Entry<UnitName, Integer> entry = this.getEntry(key);
+		Integer thisValue = 0;
+		if(entry != null) {
+			thisValue = entry.getValue();
+			key = entry.getKey();
 		}
 		Integer newValue = thisValue + change;
 		if (newValue == 0) {
@@ -59,6 +63,36 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 		} else {
 			return super.put(key, newValue);
 		}
+	}
+
+	@Override
+	public Integer get(Object key) {
+		if(key == null) {
+			return null;
+		}
+		if (key instanceof UnitName) {
+			Entry<UnitName, Integer> entry = getEntry((UnitName) key);
+			return entry == null ? null : entry.getValue();
+		} else if (key instanceof String){
+			for(Entry<UnitName, Integer> entry : entrySet()) {
+				if(key.equals(entry.getKey().toString())) {
+					return entry.getValue();
+				}
+			}
+		}
+		return null;
+	}
+
+	public Entry<UnitName, Integer> getEntry(UnitName key) {
+		if (key == null) {
+			return null;
+		}
+		for (Entry<UnitName, Integer> entry : this.entrySet()) {
+			if (entry.getKey().equals(key)) {
+				return entry;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -81,7 +115,7 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	 * 
 	 * @param denominatorUnitMap
 	 *            - UnitMap to divide by
-	 *            
+	 * 
 	 * @return The resulting UnitMap
 	 */
 	public UnitMap getDivision(UnitMap denominatorUnitMap) {
@@ -93,7 +127,7 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 		combinedMap.putAll(this);
 		int direction = isAdditive ? 1 : -1;
 
-		for (Entry<String, Integer> otherEntry : otherUnitMap.entrySet()) {
+		for (Entry<UnitName, Integer> otherEntry : otherUnitMap.entrySet()) {
 
 			combinedMap.put(otherEntry.getKey(),
 					direction * otherEntry.getValue());
@@ -113,56 +147,70 @@ public class UnitMap extends LinkedHashMap<String, Integer> {
 	public UnitMap getExponential(Integer exponent) {
 		UnitMap exponentiatedMap = new UnitMap();
 
-		for (Entry<String, Integer> baseEntry : this.entrySet()) {
+		for (Entry<UnitName, Integer> baseEntry : this.entrySet()) {
 			exponentiatedMap.put(baseEntry.getKey(), baseEntry.getValue()
 					* exponent);
 		}
 		return exponentiatedMap;
 	}
 
-	public String getUnitAttribute() {
+	public UnitAttribute getUnitAttribute() {
 
 		String dataUnitAttribute = "";
-		for (Entry<String, Integer> unitEntry : this.entrySet()) {
+		for (Entry<UnitName, Integer> unitEntry : this.entrySet()) {
 			if (unitEntry.getValue() != 0) {
-				dataUnitAttribute = dataUnitAttribute + UnitUtil.BASE_DELIMITER
-						+ unitEntry.getKey() + UnitUtil.EXP_DELIMITER
-						+ unitEntry.getValue();
+				dataUnitAttribute = dataUnitAttribute
+						+ UnitAttribute.BASE_DELIMITER + unitEntry.getKey()
+						+ UnitAttribute.EXP_DELIMITER + unitEntry.getValue();
 			}
 		}
 		dataUnitAttribute = dataUnitAttribute.replaceFirst(
-				UnitUtil.BASE_DELIMITER_REGEX, "");
-		return dataUnitAttribute;
+				UnitAttribute.BASE_DELIMITER_REGEX, "");
+		return new UnitAttribute(dataUnitAttribute);
 	}
 
 	/**
 	 * Breaks down all derived units into their base units before comparing
+	 * 
 	 * @param otherMap
 	 */
 	public boolean isConvertableTo(UnitMap otherMap) {
 		return this.getBaseQKMap().equals(otherMap.getBaseQKMap());
 	}
-	
+
 	/**
-	 * Returns a map with only simple base units. This is useful when complex derived units are unwanted.
+	 * Returns a map with only simple base units. This is useful when complex
+	 * derived units are unwanted.
 	 */
 	public UnitMap getBaseQKMap() {
 		UnitMap baseQKMap = new UnitMap();
 		UnitMap qkMap = this.getQuantityKindMap();
-		qkMap.remove(UnitUtil.PREFIX_QUANTITY_KIND);
 		
-		a:for (Entry<String, Integer> entry : qkMap.entrySet()) {
-			for(DerivedUnit derivedUnit :DerivedUnit.values()) {
-				if (derivedUnit.getQuantityKind().equals(entry.getKey())) {
-					UnitMap derivedQKMap = derivedUnit.getDerivedMap().getQuantityKindMap();
-					derivedQKMap = derivedQKMap.getExponential(entry.getValue());
+		LinkedList<UnitName> prefixes = new LinkedList<UnitName>();
+
+		a: for (Entry<UnitName, Integer> entry : qkMap.entrySet()) {
+			if(UnitAttribute.PREFIX_QUANTITY_KIND.equals(entry.getKey().toString())) {
+				prefixes.add(entry.getKey());
+				continue a;
+			}
+			for (DerivedUnit derivedUnit : DerivedUnit.values()) {
+				if (derivedUnit.getQuantityKind().equals(entry.getKey().toString())) {
+					UnitMap derivedQKMap = derivedUnit.getDerivedMap()
+							.getQuantityKindMap();
+					derivedQKMap = derivedQKMap
+							.getExponential(entry.getValue());
 					baseQKMap = baseQKMap.getMultiple(derivedQKMap);
 					continue a;
 				}
 			}
-			//Not derived unit, put it strait in
+			// Not derived unit, put it strait in
 			baseQKMap.put(entry.getKey(), entry.getValue());
 		}
+		
+		for(UnitName prefix : prefixes) {
+			qkMap.remove(prefix);
+		}
+		
 		return baseQKMap;
 	}
 

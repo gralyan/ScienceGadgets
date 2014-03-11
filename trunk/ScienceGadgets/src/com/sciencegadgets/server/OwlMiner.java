@@ -52,7 +52,7 @@ public class OwlMiner {
 					.ancestor(qkey).list();
 
 			for (Unit u : units) {
-				Key<Unit> ukey = Key.create(qkey, Unit.class, u.getName());
+				Key<Unit> ukey = Key.create(qkey, Unit.class, u.getName().toString());
 				unitKeys.add(ukey);
 			}
 		}

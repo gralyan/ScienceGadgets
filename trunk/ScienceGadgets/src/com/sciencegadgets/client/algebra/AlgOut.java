@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -132,20 +133,16 @@ public class AlgOut extends FlowPanel {
 
 			Element rootEl = root.getElement();
 			rootEl.addClassName(CSS.FILL_PARENT);
-			((Element) rootEl.getChild(0)).addClassName(CSS.ALG_OUT_EQ_LEFT);
+			
+			Element rightCase = DOM.createDiv();
+			Element leftCase = DOM.createDiv();
+			rightCase.appendChild(rootEl.getChild(2));
+			leftCase.appendChild(rootEl.getChild(0));
+			rootEl.appendChild(rightCase);
+			rootEl.insertFirst(leftCase);
+			(leftCase).addClassName(CSS.ALG_OUT_EQ_LEFT);
 			((Element) rootEl.getChild(1)).addClassName(CSS.ALG_OUT_EQ_EQUALS);
-			((Element) rootEl.getChild(2)).addClassName(CSS.ALG_OUT_EQ_RIGHT);
-
-			// HTML left = HTML.wrap((Element) root.getElement().getChild(0));
-			// HTML equals =HTML.wrap((Element) root.getElement().getChild(1));
-			// HTML right = HTML.wrap((Element) root.getElement().getChild(2));
-			//
-			// left.addStyleName(CSS.ALG_OUT_EQ_LEFT);
-			// equals.addStyleName(CSS.ALG_OUT_EQ_EQUALS);
-			// right.addStyleName(CSS.ALG_OUT_EQ_RIGHT);
-			// eqSide.add(left);
-			// eqSide.add(equals);
-			// eqSide.add(right);
+			(rightCase).addClassName(CSS.ALG_OUT_EQ_RIGHT);
 
 			ruleSide.addStyleName(CSS.ALG_OUT_RULE_ROW);
 			add(ruleSide);

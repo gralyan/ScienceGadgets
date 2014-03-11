@@ -8,29 +8,30 @@ import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.UnitUtil;
+import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.UnitHTML;
+import com.sciencegadgets.shared.UnitMultiple;
+import com.sciencegadgets.shared.UnitName;
 
 public class UnitCancelDropController extends AbstractDropController {
 
 	private ConversionActivity conversionActivity;
 	private ConversionWrapper targetWrapper;
-	private String unitName;
+	private UnitName unitName;
 	private int combinedExp;
 	private String unitSymbol;
 
 	public UnitCancelDropController(ConversionWrapper targetWrapper,
-			String targetUnitAttribute, String dragUnitAttribute,
-			String unitname) {
+			UnitMultiple targetUnit, UnitMultiple dragUnit,
+			UnitName unitname) {
 		super(targetWrapper);
 		conversionActivity = targetWrapper.getConversionActivity();
 		this.targetWrapper = targetWrapper;
 
 		this.unitName = unitname;
-		System.out.println(unitname);
-		this.unitSymbol = UnitUtil.getSymbol(unitName);
-		int dragExp = Integer.parseInt(UnitUtil.getExponent(dragUnitAttribute));
-		int targetExp = Integer.parseInt(UnitUtil
-				.getExponent(targetUnitAttribute));
+		this.unitSymbol = unitName.getSymbol();
+		int dragExp = Integer.parseInt(dragUnit.getUnitExponent());
+		int targetExp = Integer.parseInt(targetUnit.getUnitExponent());
 		this.combinedExp = targetExp - dragExp;
 	}
 
@@ -71,7 +72,7 @@ public class UnitCancelDropController extends AbstractDropController {
 				combinedNode.append(TypeML.Number, combinedExp + "");
 			}
 			combinedNode.setAttribute(MathAttribute.Unit, unitName
-					+ UnitUtil.EXP_DELIMITER + combinedExp);
+					+ UnitAttribute.EXP_DELIMITER + combinedExp);
 			
 			displayToChange.wrappedNode = combinedNode;
 		}

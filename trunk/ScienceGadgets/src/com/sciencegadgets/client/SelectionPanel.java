@@ -21,18 +21,31 @@ public class SelectionPanel extends FlowPanel {
 	private SelectionHandler selectionHandler;
 	private final Label labelAlg = new Label();
 
-	public SelectionPanel(String title) {
+	public SelectionPanel() {
 		super();
 		setStylePrimaryName(CSS.SELECTION_PANEL);
+	}
 
-		labelAlg.setText(title);
-		labelAlg.setStylePrimaryName(CSS.ROW_HEADER);
-		super.add(labelAlg);
+	public SelectionPanel(String title) {
+		this();
+		setTitle(title);
 	}
 
 	public SelectionPanel(String title, SelectionHandler selectionHandler) {
 		this(title);
 		addSelectionHandler(selectionHandler);
+	}
+	
+	public void setTitle(String title) {
+		labelAlg.setText(title);
+		labelAlg.setStylePrimaryName(CSS.ROW_HEADER);
+		super.add(labelAlg);
+	}
+	
+	public void addSectionTitle(String title) {
+		Label sectionTitle = new Label(title);
+		sectionTitle.setStylePrimaryName(CSS.ROW_HEADER);
+		add(sectionTitle);
 	}
 
 	public ArrayList<Cell> getCells(){
@@ -75,12 +88,12 @@ public class SelectionPanel extends FlowPanel {
 	public void add(String html, String value) {
 		this.add(html, value, null);
 	}
-	public void add(String html, String value, Serializable entity) {
+	public void add(String html, String value, Object entity) {
 		Cell cell = new Cell(html, value, entity);
 		cells .add(cell);
 		super.add(cell);
 	}
-	public void insert(int index, String html, String value, Serializable entity) {
+	public void insert(int index, String html, String value, Object entity) {
 		Cell cell = new Cell(html, value, entity);
 		cells .add(cell);
 		super.insert(cell, index+1);

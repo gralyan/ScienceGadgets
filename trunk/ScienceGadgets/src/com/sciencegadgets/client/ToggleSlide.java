@@ -19,9 +19,9 @@ public class ToggleSlide extends FlowPanel implements HasClickHandlers, HasTouch
 	HTML secondOption = new HTML();
 	HTML selectedOption = null;
 
-	public ToggleSlide(String first, String second, boolean firstIsSelected, ClickHandler clickHangler) {
+	public ToggleSlide(String first, String second, boolean firstIsSelected, ClickHandler clickHandler) {
 		this(first, second, firstIsSelected);
-		addClickHandler(clickHangler);
+		addClickHandler(clickHandler);
 	}
 	public ToggleSlide(String first, String second, boolean firstIsSelected) {
 		this();

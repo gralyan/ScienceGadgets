@@ -9,6 +9,7 @@
 	<!-- <inherits name="com.admin.Admin" /> -->
 	<inherits name='com.allen_sauer.gwt.dnd.gwt-dnd' />
 	<inherits name="com.googlecode.objectify.Objectify" />
+	<inherits name="com.google.gwt.http.HTTP"/>
 
 	<!-- Logger just for debugging -->
 	<!-- <inherits name="com.google.gwt.logging.Logging"/> -->
