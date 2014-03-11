@@ -26,6 +26,16 @@
     <url-pattern>admin/admin</url-pattern>
   </servlet-mapping>
   
+        <servlet>
+        <servlet-name>Upload</servlet-name>
+                <servlet-class>com.sciencegadgets.server.UploadServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+                <servlet-name>Upload</servlet-name>
+                <url-pattern>/upload</url-pattern>
+        </servlet-mapping>
+  
+  
   <filter>
         <filter-name>ObjectifyFilter</filter-name>
         <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
