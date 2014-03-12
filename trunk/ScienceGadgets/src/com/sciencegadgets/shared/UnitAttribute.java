@@ -41,6 +41,9 @@ public class UnitAttribute {
 	}
 
 	public UnitMultiple[] getUnitMultiples() {
+		if("".equals(toString())) {
+			return new UnitMultiple[0];
+		}
 		String[] multiples = unitAttribute
 				.split(UnitAttribute.BASE_DELIMITER_REGEX);
 		int multipleCount = multiples.length;

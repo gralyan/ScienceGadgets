@@ -187,10 +187,17 @@ public class Moderator implements EntryPoint {
 	}
 
 	public static void makeAlgebra(Element mathML, boolean inEditMode) {
+		try {
 		currentAlgebraActivity = new AlgebraActivity(mathML, inEditMode);
 		currentActivity = currentAlgebraActivity;
 
 		switchToAlgebra();
+		}catch (Exception e) {
+			e.printStackTrace();
+			JSNICalls.error(e.toString());
+			JSNICalls.error(e.getCause().toString());
+			JSNICalls.error(e.getMessage());
+		}
 	}
 
 	public static void switchToAlgebra() {

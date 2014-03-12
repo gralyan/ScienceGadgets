@@ -65,7 +65,9 @@ public class SaveButtonHandler implements ClickHandler {
 			});
 		} catch (Exception e) {
 			Window.alert("Could not save equation");
-			JSNICalls.log("Save Fail: " + e.toString());
+			JSNICalls.error("Save Fail: " + e.toString());
+			JSNICalls.error(e.getCause().toString());
+			JSNICalls.error(e.getMessage());
 		}
 	}
 
@@ -78,6 +80,7 @@ public class SaveButtonHandler implements ClickHandler {
 				public void onFailure(Throwable arg0) {
 					Window.alert("Re-creation FAILED");
 				}
+
 				@Override
 				public void onSuccess(Void arg0) {
 					Window.alert("Re-creation success!");
