@@ -80,7 +80,7 @@ public class EditWrapper extends EquationWrapper {
 			node.setSymbol(TypeML.Operator.MINUS.getSign());
 			break;
 		}
-		// Moderator.reloadEquationPanel(null, null);
+		 Moderator.reloadEquationPanel(null, null);
 	}
 	private class OperationTouchHandler implements TouchStartHandler{
 		@Override

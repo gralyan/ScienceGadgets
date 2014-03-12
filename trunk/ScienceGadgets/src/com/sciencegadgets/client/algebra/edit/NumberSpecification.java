@@ -15,6 +15,7 @@ import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.client.conversion.DerivedUnit;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.UnitAttribute;
 
 public class NumberSpecification extends QuantitySpecification {
 
@@ -24,6 +25,9 @@ public class NumberSpecification extends QuantitySpecification {
 	String randomness = "";
 	Constant constantSeleced = null;
 
+	public NumberSpecification(MathNode mathNode) {
+		super(mathNode, true);
+	}
 	public NumberSpecification(MathNode mathNode, boolean clearDisplays) {
 		super(mathNode, clearDisplays);
 
@@ -69,9 +73,6 @@ public class NumberSpecification extends QuantitySpecification {
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
 
 		// Fill Established Selection
-//		for (DerivedUnit constant : DerivedUnit.values()) {
-//			System.out.println(constant.name() +" "+constant.getDerivedMap().getUnitAttribute());
-//		}
 		for (Constant constant : Constant.values()) {
 			establishedSelection.add(
 					constant.getSymbol() + " - " + constant.getName(), null,

@@ -66,7 +66,7 @@ public class EquationValidator {
 		if (isWrongChildren) {
 			String errorMerrage = "Wrong number of children, type: " + type
 					+ " can't have (" + childCount + ") children: "
-					+ toString();
+					+ node.toString();
 			JSNICalls.error(errorMerrage);
 			valid = false;
 			// Damage control

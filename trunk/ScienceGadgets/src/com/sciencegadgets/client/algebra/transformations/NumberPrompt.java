@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,6 +16,7 @@ import com.sciencegadgets.client.Prompt;
 public abstract class NumberPrompt extends Prompt {
 
 	private static final int same = 0;
+	private static final int lessThan = -1;
 	final KeyPadNumerical keyPad = new KeyPadNumerical();
 	final SymbolDisplay display = keyPad.getSymbolDisplay();
 
@@ -37,7 +39,11 @@ public abstract class NumberPrompt extends Prompt {
 			public void onClick(ClickEvent event) {
 				try {
 					BigDecimal inputValue = new BigDecimal(display.getText());
-					if (inputValue.compareTo(totalValue) == same) {
+					
+					// 1% error acceptable
+					BigDecimal error = inputValue.divide(totalValue, MathContext.DECIMAL32).subtract(new BigDecimal("1")).abs();
+					if (error.compareTo(new BigDecimal(".01")) == lessThan) {
+					
 						// correct
 						disappear();
 						onCorrect();

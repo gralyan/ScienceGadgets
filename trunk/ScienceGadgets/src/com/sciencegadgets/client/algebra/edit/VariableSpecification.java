@@ -28,6 +28,9 @@ public class VariableSpecification extends QuantitySpecification {
 	SymbolClickHandler symbolClick = new SymbolClickHandler();
 	SymbolTouchHandler symbolTouch = new SymbolTouchHandler();
 
+	public VariableSpecification(MathNode mathNode) {
+		super(mathNode, true);
+	}
 	public VariableSpecification(MathNode mathNode, boolean clearDisplays) {
 		super(mathNode, clearDisplays);
 

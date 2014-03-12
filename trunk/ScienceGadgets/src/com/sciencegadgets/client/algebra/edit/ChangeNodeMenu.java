@@ -65,6 +65,13 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 	public void setNode(MathNode node) {
 		this.node = node;
+
+		TypeML type = node.getType();
+		if (!TypeML.Number.equals(type) && !TypeML.Variable.equals(type)) {
+			getWidget(0).removeFromParent();
+			getWidget(0).removeFromParent();
+			redistribute();
+		}
 	}
 
 	// //////////////////////////////////////////
@@ -171,30 +178,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 				trigFuncSpec.reload();
 				return;
 			case Number:
-				boolean clearDisplays = true;
-				if (isSameTypeNode && !NOT_SET.equals(node.getSymbol())) {
-					clearDisplays = false;
-				}
-				if (AlgebraActivity.numSpec == null) {
-					AlgebraActivity.numSpec = new NumberSpecification(node,
-							clearDisplays);
-				} else {
-					AlgebraActivity.numSpec.reload(node, clearDisplays);
-				}
-				AlgebraActivity.numSpec.appear();
+				AlgebraActivity.NUMBER_SPEC_PROMPT(node, !(isSameTypeNode && !NOT_SET.equals(node.getSymbol())));
 				return;
 			case Variable:
-				boolean clearDisplayz = true;
-				if (isSameTypeNode && !NOT_SET.equals(node.getSymbol())) {
-					clearDisplayz = false;
-				}
-				if (AlgebraActivity.varSpec == null) {
-					AlgebraActivity.varSpec = new VariableSpecification(node,
-							clearDisplayz);
-				} else {
-					AlgebraActivity.varSpec.reload(node, clearDisplayz);
-				}
-				AlgebraActivity.varSpec.appear();
+				AlgebraActivity.VARIABLE_SPEC_PROMPT(node, !(isSameTypeNode && !NOT_SET.equals(node.getSymbol())));
 				return;
 
 			case Sum:

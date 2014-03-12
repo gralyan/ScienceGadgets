@@ -37,7 +37,7 @@ public class CommunistPanel extends FlowPanel {
 		redistribute();
 	}
 
-	private void redistribute() {
+	protected void redistribute() {
 		int count = this.getWidgetCount();
 		if (count > 0) {
 			int portion = 100 / count;

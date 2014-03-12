@@ -34,6 +34,11 @@ public class UnitAttribute {
 	public void setString(String unitAttribute) {
 		this.unitAttribute = unitAttribute;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return toString().equals(obj.toString());
+	}
 
 	public UnitMultiple[] getUnitMultiples() {
 		String[] multiples = unitAttribute

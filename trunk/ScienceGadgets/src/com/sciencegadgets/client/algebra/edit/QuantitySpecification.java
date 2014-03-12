@@ -132,9 +132,12 @@ public abstract class QuantitySpecification extends Prompt {
 		reload(mathNode, clearDisplays);
 	}
 
+	public void reload(MathNode mathNode) {
+		reload(mathNode, true);
+	}
 	public void reload(MathNode mathNode, boolean clearDisplays) {
 
-		node = mathNode;
+		this.node = mathNode;
 
 		dataUnit.setString("");
 		if (unitHTML != null) {
@@ -179,9 +182,9 @@ public abstract class QuantitySpecification extends Prompt {
 			String func = mNode.getParent()
 					.getAttribute(MathAttribute.Function);
 			if (func.contains(TrigFunctions.ARC)) {
-				// TODO only allow units of PlaneAngle for trig arguments
 				return false;
 			}
+			// TODO only allow units of PlaneAngle for trig arguments
 			break;
 		case Log:
 			return false;

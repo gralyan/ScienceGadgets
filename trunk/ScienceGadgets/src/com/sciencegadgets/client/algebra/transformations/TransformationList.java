@@ -3,6 +3,7 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.shared.TypeML;
@@ -11,7 +12,7 @@ public class TransformationList extends LinkedList<TransformationButton> {
 	private static final long serialVersionUID = -3043410062241803505L;
 	private MathNode contextNode;
 	MathTree beforeAfterTree = null;
-	public boolean reloadAlgebraActivity = false;
+	public boolean reloadAlgebraActivity = true;
 
 	public TransformationList(MathNode contextNode) {
 		super();
@@ -66,6 +67,22 @@ public class TransformationList extends LinkedList<TransformationButton> {
 				&& node.getIndex() == 1) {
 			general.add(AlgebraicTransformations.denominatorFlip_check(node,
 					general));
+		}
+		
+		for(TransformationList list : lists) {
+			for(TransformationButton button : list) {
+				String buttonHTML = button.getHTML();
+				if(buttonHTML == null || "".equals(buttonHTML)) {
+					MathTree previewEq = button.getPreview();
+					String preview = null;
+					if (previewEq != null) {
+						preview = previewEq.getRightDisplay();
+					} else {
+						preview = "no label";
+					}
+					button.setHTML(preview);
+				}
+			}
 		}
 
 		return lists;

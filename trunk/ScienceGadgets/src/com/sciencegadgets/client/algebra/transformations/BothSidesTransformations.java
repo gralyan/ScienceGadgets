@@ -148,23 +148,23 @@ public class BothSidesTransformations extends TransformationList {
 
 			switch (operation) {
 			case ADD:
-				setHTML(BOTH_SIDES + PLUS + " " + node.getHTMLString());
+				setHTML(BOTH_SIDES + PLUS + " " + node.getHTMLString(true, true));
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case SUBTRACT:
-				setHTML(BOTH_SIDES + MINUS + " " + node.getHTMLString());
+				setHTML(BOTH_SIDES + MINUS + " " + node.getHTMLString(true, true));
 				addClickHandler(new AddOrSubBothHandler());
 				break;
 			case MULTIPLY:
-				setHTML(BOTH_SIDES + MULTIPLY + " " + node.getHTMLString());
+				setHTML(BOTH_SIDES + MULTIPLY + " " + node.getHTMLString(true, true));
 				addClickHandler(new MultiplyBothHandler());
 				break;
 			case DIVIDE:
-				setHTML(BOTH_SIDES + DIVIDE + " " + node.getHTMLString());
+				setHTML(BOTH_SIDES + DIVIDE + " " + node.getHTMLString(true, true));
 				addClickHandler(new DivideBothHandler());
 				break;
 			case INVERSE_EXPONENT:
-				setHTML(BOTH_SIDES + "<sup>1/" + node.getHTMLString()
+				setHTML(BOTH_SIDES + "<sup>1/" + node.getHTMLString(true, true)
 						+ "</sup>");
 				addClickHandler(new RootBothHandler());
 				break;
@@ -174,7 +174,7 @@ public class BothSidesTransformations extends TransformationList {
 				addClickHandler(new RaiseBothHandler(base));
 				break;
 			case LOG:
-				setHTML("log<sub>" + node.getHTMLString() + "</sub>"
+				setHTML("log<sub>" + node.getHTMLString(true, true) + "</sub>"
 						+ BOTH_SIDES);
 				addClickHandler(new LogBothHandler());
 				break;

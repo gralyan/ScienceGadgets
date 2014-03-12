@@ -220,11 +220,13 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 							totalUnitMap);
 
 				} else if (!reloadAlgebraActivity) {
-					exponential.replace(TypeML.Variable, "# ^ #");
+					base.replace(TypeML.Variable, "#");
+					exponent.replace(TypeML.Variable, "#");
+					
 
 				} else {// prompt
 
-					String question = exponential.getHTMLString() + " = ";
+					String question = exponential.getHTMLString(true, true) + " = ";
 					NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 						@Override
 						void onCorrect() {

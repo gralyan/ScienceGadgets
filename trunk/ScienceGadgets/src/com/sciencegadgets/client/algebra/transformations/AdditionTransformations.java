@@ -194,7 +194,7 @@ public class AdditionTransformations extends TransformationList {
 
 		String factorString = "";
 		for (MathNode fact : likeTerms.keySet()) {
-			factorString.concat(fact.getHTMLString());
+			factorString.concat(fact.getHTMLString(true, true));
 		}
 
 		return new FactorLikeTermsButton(this, leftTerm, rightTerm, likeTerms);
@@ -413,8 +413,8 @@ class AddZeroButton extends AddTransformButton {
 				parent.decase();
 
 				if (reloadAlgebraActivity) {
-					Moderator.reloadEquationPanel(other.getHTML() + " + 0 = "
-							+ other.getHTML(), Rule.ADDITION);
+					Moderator.reloadEquationPanel(other.getHTML(true, true) + " + 0 = "
+							+ other.getHTML(true, true), Rule.ADDITION);
 				}
 
 			}

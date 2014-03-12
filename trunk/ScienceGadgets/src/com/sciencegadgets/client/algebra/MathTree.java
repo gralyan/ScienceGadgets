@@ -46,7 +46,7 @@ public class MathTree {
 
 	private MathNode root;
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	private HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
+	public HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private HashMap<Element, String> idUnitHTMLMap = new HashMap<Element, String>();
@@ -250,17 +250,6 @@ public class MathTree {
 		return newNode;
 	}
 
-	private String createId(String prevId) {
-		if (!"".equals(prevId) && !idMap.containsKey(prevId)) {
-			return prevId;
-		}
-		String id = "ML" + idCounter++;
-		while (idMap.containsKey(id)) {
-			id = "ML" + idCounter++;
-		}
-		return id;
-	}
-
 	public void validateTree() {
 
 		if (eqValidator == null) {
@@ -286,13 +275,11 @@ public class MathTree {
 
 	private void AddToMaps(MathNode node) {
 		String id = node.getId();
-		id = createId(id);
+		id = node.createId(id);
 
-		// add node to binding map
-		if (!idMap.containsKey(id)) {
-			idMap.put(id, node);
-			idMLMap.put(id, node.getXMLNode());
-		}
+		node.xmlNode.setAttribute("id", id);
+		idMap.put(id, node);
+		idMLMap.put(id, node.getXMLNode());
 	}
 
 	/**
@@ -322,7 +309,6 @@ public class MathTree {
 	public class MathNode {
 		private Element xmlNode;
 		private Wrapper wrapper;
-		private String sy;
 
 		/**
 		 * Wrap existing MathML node
@@ -378,6 +364,19 @@ public class MathTree {
 			}
 
 			return top;
+		}
+		
+		private String createId(String prevId) {
+			if (prevId != null && !"".equals(prevId)) {
+				if(!idMap.containsKey(prevId) || this.equals(idMap.get(prevId))) {
+				return prevId;
+				}
+			}
+			String id = "ML" + idCounter++;
+			while (idMap.containsKey(id)) {
+				id = "ML" + idCounter++;
+			}
+			return id;
 		}
 
 		/**
@@ -456,22 +455,8 @@ public class MathTree {
 				this.replace(TypeML.Number, "0");
 				break;
 			case 1:
-				// TypeML childType = getFirstChild().getType();
-				// if (childType.equals(getParentType())
-				// && (TypeML.Sum.equals(childType) || TypeML.Term
-				// .equals(childType))) {
-				// LinkedList<MathNode> grandChildren = this.getFirstChild()
-				// .getChildren();
-				// for (int i = grandChildren.size(); i > 0; i--) {
-				// getParent().addBefore(this.getIndex(),
-				// grandChildren.get(i - 1));
-				// }
-				// this.getFirstChild().remove();
-				// this.remove();
-				// } else {
 				getParent().addBefore(this.getIndex(), this.getFirstChild());
 				this.remove();
-				// }
 				break;
 			case 2:// Should only be sums with a negative in front
 				JSNICalls
@@ -922,16 +907,20 @@ public class MathTree {
 			return TypeML.getType(parentTag);
 		}
 
-		public Element getHTMLClone() {
-			Element html = (Element) getHTML().cloneNode(true);
+		public Element getHTMLClone(boolean hasSmallUnits,
+				boolean hasSubscripts) {
+			Element html = (Element) getHTML(hasSmallUnits,
+					hasSubscripts).cloneNode(true);
 
 			html.removeAttribute("class");
 			html.getStyle().setDisplay(Display.INLINE_BLOCK);
 			return html;
 		}
 
-		public String getHTMLString() {
-			return getHTMLClone().getString();
+		public String getHTMLString(boolean hasSmallUnits,
+				boolean hasSubscripts) {
+			return getHTMLClone(hasSmallUnits,
+					hasSubscripts).getString();
 		}
 
 		/**
@@ -940,12 +929,13 @@ public class MathTree {
 		 * 
 		 * @return The current HTML element associated with this node
 		 */
-		public Element getHTML() {
+		public Element getHTML(boolean hasSmallUnits,
+				boolean hasSubscripts) {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
-				getTree().reloadDisplay(true, true);
+				getTree().reloadDisplay(hasSmallUnits, hasSubscripts);
 				Element el2 = idHTMLMap.get(getId());
-				JSNICalls.warn("No HTML for node: " + toString());
+				JSNICalls.log("No HTML for node: " + toString());
 				return (Element) el2;
 			}
 			return (Element) el;
@@ -962,11 +952,11 @@ public class MathTree {
 		}
 
 		public void highlight() {
-			getHTML().addClassName(CSS.HIGHLIGHT);
+			getHTML(true, true).addClassName(CSS.HIGHLIGHT);
 		}
 
 		public void lineThrough() {
-			getHTML().addClassName(CSS.LINE_THROUGH);
+			getHTML(true, true).addClassName(CSS.LINE_THROUGH);
 		}
 
 		public boolean isLike(MathNode another) {
@@ -1056,16 +1046,13 @@ public class MathTree {
 		Element rootNode = (Element) mathXMLequation;
 
 		root = bindXMLtoNodeRecursive(rootNode);
-
 		validateTree();
 	}
 
 	private MathNode bindXMLtoNodeRecursive(Element mathMLNode) {
 
-		String id = createId(mathMLNode.getAttribute("id"));
-		mathMLNode.setAttribute("id", id);
-
 		MathNode mathNode = new MathNode(mathMLNode);
+		String id = mathNode.getId();
 		idMap.put(id, mathNode);
 		idMLMap.put(id, mathMLNode);
 

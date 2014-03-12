@@ -3,6 +3,7 @@ package com.sciencegadgets.client;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.shared.UnitAttribute;
 
 public class UnitSelection extends CommunistPanel {
 
@@ -65,9 +66,22 @@ public class UnitSelection extends CommunistPanel {
 	public UnitSelection(String quantityKind) {
 		super(false);
 
+		this.add(quantityBox);
 		this.add(unitBox);
-		reloadUnitBox(quantityKind, null);
+		
+		quantityFilled = true;
 
+		// The Prefix quantity is special, should stand out
+		quantityBox.add(UnitAttribute.PREFIX_QUANTITY_KIND, UnitAttribute.PREFIX_QUANTITY_KIND);
+		quantityBox.getWidget(1).addStyleName(CSS.QUANTITY_KIND_PREFIX);
+		quantityBox.add(quantityKind, quantityKind);
+
+		quantityBox.addSelectionHandler(new SelectionHandler() {
+			@Override
+			public void onSelect(Cell selection) {
+				reloadUnitBox(quantityBox.getSelectedText(), null);
+			}
+		});
 	}
 
 	public void reloadUnitBox(String quantityKind, String excludedUnitName) {
