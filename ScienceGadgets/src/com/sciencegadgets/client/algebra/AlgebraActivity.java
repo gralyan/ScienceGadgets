@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.sciencegadgets.client.algebra.MathTree.MathNode;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
@@ -88,7 +89,7 @@ public class AlgebraActivity extends Composite {
 		
 		eqPanelHolder.clear();
 		selectionDetails.clear();
-
+		
 		mathTree.validateTree();
 		mathTree.reloadDisplay(true, true);
 		eqPanel = new EquationPanel(this);
@@ -99,6 +100,26 @@ public class AlgebraActivity extends Composite {
 			algOut.scrollToBottom();
 		}
 
+	}
+	
+	public static void NUMBER_SPEC_PROMPT(MathNode mathNode, boolean clearDisplays) {
+
+		if (AlgebraActivity.numSpec == null) {
+			AlgebraActivity.numSpec = new NumberSpecification(mathNode,
+					clearDisplays);
+		} else {
+			AlgebraActivity.numSpec.reload(mathNode, clearDisplays);
+		}
+		AlgebraActivity.numSpec.appear();
+	}
+	public static void VARIABLE_SPEC_PROMPT(MathNode mathNode, boolean clearDisplays) {
+		if (AlgebraActivity.varSpec == null) {
+			AlgebraActivity.varSpec = new VariableSpecification(mathNode,
+					clearDisplays);
+		} else {
+			AlgebraActivity.varSpec.reload(mathNode, clearDisplays);
+		}
+		AlgebraActivity.varSpec.appear();
 	}
 
 	@Override

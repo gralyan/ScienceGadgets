@@ -38,9 +38,13 @@ public class TransformationButton extends SimplePanel implements
 	}
 
 	public String getHTML() {
-		return buttonHTML.getHTML();
+		if (buttonHTML == null) {
+			return null;
+		} else {
+			return buttonHTML.getHTML();
+		}
 	}
-	
+
 	public TransformationList getTransformList() {
 		return transformList;
 	}
@@ -93,7 +97,7 @@ public class TransformationButton extends SimplePanel implements
 		TransformationButton previewButton = this
 				.getPreviewButton(previewContextNode);
 
-		if(previewButton == null) {
+		if (previewButton == null) {
 			return null;
 		}
 		previewButton.fireEvent(new ClickEvent() {

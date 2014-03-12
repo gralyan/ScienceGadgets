@@ -178,10 +178,10 @@ public class ConversionActivity extends AbsolutePanel {
 		dimensionalAnalysisArea.add(eqHTML);
 
 		// No need for equals sign
-		mTree.getEquals().getHTML().removeFromParent();
+		mTree.getEquals().getHTML(true, true).removeFromParent();
 
 		// Move left side of equation into wrapper area
-		Element newWorkingHTML = mTree.getLeftSide().getHTML();
+		Element newWorkingHTML = mTree.getLeftSide().getHTML(false, false);
 		if (workingHTML == null) {
 			wrapperArea.getElement().appendChild(newWorkingHTML);
 		} else {
@@ -210,7 +210,7 @@ public class ConversionActivity extends AbsolutePanel {
 			if (!unitDisplay.isCanceled) {
 				new ConversionWrapper(unitDisplay, wrapperArea, this);
 			} else {
-				unitDisplay.wrappedNode.getHTML().removeFromParent();
+				unitDisplay.wrappedNode.getHTML(false, false).removeFromParent();
 
 				if (TypeML.Number.equals(jointNode.getType())) {
 					Element[] units = jointNode.getHTMLofUnits();
@@ -218,7 +218,7 @@ public class ConversionActivity extends AbsolutePanel {
 						unit.addClassName("lineThrough");
 					}
 				} else {
-					jointNode.getHTML().addClassName("lineThrough");
+					jointNode.getHTML(false, false).addClassName("lineThrough");
 				}
 			}
 		}

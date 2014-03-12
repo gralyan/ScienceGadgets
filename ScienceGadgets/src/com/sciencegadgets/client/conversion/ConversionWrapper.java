@@ -20,7 +20,7 @@ public class ConversionWrapper extends Wrapper {
 
 	ConversionWrapper(UnitDisplay unitDisplay, AbsolutePanel panel,
 			ConversionActivity conversionAvtivity) {
-		super(unitDisplay.wrappedNode, panel, unitDisplay.wrappedNode.getHTML());
+		super(unitDisplay.wrappedNode, panel, unitDisplay.wrappedNode.getHTML(false, false));
 		this.conversionActivity = conversionAvtivity;
 		this.unitDisplay = unitDisplay;
 

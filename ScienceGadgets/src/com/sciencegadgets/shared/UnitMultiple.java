@@ -28,7 +28,7 @@ public class UnitMultiple {
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof UnitMultiple) {
-			if(unitMultiple.equals(((UnitMultiple)obj).toString())) {
+			if(toString().equals(((UnitMultiple)obj).toString())) {
 				return true;
 			}else {
 				return false;

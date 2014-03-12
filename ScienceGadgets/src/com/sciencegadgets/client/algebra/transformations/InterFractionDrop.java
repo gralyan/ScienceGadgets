@@ -58,9 +58,9 @@ public class InterFractionDrop extends TransformationDropController {
 		dropHTML = "<div style=\"display:inline-block; vertical-align:middle;\">" +
 		
 				"<div style=\"border-bottom:1px solid;\">"
-				+ target.getHTMLString()+ "</div>" +
+				+ target.getHTMLString(true, true)+ "</div>" +
 				
-				"<div>"+ drag.getHTMLString()	+ "</div>" +
+				"<div>"+ drag.getHTMLString(true, true)	+ "</div>" +
 				
 				"</div>";
 
@@ -218,8 +218,8 @@ public class InterFractionDrop extends TransformationDropController {
 			targetExpSum.append(dragExp);
 		}
 
-		setDropHTMLTotal(target.getHTMLString() + "<sup>("
-				+ targetExp.getHTMLString() + "-" + dragExp.getHTMLString()
+		setDropHTMLTotal(target.getHTMLString(true, true) + "<sup>("
+				+ targetExp.getHTMLString(true, true) + "-" + dragExp.getHTMLString(true, true)
 				+ ")</sup>");
 
 		complete();

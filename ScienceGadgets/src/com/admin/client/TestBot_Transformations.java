@@ -36,7 +36,7 @@ public class TestBot_Transformations {
 	TestBot_Transformations() {
 		// this.showsEmptyRows = true;
 		// this.showsEmptyColumns = true;
-
+		
 		Moderator.isInEasyMode = true;
 	}
 

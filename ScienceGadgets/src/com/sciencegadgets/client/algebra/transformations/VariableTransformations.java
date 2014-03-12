@@ -22,9 +22,11 @@ import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.MathTree;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeML;
@@ -38,44 +40,46 @@ public class VariableTransformations extends TransformationList {
 
 		this.variableNode = variableNode;
 		
-		isolatedVariable_check();;
+		isolatedVariable_check();
+		plugIn_check();
 	}
 
 	private void isolatedVariable_check() {
 		if (TypeML.Equation.equals(variableNode.getParentType())) {
-			add(new EvaluatePromptButton(this));
+//			add(new EvaluatePromptButton(this));
 			add(new SubstituteButton(this));
 		}
 	}
-
 	
-}
-
-
-class VariableEvaluateSpec extends FlowPanel {
-	protected final DoubleBox valueInput = new DoubleBox();
-	protected UnitSelection unitSelect = null;;
-	protected MathNode mathNode = null;
-	protected Double value = null;
-	protected String unit;
-
-	VariableEvaluateSpec(MathNode mathNode) {
-		this.mathNode = mathNode;
-		String qKind = mathNode.getUnitAttribute().getUnitMultiples()[0].getUnitName().getQuantityKind();
-		unitSelect = new UnitSelection(qKind);
-		Label symbol = new Label(mathNode.getSymbol() + " =");
-
-		symbol.addStyleName(CSS.LAYOUT_ROW);
-		valueInput.addStyleName(CSS.LAYOUT_ROW);
-		unitSelect.addStyleName(CSS.LAYOUT_ROW);
-		unitSelect.setWidth("50%");
-
-		add(symbol);
-		add(valueInput);
-		add(unitSelect);
-
+	private void plugIn_check() {
+		add(new PlugInButton(this));
 	}
 }
+
+//class VariableEvaluateSpec extends FlowPanel {
+//	protected final DoubleBox valueInput = new DoubleBox();
+//	protected UnitSelection unitSelect = null;;
+//	protected MathNode mathNode = null;
+//	protected Double value = null;
+//	protected String unit;
+//
+//	VariableEvaluateSpec(MathNode mathNode) {
+//		this.mathNode = mathNode;
+//		String qKind = mathNode.getUnitAttribute().getUnitMultiples()[0].getUnitName().getQuantityKind();
+//		unitSelect = new UnitSelection(qKind);
+//		Label symbol = new Label(mathNode.getSymbol() + " =");
+//
+//		symbol.addStyleName(CSS.LAYOUT_ROW);
+//		valueInput.addStyleName(CSS.LAYOUT_ROW);
+//		unitSelect.addStyleName(CSS.LAYOUT_ROW);
+//		unitSelect.setWidth("50%");
+//
+//		add(symbol);
+//		add(valueInput);
+//		add(unitSelect);
+//
+//	}
+//}
 
 ///////////////////////////////////////////////////////////////
 //Transformation Buttons
@@ -94,94 +98,94 @@ class VariableTransformationButton extends TransformationButton{
  * appropriate variables
  * 
  */
-class EvaluatePromptButton extends VariableTransformationButton {
-	final static HashSet<VariableEvaluateSpec> varSpecs = new HashSet<VariableEvaluateSpec>();
-
-	EvaluatePromptButton(VariableTransformations context) {
-		super(context);
-
-		setHTML("Evaluate");
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				final Prompt prompt = new Prompt();
-
-				varSpecs.clear();
-
-				MathTree tree = variableNode.getTree();
-				LinkedList<Wrapper> wrappers = tree.getWrappers();
-				for (Wrapper wrap : wrappers) {
-					MathNode node = wrap.getNode();
-					if (TypeML.Variable.equals(node.getType())
-							&& !node.equals(variableNode)) {
-						VariableEvaluateSpec varSpec = new VariableEvaluateSpec(
-								node);
-						varSpecs.add(varSpec);
-						prompt.add(varSpec);
-					}
-				}
-				if (varSpecs.size() == 0) {
-					Window.alert("There are no variables to evaluate");
-					return;
-				}
-
-				prompt.addOkHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						// Make sure the entire spec is filled
-						boolean completelyFilled = true;
-						for (VariableEvaluateSpec varSpec : varSpecs) {
-							Double value = varSpec.valueInput.getValue();
-							if (value == null) {
-								varSpec.valueInput.getElement().getStyle()
-										.setBackgroundColor("red");
-								completelyFilled = false;
-							} else {
-								varSpec.valueInput.getElement().getStyle()
-										.clearBackgroundColor();
-								varSpec.value = value;
-							}
-							String unit = varSpec.unitSelect.unitBox
-									.getSelectedValue();
-							if (unit == null) {
-								varSpec.unitSelect.getElement().getStyle()
-										.setColor("red");
-								completelyFilled = false;
-							} else {
-								varSpec.unitSelect.getElement().getStyle()
-										.clearColor();
-								varSpec.unit = unit;
-							}
-						}
-
-						// Execute
-						if (completelyFilled) {
-							prompt.disappear();
-							for (VariableEvaluateSpec varSpec : varSpecs) {
-
-								String value = String.valueOf(varSpec.value)
-										.replaceAll((String) "\\.0$", "");
-								String unit = varSpec.unit;
-
-								MathNode quantityPlugIn = varSpec.mathNode
-										.replace(TypeML.Number, value);
-								quantityPlugIn.setAttribute(MathAttribute.Unit,
-										unit);
-							}
-							Moderator.reloadEquationPanel(null, null);
-						}
-
-					}
-				});
-
-				prompt.appear();
-
-			}
-		});
-	}
-}
+//class EvaluatePromptButton extends VariableTransformationButton {
+//	final static HashSet<VariableEvaluateSpec> varSpecs = new HashSet<VariableEvaluateSpec>();
+//
+//	EvaluatePromptButton(VariableTransformations context) {
+//		super(context);
+//
+//		setHTML("Evaluate");
+//
+//		this.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				final Prompt prompt = new Prompt();
+//
+//				varSpecs.clear();
+//
+//				MathTree tree = variableNode.getTree();
+//				LinkedList<Wrapper> wrappers = tree.getWrappers();
+//				for (Wrapper wrap : wrappers) {
+//					MathNode node = wrap.getNode();
+//					if (TypeML.Variable.equals(node.getType())
+//							&& !node.equals(variableNode)) {
+//						VariableEvaluateSpec varSpec = new VariableEvaluateSpec(
+//								node);
+//						varSpecs.add(varSpec);
+//						prompt.add(varSpec);
+//					}
+//				}
+//				if (varSpecs.size() == 0) {
+//					Window.alert("There are no variables to evaluate");
+//					return;
+//				}
+//
+//				prompt.addOkHandler(new ClickHandler() {
+//
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						// Make sure the entire spec is filled
+//						boolean completelyFilled = true;
+//						for (VariableEvaluateSpec varSpec : varSpecs) {
+//							Double value = varSpec.valueInput.getValue();
+//							if (value == null) {
+//								varSpec.valueInput.getElement().getStyle()
+//										.setBackgroundColor("red");
+//								completelyFilled = false;
+//							} else {
+//								varSpec.valueInput.getElement().getStyle()
+//										.clearBackgroundColor();
+//								varSpec.value = value;
+//							}
+//							String unit = varSpec.unitSelect.unitBox
+//									.getSelectedValue();
+//							if (unit == null) {
+//								varSpec.unitSelect.getElement().getStyle()
+//										.setColor("red");
+//								completelyFilled = false;
+//							} else {
+//								varSpec.unitSelect.getElement().getStyle()
+//										.clearColor();
+//								varSpec.unit = unit;
+//							}
+//						}
+//
+//						// Execute
+//						if (completelyFilled) {
+//							prompt.disappear();
+//							for (VariableEvaluateSpec varSpec : varSpecs) {
+//
+//								String value = String.valueOf(varSpec.value)
+//										.replaceAll((String) "\\.0$", "");
+//								String unit = varSpec.unit;
+//
+//								MathNode quantityPlugIn = varSpec.mathNode
+//										.replace(TypeML.Number, value);
+//								quantityPlugIn.setAttribute(MathAttribute.Unit,
+//										unit);
+//							}
+//							Moderator.reloadEquationPanel(null, null);
+//						}
+//
+//					}
+//				});
+//
+//				prompt.appear();
+//
+//			}
+//		});
+//	}
+//}
 
 /**
  * Allows for substitution method with another equation into another variable of
@@ -292,5 +296,25 @@ class SubstituteButton extends VariableTransformationButton {
 			break;
 
 		}
+	}
+}
+/**
+ * Allows for substitution method with another equation into another variable of
+ * the same quantity kind
+ * 
+ */
+class PlugInButton extends VariableTransformationButton {
+	PlugInButton(VariableTransformations context) {
+		super(context);
+		
+		setHTML("Plug In");
+		
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AlgebraActivity.NUMBER_SPEC_PROMPT(variableNode, true);
+				
+			}
+		});
 	}
 }

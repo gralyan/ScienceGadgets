@@ -121,10 +121,6 @@ public class FactorTransformations extends TransformationList {
 			siblingMatches.add(this);
 		}
 
-		@Override
-		public String toString() {
-			return leftFactor.getHTMLString();
-		}
 	}
 }
 

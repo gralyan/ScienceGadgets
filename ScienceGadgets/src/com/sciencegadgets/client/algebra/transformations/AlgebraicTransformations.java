@@ -398,13 +398,13 @@ class UnravelButton extends TransformationButton {
 			final Rule rule, TransformationList context) {
 		super(context);
 
-		setHTML(replacement.getHTMLString());
+		setHTML(replacement.getHTMLString(true, true));
 
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				String changeComment = toReplace.getHTMLString() + " = "
-						+ replacement.getHTMLString();
+				String changeComment = toReplace.getHTMLString(true, true) + " = "
+						+ replacement.getHTMLString(true, true);
 				
 				toReplace.replace(replacement);
 				
