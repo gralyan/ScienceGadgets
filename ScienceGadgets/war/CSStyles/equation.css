@@ -192,6 +192,11 @@ body {
 	display: inline-block;
 	font-size: 50%;
 }
+.numberValue{
+	z-index: 3;
+	overflow: hidden;
+	color: gray;
+}
 
 /* .displayWrapper.in-sum.Operation {+/- */
 /* 	background-image: url('images/tile_sumOp.png'); */
