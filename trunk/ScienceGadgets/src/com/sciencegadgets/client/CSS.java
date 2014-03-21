@@ -37,6 +37,7 @@ public static final String FENCED = "fenced";
 public static final String FUNCTION_NAME = "functionName";
 public static final String UNIT = "unit";
 public static final String SUBSCRIPT = "subscript";
+public static final String NUMBER_VALUE = "numberValue";
 
 //////////////////////////////////////////////
 //ScienceGadgets.css

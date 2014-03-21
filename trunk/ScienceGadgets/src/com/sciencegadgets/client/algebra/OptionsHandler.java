@@ -101,7 +101,7 @@ class EditSolveClickHandler implements ClickHandler {
 	}
 	@Override
 	public void onClick(ClickEvent event) {
-		String equation = algebraActivity.getMathTree().getRoot().toString();
+		String equation = algebraActivity.getEquationTree().getRoot().toString();
 		if (equation.contains(ChangeNodeMenu.NOT_SET)) {
 			Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
 					+ ") must be set or removed before solving");
@@ -112,7 +112,7 @@ class EditSolveClickHandler implements ClickHandler {
 		if (algebraActivity.eqPanel != null && algebraActivity.eqPanel.selectedWrapper != null) {
 			algebraActivity.eqPanel.selectedWrapper.unselect();
 		}
-		Moderator.makeAlgebra(Moderator.getCurrentMathTree().getMathXMLClone(), !algebraActivity.inEditMode);
+		Moderator.switchToAlgebra(Moderator.getCurrentEquationTree().getEquationXMLClone(), !algebraActivity.inEditMode);
 	}
 
 }

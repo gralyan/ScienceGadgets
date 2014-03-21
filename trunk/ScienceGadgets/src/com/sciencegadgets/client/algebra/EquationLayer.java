@@ -7,18 +7,18 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 
 public class EquationLayer extends SimplePanel {
 	
 	LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
 	EquationLayer parentLayer;
 	AbsolutePanel ContextMenuPanel = new AbsolutePanel();
-	MathNode mathNode;
+	EquationNode mathNode;
 	EquationHTML eqHTML;
 	private String layerId;
 
-	public EquationLayer(MathNode mathNode, EquationHTML eqHTML) {
+	public EquationLayer(EquationNode mathNode, EquationHTML eqHTML) {
 		super();
 		this.mathNode = mathNode;
 		this.eqHTML = eqHTML;
@@ -103,7 +103,7 @@ public class EquationLayer extends SimplePanel {
 		}
 	}
 
-	public EquationLayer clone(MathNode node) {
+	public EquationLayer clone(EquationNode node) {
 		return new EquationLayer(node, eqHTML.clone());
 	}
 }

@@ -19,14 +19,14 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
 import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.TrigTransformations;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -47,7 +47,7 @@ public class AlgebaWrapper extends EquationWrapper {
 	 * {@link AbsolutePanel}</b>
 	 * </p>
 	 */
-	public AlgebaWrapper(MathNode node, AlgebraActivity algebraActivity,
+	public AlgebaWrapper(EquationNode node, AlgebraActivity algebraActivity,
 			Element element) {
 		super(node, algebraActivity, element);
 
@@ -70,7 +70,6 @@ public class AlgebaWrapper extends EquationWrapper {
 				algTransformMenu.setSize("100%", "100%");
 
 				TransformationList[] transorms = TransformationList.FIND_ALL(node);
-
 				algTransformMenu.addAll(transorms[0]);
 				algTransformMenu.addAll(transorms[1]);
 				algTransformMenu.addAll(transorms[2]);

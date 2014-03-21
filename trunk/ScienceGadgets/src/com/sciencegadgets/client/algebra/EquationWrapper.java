@@ -2,28 +2,43 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitHTML;
 
 public class EquationWrapper extends Wrapper {
 	protected EquationPanel eqPanel;
 	protected AlgebraActivity algebraActivity;
-	protected Label value = new Label();
+	protected Label value;
+	private Style valueStyle;
 
-	public EquationWrapper(MathNode node, AlgebraActivity algebraActivity,
+	public EquationWrapper(EquationNode node, AlgebraActivity algebraActivity,
 			Element element) {
 		super(node, algebraActivity.eqPanel, element);
 		this.eqPanel = algebraActivity.eqPanel;
 		this.algebraActivity = algebraActivity;
 
 		this.addStyleName(CSS.DISPLAY_WRAPPER);
+
+		String valueStr = node.getAttribute(MathAttribute.Value);
+		if (!"".equals(valueStr)
+				&& !valueStr.equals(node.getXMLNode().getInnerText())) {
+			value = new Label(valueStr);
+			valueStyle = value.getElement().getStyle();
+			value.addStyleName(CSS.NUMBER_VALUE);
+			valueStyle.setWidth(this.getOffsetWidth(), Unit.PX);
+			eqPanel.add(value,
+					this.getAbsoluteLeft() - eqPanel.getAbsoluteLeft(),
+					this.getAbsoluteTop() - eqPanel.getAbsoluteTop());
+		}
 	}
 
 	public EquationPanel getEqPanel() {
@@ -33,7 +48,7 @@ public class EquationWrapper extends Wrapper {
 	private void fillSelectionDetails() {
 		FlowPanel details = algebraActivity.selectionDetails;
 
-		TypeML type = node.getType();
+		TypeEquationXML type = node.getType();
 		Label typeLabel = new Label(type.name());
 		typeLabel.addStyleName(type.toString());
 		typeLabel.addStyleName(CSS.DISPLAY_WRAPPER);
@@ -46,8 +61,7 @@ public class EquationWrapper extends Wrapper {
 
 			UnitAttribute unit = node.getUnitAttribute();
 			if (!"".equals(unit)) {
-				quantity.getElement().appendChild(
-						UnitHTML.create(unit));
+				quantity.getElement().appendChild(UnitHTML.create(unit));
 			}
 
 			details.add(quantity);
@@ -82,13 +96,9 @@ public class EquationWrapper extends Wrapper {
 
 			fillSelectionDetails();
 
-			String valueStr = node.getAttribute(MathAttribute.Value);
-			if (!"".equals(valueStr) && !valueStr.equals(node.getXMLNode().getInnerText())) {
-				value.setText(valueStr);
-				Style valueStyle = value.getElement().getStyle();
+			if (valueStyle != null) {
+				valueStyle.clearWidth();
 				valueStyle.setBackgroundColor("white");
-				valueStyle.setZIndex(3);
-				eqPanel.add(value, this.getAbsoluteLeft()-eqPanel.getAbsoluteLeft(), this.getAbsoluteTop()-eqPanel.getAbsoluteTop());
 			}
 
 			eqPanel.selectedWrapper = this;
@@ -102,8 +112,11 @@ public class EquationWrapper extends Wrapper {
 		super.unselect();
 
 		eqPanel.selectedWrapper = null;
-		
-		value.removeFromParent();
+
+		if (valueStyle != null) {
+			valueStyle.setWidth(this.getOffsetWidth(), Unit.PX);
+			valueStyle.clearBackgroundColor();
+		}
 
 		algebraActivity.selectionDetails.clear();
 	}

@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.algebra;
 
+import java.util.HashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -9,12 +11,14 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.Moderator.ActivityType;
+import com.sciencegadgets.client.URLParameters;
+import com.sciencegadgets.client.URLParameters.Parameter;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
 import com.sciencegadgets.client.algebra.transformations.Rule;
-import com.sciencegadgets.client.conversion.Constant;
 
 public class AlgebraActivity extends Composite {
 
@@ -32,17 +36,17 @@ public class AlgebraActivity extends Composite {
 	public FlowPanel upperMidEqArea;
 	@UiField
 	public FlowPanel selectionDetails;
- 
+
 	@UiField
 	public SimplePanel eqPanelHolder;
 
 	@UiField
 	public FlowPanel lowerEqArea;
-	
+
 	public EquationPanel eqPanel = null;
 
-	public AlgOut algOut = null;
-	
+	public AlgebraHistory algOut = null;
+
 	private static Button saveEquationButton = new Button("Save Equation",
 			new SaveButtonHandler());
 
@@ -50,13 +54,13 @@ public class AlgebraActivity extends Composite {
 	public boolean inEditMode = false;
 	public static VariableSpecification varSpec;
 	public static NumberSpecification numSpec;
-	private MathTree mathTree = null;
+	private EquationTree equationTree = null;
 
-	public AlgebraActivity(Element mathML, boolean inEditMode) {
+	public AlgebraActivity(Element equationXML, boolean inEditMode) {
 		initWidget(algebraUiBinder.createAndBindUi(this));
-		
+
 		this.inEditMode = inEditMode;
-		mathTree = new MathTree(mathML, inEditMode);
+		reCreateEquationTree(equationXML, inEditMode);
 
 		optionsButton.addClickHandler(new OptionsHandler(this));
 
@@ -64,34 +68,39 @@ public class AlgebraActivity extends Composite {
 			saveEquationButton.setStyleName("saveEquationButton");
 			upperMidEqArea.add(saveEquationButton);
 		} else {
-			algOut = new AlgOut(this);
+			algOut = new AlgebraHistory(this);
 			upperMidEqArea.add(algOut);
 		}
-		
 
+	}
+
+	public EquationTree getEquationTree() {
+		return equationTree;
 	}
 	
-	public MathTree getMathTree() {
-		return mathTree;
+	public void reCreateEquationTree(Element equationXML, boolean inEditMode) {
+		equationTree = new EquationTree(equationXML, inEditMode);
 	}
 
+	public void reloadEquationPanel(String changeComment, Rule rule) {
+		reloadEquationPanel(changeComment, rule, true);
+	}
 	/**
 	 * Updates the equation in all places when a change is made
 	 * 
 	 * @param changeComment
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
-	public void reloadEquationPanel(String changeComment, Rule rule) {
+	public void reloadEquationPanel(String changeComment, Rule rule, boolean updateHistory) {
 		if (!inEditMode && changeComment != null) {
-			algOut.updateAlgOut(changeComment, rule,
-					mathTree);
+			algOut.updateAlgebraHistory(changeComment, rule, equationTree);
 		}
-		
+
 		eqPanelHolder.clear();
 		selectionDetails.clear();
-		
-		mathTree.validateTree();
-		mathTree.reloadDisplay(true, true);
+
+		equationTree.validateTree();
+		equationTree.reloadDisplay(true, true);
 		eqPanel = new EquationPanel(this);
 		eqPanelHolder.add(eqPanel);
 
@@ -100,24 +109,39 @@ public class AlgebraActivity extends Composite {
 			algOut.scrollToBottom();
 		}
 
+		if(updateHistory) {
+		HashMap<Parameter, String> parameterMap = new HashMap<Parameter, String>();
+		if (inEditMode) {
+			parameterMap.put(Parameter.activity,
+					ActivityType.algebraedit.toString());
+		} else {
+			parameterMap.put(Parameter.activity,
+					ActivityType.algebrasolve.toString());
+		}
+		parameterMap.put(Parameter.equation, equationTree.getEquationXMLString());
+		URLParameters.setParameters(parameterMap, false);
+		}
 	}
-	
-	public static void NUMBER_SPEC_PROMPT(MathNode mathNode, boolean clearDisplays) {
+
+	public static void NUMBER_SPEC_PROMPT(EquationNode equationNode,
+			boolean clearDisplays) {
 
 		if (AlgebraActivity.numSpec == null) {
-			AlgebraActivity.numSpec = new NumberSpecification(mathNode,
+			AlgebraActivity.numSpec = new NumberSpecification(equationNode,
 					clearDisplays);
 		} else {
-			AlgebraActivity.numSpec.reload(mathNode, clearDisplays);
+			AlgebraActivity.numSpec.reload(equationNode, clearDisplays);
 		}
 		AlgebraActivity.numSpec.appear();
 	}
-	public static void VARIABLE_SPEC_PROMPT(MathNode mathNode, boolean clearDisplays) {
+
+	public static void VARIABLE_SPEC_PROMPT(EquationNode equationNode,
+			boolean clearDisplays) {
 		if (AlgebraActivity.varSpec == null) {
-			AlgebraActivity.varSpec = new VariableSpecification(mathNode,
+			AlgebraActivity.varSpec = new VariableSpecification(equationNode,
 					clearDisplays);
 		} else {
-			AlgebraActivity.varSpec.reload(mathNode, clearDisplays);
+			AlgebraActivity.varSpec.reload(equationNode, clearDisplays);
 		}
 		AlgebraActivity.varSpec.appear();
 	}
@@ -127,5 +151,5 @@ public class AlgebraActivity extends Composite {
 		eqPanelHolder.clear();
 		super.onDetach();
 	}
-	
+
 }

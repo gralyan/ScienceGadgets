@@ -7,16 +7,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Prompt;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class NumberTransformations extends TransformationList {
 	private static final long serialVersionUID = -7824994598553847333L;
 
-	MathNode numberNode;
+	EquationNode numberNode;
 
-	NumberTransformations(MathNode numberNode) {
+	NumberTransformations(EquationNode numberNode) {
 		super(numberNode);
 
 		this.numberNode = numberNode;
@@ -60,7 +60,7 @@ public class NumberTransformations extends TransformationList {
 
 class NumberTransformationButton extends TransformationButton{
 	
-	protected MathNode numberNode;
+	protected EquationNode numberNode;
 
 	NumberTransformationButton(final NumberTransformations context){
 		super(context);
@@ -138,11 +138,11 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 
 					numberNode.highlight();
 
-					MathNode parent = numberNode.encase(TypeML.Term);
+					EquationNode parent = numberNode.encase(TypeEquationXML.Term);
 					int index = numberNode.getIndex();
-					parent.addBefore(index, TypeML.Operation, Operator
+					parent.addBefore(index, TypeEquationXML.Operation, Operator
 							.getMultiply().getSign());
-					parent.addBefore(index, TypeML.Number, factor + "");
+					parent.addBefore(index, TypeEquationXML.Number, factor + "");
 
 					numberNode.setSymbol(factored + "");
 

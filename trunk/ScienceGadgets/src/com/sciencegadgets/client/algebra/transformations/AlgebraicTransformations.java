@@ -9,14 +9,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebaWrapper;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.transformations.InterFractionDrop.DropType;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 /**
  * This class contains the set of static methods used to perform algebraic
@@ -32,8 +32,8 @@ public class AlgebraicTransformations {
 	 * @param opNode
 	 *            - operation to perform
 	 */
-	public static TransformationList operation(MathNode opNode) {
-		MathNode left, right = null;
+	public static TransformationList operation(EquationNode opNode) {
+		EquationNode left, right = null;
 
 		left = opNode.getPrevSibling();
 		right = opNode.getNextSibling();
@@ -63,7 +63,7 @@ public class AlgebraicTransformations {
 	 * 
 	 * @param toNegate
 	 */
-	public static void propagateNegative(MathNode toNegate) {
+	public static void propagateNegative(EquationNode toNegate) {
 
 		switch (toNegate.getType()) {
 		case Operation:
@@ -82,12 +82,12 @@ public class AlgebraicTransformations {
 			propagateNegative(toNegate.getFirstChild());
 			break;
 		case Sum:
-			for (MathNode sumChild : toNegate.getChildren()) {
-				if (TypeML.Operation.equals(sumChild.getType())) {
+			for (EquationNode sumChild : toNegate.getChildren()) {
+				if (TypeEquationXML.Operation.equals(sumChild.getType())) {
 					continue;
 				}
-				MathNode prevOp = sumChild.getPrevSibling();
-				if (prevOp != null && TypeML.Operation.equals(prevOp.getType())) {
+				EquationNode prevOp = sumChild.getPrevSibling();
+				if (prevOp != null && TypeEquationXML.Operation.equals(prevOp.getType())) {
 					Operator opValue = prevOp.getOperation();
 					opValue = Operator.PLUS.equals(opValue) ? Operator.MINUS
 							: Operator.PLUS;
@@ -101,10 +101,10 @@ public class AlgebraicTransformations {
 			propagateNegative(toNegate.getFirstChild());
 			break;
 		default:
-			MathNode casing = toNegate.encase(TypeML.Term);
-			casing.addFirst(TypeML.Operation, Operator.getMultiply()
+			EquationNode casing = toNegate.encase(TypeEquationXML.Term);
+			casing.addFirst(TypeEquationXML.Operation, Operator.getMultiply()
 					.getSign());
-			casing.addFirst(TypeML.Number, "-1");
+			casing.addFirst(TypeEquationXML.Number, "-1");
 			break;
 		}
 	}
@@ -116,29 +116,29 @@ public class AlgebraicTransformations {
 	 * 2) Encases the node in a fraction and adds the number one to the
 	 * numerator
 	 */
-	public static void reciprocate(MathNode toReciprocate) {
+	public static void reciprocate(EquationNode toReciprocate) {
 
-		MathNode parent = toReciprocate.getParent();
+		EquationNode parent = toReciprocate.getParent();
 
-		if (TypeML.Fraction.equals(parent.getType())) {
+		if (TypeEquationXML.Fraction.equals(parent.getType())) {
 
 			boolean inNumerator = toReciprocate.getIndex() == 0;
-			MathNode otherSide = inNumerator ? toReciprocate.getNextSibling()
+			EquationNode otherSide = inNumerator ? toReciprocate.getNextSibling()
 					: toReciprocate.getPrevSibling();
-			otherSide = otherSide.encase(TypeML.Term);
+			otherSide = otherSide.encase(TypeEquationXML.Term);
 
 			otherSide
-					.append(TypeML.Operation, Operator.getMultiply().getSign());
+					.append(TypeEquationXML.Operation, Operator.getMultiply().getSign());
 			otherSide.append(toReciprocate);
 
 			if (inNumerator) {
-				parent.addFirst(TypeML.Number, "1");
+				parent.addFirst(TypeEquationXML.Number, "1");
 			} else {
 				parent.replace(otherSide);
 			}
 
-		} else if (TypeML.Term.equals(parent.getType())
-				&& TypeML.Fraction.equals(parent.getParentType())) {
+		} else if (TypeEquationXML.Term.equals(parent.getType())
+				&& TypeEquationXML.Fraction.equals(parent.getParentType())) {
 
 			if (toReciprocate.getIndex() == 0) {
 				toReciprocate.getNextSibling().remove();
@@ -147,19 +147,19 @@ public class AlgebraicTransformations {
 			}
 
 			boolean inNumerator = parent.getIndex() == 0;
-			MathNode otherSide = inNumerator ? parent.getNextSibling() : parent
+			EquationNode otherSide = inNumerator ? parent.getNextSibling() : parent
 					.getPrevSibling();
 
-			otherSide = otherSide.encase(TypeML.Term);
+			otherSide = otherSide.encase(TypeEquationXML.Term);
 			otherSide
-					.append(TypeML.Operation, Operator.getMultiply().getSign());
+					.append(TypeEquationXML.Operation, Operator.getMultiply().getSign());
 			otherSide.append(toReciprocate);
 
 			parent.decase();
 
 		} else {
-			MathNode frac = toReciprocate.encase(TypeML.Fraction);
-			frac.addFirst(TypeML.Number, "1");
+			EquationNode frac = toReciprocate.encase(TypeEquationXML.Fraction);
+			frac.addFirst(TypeEquationXML.Number, "1");
 		}
 	}
 
@@ -170,9 +170,9 @@ public class AlgebraicTransformations {
 	 * @param negNode
 	 *            - node of negative number
 	 */
-	public static TransformationButton separateNegative_check(MathNode negNode,
+	public static TransformationButton separateNegative_check(EquationNode negNode,
 			TransformationList context) {
-		if (negNode.getSymbol().startsWith(TypeML.Operator.MINUS.getSign())
+		if (negNode.getSymbol().startsWith(TypeEquationXML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
 			return new SeperateNegButton(negNode, context);
 		}
@@ -186,16 +186,16 @@ public class AlgebraicTransformations {
 	 * 
 	 * @param node
 	 */
-	public static void interFractionDrop_check(MathNode node) {
+	public static void interFractionDrop_check(EquationNode node) {
 
-		MathNode thisSide = null;
-		MathNode parent = node.getParent();
+		EquationNode thisSide = null;
+		EquationNode parent = node.getParent();
 		switch (parent.getType()) {
 		case Fraction:
 			thisSide = node;
 			break;
 		case Term:
-			if (TypeML.Fraction.equals(parent.getParentType())) {
+			if (TypeEquationXML.Fraction.equals(parent.getParentType())) {
 				thisSide = parent;
 				break;
 			}// else fall through
@@ -203,17 +203,17 @@ public class AlgebraicTransformations {
 			return;
 		}
 
-		MathNode otherSide = thisSide.getIndex() == 0 ? thisSide
+		EquationNode otherSide = thisSide.getIndex() == 0 ? thisSide
 				.getNextSibling() : thisSide.getPrevSibling();
 
-		HashMap<MathNode, DropType> dropTargets = new HashMap<MathTree.MathNode, DropType>();
+		HashMap<EquationNode, DropType> dropTargets = new HashMap<EquationTree.EquationNode, DropType>();
 
 		if (node.isLike(otherSide)) {// Cancel drop on entire other sides
 			dropTargets.put(otherSide, DropType.CANCEL);
 
-		} else if (TypeML.Term.equals(otherSide.getType())) {
+		} else if (TypeEquationXML.Term.equals(otherSide.getType())) {
 
-			for (MathNode child : otherSide.getChildren()) {
+			for (EquationNode child : otherSide.getChildren()) {
 				if (node.isLike(child)) {// Cancel drop on child
 					dropTargets.put(child, DropType.CANCEL);
 				} else {// Drop on child
@@ -228,7 +228,7 @@ public class AlgebraicTransformations {
 		if (dropTargets.size() > 0) {
 			WrapDragController dragController = node.getWrapper()
 					.addDragController();
-			for (Entry<MathNode, DropType> dropTarget : dropTargets.entrySet()) {
+			for (Entry<EquationNode, DropType> dropTarget : dropTargets.entrySet()) {
 
 				dragController.registerDropController(new InterFractionDrop(
 						(AlgebaWrapper) dropTarget.getKey().getWrapper(),
@@ -241,8 +241,8 @@ public class AlgebraicTransformations {
 	/**
 	 * To be used by {@link #interFractionDrop_check}
 	 */
-	private static void addDropTarget(MathNode target, MathNode drag,
-			HashMap<MathTree.MathNode, DropType> dropTargets) {
+	private static void addDropTarget(EquationNode target, EquationNode drag,
+			HashMap<EquationTree.EquationNode, DropType> dropTargets) {
 
 		if (!drag.getType().equals(target.getType())) {
 			return;
@@ -262,7 +262,7 @@ public class AlgebraicTransformations {
 		case Log:
 			if (drag.getAttribute(MathAttribute.LogBase).equals(
 					target.getAttribute(MathAttribute.LogBase))
-					&& TypeML.Number.equals(drag.getFirstChild().getType())) {
+					&& TypeEquationXML.Number.equals(drag.getFirstChild().getType())) {
 				dropTargets.put(target, DropType.LOG_COMBINE);
 			}
 			break;
@@ -284,7 +284,7 @@ public class AlgebraicTransformations {
 		}
 	}
 
-	public static TransformationButton denominatorFlip_check(MathNode node,
+	public static TransformationButton denominatorFlip_check(EquationNode node,
 			TransformationList context) {
 		return new DenominatorFlipButton(node, context);
 	}
@@ -300,7 +300,7 @@ public class AlgebraicTransformations {
  * 
  */
 class SeperateNegButton extends TransformationButton {
-	SeperateNegButton(final MathNode negNode, TransformationList context) {
+	SeperateNegButton(final EquationNode negNode, TransformationList context) {
 		super(context);
 
 		setHTML("Seperate (-)");
@@ -308,13 +308,13 @@ class SeperateNegButton extends TransformationButton {
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				MathNode prevSib = negNode.getPrevSibling();
+				EquationNode prevSib = negNode.getPrevSibling();
 				String newSymbol = negNode.getSymbol().replaceFirst(
-						TypeML.Operator.MINUS.getSign(), "");
+						TypeEquationXML.Operator.MINUS.getSign(), "");
 				negNode.setSymbol(newSymbol);
 
 				if (prevSib != null
-						&& TypeML.Operation.equals(prevSib.getType())) {
+						&& TypeEquationXML.Operation.equals(prevSib.getType())) {
 					if (Operator.PLUS.getSign().equals(prevSib.getSymbol())) {
 						prevSib.setSymbol(Operator.MINUS.getSign());
 					} else if (Operator.MINUS.getSign().equals(
@@ -325,12 +325,12 @@ class SeperateNegButton extends TransformationButton {
 								+ "neither a plus or minus");
 					}
 				} else {
-					MathNode parent = negNode.getParent();
-					parent = negNode.encase(TypeML.Term);
+					EquationNode parent = negNode.getParent();
+					parent = negNode.encase(TypeEquationXML.Term);
 					int nodeIndex = negNode.getIndex();
-					parent.addBefore(nodeIndex, TypeML.Operation,
-							TypeML.Operator.getMultiply().getSign());
-					parent.addBefore(nodeIndex, TypeML.Number, "-1");
+					parent.addBefore(nodeIndex, TypeEquationXML.Operation,
+							TypeEquationXML.Operator.getMultiply().getSign());
+					parent.addBefore(nodeIndex, TypeEquationXML.Number, "-1");
 				}
 				Moderator.reloadEquationPanel("-" + newSymbol + " = -1"
 						+ Operator.getMultiply().getSign() + newSymbol, null);
@@ -344,7 +344,7 @@ class SeperateNegButton extends TransformationButton {
  * x / y = x &middot; (1/y)
  */
 class DenominatorFlipButton extends TransformationButton {
-	DenominatorFlipButton(final MathNode node, TransformationList context) {
+	DenominatorFlipButton(final EquationNode node, TransformationList context) {
 		super(context);
 
 		setHTML("Flip Denominator");
@@ -354,25 +354,25 @@ class DenominatorFlipButton extends TransformationButton {
 			public void onClick(ClickEvent event) {
 				node.highlight();
 
-				MathNode frac = node;
-				if (!TypeML.Fraction.equals(node.getType())) {
-					frac = node.encase(TypeML.Fraction);
-					frac.append(TypeML.Number, "1");
+				EquationNode frac = node;
+				if (!TypeEquationXML.Fraction.equals(node.getType())) {
+					frac = node.encase(TypeEquationXML.Fraction);
+					frac.append(TypeEquationXML.Number, "1");
 				}
 				// Flip
 				frac.append(frac.getChildAt(0));
 
-				MathNode parentFraction = frac.getParent();
-				MathNode grandParent = parentFraction.getParent();
+				EquationNode parentFraction = frac.getParent();
+				EquationNode grandParent = parentFraction.getParent();
 				int index = parentFraction.getIndex();
 
-				if (!TypeML.Term.equals(grandParent.getType())) {
-					grandParent = parentFraction.encase(TypeML.Term);
+				if (!TypeEquationXML.Term.equals(grandParent.getType())) {
+					grandParent = parentFraction.encase(TypeEquationXML.Term);
 					index = 0;
 				}
 
 				grandParent.addBefore(index, parentFraction.getChildAt(1));
-				grandParent.addBefore(index, TypeML.Operation, Operator
+				grandParent.addBefore(index, TypeEquationXML.Operation, Operator
 						.getMultiply().getSign());
 				grandParent.addBefore(index, parentFraction.getChildAt(0));
 
@@ -394,7 +394,7 @@ class DenominatorFlipButton extends TransformationButton {
  */
 class UnravelButton extends TransformationButton {
 
-	public UnravelButton(final MathNode toReplace, final MathNode replacement,
+	public UnravelButton(final EquationNode toReplace, final EquationNode replacement,
 			final Rule rule, TransformationList context) {
 		super(context);
 

@@ -30,14 +30,11 @@ public class UnitName {
 	public boolean equals(Object obj) {
 		if (obj instanceof UnitName) {
 			if (unitName.equals(((UnitName) obj).toString())) {
-//				System.out.println(toString()+" == "+((UnitName) obj).toString());
 				return true;
 			} else {
-//				System.out.println(toString()+" != "+((UnitName) obj).toString());
 				return false;
 			}
 		} else {
-//			System.out.println(3+obj.getClass().getName());
 			return false;
 		}
 	}

@@ -3,10 +3,10 @@ package com.sciencegadgets.client.algebra;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.shared.UnitName;
 
@@ -26,9 +26,9 @@ public class EquationValidator {
 	 * @return True if well formed<br/>
 	 *         False if invalid
 	 */
-	public boolean validateMathNode(MathNode node) {
+	public boolean validateEquationNode(EquationNode node) {
 
-		TypeML type = node.getType();
+		TypeEquationXML type = node.getType();
 		boolean isInEditMode = node.getTree().isInEditMode();
 
 		boolean valid = true;
@@ -92,11 +92,11 @@ public class EquationValidator {
 		case Sum:
 		case Term:// Confirm that there are < 3 children
 			if (type.equals(node.getParentType())) {
-				if (TypeML.Term.equals(type)) {
+				if (TypeEquationXML.Term.equals(type)) {
 					JSNICalls.error("There shouldn't be a term in a term"
 							+ node.getParent().toString());
 					valid = false;
-				} else if (TypeML.Sum.equals(type)) {
+				} else if (TypeEquationXML.Sum.equals(type)) {
 					JSNICalls.error("There shouldn't be a sum in a sum: "
 							+ node.getParent().toString());
 					valid = false;
@@ -138,9 +138,9 @@ public class EquationValidator {
 		return valid;
 	}
 
-	public boolean validateQuantityKinds(MathTree mathTree) {
+	public boolean validateQuantityKinds(EquationTree equationTree) {
 		try {
-			getQuantityKind(mathTree.getRoot());
+			getQuantityKind(equationTree.getRoot());
 			return true;
 		} catch (IllegalStateException e) {
 			JSNICalls.error(e.getMessage());
@@ -149,7 +149,7 @@ public class EquationValidator {
 		}
 	}
 
-	private UnitMap getQuantityKind(MathNode node) throws IllegalStateException {
+	private UnitMap getQuantityKind(EquationNode node) throws IllegalStateException {
 
 		switch (node.getType()) {
 		case Number:
@@ -157,8 +157,8 @@ public class EquationValidator {
 			return new UnitMap(node).getQuantityKindMap();
 		case Term:
 			UnitMap termMap = new UnitMap();
-			for (MathNode child : node.getChildren()) {
-				if (TypeML.Operation.equals(child.getType())) {
+			for (EquationNode child : node.getChildren()) {
+				if (TypeEquationXML.Operation.equals(child.getType())) {
 					continue;
 				}
 				UnitMap childMap = getQuantityKind(child);
@@ -168,8 +168,8 @@ public class EquationValidator {
 		case Equation:
 		case Sum:
 			UnitMap sumMap = null;
-			for (MathNode child : node.getChildren()) {
-				if (TypeML.Operation.equals(child.getType())
+			for (EquationNode child : node.getChildren()) {
+				if (TypeEquationXML.Operation.equals(child.getType())
 						|| "0".equals(child.getAttribute(MathAttribute.Value))) {
 					continue;
 				}
@@ -194,8 +194,8 @@ public class EquationValidator {
 				return sumMap;
 			}
 		case Exponential:
-			MathNode base = node.getChildAt(0);
-			MathNode exp = node.getChildAt(1);
+			EquationNode base = node.getChildAt(0);
+			EquationNode exp = node.getChildAt(1);
 			UnitMap baseMap = getQuantityKind(base);
 			UnitMap expMap = getQuantityKind(exp);
 
@@ -210,7 +210,7 @@ public class EquationValidator {
 				return baseMap;
 			}
 
-			if (TypeML.Number.equals(exp.getType())) {
+			if (TypeEquationXML.Number.equals(exp.getType())) {
 				try {
 					Integer expValue = Integer.parseInt(exp
 							.getAttribute(MathAttribute.Value));
@@ -232,8 +232,8 @@ public class EquationValidator {
 			}
 			// unreachable
 		case Fraction:
-			MathNode numerator = node.getChildAt(0);
-			MathNode denominator = node.getChildAt(1);
+			EquationNode numerator = node.getChildAt(0);
+			EquationNode denominator = node.getChildAt(1);
 			UnitMap divisionMap = getQuantityKind(numerator).getDivision(
 					getQuantityKind(denominator));
 

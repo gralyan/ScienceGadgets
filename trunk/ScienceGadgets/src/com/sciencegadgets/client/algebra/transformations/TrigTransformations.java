@@ -4,24 +4,24 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class TrigTransformations extends TransformationList {
 
 	private static final long serialVersionUID = 2158189067374424843L;
 
-	MathNode trig;
-	MathNode argument;
+	EquationNode trig;
+	EquationNode argument;
 	
-	TypeML argumentType;
+	TypeEquationXML argumentType;
 	
 	TrigFunctions function;
 
-	public TrigTransformations(MathNode trigNode) {
+	public TrigTransformations(EquationNode trigNode) {
 		super(trigNode);
 		
 		trig = trigNode;
@@ -57,8 +57,8 @@ public class TrigTransformations extends TransformationList {
 	 * arcsin(sin(x)) = x<br/>
 	 */
 	TransformationButton inverseTrig_check() {
-		MathNode trigChild = trig.getFirstChild();
-		if (TypeML.Trig.equals(trigChild.getType())) {
+		EquationNode trigChild = trig.getFirstChild();
+		if (TypeEquationXML.Trig.equals(trigChild.getType())) {
 			String trigChildFunc = trigChild
 					.getAttribute(MathAttribute.Function);
 			String trigChildFuncInverse = TrigFunctions
@@ -77,10 +77,10 @@ public class TrigTransformations extends TransformationList {
 // Transform buttons
 // ///////////////////////////////////////////////
 class TrigTransformButton extends TransformationButton {
-	final MathNode trig;
-	final MathNode argument;
+	final EquationNode trig;
+	final EquationNode argument;
 	
-	final TypeML argumentType;
+	final TypeEquationXML argumentType;
 	final TrigFunctions function;
 
 	protected boolean reloadAlgebraActivity;
@@ -101,7 +101,7 @@ class TrigTransformButton extends TransformationButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode trig) {
+	TransformationButton getPreviewButton(EquationNode trig) {
 		previewContext = new TrigTransformations(trig);
 		previewContext.reloadAlgebraActivity = false;
 		return null;
@@ -135,16 +135,16 @@ class TrigDefineButton extends TrigTransformButton {
 			public void onClick(ClickEvent event) {
 
 				trig.setSymbol(funcDef[0].toString());
-				MathNode otherTrig;
+				EquationNode otherTrig;
 				
 				if(defIsTerm) {
-					MathNode term = trig.encase(TypeML.Term);
+					EquationNode term = trig.encase(TypeEquationXML.Term);
 					int trigIndex = trig.getIndex();
-					otherTrig = term.addAfter(trigIndex, TypeML.Trig, funcDef[1].toString());
-					term.addAfter(trigIndex, TypeML.Operation, Operator.getMultiply().getSign());
+					otherTrig = term.addAfter(trigIndex, TypeEquationXML.Trig, funcDef[1].toString());
+					term.addAfter(trigIndex, TypeEquationXML.Operation, Operator.getMultiply().getSign());
 				}else {
-					MathNode frac = trig.encase(TypeML.Fraction);
-					otherTrig = frac.addAfter(0, TypeML.Trig, funcDef[2].toString());
+					EquationNode frac = trig.encase(TypeEquationXML.Fraction);
+					otherTrig = frac.addAfter(0, TypeEquationXML.Trig, funcDef[2].toString());
 				}
 				otherTrig.append(argument.clone());
 
@@ -154,7 +154,7 @@ class TrigDefineButton extends TrigTransformButton {
 		});
 	}
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.trigDefinition_check();
 	}
@@ -196,7 +196,7 @@ class TrigReciprocalButton extends TrigTransformButton {
 		});
 	}
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.trigReciprocal_check();
 	}

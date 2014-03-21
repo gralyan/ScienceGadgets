@@ -10,19 +10,19 @@ import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebaWrapper;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 import com.sciencegadgets.shared.UnitMap;
 
 public class InterFractionDrop extends TransformationDropController {
 
 	private DropType dropType;
-	private MathNode drag;
-	private MathNode target;
+	private EquationNode drag;
+	private EquationNode target;
 	private String dropHTML = "";
 
 	public enum DropType {
@@ -94,7 +94,7 @@ public class InterFractionDrop extends TransformationDropController {
 
 	/**
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
-	 * 1. Both nodes (drag and target) are of type {@link TypeML#Number}<br/>
+	 * 1. Both nodes (drag and target) are of type {@link TypeEquationXML#Number}<br/>
 	 */
 	private void dividePrompt() {
 		try {
@@ -131,7 +131,7 @@ public class InterFractionDrop extends TransformationDropController {
 				.getDivision(drag.getUnitMap());
 
 		String totalString = total.stripTrailingZeros().toEngineeringString();
-		MathNode division = target.replace(TypeML.Number, totalString);
+		EquationNode division = target.replace(TypeEquationXML.Number, totalString);
 		String divisionUnits = combinedMap.getUnitAttribute().toString();
 		division.setAttribute(MathAttribute.Unit, divisionUnits);
 
@@ -146,7 +146,7 @@ public class InterFractionDrop extends TransformationDropController {
 	 * Always target / drag<br/>
 	 * <br/>
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
-	 * 1. Both nodes (drag and target) are of type {@link TypeML#Trig}<br/>
+	 * 1. Both nodes (drag and target) are of type {@link TypeEquationXML#Trig}<br/>
 	 * 2. One of the nodes(drag or target) is Sin and the other is Cos<br/>
 	 * 3. Both nodes(drag or target) have same argument.<br/>
 	 */
@@ -180,7 +180,7 @@ public class InterFractionDrop extends TransformationDropController {
 	 * Always target / drag<br/>
 	 * <br/>
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
-	 * 1. Both nodes (drag and target) are of type {@link TypeML#Log}<br/>
+	 * 1. Both nodes (drag and target) are of type {@link TypeEquationXML#Log}<br/>
 	 * 2. The bases of both nodes (drag and target) are the same<br/>
 	 * 3. The drag's child is a number<br/>
 	 */
@@ -199,22 +199,22 @@ public class InterFractionDrop extends TransformationDropController {
 	 * Always target / drag<br/>
 	 * <br/>
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
-	 * 1. Both nodes (drag and target) are of type {@link TypeML#Exponential}<br/>
+	 * 1. Both nodes (drag and target) are of type {@link TypeEquationXML#Exponential}<br/>
 	 * 2. The bases of both nodes (drag and target) are the same<br/>
 	 */
 	private void exponentialDrop() {
-		MathNode dragExp = drag.getChildAt(1);
-		MathNode targetExp = target.getChildAt(1);
-		if (Moderator.isInEasyMode && TypeML.Number.equals(dragExp.getType())
-				&& TypeML.Number.equals(targetExp.getType())) {
+		EquationNode dragExp = drag.getChildAt(1);
+		EquationNode targetExp = target.getChildAt(1);
+		if (Moderator.isInEasyMode && TypeEquationXML.Number.equals(dragExp.getType())
+				&& TypeEquationXML.Number.equals(targetExp.getType())) {
 			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
 			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
 			BigDecimal total = targetValue.subtract(dragValue);
 			targetExp.setSymbol(total + "");
 		} else {
-			MathNode targetExpSum = targetExp.encase(TypeML.Sum);
+			EquationNode targetExpSum = targetExp.encase(TypeEquationXML.Sum);
 
-			targetExpSum.append(TypeML.Operation, Operator.MINUS.getSign());
+			targetExpSum.append(TypeEquationXML.Operation, Operator.MINUS.getSign());
 			targetExpSum.append(dragExp);
 		}
 
@@ -254,24 +254,24 @@ public class InterFractionDrop extends TransformationDropController {
 	}
 
 	// Clean up both drag side and target side
-	private void cleanSide(MathNode side) {
+	private void cleanSide(EquationNode side) {
 
-		MathNode sideParent = side.getParent();
-		if (TypeML.Fraction.equals(sideParent.getType())) {
+		EquationNode sideParent = side.getParent();
+		if (TypeEquationXML.Fraction.equals(sideParent.getType())) {
 			if (side.getIndex() == 0) {// numerator
-				side.replace(TypeML.Number, "1");
+				side.replace(TypeEquationXML.Number, "1");
 			} else {// denominator
-				MathNode frac = side.getParent();
+				EquationNode frac = side.getParent();
 				frac.replace(frac.getChildAt(0));
 			}
 		} else {
-			MathNode sideOp = null;
+			EquationNode sideOp = null;
 			if (side.getIndex() == 0) {
 				sideOp = side.getNextSibling();
 			} else {
 				sideOp = side.getPrevSibling();
 			}
-			if (sideOp != null && TypeML.Operation.equals(sideOp.getType())) {
+			if (sideOp != null && TypeEquationXML.Operation.equals(sideOp.getType())) {
 				sideOp.remove();
 			}
 			side.remove();

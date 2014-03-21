@@ -4,7 +4,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 
 /**
  * <b>data-unit</b> attribute <b>= </b>id^exp*id^exp... <br/>
@@ -22,11 +22,11 @@ public class UnitHTML {
 	public static final String UNIT_NODE_DELIMITER = "-unitNode-";
 	private static final double UNIT_SIZE_SMALL = 40;// %
 
-	public static Element create(MathNode mathNode) {
+	public static Element create(EquationNode mathNode) {
 		return create(mathNode.getUnitAttribute());
 	}
 
-	public static Element create(MathNode mathNode,
+	public static Element create(EquationNode mathNode,
 			String nodeId, boolean hasSmallUnits) {
 		return create(mathNode.getUnitAttribute(), nodeId,
 				hasSmallUnits);
@@ -64,7 +64,7 @@ public class UnitHTML {
 			
 			Element unitDiv = DOM.createDiv();
 			unitDiv.setAttribute("id", symbol + UNIT_NODE_DELIMITER + nodeId);
-			unitDiv.addClassName(TypeML.Term.asChild());
+			unitDiv.addClassName(TypeEquationXML.Term.asChild());
 
 			if (exponent.startsWith("-")) {// Negative
 				exponent = exponent.replace("-", "");
@@ -73,25 +73,25 @@ public class UnitHTML {
 				numerator.appendChild(unitDiv);
 			}
 			if ("1".equals(exponent)) {
-				exponent = TypeML.Operator.SPACE.getSign();
+				exponent = TypeEquationXML.Operator.SPACE.getSign();
 			}
 
 			Element symbolDiv = DOM.createDiv();
-			symbolDiv.addClassName(TypeML.Exponential.asChild(true));
+			symbolDiv.addClassName(TypeEquationXML.Exponential.asChild(true));
 			symbolDiv.setInnerText(symbol);
 			unitDiv.appendChild(symbolDiv);
 
 			Element expDiv = DOM.createDiv();
-			expDiv.addClassName(TypeML.Exponential.asChild(false));
+			expDiv.addClassName(TypeEquationXML.Exponential.asChild(false));
 			expDiv.setInnerText(exponent);
 			unitDiv.appendChild(expDiv);
 		}
 
 		if (denominator.getChildCount() > 0) {
 			Element frac = DOM.createDiv();
-			frac.addClassName(TypeML.Term.asChild());
-			numerator.addClassName(TypeML.Fraction.asChild(true));
-			denominator.addClassName(TypeML.Fraction.asChild(false));
+			frac.addClassName(TypeEquationXML.Term.asChild());
+			numerator.addClassName(TypeEquationXML.Fraction.asChild(true));
+			denominator.addClassName(TypeEquationXML.Fraction.asChild(false));
 			frac.appendChild(numerator);
 			frac.appendChild(denominator);
 			frac.addClassName(UNIT_CLASSNAME);
@@ -106,7 +106,7 @@ public class UnitHTML {
 			}
 			return frac;
 		} else {
-			numerator.addClassName(TypeML.Term.asChild());
+			numerator.addClassName(TypeEquationXML.Term.asChild());
 			numerator.addClassName(UNIT_CLASSNAME);
 			if (hasSmallUnits) {
 				numerator.getStyle().setFontSize(UNIT_SIZE_SMALL, Unit.PCT);

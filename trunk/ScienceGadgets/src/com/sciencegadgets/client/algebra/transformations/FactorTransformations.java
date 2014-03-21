@@ -6,17 +6,17 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.FactorTransformations.Match;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class FactorTransformations extends TransformationList {
 	private static final long serialVersionUID = -6071971827855796001L;
 
 	private AdditionTransformations addT;
-	LinkedList<MathNode> factorablesLeft = new LinkedList<MathNode>();
-	LinkedList<MathNode> factorablesRight = new LinkedList<MathNode>();
+	LinkedList<EquationNode> factorablesLeft = new LinkedList<EquationNode>();
+	LinkedList<EquationNode> factorablesRight = new LinkedList<EquationNode>();
 	LinkedList<Match> matches = new LinkedList<Match>();
 
 	public FactorTransformations(AdditionTransformations additionTransformations) {
@@ -31,8 +31,8 @@ public class FactorTransformations extends TransformationList {
 		collectFactorables(addT.left, factorablesLeft);
 		collectFactorables(addT.right, factorablesRight);
 
-		for (MathNode fLeft : factorablesLeft) {
-			for (MathNode fRight : factorablesRight) {
+		for (EquationNode fLeft : factorablesLeft) {
+			for (EquationNode fRight : factorablesRight) {
 				if (fLeft.isLike(fRight)) {
 					climbMatch(fLeft, fRight);
 				}
@@ -46,8 +46,8 @@ public class FactorTransformations extends TransformationList {
 		return factorButtons;
 	}
 
-	private void collectFactorables(MathNode node,
-			LinkedList<MathNode> factorables) {
+	private void collectFactorables(EquationNode node,
+			LinkedList<EquationNode> factorables) {
 		switch (node.getType()) {
 		case Variable:
 		case Number:
@@ -63,14 +63,14 @@ public class FactorTransformations extends TransformationList {
 			collectFactorables(node.getFirstChild(), factorables);
 			break;
 		case Term:
-			for (MathNode termChild : node.getChildren()) {
+			for (EquationNode termChild : node.getChildren()) {
 				collectFactorables(termChild, factorables);
 			}
 			break;
 		}
 	}
 
-	private void climbMatch(MathNode leftFactor, MathNode rightFactor) {
+	private void climbMatch(EquationNode leftFactor, EquationNode rightFactor) {
 
 		// Don't climb past selected node
 		if (addT.left == leftFactor || addT.right == rightFactor) {
@@ -78,8 +78,8 @@ public class FactorTransformations extends TransformationList {
 			return;
 		}
 
-		MathNode leftFactorParent = leftFactor.getParent();
-		MathNode rightFactorParent = rightFactor.getParent();
+		EquationNode leftFactorParent = leftFactor.getParent();
+		EquationNode rightFactorParent = rightFactor.getParent();
 
 		if (leftFactorParent.isLike(rightFactorParent)) {
 			climbMatch(leftFactorParent, rightFactorParent);
@@ -105,14 +105,14 @@ public class FactorTransformations extends TransformationList {
 	}
 
 	class Match {
-		MathNode leftFactor;
-		MathNode leftFactorParent;
-		MathNode rightFactor;
-		MathNode rightFactorParent;
+		EquationNode leftFactor;
+		EquationNode leftFactorParent;
+		EquationNode rightFactor;
+		EquationNode rightFactorParent;
 
 		LinkedList<Match> siblingMatches = new LinkedList<Match>();
 
-		Match(MathNode leftFactor, MathNode rightFactor) {
+		Match(EquationNode leftFactor, EquationNode rightFactor) {
 			this.leftFactor = leftFactor;
 			this.leftFactorParent = leftFactor.getParent();
 			this.rightFactor = rightFactor;
@@ -149,21 +149,21 @@ class FactorButton extends AddTransformButton {
 					match.rightFactor.highlight();
 				}
 
-				MathNode term = parent.addAfter(right.getIndex(), TypeML.Term,
+				EquationNode term = parent.addAfter(right.getIndex(), TypeEquationXML.Term,
 						"");
 				for (Match match : matches) {
 					term.append(match.leftFactor.clone());
-					term.append(TypeML.Operation, Operator.getMultiply()
+					term.append(TypeEquationXML.Operation, Operator.getMultiply()
 							.getSign());
 				}
-				MathNode sum = term.append(TypeML.Sum, "");
+				EquationNode sum = term.append(TypeEquationXML.Sum, "");
 				sum.append(left);
 				sum.append(operation);
 				sum.append(right);
 
 				if (isMinusBeforeLeft) {
 					minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
-					sum.addFirst(TypeML.Operation, Operator.MINUS.getSign());
+					sum.addFirst(TypeEquationXML.Operation, Operator.MINUS.getSign());
 				}
 
 				for (Match match : matches) {
@@ -173,12 +173,12 @@ class FactorButton extends AddTransformButton {
 
 				// Combine like terms if appropriate
 				if (Moderator.isInEasyMode && sum.getChildCount() == 3) {
-					MathNode sumLeft = sum.getChildAt(0);
-					MathNode sumOP = sum.getChildAt(1);
-					MathNode sumRight = sum.getChildAt(2);
-					if (TypeML.Number.equals(sumLeft.getType())
-							&& TypeML.Operation.equals(sumOP.getType())
-							&& TypeML.Number.equals(sumRight.getType())) {
+					EquationNode sumLeft = sum.getChildAt(0);
+					EquationNode sumOP = sum.getChildAt(1);
+					EquationNode sumRight = sum.getChildAt(2);
+					if (TypeEquationXML.Number.equals(sumLeft.getType())
+							&& TypeEquationXML.Operation.equals(sumOP.getType())
+							&& TypeEquationXML.Number.equals(sumRight.getType())) {
 						BigDecimal leftValue, rightValue, combinedValue;
 						leftValue = new BigDecimal(sumLeft.getSymbol());
 						rightValue = new BigDecimal(sumRight.getSymbol());
@@ -187,7 +187,7 @@ class FactorButton extends AddTransformButton {
 						} else {
 							combinedValue = leftValue.add(rightValue);
 						}
-						sum = sum.replace(TypeML.Number,
+						sum = sum.replace(TypeEquationXML.Number,
 								combinedValue.toString());
 						term.addFirst(sum.getPrevSibling());
 						term.addFirst(sum);
@@ -204,18 +204,18 @@ class FactorButton extends AddTransformButton {
 		});
 	}
 
-	private void factorOut(MathNode toFactor, MathNode inSide) {
+	private void factorOut(EquationNode toFactor, EquationNode inSide) {
 		if (toFactor == inSide) {
-			toFactor.replace(TypeML.Number, "1");
+			toFactor.replace(TypeEquationXML.Number, "1");
 			return;
 		}
 
-		MathNode toFactorParent = toFactor.getParent();
+		EquationNode toFactorParent = toFactor.getParent();
 
 		switch (toFactorParent.getType()) {
 		case Term:
-			MathNode opPrev = toFactor.getPrevSibling();
-			MathNode opNext = toFactor.getNextSibling();
+			EquationNode opPrev = toFactor.getPrevSibling();
+			EquationNode opNext = toFactor.getNextSibling();
 			if (opPrev != null) {
 				opPrev.remove();
 			} else if (opNext != null) {
@@ -225,12 +225,12 @@ class FactorButton extends AddTransformButton {
 			toFactorParent.decase();
 			break;
 		case Fraction:
-			toFactor.replace(TypeML.Number, "1");
+			toFactor.replace(TypeEquationXML.Number, "1");
 			break;
 		case Exponential:
-			MathNode exponent = toFactor.getNextSibling();
+			EquationNode exponent = toFactor.getNextSibling();
 			if (Moderator.isInEasyMode
-					&& TypeML.Number.equals(exponent.getType())) {
+					&& TypeEquationXML.Number.equals(exponent.getType())) {
 				BigDecimal expValue = new BigDecimal(exponent.getSymbol());
 				if (expValue.compareTo(new BigDecimal("2")) == 0) {
 					// No need to display 1 in exponent after 2 - 1
@@ -240,9 +240,9 @@ class FactorButton extends AddTransformButton {
 							.toString());
 				}
 			} else {
-				exponent = exponent.encase(TypeML.Term);
-				exponent.append(TypeML.Operation, Operator.MINUS.getSign());
-				exponent.append(TypeML.Number, "1");
+				exponent = exponent.encase(TypeEquationXML.Term);
+				exponent.append(TypeEquationXML.Operation, Operator.MINUS.getSign());
+				exponent.append(TypeEquationXML.Number, "1");
 			}
 		}
 	}

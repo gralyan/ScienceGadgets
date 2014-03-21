@@ -7,10 +7,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitMap;
 
@@ -18,15 +18,15 @@ public class MultiplyTransformations extends TransformationList {
 
 	private static final long serialVersionUID = 3127633894356779264L;
 
-	MathNode left;
-	MathNode operation;
-	MathNode right;
-	MathNode parent;
+	EquationNode left;
+	EquationNode operation;
+	EquationNode right;
+	EquationNode parent;
 
-	TypeML leftType;
-	TypeML rightType;
+	TypeEquationXML leftType;
+	TypeEquationXML rightType;
 
-	public MultiplyTransformations(MathNode multiplyNode) {
+	public MultiplyTransformations(EquationNode multiplyNode) {
 		super(multiplyNode);
 
 		this.parent = multiplyNode.getParent();
@@ -55,7 +55,7 @@ public class MultiplyTransformations extends TransformationList {
 	 */
 	MultiplyTransformButton multiplySpecialNumber_check() {
 
-		if (!TypeML.Number.equals(leftType) && !TypeML.Number.equals(rightType)) {
+		if (!TypeEquationXML.Number.equals(leftType) && !TypeEquationXML.Number.equals(rightType)) {
 			return null;
 		}
 
@@ -101,7 +101,7 @@ public class MultiplyTransformations extends TransformationList {
 	 */
 	MultiplyTransformButton multiplyNumbers_check() {
 
-		if (!(TypeML.Number.equals(leftType) && TypeML.Number.equals(rightType))) {
+		if (!(TypeEquationXML.Number.equals(leftType) && TypeEquationXML.Number.equals(rightType))) {
 			return null;
 		}
 
@@ -120,9 +120,9 @@ public class MultiplyTransformations extends TransformationList {
 	 */
 	MultiplyTransformButton multiplyDistribution_check() {
 
-		if (TypeML.Sum.equals(rightType)) {
+		if (TypeEquationXML.Sum.equals(rightType)) {
 			return new MultiplyDistributionButton(this, left, right, true);
-		} else if (TypeML.Sum.equals(leftType)) {
+		} else if (TypeEquationXML.Sum.equals(leftType)) {
 			return new MultiplyDistributionButton(this, right, left, false);
 		} else {
 			return null;
@@ -134,8 +134,8 @@ public class MultiplyTransformations extends TransformationList {
 	 */
 	MultiplyTransformButton multiplyCombineExponents_check() {
 
-		if (!TypeML.Exponential.equals(leftType)
-				|| !TypeML.Exponential.equals(rightType)) {
+		if (!TypeEquationXML.Exponential.equals(leftType)
+				|| !TypeEquationXML.Exponential.equals(rightType)) {
 			return null;
 		}
 
@@ -157,14 +157,14 @@ public class MultiplyTransformations extends TransformationList {
 
 		// May not already be in exponent eg. a = a^1
 		// could factor out entire side rather than just base
-		MathNode leftBase;
-		if (TypeML.Exponential.equals(left.getType())) {
+		EquationNode leftBase;
+		if (TypeEquationXML.Exponential.equals(left.getType())) {
 			leftBase = left.getChildAt(0);
 		} else {
 			leftBase = left;
 		}
-		MathNode rightBase;
-		if (TypeML.Exponential.equals(right.getType())) {
+		EquationNode rightBase;
+		if (TypeEquationXML.Exponential.equals(right.getType())) {
 			rightBase = right.getChildAt(0);
 		} else {
 			rightBase = right;
@@ -182,8 +182,8 @@ public class MultiplyTransformations extends TransformationList {
 	 * x &middot; a/b = (xa)/b
 	 */
 	MultiplyTransformButton multiplyFraction_check() {
-		boolean isLeftFraction = TypeML.Fraction.equals(leftType);
-		boolean isRightFraction = TypeML.Fraction.equals(rightType);
+		boolean isLeftFraction = TypeEquationXML.Fraction.equals(leftType);
+		boolean isRightFraction = TypeEquationXML.Fraction.equals(rightType);
 
 		if (!isRightFraction && !isLeftFraction) {
 			return null;
@@ -203,9 +203,9 @@ public class MultiplyTransformations extends TransformationList {
 	 */
 	MultiplyTransformButton multiplyLogRule_check() {
 
-		if (TypeML.Log.equals(rightType)) {
+		if (TypeEquationXML.Log.equals(rightType)) {
 			return new MultiplyLogRuleButton(this, left, right);
-		} else if (TypeML.Log.equals(leftType)) {
+		} else if (TypeEquationXML.Log.equals(leftType)) {
 			return new MultiplyLogRuleButton(this, right, left);
 		} else {
 			return null;
@@ -218,16 +218,16 @@ public class MultiplyTransformations extends TransformationList {
 // Transform buttons
 // ///////////////////////////////////////////////
 class MultiplyTransformButton extends TransformationButton {
-	MathNode left;
-	MathNode right;
-	MathNode operation;
-	MathNode parent;
+	EquationNode left;
+	EquationNode right;
+	EquationNode operation;
+	EquationNode parent;
 
 	protected boolean reloadAlgebraActivity;
 	protected MultiplyTransformations previewContext;
 
 	MultiplyTransformButton(MultiplyTransformations context, String html) {
-		super(context);
+		super(html, context);
 		addStyleName(CSS.TERM + " " + CSS.DISPLAY_WRAPPER);
 
 		this.left = context.left;
@@ -243,7 +243,7 @@ class MultiplyTransformButton extends TransformationButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		previewContext = new MultiplyTransformations(operation);
 		previewContext.reloadAlgebraActivity = false;
 		return null;
@@ -255,8 +255,8 @@ class MultiplyTransformButton extends TransformationButton {
  * x &middot; 0 = 0
  */
 class MultiplyZeroButton extends MultiplyTransformButton {
-	MultiplyZeroButton(MultiplyTransformations context, final MathNode other,
-			final MathNode zero) {
+	MultiplyZeroButton(MultiplyTransformations context, final EquationNode other,
+			final EquationNode zero) {
 		super(context, "x·0=0");
 
 		addClickHandler(new ClickHandler() {
@@ -266,17 +266,17 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 				String otherSymbol = other.getSymbol();
 
 				// Remove residual operations
-				MathNode first = zero.getIndex() < other.getIndex() ? zero
+				EquationNode first = zero.getIndex() < other.getIndex() ? zero
 						: other;
-				MathNode second = zero.getIndex() > other.getIndex() ? zero
+				EquationNode second = zero.getIndex() > other.getIndex() ? zero
 						: other;
-				MathNode firstOp = first.getPrevSibling();
-				MathNode secondNext = second.getNextSibling();
+				EquationNode firstOp = first.getPrevSibling();
+				EquationNode secondNext = second.getNextSibling();
 				if (firstOp != null
-						&& TypeML.Operation.equals(firstOp.getType())) {
+						&& TypeEquationXML.Operation.equals(firstOp.getType())) {
 					firstOp.remove();
 				} else if (secondNext != null
-						&& TypeML.Operation.equals(secondNext.getType())) {
+						&& TypeEquationXML.Operation.equals(secondNext.getType())) {
 					secondNext.remove();
 				}
 
@@ -298,7 +298,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplySpecialNumber_check();
 	}
@@ -309,8 +309,8 @@ class MultiplyZeroButton extends MultiplyTransformButton {
  * 1 &middot; x = x
  */
 class MultiplyOneButton extends MultiplyTransformButton {
-	MultiplyOneButton(MultiplyTransformations context, final MathNode other,
-			final MathNode one) {
+	MultiplyOneButton(MultiplyTransformations context, final EquationNode other,
+			final EquationNode one) {
 		super(context, "x·1=x");
 
 		addClickHandler(new ClickHandler() {
@@ -335,7 +335,7 @@ class MultiplyOneButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplySpecialNumber_check();
 	}
@@ -346,8 +346,8 @@ class MultiplyOneButton extends MultiplyTransformButton {
  * -1 &middot; x = -x
  */
 class MultiplyNegOneButton extends MultiplyTransformButton {
-	MultiplyNegOneButton(MultiplyTransformations context, final MathNode other,
-			final MathNode negOne) {
+	MultiplyNegOneButton(MultiplyTransformations context, final EquationNode other,
+			final EquationNode negOne) {
 		super(context, "-1·x=-x");
 
 		addClickHandler(new ClickHandler() {
@@ -375,7 +375,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplySpecialNumber_check();
 	}
@@ -401,7 +401,10 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 							rightValue);
 
 				} else if (!reloadAlgebraActivity) {
-					parent.replace(TypeML.Variable, "# · #");
+					parent.replace(TypeEquationXML.Term, "");
+					parent.append(TypeEquationXML.Variable, "# ");
+					parent.append(TypeEquationXML.Variable, operation.getSymbol());
+					parent.append(TypeEquationXML.Variable, " #");
 
 				} else {// prompt
 
@@ -423,7 +426,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 		});
 	}
 
-	void multiplyNumbers(MathNode left, MathNode right, BigDecimal totalValue,
+	void multiplyNumbers(EquationNode left, EquationNode right, BigDecimal totalValue,
 			BigDecimal leftValue, BigDecimal rightValue) {
 
 		totalValue = totalValue.stripTrailingZeros();
@@ -454,7 +457,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplyNumbers_check();
 	}
@@ -465,17 +468,17 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
  */
 class MultiplyDistributionButton extends MultiplyTransformButton {
 	MultiplyDistributionButton(MultiplyTransformations context,
-			final MathNode dist, final MathNode sum, final boolean isRightSum) {
+			final EquationNode dist, final EquationNode sum, final boolean isRightSum) {
 		super(context, "x·(y+z)=xy+xz");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 
-				for (MathNode sumChild : sum.getChildren()) {
-					if (!TypeML.Operation.equals(sumChild.getType())) {
+				for (EquationNode sumChild : sum.getChildren()) {
+					if (!TypeEquationXML.Operation.equals(sumChild.getType())) {
 
-						MathNode sumChildCasings = sumChild.encase(TypeML.Term);
+						EquationNode sumChildCasings = sumChild.encase(TypeEquationXML.Term);
 
 						int index = isRightSum ? 0 : -1;
 						sumChildCasings.addBefore(index, operation.getType(),
@@ -499,7 +502,7 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplyDistribution_check();
 	}
@@ -510,16 +513,16 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
  */
 class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 	MultiplyCombineExponentsButton(MultiplyTransformations context) {
-		super(context, "<sup>a</sup>·y<sup>a</sup>=(x·y)<sup>a</sup>");
+		super(context, "x<sup>a</sup>·y<sup>a</sup>=(x·y)<sup>a</sup>");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 
-				MathNode leftBase = left.getChildAt(0);
-				MathNode rightBase = right.getChildAt(0);
+				EquationNode leftBase = left.getChildAt(0);
+				EquationNode rightBase = right.getChildAt(0);
 
-				MathNode rightCasing = rightBase.encase(TypeML.Term);
+				EquationNode rightCasing = rightBase.encase(TypeEquationXML.Term);
 
 				rightCasing.addFirst(operation);
 				rightCasing.addFirst(leftBase);
@@ -538,7 +541,7 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplyCombineExponents_check();
 	}
@@ -559,35 +562,35 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 			@Override
 			public void onClick(ClickEvent arg0) {
 
-				MathNode leftExponential = left;
-				MathNode rightExponential = right;
-				if (!TypeML.Exponential.equals(left.getType())) {
-					leftExponential = left.encase(TypeML.Exponential);
-					leftExponential.append(TypeML.Number, "1");
+				EquationNode leftExponential = left;
+				EquationNode rightExponential = right;
+				if (!TypeEquationXML.Exponential.equals(left.getType())) {
+					leftExponential = left.encase(TypeEquationXML.Exponential);
+					leftExponential.append(TypeEquationXML.Number, "1");
 				}
-				if (!TypeML.Exponential.equals(right.getType())) {
-					rightExponential = right.encase(TypeML.Exponential);
-					rightExponential.append(TypeML.Number, "1");
+				if (!TypeEquationXML.Exponential.equals(right.getType())) {
+					rightExponential = right.encase(TypeEquationXML.Exponential);
+					rightExponential.append(TypeEquationXML.Number, "1");
 				}
 
-				MathNode leftExp = leftExponential.getChildAt(1);
-				MathNode rightExp = rightExponential.getChildAt(1);
+				EquationNode leftExp = leftExponential.getChildAt(1);
+				EquationNode rightExp = rightExponential.getChildAt(1);
 
 				if (Moderator.isInEasyMode
-						&& TypeML.Number.equals(leftExp.getType())
-						&& TypeML.Number.equals(rightExp.getType())) {
+						&& TypeEquationXML.Number.equals(leftExp.getType())
+						&& TypeEquationXML.Number.equals(rightExp.getType())) {
 					BigDecimal leftValue = new BigDecimal(
 							leftExp.getAttribute(MathAttribute.Value));
 					BigDecimal rightValue = new BigDecimal(
 							rightExp.getAttribute(MathAttribute.Value));
 					BigDecimal combinedValue = leftValue.add(rightValue);
-					rightExp.replace(TypeML.Number,
+					rightExp.replace(TypeEquationXML.Number,
 							combinedValue.toPlainString());
 
 				} else {
-					MathNode rightCasing = rightExp.encase(TypeML.Sum);
+					EquationNode rightCasing = rightExp.encase(TypeEquationXML.Sum);
 
-					rightCasing.addFirst(TypeML.Operation,
+					rightCasing.addFirst(TypeEquationXML.Operation,
 							Operator.PLUS.getSign());
 					rightCasing.addFirst(leftExp);
 				}
@@ -607,7 +610,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplyCombineBases_check();
 	}
@@ -618,7 +621,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
  */
 class MultiplyWithFractionButton extends MultiplyTransformButton {
 	MultiplyWithFractionButton(MultiplyTransformations context,
-			final MathNode nonFrac, final MathNode fraction,
+			final EquationNode nonFrac, final EquationNode fraction,
 			final boolean isRightFraction) {
 		super(context, "x·a/b=(xa)/b");
 
@@ -626,8 +629,8 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 			@Override
 			public void onClick(ClickEvent arg0) {
 
-				MathNode numerator = fraction.getChildAt(0);
-				numerator = numerator.encase(TypeML.Term);
+				EquationNode numerator = fraction.getChildAt(0);
+				numerator = numerator.encase(TypeEquationXML.Term);
 
 				int index = isRightFraction ? 0 : -1;
 				numerator.addBefore(index, operation);
@@ -645,7 +648,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplyFraction_check();
 	}
@@ -662,14 +665,14 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 			@Override
 			public void onClick(ClickEvent arg0) {
 
-				MathNode numerator = right.getChildAt(0);
-				numerator = numerator.encase(TypeML.Term);
+				EquationNode numerator = right.getChildAt(0);
+				numerator = numerator.encase(TypeEquationXML.Term);
 				numerator.addFirst(operation);
 				numerator.addFirst(left.getChildAt(0));
 
-				MathNode denominator = right.getChildAt(1);
-				denominator = denominator.encase(TypeML.Term);
-				denominator.addFirst(TypeML.Operation,
+				EquationNode denominator = right.getChildAt(1);
+				denominator = denominator.encase(TypeEquationXML.Term);
+				denominator.addFirst(TypeEquationXML.Operation,
 						operation.getSymbol());
 				denominator.addFirst(left.getChildAt(0));
 
@@ -687,7 +690,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplyFraction_check();
 	}
@@ -698,14 +701,14 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
  */
 class MultiplyLogRuleButton extends MultiplyTransformButton {
 	MultiplyLogRuleButton(MultiplyTransformations context,
-			final MathNode other, final MathNode log) {
+			final EquationNode other, final EquationNode log) {
 		super(context, "x·log<sub>b</sub>(a)=log<sub>b</sub>(a<sup>x</sup>)");
 
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 
-				MathNode exp = log.getFirstChild().encase(TypeML.Exponential);
+				EquationNode exp = log.getFirstChild().encase(TypeEquationXML.Exponential);
 				exp.append(other);
 
 				operation.remove();
@@ -721,7 +724,7 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	TransformationButton getPreviewButton(MathNode operation) {
+	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.multiplyLogRule_check();
 	}

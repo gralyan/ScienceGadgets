@@ -3,10 +3,10 @@ package com.admin.client;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class TestBot_Addition {
 
@@ -74,14 +74,14 @@ public class TestBot_Addition {
 		parentElement.insertAfter(multiplyElement, leftElement);
 		parentElement.insertAfter(rightElement, multiplyElement);
 
-		MathTree mathTree = new MathTree(mathElement, false);
-		MathNode leftNode = mathTree
+		EquationTree mathTree = new EquationTree(mathElement, false);
+		EquationNode leftNode = mathTree
 				.getNodeById(leftElement.getAttribute("id"));
-		MathNode rightNode = mathTree.getNodeById(rightElement
+		EquationNode rightNode = mathTree.getNodeById(rightElement
 				.getAttribute("id"));
-		MathNode operation = mathTree.getNodeById(multiplyElement.getAttribute("id"));
-		MathNode parent = operation.getParent();
-		MathNode grandParent = parent.getParent();
+		EquationNode operation = mathTree.getNodeById(multiplyElement.getAttribute("id"));
+		EquationNode parent = operation.getParent();
+		EquationNode grandParent = parent.getParent();
 
 		boolean isMinus = !Operator.PLUS.getSign().equals(operation.getSymbol());
 

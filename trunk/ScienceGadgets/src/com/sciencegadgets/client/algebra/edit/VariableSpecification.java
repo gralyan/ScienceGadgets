@@ -14,9 +14,9 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.conversion.DerivedUnit;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitMap;
 
@@ -28,10 +28,10 @@ public class VariableSpecification extends QuantitySpecification {
 	SymbolClickHandler symbolClick = new SymbolClickHandler();
 	SymbolTouchHandler symbolTouch = new SymbolTouchHandler();
 
-	public VariableSpecification(MathNode mathNode) {
+	public VariableSpecification(EquationNode mathNode) {
 		super(mathNode, true);
 	}
-	public VariableSpecification(MathNode mathNode, boolean clearDisplays) {
+	public VariableSpecification(EquationNode mathNode, boolean clearDisplays) {
 		super(mathNode, clearDisplays);
 
 		// Symbol Selection
@@ -145,6 +145,6 @@ public class VariableSpecification extends QuantitySpecification {
 
 	@Override
 	void setNode(String symbol) {
-		node = node.replace(TypeML.Variable, symbol);
+		node = node.replace(TypeEquationXML.Variable, symbol);
 	}
 }

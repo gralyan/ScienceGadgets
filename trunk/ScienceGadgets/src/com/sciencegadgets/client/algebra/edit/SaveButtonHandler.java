@@ -10,7 +10,7 @@ import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationValidator;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class SaveButtonHandler implements ClickHandler {
 
@@ -21,8 +21,8 @@ public class SaveButtonHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent arg0) {
 		try {
-			final String mathXML = Moderator.getCurrentMathTree()
-					.getMathXMLString();
+			final String mathXML = Moderator.getCurrentEquationTree()
+					.getEquationXMLString();
 
 			if (mathXML.contains(ChangeNodeMenu.NOT_SET)) {
 				Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
@@ -30,17 +30,17 @@ public class SaveButtonHandler implements ClickHandler {
 				reCreateUnitsCheck(mathXML);
 				return;
 			}
-			if (!mathXML.contains("<" + TypeML.Variable.getTag())) {
+			if (!mathXML.contains("<" + TypeEquationXML.Variable.getTag())) {
 				Window.alert("The equation must contain at least one variable");
 				return;
 			}
 			if (!new EquationValidator().validateQuantityKinds(Moderator
-					.getCurrentMathTree())) {
+					.getCurrentEquationTree())) {
 				return;
 			}
 
 			String html = JSNICalls.elementToString(Moderator
-					.getCurrentMathTree().getDisplayClone().getElement());
+					.getCurrentEquationTree().getDisplayClone().getElement());
 
 			dataBase.saveEquation(mathXML, html, new AsyncCallback<String>() {
 

@@ -6,33 +6,33 @@ import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.LogBaseSpecification;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.TrigFunctionSpecification;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class ChangeNodeMenu extends CommunistPanel {
 
 	public static final String NOT_SET = "\u25A1";
 	private TransformationButton removeButton;
-	private MathNode node;
+	private EquationNode node;
 	private LogBaseSpecification logBaseSpec = null;
 	private TrigFunctionSpecification trigFuncSpec = null;
 
 	private static final Object[][] types = {//
-	{ TypeML.Number, "#" }, //
-			{ TypeML.Variable, "a" },//
-			{ TypeML.Sum, NOT_SET + "+" + NOT_SET },//
-			{ TypeML.Term, NOT_SET + Operator.DOT.getSign() + NOT_SET },//
-			{ TypeML.Fraction, "<div style='border-bottom: thin solid;'>"//
+	{ TypeEquationXML.Number, "#" }, //
+			{ TypeEquationXML.Variable, "a" },//
+			{ TypeEquationXML.Sum, NOT_SET + "+" + NOT_SET },//
+			{ TypeEquationXML.Term, NOT_SET + Operator.DOT.getSign() + NOT_SET },//
+			{ TypeEquationXML.Fraction, "<div style='border-bottom: thin solid;'>"//
 					+ NOT_SET + "</div><div>" + NOT_SET + "</div>" },//
-			{ TypeML.Exponential, NOT_SET + "<sup>" + NOT_SET + "</sup>" },//
-			{ TypeML.Log, "log<sub>" + NOT_SET + "</sub>(" + NOT_SET + ")" },//
-			{ TypeML.Trig, "sin(" + NOT_SET + ")" } //
+			{ TypeEquationXML.Exponential, NOT_SET + "<sup>" + NOT_SET + "</sup>" },//
+			{ TypeEquationXML.Log, "log<sub>" + NOT_SET + "</sub>(" + NOT_SET + ")" },//
+			{ TypeEquationXML.Trig, "sin(" + NOT_SET + ")" } //
 	};
 
 	public ChangeNodeMenu() {
@@ -43,7 +43,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 		// Change buttons
 		for (Object[] type : types) {
-			TypeML toType = (TypeML) type[0];
+			TypeEquationXML toType = (TypeEquationXML) type[0];
 			TransformationButton changeButton = new TransformationButton(
 					(String) type[1], allButtons);
 			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON + " "
@@ -63,11 +63,11 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 	}
 
-	public void setNode(MathNode node) {
+	public void setNode(EquationNode node) {
 		this.node = node;
 
-		TypeML type = node.getType();
-		if (!TypeML.Number.equals(type) && !TypeML.Variable.equals(type)) {
+		TypeEquationXML type = node.getType();
+		if (!TypeEquationXML.Number.equals(type) && !TypeEquationXML.Variable.equals(type)) {
 			getWidget(0).removeFromParent();
 			getWidget(0).removeFromParent();
 			redistribute();
@@ -81,21 +81,21 @@ public class ChangeNodeMenu extends CommunistPanel {
 		@Override
 		public void onClick(ClickEvent event) {
 
-			MathNode parent = node.getParent();
+			EquationNode parent = node.getParent();
 
 			switch (parent.getType()) {
 			case Term:
 			case Sum:
 				if (node.getIndex() == 0) {
-					MathNode nextOp = node.getNextSibling();
+					EquationNode nextOp = node.getNextSibling();
 					if (nextOp != null
-							&& TypeML.Operation.equals(nextOp.getType())
+							&& TypeEquationXML.Operation.equals(nextOp.getType())
 							&& !Operator.MINUS.getSign().equals(
 									nextOp.getSymbol()))
 						nextOp.remove();
 				} else {
-					MathNode prevOp = node.getPrevSibling();
-					if (TypeML.Operation.equals(prevOp.getType()))
+					EquationNode prevOp = node.getPrevSibling();
+					if (TypeEquationXML.Operation.equals(prevOp.getType()))
 						prevOp.remove();
 				}
 				node.remove();
@@ -103,7 +103,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 				break;
 			case Exponential:
 			case Fraction:
-				MathNode newParent = parent.getParent();
+				EquationNode newParent = parent.getParent();
 
 				switch (node.getIndex()) {
 				case 0:
@@ -121,7 +121,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			case Equation:
 			case Trig:
 			case Log:
-				node.replace(TypeML.Variable, NOT_SET);
+				node.replace(TypeEquationXML.Variable, NOT_SET);
 				break;
 			}
 			Moderator.reloadEquationPanel(null, null);
@@ -132,21 +132,21 @@ public class ChangeNodeMenu extends CommunistPanel {
 	// Handle Change
 	// /////////////////////////////////////////
 	class ChangeNodeClick implements ClickHandler {
-		TypeML toType;
+		TypeEquationXML toType;
 
-		ChangeNodeClick(TypeML toType) {
+		ChangeNodeClick(TypeEquationXML toType) {
 			this.toType = toType;
 		}
 
 		@Override
 		public void onClick(ClickEvent event) {
 
-			MathNode parent = node.getParent();
+			EquationNode parent = node.getParent();
 			boolean isSameTypeNode = toType.equals(node.getType());
 			boolean isSameTypeParent = toType.equals(node.getParentType());
 			int nodeindex = node.getIndex();
 
-			TypeML.Operator operator = null;
+			TypeEquationXML.Operator operator = null;
 
 			switch (toType) {
 			case Log:
@@ -155,7 +155,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 						@Override
 						public void onSpecify(String base) {
 							super.onSpecify(base);
-							MathNode log = node.encase(TypeML.Log);
+							EquationNode log = node.encase(TypeEquationXML.Log);
 							log.setAttribute(MathAttribute.LogBase, base);
 							Moderator.reloadEquationPanel(null, null);
 						}
@@ -169,7 +169,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 						@Override
 						protected void onSpecify(String function) {
 							super.onSpecify(function);
-							MathNode func = node.encase(TypeML.Trig);
+							EquationNode func = node.encase(TypeEquationXML.Trig);
 							func.setAttribute(MathAttribute.Function, function);
 							Moderator.reloadEquationPanel(null, null);
 						}
@@ -185,21 +185,21 @@ public class ChangeNodeMenu extends CommunistPanel {
 				return;
 
 			case Sum:
-				operator = TypeML.Operator.PLUS;
+				operator = TypeEquationXML.Operator.PLUS;
 				// fall through
 			case Term:
 				if (operator == null) {
-					operator = TypeML.Operator.getMultiply();
+					operator = TypeEquationXML.Operator.getMultiply();
 				}
 				if (isSameTypeNode) {
 					// don't encase term in term just extend this term
-					node.append(TypeML.Operation, operator.getSign());
-					node.append(TypeML.Variable, NOT_SET);
+					node.append(TypeEquationXML.Operation, operator.getSign());
+					node.append(TypeEquationXML.Variable, NOT_SET);
 					break;
 				} else if (isSameTypeParent) {
 					// don't add sum in sum just extend parent sum
-					parent.addAfter(nodeindex, TypeML.Variable, NOT_SET);
-					parent.addAfter(nodeindex, TypeML.Operation,
+					parent.addAfter(nodeindex, TypeEquationXML.Variable, NOT_SET);
+					parent.addAfter(nodeindex, TypeEquationXML.Operation,
 							operator.getSign());
 					break;
 
@@ -211,12 +211,12 @@ public class ChangeNodeMenu extends CommunistPanel {
 				// For Sum, Term, Exponential and Fraction
 				// Encase in the new type
 
-				MathNode newNode = parent.addBefore(nodeindex, toType, "");
+				EquationNode newNode = parent.addBefore(nodeindex, toType, "");
 				newNode.append(node);
 				if (operator != null) {
-					newNode.append(TypeML.Operation, operator.getSign());
+					newNode.append(TypeEquationXML.Operation, operator.getSign());
 				}
-				newNode.append(TypeML.Variable, NOT_SET);
+				newNode.append(TypeEquationXML.Variable, NOT_SET);
 				break;
 			}
 			Moderator.reloadEquationPanel(null, null);

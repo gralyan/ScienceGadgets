@@ -3,10 +3,10 @@ package com.sciencegadgets.client.equationbrowser;
 import java.util.HashMap;
 
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -54,13 +54,13 @@ public class ScienceBrowser extends FlowPanel {
 
 			@Override
 			public void onSelect(Cell selected) {
-				String mathmlStr = selected.getValue();
-				if (mathmlStr != null) {
-					// Element mathml = (Element)
+				String equationXMLStr = selected.getValue();
+				if (equationXMLStr != null) {
+					// Element mathxml = (Element)
 					// XMLParser.parse(mathmlStr).getDocumentElement();
-					Element mathml = (Element) (new HTML(mathmlStr)
-							.getElement().getFirstChildElement());
-					Moderator.makeAlgebra(mathml, equationBrowser.inEditMode);
+					Element equationXML = new HTML(equationXMLStr)
+							.getElement().getFirstChildElement();
+					Moderator.switchToAlgebra(equationXML, equationBrowser.inEditMode);
 				}
 			}
 		});
@@ -247,7 +247,7 @@ public class ScienceBrowser extends FlowPanel {
 					}
 				}
 			}
-			Moderator.makeAlgebra(labelSumEq.getElement()
+			Moderator.switchToAlgebra(labelSumEq.getElement()
 					.getFirstChildElement(), equationBrowser.inEditMode);
 		}
 
