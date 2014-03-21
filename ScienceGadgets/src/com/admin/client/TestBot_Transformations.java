@@ -12,8 +12,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationHTML;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
 import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
 import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
@@ -23,13 +23,13 @@ import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.TrigTransformations;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class TestBot_Transformations {
 
 	private static final String buttonPrefix = "com.sciencegadgets.client.algebra.transformations.";
-	private MathTree mTree = new MathTree(false);
+	private EquationTree mTree = new EquationTree(false);
 	private boolean showsEmptyRows = false;
 	private boolean showsEmptyColumns = false;
 
@@ -54,7 +54,7 @@ public class TestBot_Transformations {
 	public void testAddition_scenario(boolean isMinusBeforeLeft, boolean isMinus) {
 
 		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
-		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+		ArrayList<EquationNode> branches = new ArrayList<EquationNode>();
 
 		// Binary Branch cases
 		Operator sign = isMinus ? Operator.MINUS : Operator.PLUS;
@@ -67,17 +67,17 @@ public class TestBot_Transformations {
 
 		// Special cases
 		ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
-		specialCases.add(new NodeCase(TypeML.Variable, "a"));
-		specialCases.add(new NodeCase(TypeML.Number, "-1"));
-		specialCases.add(new NodeCase(TypeML.Number, "0"));
-		specialCases.add(new NodeCase(TypeML.Number, "1"));
+		specialCases.add(new NodeCase(TypeEquationXML.Variable, "a"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "-1"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1"));
 
 		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(),
 				specialCases, Operator.PLUS));
 
 		if (isMinusBeforeLeft) {
-			for (MathNode child : branches) {
-				child.getParent().addFirst(TypeML.Operation,
+			for (EquationNode child : branches) {
+				child.getParent().addFirst(TypeEquationXML.Operation,
 						Operator.MINUS.getSign());
 			}
 		}
@@ -100,7 +100,7 @@ public class TestBot_Transformations {
 		FlexTable table = makeTable(tButtonMap, "Add");
 
 		for (int i = 0; i < branches.size(); i++) {
-			MathNode node = branches.get(i);
+			EquationNode node = branches.get(i);
 			AdditionTransformations transformList = new AdditionTransformations(
 					node.getPrevSibling());
 
@@ -123,7 +123,7 @@ public class TestBot_Transformations {
 	public void testMultiplication_scenario() {
 
 		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
-		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+		ArrayList<EquationNode> branches = new ArrayList<EquationNode>();
 
 		// Binary Branch cases
 //		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(),
@@ -142,40 +142,40 @@ public class TestBot_Transformations {
 //		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(),
 //				specialCases, Operator.getMultiply()));
 		
-		specialCases.add(new NodeCase(TypeML.Number, "1"));
-		specialCases.add(new NodeCase(TypeML.Number, ".00000010"));
-		specialCases.add(new NodeCase(TypeML.Number, ".0000010"));
-		specialCases.add(new NodeCase(TypeML.Number, ".000010"));
-		specialCases.add(new NodeCase(TypeML.Number, ".00010"));
-		specialCases.add(new NodeCase(TypeML.Number, ".0010"));
-		specialCases.add(new NodeCase(TypeML.Number, ".010"));
-		specialCases.add(new NodeCase(TypeML.Number, ".10"));
-		specialCases.add(new NodeCase(TypeML.Number, "1.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "10.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "100.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "1000.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "10000.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "100000.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "1000000.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "10000000.0"));
-		specialCases.add(new NodeCase(TypeML.Number, ".0000001234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, ".000001234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, ".00001234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, ".0001234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, ".001234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, ".01234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, ".1234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, "1.234567890"));
-		specialCases.add(new NodeCase(TypeML.Number, "12.34567890"));
-		specialCases.add(new NodeCase(TypeML.Number, "123.4567890"));
-		specialCases.add(new NodeCase(TypeML.Number, "1234.567890"));
-		specialCases.add(new NodeCase(TypeML.Number, "12345.67890"));
-		specialCases.add(new NodeCase(TypeML.Number, "123456.7890"));
-		specialCases.add(new NodeCase(TypeML.Number, "1234567.890"));
-		specialCases.add(new NodeCase(TypeML.Number, "12345678.90"));
-		specialCases.add(new NodeCase(TypeML.Number, "123456789.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "1234567890.0"));
-		specialCases.add(new NodeCase(TypeML.Number, "12345678900.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".00000010"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".0000010"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".000010"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".00010"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".0010"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".010"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".10"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "10.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "100.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1000.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "10000.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "100000.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1000000.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "10000000.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".0000001234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".000001234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".00001234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".0001234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".001234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".01234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, ".1234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1.234567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "12.34567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "123.4567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1234.567890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "12345.67890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "123456.7890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1234567.890"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "12345678.90"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "123456789.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1234567890.0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "12345678900.0"));
 		
 		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(),
 		specialCases, Operator.getMultiply()));
@@ -197,7 +197,7 @@ public class TestBot_Transformations {
 		FlexTable table = makeTable(tButtonMap, "Multiplication");
 
 		for (int i = 0; i < branches.size(); i++) {
-			MathNode node = branches.get(i);
+			EquationNode node = branches.get(i);
 			MultiplyTransformations transformList = new MultiplyTransformations(
 					node.getPrevSibling());
 
@@ -208,7 +208,7 @@ public class TestBot_Transformations {
 	public void testExponential_scenario() {
 
 		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
-		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+		ArrayList<EquationNode> branches = new ArrayList<EquationNode>();
 
 		// Binary Branch cases
 		branches.addAll(getBinaryArgumentBranches(mTree.getLeftSide(), null,
@@ -219,12 +219,12 @@ public class TestBot_Transformations {
 
 		// Special cases
 		ArrayList<NodeCase> specialCases = new ArrayList<NodeCase>();
-		specialCases.add(new NodeCase(TypeML.Variable, "a"));
-		specialCases.add(new NodeCase(TypeML.Number, "-1"));
-		specialCases.add(new NodeCase(TypeML.Number, "0"));
-		specialCases.add(new NodeCase(TypeML.Number, "1"));
-		specialCases.add(new NodeCase(TypeML.Number, "2"));
-		specialCases.add(new NodeCase(TypeML.Number, "3"));
+		specialCases.add(new NodeCase(TypeEquationXML.Variable, "a"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "-1"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "0"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "1"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "2"));
+		specialCases.add(new NodeCase(TypeEquationXML.Number, "3"));
 
 		branches.addAll(getSpecialBinaryCases(mTree.getLeftSide(),
 				specialCases, null));
@@ -242,7 +242,7 @@ public class TestBot_Transformations {
 		FlexTable table = makeTable(tButtonMap, "Exponential");
 
 		for (int i = 0; i < branches.size(); i++) {
-			MathNode node = branches.get(i);
+			EquationNode node = branches.get(i);
 			ExponentialTransformations transformList = new ExponentialTransformations(
 					node.getParent());
 
@@ -252,10 +252,10 @@ public class TestBot_Transformations {
 
 	public void testLog_scenario() {
 
-		MathNode leftSide = mTree.getLeftSide().replace(TypeML.Log, "2");
+		EquationNode leftSide = mTree.getLeftSide().replace(TypeEquationXML.Log, "2");
 
 		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
-		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+		ArrayList<EquationNode> branches = new ArrayList<EquationNode>();
 
 		// Branch cases
 		branches.addAll(getArgumentBranches(leftSide, true, false));
@@ -276,7 +276,7 @@ public class TestBot_Transformations {
 		FlexTable table = makeTable(tButtonMap, "Log");
 
 		for (int i = 0; i < branches.size(); i++) {
-			MathNode node = branches.get(i);
+			EquationNode node = branches.get(i);
 			LogarithmicTransformations transformList = new LogarithmicTransformations(
 					node.getParent());
 
@@ -287,12 +287,12 @@ public class TestBot_Transformations {
 	public void testTrig_scenario() {
 
 		// ~~~~~~~~~~~~~~~~~~~~Collect Cases~~~~~~~~~~~~~~~~~~~~
-		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+		ArrayList<EquationNode> branches = new ArrayList<EquationNode>();
 
 		// Function cases
 		ArrayList<NodeCase> cases = new ArrayList<NodeCase>();
 		for (TrigFunctions func : TrigFunctions.values()) {
-			cases.add(new NodeCase(TypeML.Trig, func.toString()));
+			cases.add(new NodeCase(TypeEquationXML.Trig, func.toString()));
 		}
 
 		branches.addAll(makeCases(cases, mTree.getLeftSide(), true, false));
@@ -308,7 +308,7 @@ public class TestBot_Transformations {
 		FlexTable table = makeTable(tButtonMap, "Trig");
 
 		for (int i = 0; i < branches.size(); i++) {
-			MathNode node = branches.get(i);
+			EquationNode node = branches.get(i);
 			TrigTransformations transformList = new TrigTransformations(node);
 
 			fillRow(transformList, tButtonMap, table, node);
@@ -337,7 +337,7 @@ public class TestBot_Transformations {
 	}
 
 	private void fillRow(TransformationList transformList,
-			HashMap<String, Integer> tButtonMap, FlexTable table, MathNode node) {
+			HashMap<String, Integer> tButtonMap, FlexTable table, EquationNode node) {
 
 		if (!showsEmptyRows && transformList.isEmpty()) {
 			return;
@@ -350,7 +350,7 @@ public class TestBot_Transformations {
 
 		int row = table.getRowCount() + 1;
 
-		MathTree tree = node.getTree();
+		EquationTree tree = node.getTree();
 		HTML testCase = new HTML();
 		tree.reloadDisplay(true, true);
 		testCase.setHTML(tree.getLeftDisplay());
@@ -400,16 +400,16 @@ public class TestBot_Transformations {
 //		}
 	}
 
-	ArrayList<MathNode> makeCases(ArrayList<NodeCase> caseList,
-			MathNode toReplace, boolean isIncomplete, boolean containsAllTypes) {
-		MathTree mTree = toReplace.getTree();
+	ArrayList<EquationNode> makeCases(ArrayList<NodeCase> caseList,
+			EquationNode toReplace, boolean isIncomplete, boolean containsAllTypes) {
+		EquationTree mTree = toReplace.getTree();
 		String toReplaceId = toReplace.getId();
-		ArrayList<MathNode> branches = new ArrayList<MathNode>();
+		ArrayList<EquationNode> branches = new ArrayList<EquationNode>();
 
 		for (NodeCase branchSpec : caseList) {
-			MathTree mTreeBranch = mTree.clone();
-			MathNode toReplaceBranch = mTreeBranch.getNodeById(toReplaceId);
-			MathNode branch = toReplaceBranch.replace(branchSpec.type,
+			EquationTree mTreeBranch = mTree.clone();
+			EquationNode toReplaceBranch = mTreeBranch.getNodeById(toReplaceId);
+			EquationNode branch = toReplaceBranch.replace(branchSpec.type,
 					branchSpec.symbol);
 			if (isIncomplete) {
 				completeBranch(branch, containsAllTypes);
@@ -424,17 +424,17 @@ public class TestBot_Transformations {
 	 * 
 	 * @return - A list of the varied nodes in their own MathTree
 	 */
-	private ArrayList<MathNode> getArgumentBranches(MathNode parent,
+	private ArrayList<EquationNode> getArgumentBranches(EquationNode parent,
 			boolean isIncomplete, boolean containsAllTypes) {
 
 		ArrayList<NodeCase> branchList = new ArrayList<NodeCase>();
 
 		switch (parent.getType()) {
 		case Sum:
-			branchList.addAll(branchAllBut(TypeML.Sum));
+			branchList.addAll(branchAllBut(TypeEquationXML.Sum));
 			break;
 		case Term:
-			branchList.addAll(branchAllBut(TypeML.Term));
+			branchList.addAll(branchAllBut(TypeEquationXML.Term));
 			break;
 		case Fraction:
 		case Exponential:
@@ -444,35 +444,35 @@ public class TestBot_Transformations {
 			break;
 		}
 
-		MathNode toReplace = parent.append(TypeML.Variable, "case");
+		EquationNode toReplace = parent.append(TypeEquationXML.Variable, "case");
 		return makeCases(branchList, toReplace, isIncomplete, containsAllTypes);
 	}
 
-	private ArrayList<MathNode> getBinaryArgumentBranches(MathNode toReplace,
+	private ArrayList<EquationNode> getBinaryArgumentBranches(EquationNode toReplace,
 			Operator operator, boolean containsAllTypes) {
 
 		if (operator == null) {
-			toReplace = toReplace.replace(TypeML.Exponential, "");
+			toReplace = toReplace.replace(TypeEquationXML.Exponential, "");
 		} else if (operator.equals(Operator.PLUS)
 				|| operator.equals(Operator.MINUS)) {
-			toReplace = toReplace.replace(TypeML.Sum, "");
+			toReplace = toReplace.replace(TypeEquationXML.Sum, "");
 		} else if (operator.equals(Operator.getMultiply())) {
-			toReplace = toReplace.replace(TypeML.Term, "");
+			toReplace = toReplace.replace(TypeEquationXML.Term, "");
 		}
 
-		ArrayList<MathNode> firstBranches = getArgumentBranches(toReplace,
+		ArrayList<EquationNode> firstBranches = getArgumentBranches(toReplace,
 				true, containsAllTypes);
 
-		ArrayList<MathNode> binaryBranches = new ArrayList<MathNode>();
-		for (MathNode branch : firstBranches) {
-			MathNode branchParent = branch.getParent();
+		ArrayList<EquationNode> binaryBranches = new ArrayList<EquationNode>();
+		for (EquationNode branch : firstBranches) {
+			EquationNode branchParent = branch.getParent();
 			if (operator != null) {
-				branchParent.append(TypeML.Operation, operator.getSign());
+				branchParent.append(TypeEquationXML.Operation, operator.getSign());
 			}
-			ArrayList<MathNode> rightBranches = getArgumentBranches(
+			ArrayList<EquationNode> rightBranches = getArgumentBranches(
 					branchParent, true, containsAllTypes);
-			for (MathNode rightBranch : rightBranches) {
-				MathNode parent = rightBranch.getParent();
+			for (EquationNode rightBranch : rightBranches) {
+				EquationNode parent = rightBranch.getParent();
 //				parent.addBefore(0, TypeML.Operation, operator.getSign());
 //				parent.addBefore(0, TypeML.Variable, "[");
 //				parent.append(TypeML.Operation, operator.getSign());
@@ -484,34 +484,34 @@ public class TestBot_Transformations {
 		return binaryBranches;
 	}
 
-	ArrayList<MathNode> getSpecialBinaryCases(MathNode toReplace,
+	ArrayList<EquationNode> getSpecialBinaryCases(EquationNode toReplace,
 			ArrayList<NodeCase> specialCases, Operator operator) {
 
 		if (operator == null) {
-			toReplace = toReplace.replace(TypeML.Exponential, "");
+			toReplace = toReplace.replace(TypeEquationXML.Exponential, "");
 		} else if (operator.equals(Operator.PLUS)
 				|| operator.equals(Operator.MINUS)) {
-			toReplace = toReplace.replace(TypeML.Sum, "");
+			toReplace = toReplace.replace(TypeEquationXML.Sum, "");
 		} else if (operator.equals(Operator.getMultiply())) {
-			toReplace = toReplace.replace(TypeML.Term, "");
+			toReplace = toReplace.replace(TypeEquationXML.Term, "");
 		}
 
-		MathNode leftDummy = toReplace.append(TypeML.Variable, "toReplace");
+		EquationNode leftDummy = toReplace.append(TypeEquationXML.Variable, "toReplace");
 
-		ArrayList<MathNode> leftCases = makeCases(specialCases, leftDummy,
+		ArrayList<EquationNode> leftCases = makeCases(specialCases, leftDummy,
 				false, false);
-		ArrayList<MathNode> binaryBranches = new ArrayList<MathNode>();
-		for (MathNode leftCase : leftCases) {
-			MathNode caseParent = leftCase.getParent();
+		ArrayList<EquationNode> binaryBranches = new ArrayList<EquationNode>();
+		for (EquationNode leftCase : leftCases) {
+			EquationNode caseParent = leftCase.getParent();
 			if (operator != null) {
-				caseParent.append(TypeML.Operation, operator.getSign());
+				caseParent.append(TypeEquationXML.Operation, operator.getSign());
 			}
-			MathNode rightDummy = caseParent.append(TypeML.Variable,
+			EquationNode rightDummy = caseParent.append(TypeEquationXML.Variable,
 					"toReplace");
-			ArrayList<MathNode> rightBranches = makeCases(specialCases,
+			ArrayList<EquationNode> rightBranches = makeCases(specialCases,
 					rightDummy, false, false);
-			for (MathNode rightBranch : rightBranches) {
-				MathNode parent = rightBranch.getParent();
+			for (EquationNode rightBranch : rightBranches) {
+				EquationNode parent = rightBranch.getParent();
 //				parent.addBefore(0, TypeML.Operation, operator.getSign());
 //				parent.addBefore(0, TypeML.Variable, "[");
 //				parent.append(TypeML.Operation, operator.getSign());
@@ -527,7 +527,7 @@ public class TestBot_Transformations {
 	 * 
 	 * @param branch
 	 */
-	void completeBranch(MathNode branch, boolean containsAllTypes) {
+	void completeBranch(EquationNode branch, boolean containsAllTypes) {
 		switch (branch.getType()) {
 		case Number:
 			branch.setSymbol(Math.random()*10 +"");
@@ -540,14 +540,14 @@ public class TestBot_Transformations {
 				// ArrayList<NodeCase> nodeCases =
 				// branchAllBut(branch.getType());
 				ArrayList<NodeCase> nodeCases = new ArrayList<NodeCase>();
-				nodeCases.add(new NodeCase(TypeML.Exponential, ""));
-				nodeCases.add(new NodeCase(TypeML.Fraction, ""));
-				nodeCases.add(new NodeCase(TypeML.Term, ""));
+				nodeCases.add(new NodeCase(TypeEquationXML.Exponential, ""));
+				nodeCases.add(new NodeCase(TypeEquationXML.Fraction, ""));
+				nodeCases.add(new NodeCase(TypeEquationXML.Term, ""));
 
 				for (int i = 0; i < nodeCases.size(); i++) {
 					NodeCase nCase = nodeCases.get(i);
 					if (i != 0) {
-						branch.append(TypeML.Operation, Operator.PLUS.getSign());
+						branch.append(TypeEquationXML.Operation, Operator.PLUS.getSign());
 					}
 					completeBranch(branch.append(nCase.type, nCase.symbol),
 							false);
@@ -555,9 +555,9 @@ public class TestBot_Transformations {
 			} else {
 //				branch.append(TypeML.Variable, "{");
 //				branch.append(TypeML.Operation, Operator.PLUS.getSign());
-				branch.append(TypeML.Variable, "a");
-				branch.append(TypeML.Operation, Operator.PLUS.getSign());
-				branch.append(TypeML.Variable, "a");
+				branch.append(TypeEquationXML.Variable, "a");
+				branch.append(TypeEquationXML.Operation, Operator.PLUS.getSign());
+				branch.append(TypeEquationXML.Variable, "a");
 //				branch.append(TypeML.Operation, Operator.PLUS.getSign());
 //				branch.append(TypeML.Variable, "}");
 			}
@@ -568,14 +568,14 @@ public class TestBot_Transformations {
 				// ArrayList<NodeCase> nodeCases =
 				// branchAllBut(branch.getType());
 				ArrayList<NodeCase> nodeCases = new ArrayList<NodeCase>();
-				nodeCases.add(new NodeCase(TypeML.Number, Math.random()*10 +""));
-				nodeCases.add(new NodeCase(TypeML.Exponential, ""));
-				nodeCases.add(new NodeCase(TypeML.Fraction, ""));
-				nodeCases.add(new NodeCase(TypeML.Sum, ""));
+				nodeCases.add(new NodeCase(TypeEquationXML.Number, Math.random()*10 +""));
+				nodeCases.add(new NodeCase(TypeEquationXML.Exponential, ""));
+				nodeCases.add(new NodeCase(TypeEquationXML.Fraction, ""));
+				nodeCases.add(new NodeCase(TypeEquationXML.Sum, ""));
 				for (int i = 0; i < nodeCases.size(); i++) {
 					NodeCase nCase = nodeCases.get(i);
 					if (i != 0) {
-						branch.append(TypeML.Operation, Operator.getMultiply()
+						branch.append(TypeEquationXML.Operation, Operator.getMultiply()
 								.getSign());
 					}
 					completeBranch(branch.append(nCase.type, nCase.symbol),
@@ -585,22 +585,22 @@ public class TestBot_Transformations {
 //				branch.append(TypeML.Variable, "{");
 //				branch.append(TypeML.Operation, multiply);
 //				branch.append(TypeML.Variable, "a");
-				branch.append(TypeML.Number, Math.random()*10 +"");
-				branch.append(TypeML.Operation, multiply);
-				branch.append(TypeML.Variable, "a");
-				branch.append(TypeML.Operation, multiply);
-				branch.append(TypeML.Variable, "a");
+				branch.append(TypeEquationXML.Number, Math.random()*10 +"");
+				branch.append(TypeEquationXML.Operation, multiply);
+				branch.append(TypeEquationXML.Variable, "a");
+				branch.append(TypeEquationXML.Operation, multiply);
+				branch.append(TypeEquationXML.Variable, "a");
 //				branch.append(TypeML.Operation, multiply);
 //				branch.append(TypeML.Variable, "}");
 			}
 			break;
 		case Fraction:
 			if (containsAllTypes) {
-				completeBranch(branch.append(TypeML.Term, ""), true);
-				completeBranch(branch.append(TypeML.Term, ""), true);
+				completeBranch(branch.append(TypeEquationXML.Term, ""), true);
+				completeBranch(branch.append(TypeEquationXML.Term, ""), true);
 			} else {
-				branch.append(TypeML.Variable, "a");
-				branch.append(TypeML.Variable, "a");
+				branch.append(TypeEquationXML.Variable, "a");
+				branch.append(TypeEquationXML.Variable, "a");
 			}
 			break;
 		case Exponential:
@@ -608,19 +608,19 @@ public class TestBot_Transformations {
 			// completeBranch(branch.append(TypeML.Term, ""), true);
 			// branch.append(TypeML.Variable, "a");
 			// } else {
-			branch.append(TypeML.Variable, "a");
-			branch.append(TypeML.Number, "2");
+			branch.append(TypeEquationXML.Variable, "a");
+			branch.append(TypeEquationXML.Number, "2");
 			// }
 			break;
 		case Trig:
-			branch.append(TypeML.Variable, "a");
+			branch.append(TypeEquationXML.Variable, "a");
 			if ("".equals(branch.getAttribute(MathAttribute.Function))) {
 				branch.setAttribute(MathAttribute.Function,
 						TrigFunctions.sin.toString());
 			}
 			break;
 		case Log:
-			branch.append(TypeML.Variable, "a");
+			branch.append(TypeEquationXML.Variable, "a");
 			if ("".equals(branch.getAttribute(MathAttribute.LogBase))) {
 				branch.setAttribute(MathAttribute.LogBase, "10");
 			}
@@ -628,34 +628,34 @@ public class TestBot_Transformations {
 		}
 	}
 
-	ArrayList<NodeCase> branchAllBut(TypeML excludedType) {
+	ArrayList<NodeCase> branchAllBut(TypeEquationXML excludedType) {
 
 		ArrayList<NodeCase> branchMap = new ArrayList<NodeCase>();
 
-		branchMap.add(new NodeCase(TypeML.Number, "9"));
-		branchMap.add(new NodeCase(TypeML.Variable, "x"));
+		branchMap.add(new NodeCase(TypeEquationXML.Number, "9"));
+		branchMap.add(new NodeCase(TypeEquationXML.Variable, "x"));
 
-		if (!TypeML.Sum.equals(excludedType))
-			branchMap.add(new NodeCase(TypeML.Sum, ""));
-		if (!TypeML.Term.equals(excludedType))
-			branchMap.add(new NodeCase(TypeML.Term, ""));
-		if (!TypeML.Fraction.equals(excludedType))
-			branchMap.add(new NodeCase(TypeML.Fraction, ""));
-		if (!TypeML.Exponential.equals(excludedType))
-			branchMap.add(new NodeCase(TypeML.Exponential, ""));
-		if (!TypeML.Trig.equals(excludedType))
-			branchMap.add(new NodeCase(TypeML.Trig, ""));
-		if (!TypeML.Log.equals(excludedType))
-			branchMap.add(new NodeCase(TypeML.Log, ""));
+		if (!TypeEquationXML.Sum.equals(excludedType))
+			branchMap.add(new NodeCase(TypeEquationXML.Sum, ""));
+		if (!TypeEquationXML.Term.equals(excludedType))
+			branchMap.add(new NodeCase(TypeEquationXML.Term, ""));
+		if (!TypeEquationXML.Fraction.equals(excludedType))
+			branchMap.add(new NodeCase(TypeEquationXML.Fraction, ""));
+		if (!TypeEquationXML.Exponential.equals(excludedType))
+			branchMap.add(new NodeCase(TypeEquationXML.Exponential, ""));
+		if (!TypeEquationXML.Trig.equals(excludedType))
+			branchMap.add(new NodeCase(TypeEquationXML.Trig, ""));
+		if (!TypeEquationXML.Log.equals(excludedType))
+			branchMap.add(new NodeCase(TypeEquationXML.Log, ""));
 
 		return branchMap;
 	}
 
 	class NodeCase {
-		TypeML type;
+		TypeEquationXML type;
 		String symbol;
 
-		public NodeCase(TypeML type, String symbol) {
+		public NodeCase(TypeEquationXML type, String symbol) {
 			super();
 			this.type = type;
 			this.symbol = symbol;

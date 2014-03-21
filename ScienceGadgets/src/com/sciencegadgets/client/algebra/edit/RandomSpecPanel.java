@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 
 public class RandomSpecPanel extends FlowPanel {
 

@@ -15,27 +15,27 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class EquationPanel extends AbsolutePanel {
-	public HashMap<MathNode, EquationLayer> eqLayerMap = new HashMap<MathNode, EquationLayer>();
+	public HashMap<EquationNode, EquationLayer> eqLayerMap = new HashMap<EquationNode, EquationLayer>();
 
-	private MathTree mathTree;
+	private EquationTree mathTree;
 	private EquationLayer rootLayer;
 	private static EquationLayer focusLayer;
 	public Wrapper selectedWrapper;
-	private ArrayList<MathNode> mergeRootNodes = new ArrayList<MathNode>();
-	private ArrayList<MathNode> mergeFractionNodes = new ArrayList<MathNode>();
+	private ArrayList<EquationNode> mergeRootNodes = new ArrayList<EquationNode>();
+	private ArrayList<EquationNode> mergeFractionNodes = new ArrayList<EquationNode>();
 	private ArrayList<EquationWrapper> mathWrappers = new ArrayList<EquationWrapper>();
 	private AlgebraActivity algebraActivity;
 
 	public static final String EQ_OF_LAYER = "Equation-ofLayer-";
 	public static final String OF_LAYER = "-ofLayer-";
 
-	private MathNode rootNode;
+	private EquationNode rootNode;
 
 	private EquationLayer modelEqLayer;
 
@@ -44,7 +44,7 @@ public class EquationPanel extends AbsolutePanel {
 	public EquationPanel(AlgebraActivity algebraActivity) {
 
 		this.algebraActivity = algebraActivity;
-		this.mathTree = algebraActivity.getMathTree();
+		this.mathTree = algebraActivity.getEquationTree();
 
 		setStyleName(CSS.EQ_PANEL);
 		// zIndex eqPanel=1 wrapper=2 menu=3
@@ -99,10 +99,10 @@ public class EquationPanel extends AbsolutePanel {
 
 		if (!algebraActivity.inEditMode) {
 			// Seperately place into root layer, skipped in draw()
-			for (MathNode merge : mergeRootNodes) {
+			for (EquationNode merge : mergeRootNodes) {
 				placeNextEqWrappers(merge, rootLayer);
 			}
-			for (MathNode merge : mergeFractionNodes) {
+			for (EquationNode merge : mergeFractionNodes) {
 				placeNextEqWrappers(merge, eqLayerMap.get(merge.getParent()));
 			}
 			for (EquationWrapper wrap : mathWrappers) {
@@ -132,15 +132,15 @@ public class EquationPanel extends AbsolutePanel {
 	 * 
 	 * @param root
 	 */
-	private void findRootLayerMergingNodes(MathNode root) {
-		LinkedList<MathNode> sideEqSide = root.getChildren();
+	private void findRootLayerMergingNodes(EquationNode root) {
+		LinkedList<EquationNode> sideEqSide = root.getChildren();
 
-		for (MathNode side : sideEqSide) {
+		for (EquationNode side : sideEqSide) {
 			switch (side.getType()) {
 			case Fraction:
 				mergeRootNodes.add(side);
-				for (MathNode inFrac : side.getChildren()) {
-					if (TypeML.Term.equals(inFrac.getType())) {
+				for (EquationNode inFrac : side.getChildren()) {
+					if (TypeEquationXML.Term.equals(inFrac.getType())) {
 						mergeRootNodes.add(inFrac);
 					}
 				}
@@ -154,13 +154,13 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	private void findFractionMergingNodes() {
-		ArrayList<MathNode> fractions = mathTree
-				.getNodesByType(TypeML.Fraction);
+		ArrayList<EquationNode> fractions = mathTree
+				.getNodesByType(TypeEquationXML.Fraction);
 
-		for (MathNode frac : fractions) {
-			for (MathNode child : frac.getChildren()) {
+		for (EquationNode frac : fractions) {
+			for (EquationNode child : frac.getChildren()) {
 				// numerator and denominator
-				if (TypeML.Term.equals(child.getType())
+				if (TypeEquationXML.Term.equals(child.getType())
 						&& !mergeRootNodes.contains(child)) {
 					mergeFractionNodes.add(child);
 				}
@@ -172,7 +172,7 @@ public class EquationPanel extends AbsolutePanel {
 	 * Replicates the equation graphic for each equation layer (node) to be
 	 * displayed when this layer is in focus
 	 */
-	private void draw(MathNode node, EquationLayer parentLayer) {
+	private void draw(EquationNode node, EquationLayer parentLayer) {
 
 		EquationLayer eqLayer;
 		if (!algebraActivity.inEditMode && mergeFractionNodes.contains(node)) {
@@ -204,7 +204,7 @@ public class EquationPanel extends AbsolutePanel {
 			placeNextEqWrappers(node, eqLayer);
 		}
 
-		for (MathNode childNode : node.getChildren()) {
+		for (EquationNode childNode : node.getChildren()) {
 
 			if (childNode.hasChildElements()) {
 				draw(childNode, eqLayer);
@@ -212,9 +212,9 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
-	private void placeNextEqWrappers(MathNode parentNode, EquationLayer eqLayer) {
+	private void placeNextEqWrappers(EquationNode parentNode, EquationLayer eqLayer) {
 
-		LinkedList<MathNode> childNodes = parentNode.getChildren();
+		LinkedList<EquationNode> childNodes = parentNode.getChildren();
 			if(parentNode.equals(mathTree.getRoot())) {
 				childNodes.remove(1);
 			}
@@ -232,13 +232,13 @@ public class EquationPanel extends AbsolutePanel {
 							+ parentId);
 			if(layerParentNode != null) {
 				layerParentNode.addClassName(CSS.DISPLAY_WRAPPER);
-			}else if(TypeML.Equation.equals(parentNode.getType())){
+			}else if(TypeEquationXML.Equation.equals(parentNode.getType())){
 				com.google.gwt.user.client.Element layerEqNode = DOM
 						.getElementById(EQ_OF_LAYER	+ parentId);
 				layerEqNode.addClassName(CSS.DISPLAY_WRAPPER);
 			}
 				
-		for (MathNode node : childNodes) {
+		for (EquationNode node : childNodes) {
 			
 			if (!algebraActivity.inEditMode) {
 				if (mergeRootNodes.contains(node)

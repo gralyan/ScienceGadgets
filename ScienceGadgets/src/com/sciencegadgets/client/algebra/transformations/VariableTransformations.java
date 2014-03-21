@@ -23,19 +23,19 @@ import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class VariableTransformations extends TransformationList {
 	private static final long serialVersionUID = -7278266823179858612L;
-	MathNode variableNode;
+	EquationNode variableNode;
 
-	public VariableTransformations(MathNode variableNode) {
+	public VariableTransformations(EquationNode variableNode) {
 		super(variableNode);
 
 		this.variableNode = variableNode;
@@ -45,7 +45,7 @@ public class VariableTransformations extends TransformationList {
 	}
 
 	private void isolatedVariable_check() {
-		if (TypeML.Equation.equals(variableNode.getParentType())) {
+		if (TypeEquationXML.Equation.equals(variableNode.getParentType())) {
 //			add(new EvaluatePromptButton(this));
 			add(new SubstituteButton(this));
 		}
@@ -86,7 +86,7 @@ public class VariableTransformations extends TransformationList {
 //////////////////////////////////////////////////////////////
 
 class VariableTransformationButton extends TransformationButton{
-	MathNode variableNode;
+	EquationNode variableNode;
 	VariableTransformationButton(VariableTransformations context){
 		super(context);
 	this.variableNode = context.variableNode;
@@ -215,7 +215,7 @@ class SubstituteButton extends VariableTransformationButton {
 					@Override
 					public void onSelect(Cell selected) {
 
-						MathNode eqNode = variableNode.getParent();
+						EquationNode eqNode = variableNode.getParent();
 
 						Element substitute = null;
 						if (variableNode.isLeftSide()) {
@@ -250,12 +250,12 @@ class SubstituteButton extends VariableTransformationButton {
 		});
 	}
 
-	private void substitute(final MathNode isolatedVar, Element subIntoEqEl,
+	private void substitute(final EquationNode isolatedVar, Element subIntoEqEl,
 			Element substitute) {
 
 		// Find the variable to substutute
 		NodeList<Element> possibleSubs = subIntoEqEl
-				.getElementsByTagName(TypeML.Variable.getTag());
+				.getElementsByTagName(TypeEquationXML.Variable.getTag());
 		findSub: for (int j = 0; j < possibleSubs.getLength(); j++) {
 			Element possibleSub = possibleSubs.getItem(j);
 			if (!isolatedVar.getUnitAttribute().equals(
@@ -265,8 +265,8 @@ class SubstituteButton extends VariableTransformationButton {
 			Element subParent = possibleSub.getParentElement();
 			String plugTag = substitute.getTagName();
 			if (plugTag.equals(subParent.getTagName())
-					&& (plugTag.equals(TypeML.Sum.getTag()) || plugTag
-							.equals(TypeML.Term.getTag()))) {
+					&& (plugTag.equals(TypeEquationXML.Sum.getTag()) || plugTag
+							.equals(TypeEquationXML.Term.getTag()))) {
 				Node subPrev = possibleSub.getPreviousSibling();
 				if (subPrev != null && subPrev.getNodeName().equals("mo")
 						&& "-".equals(((Element) subPrev).getInnerText())) {
@@ -292,7 +292,7 @@ class SubstituteButton extends VariableTransformationButton {
 			} else {
 				subParent.replaceChild(substitute, possibleSub);
 			}
-			Moderator.makeAlgebra(subIntoEqEl, false);
+			Moderator.switchToAlgebra(subIntoEqEl, false);
 			break;
 
 		}

@@ -3,11 +3,11 @@ package com.sciencegadgets.client.conversion;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.UnitMultiple;
@@ -39,8 +39,8 @@ public class UnitCancelDropController extends AbstractDropController {
 	public void onDrop(DragContext context) {
 		super.onDrop(context);
 
-		MathNode drag = ((Wrapper) context.draggable).getNode();
-		MathNode target = ((Wrapper) getDropTarget()).getNode();
+		EquationNode drag = ((Wrapper) context.draggable).getNode();
+		EquationNode target = ((Wrapper) getDropTarget()).getNode();
 
 		ConversionWrapper dragWraper = ((ConversionWrapper) context.draggable);
 		UnitDisplay dragDisplay = dragWraper.getUnitDisplay();
@@ -51,7 +51,7 @@ public class UnitCancelDropController extends AbstractDropController {
 			dragDisplay.isCanceled = true;
 			
 		} else {
-			MathNode nodeToChange;
+			EquationNode nodeToChange;
 			UnitDisplay displayToChange;
 			
 			if (combinedExp > 0) {
@@ -66,10 +66,10 @@ public class UnitCancelDropController extends AbstractDropController {
 				displayToChange = dragDisplay;
 			}
 			
-			MathNode combinedNode = nodeToChange.replace(TypeML.Variable, unitSymbol);
+			EquationNode combinedNode = nodeToChange.replace(TypeEquationXML.Variable, unitSymbol);
 			if (combinedExp > 1) {
-				combinedNode = combinedNode.encase(TypeML.Exponential);
-				combinedNode.append(TypeML.Number, combinedExp + "");
+				combinedNode = combinedNode.encase(TypeEquationXML.Exponential);
+				combinedNode.append(TypeEquationXML.Number, combinedExp + "");
 			}
 			combinedNode.setAttribute(MathAttribute.Unit, unitName
 					+ UnitAttribute.EXP_DELIMITER + combinedExp);

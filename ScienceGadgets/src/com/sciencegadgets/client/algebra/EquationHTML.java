@@ -13,31 +13,31 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitHTML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class EquationHTML extends HTML {
 
 	private static final String FENCED = CSS.FENCED;
 
-	MathTree mTree;
+	EquationTree mTree;
 	public boolean autoFillParent = false;
 	private boolean hasSmallUnits = true;
 	private boolean hasSubscripts = true;
 	public boolean pilot = false;
 	private Element left = null;
 	private Element right = null;
-	HashMap<Element, MathNode> displayMap = new HashMap<Element, MathNode>();
+	HashMap<Element, EquationNode> displayMap = new HashMap<Element, EquationNode>();
 
-	public EquationHTML(MathTree mTree) {
+	public EquationHTML(EquationTree mTree) {
 		this(mTree, true, true);
 	}
 
-	public EquationHTML(MathTree mTree, boolean hasSmallUnits, boolean hasSubscripts) {
+	public EquationHTML(EquationTree mTree, boolean hasSmallUnits, boolean hasSubscripts) {
 		this.mTree = mTree;
 		this.setStyleName(CSS.EQUATION);
 		this.hasSmallUnits = hasSmallUnits;
@@ -86,12 +86,12 @@ public class EquationHTML extends HTML {
 	 *            and adds it to<br/>
 	 * @param displayParentEl
 	 */
-	private Element makeHTMLNode(MathNode mNode, Element displayParentEl) {
-		MathNode mParent = mNode.getParent();
+	private Element makeHTMLNode(EquationNode mNode, Element displayParentEl) {
+		EquationNode mParent = mNode.getParent();
 
 		String id = mNode.getId();
-		TypeML type = mNode.getType();
-		TypeML parentType = mParent.getType();
+		TypeEquationXML type = mNode.getType();
+		TypeEquationXML parentType = mParent.getType();
 		boolean isSecondChild = false;
 
 		// make new display node with appropriate properties
@@ -128,13 +128,13 @@ public class EquationHTML extends HTML {
 		// Add parentheses (fence) to certain elements
 		switch (parentType) {
 		case Term:// Sums in Terms
-			if (TypeML.Sum.equals(type)) {
+			if (TypeEquationXML.Sum.equals(type)) {
 				nodeHtml = fence(nodeHtml, container);
 			}
 			break;
 		case Exponential:// All but Variables and unitless Numbers
-			if (!TypeML.Variable.equals(type)//
-					&& !(TypeML.Number.equals(type) && "".equals(mNode
+			if (!TypeEquationXML.Variable.equals(type)//
+					&& !(TypeEquationXML.Number.equals(type) && "".equals(mNode
 							.getAttribute(MathAttribute.Unit)))) {
 				nodeHtml = fence(nodeHtml, container);
 			}
@@ -146,7 +146,7 @@ public class EquationHTML extends HTML {
 		case Log:
 			functionName = "log";
 			Element base = DOM.createDiv();
-			base.addClassName(TypeML.Log.asLogBase());
+			base.addClassName(TypeEquationXML.Log.asLogBase());
 			base.setInnerText(mNode.getAttribute(MathAttribute.LogBase));
 			nodeHtml.insertFirst(base);
 
@@ -179,7 +179,7 @@ public class EquationHTML extends HTML {
 		case Log:
 		case Trig:
 			// Recursive creation
-			for (MathNode child : mNode.getChildren()) {
+			for (EquationNode child : mNode.getChildren()) {
 				makeHTMLNode(child, nodeHtml);
 			}
 			break;
@@ -215,7 +215,7 @@ public class EquationHTML extends HTML {
 		case Operation:
 			String txt = mNode.getSymbol();
 			if (txt.startsWith("&")) { // must insert as js code
-				for (TypeML.Operator op : TypeML.Operator.values()) {
+				for (TypeEquationXML.Operator op : TypeEquationXML.Operator.values()) {
 					if (op.getHTML().equals(txt)) {
 						txt = op.getSign();
 					}
@@ -236,8 +236,8 @@ public class EquationHTML extends HTML {
 
 	private Element fence(Element nodeHtml, Element container) {
 		String containerClass = container.getClassName();
-		if (!(containerClass.contains(TypeML.Trig.asChild()) || containerClass
-				.contains(TypeML.Log.asChild()))) {
+		if (!(containerClass.contains(TypeEquationXML.Trig.asChild()) || containerClass
+				.contains(TypeEquationXML.Log.asChild()))) {
 
 			nodeHtml = container.appendChild(DOM.createDiv());
 			nodeHtml.addClassName(FENCED);
@@ -263,8 +263,8 @@ public class EquationHTML extends HTML {
 	}
 
 	/**
-	 * Matches the heights of all the children of an {@link TypeML#Equation},
-	 * {@link TypeML#Term} or {@link TypeML#Sum} by:<br/>
+	 * Matches the heights of all the children of an {@link TypeEquationXML#Equation},
+	 * {@link TypeEquationXML#Term} or {@link TypeEquationXML#Sum} by:<br/>
 	 * 1.Lifting centers to the tallest denominator using padding-bottom<br/>
 	 * 2.Matching tops to tallest height with padding-top<br/>
 	 * <b>Note:</b> All children of these nodes are initially aligned at their
@@ -272,9 +272,9 @@ public class EquationHTML extends HTML {
 	 */
 	private void matchHeightsAndAlign(Element curEl) {
 
-		MathNode curNode = displayMap.get(curEl);
+		EquationNode curNode = displayMap.get(curEl);
 
-		TypeML curType = null;
+		TypeEquationXML curType = null;
 		if (curNode != null) {
 			curType = curNode.getType();
 		}
@@ -286,8 +286,8 @@ public class EquationHTML extends HTML {
 			}
 		}
 
-		if (!(TypeML.Equation.equals(curType) || TypeML.Term.equals(curType)
-				|| TypeML.Sum.equals(curType) || TypeML.Exponential
+		if (!(TypeEquationXML.Equation.equals(curType) || TypeEquationXML.Term.equals(curType)
+				|| TypeEquationXML.Sum.equals(curType) || TypeEquationXML.Exponential
 					.equals(curType))) {
 			return;
 		}
@@ -304,7 +304,7 @@ public class EquationHTML extends HTML {
 		int tallestFracChild = 0;
 		for (Element child : childrenHorizontal) {
 			// Find the tallest denominator to match centers
-			if (child.getClassName().contains(TypeML.Fraction.toString())) {
+			if (child.getClassName().contains(TypeEquationXML.Fraction.toString())) {
 				fractionChildrenHorizontal.add(child);
 				for (int i = 0; i < 2; i++) {
 					int fracChildHeight = ((Element) child.getChild(i))
@@ -349,7 +349,7 @@ public class EquationHTML extends HTML {
 		// lowestBottom = curEl.getAbsoluteBottom();
 
 		// Lift exponents of fraction bases to top
-		if (TypeML.Exponential.equals(curType)) {
+		if (TypeEquationXML.Exponential.equals(curType)) {
 			Element base = ((Element) curEl.getChild(0));
 			Element exp = ((Element) curEl.getChild(1));
 			int lift = (exp.getOffsetTop() - base.getOffsetTop());
@@ -392,7 +392,7 @@ public class EquationHTML extends HTML {
 	}
 
 	private void addChildrenIfInline(Element curEl,
-			LinkedList<Element> childrenInline, TypeML curType) {
+			LinkedList<Element> childrenInline, TypeEquationXML curType) {
 		switch (curType) {
 		case Exponential:
 			// Only the base of an exponent is considered inline

@@ -1,6 +1,6 @@
 package com.sciencegadgets.client.equationbrowser;
 
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -9,6 +9,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Equation;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class AlgebraBrowser extends SelectionPanel {
 
@@ -21,9 +22,9 @@ public class AlgebraBrowser extends SelectionPanel {
 				if (mathmlStr != null) {
 					// Element mathml = (Element)
 					// XMLParser.parse(mathmlStr).getDocumentElement();
-					Element mathml = (Element) (new HTML(mathmlStr)
-							.getElement().getFirstChildElement());
-					Moderator.makeAlgebra(mathml, equationBrowser.inEditMode);
+					Element mathml = new HTML(mathmlStr)
+							.getElement().getFirstChildElement();
+					Moderator.switchToAlgebra(mathml, equationBrowser.inEditMode);
 				}
 			}
 		});
@@ -40,8 +41,11 @@ public class AlgebraBrowser extends SelectionPanel {
 
 						if (size == 0) {
 							// Display default a=a if no other equations
+							String eq = TypeEquationXML.Equation.getTag();
+							String var = TypeEquationXML.Variable.getTag();
+							String op = TypeEquationXML.Operation.getTag();
 							add("<div>a=a<div>",
-									"<sgmt:equation><sgmt:var>a</sgmt:var><sgmt:op>=</sgmt:op><sgmt:var>a</sgmt:var></sgmt:equation>");
+									"<"+eq+"><"+var+">a</"+var+"><"+op+">=</"+op+"><"+var+">a</"+var+"></"+eq+">");
 						} else {
 							for (int i = 0; i < size; i++) {
 								Equation equation = eqList[i];

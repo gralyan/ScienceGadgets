@@ -15,6 +15,7 @@ import com.sciencegadgets.client.Prompt;
 
 public abstract class NumberPrompt extends Prompt {
 
+	static final BigDecimal ACCEPTABLE_ERROR = new BigDecimal(".01");
 	private static final int same = 0;
 	private static final int lessThan = -1;
 	final KeyPadNumerical keyPad = new KeyPadNumerical();
@@ -40,10 +41,15 @@ public abstract class NumberPrompt extends Prompt {
 				try {
 					BigDecimal inputValue = new BigDecimal(display.getText());
 					
-					// 1% error acceptable
-					BigDecimal error = inputValue.divide(totalValue, MathContext.DECIMAL32).subtract(new BigDecimal("1")).abs();
-					if (error.compareTo(new BigDecimal(".01")) == lessThan) {
+					// acceptable error
+					BigDecimal error;
+					if(totalValue.compareTo(new BigDecimal(0)) == same) {
+						error = totalValue.subtract(inputValue).abs();
+					}else {
+						error = inputValue.divide(totalValue, MathContext.DECIMAL32).subtract(new BigDecimal("1")).abs();
+					}
 					
+					if (error.compareTo(ACCEPTABLE_ERROR) == lessThan) {
 						// correct
 						disappear();
 						onCorrect();

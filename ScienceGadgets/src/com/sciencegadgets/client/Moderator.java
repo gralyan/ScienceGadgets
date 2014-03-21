@@ -14,10 +14,7 @@
  */
 package com.sciencegadgets.client;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -33,21 +30,20 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
-import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
 
 public class Moderator implements EntryPoint {
 
-	private static int historyCount = 0;
 	private int SGAWidth;
 	private static int SGAHeight;
 	public static RandomSpecPanel randomSpec = null;
@@ -56,97 +52,27 @@ public class Moderator implements EntryPoint {
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
-	private static Widget currentActivity = null;
-	private static AlgebraActivity currentAlgebraActivity;
-
-	private static final HashMap<String, Widget> algebraActivityMap = new HashMap<String, Widget>();
-
 	private static ActivityType currentActivityType = null;
+	private static AlgebraActivity algebraActivity;
+	private static EquationBrowser equationBrowser;
+	private static ConversionActivity conversionActivity;
+
 	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
 	public static boolean isInEasyMode = false;
-	public static final String HISTORY_DELIMITER = "_";
 
 	@Override
 	public void onModuleLoad() {
-		 History.addValueChangeHandler(new HistoryChange<String>());
-		
-		 // // Resize area when window resizes
-		 fitWindow();
-		 Window.addResizeHandler(new ResizeAreaHandler());
-		
-		 detectTouch();
-		
-		 switchToBrowser();
 
-//		String[] testNumbers = { ".00000010"//
-//				, ".000001230"//
-//				, ".00001230"//
-//				, ".0001230"//
-//				, ".001230"//
-//				, ".01230"//
-//				, ".1230"//
-//				, "1.23"//
-//				, "12.3"//
-//				, "123.0"//
-//				, "1230.0"//
-//				, "12300.0"//
-//				, "123000.0"//
-//				, "1230000.0"//
-//				, "12300000.0"//
-//				, ".0000001234567890"//
-//				, ".000001234567890"//
-//				, ".00001234567890"//
-//				, ".0001234567890"//
-//				, ".001234567890"//
-//				, ".01234567890"//
-//				, ".1234567890"//
-//				, "1.234567890"//
-//				, "12.34567890"//
-//				, "123.4567890"//
-//				, "1234.567890"//
-//				, "12345.67890"//
-//				, "123456.7890"//
-//				, "1234567.890"//
-//				, "12345678.90"//
-//				, "123456789.0"//
-//				, "1234567890.0"//
-//				, "12345678900.0"//
-//		};
-//		for (String symbol : testNumbers) {
-//			BigDecimal value = new BigDecimal(symbol);
-//			
-//			// Rounded display value stored as inner test
-//			String displayValue;
-//			if (value.compareTo(new BigDecimal("1000")) < 0
-//					&& value.remainder(new BigDecimal(".01")).compareTo(
-//							new BigDecimal(0)) == 0) {
-//				displayValue = value.stripTrailingZeros().toPlainString();
-//			}else {
-//				displayValue = "#";
-//			}
-////			xmlNode.setInnerText(displayValue);
-//			
-//			// Full value stored as attribute
-//			String fullValue = value.stripTrailingZeros().toString();
-////			setAttribute(MathAttribute.Value, fullValue);
-//
-//			System.out.println("D " + displayValue + "\tF " + fullValue);
-//		}
-//		// for (String symbol : testNumbers) {
-//		// BigDecimal value = new BigDecimal(symbol);
-//		// BigDecimal roundedValue = value.round(new MathContext(3));
-//		// String elipses = value.equals(roundedValue) ? "" : "...";
-//		// // Rounded display value stored as inner test
-//		// String displayValue = roundedValue.toPlainString()//
-//		// .stripTrailingZeros()
-//		// + elipses;
-//		// // xmlNode.setInnerText(displayValue);
-//		// // Full value stored as attribute
-//		// String fullValue = value.stripTrailingZeros().toString();
-//		// // setAttribute(MathAttribute.Value, fullValue);
-//		//
-//		// System.out.println("D " + displayValue + "\tF " + fullValue);
-//		// }
+		HistoryChange historyChange = new HistoryChange();
+		History.addValueChangeHandler(historyChange);
+
+		// // Resize area when window resizes
+		fitWindow();
+		Window.addResizeHandler(new ResizeAreaHandler());
+
+		detectTouch();
+
+		History.fireCurrentHistoryState();
 
 		// Blobs
 		// scienceGadgetArea.add(new UploadButton());
@@ -161,78 +87,70 @@ public class Moderator implements EntryPoint {
 	}
 
 	public enum ActivityType {
-		browser, algebra, conversion;
+		browser, algebrasolve, algebraedit, conversion;
 	}
 
 	public static void setActivity(ActivityType activityType, Widget activity) {
-		// if (!activity.equals(currentActivity)) {
+		if (activityType.equals(currentActivityType)) {
+			return;
+		}
+		scienceGadgetArea.clear();
+		scienceGadgetArea.add(activity);
 		currentActivityType = activityType;
-		String tolken = activityType.toString() + HISTORY_DELIMITER
-				+ historyCount++;
-		algebraActivityMap.put(tolken, activity);
-		History.newItem(tolken);
-		// }
 	}
 
-	public static AlgebraActivity getCurrentAlgebraActivity() {
-		return currentAlgebraActivity;
+	public static void switchToAlgebra(Element equationXML, boolean inEditMode) {
+		switchToAlgebra(equationXML, inEditMode, true);
 	}
-
-	public static MathTree getCurrentMathTree() {
-		return currentAlgebraActivity.getMathTree();
-	}
-
-	public static void reloadEquationPanel(String changeComment, Rule rule) {
-		currentAlgebraActivity.reloadEquationPanel(changeComment, rule);
-	}
-
-	public static void makeAlgebra(Element mathML, boolean inEditMode) {
+	public static void switchToAlgebra(Element equationXML, boolean inEditMode, boolean updateHistory) {
 		try {
-		currentAlgebraActivity = new AlgebraActivity(mathML, inEditMode);
-		currentActivity = currentAlgebraActivity;
-
-		switchToAlgebra();
-		}catch (Exception e) {
+			if (algebraActivity == null || algebraActivity.inEditMode != inEditMode) {
+				algebraActivity = new AlgebraActivity(equationXML, inEditMode);
+			} else {
+				algebraActivity.reCreateEquationTree(equationXML, inEditMode);
+			}
+			algebraActivity.reloadEquationPanel(null, null, updateHistory);
+			ActivityType type = inEditMode ? ActivityType.algebraedit
+					: ActivityType.algebrasolve;
+			setActivity(type, algebraActivity);
+		} catch (Exception e) {
 			e.printStackTrace();
 			JSNICalls.error(e.toString());
 			JSNICalls.error(e.getCause().toString());
 			JSNICalls.error(e.getMessage());
+			switchToBrowser();
 		}
 	}
 
-	public static void switchToAlgebra() {
+	public static void switchToConversion(EquationNode node) {
 
-		scienceGadgetArea.clear();
-		scienceGadgetArea.add(currentAlgebraActivity);
-
-		// reloadEquationPanel(null, null);
-
-		setActivity(ActivityType.algebra, currentAlgebraActivity);
-	}
-
-	public static void switchToConversion(MathNode node) {
-
-		ConversionActivity conversionActivity = new ConversionActivity();
-		currentActivity = conversionActivity;
-		currentActivity.getElement()
-				.setAttribute("id", CSS.CONVERSION_ACTIVITY);
-
+		if (conversionActivity == null) {
+			conversionActivity = new ConversionActivity();
+			conversionActivity.getElement().setAttribute("id",
+					CSS.CONVERSION_ACTIVITY);
+		}
 		conversionActivity.load(node);
 
-		scienceGadgetArea.clear();
-		scienceGadgetArea.add(currentActivity);
-
-		setActivity(ActivityType.conversion, currentActivity);
+		setActivity(ActivityType.conversion, conversionActivity);
 	}
 
-	public void switchToBrowser() {
+	public static void switchToBrowser() {
+		if (equationBrowser == null) {
+			equationBrowser = new EquationBrowser();
+		}
+		setActivity(ActivityType.browser, equationBrowser);
+	}
 
-		currentActivity = new EquationBrowser();
+	public static AlgebraActivity getCurrentAlgebraActivity() {
+		return algebraActivity;
+	}
 
-		scienceGadgetArea.clear();
-		scienceGadgetArea.add(currentActivity);
+	public static EquationTree getCurrentEquationTree() {
+		return algebraActivity.getEquationTree();
+	}
 
-		setActivity(ActivityType.browser, currentActivity);
+	public static void reloadEquationPanel(String changeComment, Rule rule) {
+		algebraActivity.reloadEquationPanel(changeComment, rule);
 	}
 
 	class ResizeAreaHandler implements ResizeHandler {
@@ -240,7 +158,9 @@ public class Moderator implements EntryPoint {
 			@Override
 			public void run() {
 				fitWindow();
-				if (ActivityType.algebra.equals(currentActivityType)) {
+				if (ActivityType.algebraedit.equals(currentActivityType)
+						|| ActivityType.algebrasolve
+								.equals(currentActivityType)) {
 					reloadEquationPanel(null, null);
 				}
 				for (Prompt prompt : prompts) {
@@ -275,8 +195,6 @@ public class Moderator implements EntryPoint {
 		};
 		detectTouchReg = scienceGadgetArea.addDomHandler(detectTouch,
 				TouchStartEvent.getType());
-
-		//
 	}
 
 	void removeDetectTouch() {
@@ -285,32 +203,109 @@ public class Moderator implements EntryPoint {
 		}
 	}
 
-	class HistoryChange<String> implements ValueChangeHandler<String> {
+	class HistoryChange implements ValueChangeHandler<String> {
 
 		@Override
 		public void onValueChange(ValueChangeEvent<String> event) {
-			java.lang.String token = ((java.lang.String) event.getValue());
+//			String token = event.getValue();
 
-			if ("".equals(token)) {
-				return;
-			}
-
-			Widget activity = algebraActivityMap.get(token);
-
-			if (activity != null) {
-				if (currentActivity == activity) {
-				} else {
-					scienceGadgetArea.clear();
-					scienceGadgetArea.add(activity);
-					currentActivity = activity;
-
+			HashMap<Parameter, String> parameterMap = URLParameters
+					.getParameterMap();
+			String activityParameter = parameterMap.get(Parameter.activity);
+			try {
+				ActivityType activityType = ActivityType
+						.valueOf(activityParameter);
+				switch (activityType) {
+				case algebraedit:
+				case algebrasolve:
+					String equationString = parameterMap
+							.get(Parameter.equation);
+					Element equationXML = new HTML(equationString).getElement()
+							.getFirstChildElement();
+					switchToAlgebra(equationXML,
+							ActivityType.algebraedit.equals(activityType), false);
+					break;
+				default:
+					throw new IllegalArgumentException();
 				}
-			}
-			if (currentActivity instanceof AlgebraActivity) {
-				reloadEquationPanel(null, null);
+			} catch (NullPointerException | IllegalArgumentException e) {
+				switchToBrowser();
+				HashMap<Parameter, String> pMap = new HashMap<Parameter, String>();
+				pMap.put(Parameter.activity, ActivityType.browser.toString());
+				URLParameters.setParameters(pMap, false);
 			}
 
 		}
 	}
 
 }
+
+// String[] testNumbers = { ".00000010"//
+// , ".000001230"//
+// , ".00001230"//
+// , ".0001230"//
+// , ".001230"//
+// , ".01230"//
+// , ".1230"//
+// , "1.23"//
+// , "12.3"//
+// , "123.0"//
+// , "1230.0"//
+// , "12300.0"//
+// , "123000.0"//
+// , "1230000.0"//
+// , "12300000.0"//
+// , ".0000001234567890"//
+// , ".000001234567890"//
+// , ".00001234567890"//
+// , ".0001234567890"//
+// , ".001234567890"//
+// , ".01234567890"//
+// , ".1234567890"//
+// , "1.234567890"//
+// , "12.34567890"//
+// , "123.4567890"//
+// , "1234.567890"//
+// , "12345.67890"//
+// , "123456.7890"//
+// , "1234567.890"//
+// , "12345678.90"//
+// , "123456789.0"//
+// , "1234567890.0"//
+// , "12345678900.0"//
+// };
+// for (String symbol : testNumbers) {
+// BigDecimal value = new BigDecimal(symbol);
+//
+// // Rounded display value stored as inner test
+// String displayValue;
+// if (value.compareTo(new BigDecimal("1000")) < 0
+// && value.remainder(new BigDecimal(".01")).compareTo(
+// new BigDecimal(0)) == 0) {
+// displayValue = value.stripTrailingZeros().toPlainString();
+// }else {
+// displayValue = "#";
+// }
+// // xmlNode.setInnerText(displayValue);
+//
+// // Full value stored as attribute
+// String fullValue = value.stripTrailingZeros().toString();
+// // setAttribute(MathAttribute.Value, fullValue);
+//
+// System.out.println("D " + displayValue + "\tF " + fullValue);
+// }
+// // for (String symbol : testNumbers) {
+// // BigDecimal value = new BigDecimal(symbol);
+// // BigDecimal roundedValue = value.round(new MathContext(3));
+// // String elipses = value.equals(roundedValue) ? "" : "...";
+// // // Rounded display value stored as inner test
+// // String displayValue = roundedValue.toPlainString()//
+// // .stripTrailingZeros()
+// // + elipses;
+// // // xmlNode.setInnerText(displayValue);
+// // // Full value stored as attribute
+// // String fullValue = value.stripTrailingZeros().toString();
+// // // setAttribute(MathAttribute.Value, fullValue);
+// //
+// // System.out.println("D " + displayValue + "\tF " + fullValue);
+// // }

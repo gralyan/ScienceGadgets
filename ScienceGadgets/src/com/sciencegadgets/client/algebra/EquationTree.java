@@ -15,7 +15,6 @@
 package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,22 +34,22 @@ import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;
-import com.sciencegadgets.shared.TypeML.ChildRequirement;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML.ChildRequirement;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 import com.sciencegadgets.shared.UnitMap;
 import com.sciencegadgets.shared.UnitHTML;
 
-public class MathTree {
+public class EquationTree {
 
-	private MathNode root;
+	private EquationNode root;
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	public HashMap<String, MathNode> idMap = new HashMap<String, MathNode>();
+	public HashMap<String, EquationNode> idMap = new HashMap<String, EquationNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private HashMap<Element, String> idUnitHTMLMap = new HashMap<Element, String>();
-	private Element mathXML;
+	private Element equationXML;
 	private EquationHTML eqHTML;
 	private boolean inEditMode;
 	private int idCounter = 0;
@@ -59,89 +58,89 @@ public class MathTree {
 	/**
 	 * A tree representation of an equation.
 	 * 
-	 * @param mathML
-	 *            - The equation element in MathML XML
+	 * @param equationXML
+	 *            - The equation element in XML
 	 * @param inEditMode
 	 *            - true if intended for edit mode, false if for solving mode
 	 * @throws TopNodesNotFoundException
 	 */
-	public MathTree(Element mathXML, boolean inEditMode) {
-		this.mathXML = mathXML;
+	public EquationTree(Element equationXML, boolean inEditMode) {
+		this.equationXML = equationXML;
 		this.inEditMode = inEditMode;
 
-		bindXMLtoNodes(mathXML);
+		bindXMLtoNodes(equationXML);
 
 		EquationRandomizer.randomizeNumbers(this, !inEditMode);
 
 		// reloadDisplay(true);
 	}
 
-	public MathTree(TypeML leftType, String leftSymbol, TypeML rightType,
+	public EquationTree(TypeEquationXML leftType, String leftSymbol, TypeEquationXML rightType,
 			String righSymbol, boolean inEditMode) {
 		this(newDummyElement(), inEditMode);
 		getLeftSide().replace(leftType, leftSymbol);
 		getRightSide().replace(rightType, righSymbol);
 	}
 
-	public MathTree(boolean inEditMode) {
+	public EquationTree(boolean inEditMode) {
 		this(newDummyElement(), inEditMode);
 	}
 
 	private static Element newDummyElement() {
-		Element eq = DOM.createElement(TypeML.Operation.getTag());
+		Element eq = DOM.createElement(TypeEquationXML.Operation.getTag());
 		eq.setInnerText("=");
 		eq.setAttribute("id", "dummyNodeEquals");
 
-		Element dummyLeft = DOM.createElement(TypeML.Variable.getTag());
+		Element dummyLeft = DOM.createElement(TypeEquationXML.Variable.getTag());
 		dummyLeft.setInnerText("a");
 		dummyLeft.setAttribute("id", "dummyNodeLeft");
 
-		Element dummyRight = DOM.createElement(TypeML.Variable.getTag());
+		Element dummyRight = DOM.createElement(TypeEquationXML.Variable.getTag());
 		dummyRight.setInnerText("a");
 		dummyRight.setAttribute("id", "dummyNodeRight");
 
-		Element root = DOM.createElement(TypeML.Equation.getTag());
+		Element root = DOM.createElement(TypeEquationXML.Equation.getTag());
 		root.appendChild(dummyLeft);
 		root.appendChild(eq);
 		root.appendChild(dummyRight);
 		return root;
 	}
 
-	public MathTree clone() {
-		return new MathTree(getMathXMLClone(), isInEditMode());
+	public EquationTree clone() {
+		return new EquationTree(getEquationXMLClone(), isInEditMode());
 	}
 
 	public boolean isInEditMode() {
 		return inEditMode;
 	}
 
-	public Element getMathXMLClone() {
-		return (Element) mathXML.cloneNode(true);
+	public Element getEquationXMLClone() {
+		return (Element) equationXML.cloneNode(true);
 	}
 
-	public String getMathXMLString() {
-		String mlString = JSNICalls.elementToString(mathXML);
-		mlString = mlString.replace(
+	public String getEquationXMLString() {
+		String equationString = JSNICalls.elementToString(equationXML);
+		equationString = equationString.replace(
 				" xmlns=\"http://www.w3.org/1998/Math/MathML\"", "").replace(
 				" xmlns=\"http://www.w3.org/1999/xhtml\"", "");
-		return mlString;
+		return equationString;
 	}
 
-	public MathNode getRoot() {
+	public EquationNode getRoot() {
 		return root;
 	}
 
-	public MathNode getLeftSide() {
+	public EquationNode getLeftSide() {
 		checkSideForm();
 		return root.getChildAt(0);
 	}
 
-	public MathNode getRightSide() {
+	public EquationNode getRightSide() {
 		checkSideForm();
 		return root.getChildAt(2);
 	}
 
-	public MathNode getEquals() {
+	public EquationNode getEquals() {
 		checkSideForm();
 		return root.getChildAt(1);
 	}
@@ -149,12 +148,12 @@ public class MathTree {
 	void checkSideForm() {
 		if (root.getChildCount() != 3) {
 			JSNICalls.error("root has too many children, not side=side: "
-					+ getMathXMLClone().getString());
+					+ getEquationXMLClone().getString());
 		}
 		if (!"=".equals(root.getChildAt(1).getSymbol())) {
 			JSNICalls
 					.error("<mo>=</mo> isn't the root's second child, not side=side "
-							+ getMathXMLClone().getString());
+							+ getEquationXMLClone().getString());
 		}
 	}
 
@@ -220,32 +219,32 @@ public class MathTree {
 		return wrappers;
 	}
 
-	public MathNode getNodeById(String id) throws NoSuchElementException {
+	public EquationNode getNodeById(String id) throws NoSuchElementException {
 
-		MathNode node = idMap.get(id);
+		EquationNode node = idMap.get(id);
 		if (node == null) {
 			JSNICalls.error("Can't get node by id: " + id + "\n"
-					+ getMathXMLClone().getString());
+					+ getEquationXMLClone().getString());
 			throw new NoSuchElementException("Can't get node by id: " + id);
 		}
 		return node;
 	}
 
-	public MathNode NEW_NODE(Element xmlNode) {
-		MathNode newNode = new MathNode(xmlNode);
+	public EquationNode NEW_NODE(Element xmlNode) {
+		EquationNode newNode = new EquationNode(xmlNode);
 		AddToMaps(newNode);
 
 		NodeList<Element> descendants = xmlNode.getElementsByTagName("*");
 		for (int i = 0; i < descendants.getLength(); i++) {
 			Element descendantEl = descendants.getItem(i);
-			AddToMaps(new MathNode(descendantEl));
+			AddToMaps(new EquationNode(descendantEl));
 		}
 
 		return newNode;
 	}
 
-	public MathNode NEW_NODE(TypeML type, String symbol) {
-		MathNode newNode = new MathNode(type, symbol);
+	public EquationNode NEW_NODE(TypeEquationXML type, String symbol) {
+		EquationNode newNode = new EquationNode(type, symbol);
 		AddToMaps(newNode);
 		return newNode;
 	}
@@ -256,8 +255,8 @@ public class MathTree {
 			eqValidator = new EquationValidator();
 		}
 
-		for (MathNode node : idMap.values()) {
-			eqValidator.validateMathNode(node);
+		for (EquationNode node : idMap.values()) {
+			eqValidator.validateEquationNode(node);
 		}
 
 		if (!inEditMode) {
@@ -273,7 +272,7 @@ public class MathTree {
 		}
 	}
 
-	private void AddToMaps(MathNode node) {
+	private void AddToMaps(EquationNode node) {
 		String id = node.getId();
 		id = node.createId(id);
 
@@ -287,8 +286,8 @@ public class MathTree {
 	 * 
 	 * @param type
 	 */
-	public ArrayList<MathNode> getNodesByType(TypeML type) {
-		ArrayList<MathNode> nodes = new ArrayList<MathNode>();
+	public ArrayList<EquationNode> getNodesByType(TypeEquationXML type) {
+		ArrayList<EquationNode> nodes = new ArrayList<EquationNode>();
 		String tag = "*";
 		if (type != null) {
 			tag = type.getTag();
@@ -306,35 +305,35 @@ public class MathTree {
 	// Node Class
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class MathNode {
+	public class EquationNode {
 		private Element xmlNode;
 		private Wrapper wrapper;
 
 		/**
-		 * Wrap existing MathML node
+		 * Wrap existing equation XML node
 		 */
-		public MathNode(Element mlNode) {
+		public EquationNode(Element xmlNode) {
 
-			String id = mlNode.getAttribute("id");
+			String id = xmlNode.getAttribute("id");
 			id = createId(id);
-			mlNode.setAttribute("id", id);
+			xmlNode.setAttribute("id", id);
 
-			this.xmlNode = mlNode;
+			this.xmlNode = xmlNode;
 		}
 
 		/**
-		 * Creates a new MathML DOM node which should be added into the MathML
+		 * Creates a new equation XML DOM node which should be added into the EquationNode
 		 * </br>get the DOM node with:
 		 * <p>
 		 * getMlNode()
 		 * </p>
 		 * 
 		 * @param type
-		 *            - The {@link TypeML}
+		 *            - The {@link TypeEquationXML}
 		 * @param symbol
 		 *            - inner text
 		 */
-		public MathNode(TypeML type, String symbol) {
+		public EquationNode(TypeEquationXML type, String symbol) {
 
 			String tag = type.getTag();
 
@@ -350,17 +349,17 @@ public class MathTree {
 		/**
 		 * Returns a copy of this node
 		 */
-		public MathNode clone() {
+		public EquationNode clone() {
 			Element newEl = (Element) xmlNode.cloneNode(true);
 			newEl.removeAttribute("id");
-			MathNode top = new MathNode(newEl);
+			EquationNode top = new EquationNode(newEl);
 			AddToMaps(top);
 
 			NodeList<Element> descendants = newEl.getElementsByTagName("*");
 			for (int i = 0; i < descendants.getLength(); i++) {
 				Element descendantEl = descendants.getItem(i);
 				descendantEl.removeAttribute("id");
-				AddToMaps(new MathNode(descendantEl));
+				AddToMaps(new EquationNode(descendantEl));
 			}
 
 			return top;
@@ -387,16 +386,16 @@ public class MathTree {
 		 *            - the type of the new node
 		 * @return - encasing node
 		 */
-		public MathNode encase(TypeML type) {
+		public EquationNode encase(TypeEquationXML type) {
 			// Don't encase sum in sum or term in term
-			boolean sumOrTerm = TypeML.Sum.equals(type)
-					|| TypeML.Term.equals(type);
+			boolean sumOrTerm = TypeEquationXML.Sum.equals(type)
+					|| TypeEquationXML.Term.equals(type);
 			if (getType().equals(type) && sumOrTerm) {
 				return this;
 			} else if (getParentType().equals(type) && sumOrTerm) {
 				return getParent();
 			} else {
-				MathNode encasing = new MathNode(type, "");
+				EquationNode encasing = new EquationNode(type, "");
 				this.getParent().addBefore(this.getIndex(), encasing);
 				encasing.append(this);
 
@@ -425,8 +424,8 @@ public class MathTree {
 
 			// Propagate leading minus sign or remove leading plus
 			if (getChildCount() != 0) {
-				MathNode possibleMinus = getChildAt(0);
-				if (TypeML.Operation.equals(possibleMinus.getType())) {
+				EquationNode possibleMinus = getChildAt(0);
+				if (TypeEquationXML.Operation.equals(possibleMinus.getType())) {
 					if (Operator.MINUS.getSign().equals(
 							possibleMinus.getSymbol())) {
 						if (getChildCount() > 1) {
@@ -435,7 +434,7 @@ public class MathTree {
 							possibleMinus.remove();
 						} else {
 							possibleMinus.remove();
-							MathNode parent = this.getParent();
+							EquationNode parent = this.getParent();
 							this.remove();
 							parent.decase();
 							JSNICalls.error("Operation with no siblings: "
@@ -452,7 +451,7 @@ public class MathTree {
 
 			switch (this.getChildCount()) {
 			case 0:
-				this.replace(TypeML.Number, "0");
+				this.replace(TypeEquationXML.Number, "0");
 				break;
 			case 1:
 				getParent().addBefore(this.getIndex(), this.getFirstChild());
@@ -466,14 +465,14 @@ public class MathTree {
 			}
 		}
 
-		public MathNode replace(MathNode replacement) {
+		public EquationNode replace(EquationNode replacement) {
 			this.getParent().addBefore(this.getIndex(), replacement);
 			this.remove();
 			return replacement;
 		}
 
-		public MathNode replace(TypeML type, String symbol) {
-			MathNode replacement = new MathNode(type, symbol);
+		public EquationNode replace(TypeEquationXML type, String symbol) {
+			EquationNode replacement = new EquationNode(type, symbol);
 			replace(replacement);
 			return replacement;
 		}
@@ -499,16 +498,16 @@ public class MathTree {
 		 * @param node
 		 *            - the node to be added
 		 */
-		private void add(int index, MathNode node, boolean after)
+		private void add(int index, EquationNode node, boolean after)
 				throws IllegalArgumentException {
 
 			boolean indexOutOfRange = index < 0 || index >= getChildCount();
 
 			// Don't add sum to sum or term to term, just add it's children
 			if (getType().equals(node.getType())
-					&& (TypeML.Sum.equals(node.getType()) || TypeML.Term
+					&& (TypeEquationXML.Sum.equals(node.getType()) || TypeEquationXML.Term
 							.equals(node.getType()))) {
-				LinkedList<MathNode> children = node.getChildren();
+				LinkedList<EquationNode> children = node.getChildren();
 				if (indexOutOfRange) {
 					for (int i = 0; i < children.size(); i++) {
 						append(children.get(i));
@@ -539,47 +538,47 @@ public class MathTree {
 			}
 		}
 
-		public void addAfter(int index, MathNode node) {
+		public void addAfter(int index, EquationNode node) {
 			add(index, node, true);
 		}
 
-		public MathNode addAfter(int index, TypeML type, String symbol) {
-			MathNode newNode = new MathNode(type, symbol);
+		public EquationNode addAfter(int index, TypeEquationXML type, String symbol) {
+			EquationNode newNode = new EquationNode(type, symbol);
 			this.addAfter(index, newNode);
 			return newNode;
 		}
 
-		public void addBefore(int index, MathNode node) {
+		public void addBefore(int index, EquationNode node) {
 			add(index, node, false);
 		}
 
-		public MathNode addBefore(int index, TypeML type, String symbol) {
-			MathNode newNode = new MathNode(type, symbol);
+		public EquationNode addBefore(int index, TypeEquationXML type, String symbol) {
+			EquationNode newNode = new EquationNode(type, symbol);
 			this.addBefore(index, newNode);
 			return newNode;
 		}
 
-		public MathNode append(MathNode newNode) {
+		public EquationNode append(EquationNode newNode) {
 			addBefore(-1, newNode);
 			return newNode;
 		}
 
-		public MathNode append(TypeML type, String symbol) {
+		public EquationNode append(TypeEquationXML type, String symbol) {
 			return addBefore(-1, type, symbol);
 		}
 
-		public MathNode addFirst(MathNode newNode) {
+		public EquationNode addFirst(EquationNode newNode) {
 			addBefore(0, newNode);
 			return newNode;
 		}
 
-		public MathNode addFirst(TypeML type, String symbol) {
+		public EquationNode addFirst(TypeEquationXML type, String symbol) {
 			return addBefore(0, type, symbol);
 		}
 
-		public LinkedList<MathNode> getChildren() {
+		public LinkedList<EquationNode> getChildren() {
 			NodeList<Node> childrenNodesList = getXMLNode().getChildNodes();
-			LinkedList<MathNode> childrenNodes = new LinkedList<MathNode>();
+			LinkedList<EquationNode> childrenNodes = new LinkedList<EquationNode>();
 
 			for (int i = 0; i < childrenNodesList.getLength(); i++) {
 				Node curNode = childrenNodesList.getItem(i);
@@ -593,7 +592,7 @@ public class MathTree {
 			return childrenNodes;
 		}
 
-		public MathNode getChildAt(int index) {
+		public EquationNode getChildAt(int index) {
 
 			if (index < 0
 					|| index > getChildCount() - 1
@@ -612,7 +611,7 @@ public class MathTree {
 			return getNodeById(id);
 		}
 
-		public MathNode getFirstChild() {
+		public EquationNode getFirstChild() {
 			return getChildAt(0);
 		}
 
@@ -627,14 +626,14 @@ public class MathTree {
 		/**
 		 * @return <b>Next sibling</b> or <b>null</b> if none exists
 		 */
-		public MathNode getNextSibling() {
+		public EquationNode getNextSibling() {
 			return getSibling(1);
 		}
 
 		/**
 		 * @return <b>Previous sibling</b> or <b>null</b> if none exists
 		 */
-		public MathNode getPrevSibling() {
+		public EquationNode getPrevSibling() {
 			return getSibling(-1);
 		}
 
@@ -648,12 +647,12 @@ public class MathTree {
 		 *            ex:<br/>
 		 *            -1 for previous </br>1 for next
 		 */
-		private MathNode getSibling(int indexesAway) {
-			MathNode parent = this.getParent();
+		private EquationNode getSibling(int indexesAway) {
+			EquationNode parent = this.getParent();
 			int siblingIndex = getIndex() + indexesAway;
 
 			try {
-				MathNode sibling = parent.getChildAt(siblingIndex);
+				EquationNode sibling = parent.getChildAt(siblingIndex);
 				return sibling;
 			} catch (IllegalArgumentException e) {
 				return null;
@@ -678,9 +677,9 @@ public class MathTree {
 		}
 
 		private void removeChildren() {
-			LinkedList<MathNode> children = getChildren();
+			LinkedList<EquationNode> children = getChildren();
 
-			for (MathNode child : children) {
+			for (EquationNode child : children) {
 				String id = child.getId();
 				idMap.remove(id);
 				idMLMap.remove(id);
@@ -692,15 +691,15 @@ public class MathTree {
 			return this.getParent().getChildren().indexOf(this);
 		}
 
-		public MathNode getParent() {
-			if ("math".equalsIgnoreCase(getTag())) {
+		public EquationNode getParent() {
+			if (TypeEquationXML.Equation.getTag().equalsIgnoreCase(getTag())) {
 				throw new NoSuchElementException(
-						"Can't get the parent of a math tag because it's the root:\n"
+						"Can't get the parent of an equation tag because it's the root:\n"
 								+ toString());
 			}
 			Element parentElement = getXMLNode().getParentElement();
 			String parentId = parentElement.getAttribute("id");
-			MathNode parentNode = getNodeById(parentId);
+			EquationNode parentNode = getNodeById(parentId);
 			return parentNode;
 		}
 
@@ -822,8 +821,8 @@ public class MathTree {
 			return xmlNode.getTagName().toLowerCase();
 		}
 
-		public MathTree getTree() {
-			return MathTree.this;
+		public EquationTree getTree() {
+			return EquationTree.this;
 		}
 
 		public String getId() {
@@ -865,11 +864,11 @@ public class MathTree {
 				return false;
 		}
 
-		public TypeML.Operator getOperation() {
-			if (TypeML.Operation.equals(getType())) {
+		public TypeEquationXML.Operator getOperation() {
+			if (TypeEquationXML.Operation.equals(getType())) {
 				String symbol = getSymbol();
 
-				for (TypeML.Operator op : TypeML.Operator.values()) {
+				for (TypeEquationXML.Operator op : TypeEquationXML.Operator.values()) {
 					if (op.getSign().equalsIgnoreCase(symbol)
 							|| op.getHTML().equalsIgnoreCase(symbol)) {
 						return op;
@@ -894,17 +893,17 @@ public class MathTree {
 			return false;
 		}
 
-		public TypeML getType() {
-			return TypeML.getType(getTag());
+		public TypeEquationXML getType() {
+			return TypeEquationXML.getType(getTag());
 		}
 
-		public TypeML getParentType() {
+		public TypeEquationXML getParentType() {
 			Element parentEl = getXMLNode().getParentElement();
 			if (parentEl == null) {
 				return null;
 			}
 			String parentTag = parentEl.getTagName();
-			return TypeML.getType(parentTag);
+			return TypeEquationXML.getType(parentTag);
 		}
 
 		public Element getHTMLClone(boolean hasSmallUnits,
@@ -925,7 +924,7 @@ public class MathTree {
 
 		/**
 		 * This should only be done after
-		 * {@link MathTree#reloadDisplay(boolean)}
+		 * {@link EquationTree#reloadDisplay(boolean)}
 		 * 
 		 * @return The current HTML element associated with this node
 		 */
@@ -959,7 +958,7 @@ public class MathTree {
 			getHTML(true, true).addClassName(CSS.LINE_THROUGH);
 		}
 
-		public boolean isLike(MathNode another) {
+		public boolean isLike(EquationNode another) {
 
 			if (!getType().equals(another.getType())) {
 				return false;
@@ -970,9 +969,9 @@ public class MathTree {
 			case Term:
 				// fall through
 			case Sum:
-				LinkedList<MathNode> assignedOtherChildren = new LinkedList<MathNode>();
-				a: for (MathNode child : getChildren()) {
-					b: for (MathNode otherChild : another.getChildren()) {
+				LinkedList<EquationNode> assignedOtherChildren = new LinkedList<EquationNode>();
+				a: for (EquationNode child : getChildren()) {
+					b: for (EquationNode otherChild : another.getChildren()) {
 						if (assignedOtherChildren.contains(otherChild)) {
 							continue b;
 						}
@@ -1042,29 +1041,29 @@ public class MathTree {
 
 	}
 
-	private void bindXMLtoNodes(Node mathXMLequation) {
-		Element rootNode = (Element) mathXMLequation;
+	private void bindXMLtoNodes(Node equationXMLNode) {
+		Element rootNode = (Element) equationXMLNode;
 
 		root = bindXMLtoNodeRecursive(rootNode);
 		validateTree();
 	}
 
-	private MathNode bindXMLtoNodeRecursive(Element mathMLNode) {
+	private EquationNode bindXMLtoNodeRecursive(Element equationXMLNode) {
 
-		MathNode mathNode = new MathNode(mathMLNode);
-		String id = mathNode.getId();
-		idMap.put(id, mathNode);
-		idMLMap.put(id, mathMLNode);
+		EquationNode eqNode = new EquationNode(equationXMLNode);
+		String id = eqNode.getId();
+		idMap.put(id, eqNode);
+		idMLMap.put(id, equationXMLNode);
 
-		NodeList<Node> mathMLChildren = mathMLNode.getChildNodes();
-		for (int i = 0; i < mathMLChildren.getLength(); i++) {
-			Element currentNode = (Element) mathMLChildren.getItem(i);
+		NodeList<Node> equationXMLNodeChildren = equationXMLNode.getChildNodes();
+		for (int i = 0; i < equationXMLNodeChildren.getLength(); i++) {
+			Element currentNode = (Element) equationXMLNodeChildren.getItem(i);
 
 			if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
 				bindXMLtoNodeRecursive((Element) currentNode);
 			}
 		}
-		return mathNode;
+		return eqNode;
 	}
 
 }

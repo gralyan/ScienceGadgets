@@ -19,7 +19,7 @@ import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.ToggleSlide;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.UnitAttribute;
@@ -56,7 +56,7 @@ public abstract class QuantitySpecification extends Prompt {
 
 	FlowPanel mainPanel = uiBinder.createAndBindUi(this);
 
-	protected MathNode node;
+	protected EquationNode node;
 	private boolean isReciprocal = false;
 
 	// Stores the unit name and associated exponent
@@ -64,7 +64,7 @@ public abstract class QuantitySpecification extends Prompt {
 	protected UnitAttribute dataUnit = new UnitAttribute("");
 	protected Element unitHTML;
 
-	public QuantitySpecification(MathNode mathNode, boolean clearDisplays) {
+	public QuantitySpecification(EquationNode mathNode, boolean clearDisplays) {
 		super();
 		this.node = mathNode;
 
@@ -132,10 +132,10 @@ public abstract class QuantitySpecification extends Prompt {
 		reload(mathNode, clearDisplays);
 	}
 
-	public void reload(MathNode mathNode) {
+	public void reload(EquationNode mathNode) {
 		reload(mathNode, true);
 	}
-	public void reload(MathNode mathNode, boolean clearDisplays) {
+	public void reload(EquationNode mathNode, boolean clearDisplays) {
 
 		this.node = mathNode;
 
@@ -171,7 +171,7 @@ public abstract class QuantitySpecification extends Prompt {
 
 	}
 
-	private boolean canHaveUnits(MathNode mNode) {
+	private boolean canHaveUnits(EquationNode mNode) {
 		switch (mNode.getParentType()) {
 		case Exponential:
 			if (mNode.getIndex() == 1) {

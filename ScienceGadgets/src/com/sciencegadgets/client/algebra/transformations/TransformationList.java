@@ -4,32 +4,29 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class TransformationList extends LinkedList<TransformationButton> {
 	private static final long serialVersionUID = -3043410062241803505L;
-	private MathNode contextNode;
-	MathTree beforeAfterTree = null;
+	private EquationNode contextNode;
+	EquationTree beforeAfterTree = null;
 	public boolean reloadAlgebraActivity = true;
 
-	public TransformationList(MathNode contextNode) {
+	public TransformationList(EquationNode contextNode) {
 		super();
 		this.contextNode = contextNode;
 	}
 
-	public MathNode getNode() {
+	public EquationNode getNode() {
 		return contextNode;
 	}
 
-	public static TransformationList[] FIND_ALL(MathNode node) {
+	public static TransformationList[] FIND_ALL(EquationNode node) {
 		TransformationList typeSpecific = new TransformationList(node);
-		TransformationList toBothSides = new TransformationList(node);
+		TransformationList toBothSides = new BothSidesTransformations(node);
 		TransformationList general = new TransformationList(node);
-		TransformationList[] lists = { typeSpecific, toBothSides, general };
-
-		toBothSides = new BothSidesTransformations(node);
 
 		switch (node.getType()) {
 		case Exponential:
@@ -63,17 +60,20 @@ public class TransformationList extends LinkedList<TransformationButton> {
 			break;
 		}
 
-		if (TypeML.Fraction.equals(node.getParentType())
+		if (TypeEquationXML.Fraction.equals(node.getParentType())
 				&& node.getIndex() == 1) {
 			general.add(AlgebraicTransformations.denominatorFlip_check(node,
 					general));
 		}
+
+		TransformationList[] lists = { typeSpecific, toBothSides, general };
 		
+		// Name as preview
 		for(TransformationList list : lists) {
 			for(TransformationButton button : list) {
 				String buttonHTML = button.getHTML();
 				if(buttonHTML == null || "".equals(buttonHTML)) {
-					MathTree previewEq = button.getPreview();
+					EquationTree previewEq = button.getPreview();
 					String preview = null;
 					if (previewEq != null) {
 						preview = previewEq.getRightDisplay();

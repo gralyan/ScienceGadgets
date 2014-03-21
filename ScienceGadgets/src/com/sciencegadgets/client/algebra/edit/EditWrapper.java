@@ -8,19 +8,19 @@ import com.google.gwt.user.client.Element;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationPanel;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.EquationWrapper;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class EditWrapper extends EquationWrapper {
 
 	public ChangeNodeMenu changeNodeMenu = new ChangeNodeMenu();
 
-	public EditWrapper(MathNode node, AlgebraActivity algebraActivity, Element element) {
+	public EditWrapper(EquationNode node, AlgebraActivity algebraActivity, Element element) {
 		super(node, algebraActivity, element);
 		
 		
-		if(TypeML.Operation.equals(node.getType())) {
+		if(TypeEquationXML.Operation.equals(node.getType())) {
 			if(Moderator.isTouch) {
 				addTouchStartHandler(new OperationTouchHandler());
 			}else {
@@ -62,22 +62,22 @@ public class EditWrapper extends EquationWrapper {
 	}
 	
 	private void changeOperator() {
-		TypeML.Operator operation = node.getOperation();
+		TypeEquationXML.Operator operation = node.getOperation();
 		if (operation == null) {
 			return;
 		}
 		switch (operation) {
 		case CROSS:
-			node.setSymbol(TypeML.Operator.DOT.getSign());
+			node.setSymbol(TypeEquationXML.Operator.DOT.getSign());
 			break;
 		case DOT:
-			node.setSymbol(TypeML.Operator.CROSS.getSign());
+			node.setSymbol(TypeEquationXML.Operator.CROSS.getSign());
 			break;
 		case MINUS:
-			node.setSymbol(TypeML.Operator.PLUS.getSign());
+			node.setSymbol(TypeEquationXML.Operator.PLUS.getSign());
 			break;
 		case PLUS:
-			node.setSymbol(TypeML.Operator.MINUS.getSign());
+			node.setSymbol(TypeEquationXML.Operator.MINUS.getSign());
 			break;
 		}
 		 Moderator.reloadEquationPanel(null, null);

@@ -34,7 +34,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 
-public class AlgOut extends FlowPanel {
+public class AlgebraHistory extends FlowPanel {
 
 	private AlgebraActivity algebraActivity;
 
@@ -45,7 +45,7 @@ public class AlgOut extends FlowPanel {
 	public static final String UP_ARROW = "\u2191";
 	boolean wasTouchMoved = false;
 
-	public AlgOut(AlgebraActivity algebraActivity) {
+	public AlgebraHistory(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
 		addStyleName(CSS.ALG_OUT);
 
@@ -78,14 +78,14 @@ public class AlgOut extends FlowPanel {
 		firstRow.setSize("100%", getOffsetHeight() + "px");
 	}
 
-	public void updateAlgOut(String changeComment, Rule rule, MathTree mathTree) {
+	public void updateAlgebraHistory(String changeComment, Rule rule, EquationTree mathTree) {
 
 		changeComment = changeComment.replace("lineThrough", "");
 		
-		add(new AlgOutRow(changeComment, rule, mathTree));
+		add(new AlgebraHistoryRow(changeComment, rule, mathTree));
 
 		if (changeComment.contains(BothSidesTransformations.BOTH_SIDES)) {
-			add(new AlgOutRow(changeComment.replace(
+			add(new AlgebraHistoryRow(changeComment.replace(
 					BothSidesTransformations.BOTH_SIDES, UP_ARROW)));
 		}
 
@@ -98,12 +98,12 @@ public class AlgOut extends FlowPanel {
 								- getElement().getClientHeight());
 	}
 
-	class AlgOutRow extends FlowPanel {
+	class AlgebraHistoryRow extends FlowPanel {
 		private FlowPanel eqSide = new FlowPanel();
 		private Anchor ruleSide = new Anchor();
 
 		// Change row
-		AlgOutRow(String changeComment) {
+		AlgebraHistoryRow(String changeComment) {
 			this(new HTML("<div>" + changeComment
 					+ "</div><div></div><div>" + changeComment + "</div>"));
 
@@ -112,7 +112,7 @@ public class AlgOut extends FlowPanel {
 		}
 
 		// Equation row
-		AlgOutRow(String changeComment, Rule rule, MathTree mathTree) {
+		AlgebraHistoryRow(String changeComment, Rule rule, EquationTree mathTree) {
 			this(mathTree.getDisplay());
 
 			ruleSide.setHTML(changeComment);
@@ -123,7 +123,7 @@ public class AlgOut extends FlowPanel {
 			}
 		}
 
-		private AlgOutRow(HTML root) {
+		private AlgebraHistoryRow(HTML root) {
 			addStyleName(CSS.ALG_OUT_ROW);
 
 			eqSide.addStyleName(CSS.ALG_OUT_EQ_ROW);

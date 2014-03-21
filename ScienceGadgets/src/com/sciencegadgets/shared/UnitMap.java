@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.conversion.DerivedUnit;
 
 public class UnitMap extends LinkedHashMap<UnitName, Integer> {
@@ -15,7 +15,7 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 		super();
 	}
 
-	public UnitMap(MathNode mNode) {
+	public UnitMap(EquationNode mNode) {
 		this(mNode.getUnitAttribute());
 	}
 

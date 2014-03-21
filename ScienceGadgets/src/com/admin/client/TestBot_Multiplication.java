@@ -3,8 +3,8 @@ package com.admin.client;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.sciencegadgets.client.algebra.MathTree;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.MultiplyTransformations;
 
 public class TestBot_Multiplication {

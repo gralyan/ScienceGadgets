@@ -16,21 +16,21 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.AssociativeDropController;
 import com.sciencegadgets.client.conversion.ConversionWrapper;
 import com.sciencegadgets.client.conversion.ReorderDropController;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class Wrapper extends HTML implements HasClickHandlers,
 		HasTouchStartHandlers, HasTouchEndHandlers {
 	
-	protected MathNode node;
+	protected EquationNode node;
 	protected AbsolutePanel parentPanel;
 	protected WrapDragController dragController = null;
 	public boolean moved = false;
 
-	public Wrapper(MathNode node, final AbsolutePanel parentPanel,
+	public Wrapper(EquationNode node, final AbsolutePanel parentPanel,
 			Element element) {
 		super(element);
 
@@ -52,7 +52,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	}
 
-	public MathNode getNode() {
+	public EquationNode getNode() {
 		return node;
 	}
 
@@ -70,7 +70,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	public void select() {
 		this.getElement().addClassName(CSS.SELECTED_WRAPPER);
-		if(TypeML.Operation.equals(node.getType())) {
+		if(TypeEquationXML.Operation.equals(node.getType())) {
 			getNextSiblingWrapper().getElement().addClassName(CSS.SELECTED_WRAPPER);
 			getPrevSiblingWrapper().getElement().addClassName(CSS.SELECTED_WRAPPER);
 		}
@@ -78,7 +78,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	public void unselect() {
 		this.getElement().removeClassName(CSS.SELECTED_WRAPPER);
-		if(TypeML.Operation.equals(node.getType())) {
+		if(TypeEquationXML.Operation.equals(node.getType())) {
 			getNextSiblingWrapper().getElement().removeClassName(CSS.SELECTED_WRAPPER);
 			getPrevSiblingWrapper().getElement().removeClassName(CSS.SELECTED_WRAPPER);
 		}
@@ -99,15 +99,15 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	public void addAssociativeDragDrop() {
 
 		// Add associative drag and drop
-		if ((TypeML.Sum.equals(node.getParentType()) || TypeML.Term.equals(node
-				.getParentType())) && !TypeML.Operation.equals(node.getType())) {
+		if ((TypeEquationXML.Sum.equals(node.getParentType()) || TypeEquationXML.Term.equals(node
+				.getParentType())) && !TypeEquationXML.Operation.equals(node.getType())) {
 
 			addDragController();
 
-			LinkedList<MathNode> siblings = node.getParent().getChildren();
+			LinkedList<EquationNode> siblings = node.getParent().getChildren();
 			siblings.remove(node);
-			for (MathNode dropNode : siblings) {
-				if (!TypeML.Operation.equals(dropNode.getType())) {
+			for (EquationNode dropNode : siblings) {
+				if (!TypeEquationXML.Operation.equals(dropNode.getType())) {
 					DropController controller = null;
 					Wrapper dropWraper = dropNode.getWrapper();
 					if (dropWraper instanceof ConversionWrapper) {

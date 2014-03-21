@@ -5,12 +5,12 @@ import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.EquationWrapper;
-import com.sciencegadgets.shared.TypeML;
-import com.sciencegadgets.shared.TypeML.Operator;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 public class AssociativeDropController extends TransformationDropController {
 	
@@ -24,22 +24,22 @@ public class AssociativeDropController extends TransformationDropController {
 	public void onDrop(DragContext context) {
 		super.onDrop(context);
 
-		MathNode drag = ((Wrapper) context.draggable).getNode();
-		MathNode target = ((Wrapper) getDropTarget())
+		EquationNode drag = ((Wrapper) context.draggable).getNode();
+		EquationNode target = ((Wrapper) getDropTarget())
 				.getNode();
-		MathNode parent = drag.getParent();
-		boolean isSum = TypeML.Sum.equals(parent.getType());
+		EquationNode parent = drag.getParent();
+		boolean isSum = TypeEquationXML.Sum.equals(parent.getType());
 
 		drag.highlight();
 		target.highlight();
 
-		MathNode dragOp = drag.getPrevSibling();
-		if (dragOp == null || !TypeML.Operation.equals(dragOp.getType())) {
+		EquationNode dragOp = drag.getPrevSibling();
+		if (dragOp == null || !TypeEquationXML.Operation.equals(dragOp.getType())) {
 			if (isSum) {
-				dragOp = drag.getTree().NEW_NODE(TypeML.Operation,
+				dragOp = drag.getTree().NEW_NODE(TypeEquationXML.Operation,
 						Operator.PLUS.getSign());
 			} else {
-				dragOp = drag.getTree().NEW_NODE(TypeML.Operation,
+				dragOp = drag.getTree().NEW_NODE(TypeEquationXML.Operation,
 						Operator.getMultiply().getSign());
 			}
 		}
@@ -49,17 +49,17 @@ public class AssociativeDropController extends TransformationDropController {
 			parent.addAfter(target.getIndex(), dragOp);
 			parent.addAfter(dragOp.getIndex(), drag);
 
-			MathNode firstNode = parent.getFirstChild();
-			if (TypeML.Operation.equals(firstNode.getType()) && !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
+			EquationNode firstNode = parent.getFirstChild();
+			if (TypeEquationXML.Operation.equals(firstNode.getType()) && !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
 				firstNode.remove();
 			}
 		} else {// add before drop
 			
 			if(target.getIndex() == 0){
 				if(isSum){
-					parent.addFirst(TypeML.Operation, Operator.PLUS.getSign());
+					parent.addFirst(TypeEquationXML.Operation, Operator.PLUS.getSign());
 				}else{
-				parent.addFirst(TypeML.Operation, Operator.getMultiply().getSign());
+				parent.addFirst(TypeEquationXML.Operation, Operator.getMultiply().getSign());
 				}
 			}
 			int dropIndex = target.getPrevSibling().getIndex();

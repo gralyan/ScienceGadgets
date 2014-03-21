@@ -8,7 +8,7 @@ import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.SymbolDisplay;
 import com.sciencegadgets.client.Prompt;
-import com.sciencegadgets.client.algebra.MathTree;
+import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.conversion.Constant;
 
 public class LogBaseSpecification extends Prompt {

@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.Random;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 
 public class EquationRandomizer {
 
@@ -25,11 +25,11 @@ public class EquationRandomizer {
 	 *            random symbol
 	 * @return
 	 */
-	public static void randomizeNumbers(MathTree mTree, boolean randomize) {
+	public static void randomizeNumbers(EquationTree mTree, boolean randomize) {
 
-		ArrayList<MathNode> variables = mTree.getNodesByType(TypeML.Number);
+		ArrayList<EquationNode> variables = mTree.getNodesByType(TypeEquationXML.Number);
 
-		for (MathNode var : variables) {
+		for (EquationNode var : variables) {
 			String varRandomness = var.getAttribute(MathAttribute.Randomness);
 
 			if (varRandomness.contains(RandomSpecPanel.DELIMITER)) {

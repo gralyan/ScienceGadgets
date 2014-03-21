@@ -58,8 +58,6 @@ public class SelectionPanel extends FlowPanel {
 	 * @return - true if cell is found
 	 */
 	public boolean removeCell(String value) {
-		System.out.println("v "+value);
-		System.out.println("c "+cells);
 		for(Cell cell : getCells()) {
 			if(value.equals(cell.value)) {
 				cells.remove(cell);

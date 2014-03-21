@@ -10,11 +10,11 @@ import com.sciencegadgets.client.KeyPadNumerical;
 import com.sciencegadgets.client.UnitSelection;
 import com.sciencegadgets.client.SelectionPanel.Cell;
 import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.client.conversion.DerivedUnit;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;
 
 public class NumberSpecification extends QuantitySpecification {
@@ -25,10 +25,10 @@ public class NumberSpecification extends QuantitySpecification {
 	String randomness = "";
 	Constant constantSeleced = null;
 
-	public NumberSpecification(MathNode mathNode) {
+	public NumberSpecification(EquationNode mathNode) {
 		super(mathNode, true);
 	}
-	public NumberSpecification(MathNode mathNode, boolean clearDisplays) {
+	public NumberSpecification(EquationNode mathNode, boolean clearDisplays) {
 		super(mathNode, clearDisplays);
 
 		// Number Pad
@@ -116,7 +116,7 @@ public class NumberSpecification extends QuantitySpecification {
 	@Override
 	void setNode(String symbol) {
 
-		node = node.replace(TypeML.Number, symbol);
+		node = node.replace(TypeEquationXML.Number, symbol);
 
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 			node.getXMLNode().setAttribute(

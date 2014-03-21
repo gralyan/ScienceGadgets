@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.transformations;
 
 
 	public enum Rule {
+		CONVERSION, //
 		COMMUNATIVE_PROPERTY, //
 		ADDITION,//
 		MULTIPLICATION,//
@@ -18,7 +19,8 @@ package com.sciencegadgets.client.algebra.transformations;
 		INTEGER_FACTORIZATION,//
 		INVERSE_TRIGONOMETRIC_FUNCTIONS,//
 		TRIGONOMETRIC_FUNCTIONS,//
-		LOGARITHM;//
+		LOGARITHM,//
+		SUBSTITUTION;//
 		
 
 		public static final String GOOGLE_SEARCH_PREFIX = "https://www.google.com/#q=";

@@ -6,7 +6,7 @@ import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 
 public class ReorderDropController extends AbstractDropController {
@@ -24,9 +24,9 @@ public class ReorderDropController extends AbstractDropController {
 	public void onDrop(DragContext context) {
 		super.onDrop(context);
 
-		MathNode drag = ((Wrapper) context.draggable).getNode();
-		MathNode target = ((Wrapper) getDropTarget()).getNode();
-		MathNode parent = drag.getParent();
+		EquationNode drag = ((Wrapper) context.draggable).getNode();
+		EquationNode target = ((Wrapper) getDropTarget()).getNode();
+		EquationNode parent = drag.getParent();
 
 		LinkedList<UnitDisplay> displayList = conversionActivity.unitDisplays;
 		ConversionWrapper dragWraper = ((ConversionWrapper) context.draggable);

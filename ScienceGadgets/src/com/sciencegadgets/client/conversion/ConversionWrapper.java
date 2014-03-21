@@ -2,12 +2,12 @@ package com.sciencegadgets.client.conversion;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.algebra.MathTree.MathNode;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.UnitMultiple;
@@ -64,14 +64,14 @@ public class ConversionWrapper extends Wrapper {
 	}
 
 	public void addUnitCancelDropControllers() {
-		MathNode thisSide = node.getParent();
-		if (!TypeML.Fraction.equals(thisSide.getParentType())) {
+		EquationNode thisSide = node.getParent();
+		if (!TypeEquationXML.Fraction.equals(thisSide.getParentType())) {
 			return;
 		}
-		MathNode otherSide = thisSide.getIndex() == 0 ? thisSide
+		EquationNode otherSide = thisSide.getIndex() == 0 ? thisSide
 				.getNextSibling() : thisSide.getPrevSibling();
 
-		for (MathNode targetNode : otherSide.getChildren()) {
+		for (EquationNode targetNode : otherSide.getChildren()) {
 			ConversionWrapper targetWrapper = (ConversionWrapper) targetNode
 					.getWrapper();
 			if (targetWrapper == null) {

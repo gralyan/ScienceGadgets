@@ -1,46 +1,30 @@
 package com.sciencegadgets.shared;
 
-import java.util.NoSuchElementException;
-
 import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 
 /**
- * <em><b>TypeML - tag - attributes</b></em></br> Number - mn -
- * data-randomness</br> Number - mn - data-unit</br> Trig- trig -
- * data-function</br> Log- log - data-base</br>
- * 
+ * Types of equation xml nodes. See {@link MathAttribute} for attributes
  */
 
-public enum TypeML {
-	Equation("sgmt:equation",CSS.EQUATION, ChildRequirement.EQUATION), //
-	Number("sgmt:num",CSS.NUMBER, ChildRequirement.TERMINAL), //
-	Variable("sgmt:var",CSS.VARIABLE, ChildRequirement.TERMINAL), //
-	Operation("sgmt:op",CSS.OPERATION, ChildRequirement.TERMINAL), //
-	Term("sgmt:term",CSS.TERM, ChildRequirement.SEQUENCE), //
-	Sum("sgmt:sum",CSS.SUM, ChildRequirement.SEQUENCE), //
-	Fraction("sgmt:frac",CSS.FRACTION, ChildRequirement.BINARY), //
-	Exponential("sgmt:exp",CSS.EXPONENTIAL, ChildRequirement.BINARY), //
-	Log("sgmt:log",CSS.LOG, ChildRequirement.UNARY), //
-	Trig("sgmt:trig",CSS.TRIG, ChildRequirement.UNARY);
-
-	// Equation("math", ChildRequirement.EQUATION), //
-	// Number("mn", ChildRequirement.TERMINAL), //
-	// Variable("mi", ChildRequirement.TERMINAL), //
-	// Operation("mo", ChildRequirement.TERMINAL), //
-	// Term("mrow", ChildRequirement.SEQUENCE), //
-	// Sum("mfenced", ChildRequirement.SEQUENCE), //
-	// Fraction("mfrac", ChildRequirement.BINARY), //
-	// Exponential("msup", ChildRequirement.BINARY), //
-	// Log("log", ChildRequirement.UNARY), //
-	// Trig("trig", ChildRequirement.UNARY);
+public enum TypeEquationXML {
+	Equation("sget:equation",CSS.EQUATION, ChildRequirement.EQUATION), //
+	Number("sget:num",CSS.NUMBER, ChildRequirement.TERMINAL), //
+	Variable("sget:var",CSS.VARIABLE, ChildRequirement.TERMINAL), //
+	Operation("sget:op",CSS.OPERATION, ChildRequirement.TERMINAL), //
+	Term("sget:term",CSS.TERM, ChildRequirement.SEQUENCE), //
+	Sum("sget:sum",CSS.SUM, ChildRequirement.SEQUENCE), //
+	Fraction("sget:frac",CSS.FRACTION, ChildRequirement.BINARY), //
+	Exponential("sget:exp",CSS.EXPONENTIAL, ChildRequirement.BINARY), //
+	Log("sget:log",CSS.LOG, ChildRequirement.UNARY), //
+	Trig("sget:trig",CSS.TRIG, ChildRequirement.UNARY);
 
 	private String tag;
 	private String cssClassName;
 	private ChildRequirement childRequirement;
 	public static final String IN_PREFIX = "in-";
 
-	TypeML(String tag,String cssClassName, ChildRequirement childRequirement) {
+	TypeEquationXML(String tag,String cssClassName, ChildRequirement childRequirement) {
 		this.tag = tag;
 		this.childRequirement = childRequirement;
 		this.cssClassName = cssClassName;
@@ -86,9 +70,9 @@ public enum TypeML {
 
 	}
 
-	public static TypeML getType(String tag) throws NoSuchElementException {
+	public static TypeEquationXML getType(String tag) {
 		tag = tag.toLowerCase();
-		for (TypeML type : TypeML.values()) {
+		for (TypeEquationXML type : TypeEquationXML.values()) {
 			if (type.getTag().equals(tag)) {
 				return type;
 			}

@@ -20,7 +20,7 @@ import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeML;
+import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.UnitName;
 
@@ -50,7 +50,7 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 			Document doc = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder()
 					.parse(new InputSource(new StringReader(mathML)));
-			NodeList variables = doc.getElementsByTagName(TypeML.Variable
+			NodeList variables = doc.getElementsByTagName(TypeEquationXML.Variable
 					.getTag());
 
 			for (int i = 0; i < variables.getLength(); i++) {
