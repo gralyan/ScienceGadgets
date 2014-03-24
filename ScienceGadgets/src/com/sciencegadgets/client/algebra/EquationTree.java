@@ -337,7 +337,7 @@ public class EquationTree {
 
 			String tag = type.getTag();
 
-			com.google.gwt.user.client.Element newNode = DOM.createElement(tag);
+			Element newNode = DOM.createElement(tag);
 			newNode.setAttribute("id", createId(""));
 
 			this.xmlNode = newNode;

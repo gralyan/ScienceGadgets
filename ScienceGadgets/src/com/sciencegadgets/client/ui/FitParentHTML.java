@@ -29,7 +29,7 @@ public class FitParentHTML extends HTML {
 	public FitParentHTML(String html, int percentOfParent) {
 		super(html);
 		this.percentOfParent = percentOfParent;
-		getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		addStyleName(CSS.FIT_PARENT_HTML);
 	}
 
 	@Override
@@ -38,26 +38,25 @@ public class FitParentHTML extends HTML {
 
 		resize();
 	}
-	
+
 	public void resize() {
-				Element htmlElement = this.getElement();
+		Element htmlElement = this.getElement();
 
-//		if ("".equals(htmlElement.getStyle().getFontSize())) {
+		htmlElement.getStyle().clearFontSize();
 
-			Element parentElement = this.getParent().getElement();
+		Element parentElement = this.getParent().getElement();
 
-			double widthRatio = (double) parentElement.getOffsetWidth()
-					/ (double) htmlElement.getOffsetWidth();
-			double heightRatio = (double) parentElement.getOffsetHeight()
-					/ (double) htmlElement.getOffsetHeight();
+		double widthRatio = (double) parentElement.getOffsetWidth()
+				/ (double) htmlElement.getOffsetWidth();
+		double heightRatio = (double) parentElement.getOffsetHeight()
+				/ (double) htmlElement.getOffsetHeight();
 
-			double smallerRatio = (widthRatio > heightRatio) ? heightRatio
-					: widthRatio;
+		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
+				: widthRatio;
 
-			// *percentOfParent for looser fit, *100 for percent
-			double fontPercent = smallerRatio * percentOfParent;
+		// *percentOfParent for looser fit, *100 for percent
+		double fontPercent = smallerRatio * percentOfParent;
 
-			htmlElement.getStyle().setFontSize((fontPercent), Unit.PCT);
-//		}
+		htmlElement.getStyle().setFontSize((fontPercent), Unit.PCT);
 	}
 }
