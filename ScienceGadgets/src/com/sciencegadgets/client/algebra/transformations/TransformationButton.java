@@ -5,10 +5,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.FitParentHTML;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
@@ -28,6 +28,10 @@ public class TransformationButton extends SimplePanel implements
 	public TransformationButton(String html, TransformationList context) {
 		this(context);
 		setHTML(html);
+	}
+	
+	public void resize() {
+		buttonHTML.resize();
 	}
 
 	public void setHTML(String html) {

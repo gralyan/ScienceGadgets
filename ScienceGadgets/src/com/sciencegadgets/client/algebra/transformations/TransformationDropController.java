@@ -4,9 +4,9 @@ import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.FitParentHTML;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.FitParentHTML;
 
 public class TransformationDropController extends AbstractDropController {
 

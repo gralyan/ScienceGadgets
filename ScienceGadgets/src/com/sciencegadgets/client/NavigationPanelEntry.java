@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sciencegadgets.client.ui.CSS;
 
 public class NavigationPanelEntry implements EntryPoint {
 

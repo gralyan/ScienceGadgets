@@ -11,9 +11,9 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.Prompt;
-import com.sciencegadgets.client.ToggleSlide;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
+import com.sciencegadgets.client.ui.Prompt;
+import com.sciencegadgets.client.ui.ToggleSlide;
 
 public class OptionsHandler implements ClickHandler {
 

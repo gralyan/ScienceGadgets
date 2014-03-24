@@ -14,12 +14,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.SelectionPanel;
-import com.sciencegadgets.client.SelectionPanel.Cell;
-import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.SelectionPanel;
+import com.sciencegadgets.client.ui.SelectionPanel.Cell;
+import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 
 public class ScienceBrowser extends FlowPanel {
 

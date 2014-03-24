@@ -41,6 +41,8 @@ import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.Prompt;
 
 public class Moderator implements EntryPoint {
 

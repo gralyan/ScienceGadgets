@@ -16,8 +16,6 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.CommunistPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
@@ -26,6 +24,8 @@ import com.sciencegadgets.client.algebra.transformations.ExponentialTransformati
 import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.TrigTransformations;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.shared.TypeEquationXML;
 
 /**
@@ -63,20 +63,28 @@ public class AlgebaWrapper extends EquationWrapper {
 
 		if (this.equals(eqPanel.selectedWrapper)) {
 
-			if (algTransformMenu == null) {
-
-				algTransformMenu = new CommunistPanel(true);
-				algTransformMenu.addStyleName(CSS.LAYOUT_ROW);
-				algTransformMenu.setSize("100%", "100%");
-
-				TransformationList[] transorms = TransformationList.FIND_ALL(node);
-				algTransformMenu.addAll(transorms[0]);
-				algTransformMenu.addAll(transorms[1]);
-				algTransformMenu.addAll(transorms[2]);
-			}
-			Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
-			Moderator.getCurrentAlgebraActivity().lowerEqArea
-					.add(algTransformMenu);
+//			if (algTransformMenu == null) {
+//
+//				algTransformMenu = new CommunistPanel(true);
+//				algTransformMenu.addStyleName(CSS.LAYOUT_ROW);
+//				algTransformMenu.setSize("100%", "100%");
+//
+//				TransformationList[] transorms = TransformationList.FIND_ALL(node);
+//				algTransformMenu.addAll(transorms[0]);
+//				algTransformMenu.addAll(transorms[1]);
+//				algTransformMenu.addAll(transorms[2]);
+//			}
+			
+//			AlgebraActivity algActivity = Moderator.getCurrentAlgebraActivity();
+//			TransformationList[] transorms = TransformationList.FIND_ALL(node);
+//			algTransformMenu.addAll(transorms[0]);
+//			algTransformMenu.addAll(transorms[1]);
+//			algTransformMenu.addAll(transorms[2]);
+//			
+//			algActivity.lowerEqArea.clear();
+//			algActivity.lowerEqArea.add(algTransformMenu);
+			
+			Moderator.getCurrentAlgebraActivity().fillTransformLists(node);
 		}
 	}
 

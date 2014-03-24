@@ -2,10 +2,10 @@ package com.sciencegadgets.client.conversion;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.UnitAttribute;

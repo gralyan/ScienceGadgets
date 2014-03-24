@@ -29,10 +29,10 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.client.ui.CSS;
 
 public class AlgebraHistory extends FlowPanel {
 

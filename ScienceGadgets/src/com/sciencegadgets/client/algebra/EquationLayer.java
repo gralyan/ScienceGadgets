@@ -6,8 +6,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.ui.CSS;
 
 public class EquationLayer extends SimplePanel {
 	

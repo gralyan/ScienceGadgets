@@ -8,10 +8,11 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.ChildRequirement;
@@ -154,198 +155,198 @@ public class AdditionTransformations extends TransformationList {
 		}
 	}
 
-	/**
-	 * xy + xz = x(y + z)<br/>
-	 * Factors out all like entities within the term or numerator<br/>
-	 */
-	AddTransformButton factorLikeTerms_check() {
-
-		// If sides are fractions, like terms come from numerators
-		EquationNode leftTerm = getTerm(left);
-		if (leftTerm == null) {
-			return null;
-		}
-		EquationNode rightTerm = getTerm(right);
-		if (rightTerm == null) {
-			return null;
-		}
-
-		// Collect like terms
-		final LinkedHashMap<EquationNode, EquationNode> likeTerms = new LinkedHashMap<EquationNode, EquationNode>();
-		a: for (EquationNode leftChild : leftTerm.getChildren()) {
-			if (TypeEquationXML.Operation.equals(leftChild.getType())) {
-				continue a;
-			}
-			b: for (EquationNode rightChild : rightTerm.getChildren()) {
-				if (likeTerms.containsValue(rightChild)
-						|| TypeEquationXML.Operation.equals(rightChild.getType())) {
-					continue b;
-				}
-				if (leftChild.isLike(rightChild)) {
-					likeTerms.put(leftChild, rightChild);
-					continue a;
-				}
-			}
-		}
-		// Check
-		if (likeTerms.size() == 0) {
-			return null;
-		}
-
-		String factorString = "";
-		for (EquationNode fact : likeTerms.keySet()) {
-			factorString.concat(fact.getHTMLString(true, true));
-		}
-
-		return new FactorLikeTermsButton(this, leftTerm, rightTerm, likeTerms);
-	}
-
-	AddTransformButton factorWithBase_check() {
-
-		if (TypeEquationXML.Exponential.equals(leftType)) {
-			if (right.isLike(left.getChildAt(0))) {
-				return new FactorBaseButton(this, right, left);
-			}
-		} else if (TypeEquationXML.Exponential.equals(rightType)) {
-			if (left.isLike(right.getChildAt(0))) {
-				return new FactorBaseButton(this, left, right);
-			}
-		}
-		return null;
-	}
-
-	AddTransformButton factorWithTermChild_check() {
-		// TODO the case where the factor matches the fraction numerator, but
-		// it's not in a term
-		// ex. a + a/b doesn't work here
-		// but a + (a x c)/b does work here
-		EquationNode term, other;
-		JSNICalls.debug(" ");
-		JSNICalls.debug("Left " + left.getType()
-				+ left.getXMLNode().getInnerText() + " Right "
-				+ right.getType() + right.getXMLNode().getInnerText());
-		// If sides are fractions, like terms come from numerators
-		EquationNode leftTerm = getTerm(left);
-		EquationNode rightTerm = getTerm(right);
-		JSNICalls.debug("LeftTerm " + leftTerm);
-		JSNICalls.debug("RightTerm " + rightTerm);
-		if (leftTerm != null && rightTerm == null) {
-			JSNICalls.debug("LeftTerm " + leftTerm.getXMLNode().getInnerText());
-			term = leftTerm;
-			other = right;
-		} else if (leftTerm == null && rightTerm != null) {
-			JSNICalls.debug("RightTerm "
-					+ rightTerm.getXMLNode().getInnerText());
-			term = rightTerm;
-			other = left;
-		} else {
-			return null;
-		}
-
-		JSNICalls.debug("----Other " + other.getXMLNode().getInnerText());
-		for (final EquationNode termChild : term.getChildren()) {
-			JSNICalls.debug("--TermChild "
-					+ termChild.getXMLNode().getInnerText());
-			if (termChild.isLike(other)) {
-				JSNICalls.debug("RETURNIJNG ");
-				return new FactorWithTermChildButton(this, other, term,
-						termChild);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Sub routine to be used at the end of the other factor methods
-	 */
-	void factor(LinkedList<EquationNode> factors, EquationNode inBinomialA,
-			EquationNode inBinomialB, EquationNode minusBeforeLeft) {
-
-		EquationNode inBinomialFirst = inBinomialA;
-		EquationNode inBinomialSecond = inBinomialB;
-		if (inBinomialA.getIndex() > inBinomialB.getIndex()) {
-			inBinomialFirst = inBinomialB;
-			inBinomialSecond = inBinomialA;
-		}
-
-		if (inBinomialFirst.getChildCount() == 1
-				&& !ChildRequirement.TERMINAL.equals(inBinomialFirst.getType()
-						.childRequirement())) {
-			inBinomialFirst = inBinomialFirst.getFirstChild();
-			inBinomialFirst.getParent().decase();
-		}
-		if (inBinomialSecond.getChildCount() == 1
-				&& !ChildRequirement.TERMINAL.equals(inBinomialSecond.getType()
-						.childRequirement())) {
-			inBinomialSecond = inBinomialSecond.getFirstChild();
-			inBinomialSecond.getParent().decase();
-		}
-
-		EquationNode termCasing = operation.getParent().addBefore(
-				operation.getIndex(), TypeEquationXML.Term, "");
-
-		if (Moderator.isInEasyMode
-				&& TypeEquationXML.Number.equals(inBinomialFirst.getType())
-				&& TypeEquationXML.Number.equals(inBinomialSecond.getType())) {
-
-			BigDecimal firstValue = new BigDecimal(inBinomialFirst.getSymbol());
-			BigDecimal secondValue = new BigDecimal(
-					inBinomialSecond.getSymbol());
-			BigDecimal total = firstValue.add(secondValue);
-
-			termCasing.append(TypeEquationXML.Number, "" + total);
-
-			inBinomialFirst.remove();
-			operation.remove();
-			inBinomialSecond.remove();
-
-			for (EquationNode factor : factors) {
-				termCasing.append(TypeEquationXML.Operation, Operator.getMultiply()
-						.getSign());
-				termCasing.append(factor);
-			}
-		} else {
-
-			for (EquationNode factor : factors) {
-				termCasing.append(factor);
-				termCasing.append(TypeEquationXML.Operation, Operator.getMultiply()
-						.getSign());
-			}
-
-			EquationNode binomialCasing = termCasing.append(TypeEquationXML.Sum, "");
-
-			if (minusBeforeLeft != null) {
-				if (minusBeforeLeft.getIndex() != 0) {
-					minusBeforeLeft.getParent().addBefore(
-							minusBeforeLeft.getIndex(), TypeEquationXML.Operation,
-							Operator.PLUS.getSign());
-				}
-				binomialCasing.append(minusBeforeLeft);
-			}
-			binomialCasing.append(inBinomialFirst);
-			binomialCasing.append(operation);
-			binomialCasing.append(inBinomialSecond);
-		}
-		inBinomialFirst.decase();
-		inBinomialSecond.decase();
-	}
-
-	/**
-	 * If the node is of type fraction, numerators are considered the term
-	 */
-	EquationNode getTerm(EquationNode node) {
-		switch (node.getType()) {
-		case Fraction:
-			if (TypeEquationXML.Term.equals(node.getChildAt(0).getType())) {
-				return node.getChildAt(0);
-			}
-			return null;
-		case Term:
-			return node;
-		default:
-			return null;
-		}
-	}
+//	/**
+//	 * xy + xz = x(y + z)<br/>
+//	 * Factors out all like entities within the term or numerator<br/>
+//	 */
+//	AddTransformButton factorLikeTerms_check() {
+//
+//		// If sides are fractions, like terms come from numerators
+//		EquationNode leftTerm = getTerm(left);
+//		if (leftTerm == null) {
+//			return null;
+//		}
+//		EquationNode rightTerm = getTerm(right);
+//		if (rightTerm == null) {
+//			return null;
+//		}
+//
+//		// Collect like terms
+//		final LinkedHashMap<EquationNode, EquationNode> likeTerms = new LinkedHashMap<EquationNode, EquationNode>();
+//		a: for (EquationNode leftChild : leftTerm.getChildren()) {
+//			if (TypeEquationXML.Operation.equals(leftChild.getType())) {
+//				continue a;
+//			}
+//			b: for (EquationNode rightChild : rightTerm.getChildren()) {
+//				if (likeTerms.containsValue(rightChild)
+//						|| TypeEquationXML.Operation.equals(rightChild.getType())) {
+//					continue b;
+//				}
+//				if (leftChild.isLike(rightChild)) {
+//					likeTerms.put(leftChild, rightChild);
+//					continue a;
+//				}
+//			}
+//		}
+//		// Check
+//		if (likeTerms.size() == 0) {
+//			return null;
+//		}
+//
+//		String factorString = "";
+//		for (EquationNode fact : likeTerms.keySet()) {
+//			factorString.concat(fact.getHTMLString(true, true));
+//		}
+//
+//		return new FactorLikeTermsButton(this, leftTerm, rightTerm, likeTerms);
+//	}
+//
+//	AddTransformButton factorWithBase_check() {
+//
+//		if (TypeEquationXML.Exponential.equals(leftType)) {
+//			if (right.isLike(left.getChildAt(0))) {
+//				return new FactorBaseButton(this, right, left);
+//			}
+//		} else if (TypeEquationXML.Exponential.equals(rightType)) {
+//			if (left.isLike(right.getChildAt(0))) {
+//				return new FactorBaseButton(this, left, right);
+//			}
+//		}
+//		return null;
+//	}
+//
+//	AddTransformButton factorWithTermChild_check() {
+//		// TODO the case where the factor matches the fraction numerator, but
+//		// it's not in a term
+//		// ex. a + a/b doesn't work here
+//		// but a + (a x c)/b does work here
+//		EquationNode term, other;
+//		JSNICalls.debug(" ");
+//		JSNICalls.debug("Left " + left.getType()
+//				+ left.getXMLNode().getInnerText() + " Right "
+//				+ right.getType() + right.getXMLNode().getInnerText());
+//		// If sides are fractions, like terms come from numerators
+//		EquationNode leftTerm = getTerm(left);
+//		EquationNode rightTerm = getTerm(right);
+//		JSNICalls.debug("LeftTerm " + leftTerm);
+//		JSNICalls.debug("RightTerm " + rightTerm);
+//		if (leftTerm != null && rightTerm == null) {
+//			JSNICalls.debug("LeftTerm " + leftTerm.getXMLNode().getInnerText());
+//			term = leftTerm;
+//			other = right;
+//		} else if (leftTerm == null && rightTerm != null) {
+//			JSNICalls.debug("RightTerm "
+//					+ rightTerm.getXMLNode().getInnerText());
+//			term = rightTerm;
+//			other = left;
+//		} else {
+//			return null;
+//		}
+//
+//		JSNICalls.debug("----Other " + other.getXMLNode().getInnerText());
+//		for (final EquationNode termChild : term.getChildren()) {
+//			JSNICalls.debug("--TermChild "
+//					+ termChild.getXMLNode().getInnerText());
+//			if (termChild.isLike(other)) {
+//				JSNICalls.debug("RETURNIJNG ");
+//				return new FactorWithTermChildButton(this, other, term,
+//						termChild);
+//			}
+//		}
+//		return null;
+//	}
+//
+//	/**
+//	 * Sub routine to be used at the end of the other factor methods
+//	 */
+//	void factor(LinkedList<EquationNode> factors, EquationNode inBinomialA,
+//			EquationNode inBinomialB, EquationNode minusBeforeLeft) {
+//
+//		EquationNode inBinomialFirst = inBinomialA;
+//		EquationNode inBinomialSecond = inBinomialB;
+//		if (inBinomialA.getIndex() > inBinomialB.getIndex()) {
+//			inBinomialFirst = inBinomialB;
+//			inBinomialSecond = inBinomialA;
+//		}
+//
+//		if (inBinomialFirst.getChildCount() == 1
+//				&& !ChildRequirement.TERMINAL.equals(inBinomialFirst.getType()
+//						.childRequirement())) {
+//			inBinomialFirst = inBinomialFirst.getFirstChild();
+//			inBinomialFirst.getParent().decase();
+//		}
+//		if (inBinomialSecond.getChildCount() == 1
+//				&& !ChildRequirement.TERMINAL.equals(inBinomialSecond.getType()
+//						.childRequirement())) {
+//			inBinomialSecond = inBinomialSecond.getFirstChild();
+//			inBinomialSecond.getParent().decase();
+//		}
+//
+//		EquationNode termCasing = operation.getParent().addBefore(
+//				operation.getIndex(), TypeEquationXML.Term, "");
+//
+//		if (Moderator.isInEasyMode
+//				&& TypeEquationXML.Number.equals(inBinomialFirst.getType())
+//				&& TypeEquationXML.Number.equals(inBinomialSecond.getType())) {
+//
+//			BigDecimal firstValue = new BigDecimal(inBinomialFirst.getSymbol());
+//			BigDecimal secondValue = new BigDecimal(
+//					inBinomialSecond.getSymbol());
+//			BigDecimal total = firstValue.add(secondValue);
+//
+//			termCasing.append(TypeEquationXML.Number, "" + total);
+//
+//			inBinomialFirst.remove();
+//			operation.remove();
+//			inBinomialSecond.remove();
+//
+//			for (EquationNode factor : factors) {
+//				termCasing.append(TypeEquationXML.Operation, Operator.getMultiply()
+//						.getSign());
+//				termCasing.append(factor);
+//			}
+//		} else {
+//
+//			for (EquationNode factor : factors) {
+//				termCasing.append(factor);
+//				termCasing.append(TypeEquationXML.Operation, Operator.getMultiply()
+//						.getSign());
+//			}
+//
+//			EquationNode binomialCasing = termCasing.append(TypeEquationXML.Sum, "");
+//
+//			if (minusBeforeLeft != null) {
+//				if (minusBeforeLeft.getIndex() != 0) {
+//					minusBeforeLeft.getParent().addBefore(
+//							minusBeforeLeft.getIndex(), TypeEquationXML.Operation,
+//							Operator.PLUS.getSign());
+//				}
+//				binomialCasing.append(minusBeforeLeft);
+//			}
+//			binomialCasing.append(inBinomialFirst);
+//			binomialCasing.append(operation);
+//			binomialCasing.append(inBinomialSecond);
+//		}
+//		inBinomialFirst.decase();
+//		inBinomialSecond.decase();
+//	}
+//
+//	/**
+//	 * If the node is of type fraction, numerators are considered the term
+//	 */
+//	EquationNode getTerm(EquationNode node) {
+//		switch (node.getType()) {
+//		case Fraction:
+//			if (TypeEquationXML.Term.equals(node.getChildAt(0).getType())) {
+//				return node.getChildAt(0);
+//			}
+//			return null;
+//		case Term:
+//			return node;
+//		default:
+//			return null;
+//		}
+//	}
 }
 
 // ////////////////////////////////////////////////
@@ -477,7 +478,7 @@ class AddNumbersButton extends AddTransformButton {
 							+ rightValue.toString() + " = ";
 					NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 						@Override
-						void onCorrect() {
+						public void onCorrect() {
 							addNumbers(left, right, totalValue, leftValue,
 									rightValue);
 						}
@@ -761,204 +762,204 @@ class AddLogsButton extends AddTransformButton {
 	}
 }
 
-/**
- * xy + xz = x(y + z)<br/>
- * Factors out all like entities within the term or numerator<br/>
- */
-class FactorLikeTermsButton extends AddTransformButton {
-	FactorLikeTermsButton(final AdditionTransformations context,
-			final EquationNode leftTerm, final EquationNode rightTerm,
-			final LinkedHashMap<EquationNode, EquationNode> likeTerms) {
-		super(context, "xy + xz = x(y + z)");
-
-		addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-				// Highlight terms in AlgOut
-				for (EquationNode key : likeTerms.keySet()) {
-					likeTerms.get(key).highlight();
-					key.highlight();
-				}
-
-				// Like terms are cloned to simplify cleanup
-				LinkedList<EquationNode> factors = new LinkedList<EquationNode>();
-				for (EquationNode factor : likeTerms.values()) {
-					factors.add(factor.clone());
-				}
-
-				EquationNode leftRemaining = leftTerm;
-				// Remove operation on like term
-				if (likeTerms.size() * 2 - 1 == leftTerm.getChildCount()) {
-					// will be MathNode.decase[d]
-					leftRemaining = leftTerm.replace(TypeEquationXML.Term, "");
-					leftRemaining.append(TypeEquationXML.Number, "1");
-				} else {
-					for (EquationNode extraFactor : likeTerms.keySet()) {
-
-						if (extraFactor.getIndex() == 0) {
-							EquationNode nextOp = extraFactor.getNextSibling();
-							if (nextOp != null
-									&& TypeEquationXML.Operation
-											.equals(nextOp.getType())) {
-								nextOp.remove();
-							}
-						} else {
-							EquationNode prevOp = extraFactor.getPrevSibling();
-							if (TypeEquationXML.Operation.equals(prevOp.getType())) {
-								prevOp.remove();
-							}
-						}
-						extraFactor.remove();
-					}
-				}
-
-				EquationNode rightRemaining = rightTerm;
-				if (likeTerms.size() * 2 - 1 == rightTerm.getChildCount()) {
-					rightRemaining = rightTerm.replace(TypeEquationXML.Term, "");
-					rightRemaining.append(TypeEquationXML.Number, "1");
-				} else {
-					for (EquationNode fact : likeTerms.values()) {
-						if (fact.getIndex() == 0) {
-							EquationNode nextOp = fact.getNextSibling();
-							if (nextOp != null
-									&& TypeEquationXML.Operation
-											.equals(nextOp.getType())) {
-								nextOp.remove();
-							}
-						} else {
-							EquationNode prevOp = fact.getPrevSibling();
-							if (TypeEquationXML.Operation.equals(prevOp.getType())) {
-								prevOp.remove();
-							}
-						}
-						fact.remove();
-					}
-				}
-
-				context.factor(factors, leftRemaining, rightRemaining,
-						minusBeforeLeft);
-
-				if (reloadAlgebraActivity) {
-					Moderator.reloadEquationPanel("Factor Like Terms",
-							Rule.COMBINING_LIKE_TERMS);
-				}
-			}
-		});
-	}
-
-	@Override
-	TransformationButton getPreviewButton(EquationNode operation) {
-		super.getPreviewButton(operation);
-		return previewContext.factorLikeTerms_check();
-	}
-}
-
-/**
- * x + x<sup>y</sup> = x &middot; (1 + x<sup>y-1</sup>) <br/>
- * Factors out a single multiple of the base and other entity if equal
- */
-class FactorBaseButton extends AddTransformButton {
-	FactorBaseButton(final AdditionTransformations context,
-			final EquationNode other, final EquationNode exponential) {
-		super(context, "x + x<sup>y</sup> = x·(1 + x<sup>y-1</sup>)");
-
-		addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-				other.highlight();
-				operation.highlight();
-				exponential.getChildAt(0).highlight();
-
-				EquationNode inBinomialB = exponential;
-				EquationNode inBinomialA = other.getParent().addBefore(
-						other.getIndex(), TypeEquationXML.Number, "1");
-
-				LinkedList<EquationNode> factors = new LinkedList<EquationNode>();
-				factors.add(other);
-				context.factor(factors, inBinomialA, inBinomialB,
-						minusBeforeLeft);
-
-				EquationNode exp = exponential.getChildAt(1);
-				if (TypeEquationXML.Number.equals(exp.getType())
-						&& Moderator.isInEasyMode) {
-					BigDecimal expValue = new BigDecimal(exp.getSymbol());
-					exp.setSymbol(expValue.subtract(new BigDecimal("1")) + "");
-				} else {
-					exp = exp.encase(TypeEquationXML.Sum);
-					exp.append(TypeEquationXML.Operation, Operator.MINUS.getSign());
-					exp.append(TypeEquationXML.Number, "1");
-				}
-
-				if (reloadAlgebraActivity) {
-					Moderator.reloadEquationPanel("Factor with Base",
-							Rule.FACTORIZATION);
-				}
-
-			}
-		});
-	}
-
-	@Override
-	TransformationButton getPreviewButton(EquationNode operation) {
-		super.getPreviewButton(operation);
-		return previewContext.factorWithBase_check();
-	}
-}
-
-/**
- * x + (x &middot; y) = x &middot; (1 + y) <br/>
- * Factors out a child of the term if similar to the other entity
- */
-class FactorWithTermChildButton extends AddTransformButton {
-	FactorWithTermChildButton(final AdditionTransformations context,
-			final EquationNode other, final EquationNode term, final EquationNode termChild) {
-		super(context, "x + (x·y) = x·(1 + y)");
-
-		addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-				other.highlight();
-				operation.highlight();
-				termChild.highlight();
-
-				EquationNode inBinomialA = other;
-				EquationNode inBinomialB = term;
-
-				if (termChild.getIndex() == 0) {
-					EquationNode nextOp = termChild.getNextSibling();
-					if (nextOp != null
-							&& TypeEquationXML.Operation.equals(nextOp.getType())) {
-						nextOp.remove();
-					}
-				} else {
-					EquationNode prevOp = termChild.getPrevSibling();
-					if (TypeEquationXML.Operation.equals(prevOp.getType())) {
-						prevOp.remove();
-					}
-				}
-
-				// TODO The case where a term child and an exponential base
-				// would be factored out together
-
-				inBinomialA = other.replace(TypeEquationXML.Number, "1");
-
-				LinkedList<EquationNode> factors = new LinkedList<EquationNode>();
-				factors.add(termChild);
-				context.factor(factors, inBinomialA, inBinomialB,
-						minusBeforeLeft);
-
-				// term.decase();
-
-				if (reloadAlgebraActivity) {
-					Moderator.reloadEquationPanel("Factor", Rule.FACTORIZATION);
-				}
-			}
-		});
-	}
-
-	@Override
-	TransformationButton getPreviewButton(EquationNode operation) {
-		super.getPreviewButton(operation);
-		return previewContext.factorWithTermChild_check();
-	}
-}
+///**
+// * xy + xz = x(y + z)<br/>
+// * Factors out all like entities within the term or numerator<br/>
+// */
+//class FactorLikeTermsButton extends AddTransformButton {
+//	FactorLikeTermsButton(final AdditionTransformations context,
+//			final EquationNode leftTerm, final EquationNode rightTerm,
+//			final LinkedHashMap<EquationNode, EquationNode> likeTerms) {
+//		super(context, "xy + xz = x(y + z)");
+//
+//		addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent arg0) {
+//				// Highlight terms in AlgOut
+//				for (EquationNode key : likeTerms.keySet()) {
+//					likeTerms.get(key).highlight();
+//					key.highlight();
+//				}
+//
+//				// Like terms are cloned to simplify cleanup
+//				LinkedList<EquationNode> factors = new LinkedList<EquationNode>();
+//				for (EquationNode factor : likeTerms.values()) {
+//					factors.add(factor.clone());
+//				}
+//
+//				EquationNode leftRemaining = leftTerm;
+//				// Remove operation on like term
+//				if (likeTerms.size() * 2 - 1 == leftTerm.getChildCount()) {
+//					// will be MathNode.decase[d]
+//					leftRemaining = leftTerm.replace(TypeEquationXML.Term, "");
+//					leftRemaining.append(TypeEquationXML.Number, "1");
+//				} else {
+//					for (EquationNode extraFactor : likeTerms.keySet()) {
+//
+//						if (extraFactor.getIndex() == 0) {
+//							EquationNode nextOp = extraFactor.getNextSibling();
+//							if (nextOp != null
+//									&& TypeEquationXML.Operation
+//											.equals(nextOp.getType())) {
+//								nextOp.remove();
+//							}
+//						} else {
+//							EquationNode prevOp = extraFactor.getPrevSibling();
+//							if (TypeEquationXML.Operation.equals(prevOp.getType())) {
+//								prevOp.remove();
+//							}
+//						}
+//						extraFactor.remove();
+//					}
+//				}
+//
+//				EquationNode rightRemaining = rightTerm;
+//				if (likeTerms.size() * 2 - 1 == rightTerm.getChildCount()) {
+//					rightRemaining = rightTerm.replace(TypeEquationXML.Term, "");
+//					rightRemaining.append(TypeEquationXML.Number, "1");
+//				} else {
+//					for (EquationNode fact : likeTerms.values()) {
+//						if (fact.getIndex() == 0) {
+//							EquationNode nextOp = fact.getNextSibling();
+//							if (nextOp != null
+//									&& TypeEquationXML.Operation
+//											.equals(nextOp.getType())) {
+//								nextOp.remove();
+//							}
+//						} else {
+//							EquationNode prevOp = fact.getPrevSibling();
+//							if (TypeEquationXML.Operation.equals(prevOp.getType())) {
+//								prevOp.remove();
+//							}
+//						}
+//						fact.remove();
+//					}
+//				}
+//
+//				context.factor(factors, leftRemaining, rightRemaining,
+//						minusBeforeLeft);
+//
+//				if (reloadAlgebraActivity) {
+//					Moderator.reloadEquationPanel("Factor Like Terms",
+//							Rule.COMBINING_LIKE_TERMS);
+//				}
+//			}
+//		});
+//	}
+//
+//	@Override
+//	TransformationButton getPreviewButton(EquationNode operation) {
+//		super.getPreviewButton(operation);
+//		return previewContext.factorLikeTerms_check();
+//	}
+//}
+//
+///**
+// * x + x<sup>y</sup> = x &middot; (1 + x<sup>y-1</sup>) <br/>
+// * Factors out a single multiple of the base and other entity if equal
+// */
+//class FactorBaseButton extends AddTransformButton {
+//	FactorBaseButton(final AdditionTransformations context,
+//			final EquationNode other, final EquationNode exponential) {
+//		super(context, "x + x<sup>y</sup> = x·(1 + x<sup>y-1</sup>)");
+//
+//		addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent arg0) {
+//				other.highlight();
+//				operation.highlight();
+//				exponential.getChildAt(0).highlight();
+//
+//				EquationNode inBinomialB = exponential;
+//				EquationNode inBinomialA = other.getParent().addBefore(
+//						other.getIndex(), TypeEquationXML.Number, "1");
+//
+//				LinkedList<EquationNode> factors = new LinkedList<EquationNode>();
+//				factors.add(other);
+//				context.factor(factors, inBinomialA, inBinomialB,
+//						minusBeforeLeft);
+//
+//				EquationNode exp = exponential.getChildAt(1);
+//				if (TypeEquationXML.Number.equals(exp.getType())
+//						&& Moderator.isInEasyMode) {
+//					BigDecimal expValue = new BigDecimal(exp.getSymbol());
+//					exp.setSymbol(expValue.subtract(new BigDecimal("1")) + "");
+//				} else {
+//					exp = exp.encase(TypeEquationXML.Sum);
+//					exp.append(TypeEquationXML.Operation, Operator.MINUS.getSign());
+//					exp.append(TypeEquationXML.Number, "1");
+//				}
+//
+//				if (reloadAlgebraActivity) {
+//					Moderator.reloadEquationPanel("Factor with Base",
+//							Rule.FACTORIZATION);
+//				}
+//
+//			}
+//		});
+//	}
+//
+//	@Override
+//	TransformationButton getPreviewButton(EquationNode operation) {
+//		super.getPreviewButton(operation);
+//		return previewContext.factorWithBase_check();
+//	}
+//}
+//
+///**
+// * x + (x &middot; y) = x &middot; (1 + y) <br/>
+// * Factors out a child of the term if similar to the other entity
+// */
+//class FactorWithTermChildButton extends AddTransformButton {
+//	FactorWithTermChildButton(final AdditionTransformations context,
+//			final EquationNode other, final EquationNode term, final EquationNode termChild) {
+//		super(context, "x + (x·y) = x·(1 + y)");
+//
+//		addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent arg0) {
+//				other.highlight();
+//				operation.highlight();
+//				termChild.highlight();
+//
+//				EquationNode inBinomialA = other;
+//				EquationNode inBinomialB = term;
+//
+//				if (termChild.getIndex() == 0) {
+//					EquationNode nextOp = termChild.getNextSibling();
+//					if (nextOp != null
+//							&& TypeEquationXML.Operation.equals(nextOp.getType())) {
+//						nextOp.remove();
+//					}
+//				} else {
+//					EquationNode prevOp = termChild.getPrevSibling();
+//					if (TypeEquationXML.Operation.equals(prevOp.getType())) {
+//						prevOp.remove();
+//					}
+//				}
+//
+//				// TODO The case where a term child and an exponential base
+//				// would be factored out together
+//
+//				inBinomialA = other.replace(TypeEquationXML.Number, "1");
+//
+//				LinkedList<EquationNode> factors = new LinkedList<EquationNode>();
+//				factors.add(termChild);
+//				context.factor(factors, inBinomialA, inBinomialB,
+//						minusBeforeLeft);
+//
+//				// term.decase();
+//
+//				if (reloadAlgebraActivity) {
+//					Moderator.reloadEquationPanel("Factor", Rule.FACTORIZATION);
+//				}
+//			}
+//		});
+//	}
+//
+//	@Override
+//	TransformationButton getPreviewButton(EquationNode operation) {
+//		super.getPreviewButton(operation);
+//		return previewContext.factorWithTermChild_check();
+//	}
+//}

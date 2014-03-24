@@ -1,8 +1,8 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.ui;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 
 public class FitParentHTML extends HTML {
@@ -36,9 +36,13 @@ public class FitParentHTML extends HTML {
 	protected void onAttach() {
 		super.onAttach();
 
-		Element htmlElement = this.getElement();
+		resize();
+	}
+	
+	public void resize() {
+				Element htmlElement = this.getElement();
 
-		if ("".equals(htmlElement.getStyle().getFontSize())) {
+//		if ("".equals(htmlElement.getStyle().getFontSize())) {
 
 			Element parentElement = this.getParent().getElement();
 
@@ -54,6 +58,6 @@ public class FitParentHTML extends HTML {
 			double fontPercent = smallerRatio * percentOfParent;
 
 			htmlElement.getStyle().setFontSize((fontPercent), Unit.PCT);
-		}
+//		}
 	}
 }

@@ -24,32 +24,32 @@ public class TransformationList extends LinkedList<TransformationButton> {
 	}
 
 	public static TransformationList[] FIND_ALL(EquationNode node) {
-		TransformationList typeSpecific = new TransformationList(node);
+		TransformationList factorize = new TransformationList(node);
 		TransformationList toBothSides = new BothSidesTransformations(node);
-		TransformationList general = new TransformationList(node);
+		TransformationList simplify = new TransformationList(node);
 
 		switch (node.getType()) {
 		case Exponential:
-			typeSpecific.addAll(new ExponentialTransformations(node));
+			simplify.addAll(new ExponentialTransformations(node));
 			break;
 		case Operation:
-			typeSpecific.addAll(AlgebraicTransformations.operation(node));
+			simplify.addAll(AlgebraicTransformations.operation(node));
 			break;
 		case Number:
-			general.add(AlgebraicTransformations.separateNegative_check(node,
-					general));
-			typeSpecific.addAll(new NumberTransformations(node));
+			factorize.add(AlgebraicTransformations.separateNegative_check(node,
+					factorize));
+			simplify.addAll(new NumberTransformations(node));
 			break;
 		case Variable:
-			general.add(AlgebraicTransformations.separateNegative_check(node,
-					general));
-			typeSpecific.addAll(new VariableTransformations(node));
+			factorize.add(AlgebraicTransformations.separateNegative_check(node,
+					factorize));
+			simplify.addAll(new VariableTransformations(node));
 			break;
 		case Log:
-			typeSpecific.addAll(new LogarithmicTransformations(node));
+			simplify.addAll(new LogarithmicTransformations(node));
 			break;
 		case Trig:
-			typeSpecific.addAll(new TrigTransformations(node));
+			simplify.addAll(new TrigTransformations(node));
 			break;
 		case Fraction:
 		case Sum:
@@ -62,11 +62,11 @@ public class TransformationList extends LinkedList<TransformationButton> {
 
 		if (TypeEquationXML.Fraction.equals(node.getParentType())
 				&& node.getIndex() == 1) {
-			general.add(AlgebraicTransformations.denominatorFlip_check(node,
-					general));
+			factorize.add(AlgebraicTransformations.denominatorFlip_check(node,
+					factorize));
 		}
 
-		TransformationList[] lists = { typeSpecific, toBothSides, general };
+		TransformationList[] lists = { factorize, toBothSides, simplify};
 		
 		// Name as preview
 		for(TransformationList list : lists) {
