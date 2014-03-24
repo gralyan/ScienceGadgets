@@ -3,8 +3,8 @@ package com.sciencegadgets.shared;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.ui.CSS;
 
 /**
  * <b>data-unit</b> attribute <b>= </b>id^exp*id^exp... <br/>

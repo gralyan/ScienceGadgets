@@ -6,12 +6,13 @@ import java.math.MathContext;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebaWrapper;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
 import com.sciencegadgets.client.algebra.ResponseNote;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeEquationXML;
@@ -113,7 +114,7 @@ public class InterFractionDrop extends TransformationDropController {
 						+ " = ";
 				NumberPrompt prompt = new NumberPrompt(question, total) {
 					@Override
-					void onCorrect() {
+					public void onCorrect() {
 						divide(total);
 					}
 				};

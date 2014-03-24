@@ -1,4 +1,4 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.ui;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -13,6 +13,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.Moderator;
 
 public class ToggleSlide extends FlowPanel implements HasClickHandlers, HasTouchStartHandlers {
 	HTML firstOption = new HTML();

@@ -7,9 +7,10 @@ import java.util.LinkedList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
@@ -229,7 +230,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 					String question = exponential.getHTMLString(true, true) + " = ";
 					NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 						@Override
-						void onCorrect() {
+						public void onCorrect() {
 							evaluateExponential(baseValue, exp, totalValue,
 									totalUnitMap);
 						}

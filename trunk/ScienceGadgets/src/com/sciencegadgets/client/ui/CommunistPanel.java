@@ -1,4 +1,4 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.ui;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;

@@ -1,7 +1,7 @@
 package com.sciencegadgets.shared;
 
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.ui.CSS;
 
 /**
  * Types of equation xml nodes. See {@link MathAttribute} for attributes

@@ -1,15 +1,15 @@
-package com.sciencegadgets.client.algebra.transformations;
+package com.sciencegadgets.client.algebra.transformations.specification;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.KeyPadNumerical;
-import com.sciencegadgets.client.SymbolDisplay;
-import com.sciencegadgets.client.Prompt;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.conversion.Constant;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.KeyPadNumerical;
+import com.sciencegadgets.client.ui.Prompt;
+import com.sciencegadgets.client.ui.SymbolDisplay;
 
 public class LogBaseSpecification extends Prompt {
 	public final String[] bases = { "2", "10", Constant.EULER.getSymbol() };

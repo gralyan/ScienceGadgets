@@ -4,11 +4,11 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.SelectionPanel;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Equation;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.shared.TypeEquationXML;
 
 public class AlgebraBrowser extends SelectionPanel {

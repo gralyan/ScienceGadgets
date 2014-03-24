@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.algebra.transformations;
+package com.sciencegadgets.client.algebra.transformations.specification;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -8,10 +8,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.CSS;
-import com.sciencegadgets.client.KeyPadNumerical;
-import com.sciencegadgets.client.SymbolDisplay;
-import com.sciencegadgets.client.Prompt;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.KeyPadNumerical;
+import com.sciencegadgets.client.ui.Prompt;
+import com.sciencegadgets.client.ui.SymbolDisplay;
 
 public abstract class NumberPrompt extends Prompt {
 
@@ -21,7 +21,7 @@ public abstract class NumberPrompt extends Prompt {
 	final KeyPadNumerical keyPad = new KeyPadNumerical();
 	final SymbolDisplay display = keyPad.getSymbolDisplay();
 
-	NumberPrompt(String question, final BigDecimal totalValue) {
+	public NumberPrompt(String question, final BigDecimal totalValue) {
 
 		Label questionDisplay = new HTML(question);
 		questionDisplay.addStyleName(CSS.LAYOUT_ROW+" "+CSS.DOUBLE_FONT_SIZE);
@@ -74,5 +74,5 @@ public abstract class NumberPrompt extends Prompt {
 		});
 	}
 
-	abstract void onCorrect();
+	public abstract void onCorrect();
 }

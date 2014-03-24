@@ -1,4 +1,4 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.ui;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -6,11 +6,11 @@ import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.sciencegadgets.client.CSS;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
-import com.sciencegadgets.client.SelectionPanel;
-import com.sciencegadgets.client.UnitSelection;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.SelectionPanel;
+import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.UnitAttribute;
 
 public class DataModerator {

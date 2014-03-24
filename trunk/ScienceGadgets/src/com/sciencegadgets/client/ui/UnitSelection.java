@@ -1,8 +1,9 @@
-package com.sciencegadgets.client;
+package com.sciencegadgets.client.ui;
 
-import com.sciencegadgets.client.SelectionPanel.Cell;
-import com.sciencegadgets.client.SelectionPanel.SelectionHandler;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.ui.SelectionPanel.Cell;
+import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.shared.UnitAttribute;
 
 public class UnitSelection extends CommunistPanel {
