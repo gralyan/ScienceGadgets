@@ -46,6 +46,7 @@ public static final String NUMBER_VALUE = "numberValue";
 public static final String TEXT_CENTER = "textCenter";
 public static final String FILL_PARENT = "fillParent";
 public static final String SCIENCE_GADGET_AREA = "scienceGadgetArea";
+public static final String FIT_PARENT_HTML = "fitParentHTML";
 /*---------------Browsers---------------*/
 public static final String EQUATION_BROWSER = "equationBrowser";
 public static final String MODES = "modes";
@@ -107,6 +108,8 @@ public static final String CHANGE_NODE_BUTTON = "changeNodeButton";
 public static final String BOTH_SIDES_BUTTON = "bothSidesButton";
 public static final String SMALLEST_BUTTON = "smallestButton";
 public static final String MEDIUM_BUTTON = "mediumButton";
+public static final String BOTH_SIDES_PANEL_BUTTON = "bothSidesPanelButton";
+public static final String SIMPLIFY_PANEL_BUTTON = "simplifyPanelButton";
 
 
 }

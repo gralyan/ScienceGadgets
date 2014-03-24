@@ -24,9 +24,8 @@ public class TransformationList extends LinkedList<TransformationButton> {
 	}
 
 	public static TransformationList[] FIND_ALL(EquationNode node) {
-		TransformationList factorize = new TransformationList(node);
-		TransformationList toBothSides = new BothSidesTransformations(node);
 		TransformationList simplify = new TransformationList(node);
+		TransformationList toBothSides = new BothSidesTransformations(node);
 
 		switch (node.getType()) {
 		case Exponential:
@@ -36,13 +35,13 @@ public class TransformationList extends LinkedList<TransformationButton> {
 			simplify.addAll(AlgebraicTransformations.operation(node));
 			break;
 		case Number:
-			factorize.add(AlgebraicTransformations.separateNegative_check(node,
-					factorize));
+			simplify.add(AlgebraicTransformations.separateNegative_check(node,
+					simplify));
 			simplify.addAll(new NumberTransformations(node));
 			break;
 		case Variable:
-			factorize.add(AlgebraicTransformations.separateNegative_check(node,
-					factorize));
+			simplify.add(AlgebraicTransformations.separateNegative_check(node,
+					simplify));
 			simplify.addAll(new VariableTransformations(node));
 			break;
 		case Log:
@@ -62,11 +61,11 @@ public class TransformationList extends LinkedList<TransformationButton> {
 
 		if (TypeEquationXML.Fraction.equals(node.getParentType())
 				&& node.getIndex() == 1) {
-			factorize.add(AlgebraicTransformations.denominatorFlip_check(node,
-					factorize));
+			simplify.add(AlgebraicTransformations.denominatorFlip_check(node,
+					simplify));
 		}
 
-		TransformationList[] lists = { factorize, toBothSides, simplify};
+		TransformationList[] lists = { simplify, toBothSides};
 		
 		// Name as preview
 		for(TransformationList list : lists) {
