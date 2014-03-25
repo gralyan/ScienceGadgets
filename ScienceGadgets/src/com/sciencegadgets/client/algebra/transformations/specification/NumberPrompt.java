@@ -3,7 +3,6 @@ package com.sciencegadgets.client.algebra.transformations.specification;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;

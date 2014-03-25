@@ -6,10 +6,7 @@ import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitAttribute;
-import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.UnitMultiple;
 import com.sciencegadgets.shared.UnitName;
 

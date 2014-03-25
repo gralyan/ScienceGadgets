@@ -4,14 +4,11 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator.ActivityType;
@@ -21,6 +18,8 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
 import com.sciencegadgets.client.algebra.transformations.Rule;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
@@ -60,11 +59,12 @@ public class AlgebraActivity extends SimplePanel {
 			new SaveButtonHandler());
 
 	private FlowPanel transformMain = new FlowPanel();
-	private TransformationPanel transformSimplify = new TransformationPanel();
-	private TransformationPanel transformBothSides = new TransformationPanel();
-	private TransformationButton simplifyButton = new TransformationButton("Simplify", null);
-	private BothSidesPanelButton bothSidesLeft = new BothSidesPanelButton();
-	private BothSidesPanelButton bothSidesRight = new BothSidesPanelButton();
+	private TransformationPanel bothSidesPanelLeft = new TransformationPanel();
+	private TransformationPanel simplifyPanel = new TransformationPanel();
+	private TransformationPanel bothSidesPanelRight = new TransformationPanel();
+//	private TransformationButton simplifyButton = new TransformationButton("Simplify", null);
+//	private BothSidesPanelButton bothSidesLeft = new BothSidesPanelButton();
+//	private BothSidesPanelButton bothSidesRight = new BothSidesPanelButton();
 
 	public String focusLayerId = null;
 	public boolean inEditMode = false;
@@ -90,24 +90,14 @@ public class AlgebraActivity extends SimplePanel {
 		} else {
 			algOut = new AlgebraHistory(this);
 			upperMidEqArea.add(algOut);
-			
-			bothSidesLeft.setOther(bothSidesRight);
-			bothSidesRight.setOther(bothSidesLeft);
-			simplifyButton.addStyleName(CSS.SIMPLIFY_PANEL_BUTTON);
-			simplifyButton.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					bothSidesLeft.deselect();
-					bothSidesRight.deselect();
-					lowerEqArea.clear();
-					lowerEqArea.add(transformSimplify);
-				}
-			});
 
-			transformMain.addStyleName(CSS.FILL_PARENT);
-			transformMain.add(bothSidesLeft);
-			transformMain.add(simplifyButton);
-			transformMain.add(bothSidesRight);
+			transformMain.add(bothSidesPanelLeft);
+			transformMain.add(simplifyPanel);
+			transformMain.add(bothSidesPanelRight);
+			transformMain.addStyleName(CSS.FILL_PARENT); 
+			bothSidesPanelLeft.addStyleName(CSS.BOTH_SIDES_PANEL);
+			simplifyPanel.addStyleName(CSS.SIMPLIFY_PANEL);
+			bothSidesPanelRight.addStyleName(CSS.BOTH_SIDES_PANEL);
 			
 		}
 
@@ -165,17 +155,20 @@ public class AlgebraActivity extends SimplePanel {
 		}
 	}
 
-	public void fillTransformLists(EquationNode node) {
-		TransformationList[] transforms = TransformationList.FIND_ALL(node);
+	public void fillTransformLists(
+			TransformationList<TransformationButton> transSimplify,
+			BothSidesTransformations transBothSides) {
 		
-		transformSimplify.clear();
-		transformBothSides.clear();
-		transformSimplify.addAll(transforms[0]);
-		transformBothSides.addAll(transforms[1]);
+		bothSidesPanelLeft.clear();
+		simplifyPanel.clear();
+		bothSidesPanelRight.clear();
+		simplifyPanel.addAll(transSimplify);
+		bothSidesPanelLeft.addAll(transBothSides);
 		
-		bothSidesLeft.deselect();
-		bothSidesRight.deselect();
-
+		for(int i = transBothSides.size() ; i>0 ; i--) {
+			BothSidesButton button = transBothSides.get(i-1);
+			bothSidesPanelRight.add(button.getJoinedButton());
+		}
 		lowerEqArea.clear();
 		lowerEqArea.add(transformMain);
 	}
@@ -221,41 +214,6 @@ public class AlgebraActivity extends SimplePanel {
 			for(Widget child : getChildren()) {
 				((TransformationButton)child).resize();
 			}
-		}
-	}
-	
-	class BothSidesPanelButton extends TransformationButton {
-		BothSidesPanelButton other;
-		private static final String UNSELECTED_TEXT = "\u2191";
-		private static final String SELECTED_TEXT = "\u21E7";
-		BothSidesPanelButton(){
-			super(UNSELECTED_TEXT, null);
-			addStyleName(CSS.BOTH_SIDES_PANEL_BUTTON);
-		}
-		void setOther(final BothSidesPanelButton other){
-			this.other = other;
-			
-			addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					if(other.isSelected()) {
-						other.deselect();
-						lowerEqArea.clear();
-						lowerEqArea.add(transformBothSides);
-					}else {
-						select();
-					}
-				}
-			});
-		}
-		boolean isSelected() {
-			return SELECTED_TEXT.equals(getHTML());
-		}
-		void select(){
-			setHTML(SELECTED_TEXT);
-		}
-		void deselect() {
-			setHTML(UNSELECTED_TEXT);
 		}
 	}
 }

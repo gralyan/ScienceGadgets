@@ -6,13 +6,13 @@ import java.util.LinkedList;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Duration;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -227,13 +227,13 @@ public class EquationPanel extends AbsolutePanel {
 			
 			String parentId = parentNode.getId();
 			
-			com.google.gwt.user.client.Element layerParentNode = DOM
+			Element layerParentNode = DOM
 					.getElementById(parentId + OF_LAYER
 							+ parentId);
 			if(layerParentNode != null) {
 				layerParentNode.addClassName(CSS.DISPLAY_WRAPPER);
 			}else if(TypeEquationXML.Equation.equals(parentNode.getType())){
-				com.google.gwt.user.client.Element layerEqNode = DOM
+				Element layerEqNode = DOM
 						.getElementById(EQ_OF_LAYER	+ parentId);
 				layerEqNode.addClassName(CSS.DISPLAY_WRAPPER);
 			}
@@ -246,7 +246,7 @@ public class EquationPanel extends AbsolutePanel {
 					continue;
 				}
 			}
-			com.google.gwt.user.client.Element layerNode = DOM
+			Element layerNode = DOM
 					.getElementById(node.getId() + OF_LAYER
 							+ parentId);
 

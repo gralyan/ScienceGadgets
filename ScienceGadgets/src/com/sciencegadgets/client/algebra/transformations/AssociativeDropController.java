@@ -1,14 +1,11 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
-import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
-import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.client.algebra.EquationWrapper;
-import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
 

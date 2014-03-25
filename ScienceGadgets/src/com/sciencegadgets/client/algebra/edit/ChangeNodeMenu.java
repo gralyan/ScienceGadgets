@@ -1,7 +1,5 @@
 package com.sciencegadgets.client.algebra.edit;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -22,16 +20,20 @@ public class ChangeNodeMenu extends CommunistPanel {
 	private EquationNode node;
 	private LogBaseSpecification logBaseSpec = null;
 	private TrigFunctionSpecification trigFuncSpec = null;
+	TransformationList<TransformationButton> changeButtons;
 
 	private static final Object[][] types = {//
-	{ TypeEquationXML.Number, "#" }, //
+			{ TypeEquationXML.Number, "#" }, //
 			{ TypeEquationXML.Variable, "a" },//
 			{ TypeEquationXML.Sum, NOT_SET + "+" + NOT_SET },//
 			{ TypeEquationXML.Term, NOT_SET + Operator.DOT.getSign() + NOT_SET },//
-			{ TypeEquationXML.Fraction, "<div style='border-bottom: thin solid;'>"//
-					+ NOT_SET + "</div><div>" + NOT_SET + "</div>" },//
-			{ TypeEquationXML.Exponential, NOT_SET + "<sup>" + NOT_SET + "</sup>" },//
-			{ TypeEquationXML.Log, "log<sub>" + NOT_SET + "</sub>(" + NOT_SET + ")" },//
+			{ TypeEquationXML.Fraction,
+					"<div style='border-bottom: thin solid;'>"//
+							+ NOT_SET + "</div><div>" + NOT_SET + "</div>" },//
+			{ TypeEquationXML.Exponential,
+					NOT_SET + "<sup>" + NOT_SET + "</sup>" },//
+			{ TypeEquationXML.Log,
+					"log<sub>" + NOT_SET + "</sub>(" + NOT_SET + ")" },//
 			{ TypeEquationXML.Trig, "sin(" + NOT_SET + ")" } //
 	};
 
@@ -39,27 +41,23 @@ public class ChangeNodeMenu extends CommunistPanel {
 		super(true);
 		addStyleName(CSS.FILL_PARENT);
 
-		TransformationList allButtons = new TransformationList(node);
+		changeButtons = new TransformationList<TransformationButton>(node);
 
 		// Change buttons
 		for (Object[] type : types) {
 			TypeEquationXML toType = (TypeEquationXML) type[0];
-			TransformationButton changeButton = new TransformationButton(
-					(String) type[1], allButtons);
+			TransformationButton changeButton = new ChangeNodeButton(
+					(String) type[1], changeButtons, toType);
 			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON + " "
 					+ toType.toString() + " " + CSS.DISPLAY_WRAPPER);
-			changeButton.addClickHandler(new ChangeNodeClick(toType));
-			allButtons.add(changeButton);
+			changeButtons.add(changeButton);
 		}
 
 		// Remove button
-		this.removeButton = new TransformationButton("Remove", allButtons);
-		removeButton.addClickHandler(new RemoveNodeClick());
+		this.removeButton = new RemoveNodeButton(changeButtons);
+		changeButtons.add(removeButton);
 
-		removeButton.getElement().getStyle().setColor("red");
-		allButtons.add(removeButton);
-
-		addAll(allButtons);
+		addAll(changeButtons);
 
 	}
 
@@ -67,7 +65,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 		this.node = node;
 
 		TypeEquationXML type = node.getType();
-		if (!TypeEquationXML.Number.equals(type) && !TypeEquationXML.Variable.equals(type)) {
+		if (!TypeEquationXML.Number.equals(type)
+				&& !TypeEquationXML.Variable.equals(type)) {
 			getWidget(0).removeFromParent();
 			getWidget(0).removeFromParent();
 			redistribute();
@@ -77,10 +76,13 @@ public class ChangeNodeMenu extends CommunistPanel {
 	// //////////////////////////////////////////
 	// Handle Remove
 	// /////////////////////////////////////////
-	private class RemoveNodeClick implements ClickHandler {
-		@Override
-		public void onClick(ClickEvent event) {
+	private class RemoveNodeButton extends TransformationButton {
+		RemoveNodeButton(TransformationList<TransformationButton> changeButtons) {
+			super("Remove", changeButtons);
+			removeButton.getElement().getStyle().setColor("red");
+		}
 
+		public void transform() {
 			EquationNode parent = node.getParent();
 
 			switch (parent.getType()) {
@@ -89,7 +91,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 				if (node.getIndex() == 0) {
 					EquationNode nextOp = node.getNextSibling();
 					if (nextOp != null
-							&& TypeEquationXML.Operation.equals(nextOp.getType())
+							&& TypeEquationXML.Operation.equals(nextOp
+									.getType())
 							&& !Operator.MINUS.getSign().equals(
 									nextOp.getSymbol()))
 						nextOp.remove();
@@ -131,15 +134,18 @@ public class ChangeNodeMenu extends CommunistPanel {
 	// //////////////////////////////////////////
 	// Handle Change
 	// /////////////////////////////////////////
-	class ChangeNodeClick implements ClickHandler {
+	class ChangeNodeButton extends TransformationButton {
 		TypeEquationXML toType;
 
-		ChangeNodeClick(TypeEquationXML toType) {
+		ChangeNodeButton(String html,
+				TransformationList<TransformationButton> changeButtons,
+				TypeEquationXML toType) {
+			super(html, changeButtons);
 			this.toType = toType;
 		}
 
 		@Override
-		public void onClick(ClickEvent event) {
+		public void transform() {
 
 			EquationNode parent = node.getParent();
 			boolean isSameTypeNode = toType.equals(node.getType());
@@ -169,7 +175,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 						@Override
 						protected void onSpecify(String function) {
 							super.onSpecify(function);
-							EquationNode func = node.encase(TypeEquationXML.Trig);
+							EquationNode func = node
+									.encase(TypeEquationXML.Trig);
 							func.setAttribute(MathAttribute.Function, function);
 							Moderator.reloadEquationPanel(null, null);
 						}
@@ -178,10 +185,12 @@ public class ChangeNodeMenu extends CommunistPanel {
 				trigFuncSpec.reload();
 				return;
 			case Number:
-				AlgebraActivity.NUMBER_SPEC_PROMPT(node, !(isSameTypeNode && !NOT_SET.equals(node.getSymbol())));
+				AlgebraActivity.NUMBER_SPEC_PROMPT(node,
+						!(isSameTypeNode && !NOT_SET.equals(node.getSymbol())));
 				return;
 			case Variable:
-				AlgebraActivity.VARIABLE_SPEC_PROMPT(node, !(isSameTypeNode && !NOT_SET.equals(node.getSymbol())));
+				AlgebraActivity.VARIABLE_SPEC_PROMPT(node,
+						!(isSameTypeNode && !NOT_SET.equals(node.getSymbol())));
 				return;
 
 			case Sum:
@@ -198,7 +207,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 					break;
 				} else if (isSameTypeParent) {
 					// don't add sum in sum just extend parent sum
-					parent.addAfter(nodeindex, TypeEquationXML.Variable, NOT_SET);
+					parent.addAfter(nodeindex, TypeEquationXML.Variable,
+							NOT_SET);
 					parent.addAfter(nodeindex, TypeEquationXML.Operation,
 							operator.getSign());
 					break;
@@ -214,7 +224,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 				EquationNode newNode = parent.addBefore(nodeindex, toType, "");
 				newNode.append(node);
 				if (operator != null) {
-					newNode.append(TypeEquationXML.Operation, operator.getSign());
+					newNode.append(TypeEquationXML.Operation,
+							operator.getSign());
 				}
 				newNode.append(TypeEquationXML.Variable, NOT_SET);
 				break;

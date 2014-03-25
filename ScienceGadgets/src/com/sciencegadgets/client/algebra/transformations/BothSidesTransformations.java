@@ -1,26 +1,25 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
-public class BothSidesTransformations extends TransformationList {
+public class BothSidesTransformations extends
+		TransformationList<BothSidesButton> {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 9132644612826212329L;
 
 	private EquationNode node;
-	private EquationNode parentNode;
+	private EquationNode oldParent;
 	private EquationTree tree;
 	Focusable focusable = null;
 	Widget responseNotes = null;
@@ -28,7 +27,7 @@ public class BothSidesTransformations extends TransformationList {
 	boolean isNestedInFraction = false;
 	boolean isSide = false;
 
-	public static final String BOTH_SIDES = ChangeNodeMenu.NOT_SET;
+	public static final String UP_ARROW = "\u2191";
 
 	private static final String PLUS = TypeEquationXML.Operator.PLUS.getSign();
 	private static final String MINUS = TypeEquationXML.Operator.MINUS
@@ -48,9 +47,9 @@ public class BothSidesTransformations extends TransformationList {
 
 		this.node = node;
 		tree = node.getTree();
-		parentNode = node.getParent();
+		oldParent = node.getParent();
 
-		if (parentNode.isLeftSide() || parentNode.isRightSide()) {
+		if (oldParent.isLeftSide() || oldParent.isRightSide()) {
 			switch (type) {
 			case Sum:
 			case Term:
@@ -64,38 +63,38 @@ public class BothSidesTransformations extends TransformationList {
 			}
 		}
 
-		parent: switch (parentNode.getType()) {
+		parent: switch (oldParent.getType()) {
 		case Sum:
 			if (isTopLevel) {
 				if (node.getIndex() > 0) {
 					String opNode = node.getPrevSibling().getSymbol();
 					if (MINUS.equals(opNode)) {
-						this.add(new BothSidesButton(Math.ADD, this));
+						this.add(Math.ADD);
 					} else if (PLUS.equals(opNode)) {
-						this.add(new BothSidesButton(Math.SUBTRACT, this));
+						this.add(Math.SUBTRACT);
 					} else {
 						JSNICalls.warn("The opperator should be + or -");
 					}
 				} else {
-					this.add(new BothSidesButton(Math.SUBTRACT, this));
+					this.add(Math.SUBTRACT);
 				}
 			}
 			break parent;
 		case Term:
 			if (isTopLevel) {
-				this.add(new BothSidesButton(Math.DIVIDE, this));
+				this.add(Math.DIVIDE);
 			}
-			if (TypeEquationXML.Fraction.equals(parentNode.getParent()
+			if (TypeEquationXML.Fraction.equals(oldParent.getParent()
 					.getType())
 					&& !TypeEquationXML.Operation.equals(node.getType())) {
-				if (parentNode.getParent().isRightSide()
-						|| parentNode.getParent().isLeftSide()) {
+				if (oldParent.getParent().isRightSide()
+						|| oldParent.getParent().isLeftSide()) {
 
 					isNestedInFraction = true;
-					if (parentNode.getIndex() == 0) {
-						this.add(new BothSidesButton(Math.DIVIDE, this));
+					if (oldParent.getIndex() == 0) {
+						this.add(Math.DIVIDE);
 					} else {
-						this.add(new BothSidesButton(Math.MULTIPLY, this));
+						this.add(Math.MULTIPLY);
 					}
 				}
 			}
@@ -103,19 +102,19 @@ public class BothSidesTransformations extends TransformationList {
 		case Fraction:
 			if (isTopLevel) {
 				if (node.getIndex() == 0) {
-					this.add(new BothSidesButton(Math.DIVIDE, this));
+					this.add(Math.DIVIDE);
 				} else {
-					this.add(new BothSidesButton(Math.MULTIPLY, this));
+					this.add(Math.MULTIPLY);
 				}
 			}
 			break parent;
 		case Exponential:
 			if (isTopLevel) {
 				if (node.getIndex() == 1) {
-					this.add(new BothSidesButton(Math.INVERSE_EXPONENT, this));
+					this.add(Math.INVERSE_EXPONENT);
 				} else if (node.getIndex() == 0
 						&& TypeEquationXML.Number.equals(type)) {
-					this.add(new BothSidesButton(Math.LOG, this));
+					this.add(Math.LOG);
 				}
 			}
 			break parent;
@@ -124,14 +123,14 @@ public class BothSidesTransformations extends TransformationList {
 				break;
 			}
 			isSide = true;
-			this.add(new BothSidesButton(Math.SUBTRACT, this));
-			this.add(new BothSidesButton(Math.DIVIDE, this));
+			this.add(Math.SUBTRACT);
+			this.add(Math.DIVIDE);
 			eq: switch (type) {
 			case Log:
-				this.add(new BothSidesButton(Math.RAISE, this));
+				this.add(Math.RAISE);
 				break eq;
 			case Trig:
-				this.add(new BothSidesButton(Math.INVERSE_TRIG, this));
+				this.add(Math.INVERSE_TRIG);
 				break eq;
 			}
 			break parent;
@@ -139,79 +138,85 @@ public class BothSidesTransformations extends TransformationList {
 
 	}
 
+	private void add(Math operation) {
+		add(makeButton(operation));
+	}
+	private BothSidesButton makeButton(Math operation) {
+		return makeButton(operation, null);
+	}
+private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton) {
+		String html;
+		BothSidesButton button = null;
+
+		switch (operation) {
+		case ADD:
+			html = UP_ARROW + PLUS + " " + node.getHTMLString(true, true);
+			button = new AddOrSubBothButton(operation, html, this, joinedButton);
+			break;
+		case SUBTRACT:
+			html = UP_ARROW + MINUS + " " + node.getHTMLString(true, true);
+			button = new AddOrSubBothButton(operation, html, this, joinedButton);
+			break;
+		case MULTIPLY:
+			html = UP_ARROW + MULTIPLY + " " + node.getHTMLString(true, true);
+			button = new MultiplyBothButton(operation, html, this, joinedButton);
+			break;
+		case DIVIDE:
+			html = UP_ARROW + DIVIDE + " " + node.getHTMLString(true, true);
+			button = new DivideBothButton(operation, html, this, joinedButton);
+			break;
+		case INVERSE_EXPONENT:
+			html = UP_ARROW + "<sup>1/" + node.getHTMLString(true, true)
+					+ "</sup>";
+			button = new RootBothButton(operation, html, this, joinedButton);
+			break;
+		case RAISE:
+			String base = node.getAttribute(MathAttribute.LogBase);
+			html = base + "<sup>" + UP_ARROW + "</sup>";
+			button = new RaiseBothButton(operation, base, html, this, joinedButton);
+			break;
+		case LOG:
+			html = "log<sub>" + node.getHTMLString(true, true) + "</sub>"
+					+ UP_ARROW;
+			button = new LogBothButton(operation, html, this, joinedButton);
+			break;
+		case INVERSE_TRIG:
+			String func = node.getAttribute(MathAttribute.Function);
+			String inverseFunc = TrigFunctions.getInverseName(func);
+			html = inverseFunc + "(" + UP_ARROW + ")";
+			button = new InverseTrigBothButton(operation, inverseFunc, html, this, joinedButton);
+			break;
+		}
+		return button;
+	}
+
 	enum Math {
 		ADD, SUBTRACT, MULTIPLY, DIVIDE, INVERSE_EXPONENT, RAISE, LOG, INVERSE_TRIG
 	}
 
-	class BothSidesButton extends TransformationButton {
+	public abstract class BothSidesButton extends TransformationButton {
 
-		BothSidesButton(Math operation, TransformationList context) {
-			super(context);
+		private BothSidesButton joinedButton;
 
-			addStyleName(CSS.BOTH_SIDES_BUTTON);
-
-			switch (operation) {
-			case ADD:
-				setHTML(BOTH_SIDES + PLUS + " "
-						+ node.getHTMLString(true, true));
-				addClickHandler(new AddOrSubBothHandler());
-				break;
-			case SUBTRACT:
-				setHTML(BOTH_SIDES + MINUS + " "
-						+ node.getHTMLString(true, true));
-				addClickHandler(new AddOrSubBothHandler());
-				break;
-			case MULTIPLY:
-				setHTML(BOTH_SIDES + MULTIPLY + " "
-						+ node.getHTMLString(true, true));
-				addClickHandler(new MultiplyBothHandler());
-				break;
-			case DIVIDE:
-				setHTML(BOTH_SIDES + DIVIDE + " "
-						+ node.getHTMLString(true, true));
-				addClickHandler(new DivideBothHandler());
-				break;
-			case INVERSE_EXPONENT:
-				setHTML(BOTH_SIDES + "<sup>1/" + node.getHTMLString(true, true)
-						+ "</sup>");
-				addClickHandler(new RootBothHandler());
-				break;
-			case RAISE:
-				String base = node.getAttribute(MathAttribute.LogBase);
-				setHTML(base + "<sup>" + BOTH_SIDES + "</sup>");
-				addClickHandler(new RaiseBothHandler(base));
-				break;
-			case LOG:
-				setHTML("log<sub>" + node.getHTMLString(true, true) + "</sub>"
-						+ BOTH_SIDES);
-				addClickHandler(new LogBothHandler());
-				break;
-			case INVERSE_TRIG:
-				String func = node.getAttribute(MathAttribute.Function);
-				String inverseFunc = TrigFunctions.getInverseName(func);
-				setHTML(inverseFunc + "(" + BOTH_SIDES + ")");
-				addClickHandler(new InverseTrigBothHandler(inverseFunc));
-				break;
-			}
-		}
-	}
-
-	// ////////////////////////////////////////////////////////
-	// Both Sides Handlers
-	// ///////////////////////////////////////////////////////
-
-	abstract class BothSidesHandler implements ClickHandler {
-
-		protected boolean isOnTopLeft;
-		protected boolean isOnTopRight;
 		protected EquationNode targetSide = null;
-		// renamed for clarity
-		protected EquationNode oldParent = parentNode;
-		protected EquationNode oldNextSib;
 		protected String changeComment;
 		EquationNode topParent = null;
 
-		BothSidesHandler() {
+		BothSidesButton(Math operation, String html, BothSidesTransformations context) {
+			this(operation, html, context, null);
+		}
+
+		BothSidesButton(Math operation, String html, BothSidesTransformations context,
+				BothSidesButton joinedButton) {
+			super(html, context);
+
+			if (joinedButton == null) {
+				 this.joinedButton = makeButton(operation, this);
+			} else {
+				this.joinedButton = joinedButton;
+			}
+
+			addStyleName(CSS.BOTH_SIDES_BUTTON);
 
 			if (isSide) {
 				topParent = node;
@@ -220,32 +225,66 @@ public class BothSidesTransformations extends TransformationList {
 			} else if (isNestedInFraction) {
 				topParent = oldParent.getParent();
 			} else {
-				JSNICalls.warn("Added bothSidesHandler to wrong node: " + node);
+				JSNICalls.error("Added bothSidesHandler to wrong node: " + node);
 			}
 			if (topParent.isLeftSide()) {
-				isOnTopLeft = true;
 				targetSide = tree.getRightSide();
 			} else if (topParent.isRightSide()) {
-				isOnTopRight = true;
 				targetSide = tree.getLeftSide();
 			} else {
-				JSNICalls.warn("bothSidesHandler on wrong node: " + node
+				JSNICalls.error("bothSidesHandler on wrong node: " + node
 						+ "\nparent: " + topParent);
+			}
+
+		}
+
+		public BothSidesButton getJoinedButton() {
+			return joinedButton;
+		}
+
+		public boolean isSelected() {
+			return getStyleName().contains(CSS.BOTH_SIDES_BUTTON_SELECTED);
+		}
+
+		public void select() {
+			addStyleName(CSS.BOTH_SIDES_BUTTON_SELECTED);
+		}
+
+		public void deselect() {
+			removeStyleName(CSS.BOTH_SIDES_BUTTON_SELECTED);
+		}
+
+		@Override
+		protected
+		void transform() {
+			BothSidesButton joinedButton = this.getJoinedButton();
+
+			if (joinedButton.isSelected()) {
+				joinedButton.deselect();
+				changeComment = this.getHTML();
+				node.lineThrough();
+				execute();
+			} else {
+				this.select();
+				return;
 			}
 		}
 
-		@Override
-		public void onClick(ClickEvent event) {
-			changeComment = ((BothSidesButton) event.getSource()).getHTML();
-
-			node.lineThrough();
-		}
+		abstract protected void execute();
 	}
 
-	class AddOrSubBothHandler extends BothSidesHandler {
+	// ////////////////////////////////////////////////////////
+	// Both Sides Buttons
+	// ///////////////////////////////////////////////////////
+
+	class AddOrSubBothButton extends BothSidesButton {
+		AddOrSubBothButton(Math operation, String html, BothSidesTransformations context,
+				BothSidesButton joinedButton) {
+			super(operation, html, context, joinedButton);
+		}
+
 		@Override
-		public void onClick(ClickEvent event) {
-			super.onClick(event);
+		protected void execute() {
 			// Prepare Target side
 			targetSide = targetSide.encase(TypeEquationXML.Sum);
 
@@ -301,12 +340,17 @@ public class BothSidesTransformations extends TransformationList {
 			Moderator.reloadEquationPanel(changeComment,
 					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
 		}
+
 	}
 
-	class DivideBothHandler extends BothSidesHandler {
+	class DivideBothButton extends BothSidesButton {
+		DivideBothButton(Math operation, String html, BothSidesTransformations context,
+				BothSidesButton joinedButton) {
+			super(operation, html, context, joinedButton);
+		}
+
 		@Override
-		public void onClick(ClickEvent event) {
-			super.onClick(event);
+		protected void execute() {
 
 			EquationNode operator = null;
 
@@ -349,22 +393,23 @@ public class BothSidesTransformations extends TransformationList {
 				targetSide.append(node);
 
 				// clean source side
-				if(!isSide) {
-				EquationNode oldFirstSib = oldParent.getFirstChild();
-				if (oldFirstSib != null
-						&& TypeEquationXML.Operation.equals(oldFirstSib
-								.getType())) {
-					oldFirstSib.remove();
-				}
+				if (!isSide) {
+					EquationNode oldFirstSib = oldParent.getFirstChild();
+					if (oldFirstSib != null
+							&& TypeEquationXML.Operation.equals(oldFirstSib
+									.getType())) {
+						oldFirstSib.remove();
+					}
 
-				oldParent.decase();
-			}
+					oldParent.decase();
+				}
 			} else {// create node on other side
 				targetSide.append(node.clone());
 				if (TypeEquationXML.Fraction.equals(oldParent.getType())) {
 					EquationNode denominator = oldParent.getChildAt(1).encase(
 							TypeEquationXML.Term);
-					denominator.append(TypeEquationXML.Operation, TypeEquationXML.Operator.getMultiply().getSign());
+					denominator.append(TypeEquationXML.Operation,
+							TypeEquationXML.Operator.getMultiply().getSign());
 					denominator.append(node.clone());
 				} else {
 					topParent = topParent.encase(TypeEquationXML.Fraction);
@@ -377,11 +422,14 @@ public class BothSidesTransformations extends TransformationList {
 		}
 	}
 
-	class MultiplyBothHandler extends BothSidesHandler {
+	class MultiplyBothButton extends BothSidesButton {
+		MultiplyBothButton(Math operation, String html, BothSidesTransformations context,
+				BothSidesButton joinedButton) {
+			super(operation, html, context, joinedButton);
+		}
 
 		@Override
-		public void onClick(ClickEvent event) {
-			super.onClick(event);
+		protected void execute() {
 
 			// Prepare Target side
 			targetSide = targetSide.encase(TypeEquationXML.Term);
@@ -452,11 +500,14 @@ public class BothSidesTransformations extends TransformationList {
 	 * clean up<br/>
 	 * b = targetSide<sup>1/e</sup></sup>
 	 */
-	class RootBothHandler extends BothSidesHandler {
+	class RootBothButton extends BothSidesButton {
+		RootBothButton(Math operation, String html, BothSidesTransformations context,
+				BothSidesButton joinedButton) {
+			super(operation, html, context, joinedButton);
+		}
 
 		@Override
-		public void onClick(ClickEvent event) {
-			super.onClick(event);
+		protected void execute() {
 
 			// Prepare Target side
 			EquationNode target = null;
@@ -517,19 +568,18 @@ public class BothSidesTransformations extends TransformationList {
 	 * clean up<br/>
 	 * x = b<sup>targetSide</sup>
 	 */
-	class RaiseBothHandler extends BothSidesHandler {
-
+	class RaiseBothButton extends BothSidesButton {
 		String base;
-
-		RaiseBothHandler(String base) {
+		RaiseBothButton(Math operation, String base, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
+			super(operation, html, context, joinedButton);
 			this.base = base;
 		}
 
 		@Override
-		public void onClick(ClickEvent event) {
-			super.onClick(event);
-			// Prepare Target side
+		protected void execute() {
 
+			// Prepare Target side
 			EquationNode targetExp = targetSide
 					.encase(TypeEquationXML.Exponential);
 			targetExp.addFirst(TypeEquationXML.Number, base);
@@ -556,13 +606,16 @@ public class BothSidesTransformations extends TransformationList {
 	 * clean up<br/>
 	 * e = log<sub>b</sub>(targetSide)</sup>
 	 */
-	class LogBothHandler extends BothSidesHandler {
+	class LogBothButton extends BothSidesButton {
+		LogBothButton(Math operation, String html, BothSidesTransformations context,
+				BothSidesButton joinedButton) {
+			super(operation, html, context, joinedButton);
+		}
 
 		@Override
-		public void onClick(ClickEvent event) {
-			super.onClick(event);
-			// Prepare Target side
+		protected void execute() {
 
+			// Prepare Target side
 			EquationNode targetLog = targetSide.encase(TypeEquationXML.Log);
 			targetLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 
@@ -588,18 +641,19 @@ public class BothSidesTransformations extends TransformationList {
 	 * clean up<br/>
 	 * x = arcsin(targetSide)</sup>
 	 */
-	class InverseTrigBothHandler extends BothSidesHandler {
+	class InverseTrigBothButton extends BothSidesButton {
 		String toFunction;
 
-		InverseTrigBothHandler(String toFunction) {
+		InverseTrigBothButton(Math operation, String toFunction, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
+			super(operation, html, context, joinedButton);
 			this.toFunction = toFunction;
 		}
 
 		@Override
-		public void onClick(ClickEvent event) {
-			super.onClick(event);
-			// Prepare Target side
+		protected void execute() {
 
+			// Prepare Target side
 			EquationNode targetTrig = targetSide.encase(TypeEquationXML.Trig);
 			targetTrig.setAttribute(MathAttribute.Function, toFunction);
 

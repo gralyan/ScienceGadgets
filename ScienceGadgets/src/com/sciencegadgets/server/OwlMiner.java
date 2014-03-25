@@ -3,9 +3,7 @@ package com.sciencegadgets.server;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -20,7 +18,6 @@ import org.xml.sax.SAXException;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
 

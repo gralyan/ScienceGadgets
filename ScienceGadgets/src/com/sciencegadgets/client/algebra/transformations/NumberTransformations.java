@@ -2,8 +2,6 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.util.LinkedHashSet;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -11,7 +9,8 @@ import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
-public class NumberTransformations extends TransformationList {
+public class NumberTransformations extends
+		TransformationList<NumberTransformationButton> {
 	private static final long serialVersionUID = -7824994598553847333L;
 
 	EquationNode numberNode;
@@ -28,7 +27,7 @@ public class NumberTransformations extends TransformationList {
 	/**
 	 * List the factors of the number as buttons to choose in a prompt
 	 */
-	private TransformationButton factorizeNumbers_check() {
+	private FactorNumberPromptButton factorizeNumbers_check() {
 		Integer number;
 		try {
 			number = Integer.parseInt(numberNode.getSymbol());
@@ -45,7 +44,7 @@ public class NumberTransformations extends TransformationList {
 	/**
 	 * Checks if there is a unit attribute
 	 */
-	private TransformationButton unitConversion_check() {
+	private UnitConversionButton unitConversion_check() {
 		if (!"".equals(numberNode.getUnitAttribute().toString())) {
 			return new UnitConversionButton(this);
 		}
@@ -58,13 +57,13 @@ public class NumberTransformations extends TransformationList {
 // Transformation Buttons
 // ////////////////////////////////////////////////////////////
 
-class NumberTransformationButton extends TransformationButton{
-	
+abstract class NumberTransformationButton extends TransformationButton {
+
 	protected EquationNode numberNode;
 
-	NumberTransformationButton(final NumberTransformations context){
-		super(context);
-		
+	NumberTransformationButton(String html, final NumberTransformations context) {
+		super(html, context);
+
 		this.numberNode = context.numberNode;
 	}
 }
@@ -73,29 +72,31 @@ class NumberTransformationButton extends TransformationButton{
  * Decompose - factor number
  */
 class FactorNumberPromptButton extends NumberTransformationButton {
-	public FactorNumberPromptButton(final Integer number, final NumberTransformations context) {
-		super(context);
-		
-		setHTML("Factor");
+	private Integer number;
+	private NumberTransformations context;
 
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
+	public FactorNumberPromptButton(final Integer number,
+			final NumberTransformations context) {
+		super("Factor", context);
+		this.number = number;
+		this.context = context;
+	}
 
-				Prompt prompt = new Prompt(false);
-				Label title = new Label();
-				title.setText("" + number);
-				title.setHeight("20%");
-				prompt.add(title);
-				for (Integer factor : primeFactors) {
-					prompt.add(new FactorNumberButton(factor, number / factor,
-							prompt, context));
-				}
-				prompt.appear();
-			}
-		});
+	@Override
+	protected
+	void transform() {
+		LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
 
+		Prompt prompt = new Prompt(false);
+		Label title = new Label();
+		title.setText("" + number);
+		title.setHeight("20%");
+		prompt.add(title);
+		for (Integer factor : primeFactors) {
+			prompt.add(new FactorNumberButton(factor, number / factor, prompt,
+					context));
+		}
+		prompt.appear();
 	}
 
 	LinkedHashSet<Integer> findPrimeFactors(Integer number) {
@@ -121,40 +122,42 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 	}
 
 	class FactorNumberButton extends NumberTransformationButton {
+		private int factor;
+		private Prompt prompt;
+
 		FactorNumberButton(final int factor, final int cofactor,
 				final Prompt prompt, final NumberTransformations context) {
-			super(context);
-
-			setHTML(factor + " " + Operator.getMultiply().getSign() + " "
-					+ cofactor);
+			super(factor + " " + Operator.getMultiply().getSign() + " "
+					+ cofactor, context);
+			this.factor = factor;
+			this.prompt = prompt;
 			setSize("50%", "50%");
+		}
 
-			this.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
+		@Override
+		protected
+		void transform() {
+			String original = numberNode.getSymbol();
+			int factored = Integer.parseInt(original) / factor;
 
-					String original = numberNode.getSymbol();
-					int factored = Integer.parseInt(original) / factor;
+			numberNode.highlight();
 
-					numberNode.highlight();
+			EquationNode parent = numberNode.encase(TypeEquationXML.Term);
+			int index = numberNode.getIndex();
+			parent.addBefore(index, TypeEquationXML.Operation, Operator
+					.getMultiply().getSign());
+			parent.addBefore(index, TypeEquationXML.Number, factor + "");
 
-					EquationNode parent = numberNode.encase(TypeEquationXML.Term);
-					int index = numberNode.getIndex();
-					parent.addBefore(index, TypeEquationXML.Operation, Operator
-							.getMultiply().getSign());
-					parent.addBefore(index, TypeEquationXML.Number, factor + "");
+			numberNode.setSymbol(factored + "");
 
-					numberNode.setSymbol(factored + "");
+			Moderator.reloadEquationPanel(original + " = " + factor + " "
+					+ Operator.getMultiply().getSign() + " " + factored,
+					Rule.INTEGER_FACTORIZATION);
 
-					Moderator.reloadEquationPanel(original + " = " + factor
-							+ " " + Operator.getMultiply().getSign() + " "
-							+ factored, Rule.INTEGER_FACTORIZATION);
-
-					prompt.disappear();
-				}
-			});
+			prompt.disappear();
 		}
 	}
+
 }
 
 /**
@@ -163,15 +166,12 @@ class FactorNumberPromptButton extends NumberTransformationButton {
  */
 class UnitConversionButton extends NumberTransformationButton {
 	UnitConversionButton(final NumberTransformations context) {
-		super(context);
+		super("Convert Units", context);
+	}
 
-		setHTML("Convert Units");
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Moderator.switchToConversion(numberNode);
-			}
-		});
+	@Override
+	protected
+	void transform() {
+		Moderator.switchToConversion(numberNode);
 	}
 }
