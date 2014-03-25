@@ -1,7 +1,6 @@
 package com.sciencegadgets.client.algebra.edit;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -9,13 +8,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.Moderator.ActivityType;
-import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 
 public class RandomSpecPanel extends FlowPanel {

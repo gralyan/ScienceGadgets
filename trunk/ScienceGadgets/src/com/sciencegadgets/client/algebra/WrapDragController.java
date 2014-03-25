@@ -26,7 +26,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.ui.CSS;
 
 public class WrapDragController extends PickupDragController {
 

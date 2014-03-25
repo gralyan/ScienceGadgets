@@ -18,15 +18,10 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
-import com.sciencegadgets.client.algebra.transformations.ExponentialTransformations;
-import com.sciencegadgets.client.algebra.transformations.LogarithmicTransformations;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
+import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
-import com.sciencegadgets.client.algebra.transformations.TrigTransformations;
-import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.CommunistPanel;
-import com.sciencegadgets.shared.TypeEquationXML;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -36,8 +31,8 @@ import com.sciencegadgets.shared.TypeEquationXML;
  * 
  */
 public class AlgebaWrapper extends EquationWrapper {
-
-	private CommunistPanel algTransformMenu;
+	TransformationList<TransformationButton> simplifyTransformations = null;
+	BothSidesTransformations bothSidesTransformations = null;
 
 	/**
 	 * Wrapper for symbols which allow for user interaction
@@ -62,34 +57,27 @@ public class AlgebaWrapper extends EquationWrapper {
 		super.select();
 
 		if (this.equals(eqPanel.selectedWrapper)) {
+			
+			if (simplifyTransformations == null || bothSidesTransformations == null) {
+				simplifyTransformations = TransformationList.FIND_ALL_SIMPLIFY(node);
+				bothSidesTransformations = new BothSidesTransformations(node);
+			}
 
-//			if (algTransformMenu == null) {
-//
-//				algTransformMenu = new CommunistPanel(true);
-//				algTransformMenu.addStyleName(CSS.LAYOUT_ROW);
-//				algTransformMenu.setSize("100%", "100%");
-//
-//				TransformationList[] transorms = TransformationList.FIND_ALL(node);
-//				algTransformMenu.addAll(transorms[0]);
-//				algTransformMenu.addAll(transorms[1]);
-//				algTransformMenu.addAll(transorms[2]);
-//			}
-			
-//			AlgebraActivity algActivity = Moderator.getCurrentAlgebraActivity();
-//			TransformationList[] transorms = TransformationList.FIND_ALL(node);
-//			algTransformMenu.addAll(transorms[0]);
-//			algTransformMenu.addAll(transorms[1]);
-//			algTransformMenu.addAll(transorms[2]);
-//			
-//			algActivity.lowerEqArea.clear();
-//			algActivity.lowerEqArea.add(algTransformMenu);
-			
-			Moderator.getCurrentAlgebraActivity().fillTransformLists(node);
+			Moderator.getCurrentAlgebraActivity().fillTransformLists(
+					simplifyTransformations, bothSidesTransformations);
 		}
 	}
 
 	public void unselect() {
 		super.unselect();
+		
+		if(bothSidesTransformations != null) {
+			for(BothSidesButton button : bothSidesTransformations) {
+				button.deselect();
+				button.getJoinedButton().deselect();
+			}
+		}
+		
 		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
 	}
 

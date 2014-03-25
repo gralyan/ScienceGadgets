@@ -1,13 +1,12 @@
 package com.sciencegadgets.client.algebra.edit;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
-import com.google.gwt.user.client.Element;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.shared.TypeEquationXML;

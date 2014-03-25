@@ -22,8 +22,6 @@ import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -42,7 +40,6 @@ public class AlgebraHistory extends FlowPanel {
 	public String origionalHeightStr;
 	public boolean scrolled = false;
 	FlowPanel firstRow = new FlowPanel();
-	public static final String UP_ARROW = "\u2191";
 	boolean wasTouchMoved = false;
 
 	public AlgebraHistory(AlgebraActivity algebraActivity) {
@@ -84,9 +81,8 @@ public class AlgebraHistory extends FlowPanel {
 		
 		add(new AlgebraHistoryRow(changeComment, rule, mathTree));
 
-		if (changeComment.contains(BothSidesTransformations.BOTH_SIDES)) {
-			add(new AlgebraHistoryRow(changeComment.replace(
-					BothSidesTransformations.BOTH_SIDES, UP_ARROW)));
+		if (changeComment.contains(BothSidesTransformations.UP_ARROW)) {
+			add(new AlgebraHistoryRow(changeComment));
 		}
 
 	}

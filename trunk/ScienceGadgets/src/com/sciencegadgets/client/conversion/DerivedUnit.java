@@ -2,7 +2,6 @@ package com.sciencegadgets.client.conversion;
 
 import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.UnitName;
 
 public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)

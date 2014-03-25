@@ -21,7 +21,6 @@ import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.UnitName;
 
 @SuppressWarnings("serial")

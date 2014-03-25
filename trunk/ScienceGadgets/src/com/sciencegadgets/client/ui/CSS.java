@@ -108,8 +108,9 @@ public static final String CHANGE_NODE_BUTTON = "changeNodeButton";
 public static final String BOTH_SIDES_BUTTON = "bothSidesButton";
 public static final String SMALLEST_BUTTON = "smallestButton";
 public static final String MEDIUM_BUTTON = "mediumButton";
-public static final String BOTH_SIDES_PANEL_BUTTON = "bothSidesPanelButton";
-public static final String SIMPLIFY_PANEL_BUTTON = "simplifyPanelButton";
+public static final String BOTH_SIDES_BUTTON_SELECTED = "bothSidesButtonSelected";
+public static final String BOTH_SIDES_PANEL = "bothSidesPanel";
+public static final String SIMPLIFY_PANEL = "simplifyPanel";
 
 
 }

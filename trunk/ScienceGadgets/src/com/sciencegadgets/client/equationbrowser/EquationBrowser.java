@@ -19,7 +19,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.ui.CSS;
 
 //Uncomment to use as gadget////////////////////////////////////

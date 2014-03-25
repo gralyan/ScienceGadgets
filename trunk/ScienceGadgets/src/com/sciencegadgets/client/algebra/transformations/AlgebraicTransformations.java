@@ -3,8 +3,6 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
@@ -32,13 +30,9 @@ public class AlgebraicTransformations {
 	 * @param opNode
 	 *            - operation to perform
 	 */
-	public static TransformationList operation(EquationNode opNode) {
-		EquationNode left, right = null;
+	public static TransformationList<? extends TransformationButton> operation(EquationNode opNode) {
 
-		left = opNode.getPrevSibling();
-		right = opNode.getNextSibling();
-
-		if (left != null && left != null) {
+		if (opNode.getPrevSibling() != null && opNode.getNextSibling() != null) {
 			switch (opNode.getOperation()) {
 			case CROSS:
 			case DOT:
@@ -171,7 +165,7 @@ public class AlgebraicTransformations {
 	 *            - node of negative number
 	 */
 	public static TransformationButton separateNegative_check(EquationNode negNode,
-			TransformationList context) {
+			TransformationList<TransformationButton> context) {
 		if (negNode.getSymbol().startsWith(TypeEquationXML.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
 			return new SeperateNegButton(negNode, context);
@@ -285,7 +279,7 @@ public class AlgebraicTransformations {
 	}
 
 	public static TransformationButton denominatorFlip_check(EquationNode node,
-			TransformationList context) {
+			TransformationList<TransformationButton> context) {
 		return new DenominatorFlipButton(node, context);
 	}
 
@@ -300,42 +294,41 @@ public class AlgebraicTransformations {
  * 
  */
 class SeperateNegButton extends TransformationButton {
-	SeperateNegButton(final EquationNode negNode, TransformationList context) {
-		super(context);
+	private EquationNode negNode;
+	SeperateNegButton(final EquationNode negNode, TransformationList<TransformationButton> context) {
+		super("Seperate (-)", context);
+		this.negNode = negNode;
+	}
+	@Override
+	protected
+	void transform() {
 
-		setHTML("Seperate (-)");
+		EquationNode prevSib = negNode.getPrevSibling();
+		String newSymbol = negNode.getSymbol().replaceFirst(
+				TypeEquationXML.Operator.MINUS.getSign(), "");
+		negNode.setSymbol(newSymbol);
 
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				EquationNode prevSib = negNode.getPrevSibling();
-				String newSymbol = negNode.getSymbol().replaceFirst(
-						TypeEquationXML.Operator.MINUS.getSign(), "");
-				negNode.setSymbol(newSymbol);
-
-				if (prevSib != null
-						&& TypeEquationXML.Operation.equals(prevSib.getType())) {
-					if (Operator.PLUS.getSign().equals(prevSib.getSymbol())) {
-						prevSib.setSymbol(Operator.MINUS.getSign());
-					} else if (Operator.MINUS.getSign().equals(
-							prevSib.getSymbol())) {
-						prevSib.setSymbol(Operator.PLUS.getSign());
-					} else {
-						JSNICalls.error("The previous operator contains "
-								+ "neither a plus or minus");
-					}
-				} else {
-					EquationNode parent = negNode.getParent();
-					parent = negNode.encase(TypeEquationXML.Term);
-					int nodeIndex = negNode.getIndex();
-					parent.addBefore(nodeIndex, TypeEquationXML.Operation,
-							TypeEquationXML.Operator.getMultiply().getSign());
-					parent.addBefore(nodeIndex, TypeEquationXML.Number, "-1");
-				}
-				Moderator.reloadEquationPanel("-" + newSymbol + " = -1"
-						+ Operator.getMultiply().getSign() + newSymbol, null);
+		if (prevSib != null
+				&& TypeEquationXML.Operation.equals(prevSib.getType())) {
+			if (Operator.PLUS.getSign().equals(prevSib.getSymbol())) {
+				prevSib.setSymbol(Operator.MINUS.getSign());
+			} else if (Operator.MINUS.getSign().equals(
+					prevSib.getSymbol())) {
+				prevSib.setSymbol(Operator.PLUS.getSign());
+			} else {
+				JSNICalls.error("The previous operator contains "
+						+ "neither a plus or minus");
 			}
-		});
+		} else {
+			EquationNode parent = negNode.getParent();
+			parent = negNode.encase(TypeEquationXML.Term);
+			int nodeIndex = negNode.getIndex();
+			parent.addBefore(nodeIndex, TypeEquationXML.Operation,
+					TypeEquationXML.Operator.getMultiply().getSign());
+			parent.addBefore(nodeIndex, TypeEquationXML.Number, "-1");
+		}
+		Moderator.reloadEquationPanel("-" + newSymbol + " = -1"
+				+ Operator.getMultiply().getSign() + newSymbol, null);
 	}
 }
 
@@ -344,72 +337,43 @@ class SeperateNegButton extends TransformationButton {
  * x / y = x &middot; (1/y)
  */
 class DenominatorFlipButton extends TransformationButton {
-	DenominatorFlipButton(final EquationNode node, TransformationList context) {
-		super(context);
+	private EquationNode node;
+	DenominatorFlipButton(final EquationNode node, TransformationList<TransformationButton> context) {
+		super("Flip Denominator",context);
+		this.node = node;
+	}
+	@Override
+	protected
+	void transform() {
 
-		setHTML("Flip Denominator");
+		node.highlight();
 
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				node.highlight();
+		EquationNode frac = node;
+		if (!TypeEquationXML.Fraction.equals(node.getType())) {
+			frac = node.encase(TypeEquationXML.Fraction);
+			frac.append(TypeEquationXML.Number, "1");
+		}
+		// Flip
+		frac.append(frac.getChildAt(0));
 
-				EquationNode frac = node;
-				if (!TypeEquationXML.Fraction.equals(node.getType())) {
-					frac = node.encase(TypeEquationXML.Fraction);
-					frac.append(TypeEquationXML.Number, "1");
-				}
-				// Flip
-				frac.append(frac.getChildAt(0));
+		EquationNode parentFraction = frac.getParent();
+		EquationNode grandParent = parentFraction.getParent();
+		int index = parentFraction.getIndex();
 
-				EquationNode parentFraction = frac.getParent();
-				EquationNode grandParent = parentFraction.getParent();
-				int index = parentFraction.getIndex();
+		if (!TypeEquationXML.Term.equals(grandParent.getType())) {
+			grandParent = parentFraction.encase(TypeEquationXML.Term);
+			index = 0;
+		}
 
-				if (!TypeEquationXML.Term.equals(grandParent.getType())) {
-					grandParent = parentFraction.encase(TypeEquationXML.Term);
-					index = 0;
-				}
+		grandParent.addBefore(index, parentFraction.getChildAt(1));
+		grandParent.addBefore(index, TypeEquationXML.Operation, Operator
+				.getMultiply().getSign());
+		grandParent.addBefore(index, parentFraction.getChildAt(0));
 
-				grandParent.addBefore(index, parentFraction.getChildAt(1));
-				grandParent.addBefore(index, TypeEquationXML.Operation, Operator
-						.getMultiply().getSign());
-				grandParent.addBefore(index, parentFraction.getChildAt(0));
+		parentFraction.remove();
 
-				parentFraction.remove();
-
-				Moderator.reloadEquationPanel("Multiply by Resiprocal",
-						Rule.FRACTION_DIVISION);
-			}
-		});
+		Moderator.reloadEquationPanel("Multiply by Resiprocal",
+				Rule.FRACTION_DIVISION);
 	}
 }
 
-/**
- * Unravel function within inverse function or inverse function within function<br/>
- * sin(arcsin(x)) = x<br/>
- * arcsin(sin(x)) = x<br/>
- * log<sub>b</sub>(b<sup>x</sup>) = x<br/>
- * b<sup>log<sub>b</sub>(x)</sup> = x<br/>
- */
-class UnravelButton extends TransformationButton {
-
-	public UnravelButton(final EquationNode toReplace, final EquationNode replacement,
-			final Rule rule, TransformationList context) {
-		super(context);
-
-		setHTML(replacement.getHTMLString(true, true));
-
-		this.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				String changeComment = toReplace.getHTMLString(true, true) + " = "
-						+ replacement.getHTMLString(true, true);
-				
-				toReplace.replace(replacement);
-				
-				Moderator.reloadEquationPanel(changeComment, rule);
-			}
-		});
-	}
-}

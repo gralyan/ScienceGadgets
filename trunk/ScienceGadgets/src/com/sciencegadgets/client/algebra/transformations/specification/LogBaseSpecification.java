@@ -4,7 +4,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.KeyPadNumerical;

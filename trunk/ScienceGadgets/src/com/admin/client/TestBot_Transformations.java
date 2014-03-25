@@ -336,7 +336,7 @@ public class TestBot_Transformations {
 		return table;
 	}
 
-	private void fillRow(TransformationList transformList,
+	private void fillRow(TransformationList<? extends TransformationButton> transformList,
 			HashMap<String, Integer> tButtonMap, FlexTable table, EquationNode node) {
 
 		if (!showsEmptyRows && transformList.isEmpty()) {

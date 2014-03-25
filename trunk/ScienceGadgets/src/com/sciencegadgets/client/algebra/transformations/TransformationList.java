@@ -3,12 +3,11 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.TypeEquationXML;
 
-public class TransformationList extends LinkedList<TransformationButton> {
+public class TransformationList<E extends TransformationButton> extends LinkedList<E> {
 	private static final long serialVersionUID = -3043410062241803505L;
 	private EquationNode contextNode;
 	EquationTree beforeAfterTree = null;
@@ -23,9 +22,14 @@ public class TransformationList extends LinkedList<TransformationButton> {
 		return contextNode;
 	}
 
-	public static TransformationList[] FIND_ALL(EquationNode node) {
-		TransformationList simplify = new TransformationList(node);
-		TransformationList toBothSides = new BothSidesTransformations(node);
+	public static BothSidesTransformations FIND_ALL_BOTHSIDES(EquationNode node) {
+		BothSidesTransformations toBothSides = new BothSidesTransformations(node);
+		toBothSides.setPreviewLabels();
+		return toBothSides;
+	}
+
+	public static TransformationList<TransformationButton> FIND_ALL_SIMPLIFY(EquationNode node) {
+		TransformationList<TransformationButton> simplify = new TransformationList<TransformationButton>(node);
 
 		switch (node.getType()) {
 		case Exponential:
@@ -65,30 +69,30 @@ public class TransformationList extends LinkedList<TransformationButton> {
 					simplify));
 		}
 
-		TransformationList[] lists = { simplify, toBothSides};
-		
+		simplify.setPreviewLabels();
+
+		return simplify;
+	}
+
+	void setPreviewLabels() {
 		// Name as preview
-		for(TransformationList list : lists) {
-			for(TransformationButton button : list) {
-				String buttonHTML = button.getHTML();
-				if(buttonHTML == null || "".equals(buttonHTML)) {
-					EquationTree previewEq = button.getPreview();
-					String preview = null;
-					if (previewEq != null) {
-						preview = previewEq.getRightDisplay();
-					} else {
-						preview = "no label";
-					}
-					button.setHTML(preview);
+		for (TransformationButton button : this) {
+			String buttonHTML = button.getHTML();
+			if (buttonHTML == null || "".equals(buttonHTML)) {
+				EquationTree previewEq = button.getPreview();
+				String preview = null;
+				if (previewEq != null) {
+					preview = previewEq.getRightDisplay();
+				} else {
+					preview = "no label";
 				}
+				button.setHTML(preview);
 			}
 		}
-
-		return lists;
 	}
 
 	@Override
-	public boolean add(TransformationButton tButt) {
+	public boolean add(E tButt) {
 		if (tButt != null) {
 			super.add(tButt);
 			return true;
@@ -97,7 +101,7 @@ public class TransformationList extends LinkedList<TransformationButton> {
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends TransformationButton> c) {
+	public boolean addAll(Collection<? extends E> c) {
 		if (c != null) {
 			for (TransformationButton b : c) {
 				if (b == null) {

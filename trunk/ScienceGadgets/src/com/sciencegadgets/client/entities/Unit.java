@@ -6,8 +6,6 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
-import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.UnitName;
 
 @Entity

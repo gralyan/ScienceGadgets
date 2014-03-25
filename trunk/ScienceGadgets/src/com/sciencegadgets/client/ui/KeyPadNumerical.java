@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 

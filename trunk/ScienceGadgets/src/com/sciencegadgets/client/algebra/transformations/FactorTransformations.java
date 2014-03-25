@@ -3,15 +3,13 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.FactorTransformations.Match;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
-public class FactorTransformations extends TransformationList {
+public class FactorTransformations extends TransformationList<AddTransformButton> {
 	private static final long serialVersionUID = -6071971827855796001L;
 
 	private AdditionTransformations addT;
@@ -135,75 +133,76 @@ public class FactorTransformations extends TransformationList {
  * x/y + x<sup>a</sup> = x&middot;(1/y + x<sup>a-1</sup>)<br/>
  */
 class FactorButton extends AddTransformButton {
+	private LinkedList<Match> matches;
+
 	FactorButton(AdditionTransformations context,
 			final LinkedList<Match> matches) {
 		super(context, "Factor " + matches);
-
-		addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-
-				for (Match match : matches) {
-					match.leftFactor.highlight();
-					match.rightFactor.highlight();
-				}
-
-				EquationNode term = parent.addAfter(right.getIndex(), TypeEquationXML.Term,
-						"");
-				for (Match match : matches) {
-					term.append(match.leftFactor.clone());
-					term.append(TypeEquationXML.Operation, Operator.getMultiply()
-							.getSign());
-				}
-				EquationNode sum = term.append(TypeEquationXML.Sum, "");
-				sum.append(left);
-				sum.append(operation);
-				sum.append(right);
-
-				if (isMinusBeforeLeft) {
-					minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
-					sum.addFirst(TypeEquationXML.Operation, Operator.MINUS.getSign());
-				}
-
-				for (Match match : matches) {
-					factorOut(match.leftFactor, left);
-					factorOut(match.rightFactor, right);
-				}
-
-				// Combine like terms if appropriate
-				if (Moderator.isInEasyMode && sum.getChildCount() == 3) {
-					EquationNode sumLeft = sum.getChildAt(0);
-					EquationNode sumOP = sum.getChildAt(1);
-					EquationNode sumRight = sum.getChildAt(2);
-					if (TypeEquationXML.Number.equals(sumLeft.getType())
-							&& TypeEquationXML.Operation.equals(sumOP.getType())
-							&& TypeEquationXML.Number.equals(sumRight.getType())) {
-						BigDecimal leftValue, rightValue, combinedValue;
-						leftValue = new BigDecimal(sumLeft.getSymbol());
-						rightValue = new BigDecimal(sumRight.getSymbol());
-						if (isMinus) {
-							combinedValue = leftValue.subtract(rightValue);
-						} else {
-							combinedValue = leftValue.add(rightValue);
-						}
-						sum = sum.replace(TypeEquationXML.Number,
-								combinedValue.toString());
-						term.addFirst(sum.getPrevSibling());
-						term.addFirst(sum);
-					}
-				}
-
-				parent.decase();
-
-				if (reloadAlgebraActivity) {
-					Moderator.reloadEquationPanel("Factor " + getHTML(),
-							Rule.FACTORIZATION);
-				}
-			}
-		});
+		this.matches = matches;
 	}
 
+	@Override
+	protected
+	void transform() {
+
+		for (Match match : matches) {
+			match.leftFactor.highlight();
+			match.rightFactor.highlight();
+		}
+
+		EquationNode term = parent.addAfter(right.getIndex(), TypeEquationXML.Term,
+				"");
+		for (Match match : matches) {
+			term.append(match.leftFactor.clone());
+			term.append(TypeEquationXML.Operation, Operator.getMultiply()
+					.getSign());
+		}
+		EquationNode sum = term.append(TypeEquationXML.Sum, "");
+		sum.append(left);
+		sum.append(operation);
+		sum.append(right);
+
+		if (isMinusBeforeLeft) {
+			minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
+			sum.addFirst(TypeEquationXML.Operation, Operator.MINUS.getSign());
+		}
+
+		for (Match match : matches) {
+			factorOut(match.leftFactor, left);
+			factorOut(match.rightFactor, right);
+		}
+
+		// Combine like terms if appropriate
+		if (Moderator.isInEasyMode && sum.getChildCount() == 3) {
+			EquationNode sumLeft = sum.getChildAt(0);
+			EquationNode sumOP = sum.getChildAt(1);
+			EquationNode sumRight = sum.getChildAt(2);
+			if (TypeEquationXML.Number.equals(sumLeft.getType())
+					&& TypeEquationXML.Operation.equals(sumOP.getType())
+					&& TypeEquationXML.Number.equals(sumRight.getType())) {
+				BigDecimal leftValue, rightValue, combinedValue;
+				leftValue = new BigDecimal(sumLeft.getSymbol());
+				rightValue = new BigDecimal(sumRight.getSymbol());
+				if (isMinus) {
+					combinedValue = leftValue.subtract(rightValue);
+				} else {
+					combinedValue = leftValue.add(rightValue);
+				}
+				sum = sum.replace(TypeEquationXML.Number,
+						combinedValue.toString());
+				term.addFirst(sum.getPrevSibling());
+				term.addFirst(sum);
+			}
+		}
+
+		parent.decase();
+
+		if (reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel("Factor " + getHTML(),
+					Rule.FACTORIZATION);
+		}
+	}
+	
 	private void factorOut(EquationNode toFactor, EquationNode inSide) {
 		if (toFactor == inSide) {
 			toFactor.replace(TypeEquationXML.Number, "1");

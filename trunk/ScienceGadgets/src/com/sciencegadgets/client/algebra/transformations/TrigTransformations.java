@@ -10,25 +10,26 @@ import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
-public class TrigTransformations extends TransformationList {
+public class TrigTransformations extends
+		TransformationList<TrigTransformButton> {
 
 	private static final long serialVersionUID = 2158189067374424843L;
 
 	EquationNode trig;
 	EquationNode argument;
-	
+
 	TypeEquationXML argumentType;
-	
+
 	TrigFunctions function;
 
 	public TrigTransformations(EquationNode trigNode) {
 		super(trigNode);
-		
+
 		trig = trigNode;
 		argument = trigNode.getChildAt(0);
-		
+
 		argumentType = argument.getType();
-		
+
 		function = TrigFunctions.valueOf(trigNode
 				.getAttribute(MathAttribute.Function));
 
@@ -43,7 +44,7 @@ public class TrigTransformations extends TransformationList {
 		}
 		return null;
 	}
-	
+
 	TrigDefineButton trigDefinition_check() {
 		if (!function.isArc()) {
 			return new TrigDefineButton(this);
@@ -56,7 +57,7 @@ public class TrigTransformations extends TransformationList {
 	 * sin(arcsin(x)) = x<br/>
 	 * arcsin(sin(x)) = x<br/>
 	 */
-	TransformationButton inverseTrig_check() {
+	TrigUnravelButton inverseTrig_check() {
 		EquationNode trigChild = trig.getFirstChild();
 		if (TypeEquationXML.Trig.equals(trigChild.getType())) {
 			String trigChildFunc = trigChild
@@ -65,7 +66,7 @@ public class TrigTransformations extends TransformationList {
 					.getInverseName(trigChildFunc);
 			String trigFunc = trig.getAttribute(MathAttribute.Function);
 			if (trigFunc.equals(trigChildFuncInverse)) {
-				return new UnravelButton(trig, trigChild.getFirstChild(),
+				return new TrigUnravelButton(trig, trigChild.getFirstChild(),
 						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS, this);
 			}
 		}
@@ -73,13 +74,13 @@ public class TrigTransformations extends TransformationList {
 	}
 }
 
-// ////////////////////////////////////////////////
+abstract// ////////////////////////////////////////////////
 // Transform buttons
 // ///////////////////////////////////////////////
 class TrigTransformButton extends TransformationButton {
 	final EquationNode trig;
 	final EquationNode argument;
-	
+
 	final TypeEquationXML argumentType;
 	final TrigFunctions function;
 
@@ -88,8 +89,8 @@ class TrigTransformButton extends TransformationButton {
 
 	TrigTransformButton(TrigTransformations context) {
 		super(context);
-		addStyleName(CSS.TRIG +" "+CSS.DISPLAY_WRAPPER);
-		
+		addStyleName(CSS.TRIG + " " + CSS.DISPLAY_WRAPPER);
+
 		this.trig = context.trig;
 		this.argument = context.argument;
 		this.argumentType = context.argumentType;
@@ -118,41 +119,47 @@ class TrigTransformButton extends TransformationButton {
  */
 class TrigDefineButton extends TrigTransformButton {
 
+	private TrigFunctions[] funcDef;
+	private boolean defIsTerm;
+
 	public TrigDefineButton(TrigTransformations context) {
 		super(context);
 
-		final TrigFunctions[] funcDef = function.getDefinition();
+		funcDef = function.getDefinition();
 
-		final boolean defIsTerm =  funcDef[1] != null;
+		defIsTerm = funcDef[1] != null;
 		String html = defIsTerm ? "*" + funcDef[1] : "/" + funcDef[2];
 		html = funcDef[0] + html;
 
 		setHTML(html);
-
-		addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-
-				trig.setSymbol(funcDef[0].toString());
-				EquationNode otherTrig;
-				
-				if(defIsTerm) {
-					EquationNode term = trig.encase(TypeEquationXML.Term);
-					int trigIndex = trig.getIndex();
-					otherTrig = term.addAfter(trigIndex, TypeEquationXML.Trig, funcDef[1].toString());
-					term.addAfter(trigIndex, TypeEquationXML.Operation, Operator.getMultiply().getSign());
-				}else {
-					EquationNode frac = trig.encase(TypeEquationXML.Fraction);
-					otherTrig = frac.addAfter(0, TypeEquationXML.Trig, funcDef[2].toString());
-				}
-				otherTrig.append(argument.clone());
-
-				if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(getHTML(), Rule.TRIGONOMETRIC_FUNCTIONS);
-			}}
-		});
 	}
+
+	@Override
+	protected
+	void transform() {
+		trig.setSymbol(funcDef[0].toString());
+		EquationNode otherTrig;
+
+		if (defIsTerm) {
+			EquationNode term = trig.encase(TypeEquationXML.Term);
+			int trigIndex = trig.getIndex();
+			otherTrig = term.addAfter(trigIndex, TypeEquationXML.Trig,
+					funcDef[1].toString());
+			term.addAfter(trigIndex, TypeEquationXML.Operation, Operator
+					.getMultiply().getSign());
+		} else {
+			EquationNode frac = trig.encase(TypeEquationXML.Fraction);
+			otherTrig = frac.addAfter(0, TypeEquationXML.Trig,
+					funcDef[2].toString());
+		}
+		otherTrig.append(argument.clone());
+
+		if (reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel(getHTML(),
+					Rule.TRIGONOMETRIC_FUNCTIONS);
+		}
+	}
+
 	@Override
 	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
@@ -172,11 +179,12 @@ class TrigDefineButton extends TrigTransformButton {
  * tanh(x) = 1/coth(x)<br/>
  */
 class TrigReciprocalButton extends TrigTransformButton {
+	TrigFunctions reciprocalFunction;
 
 	public TrigReciprocalButton(TrigTransformations context) {
 		super(context);
 
-		final TrigFunctions reciprocalFunction = function.getReciprocal();
+		reciprocalFunction = function.getReciprocal();
 
 		setHTML("1/" + reciprocalFunction);
 
@@ -184,20 +192,54 @@ class TrigReciprocalButton extends TrigTransformButton {
 
 			@Override
 			public void onClick(ClickEvent event) {
-
-				AlgebraicTransformations.reciprocate(trig);
-
-				trig.setAttribute(MathAttribute.Function,
-						reciprocalFunction.toString());
-
-				if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(getHTML(), Rule.TRIGONOMETRIC_FUNCTIONS);
-			}}
+			}
 		});
 	}
+
+	@Override
+	protected
+	void transform() {
+		AlgebraicTransformations.reciprocate(trig);
+
+		trig.setAttribute(MathAttribute.Function, reciprocalFunction.toString());
+
+		if (reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel(getHTML(),
+					Rule.TRIGONOMETRIC_FUNCTIONS);
+		}
+	}
+
 	@Override
 	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
 		return previewContext.trigReciprocal_check();
+	}
+}
+
+/**
+ * sin(arcsin(x)) = x<br/>
+ * arcsin(sin(x)) = x<br/>
+ */
+class TrigUnravelButton extends TrigTransformButton {
+
+	private EquationNode toReplace;
+	private EquationNode replacement;
+	private Rule rule;
+
+	public TrigUnravelButton(final EquationNode toReplace, final EquationNode replacement,
+			final Rule rule, TrigTransformations context) {
+		super(context);
+		setHTML(replacement.getHTMLString(true, true));
+		this.rule = rule;
+		this.toReplace = toReplace;
+		this.replacement = replacement;
+	}
+	@Override
+	protected
+	void transform() {
+		String changeComment = toReplace.getHTMLString(true, true) + " = "
+				+ replacement.getHTMLString(true, true);
+		toReplace.replace(replacement);
+		Moderator.reloadEquationPanel(changeComment, rule);
 	}
 }

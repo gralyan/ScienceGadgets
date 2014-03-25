@@ -12,7 +12,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 
 public class ToggleSlide extends FlowPanel implements HasClickHandlers, HasTouchStartHandlers {
