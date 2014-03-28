@@ -7,8 +7,8 @@ import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitMultiple;
-import com.sciencegadgets.shared.UnitName;
+import com.sciencegadgets.shared.dimensions.UnitMultiple;
+import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class ConversionWrapper extends Wrapper {
 

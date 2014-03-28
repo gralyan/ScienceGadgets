@@ -12,7 +12,7 @@ import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
-import com.sciencegadgets.shared.UnitMap;
+import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class ExponentialTransformations extends
 		TransformationList<ExponentialTransformButton> {

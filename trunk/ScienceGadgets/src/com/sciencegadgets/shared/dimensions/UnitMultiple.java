@@ -1,4 +1,4 @@
-package com.sciencegadgets.shared;
+package com.sciencegadgets.shared.dimensions;
 
 public class UnitMultiple {
 

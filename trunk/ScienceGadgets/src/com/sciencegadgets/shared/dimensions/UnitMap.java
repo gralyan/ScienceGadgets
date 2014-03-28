@@ -1,11 +1,11 @@
-package com.sciencegadgets.shared;
+package com.sciencegadgets.shared.dimensions;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.conversion.DerivedUnit;
 
 public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 
@@ -47,12 +47,12 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 	 */
 	@Override
 	public Integer put(UnitName key, Integer change) {
-		if("".equals(key.toString())) {
+		if ("".equals(key.toString())) {
 			return 0;
 		}
 		Entry<UnitName, Integer> entry = this.getEntry(key);
 		Integer thisValue = 0;
-		if(entry != null) {
+		if (entry != null) {
 			thisValue = entry.getValue();
 			key = entry.getKey();
 		}
@@ -67,15 +67,15 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 
 	@Override
 	public Integer get(Object key) {
-		if(key == null) {
+		if (key == null) {
 			return null;
 		}
 		if (key instanceof UnitName) {
 			Entry<UnitName, Integer> entry = getEntry((UnitName) key);
 			return entry == null ? null : entry.getValue();
-		} else if (key instanceof String){
-			for(Entry<UnitName, Integer> entry : entrySet()) {
-				if(key.equals(entry.getKey().toString())) {
+		} else if (key instanceof String) {
+			for (Entry<UnitName, Integer> entry : entrySet()) {
+				if (key.equals(entry.getKey().toString())) {
 					return entry.getValue();
 				}
 			}
@@ -175,7 +175,24 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 	 * @param otherMap
 	 */
 	public boolean isConvertableTo(UnitMap otherMap) {
-		return this.getBaseQKMap().equals(otherMap.getBaseQKMap());
+		UnitMap qkMap = getBaseQKMap();
+		UnitMap qkMapOther = otherMap.getBaseQKMap();
+		if (qkMap.size() != qkMapOther.size()) {
+			return false;
+		}
+		a: for (Entry<UnitName, Integer> unitEntry : qkMap.entrySet()) {
+			for (Entry<UnitName, Integer> otherEntry : qkMapOther.entrySet()) {
+				if (unitEntry.getKey().equals(otherEntry.getKey())) {
+					if (unitEntry.getValue().equals(otherEntry.getValue())) {
+						continue a;
+					} else {
+						return false;
+					}
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -185,32 +202,34 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 	public UnitMap getBaseQKMap() {
 		UnitMap baseQKMap = new UnitMap();
 		UnitMap qkMap = this.getQuantityKindMap();
-		
+
 		LinkedList<UnitName> prefixes = new LinkedList<UnitName>();
 
 		a: for (Entry<UnitName, Integer> entry : qkMap.entrySet()) {
-			if(UnitAttribute.PREFIX_QUANTITY_KIND.equals(entry.getKey().toString())) {
-				prefixes.add(entry.getKey());
+			UnitName entryQK = entry.getKey();
+			String quantityKind = entryQK.toString();
+			int entryMultiple = entry.getValue();
+
+			if (UnitAttribute.PREFIX_QUANTITY_KIND.equals(quantityKind)) {
+				prefixes.add(entryQK);
 				continue a;
 			}
-			for (DerivedUnit derivedUnit : DerivedUnit.values()) {
-				if (derivedUnit.getQuantityKind().equals(entry.getKey().toString())) {
-					UnitMap derivedQKMap = derivedUnit.getDerivedMap()
-							.getQuantityKindMap();
-					derivedQKMap = derivedQKMap
-							.getExponential(entry.getValue());
-					baseQKMap = baseQKMap.getMultiple(derivedQKMap);
-					continue a;
-				}
+
+			try {
+				CommonVariables varUnit = CommonVariables.valueOf(quantityKind);
+				UnitMap varQKMap = varUnit.getBaseUnitMap();
+				varQKMap = varQKMap.getExponential(entryMultiple);
+				baseQKMap = baseQKMap.getMultiple(varQKMap);
+			} catch (IllegalArgumentException ex) {
+				JSNICalls.error("No base units found for: " + quantityKind);
+				System.out.println("No base units found for: " + quantityKind);
 			}
-			// Not derived unit, put it strait in
-			baseQKMap.put(entry.getKey(), entry.getValue());
 		}
-		
-		for(UnitName prefix : prefixes) {
+
+		for (UnitName prefix : prefixes) {
 			qkMap.remove(prefix);
 		}
-		
+
 		return baseQKMap;
 	}
 

@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.KeyPadNumerical;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
@@ -14,6 +13,7 @@ import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.dimensions.CommonConstants;
 
 public class NumberSpecification extends QuantitySpecification {
 
@@ -21,7 +21,7 @@ public class NumberSpecification extends QuantitySpecification {
 	RandomSpecPanel randSpec = new RandomSpecPanel();
 
 	String randomness = "";
-	Constant constantSeleced = null;
+	CommonConstants constantSeleced = null;
 
 	public NumberSpecification(EquationNode mathNode) {
 		super(mathNode, true);
@@ -71,7 +71,7 @@ public class NumberSpecification extends QuantitySpecification {
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
 
 		// Fill Established Selection
-		for (Constant constant : Constant.values()) {
+		for (CommonConstants constant : CommonConstants.values()) {
 			establishedSelection.add(
 					constant.getSymbol() + " - " + constant.getName(), null,
 					constant);
@@ -81,7 +81,7 @@ public class NumberSpecification extends QuantitySpecification {
 		establishedSelection.addSelectionHandler(new SelectionHandler() {
 			@Override
 			public void onSelect(Cell selected) {
-				constantSeleced = ((Constant) selected.getEntity());
+				constantSeleced = ((CommonConstants) selected.getEntity());
 
 				symbolDisplay.setText(constantSeleced.getValue());
 

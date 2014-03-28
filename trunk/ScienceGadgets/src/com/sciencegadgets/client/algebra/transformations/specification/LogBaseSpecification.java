@@ -4,14 +4,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.KeyPadNumerical;
 import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.SymbolDisplay;
+import com.sciencegadgets.shared.dimensions.CommonConstants;
 
 public class LogBaseSpecification extends Prompt {
-	public final String[] bases = { "2", "10", Constant.EULER.getSymbol() };
+	public final String[] bases = { "2", "10", CommonConstants.EULER.getSymbol() };
 	private SymbolDisplay symbolDisplay;
 	KeyPadNumerical keyPad = new KeyPadNumerical(true);
 

@@ -32,11 +32,12 @@ import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
-import com.sciencegadgets.shared.UnitAttribute;
-import com.sciencegadgets.shared.UnitHTML;
-import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitMultiple;
-import com.sciencegadgets.shared.UnitName;
+import com.sciencegadgets.shared.dimensions.CommonDerivedUnits;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitHTML;
+import com.sciencegadgets.shared.dimensions.UnitMap;
+import com.sciencegadgets.shared.dimensions.UnitMultiple;
+import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class ConversionActivity extends AbsolutePanel {
 
@@ -257,7 +258,7 @@ public class ConversionActivity extends AbsolutePanel {
 		derivedUnitsSelection.clear();
 
 		try {// Deconstruct option for derived units
-			DerivedUnit derivedUnit = DerivedUnit.valueOf(unitName);
+			CommonDerivedUnits derivedUnit = CommonDerivedUnits.valueOf(unitName);
 			UnitAttribute dataUnitAttribute = derivedUnit.getDerivedMap()
 					.getUnitAttribute();
 			Element derivedUnitElement = UnitHTML.create(dataUnitAttribute,
@@ -390,8 +391,8 @@ public class ConversionActivity extends AbsolutePanel {
 		@Override
 		public void onSelect(Cell selected) {
 			Object selectedEntity = selected.getEntity();
-			if (selectedEntity instanceof DerivedUnit) {
-				DerivedUnit deriveUnit = (DerivedUnit) selectedEntity;
+			if (selectedEntity instanceof CommonDerivedUnits) {
+				CommonDerivedUnits deriveUnit = (CommonDerivedUnits) selectedEntity;
 				convert(deriveUnit.getDerivedMap(),
 						deriveUnit.getConversionMultiplier());
 			} else if (selectedEntity instanceof Unit) {

@@ -11,14 +11,15 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.conversion.DerivedUnit;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitAttribute;
-import com.sciencegadgets.shared.UnitMap;
+import com.sciencegadgets.shared.dimensions.CommonDerivedUnits;
+import com.sciencegadgets.shared.dimensions.CommonVariables;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class VariableSpecification extends QuantitySpecification {
 
@@ -77,21 +78,21 @@ public class VariableSpecification extends QuantitySpecification {
 		quantityBox.quantityBox.addSelectionHandler(new UnitSelectionHandler());
 		
 		// Established Selection
-		for (DerivedUnit unit : DerivedUnit.values()) {
+		for (CommonVariables var : CommonVariables.values()) {
 			establishedSelection.add(
-					unit.getName(), null,
-					unit);
+					var.getSymbol() + " - "+var.toString(), null,
+					var);
 		}
 		// Handle Established Selection
 		establishedSelection.addSelectionHandler(new SelectionHandler() {
 			@Override
 			public void onSelect(Cell selected) {
-				DerivedUnit establishedUnit = ((DerivedUnit) selected
+				CommonVariables establishedVariable = ((CommonVariables) selected
 						.getEntity());
 
-				symbolDisplay.setText(establishedUnit.getSymbol());
+				symbolDisplay.setText(establishedVariable.getSymbol());
 
-				setUnit(new UnitMap(new UnitAttribute(establishedUnit.toString()+UnitAttribute.EXP_DELIMITER+"1")));
+				setUnit(new UnitMap(establishedVariable.getUnitAttribute()));
 			}
 		});
 

@@ -6,12 +6,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator.ActivityType;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -123,6 +125,19 @@ public class AlgebraActivity extends SimplePanel {
 	 */
 	public void reloadEquationPanel(String changeComment, Rule rule,
 			boolean updateHistory) {
+		try {
+			equationTree.validateTree();
+		} catch (IllegalStateException e) {
+			String message = e.getMessage();
+			if(message == null) {
+				Window.alert("Oops, an error occured, please refresh the page");
+			}else {
+				Window.alert(message);
+			}
+			JSNICalls.error(e.getCause().toString());
+			return;
+		}
+		
 		if (!inEditMode && changeComment != null) {
 			algOut.updateAlgebraHistory(changeComment, rule, equationTree);
 		}
@@ -130,7 +145,6 @@ public class AlgebraActivity extends SimplePanel {
 		eqPanelHolder.clear();
 		selectionDetails.clear();
 
-		equationTree.validateTree();
 		equationTree.reloadDisplay(true, true);
 		eqPanel = new EquationPanel(this);
 		eqPanelHolder.add(eqPanel);

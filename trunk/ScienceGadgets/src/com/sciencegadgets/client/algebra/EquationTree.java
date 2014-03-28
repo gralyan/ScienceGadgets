@@ -26,20 +26,21 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
-import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitAttribute;
 import com.sciencegadgets.shared.TypeEquationXML.ChildRequirement;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
-import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitHTML;
+import com.sciencegadgets.shared.dimensions.CommonConstants;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitHTML;
+import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class EquationTree {
 
@@ -75,8 +76,8 @@ public class EquationTree {
 		// reloadDisplay(true);
 	}
 
-	public EquationTree(TypeEquationXML leftType, String leftSymbol, TypeEquationXML rightType,
-			String righSymbol, boolean inEditMode) {
+	public EquationTree(TypeEquationXML leftType, String leftSymbol,
+			TypeEquationXML rightType, String righSymbol, boolean inEditMode) {
 		this(newDummyElement(), inEditMode);
 		getLeftSide().replace(leftType, leftSymbol);
 		getRightSide().replace(rightType, righSymbol);
@@ -91,11 +92,13 @@ public class EquationTree {
 		eq.setInnerText("=");
 		eq.setAttribute("id", "dummyNodeEquals");
 
-		Element dummyLeft = DOM.createElement(TypeEquationXML.Variable.getTag());
+		Element dummyLeft = DOM
+				.createElement(TypeEquationXML.Variable.getTag());
 		dummyLeft.setInnerText("a");
 		dummyLeft.setAttribute("id", "dummyNodeLeft");
 
-		Element dummyRight = DOM.createElement(TypeEquationXML.Variable.getTag());
+		Element dummyRight = DOM.createElement(TypeEquationXML.Variable
+				.getTag());
 		dummyRight.setInnerText("a");
 		dummyRight.setAttribute("id", "dummyNodeRight");
 
@@ -147,13 +150,16 @@ public class EquationTree {
 
 	void checkSideForm() {
 		if (root.getChildCount() != 3) {
-			JSNICalls.error("root has too many children, not side=side: "
-					+ getEquationXMLClone().getString());
+			String errorMessage = "There must be 3 parts to an equation, not side=side: "
+					+ getEquationXMLClone().getString();
+			throw new IllegalStateException(errorMessage, new Throwable(
+					errorMessage));
 		}
 		if (!"=".equals(root.getChildAt(1).getSymbol())) {
-			JSNICalls
-					.error("<mo>=</mo> isn't the root's second child, not side=side "
-							+ getEquationXMLClone().getString());
+			String errorMessage = "[=] isn't the root's second child, not side=side "
+					+ getEquationXMLClone().getString();
+			throw new IllegalStateException(errorMessage, new Throwable(
+					errorMessage));
 		}
 	}
 
@@ -249,7 +255,7 @@ public class EquationTree {
 		return newNode;
 	}
 
-	public void validateTree() {
+	public void validateTree() throws IllegalStateException {
 
 		if (eqValidator == null) {
 			eqValidator = new EquationValidator();
@@ -264,11 +270,10 @@ public class EquationTree {
 		}
 
 		if (idMap.size() != idMLMap.size()) {
-			JSNICalls
-					.error("The binding maps must have the same size: idMap.size()="
-							+ idMap.size()
-							+ " idMLMap.size()="
-							+ idMLMap.size());
+			String errorMessage = "The binding maps must have the same size: idMap.size()="
+					+ idMap.size() + " idMLMap.size()=" + idMLMap.size();
+			throw new IllegalStateException(errorMessage, new Throwable(
+					errorMessage));
 		}
 	}
 
@@ -322,8 +327,8 @@ public class EquationTree {
 		}
 
 		/**
-		 * Creates a new equation XML DOM node which should be added into the EquationNode
-		 * </br>get the DOM node with:
+		 * Creates a new equation XML DOM node which should be added into the
+		 * EquationNode </br>get the DOM node with:
 		 * <p>
 		 * getMlNode()
 		 * </p>
@@ -364,11 +369,12 @@ public class EquationTree {
 
 			return top;
 		}
-		
+
 		private String createId(String prevId) {
 			if (prevId != null && !"".equals(prevId)) {
-				if(!idMap.containsKey(prevId) || this.equals(idMap.get(prevId))) {
-				return prevId;
+				if (!idMap.containsKey(prevId)
+						|| this.equals(idMap.get(prevId))) {
+					return prevId;
 				}
 			}
 			String id = "ML" + idCounter++;
@@ -542,7 +548,8 @@ public class EquationTree {
 			add(index, node, true);
 		}
 
-		public EquationNode addAfter(int index, TypeEquationXML type, String symbol) {
+		public EquationNode addAfter(int index, TypeEquationXML type,
+				String symbol) {
 			EquationNode newNode = new EquationNode(type, symbol);
 			this.addAfter(index, newNode);
 			return newNode;
@@ -552,7 +559,8 @@ public class EquationTree {
 			add(index, node, false);
 		}
 
-		public EquationNode addBefore(int index, TypeEquationXML type, String symbol) {
+		public EquationNode addBefore(int index, TypeEquationXML type,
+				String symbol) {
 			EquationNode newNode = new EquationNode(type, symbol);
 			this.addBefore(index, newNode);
 			return newNode;
@@ -771,7 +779,7 @@ public class EquationTree {
 			}
 		}
 
-		public void setConstant(Constant symbol) {
+		public void setConstant(CommonConstants symbol) {
 			// Display
 			xmlNode.setInnerText(symbol.getSymbol());
 			// Value
@@ -786,7 +794,7 @@ public class EquationTree {
 			case Number:
 				String valueAttr = getAttribute(MathAttribute.Value);
 				try {
-					return Constant.valueOf(valueAttr).getValue();
+					return CommonConstants.valueOf(valueAttr).getValue();
 				} catch (IllegalArgumentException e) {
 				}
 				try {
@@ -868,7 +876,8 @@ public class EquationTree {
 			if (TypeEquationXML.Operation.equals(getType())) {
 				String symbol = getSymbol();
 
-				for (TypeEquationXML.Operator op : TypeEquationXML.Operator.values()) {
+				for (TypeEquationXML.Operator op : TypeEquationXML.Operator
+						.values()) {
 					if (op.getSign().equalsIgnoreCase(symbol)
 							|| op.getHTML().equalsIgnoreCase(symbol)) {
 						return op;
@@ -906,20 +915,17 @@ public class EquationTree {
 			return TypeEquationXML.getType(parentTag);
 		}
 
-		public Element getHTMLClone(boolean hasSmallUnits,
-				boolean hasSubscripts) {
-			Element html = (Element) getHTML(hasSmallUnits,
-					hasSubscripts).cloneNode(true);
+		public Element getHTMLClone(boolean hasSmallUnits, boolean hasSubscripts) {
+			Element html = (Element) getHTML(hasSmallUnits, hasSubscripts)
+					.cloneNode(true);
 
 			html.removeAttribute("class");
 			html.getStyle().setDisplay(Display.INLINE_BLOCK);
 			return html;
 		}
 
-		public String getHTMLString(boolean hasSmallUnits,
-				boolean hasSubscripts) {
-			return getHTMLClone(hasSmallUnits,
-					hasSubscripts).getString();
+		public String getHTMLString(boolean hasSmallUnits, boolean hasSubscripts) {
+			return getHTMLClone(hasSmallUnits, hasSubscripts).getString();
 		}
 
 		/**
@@ -928,8 +934,7 @@ public class EquationTree {
 		 * 
 		 * @return The current HTML element associated with this node
 		 */
-		public Element getHTML(boolean hasSmallUnits,
-				boolean hasSubscripts) {
+		public Element getHTML(boolean hasSmallUnits, boolean hasSubscripts) {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
 				getTree().reloadDisplay(hasSmallUnits, hasSubscripts);
@@ -1045,7 +1050,19 @@ public class EquationTree {
 		Element rootNode = (Element) equationXMLNode;
 
 		root = bindXMLtoNodeRecursive(rootNode);
-		validateTree();
+		
+		try {
+			validateTree();
+		} catch (IllegalStateException e) {
+			String message = e.getMessage();
+			if(message == null) {
+				Window.alert("Oops, an error occured, please refresh the page");
+			}else {
+				Window.alert(message);
+			}
+			JSNICalls.error(e.getCause().toString());
+			return;
+		}
 	}
 
 	private EquationNode bindXMLtoNodeRecursive(Element equationXMLNode) {
@@ -1055,7 +1072,8 @@ public class EquationTree {
 		idMap.put(id, eqNode);
 		idMLMap.put(id, equationXMLNode);
 
-		NodeList<Node> equationXMLNodeChildren = equationXMLNode.getChildNodes();
+		NodeList<Node> equationXMLNodeChildren = equationXMLNode
+				.getChildNodes();
 		for (int i = 0; i < equationXMLNodeChildren.getLength(); i++) {
 			Element currentNode = (Element) equationXMLNodeChildren.getItem(i);
 

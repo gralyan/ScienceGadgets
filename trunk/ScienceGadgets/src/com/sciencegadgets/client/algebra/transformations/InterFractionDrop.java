@@ -14,7 +14,7 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
-import com.sciencegadgets.shared.UnitMap;
+import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class InterFractionDrop extends TransformationDropController {
 
@@ -24,7 +24,7 @@ public class InterFractionDrop extends TransformationDropController {
 	private String dropHTML = "";
 
 	public enum DropType {
-		CANCEL, DIVIDE, EXPONENTIAL, LOG_COMBINE, TRIG_COMBINE;
+		CANCEL, REMOVE_ONE, DIVIDE, EXPONENTIAL, LOG_COMBINE, TRIG_COMBINE;
 	}
 
 	public InterFractionDrop(AlgebaWrapper dropTarget, DropType dropType) {
@@ -37,6 +37,7 @@ public class InterFractionDrop extends TransformationDropController {
 			response.setText(ResponseNote.Cancel.toString());
 			break;
 		case DIVIDE:
+		case REMOVE_ONE:
 			response.setText(ResponseNote.Divide.toString());
 			break;
 		case EXPONENTIAL:
@@ -53,20 +54,19 @@ public class InterFractionDrop extends TransformationDropController {
 		drag = ((AlgebaWrapper) context.draggable).getNode();
 		target = ((AlgebaWrapper) getDropTarget()).getNode();
 
-		dropHTML = "<div style=\"display:inline-block; vertical-align:middle;\">" +
-		
-				"<div style=\"border-bottom:1px solid;\">"
-				+ target.getHTMLString(true, true)+ "</div>" +
-				
-				"<div>"+ drag.getHTMLString(true, true)	+ "</div>" +
-				
-				"</div>";
+		dropHTML = "<div style=\"display:inline-block; vertical-align:middle;\">"
+				+ "<div style=\"border-bottom:1px solid;\">"
+				+ target.getHTMLString(true, true)
+				+ "</div>"
+				+ "<div>"
+				+ drag.getHTMLString(true, true) + "</div>" + "</div>";
 
 		switch (dropType) {
 		case CANCEL:
-			setDropHTMLTotal("1");
-			cleanSide(target);
-			complete();
+			cancelDrop();
+			break;
+		case REMOVE_ONE:
+			complete(true);
 			break;
 		case DIVIDE:
 			dividePrompt();
@@ -92,7 +92,28 @@ public class InterFractionDrop extends TransformationDropController {
 
 	/**
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
-	 * 1. Both nodes (drag and target) are of type {@link TypeEquationXML#Number}<br/>
+	 * 1. Both nodes (drag and target) are of equivalent<br/>
+	 */
+	private void cancelDrop() {
+
+		target.lineThrough();
+
+		if (TypeEquationXML.Fraction.equals(drag.getParentType())
+				&& TypeEquationXML.Fraction.equals(target.getParentType())
+				&& TypeEquationXML.Equation.equals(target.getParent()
+						.getParentType())) {
+			target.getParent().replace(TypeEquationXML.Number, "1");
+			complete(false);
+		} else {
+			cleanSide(target);
+			complete(true);
+		}
+	}
+
+	/**
+	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
+	 * 1. Both nodes (drag and target) are of type
+	 * {@link TypeEquationXML#Number}<br/>
 	 */
 	private void dividePrompt() {
 		try {
@@ -129,13 +150,14 @@ public class InterFractionDrop extends TransformationDropController {
 				.getDivision(drag.getUnitMap());
 
 		String totalString = total.stripTrailingZeros().toEngineeringString();
-		EquationNode division = target.replace(TypeEquationXML.Number, totalString);
+		EquationNode division = target.replace(TypeEquationXML.Number,
+				totalString);
 		String divisionUnits = combinedMap.getUnitAttribute().toString();
 		division.setAttribute(MathAttribute.Unit, divisionUnits);
 
 		setDropHTMLTotal(totalString);
 
-		complete();
+		complete(true);
 	}
 
 	/**
@@ -170,7 +192,7 @@ public class InterFractionDrop extends TransformationDropController {
 
 		setDropHTMLTotal(finalFunctionString);
 
-		complete();
+		complete(true);
 	}
 
 	/**
@@ -189,7 +211,7 @@ public class InterFractionDrop extends TransformationDropController {
 
 		setDropHTMLTotal(newBase);
 
-		complete();
+		complete(true);
 	}
 
 	/**
@@ -197,13 +219,15 @@ public class InterFractionDrop extends TransformationDropController {
 	 * Always target / drag<br/>
 	 * <br/>
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
-	 * 1. Both nodes (drag and target) are of type {@link TypeEquationXML#Exponential}<br/>
+	 * 1. Both nodes (drag and target) are of type
+	 * {@link TypeEquationXML#Exponential}<br/>
 	 * 2. The bases of both nodes (drag and target) are the same<br/>
 	 */
 	private void exponentialDrop() {
 		EquationNode dragExp = drag.getChildAt(1);
 		EquationNode targetExp = target.getChildAt(1);
-		if (Moderator.isInEasyMode && TypeEquationXML.Number.equals(dragExp.getType())
+		if (Moderator.isInEasyMode
+				&& TypeEquationXML.Number.equals(dragExp.getType())
 				&& TypeEquationXML.Number.equals(targetExp.getType())) {
 			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
 			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
@@ -212,28 +236,33 @@ public class InterFractionDrop extends TransformationDropController {
 		} else {
 			EquationNode targetExpSum = targetExp.encase(TypeEquationXML.Sum);
 
-			targetExpSum.append(TypeEquationXML.Operation, Operator.MINUS.getSign());
+			targetExpSum.append(TypeEquationXML.Operation,
+					Operator.MINUS.getSign());
 			targetExpSum.append(dragExp);
 		}
 
 		setDropHTMLTotal(target.getHTMLString(true, true) + "<sup>("
-				+ targetExp.getHTMLString(true, true) + "-" + dragExp.getHTMLString(true, true)
-				+ ")</sup>");
+				+ targetExp.getHTMLString(true, true) + "-"
+				+ dragExp.getHTMLString(true, true) + ")</sup>");
 
-		complete();
+		complete(true);
 	}
 
-	private void complete() {
+	private void complete(boolean removeDrag) {
 
-		cleanSide(drag);
+		if (removeDrag) {
+			cleanSide(drag);
+		}
 
 		drag.lineThrough();
 		target.highlight();
 
 		switch (dropType) {
 		case CANCEL:
-			Moderator.reloadEquationPanel("Cancellation",
+		case REMOVE_ONE:
+			Moderator.reloadEquationPanel(response.getText(),
 					Rule.CANCELLING_FRACTIONS);
+
 			break;
 		case DIVIDE:
 			Moderator.reloadEquationPanel(dropHTML, Rule.DIVISION);
@@ -269,7 +298,8 @@ public class InterFractionDrop extends TransformationDropController {
 			} else {
 				sideOp = side.getPrevSibling();
 			}
-			if (sideOp != null && TypeEquationXML.Operation.equals(sideOp.getType())) {
+			if (sideOp != null
+					&& TypeEquationXML.Operation.equals(sideOp.getType())) {
 				sideOp.remove();
 			}
 			side.remove();

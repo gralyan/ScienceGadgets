@@ -1,10 +1,12 @@
-package com.sciencegadgets.shared;
+package com.sciencegadgets.shared.dimensions;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeEquationXML.Operator;
 
 /**
  * <b>data-unit</b> attribute <b>= </b>id^exp*id^exp... <br/>
