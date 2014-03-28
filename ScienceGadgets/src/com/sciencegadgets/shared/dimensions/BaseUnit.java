@@ -1,6 +1,5 @@
-package com.sciencegadgets.client.conversion;
+package com.sciencegadgets.shared.dimensions;
 
-import com.sciencegadgets.shared.UnitAttribute;
 
 public enum BaseUnit {
 	m("Length", "m"), //

@@ -9,7 +9,6 @@ import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.EquationValidator;
 import com.sciencegadgets.shared.TypeEquationXML;
 
 public class SaveButtonHandler implements ClickHandler {
@@ -34,8 +33,17 @@ public class SaveButtonHandler implements ClickHandler {
 				Window.alert("The equation must contain at least one variable");
 				return;
 			}
-			if (!new EquationValidator().validateQuantityKinds(Moderator
-					.getCurrentEquationTree())) {
+			
+			try {
+				Moderator.getCurrentEquationTree().validateTree();
+			} catch (IllegalStateException e) {
+				String message = e.getMessage();
+				if(message == null) {
+					Window.alert("This equation is invalid, please rebuild it and try again");
+				}else {
+					Window.alert(message);
+				}
+				JSNICalls.error(e.getCause().toString());
 				return;
 			}
 

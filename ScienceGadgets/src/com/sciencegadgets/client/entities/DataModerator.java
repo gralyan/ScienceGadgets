@@ -11,7 +11,9 @@ import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.UnitSelection;
-import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.BaseUnit;
+import com.sciencegadgets.shared.dimensions.CommonVariables;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class DataModerator {
 
@@ -176,6 +178,20 @@ public class DataModerator {
 			qBox.getWidget(1).addStyleName(CSS.QUANTITY_KIND_PREFIX);
 			qBox.getWidget(2).addStyleName(CSS.QUANTITY_KIND_PREFIX);
 		}
+		
+		
+//		for(String qk : DataModerator.quantityKinds) {
+//			try {
+//				BaseUnit.valueOf(qk);
+//				System.out.println("Base: "+qk);
+//			} catch (IllegalArgumentException e) {
+//				try {
+//					CommonVariables varUnit = CommonVariables.valueOf(qk);
+//					System.out.println("\tVariable: "+qk);
+//				} catch (IllegalArgumentException ex) {
+//					System.out.println("---------------------------------none: "+qk);
+//				}
+//			}}
 	}
 
 }

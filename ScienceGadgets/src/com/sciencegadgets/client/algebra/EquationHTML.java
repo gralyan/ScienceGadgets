@@ -16,9 +16,9 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitAttribute;
-import com.sciencegadgets.shared.UnitHTML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitHTML;
 
 public class EquationHTML extends HTML {
 

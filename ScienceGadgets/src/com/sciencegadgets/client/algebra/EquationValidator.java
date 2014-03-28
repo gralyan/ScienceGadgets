@@ -1,14 +1,11 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.user.client.Window;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitName;
+import com.sciencegadgets.shared.dimensions.UnitMap;
+import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class EquationValidator {
 
@@ -26,7 +23,7 @@ public class EquationValidator {
 	 * @return True if well formed<br/>
 	 *         False if invalid
 	 */
-	public boolean validateEquationNode(EquationNode node) {
+	public void validateEquationNode(EquationNode node) throws IllegalStateException {
 
 		TypeEquationXML type = node.getType();
 		boolean isInEditMode = node.getTree().isInEditMode();
@@ -64,14 +61,10 @@ public class EquationValidator {
 		}
 
 		if (isWrongChildren) {
-			String errorMerrage = "Wrong number of children, type: " + type
-					+ " can't have (" + childCount + ") children: "
+			String errorMessage = "Wrong number of children in type: " + type
+					+ " which is a "+type.childRequirement() + "function, but has (" + childCount + ") children: "
 					+ node.toString();
-			JSNICalls.error(errorMerrage);
-			valid = false;
-			// Damage control
-			Window.alert("Error, see log");
-			return false;
+			throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
 		}
 
 		switch (type) {
@@ -81,11 +74,8 @@ public class EquationValidator {
 				try {
 					Double.parseDouble(node.getSymbol());
 				} catch (NumberFormatException e) {
-					JSNICalls.warn("The number node " + toString()
-							+ " must have a number");
-					valid = false;
-					// Damage control
-					node.setSymbol("1");
+					String errorMessage = "The number node must have a valid number: " + toString();
+					throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
 				}
 			}
 			break;
@@ -93,13 +83,13 @@ public class EquationValidator {
 		case Term:// Confirm that there are < 3 children
 			if (type.equals(node.getParentType())) {
 				if (TypeEquationXML.Term.equals(type)) {
-					JSNICalls.error("There shouldn't be a term in a term"
-							+ node.getParent().toString());
-					valid = false;
+					String errorMessage = "There shouldn't be a term in a term"
+							+ node.getParent().toString();
+					throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
 				} else if (TypeEquationXML.Sum.equals(type)) {
-					JSNICalls.error("There shouldn't be a sum in a sum: "
-							+ node.getParent().toString());
-					valid = false;
+					String errorMessage = "There shouldn't be a sum in a sum: "
+							+ node.getParent().toString();
+					throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
 				}
 			}
 			break;
@@ -112,11 +102,9 @@ public class EquationValidator {
 					Double.parseDouble(node.getAttribute(MathAttribute.LogBase));
 				} catch (NumberFormatException e) {
 					if (!"e".equals(node.getAttribute(MathAttribute.LogBase))) {
-						JSNICalls.error("The base of a log must be a number: "
-								+ node.getParent().toString());
-						valid = false;
-						// Damage control
-						node.setAttribute(MathAttribute.LogBase, "10");
+						String errorMessage = "The base of a log must be a number or e: "
+								+ node.getParent().toString();
+						throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
 					}
 				}
 			}
@@ -124,29 +112,17 @@ public class EquationValidator {
 		case Trig:// Confirm the function attribute exists
 			if (!isInEditMode) {
 				if ("".equals(node.getAttribute(MathAttribute.Function))) {
-					JSNICalls
-							.error("Trig functiond must have function attribute: "
-									+ node.getParent().toString());
-					valid = false;
-					// Damage control
-					node.setAttribute(MathAttribute.Function,
-							TrigFunctions.sin.toString());
+					String errorMessage = "Trig functions must have function attribute: "
+							+ node.getParent().toString();
+					throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
 				}
 			}
 			break;
 		}
-		return valid;
 	}
 
-	public boolean validateQuantityKinds(EquationTree equationTree) {
-		try {
+	public void validateQuantityKinds(EquationTree equationTree) throws IllegalStateException{
 			getQuantityKind(equationTree.getRoot());
-			return true;
-		} catch (IllegalStateException e) {
-			JSNICalls.error(e.getMessage());
-			Window.alert(e.getCause().getMessage());
-			return false;
-		}
 	}
 
 	private UnitMap getQuantityKind(EquationNode node) throws IllegalStateException {
@@ -177,15 +153,14 @@ public class EquationValidator {
 				if (sumMap == null) {
 					sumMap = childMap;
 				} else if (!sumMap.isConvertableTo(childMap)) {
-					throw new IllegalStateException(
-							"All sums and equations must contain equivalent derived quantity kinds for all of it's children: \n"
-									+ "first: "
-									+ sumMap
-									+ "\ndiffernent: "
-									+ childMap + "\nof node: " + child,
-							new Throwable(
-									"Units must be similar in sides of the equation and in sums, these are not convertable:\n"
-											+ sumMap + "\n" + childMap));
+					throw new IllegalStateException("Units must be similar in sides of the equation and in sums, these are not convertable:\n"
+											+ sumMap + "\n" + childMap
+							,
+							new Throwable("All sums and equations must contain equivalent derived quantity kinds for all of it's children: \n"
+									+ "full: "+ sumMap + " -vs- "+ childMap 
+									+ "\nbase: "+ sumMap.getBaseQKMap()+ " -vs- "+ childMap.getBaseQKMap()
+									+ "\nof node: " + child
+									));
 				}
 			}
 			if (sumMap == null) {
@@ -200,10 +175,10 @@ public class EquationValidator {
 			UnitMap expMap = getQuantityKind(exp);
 
 			if (expMap.size() != 0) {
-				throw new IllegalStateException(
-						"Exponents can't have units: \n" + "attribute: "
-								+ expMap + "\nof node: " + exp, new Throwable(
-								"Exponents can't have units"));
+				throw new IllegalStateException("Exponents can't have units"
+						, new Throwable("Exponents can't have units: \n" + "attribute: "
+								+ expMap + "\nof node: " + exp
+								));
 			}
 
 			if ((baseMap.size() == 0)) {
@@ -217,18 +192,18 @@ public class EquationValidator {
 					baseMap = baseMap.getExponential(expValue);
 					return baseMap;
 				} catch (NumberFormatException e) {
-					throw new IllegalStateException(
-							"The base of a non-integer exponential has units: \n"
-									+ baseMap + "\nof node: " + node,
-							new Throwable(
-									"Bases of exponentials can only have units if the exponent is a constant integer"));
+					throw new IllegalStateException("Bases of exponentials can only have units if the exponent is a constant integer"
+							,
+							new Throwable("The base of a non-integer exponential has units: \n"
+									+ baseMap + "\nof node: " + node
+									));
 				}
 			} else {
-				throw new IllegalStateException(
-						"The base of a variable exponential has units: \n"
-								+ baseMap + "\nof node: " + node,
-						new Throwable(
-								"Bases of exponentials can only have units if the exponent is a constant integer"));
+				throw new IllegalStateException("Bases of exponentials can only have units if the exponent is a constant integer"
+						,
+						new Throwable("The base of a variable exponential has units: \n"
+								+ baseMap + "\nof node: " + node
+								));
 			}
 			// unreachable
 		case Fraction:
@@ -243,10 +218,10 @@ public class EquationValidator {
 			if (logArgumentMap.size() == 0) {
 				return logArgumentMap;
 			} else {
-				throw new IllegalStateException(
-						"The child of a log has units: \n" + logArgumentMap
-								+ "\nof node: " + node, new Throwable(
-								"The argument of a logarithm can't have units"));
+				throw new IllegalStateException("The argument of a logarithm can't have units"
+						, new Throwable("The child of a log has units: \n" + logArgumentMap
+								+ "\nof node: " + node
+								));
 
 			}
 			// unreachable
@@ -257,12 +232,12 @@ public class EquationValidator {
 			if (comparison.equals(trigArgumentMap)) {
 				break;
 			} else {
-				throw new IllegalStateException(
-						"The child of a trig function doesn't have units of "
+				throw new IllegalStateException("The argument of a trigonometric function must have the unit type of "
+										+ ANGLE
+						, new Throwable("The child of a trig function doesn't have units of "
 								+ ANGLE + ": \n" + trigArgumentMap
-								+ "\nof node: " + node, new Throwable(
-								"The argument of a trigonometric function must have the unit type of "
-										+ ANGLE));
+								+ "\nof node: " + node
+								));
 			}
 		}
 		return new UnitMap();

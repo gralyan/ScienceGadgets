@@ -4,7 +4,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.shared.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class UnitSelection extends CommunistPanel {
 

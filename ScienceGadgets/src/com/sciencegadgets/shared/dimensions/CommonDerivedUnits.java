@@ -1,10 +1,7 @@
-package com.sciencegadgets.client.conversion;
+package com.sciencegadgets.shared.dimensions;
 
-import com.sciencegadgets.shared.UnitAttribute;
-import com.sciencegadgets.shared.UnitMap;
-import com.sciencegadgets.shared.UnitName;
 
-public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)
+public enum CommonDerivedUnits {// ("conversion", m, kg, s, A, K, mol, cd)
 
 	// SI definitions
 	Capacitance_F("Farad","1", "Length_m^-2*Mass_kg^-1*Time_s^4*ElectricCurrent_A^2"),//
@@ -51,7 +48,7 @@ public enum DerivedUnit {// ("conversion", m, kg, s, A, K, mol, cd)
 	private final String name;
 	private final String derivedUnitAttribute;
 
-	private DerivedUnit(String name, String conversionMultiplier, String derivedUnitAttribute) {
+	private CommonDerivedUnits(String name, String conversionMultiplier, String derivedUnitAttribute) {
 		this.unitName = new UnitName(toString());
 		this.quantityKind = unitName.getQuantityKind();
 		this.symbol = unitName.getSymbol();

@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import com.google.gwt.animation.client.Animation;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
@@ -84,8 +86,8 @@ public class BothSidesTransformations extends
 			if (isTopLevel) {
 				this.add(Math.DIVIDE);
 			}
-			if (TypeEquationXML.Fraction.equals(oldParent.getParent()
-					.getType())
+			if (TypeEquationXML.Fraction
+					.equals(oldParent.getParent().getType())
 					&& !TypeEquationXML.Operation.equals(node.getType())) {
 				if (oldParent.getParent().isRightSide()
 						|| oldParent.getParent().isLeftSide()) {
@@ -141,10 +143,13 @@ public class BothSidesTransformations extends
 	private void add(Math operation) {
 		add(makeButton(operation));
 	}
+
 	private BothSidesButton makeButton(Math operation) {
 		return makeButton(operation, null);
 	}
-private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton) {
+
+	private BothSidesButton makeButton(Math operation,
+			BothSidesButton joinedButton) {
 		String html;
 		BothSidesButton button = null;
 
@@ -173,7 +178,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 		case RAISE:
 			String base = node.getAttribute(MathAttribute.LogBase);
 			html = base + "<sup>" + UP_ARROW + "</sup>";
-			button = new RaiseBothButton(operation, base, html, this, joinedButton);
+			button = new RaiseBothButton(operation, base, html, this,
+					joinedButton);
 			break;
 		case LOG:
 			html = "log<sub>" + node.getHTMLString(true, true) + "</sub>"
@@ -184,7 +190,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 			String func = node.getAttribute(MathAttribute.Function);
 			String inverseFunc = TrigFunctions.getInverseName(func);
 			html = inverseFunc + "(" + UP_ARROW + ")";
-			button = new InverseTrigBothButton(operation, inverseFunc, html, this, joinedButton);
+			button = new InverseTrigBothButton(operation, inverseFunc, html,
+					this, joinedButton);
 			break;
 		}
 		return button;
@@ -202,16 +209,17 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 		protected String changeComment;
 		EquationNode topParent = null;
 
-		BothSidesButton(Math operation, String html, BothSidesTransformations context) {
+		BothSidesButton(Math operation, String html,
+				BothSidesTransformations context) {
 			this(operation, html, context, null);
 		}
 
-		BothSidesButton(Math operation, String html, BothSidesTransformations context,
-				BothSidesButton joinedButton) {
+		BothSidesButton(Math operation, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(html, context);
 
 			if (joinedButton == null) {
-				 this.joinedButton = makeButton(operation, this);
+				this.joinedButton = makeButton(operation, this);
 			} else {
 				this.joinedButton = joinedButton;
 			}
@@ -225,7 +233,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 			} else if (isNestedInFraction) {
 				topParent = oldParent.getParent();
 			} else {
-				JSNICalls.error("Added bothSidesHandler to wrong node: " + node);
+				JSNICalls
+						.error("Added bothSidesHandler to wrong node: " + node);
 			}
 			if (topParent.isLeftSide()) {
 				targetSide = tree.getRightSide();
@@ -254,9 +263,48 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 			removeStyleName(CSS.BOTH_SIDES_BUTTON_SELECTED);
 		}
 
+		void flash() {
+			Animation flash = new Animation() {
+				private Style style;
+				boolean isGettingDarker;
+				int flashCounter = 0;
+				final int FLASH_COUNT = 20;
+
+				@Override
+				protected void onStart() {
+					super.onStart();
+					style = getElement().getStyle();
+				}
+
+				@Override
+				protected void onUpdate(double progress) {
+					if (isGettingDarker) {
+						progress = 1 - progress;
+					}
+					// Go white to gray (225 tp 128 in hexadecimal)
+					String colorProgress = Integer
+							.toHexString(225 - (int) (progress * 128));
+					style.setBackgroundColor("#" + colorProgress
+							+ colorProgress + colorProgress);
+				}
+
+				@Override
+				protected void onComplete() {
+					super.onComplete();
+					flashCounter++;
+					if (joinedButton.isSelected() && flashCounter < FLASH_COUNT) {
+						isGettingDarker = !isGettingDarker;
+						run(500);
+					} else {
+						style.clearBackgroundColor();
+					}
+				}
+			};
+			flash.run(500);
+		}
+
 		@Override
-		protected
-		void transform() {
+		protected void transform() {
 			BothSidesButton joinedButton = this.getJoinedButton();
 
 			if (joinedButton.isSelected()) {
@@ -266,6 +314,7 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 				execute();
 			} else {
 				this.select();
+				joinedButton.flash();
 				return;
 			}
 		}
@@ -278,8 +327,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 	// ///////////////////////////////////////////////////////
 
 	class AddOrSubBothButton extends BothSidesButton {
-		AddOrSubBothButton(Math operation, String html, BothSidesTransformations context,
-				BothSidesButton joinedButton) {
+		AddOrSubBothButton(Math operation, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(operation, html, context, joinedButton);
 		}
 
@@ -344,8 +393,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 	}
 
 	class DivideBothButton extends BothSidesButton {
-		DivideBothButton(Math operation, String html, BothSidesTransformations context,
-				BothSidesButton joinedButton) {
+		DivideBothButton(Math operation, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(operation, html, context, joinedButton);
 		}
 
@@ -423,8 +472,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 	}
 
 	class MultiplyBothButton extends BothSidesButton {
-		MultiplyBothButton(Math operation, String html, BothSidesTransformations context,
-				BothSidesButton joinedButton) {
+		MultiplyBothButton(Math operation, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(operation, html, context, joinedButton);
 		}
 
@@ -501,8 +550,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 	 * b = targetSide<sup>1/e</sup></sup>
 	 */
 	class RootBothButton extends BothSidesButton {
-		RootBothButton(Math operation, String html, BothSidesTransformations context,
-				BothSidesButton joinedButton) {
+		RootBothButton(Math operation, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(operation, html, context, joinedButton);
 		}
 
@@ -570,6 +619,7 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 	 */
 	class RaiseBothButton extends BothSidesButton {
 		String base;
+
 		RaiseBothButton(Math operation, String base, String html,
 				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(operation, html, context, joinedButton);
@@ -607,8 +657,8 @@ private BothSidesButton makeButton(Math operation, BothSidesButton joinedButton)
 	 * e = log<sub>b</sub>(targetSide)</sup>
 	 */
 	class LogBothButton extends BothSidesButton {
-		LogBothButton(Math operation, String html, BothSidesTransformations context,
-				BothSidesButton joinedButton) {
+		LogBothButton(Math operation, String html,
+				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(operation, html, context, joinedButton);
 		}
 

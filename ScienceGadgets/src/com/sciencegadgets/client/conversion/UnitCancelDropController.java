@@ -8,9 +8,9 @@ import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.UnitAttribute;
-import com.sciencegadgets.shared.UnitMultiple;
-import com.sciencegadgets.shared.UnitName;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitMultiple;
+import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class UnitCancelDropController extends AbstractDropController {
 

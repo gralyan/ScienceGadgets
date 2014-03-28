@@ -206,7 +206,7 @@ public class AlgebraicTransformations {
 			dropTargets.put(otherSide, DropType.CANCEL);
 
 		} else if (TypeEquationXML.Term.equals(otherSide.getType())) {
-
+			// Drop on each term child
 			for (EquationNode child : otherSide.getChildren()) {
 				if (node.isLike(child)) {// Cancel drop on child
 					dropTargets.put(child, DropType.CANCEL);
@@ -237,12 +237,20 @@ public class AlgebraicTransformations {
 	 */
 	private static void addDropTarget(EquationNode target, EquationNode drag,
 			HashMap<EquationTree.EquationNode, DropType> dropTargets) {
-
-		if (!drag.getType().equals(target.getType())) {
+		
+		TypeEquationXML dragType = drag.getType();
+		
+		if(TypeEquationXML.Number.equals(dragType) && "1".equals(drag.getSymbol())) {
+			dropTargets.put(target, DropType.REMOVE_ONE);
 			return;
 		}
 
-		switch (target.getType()) {
+		// The rest of this method is only applicable if
+		if (!dragType.equals(target.getType())) {
+			return;
+		}
+
+		switch (dragType) {
 		case Number:
 			if (!"0".equals(drag.getSymbol())) {
 				dropTargets.put(target, DropType.DIVIDE);

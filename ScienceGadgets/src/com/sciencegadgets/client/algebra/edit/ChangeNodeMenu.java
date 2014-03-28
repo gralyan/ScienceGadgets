@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.algebra.edit;
 
+import com.google.gwt.dom.client.Style;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -79,7 +80,9 @@ public class ChangeNodeMenu extends CommunistPanel {
 	private class RemoveNodeButton extends TransformationButton {
 		RemoveNodeButton(TransformationList<TransformationButton> changeButtons) {
 			super("Remove", changeButtons);
-			removeButton.getElement().getStyle().setColor("red");
+			Style style = getElement().getStyle();
+			style.setColor("red");
+			style.setBackgroundColor("black");
 		}
 
 		public void transform() {

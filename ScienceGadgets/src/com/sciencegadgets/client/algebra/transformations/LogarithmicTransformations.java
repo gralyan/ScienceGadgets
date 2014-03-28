@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.specification.LogBaseSpecification;
-import com.sciencegadgets.client.conversion.Constant;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeEquationXML;
 import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.dimensions.CommonConstants;
 
 public class LogarithmicTransformations extends
 		TransformationList<LogTransformButton> {
@@ -142,7 +142,7 @@ class LogEvaluateButton extends LogTransformButton {
 	void transform() {
 		Double total;
 
-		if (Constant.EULER.getSymbol().equals(base)) {
+		if (CommonConstants.EULER.getSymbol().equals(base)) {
 			total = Math.log(argValue);
 		} else if ("10".equals(base)) {
 			total = Math.log10(argValue);
