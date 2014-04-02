@@ -144,6 +144,15 @@ public class OwlMiner {
 		map.put("InformationEntropy", "1,0,0,0,0,0,0,0");
 		map.remove("ElectricCurrentPerUnitLength");
 		map.put("AuxillaryMagneticField", "0,-1,0,0,1,0,0,0");
+		map.remove("EnergyAndWork");
+		map.put("Energy", "0,2,1,-2,0,0,0,0");
+		map.remove("LinearAcceleration");
+		map.put("Acceleration", "0,1,0,-2,0,0,0,0");
+		map.remove("LinearVelocity");
+		map.put("Velocity", "0,1,0,-1,0,0,0,0");
+		map.remove("ThermodynamicTemperature");
+		map.put("Temperature", "0,0,0,0,0,1,0,0");
+		
 
 		// ////////////////////////////////
 		// Mine owl for Units
@@ -254,7 +263,16 @@ public class OwlMiner {
 							|| qKind.equals("DoseEquivalent")) {
 						qKind = "SpecificEnergy";
 					} else if (qKind.equals("ThermalEnergy")) {
-						qKind = "EnergyAndWork";
+						qKind = "Energy";
+						
+					} else if (qKind.equals("EnergyAndWork")) {
+						qKind = "Energy";
+					} else if (qKind.equals("ThermodynamicTemperature")) {
+						qKind = "Temperature";
+					} else if (qKind.equals("LinearAcceleration")) {
+						qKind = "Acceleration";
+					} else if (qKind.equals("LinearVelocity")) {
+						qKind = "Velocity";
 						
 						//No need for these quantity kinds
 					} else if (qKind.equals("MassAmountOfSubstance")) {
@@ -306,9 +324,9 @@ public class OwlMiner {
 
 				// No space
 			} else if (symbol.equals("therm (US)")) {
-				symbolFixed = "therm(US)";
+				symbolFixed = "therm[US]";
 			} else if (symbol.equals("therm (EC)")) {
-				symbolFixed = "therm(EC)";
+				symbolFixed = "therm[EC]";
 
 				// Incorrect
 				// } else if (symbol.equals("(K^2)m/W")) {
@@ -322,37 +340,37 @@ public class OwlMiner {
 			} else if (label.equals("Pound Mass")) {
 				symbolFixed = "lb";
 			} else if (label.equals("Ton - Long")) {
-				symbolFixed = "ton(UK)";
+				symbolFixed = "ton[UK]";
 			} else if (label.equals("Imperial Pint")) {
-				symbolFixed = "pt(UK)";
+				symbolFixed = "pt[UK])";
 			} else if (label.equals("Imperial Gallon")) {
-				symbolFixed = "gal(UK)";
+				symbolFixed = "gal[UK]";
 			} else if (label.equals("Imperial Ounce")) {
-				symbolFixed = "fl.oz.(UK>";
+				symbolFixed = "fl.oz.[UK]";
 			} else if (label.equals("Ton - Short")) {
-				symbolFixed = "ton(US)";
+				symbolFixed = "ton[US]";
 			} else if (label.equals("US Liquid Pint")) {
-				symbolFixed = "pt(US)";
+				symbolFixed = "pt[US]";
 			} else if (label.equals("US Gallon")) {
-				symbolFixed = "gal(US)";
+				symbolFixed = "gal[US]";
 			} else if (label.equals("US Liquid Ounce")) {
-				symbolFixed = "fl.oz.(US)";
+				symbolFixed = "fl.oz.[US]";
 			} else if (label.equals("Ounce Troy")) {
-				symbolFixed = "oz(Troy)";
+				symbolFixed = "oz[Troy]";
 			} else if (label.equals("Pound Troy")) {
-				symbolFixed = "lb(Troy)";
+				symbolFixed = "lb[Troy]";
 
 				// No underscore (_)
 			} else if (symbolFixed.equals("dry_qt")) {
-				symbolFixed = "qt(dry)";
+				symbolFixed = "qt[dry]";
 			} else if (symbolFixed.equals("dry_gal")) {
-				symbolFixed = "gal(dry)";
+				symbolFixed = "gal[dry]";
 			} else if (symbolFixed.equals("dry_pt")) {
-				symbolFixed = "pt(dry)";
+				symbolFixed = "pt[dry]";
 			} else if (symbolFixed.equals("E_h")) {
 				symbolFixed = "Eh";
 			} else if (symbolFixed.equals("Θ_P")) {
-				symbolFixed = "Θp>";
+				symbolFixed = "Θp";
 			} else if (symbolFixed.equals("l_P")) {
 				symbolFixed = "lp";
 			} else if (symbolFixed.equals("m_P")) {
@@ -428,6 +446,7 @@ public class OwlMiner {
 
 			// mark quantity kind as used as a parent
 			String oldDim = map.get(qKind);
+			
 			map.put(qKind, oldDim.replace(",", "_"));
 		}
 

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 
 public class TransformationList<E extends TransformationButton> extends LinkedList<E> {
 	private static final long serialVersionUID = -3043410062241803505L;
@@ -63,7 +63,7 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 			break;
 		}
 
-		if (TypeEquationXML.Fraction.equals(node.getParentType())
+		if (TypeSGET.Fraction.equals(node.getParentType())
 				&& node.getIndex() == 1) {
 			simplify.add(AlgebraicTransformations.denominatorFlip_check(node,
 					simplify));

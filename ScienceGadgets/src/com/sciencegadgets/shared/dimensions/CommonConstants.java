@@ -12,8 +12,8 @@ public enum CommonConstants {// ("symbol","value", m, kg, s, A, K, mol, cd)
 	// Universal
 	SPEED_OF_LIGHT("speed of light in vacuum", "c", "299792458", "Length_m^1*Time_s^-1"),//
 	NEWTONIAN_GRAVITATION("Newtonian gravitation", "G", "6.67384E-11", "Length_m^3*Mass_kg^-1*Time_s^-2"),//
-	PLANK("Planck", "h", "6.62606957E-34", "EnergyAndWork_J^1*Time_s^1"),//
-	PLANK_REDUCED("reduced Planck", "ħ", "1.054571726E-34", "EnergyAndWork_J^1*Time_s^1"),//
+	PLANK("Planck", "h", "6.62606957E-34", "Energy_J^1*Time_s^1"),//
+	PLANK_REDUCED("reduced Planck", "ħ", "1.054571726E-34", "Energy_J^1*Time_s^1"),//
 	
 	// Adopted
 	JOSEPHSON_90("conventional Josephson", "KJ-90", "4.835979E+14", "Frequency_Hz^1*EnergyPerElectricCharge_V^1"),//
@@ -28,11 +28,11 @@ public enum CommonConstants {// ("symbol","value", m, kg, s, A, K, mol, cd)
 	IMPEDANCE_VACUUM("characteristic impedance of vacuum", "Z0", "376.730313461", "Resistance_ohm^1"),//
 	COULOMB("Coulomb's", "Z0", "8.987551787E+9", "Force_N^1*Length_m^2*ElectricCharge_C^-2"),//
 	E_CHARGE("elementary charge", "e", "1.602176565E-19", "ElectricCharge_C^1"),//
-	BHOR_MAGNETON("Bohr magneton", "μB", "9.27400968E-24", "EnergyAndWork_J^1*MagneticField_T^-1"),//
+	BHOR_MAGNETON("Bohr magneton", "μB", "9.27400968E-24", "Energy_J^1*MagneticField_T^-1"),//
 	CONDUCTANCE_QUANTUM("conductance quantum", "G0", "7.7480917346E-5", "ElectricConductivity_S^1"),//
 	JOSEPHSON("Josephson", "KJ", "4.83597870E+14", "Frequency_Hz^1*EnergyPerElectricCharge_V^-1"),//
 	MAGNETIC_FLUX_QUANTUM("magnetic flux quantum", "φ0", "2.067833758E-15", "MagneticFlux_Wb^1"),//
-	NUCLEAR_MAGNETON("nuclear magneton", "μN", "5.05078353E-27", "EnergyAndWork_J^1*MagneticField_T^-1"),//
+	NUCLEAR_MAGNETON("nuclear magneton", "μN", "5.05078353E-27", "Energy_J^1*MagneticField_T^-1"),//
 	KLITZING("von Klitzing", "RK", "25812.8074434", "Resistance_ohm^1"),//
 	
 	//Atomic and Nuclear
@@ -40,29 +40,29 @@ public enum CommonConstants {// ("symbol","value", m, kg, s, A, K, mol, cd)
 	ELECTRON_RADIUS_CLASSIC("classical electron radius", "re", "2.8179403267E-15", "Length_m^1"),//
 	ELECTRON_MASS("electron mass", "me", "9.10938291E-31", "Mass_kg^1"),//
 	FINE_STRUCTURE("fine-structure", "α", "7.2973525698E-3","" ),//
-	HARTREE("Hartree energy", "Eh", "	4.35974434E-18", "EnergyAndWork_J^1"),//
+	HARTREE("Hartree energy", "Eh", "	4.35974434E-18", "Energy_J^1"),//
 	PROTON_MASS("proton mass", "mp", "1.672621777E-27", "Mass_kg^1"),//
 	RYDBERG("Rydberg", "R∞", "10973731.568539", "Length_m^-1"),//
 	
 	// Physical/Chemical
 	ATOMIC_MASS_UNIT("Atomic mass unit", "mu", "1.660538921E-27", "Mass_kg^1"),//
 	AVOGADRO("Avogadro's", "NA", "6.02214129E+23", "AmountOfSubstance_mol^-1"),//
-	BOLTZMANN("Boltzmann", "k", "1.3806488E-23", "EnergyAndWork_J^1*ThermodynamicTemperature_K^-1"),//
+	BOLTZMANN("Boltzmann", "k", "1.3806488E-23", "Energy_J^1*Temperature_K^-1"),//
 	FARADAY("Faraday", "F", "96485.3365", "ElectricCharge_C^1*AmountOfSubstance_mol^-1"),//
 	FIRST_RADIATION("first radiation constant", "c1", "3.74177153E-16", "Power_W^1*Length_m^2"),//
 	LOSCHMIDT("Loschmidt", "n0", "2.6867805E+25", "Length_m^-3"),//
-	IDEAL_GAS("ideal gas", "R", "8.3144621", "EnergyAndWork_J^1*ThermodynamicTemperature_K^-1*AmountOfSubstance_mol^-1"),//
-	MOLAR_PLANK("molar Planck", "NAh", "3.9903127176E-10", "EnergyAndWork_J^1*Time_s^1*AmountOfSubstance_mol^-1"),//
-	SECOND_RADIATION("second radiation", "c2", "1.4387770E-2", "Length_m^1*ThermodynamicTemperature_K^1"),//
-	STEFAN_BOLTZMANN("Stefan–Boltzmann", "σ", "5.670373E-8", "Power_W^1*Length_m^-2*ThermodynamicTemperature_K^-4"),//
-	WIEN_DISPLACEMENT("Wien displacement", "b", "2.8977721E-3", "Length_m^1*ThermodynamicTemperature_K^1"),//
+	IDEAL_GAS("ideal gas", "R", "8.3144621", "Energy_J^1*Temperature_K^-1*AmountOfSubstance_mol^-1"),//
+	MOLAR_PLANK("molar Planck", "NAh", "3.9903127176E-10", "Energy_J^1*Time_s^1*AmountOfSubstance_mol^-1"),//
+	SECOND_RADIATION("second radiation", "c2", "1.4387770E-2", "Length_m^1*Temperature_K^1"),//
+	STEFAN_BOLTZMANN("Stefan–Boltzmann", "σ", "5.670373E-8", "Power_W^1*Length_m^-2*Temperature_K^-4"),//
+	WIEN_DISPLACEMENT("Wien displacement", "b", "2.8977721E-3", "Length_m^1*Temperature_K^1"),//
 	
 	// Plank/Natural units
 	PLANK_LENGTH("Plank length", "lP", "1.616199E-35", "Length_m^1"),//
 	PLANK_MASS("Plank mass", "mP", "2.17651E-8", "Mass_kg^1"),//
 	PLANK_TIME("Plank time", "tP", "5.39106E-44", "Time_s^1"),//
 	PLANK_CHARGE("Plank charge", "qP", "1.875545956E-18", "ElectricCharge_C^1"),//
-	PLANK_TEMPERATURE("Plank temperature", "TP", "1.416833E+32", "ThermodynamicTemperature_K^1"),//
+	PLANK_TEMPERATURE("Plank temperature", "TP", "1.416833E+32", "Temperature_K^1"),//
 	;
 	
 	private final String name;

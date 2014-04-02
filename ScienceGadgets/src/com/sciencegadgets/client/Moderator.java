@@ -111,11 +111,17 @@ public class Moderator implements EntryPoint {
 		switchToAlgebra(equationXML, inEditMode, true);
 	}
 	public static void switchToAlgebra(Element equationXML, boolean inEditMode, boolean updateHistory) {
+		switchToAlgebra(new EquationTree(equationXML, inEditMode), inEditMode, updateHistory);
+	}
+	public static void switchToAlgebra(EquationTree equationTree, boolean inEditMode) {
+		switchToAlgebra(equationTree, inEditMode, true);
+	}
+	public static void switchToAlgebra(EquationTree equationTree, boolean inEditMode, boolean updateHistory) {
 		try {
 			if (algebraActivity == null || algebraActivity.inEditMode != inEditMode) {
-				algebraActivity = new AlgebraActivity(equationXML, inEditMode);
+				algebraActivity = new AlgebraActivity(equationTree, inEditMode);
 			} else {
-				algebraActivity.reCreateEquationTree(equationXML, inEditMode);
+				algebraActivity.setEquationTree(equationTree);
 			}
 			algebraActivity.reloadEquationPanel(null, null, updateHistory);
 			ActivityType type = inEditMode ? ActivityType.algebraedit

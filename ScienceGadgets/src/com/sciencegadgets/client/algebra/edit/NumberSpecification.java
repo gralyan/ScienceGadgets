@@ -12,7 +12,7 @@ import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
 
 public class NumberSpecification extends QuantitySpecification {
@@ -114,7 +114,7 @@ public class NumberSpecification extends QuantitySpecification {
 	@Override
 	void setNode(String symbol) {
 
-		node = node.replace(TypeEquationXML.Number, symbol);
+		node = node.replace(TypeSGET.Number, symbol);
 
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 			node.getXMLNode().setAttribute(

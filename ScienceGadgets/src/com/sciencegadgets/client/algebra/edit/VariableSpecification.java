@@ -15,7 +15,7 @@ import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonDerivedUnits;
 import com.sciencegadgets.shared.dimensions.CommonVariables;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
@@ -146,6 +146,6 @@ public class VariableSpecification extends QuantitySpecification {
 
 	@Override
 	void setNode(String symbol) {
-		node = node.replace(TypeEquationXML.Variable, symbol);
+		node = node.replace(TypeSGET.Variable, symbol);
 	}
 }

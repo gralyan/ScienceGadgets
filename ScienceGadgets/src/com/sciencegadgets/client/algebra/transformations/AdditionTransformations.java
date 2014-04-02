@@ -8,8 +8,8 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class AdditionTransformations extends
 		TransformationList<AddTransformButton> {
@@ -22,8 +22,8 @@ public class AdditionTransformations extends
 
 	EquationNode parent;
 
-	TypeEquationXML leftType;
-	TypeEquationXML rightType;
+	TypeSGET leftType;
+	TypeSGET rightType;
 
 	boolean isMinus;
 	boolean isMinusBeforeLeft = false;
@@ -46,7 +46,7 @@ public class AdditionTransformations extends
 		EquationNode leftPrev = left.getPrevSibling();
 		if (leftPrev != null
 				&& Operator.MINUS.getSign().equals(leftPrev.getSymbol())
-				&& TypeEquationXML.Operation.equals(leftPrev.getType())) {
+				&& TypeSGET.Operation.equals(leftPrev.getType())) {
 			isMinusBeforeLeft = true;
 			minusBeforeLeft = leftPrev;
 		}
@@ -66,19 +66,19 @@ public class AdditionTransformations extends
 
 	AddZeroButton addZero_check() {
 
-		if (!TypeEquationXML.Number.equals(leftType)
-				&& !TypeEquationXML.Number.equals(rightType)) {
+		if (!TypeSGET.Number.equals(leftType)
+				&& !TypeSGET.Number.equals(rightType)) {
 			return null;
 		}
 
 		final int same = 0;
 
-		if (TypeEquationXML.Number.equals(leftType)) {
+		if (TypeSGET.Number.equals(leftType)) {
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
 			if (leftValue.compareTo(new BigDecimal(0)) == same) {
 				return new AddZeroButton(this, right, left);
 			}
-		} else if (TypeEquationXML.Number.equals(rightType)) {
+		} else if (TypeSGET.Number.equals(rightType)) {
 			BigDecimal rightValue = new BigDecimal(right.getSymbol());
 			if (rightValue.compareTo(new BigDecimal(0)) == same) {
 				return new AddZeroButton(this, left, right);
@@ -89,8 +89,8 @@ public class AdditionTransformations extends
 
 	AddNumbersButton addNumbers_check() {
 
-		if (!TypeEquationXML.Number.equals(leftType)
-				|| !TypeEquationXML.Number.equals(rightType)) {
+		if (!TypeSGET.Number.equals(leftType)
+				|| !TypeSGET.Number.equals(rightType)) {
 			return null;
 		}
 		return new AddNumbersButton(this);
@@ -108,8 +108,8 @@ public class AdditionTransformations extends
 	}
 
 	AddTransformButton addFractions_check() {
-		boolean isLeftFraction = TypeEquationXML.Fraction.equals(leftType);
-		boolean isRightFraction = TypeEquationXML.Fraction.equals(rightType);
+		boolean isLeftFraction = TypeSGET.Fraction.equals(leftType);
+		boolean isRightFraction = TypeSGET.Fraction.equals(rightType);
 
 		if (!isRightFraction && !isLeftFraction) {
 			return null;
@@ -136,8 +136,8 @@ public class AdditionTransformations extends
 		if (isMinusBeforeLeft) {
 			return null;
 		}
-		if (!TypeEquationXML.Log.equals(leftType)
-				|| !TypeEquationXML.Log.equals(rightType)) {
+		if (!TypeSGET.Log.equals(leftType)
+				|| !TypeSGET.Log.equals(rightType)) {
 			return null;
 		}
 		if (left.getAttribute(MathAttribute.LogBase).equals(
@@ -271,9 +271,9 @@ class AddNumbersButton extends AddTransformButton {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else if (!reloadAlgebraActivity) {
-			parent.replace(TypeEquationXML.Sum, "");
-			parent.append(TypeEquationXML.Variable, "# ");
-			parent.append(TypeEquationXML.Variable, operation.getSymbol());
+			parent.replace(TypeSGET.Sum, "");
+			parent.append(TypeSGET.Variable, "# ");
+			parent.append(TypeSGET.Variable, operation.getSymbol());
 			// parent.append(TypeML.Variable, " #");
 
 		} else {// prompt
@@ -348,15 +348,15 @@ class AddSimilarButton extends AddTransformButton {
 		left.highlight();
 
 		if (!isMinus && !isMinusBeforeLeft) {
-			EquationNode casing = right.encase(TypeEquationXML.Term);
-			casing.addFirst(TypeEquationXML.Operation, Operator.getMultiply()
+			EquationNode casing = right.encase(TypeSGET.Term);
+			casing.addFirst(TypeSGET.Operation, Operator.getMultiply()
 					.getSign());
-			casing.addFirst(TypeEquationXML.Number, "2");
+			casing.addFirst(TypeSGET.Number, "2");
 		} else if (isMinus && isMinusBeforeLeft) {
-			EquationNode casing = right.encase(TypeEquationXML.Term);
-			casing.addFirst(TypeEquationXML.Operation, Operator.getMultiply()
+			EquationNode casing = right.encase(TypeSGET.Term);
+			casing.addFirst(TypeSGET.Operation, Operator.getMultiply()
 					.getSign());
-			casing.addFirst(TypeEquationXML.Number, "-2");
+			casing.addFirst(TypeSGET.Number, "-2");
 			minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
 		} else if ((isMinus && !isMinusBeforeLeft)
 				|| (!isMinus && isMinusBeforeLeft)) {
@@ -364,10 +364,10 @@ class AddSimilarButton extends AddTransformButton {
 			EquationNode leftOp = left.getPrevSibling();
 			EquationNode rightNext = right.getNextSibling();
 			if (leftOp != null
-					&& TypeEquationXML.Operation.equals(leftOp.getType())) {
+					&& TypeSGET.Operation.equals(leftOp.getType())) {
 				leftOp.remove();
 			} else if (rightNext != null
-					&& TypeEquationXML.Operation.equals(rightNext.getType())) {
+					&& TypeSGET.Operation.equals(rightNext.getType())) {
 				rightNext.remove();
 			}
 
@@ -420,13 +420,13 @@ class ToCommonDenominatorButton extends AddTransformButton {
 
 			EquationNode commonDenominator = fraction.getChildAt(1);
 
-			EquationNode nonFracTerm = nonFrac.encase(TypeEquationXML.Term);
-			nonFracTerm.append(TypeEquationXML.Operation, Operator
+			EquationNode nonFracTerm = nonFrac.encase(TypeSGET.Term);
+			nonFracTerm.append(TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 			nonFracTerm.append(commonDenominator.clone());
 
 			EquationNode nonFracFraction = nonFracTerm
-					.encase(TypeEquationXML.Fraction);
+					.encase(TypeSGET.Fraction);
 			nonFracFraction.append(commonDenominator.clone());
 
 		} else {// Both left and right are fractions
@@ -437,26 +437,26 @@ class ToCommonDenominatorButton extends AddTransformButton {
 			EquationNode commonRight = right.getChildAt(1).clone();
 
 			EquationNode leftNumTerm = left.getChildAt(0).encase(
-					TypeEquationXML.Term);
-			leftNumTerm.append(TypeEquationXML.Operation, Operator
+					TypeSGET.Term);
+			leftNumTerm.append(TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 			leftNumTerm.append(commonRight.clone());
 
 			EquationNode rightNumTerm = right.getChildAt(0).encase(
-					TypeEquationXML.Term);
-			rightNumTerm.append(TypeEquationXML.Operation, Operator
+					TypeSGET.Term);
+			rightNumTerm.append(TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 			rightNumTerm.append(commonLeft.clone());
 
 			EquationNode leftDenTerm = left.getChildAt(1).encase(
-					TypeEquationXML.Term);
-			leftDenTerm.append(TypeEquationXML.Operation, Operator
+					TypeSGET.Term);
+			leftDenTerm.append(TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 			leftDenTerm.append(commonRight);
 
 			EquationNode rightDenTerm = right.getChildAt(1).encase(
-					TypeEquationXML.Term);
-			rightDenTerm.append(TypeEquationXML.Operation, Operator
+					TypeSGET.Term);
+			rightDenTerm.append(TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 			rightDenTerm.append(commonLeft);
 		}
@@ -496,7 +496,7 @@ class AddFractionsButton extends AddTransformButton {
 		}
 
 		EquationNode numeratorCasing = right.getChildAt(0).encase(
-				TypeEquationXML.Sum);
+				TypeSGET.Sum);
 		numeratorCasing.addFirst(operation);
 		numeratorCasing.addFirst(left.getChildAt(0));
 
@@ -535,10 +535,10 @@ class AddLogsButton extends AddTransformButton {
 		EquationNode newLogChild;
 		EquationNode leftChild = left.getFirstChild();
 		if (isMinus) {
-			newLogChild = leftChild.encase(TypeEquationXML.Fraction);
+			newLogChild = leftChild.encase(TypeSGET.Fraction);
 		} else {
-			newLogChild = leftChild.encase(TypeEquationXML.Term);
-			newLogChild.append(TypeEquationXML.Operation, Operator
+			newLogChild = leftChild.encase(TypeSGET.Term);
+			newLogChild.append(TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 		}
 		newLogChild.append(right.getFirstChild());

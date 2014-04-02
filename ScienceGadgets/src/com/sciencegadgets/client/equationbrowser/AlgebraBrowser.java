@@ -9,7 +9,7 @@ import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionPanel;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 
 public class AlgebraBrowser extends SelectionPanel {
 
@@ -41,9 +41,9 @@ public class AlgebraBrowser extends SelectionPanel {
 
 						if (size == 0) {
 							// Display default a=a if no other equations
-							String eq = TypeEquationXML.Equation.getTag();
-							String var = TypeEquationXML.Variable.getTag();
-							String op = TypeEquationXML.Operation.getTag();
+							String eq = TypeSGET.Equation.getTag();
+							String var = TypeSGET.Variable.getTag();
+							String op = TypeSGET.Operation.getTag();
 							add("<div>a=a<div>",
 									"<"+eq+"><"+var+">a</"+var+"><"+op+">=</"+op+"><"+var+">a</"+var+"></"+eq+">");
 						} else {

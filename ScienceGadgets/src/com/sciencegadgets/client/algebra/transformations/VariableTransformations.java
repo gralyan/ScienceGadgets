@@ -16,7 +16,7 @@ import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 
 public class VariableTransformations extends
 		TransformationList<VariableTransformationButton> {
@@ -33,7 +33,7 @@ public class VariableTransformations extends
 	}
 
 	private void isolatedVariable_check() {
-		if (TypeEquationXML.Equation.equals(variableNode.getParentType())) {
+		if (TypeSGET.Equation.equals(variableNode.getParentType())) {
 			// add(new EvaluatePromptButton(this));
 			add(new SubstituteButton(this));
 		}
@@ -121,7 +121,7 @@ class SubstituteButton extends VariableTransformationButton {
 
 		// Find the variable to substutute
 		NodeList<Element> possibleSubs = subIntoEqEl
-				.getElementsByTagName(TypeEquationXML.Variable.getTag());
+				.getElementsByTagName(TypeSGET.Variable.getTag());
 		findSub: for (int j = 0; j < possibleSubs.getLength(); j++) {
 			Element possibleSub = possibleSubs.getItem(j);
 			if (!isolatedVar.getUnitAttribute().equals(
@@ -132,8 +132,8 @@ class SubstituteButton extends VariableTransformationButton {
 			Element subParent = possibleSub.getParentElement();
 			String plugTag = substitute.getTagName();
 			if (plugTag.equals(subParent.getTagName())
-					&& (plugTag.equals(TypeEquationXML.Sum.getTag()) || plugTag
-							.equals(TypeEquationXML.Term.getTag()))) {
+					&& (plugTag.equals(TypeSGET.Sum.getTag()) || plugTag
+							.equals(TypeSGET.Term.getTag()))) {
 				Node subPrev = possibleSub.getPreviousSibling();
 				if (subPrev != null && subPrev.getNodeName().equals("mo")
 						&& "-".equals(((Element) subPrev).getInnerText())) {

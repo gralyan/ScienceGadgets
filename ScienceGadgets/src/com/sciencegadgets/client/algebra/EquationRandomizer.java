@@ -7,7 +7,7 @@ import com.google.gwt.user.client.Random;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 
 public class EquationRandomizer {
 
@@ -27,7 +27,7 @@ public class EquationRandomizer {
 	 */
 	public static void randomizeNumbers(EquationTree mTree, boolean randomize) {
 
-		ArrayList<EquationNode> variables = mTree.getNodesByType(TypeEquationXML.Number);
+		ArrayList<EquationNode> variables = mTree.getNodesByType(TypeSGET.Number);
 
 		for (EquationNode var : variables) {
 			String varRandomness = var.getAttribute(MathAttribute.Randomness);

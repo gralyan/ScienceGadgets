@@ -3,7 +3,7 @@ package com.sciencegadgets.client.algebra;
 import com.google.gwt.dom.client.Node;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitMap;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
@@ -25,10 +25,8 @@ public class EquationValidator {
 	 */
 	public void validateEquationNode(EquationNode node) throws IllegalStateException {
 
-		TypeEquationXML type = node.getType();
+		TypeSGET type = node.getType();
 		boolean isInEditMode = node.getTree().isInEditMode();
-
-		boolean valid = true;
 
 		int childCount = node.getChildCount();
 		boolean isWrongChildren = false;
@@ -60,6 +58,8 @@ public class EquationValidator {
 			break;
 		}
 
+		System.out.println(isWrongChildren+" "+type+" "+childCount);
+		
 		if (isWrongChildren) {
 			String errorMessage = "Wrong number of children in type: " + type
 					+ " which is a "+type.childRequirement() + "function, but has (" + childCount + ") children: "
@@ -82,11 +82,11 @@ public class EquationValidator {
 		case Sum:
 		case Term:// Confirm that there are < 3 children
 			if (type.equals(node.getParentType())) {
-				if (TypeEquationXML.Term.equals(type)) {
+				if (TypeSGET.Term.equals(type)) {
 					String errorMessage = "There shouldn't be a term in a term"
 							+ node.getParent().toString();
 					throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
-				} else if (TypeEquationXML.Sum.equals(type)) {
+				} else if (TypeSGET.Sum.equals(type)) {
 					String errorMessage = "There shouldn't be a sum in a sum: "
 							+ node.getParent().toString();
 					throw new IllegalStateException(errorMessage,new Throwable(errorMessage));
@@ -134,7 +134,7 @@ public class EquationValidator {
 		case Term:
 			UnitMap termMap = new UnitMap();
 			for (EquationNode child : node.getChildren()) {
-				if (TypeEquationXML.Operation.equals(child.getType())) {
+				if (TypeSGET.Operation.equals(child.getType())) {
 					continue;
 				}
 				UnitMap childMap = getQuantityKind(child);
@@ -145,7 +145,7 @@ public class EquationValidator {
 		case Sum:
 			UnitMap sumMap = null;
 			for (EquationNode child : node.getChildren()) {
-				if (TypeEquationXML.Operation.equals(child.getType())
+				if (TypeSGET.Operation.equals(child.getType())
 						|| "0".equals(child.getAttribute(MathAttribute.Value))) {
 					continue;
 				}
@@ -185,7 +185,7 @@ public class EquationValidator {
 				return baseMap;
 			}
 
-			if (TypeEquationXML.Number.equals(exp.getType())) {
+			if (TypeSGET.Number.equals(exp.getType())) {
 				try {
 					Integer expValue = Integer.parseInt(exp
 							.getAttribute(MathAttribute.Value));

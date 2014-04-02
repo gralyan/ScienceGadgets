@@ -35,7 +35,7 @@ public class AlgebraActivity extends SimplePanel {
 
 	private static AlgebraUiBinder algebraUiBinder = GWT
 			.create(AlgebraUiBinder.class);
-	
+
 	AbsolutePanel mainPanel = algebraUiBinder.createAndBindUi(this);
 
 	@UiField
@@ -64,9 +64,10 @@ public class AlgebraActivity extends SimplePanel {
 	private TransformationPanel bothSidesPanelLeft = new TransformationPanel();
 	private TransformationPanel simplifyPanel = new TransformationPanel();
 	private TransformationPanel bothSidesPanelRight = new TransformationPanel();
-//	private TransformationButton simplifyButton = new TransformationButton("Simplify", null);
-//	private BothSidesPanelButton bothSidesLeft = new BothSidesPanelButton();
-//	private BothSidesPanelButton bothSidesRight = new BothSidesPanelButton();
+	// private TransformationButton simplifyButton = new
+	// TransformationButton("Simplify", null);
+	// private BothSidesPanelButton bothSidesLeft = new BothSidesPanelButton();
+	// private BothSidesPanelButton bothSidesRight = new BothSidesPanelButton();
 
 	public String focusLayerId = null;
 	public boolean inEditMode = false;
@@ -75,16 +76,19 @@ public class AlgebraActivity extends SimplePanel {
 	private EquationTree equationTree = null;
 
 	public AlgebraActivity(Element equationXML, boolean inEditMode) {
-		
+		this(new EquationTree(equationXML, inEditMode), inEditMode);
+	}
+
+	public AlgebraActivity(EquationTree eTree, boolean inEditMode) {
 		add(mainPanel);
 
 		this.addStyleName(CSS.FILL_PARENT);
 		mainPanel.addStyleName(CSS.FILL_PARENT);
 
 		this.inEditMode = inEditMode;
-		reCreateEquationTree(equationXML, inEditMode);
 
 		optionsButton.addClickHandler(new OptionsHandler(this));
+		this.equationTree = eTree;
 
 		if (inEditMode) {
 			saveEquationButton.setStyleName("saveEquationButton");
@@ -96,11 +100,11 @@ public class AlgebraActivity extends SimplePanel {
 			transformMain.add(bothSidesPanelLeft);
 			transformMain.add(simplifyPanel);
 			transformMain.add(bothSidesPanelRight);
-			transformMain.addStyleName(CSS.FILL_PARENT); 
+			transformMain.addStyleName(CSS.FILL_PARENT);
 			bothSidesPanelLeft.addStyleName(CSS.BOTH_SIDES_PANEL);
 			simplifyPanel.addStyleName(CSS.SIMPLIFY_PANEL);
 			bothSidesPanelRight.addStyleName(CSS.BOTH_SIDES_PANEL);
-			
+
 		}
 
 	}
@@ -109,8 +113,13 @@ public class AlgebraActivity extends SimplePanel {
 		return equationTree;
 	}
 
-	public void reCreateEquationTree(Element equationXML, boolean inEditMode) {
+	public EquationTree reCreateEquationTree(Element equationXML,
+			boolean inEditMode) {
 		equationTree = new EquationTree(equationXML, inEditMode);
+		return equationTree;
+	}
+	public void setEquationTree(EquationTree eTree) {
+		equationTree = eTree;
 	}
 
 	public void reloadEquationPanel(String changeComment, Rule rule) {
@@ -129,15 +138,15 @@ public class AlgebraActivity extends SimplePanel {
 			equationTree.validateTree();
 		} catch (IllegalStateException e) {
 			String message = e.getMessage();
-			if(message == null) {
+			if (message == null) {
 				Window.alert("Oops, an error occured, please refresh the page");
-			}else {
+			} else {
 				Window.alert(message);
 			}
 			JSNICalls.error(e.getCause().toString());
 			return;
 		}
-		
+
 		if (!inEditMode && changeComment != null) {
 			algOut.updateAlgebraHistory(changeComment, rule, equationTree);
 		}
@@ -172,21 +181,21 @@ public class AlgebraActivity extends SimplePanel {
 	public void fillTransformLists(
 			TransformationList<TransformationButton> transSimplify,
 			BothSidesTransformations transBothSides) {
-		
+
 		bothSidesPanelLeft.clear();
 		simplifyPanel.clear();
 		bothSidesPanelRight.clear();
 		simplifyPanel.addAll(transSimplify);
 		bothSidesPanelLeft.addAll(transBothSides);
-		
-		for(int i = transBothSides.size() ; i>0 ; i--) {
-			BothSidesButton button = transBothSides.get(i-1);
+
+		for (int i = transBothSides.size(); i > 0; i--) {
+			BothSidesButton button = transBothSides.get(i - 1);
 			bothSidesPanelRight.add(button.getJoinedButton());
 		}
 		lowerEqArea.clear();
 		lowerEqArea.add(transformMain);
 	}
-	
+
 	public static void NUMBER_SPEC_PROMPT(EquationNode equationNode,
 			boolean clearDisplays) {
 
@@ -215,18 +224,19 @@ public class AlgebraActivity extends SimplePanel {
 		eqPanelHolder.clear();
 		super.onDetach();
 	}
-	
-	class TransformationPanel extends CommunistPanel{
+
+	class TransformationPanel extends CommunistPanel {
 
 		public TransformationPanel() {
 			super(true);
 			addStyleName(CSS.FILL_PARENT);
 		}
+
 		@Override
 		protected void onAttach() {
 			super.onAttach();
-			for(Widget child : getChildren()) {
-				((TransformationButton)child).resize();
+			for (Widget child : getChildren()) {
+				((TransformationButton) child).resize();
 			}
 		}
 	}

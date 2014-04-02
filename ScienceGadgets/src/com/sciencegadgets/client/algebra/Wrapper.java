@@ -19,7 +19,7 @@ import com.sciencegadgets.client.algebra.transformations.AssociativeDropControll
 import com.sciencegadgets.client.conversion.ConversionWrapper;
 import com.sciencegadgets.client.conversion.ReorderDropController;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 
 public class Wrapper extends HTML implements HasClickHandlers,
 		HasTouchStartHandlers, HasTouchEndHandlers {
@@ -69,7 +69,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	public void select() {
 		this.getElement().addClassName(CSS.SELECTED_WRAPPER);
-		if(TypeEquationXML.Operation.equals(node.getType())) {
+		if(TypeSGET.Operation.equals(node.getType())) {
 			getNextSiblingWrapper().getElement().addClassName(CSS.SELECTED_WRAPPER);
 			getPrevSiblingWrapper().getElement().addClassName(CSS.SELECTED_WRAPPER);
 		}
@@ -77,7 +77,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	public void unselect() {
 		this.getElement().removeClassName(CSS.SELECTED_WRAPPER);
-		if(TypeEquationXML.Operation.equals(node.getType())) {
+		if(TypeSGET.Operation.equals(node.getType())) {
 			getNextSiblingWrapper().getElement().removeClassName(CSS.SELECTED_WRAPPER);
 			getPrevSiblingWrapper().getElement().removeClassName(CSS.SELECTED_WRAPPER);
 		}
@@ -98,15 +98,15 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	public void addAssociativeDragDrop() {
 
 		// Add associative drag and drop
-		if ((TypeEquationXML.Sum.equals(node.getParentType()) || TypeEquationXML.Term.equals(node
-				.getParentType())) && !TypeEquationXML.Operation.equals(node.getType())) {
+		if ((TypeSGET.Sum.equals(node.getParentType()) || TypeSGET.Term.equals(node
+				.getParentType())) && !TypeSGET.Operation.equals(node.getType())) {
 
 			addDragController();
 
 			LinkedList<EquationNode> siblings = node.getParent().getChildren();
 			siblings.remove(node);
 			for (EquationNode dropNode : siblings) {
-				if (!TypeEquationXML.Operation.equals(dropNode.getType())) {
+				if (!TypeSGET.Operation.equals(dropNode.getType())) {
 					DropController controller = null;
 					Wrapper dropWraper = dropNode.getWrapper();
 					if (dropWraper instanceof ConversionWrapper) {

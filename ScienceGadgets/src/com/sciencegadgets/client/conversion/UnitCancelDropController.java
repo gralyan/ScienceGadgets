@@ -7,7 +7,7 @@ import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitMultiple;
 import com.sciencegadgets.shared.dimensions.UnitName;
@@ -65,10 +65,10 @@ public class UnitCancelDropController extends AbstractDropController {
 				displayToChange = dragDisplay;
 			}
 			
-			EquationNode combinedNode = nodeToChange.replace(TypeEquationXML.Variable, unitSymbol);
+			EquationNode combinedNode = nodeToChange.replace(TypeSGET.Variable, unitSymbol);
 			if (combinedExp > 1) {
-				combinedNode = combinedNode.encase(TypeEquationXML.Exponential);
-				combinedNode.append(TypeEquationXML.Number, combinedExp + "");
+				combinedNode = combinedNode.encase(TypeSGET.Exponential);
+				combinedNode.append(TypeSGET.Number, combinedExp + "");
 			}
 			combinedNode.setAttribute(MathAttribute.Unit, unitName
 					+ UnitAttribute.EXP_DELIMITER + combinedExp);

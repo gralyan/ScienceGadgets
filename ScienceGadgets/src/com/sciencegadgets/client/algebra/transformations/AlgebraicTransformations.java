@@ -13,8 +13,8 @@ import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.transformations.InterFractionDrop.DropType;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 /**
  * This class contains the set of static methods used to perform algebraic
@@ -77,11 +77,11 @@ public class AlgebraicTransformations {
 			break;
 		case Sum:
 			for (EquationNode sumChild : toNegate.getChildren()) {
-				if (TypeEquationXML.Operation.equals(sumChild.getType())) {
+				if (TypeSGET.Operation.equals(sumChild.getType())) {
 					continue;
 				}
 				EquationNode prevOp = sumChild.getPrevSibling();
-				if (prevOp != null && TypeEquationXML.Operation.equals(prevOp.getType())) {
+				if (prevOp != null && TypeSGET.Operation.equals(prevOp.getType())) {
 					Operator opValue = prevOp.getOperation();
 					opValue = Operator.PLUS.equals(opValue) ? Operator.MINUS
 							: Operator.PLUS;
@@ -95,10 +95,10 @@ public class AlgebraicTransformations {
 			propagateNegative(toNegate.getFirstChild());
 			break;
 		default:
-			EquationNode casing = toNegate.encase(TypeEquationXML.Term);
-			casing.addFirst(TypeEquationXML.Operation, Operator.getMultiply()
+			EquationNode casing = toNegate.encase(TypeSGET.Term);
+			casing.addFirst(TypeSGET.Operation, Operator.getMultiply()
 					.getSign());
-			casing.addFirst(TypeEquationXML.Number, "-1");
+			casing.addFirst(TypeSGET.Number, "-1");
 			break;
 		}
 	}
@@ -114,25 +114,25 @@ public class AlgebraicTransformations {
 
 		EquationNode parent = toReciprocate.getParent();
 
-		if (TypeEquationXML.Fraction.equals(parent.getType())) {
+		if (TypeSGET.Fraction.equals(parent.getType())) {
 
 			boolean inNumerator = toReciprocate.getIndex() == 0;
 			EquationNode otherSide = inNumerator ? toReciprocate.getNextSibling()
 					: toReciprocate.getPrevSibling();
-			otherSide = otherSide.encase(TypeEquationXML.Term);
+			otherSide = otherSide.encase(TypeSGET.Term);
 
 			otherSide
-					.append(TypeEquationXML.Operation, Operator.getMultiply().getSign());
+					.append(TypeSGET.Operation, Operator.getMultiply().getSign());
 			otherSide.append(toReciprocate);
 
 			if (inNumerator) {
-				parent.addFirst(TypeEquationXML.Number, "1");
+				parent.addFirst(TypeSGET.Number, "1");
 			} else {
 				parent.replace(otherSide);
 			}
 
-		} else if (TypeEquationXML.Term.equals(parent.getType())
-				&& TypeEquationXML.Fraction.equals(parent.getParentType())) {
+		} else if (TypeSGET.Term.equals(parent.getType())
+				&& TypeSGET.Fraction.equals(parent.getParentType())) {
 
 			if (toReciprocate.getIndex() == 0) {
 				toReciprocate.getNextSibling().remove();
@@ -144,16 +144,16 @@ public class AlgebraicTransformations {
 			EquationNode otherSide = inNumerator ? parent.getNextSibling() : parent
 					.getPrevSibling();
 
-			otherSide = otherSide.encase(TypeEquationXML.Term);
+			otherSide = otherSide.encase(TypeSGET.Term);
 			otherSide
-					.append(TypeEquationXML.Operation, Operator.getMultiply().getSign());
+					.append(TypeSGET.Operation, Operator.getMultiply().getSign());
 			otherSide.append(toReciprocate);
 
 			parent.decase();
 
 		} else {
-			EquationNode frac = toReciprocate.encase(TypeEquationXML.Fraction);
-			frac.addFirst(TypeEquationXML.Number, "1");
+			EquationNode frac = toReciprocate.encase(TypeSGET.Fraction);
+			frac.addFirst(TypeSGET.Number, "1");
 		}
 	}
 
@@ -166,7 +166,7 @@ public class AlgebraicTransformations {
 	 */
 	public static TransformationButton separateNegative_check(EquationNode negNode,
 			TransformationList<TransformationButton> context) {
-		if (negNode.getSymbol().startsWith(TypeEquationXML.Operator.MINUS.getSign())
+		if (negNode.getSymbol().startsWith(TypeSGET.Operator.MINUS.getSign())
 				&& !negNode.getSymbol().equals("-1")) {
 			return new SeperateNegButton(negNode, context);
 		}
@@ -189,7 +189,7 @@ public class AlgebraicTransformations {
 			thisSide = node;
 			break;
 		case Term:
-			if (TypeEquationXML.Fraction.equals(parent.getParentType())) {
+			if (TypeSGET.Fraction.equals(parent.getParentType())) {
 				thisSide = parent;
 				break;
 			}// else fall through
@@ -205,7 +205,7 @@ public class AlgebraicTransformations {
 		if (node.isLike(otherSide)) {// Cancel drop on entire other sides
 			dropTargets.put(otherSide, DropType.CANCEL);
 
-		} else if (TypeEquationXML.Term.equals(otherSide.getType())) {
+		} else if (TypeSGET.Term.equals(otherSide.getType())) {
 			// Drop on each term child
 			for (EquationNode child : otherSide.getChildren()) {
 				if (node.isLike(child)) {// Cancel drop on child
@@ -238,9 +238,9 @@ public class AlgebraicTransformations {
 	private static void addDropTarget(EquationNode target, EquationNode drag,
 			HashMap<EquationTree.EquationNode, DropType> dropTargets) {
 		
-		TypeEquationXML dragType = drag.getType();
+		TypeSGET dragType = drag.getType();
 		
-		if(TypeEquationXML.Number.equals(dragType) && "1".equals(drag.getSymbol())) {
+		if(TypeSGET.Number.equals(dragType) && "1".equals(drag.getSymbol())) {
 			dropTargets.put(target, DropType.REMOVE_ONE);
 			return;
 		}
@@ -264,7 +264,7 @@ public class AlgebraicTransformations {
 		case Log:
 			if (drag.getAttribute(MathAttribute.LogBase).equals(
 					target.getAttribute(MathAttribute.LogBase))
-					&& TypeEquationXML.Number.equals(drag.getFirstChild().getType())) {
+					&& TypeSGET.Number.equals(drag.getFirstChild().getType())) {
 				dropTargets.put(target, DropType.LOG_COMBINE);
 			}
 			break;
@@ -313,11 +313,11 @@ class SeperateNegButton extends TransformationButton {
 
 		EquationNode prevSib = negNode.getPrevSibling();
 		String newSymbol = negNode.getSymbol().replaceFirst(
-				TypeEquationXML.Operator.MINUS.getSign(), "");
+				TypeSGET.Operator.MINUS.getSign(), "");
 		negNode.setSymbol(newSymbol);
 
 		if (prevSib != null
-				&& TypeEquationXML.Operation.equals(prevSib.getType())) {
+				&& TypeSGET.Operation.equals(prevSib.getType())) {
 			if (Operator.PLUS.getSign().equals(prevSib.getSymbol())) {
 				prevSib.setSymbol(Operator.MINUS.getSign());
 			} else if (Operator.MINUS.getSign().equals(
@@ -329,11 +329,11 @@ class SeperateNegButton extends TransformationButton {
 			}
 		} else {
 			EquationNode parent = negNode.getParent();
-			parent = negNode.encase(TypeEquationXML.Term);
+			parent = negNode.encase(TypeSGET.Term);
 			int nodeIndex = negNode.getIndex();
-			parent.addBefore(nodeIndex, TypeEquationXML.Operation,
-					TypeEquationXML.Operator.getMultiply().getSign());
-			parent.addBefore(nodeIndex, TypeEquationXML.Number, "-1");
+			parent.addBefore(nodeIndex, TypeSGET.Operation,
+					TypeSGET.Operator.getMultiply().getSign());
+			parent.addBefore(nodeIndex, TypeSGET.Number, "-1");
 		}
 		Moderator.reloadEquationPanel("-" + newSymbol + " = -1"
 				+ Operator.getMultiply().getSign() + newSymbol, null);
@@ -357,9 +357,9 @@ class DenominatorFlipButton extends TransformationButton {
 		node.highlight();
 
 		EquationNode frac = node;
-		if (!TypeEquationXML.Fraction.equals(node.getType())) {
-			frac = node.encase(TypeEquationXML.Fraction);
-			frac.append(TypeEquationXML.Number, "1");
+		if (!TypeSGET.Fraction.equals(node.getType())) {
+			frac = node.encase(TypeSGET.Fraction);
+			frac.append(TypeSGET.Number, "1");
 		}
 		// Flip
 		frac.append(frac.getChildAt(0));
@@ -368,13 +368,13 @@ class DenominatorFlipButton extends TransformationButton {
 		EquationNode grandParent = parentFraction.getParent();
 		int index = parentFraction.getIndex();
 
-		if (!TypeEquationXML.Term.equals(grandParent.getType())) {
-			grandParent = parentFraction.encase(TypeEquationXML.Term);
+		if (!TypeSGET.Term.equals(grandParent.getType())) {
+			grandParent = parentFraction.encase(TypeSGET.Term);
 			index = 0;
 		}
 
 		grandParent.addBefore(index, parentFraction.getChildAt(1));
-		grandParent.addBefore(index, TypeEquationXML.Operation, Operator
+		grandParent.addBefore(index, TypeSGET.Operation, Operator
 				.getMultiply().getSign());
 		grandParent.addBefore(index, parentFraction.getChildAt(0));
 

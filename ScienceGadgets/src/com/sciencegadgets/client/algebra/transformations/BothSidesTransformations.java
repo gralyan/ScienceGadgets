@@ -12,8 +12,8 @@ import com.sciencegadgets.client.algebra.transformations.BothSidesTransformation
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class BothSidesTransformations extends
 		TransformationList<BothSidesButton> {
@@ -31,19 +31,19 @@ public class BothSidesTransformations extends
 
 	public static final String UP_ARROW = "\u2191";
 
-	private static final String PLUS = TypeEquationXML.Operator.PLUS.getSign();
-	private static final String MINUS = TypeEquationXML.Operator.MINUS
+	private static final String PLUS = TypeSGET.Operator.PLUS.getSign();
+	private static final String MINUS = TypeSGET.Operator.MINUS
 			.getSign();
-	private static final String MULTIPLY = TypeEquationXML.Operator
+	private static final String MULTIPLY = TypeSGET.Operator
 			.getMultiply().getSign();
-	private static final String DIVIDE = TypeEquationXML.Operator.DIVIDE
+	private static final String DIVIDE = TypeSGET.Operator.DIVIDE
 			.getSign();
 
 	public BothSidesTransformations(EquationNode node) {
 		super(node);
 
-		TypeEquationXML type = node.getType();
-		if (TypeEquationXML.Operation.equals(type)) {
+		TypeSGET type = node.getType();
+		if (TypeSGET.Operation.equals(type)) {
 			return;
 		}
 
@@ -86,9 +86,9 @@ public class BothSidesTransformations extends
 			if (isTopLevel) {
 				this.add(Math.DIVIDE);
 			}
-			if (TypeEquationXML.Fraction
+			if (TypeSGET.Fraction
 					.equals(oldParent.getParent().getType())
-					&& !TypeEquationXML.Operation.equals(node.getType())) {
+					&& !TypeSGET.Operation.equals(node.getType())) {
 				if (oldParent.getParent().isRightSide()
 						|| oldParent.getParent().isLeftSide()) {
 
@@ -115,7 +115,7 @@ public class BothSidesTransformations extends
 				if (node.getIndex() == 1) {
 					this.add(Math.INVERSE_EXPONENT);
 				} else if (node.getIndex() == 0
-						&& TypeEquationXML.Number.equals(type)) {
+						&& TypeSGET.Number.equals(type)) {
 					this.add(Math.LOG);
 				}
 			}
@@ -335,7 +335,7 @@ public class BothSidesTransformations extends
 		@Override
 		protected void execute() {
 			// Prepare Target side
-			targetSide = targetSide.encase(TypeEquationXML.Sum);
+			targetSide = targetSide.encase(TypeSGET.Sum);
 
 			// take operation
 			EquationNode operator = node.getPrevSibling();
@@ -353,14 +353,14 @@ public class BothSidesTransformations extends
 				}
 				targetSide.append(operator);
 			} else {
-				targetSide.append(TypeEquationXML.Operation, MINUS);
+				targetSide.append(TypeSGET.Operation, MINUS);
 			}
 
 			if (Moderator.isInEasyMode) {
 				// Leave 0 in old side if top node
 				if (isSide) {
 					node.getParent().addBefore(node.getIndex(),
-							TypeEquationXML.Number, "0");
+							TypeSGET.Number, "0");
 				}
 				// move node to other side
 				targetSide.append(node);
@@ -377,11 +377,11 @@ public class BothSidesTransformations extends
 				}
 			} else {// create node on both sides
 				targetSide.append(node.clone());
-				topParent = topParent.encase(TypeEquationXML.Sum);
+				topParent = topParent.encase(TypeSGET.Sum);
 				if (operator != null) {
 					topParent.append(operator.clone());
 				} else {
-					topParent.append(TypeEquationXML.Operation, MINUS);
+					topParent.append(TypeSGET.Operation, MINUS);
 				}
 				topParent.append(node.clone());
 			}
@@ -404,13 +404,13 @@ public class BothSidesTransformations extends
 			EquationNode operator = null;
 
 			if (Moderator.isInEasyMode) {
-				if (TypeEquationXML.Fraction.equals(oldParent.getType())) {
+				if (TypeSGET.Fraction.equals(oldParent.getType())) {
 					// leave 1 in numerator
-					oldParent.addFirst(TypeEquationXML.Number, "1");
+					oldParent.addFirst(TypeSGET.Number, "1");
 				} else if (isSide) {
 					// Leave 1 in old side if top node
 					oldParent.addBefore(node.getIndex(),
-							TypeEquationXML.Number, "1");
+							TypeSGET.Number, "1");
 				} else {
 					// take operation
 					if (node.getIndex() > 0) {
@@ -422,16 +422,16 @@ public class BothSidesTransformations extends
 			}
 
 			// Prepare Target side
-			if (!TypeEquationXML.Fraction.equals(targetSide.getType())) {
-				targetSide = targetSide.encase(TypeEquationXML.Fraction);
+			if (!TypeSGET.Fraction.equals(targetSide.getType())) {
+				targetSide = targetSide.encase(TypeSGET.Fraction);
 				if (operator != null)
 					operator.remove();
 			} else {
 				targetSide = targetSide.getChildAt(1);
-				targetSide = targetSide.encase(TypeEquationXML.Term);
+				targetSide = targetSide.encase(TypeSGET.Term);
 				if (operator == null) {
-					targetSide.append(TypeEquationXML.Operation,
-							TypeEquationXML.Operator.getMultiply().getSign());
+					targetSide.append(TypeSGET.Operation,
+							TypeSGET.Operator.getMultiply().getSign());
 				} else {
 					targetSide.append(operator);
 				}
@@ -445,7 +445,7 @@ public class BothSidesTransformations extends
 				if (!isSide) {
 					EquationNode oldFirstSib = oldParent.getFirstChild();
 					if (oldFirstSib != null
-							&& TypeEquationXML.Operation.equals(oldFirstSib
+							&& TypeSGET.Operation.equals(oldFirstSib
 									.getType())) {
 						oldFirstSib.remove();
 					}
@@ -454,14 +454,14 @@ public class BothSidesTransformations extends
 				}
 			} else {// create node on other side
 				targetSide.append(node.clone());
-				if (TypeEquationXML.Fraction.equals(oldParent.getType())) {
+				if (TypeSGET.Fraction.equals(oldParent.getType())) {
 					EquationNode denominator = oldParent.getChildAt(1).encase(
-							TypeEquationXML.Term);
-					denominator.append(TypeEquationXML.Operation,
-							TypeEquationXML.Operator.getMultiply().getSign());
+							TypeSGET.Term);
+					denominator.append(TypeSGET.Operation,
+							TypeSGET.Operator.getMultiply().getSign());
 					denominator.append(node.clone());
 				} else {
-					topParent = topParent.encase(TypeEquationXML.Fraction);
+					topParent = topParent.encase(TypeSGET.Fraction);
 					topParent.append(node.clone());
 				}
 			}
@@ -481,7 +481,7 @@ public class BothSidesTransformations extends
 		protected void execute() {
 
 			// Prepare Target side
-			targetSide = targetSide.encase(TypeEquationXML.Term);
+			targetSide = targetSide.encase(TypeSGET.Term);
 
 			if (isNestedInFraction && Moderator.isInEasyMode) {
 				EquationNode operation = null;
@@ -491,13 +491,13 @@ public class BothSidesTransformations extends
 					operation = node.getPrevSibling();
 				}
 				if (operation != null
-						&& TypeEquationXML.Operation
+						&& TypeSGET.Operation
 								.equals(operation.getType())) {
 					targetSide.append(operation);
 				}
 			} else if (isTopLevel || !Moderator.isInEasyMode) {
-				targetSide.append(TypeEquationXML.Operation,
-						TypeEquationXML.Operator.getMultiply().getSign());
+				targetSide.append(TypeSGET.Operation,
+						TypeSGET.Operator.getMultiply().getSign());
 			} else {
 				JSNICalls
 						.warn("Multiplying somethimg that's not top level or nested in a top level fraction: "
@@ -506,13 +506,13 @@ public class BothSidesTransformations extends
 
 			if (!Moderator.isInEasyMode) {
 				node = node.clone();
-				oldParent = oldParent.encase(TypeEquationXML.Term);
-				oldParent.append(TypeEquationXML.Operation, Operator
+				oldParent = oldParent.encase(TypeSGET.Term);
+				oldParent.append(TypeSGET.Operation, Operator
 						.getMultiply().getSign());
 				oldParent.append(node.clone());
 			}
 
-			if (TypeEquationXML.Term.equals(node.getType())) {// Termception
+			if (TypeSGET.Term.equals(node.getType())) {// Termception
 				for (EquationNode transplants : node.getChildren()) {
 					targetSide.append(transplants);
 				}
@@ -523,10 +523,10 @@ public class BothSidesTransformations extends
 
 			if (Moderator.isInEasyMode) {
 				// clean source side
-				if (TypeEquationXML.Fraction.equals(oldParent.getType())) {
+				if (TypeSGET.Fraction.equals(oldParent.getType())) {
 					// remove unnecessary intermediate fraction
 					oldParent.replace(oldParent.getFirstChild());
-				} else if (TypeEquationXML.Term.equals(oldParent.getType())) {
+				} else if (TypeSGET.Term.equals(oldParent.getType())) {
 					oldParent.decase();
 				} else {
 					JSNICalls
@@ -560,13 +560,13 @@ public class BothSidesTransformations extends
 
 			// Prepare Target side
 			EquationNode target = null;
-			if (!TypeEquationXML.Exponential.equals(targetSide.getType())) {
-				targetSide = targetSide.encase(TypeEquationXML.Exponential);
+			if (!TypeSGET.Exponential.equals(targetSide.getType())) {
+				targetSide = targetSide.encase(TypeSGET.Exponential);
 				target = targetSide;
 			} else {
 				EquationNode targetExp = targetSide.getChildAt(1);
-				targetExp = targetExp.encase(TypeEquationXML.Term);
-				targetExp.append(TypeEquationXML.Operation, Operator
+				targetExp = targetExp.encase(TypeSGET.Term);
+				targetExp.append(TypeSGET.Operation, Operator
 						.getMultiply().getSign());
 				target = targetExp;
 			}
@@ -575,9 +575,9 @@ public class BothSidesTransformations extends
 				node = node.clone();
 			}
 
-			if (TypeEquationXML.Fraction.equals(node.getType())) {
+			if (TypeSGET.Fraction.equals(node.getType())) {
 				EquationNode numerator = node.getChildAt(0);
-				if (TypeEquationXML.Number.equals(numerator.getType())
+				if (TypeSGET.Number.equals(numerator.getType())
 						&& "1".equals(numerator.getSymbol())) {
 					target.append(node.getChildAt(1));
 					node.remove();
@@ -586,8 +586,8 @@ public class BothSidesTransformations extends
 					target.append(node);
 				}
 			} else {
-				EquationNode frac = target.append(TypeEquationXML.Fraction, "");
-				frac.append(TypeEquationXML.Number, "1");
+				EquationNode frac = target.append(TypeSGET.Fraction, "");
+				frac.append(TypeSGET.Number, "1");
 				frac.append(node);
 			}
 
@@ -595,10 +595,10 @@ public class BothSidesTransformations extends
 				// clean source side
 				oldParent.replace(oldParent.getFirstChild());
 			} else {
-				oldParent.encase(TypeEquationXML.Exponential);
-				EquationNode frac = oldParent.append(TypeEquationXML.Fraction,
+				oldParent.encase(TypeSGET.Exponential);
+				EquationNode frac = oldParent.append(TypeSGET.Fraction,
 						"");
-				frac.append(TypeEquationXML.Number, "1");
+				frac.append(TypeSGET.Number, "1");
 				frac.append(node.clone());
 			}
 
@@ -631,15 +631,15 @@ public class BothSidesTransformations extends
 
 			// Prepare Target side
 			EquationNode targetExp = targetSide
-					.encase(TypeEquationXML.Exponential);
-			targetExp.addFirst(TypeEquationXML.Number, base);
+					.encase(TypeSGET.Exponential);
+			targetExp.addFirst(TypeSGET.Number, base);
 
 			if (Moderator.isInEasyMode) {
 				// clean source side
 				node.replace(node.getFirstChild());
 			} else {
-				EquationNode fromExp = node.encase(TypeEquationXML.Exponential);
-				fromExp.addFirst(TypeEquationXML.Number, base);
+				EquationNode fromExp = node.encase(TypeSGET.Exponential);
+				fromExp.addFirst(TypeSGET.Number, base);
 			}
 
 			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
@@ -666,14 +666,14 @@ public class BothSidesTransformations extends
 		protected void execute() {
 
 			// Prepare Target side
-			EquationNode targetLog = targetSide.encase(TypeEquationXML.Log);
+			EquationNode targetLog = targetSide.encase(TypeSGET.Log);
 			targetLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 
 			if (Moderator.isInEasyMode) {
 				// clean source side
 				node.replace(node.getChildAt(1));
 			} else {
-				EquationNode fromLog = node.encase(TypeEquationXML.Log);
+				EquationNode fromLog = node.encase(TypeSGET.Log);
 				fromLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 			}
 
@@ -704,14 +704,14 @@ public class BothSidesTransformations extends
 		protected void execute() {
 
 			// Prepare Target side
-			EquationNode targetTrig = targetSide.encase(TypeEquationXML.Trig);
+			EquationNode targetTrig = targetSide.encase(TypeSGET.Trig);
 			targetTrig.setAttribute(MathAttribute.Function, toFunction);
 
 			if (Moderator.isInEasyMode) {
 				// clean source side
 				node.replace(node.getFirstChild());
 			} else {
-				EquationNode fromTrig = node.encase(TypeEquationXML.Trig);
+				EquationNode fromTrig = node.encase(TypeSGET.Trig);
 				fromTrig.setAttribute(MathAttribute.Function, toFunction);
 			}
 

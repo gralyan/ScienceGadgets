@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitHTML;
 
@@ -47,7 +47,7 @@ public class EquationWrapper extends Wrapper {
 	private void fillSelectionDetails() {
 		FlowPanel details = algebraActivity.selectionDetails;
 
-		TypeEquationXML type = node.getType();
+		TypeSGET type = node.getType();
 		Label typeLabel = new Label(type.name());
 		typeLabel.addStyleName(type.toString());
 		typeLabel.addStyleName(CSS.DISPLAY_WRAPPER);
