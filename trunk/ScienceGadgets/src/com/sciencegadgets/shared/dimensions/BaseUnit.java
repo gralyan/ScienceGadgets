@@ -6,7 +6,7 @@ public enum BaseUnit {
 	kg("Mass", "kg"), //
 	s("Time", "s"), //
 	A("ElectricCurrent", "A"), //
-	K("ThermodynamicTemperature", "K"), //
+	K("Temperature", "K"), //
 	mol("AmountOfSubstance", "mol"), //
 	cd("LuminousIntensity", "cd");
 

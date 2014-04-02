@@ -5,8 +5,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 /**
  * <b>data-unit</b> attribute <b>= </b>id^exp*id^exp... <br/>
@@ -66,7 +66,7 @@ public class UnitHTML {
 			
 			Element unitDiv = DOM.createDiv();
 			unitDiv.setAttribute("id", symbol + UNIT_NODE_DELIMITER + nodeId);
-			unitDiv.addClassName(TypeEquationXML.Term.asChild());
+			unitDiv.addClassName(TypeSGET.Term.asChild());
 
 			if (exponent.startsWith("-")) {// Negative
 				exponent = exponent.replace("-", "");
@@ -75,25 +75,25 @@ public class UnitHTML {
 				numerator.appendChild(unitDiv);
 			}
 			if ("1".equals(exponent)) {
-				exponent = TypeEquationXML.Operator.SPACE.getSign();
+				exponent = TypeSGET.Operator.SPACE.getSign();
 			}
 
 			Element symbolDiv = DOM.createDiv();
-			symbolDiv.addClassName(TypeEquationXML.Exponential.asChild(true));
+			symbolDiv.addClassName(TypeSGET.Exponential.asChild(true));
 			symbolDiv.setInnerText(symbol);
 			unitDiv.appendChild(symbolDiv);
 
 			Element expDiv = DOM.createDiv();
-			expDiv.addClassName(TypeEquationXML.Exponential.asChild(false));
+			expDiv.addClassName(TypeSGET.Exponential.asChild(false));
 			expDiv.setInnerText(exponent);
 			unitDiv.appendChild(expDiv);
 		}
 
 		if (denominator.getChildCount() > 0) {
 			Element frac = DOM.createDiv();
-			frac.addClassName(TypeEquationXML.Term.asChild());
-			numerator.addClassName(TypeEquationXML.Fraction.asChild(true));
-			denominator.addClassName(TypeEquationXML.Fraction.asChild(false));
+			frac.addClassName(TypeSGET.Term.asChild());
+			numerator.addClassName(TypeSGET.Fraction.asChild(true));
+			denominator.addClassName(TypeSGET.Fraction.asChild(false));
 			frac.appendChild(numerator);
 			frac.appendChild(denominator);
 			frac.addClassName(UNIT_CLASSNAME);
@@ -108,7 +108,7 @@ public class UnitHTML {
 			}
 			return frac;
 		} else {
-			numerator.addClassName(TypeEquationXML.Term.asChild());
+			numerator.addClassName(TypeSGET.Term.asChild());
 			numerator.addClassName(UNIT_CLASSNAME);
 			if (hasSmallUnits) {
 				numerator.getStyle().setFontSize(UNIT_SIZE_SMALL, Unit.PCT);

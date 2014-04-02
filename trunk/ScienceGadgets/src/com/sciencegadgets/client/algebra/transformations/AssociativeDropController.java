@@ -6,8 +6,8 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.client.algebra.ResponseNote;
 import com.sciencegadgets.client.algebra.Wrapper;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class AssociativeDropController extends TransformationDropController {
 	
@@ -25,18 +25,18 @@ public class AssociativeDropController extends TransformationDropController {
 		EquationNode target = ((Wrapper) getDropTarget())
 				.getNode();
 		EquationNode parent = drag.getParent();
-		boolean isSum = TypeEquationXML.Sum.equals(parent.getType());
+		boolean isSum = TypeSGET.Sum.equals(parent.getType());
 
 		drag.highlight();
 		target.highlight();
 
 		EquationNode dragOp = drag.getPrevSibling();
-		if (dragOp == null || !TypeEquationXML.Operation.equals(dragOp.getType())) {
+		if (dragOp == null || !TypeSGET.Operation.equals(dragOp.getType())) {
 			if (isSum) {
-				dragOp = drag.getTree().NEW_NODE(TypeEquationXML.Operation,
+				dragOp = drag.getTree().NEW_NODE(TypeSGET.Operation,
 						Operator.PLUS.getSign());
 			} else {
-				dragOp = drag.getTree().NEW_NODE(TypeEquationXML.Operation,
+				dragOp = drag.getTree().NEW_NODE(TypeSGET.Operation,
 						Operator.getMultiply().getSign());
 			}
 		}
@@ -47,16 +47,16 @@ public class AssociativeDropController extends TransformationDropController {
 			parent.addAfter(dragOp.getIndex(), drag);
 
 			EquationNode firstNode = parent.getFirstChild();
-			if (TypeEquationXML.Operation.equals(firstNode.getType()) && !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
+			if (TypeSGET.Operation.equals(firstNode.getType()) && !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
 				firstNode.remove();
 			}
 		} else {// add before drop
 			
 			if(target.getIndex() == 0){
 				if(isSum){
-					parent.addFirst(TypeEquationXML.Operation, Operator.PLUS.getSign());
+					parent.addFirst(TypeSGET.Operation, Operator.PLUS.getSign());
 				}else{
-				parent.addFirst(TypeEquationXML.Operation, Operator.getMultiply().getSign());
+				parent.addFirst(TypeSGET.Operation, Operator.getMultiply().getSign());
 				}
 			}
 			int dropIndex = target.getPrevSibling().getIndex();

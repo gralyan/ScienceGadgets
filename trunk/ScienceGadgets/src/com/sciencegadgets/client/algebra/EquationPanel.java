@@ -18,7 +18,7 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 
 public class EquationPanel extends AbsolutePanel {
 	public HashMap<EquationNode, EquationLayer> eqLayerMap = new HashMap<EquationNode, EquationLayer>();
@@ -140,7 +140,7 @@ public class EquationPanel extends AbsolutePanel {
 			case Fraction:
 				mergeRootNodes.add(side);
 				for (EquationNode inFrac : side.getChildren()) {
-					if (TypeEquationXML.Term.equals(inFrac.getType())) {
+					if (TypeSGET.Term.equals(inFrac.getType())) {
 						mergeRootNodes.add(inFrac);
 					}
 				}
@@ -155,12 +155,12 @@ public class EquationPanel extends AbsolutePanel {
 
 	private void findFractionMergingNodes() {
 		ArrayList<EquationNode> fractions = mathTree
-				.getNodesByType(TypeEquationXML.Fraction);
+				.getNodesByType(TypeSGET.Fraction);
 
 		for (EquationNode frac : fractions) {
 			for (EquationNode child : frac.getChildren()) {
 				// numerator and denominator
-				if (TypeEquationXML.Term.equals(child.getType())
+				if (TypeSGET.Term.equals(child.getType())
 						&& !mergeRootNodes.contains(child)) {
 					mergeFractionNodes.add(child);
 				}
@@ -232,7 +232,7 @@ public class EquationPanel extends AbsolutePanel {
 							+ parentId);
 			if(layerParentNode != null) {
 				layerParentNode.addClassName(CSS.DISPLAY_WRAPPER);
-			}else if(TypeEquationXML.Equation.equals(parentNode.getType())){
+			}else if(TypeSGET.Equation.equals(parentNode.getType())){
 				Element layerEqNode = DOM
 						.getElementById(EQ_OF_LAYER	+ parentId);
 				layerEqNode.addClassName(CSS.DISPLAY_WRAPPER);

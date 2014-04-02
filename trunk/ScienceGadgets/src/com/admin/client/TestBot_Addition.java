@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.AdditionTransformations;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class TestBot_Addition {
 

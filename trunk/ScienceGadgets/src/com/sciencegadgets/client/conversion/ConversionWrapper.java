@@ -6,7 +6,7 @@ import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitMultiple;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
@@ -62,7 +62,7 @@ public class ConversionWrapper extends Wrapper {
 
 	public void addUnitCancelDropControllers() {
 		EquationNode thisSide = node.getParent();
-		if (!TypeEquationXML.Fraction.equals(thisSide.getParentType())) {
+		if (!TypeSGET.Fraction.equals(thisSide.getParentType())) {
 			return;
 		}
 		EquationNode otherSide = thisSide.getIndex() == 0 ? thisSide

@@ -34,9 +34,9 @@ import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.ChildRequirement;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.ChildRequirement;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitHTML;
@@ -76,8 +76,8 @@ public class EquationTree {
 		// reloadDisplay(true);
 	}
 
-	public EquationTree(TypeEquationXML leftType, String leftSymbol,
-			TypeEquationXML rightType, String righSymbol, boolean inEditMode) {
+	public EquationTree(TypeSGET leftType, String leftSymbol,
+			TypeSGET rightType, String righSymbol, boolean inEditMode) {
 		this(newDummyElement(), inEditMode);
 		getLeftSide().replace(leftType, leftSymbol);
 		getRightSide().replace(rightType, righSymbol);
@@ -88,21 +88,21 @@ public class EquationTree {
 	}
 
 	private static Element newDummyElement() {
-		Element eq = DOM.createElement(TypeEquationXML.Operation.getTag());
+		Element eq = DOM.createElement(TypeSGET.Operation.getTag());
 		eq.setInnerText("=");
 		eq.setAttribute("id", "dummyNodeEquals");
 
 		Element dummyLeft = DOM
-				.createElement(TypeEquationXML.Variable.getTag());
+				.createElement(TypeSGET.Variable.getTag());
 		dummyLeft.setInnerText("a");
 		dummyLeft.setAttribute("id", "dummyNodeLeft");
 
-		Element dummyRight = DOM.createElement(TypeEquationXML.Variable
+		Element dummyRight = DOM.createElement(TypeSGET.Variable
 				.getTag());
 		dummyRight.setInnerText("a");
 		dummyRight.setAttribute("id", "dummyNodeRight");
 
-		Element root = DOM.createElement(TypeEquationXML.Equation.getTag());
+		Element root = DOM.createElement(TypeSGET.Equation.getTag());
 		root.appendChild(dummyLeft);
 		root.appendChild(eq);
 		root.appendChild(dummyRight);
@@ -249,7 +249,7 @@ public class EquationTree {
 		return newNode;
 	}
 
-	public EquationNode NEW_NODE(TypeEquationXML type, String symbol) {
+	public EquationNode NEW_NODE(TypeSGET type, String symbol) {
 		EquationNode newNode = new EquationNode(type, symbol);
 		AddToMaps(newNode);
 		return newNode;
@@ -291,7 +291,7 @@ public class EquationTree {
 	 * 
 	 * @param type
 	 */
-	public ArrayList<EquationNode> getNodesByType(TypeEquationXML type) {
+	public ArrayList<EquationNode> getNodesByType(TypeSGET type) {
 		ArrayList<EquationNode> nodes = new ArrayList<EquationNode>();
 		String tag = "*";
 		if (type != null) {
@@ -334,11 +334,11 @@ public class EquationTree {
 		 * </p>
 		 * 
 		 * @param type
-		 *            - The {@link TypeEquationXML}
+		 *            - The {@link TypeSGET}
 		 * @param symbol
 		 *            - inner text
 		 */
-		public EquationNode(TypeEquationXML type, String symbol) {
+		public EquationNode(TypeSGET type, String symbol) {
 
 			String tag = type.getTag();
 
@@ -392,10 +392,10 @@ public class EquationTree {
 		 *            - the type of the new node
 		 * @return - encasing node
 		 */
-		public EquationNode encase(TypeEquationXML type) {
+		public EquationNode encase(TypeSGET type) {
 			// Don't encase sum in sum or term in term
-			boolean sumOrTerm = TypeEquationXML.Sum.equals(type)
-					|| TypeEquationXML.Term.equals(type);
+			boolean sumOrTerm = TypeSGET.Sum.equals(type)
+					|| TypeSGET.Term.equals(type);
 			if (getType().equals(type) && sumOrTerm) {
 				return this;
 			} else if (getParentType().equals(type) && sumOrTerm) {
@@ -431,7 +431,7 @@ public class EquationTree {
 			// Propagate leading minus sign or remove leading plus
 			if (getChildCount() != 0) {
 				EquationNode possibleMinus = getChildAt(0);
-				if (TypeEquationXML.Operation.equals(possibleMinus.getType())) {
+				if (TypeSGET.Operation.equals(possibleMinus.getType())) {
 					if (Operator.MINUS.getSign().equals(
 							possibleMinus.getSymbol())) {
 						if (getChildCount() > 1) {
@@ -457,7 +457,7 @@ public class EquationTree {
 
 			switch (this.getChildCount()) {
 			case 0:
-				this.replace(TypeEquationXML.Number, "0");
+				this.replace(TypeSGET.Number, "0");
 				break;
 			case 1:
 				getParent().addBefore(this.getIndex(), this.getFirstChild());
@@ -477,7 +477,7 @@ public class EquationTree {
 			return replacement;
 		}
 
-		public EquationNode replace(TypeEquationXML type, String symbol) {
+		public EquationNode replace(TypeSGET type, String symbol) {
 			EquationNode replacement = new EquationNode(type, symbol);
 			replace(replacement);
 			return replacement;
@@ -511,7 +511,7 @@ public class EquationTree {
 
 			// Don't add sum to sum or term to term, just add it's children
 			if (getType().equals(node.getType())
-					&& (TypeEquationXML.Sum.equals(node.getType()) || TypeEquationXML.Term
+					&& (TypeSGET.Sum.equals(node.getType()) || TypeSGET.Term
 							.equals(node.getType()))) {
 				LinkedList<EquationNode> children = node.getChildren();
 				if (indexOutOfRange) {
@@ -548,7 +548,7 @@ public class EquationTree {
 			add(index, node, true);
 		}
 
-		public EquationNode addAfter(int index, TypeEquationXML type,
+		public EquationNode addAfter(int index, TypeSGET type,
 				String symbol) {
 			EquationNode newNode = new EquationNode(type, symbol);
 			this.addAfter(index, newNode);
@@ -559,7 +559,7 @@ public class EquationTree {
 			add(index, node, false);
 		}
 
-		public EquationNode addBefore(int index, TypeEquationXML type,
+		public EquationNode addBefore(int index, TypeSGET type,
 				String symbol) {
 			EquationNode newNode = new EquationNode(type, symbol);
 			this.addBefore(index, newNode);
@@ -571,7 +571,7 @@ public class EquationTree {
 			return newNode;
 		}
 
-		public EquationNode append(TypeEquationXML type, String symbol) {
+		public EquationNode append(TypeSGET type, String symbol) {
 			return addBefore(-1, type, symbol);
 		}
 
@@ -580,7 +580,7 @@ public class EquationTree {
 			return newNode;
 		}
 
-		public EquationNode addFirst(TypeEquationXML type, String symbol) {
+		public EquationNode addFirst(TypeSGET type, String symbol) {
 			return addBefore(0, type, symbol);
 		}
 
@@ -700,7 +700,7 @@ public class EquationTree {
 		}
 
 		public EquationNode getParent() {
-			if (TypeEquationXML.Equation.getTag().equalsIgnoreCase(getTag())) {
+			if (TypeSGET.Equation.getTag().equalsIgnoreCase(getTag())) {
 				throw new NoSuchElementException(
 						"Can't get the parent of an equation tag because it's the root:\n"
 								+ toString());
@@ -872,11 +872,11 @@ public class EquationTree {
 				return false;
 		}
 
-		public TypeEquationXML.Operator getOperation() {
-			if (TypeEquationXML.Operation.equals(getType())) {
+		public TypeSGET.Operator getOperation() {
+			if (TypeSGET.Operation.equals(getType())) {
 				String symbol = getSymbol();
 
-				for (TypeEquationXML.Operator op : TypeEquationXML.Operator
+				for (TypeSGET.Operator op : TypeSGET.Operator
 						.values()) {
 					if (op.getSign().equalsIgnoreCase(symbol)
 							|| op.getHTML().equalsIgnoreCase(symbol)) {
@@ -902,17 +902,17 @@ public class EquationTree {
 			return false;
 		}
 
-		public TypeEquationXML getType() {
-			return TypeEquationXML.getType(getTag());
+		public TypeSGET getType() {
+			return TypeSGET.getType(getTag());
 		}
 
-		public TypeEquationXML getParentType() {
+		public TypeSGET getParentType() {
 			Element parentEl = getXMLNode().getParentElement();
 			if (parentEl == null) {
 				return null;
 			}
 			String parentTag = parentEl.getTagName();
-			return TypeEquationXML.getType(parentTag);
+			return TypeSGET.getType(parentTag);
 		}
 
 		public Element getHTMLClone(boolean hasSmallUnits, boolean hasSubscripts) {

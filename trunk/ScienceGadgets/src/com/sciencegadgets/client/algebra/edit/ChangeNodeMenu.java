@@ -11,8 +11,8 @@ import com.sciencegadgets.client.algebra.transformations.specification.TrigFunct
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class ChangeNodeMenu extends CommunistPanel {
 
@@ -24,18 +24,18 @@ public class ChangeNodeMenu extends CommunistPanel {
 	TransformationList<TransformationButton> changeButtons;
 
 	private static final Object[][] types = {//
-			{ TypeEquationXML.Number, "#" }, //
-			{ TypeEquationXML.Variable, "a" },//
-			{ TypeEquationXML.Sum, NOT_SET + "+" + NOT_SET },//
-			{ TypeEquationXML.Term, NOT_SET + Operator.DOT.getSign() + NOT_SET },//
-			{ TypeEquationXML.Fraction,
+			{ TypeSGET.Number, "#" }, //
+			{ TypeSGET.Variable, "a" },//
+			{ TypeSGET.Sum, NOT_SET + "+" + NOT_SET },//
+			{ TypeSGET.Term, NOT_SET + Operator.DOT.getSign() + NOT_SET },//
+			{ TypeSGET.Fraction,
 					"<div style='border-bottom: thin solid;'>"//
 							+ NOT_SET + "</div><div>" + NOT_SET + "</div>" },//
-			{ TypeEquationXML.Exponential,
+			{ TypeSGET.Exponential,
 					NOT_SET + "<sup>" + NOT_SET + "</sup>" },//
-			{ TypeEquationXML.Log,
+			{ TypeSGET.Log,
 					"log<sub>" + NOT_SET + "</sub>(" + NOT_SET + ")" },//
-			{ TypeEquationXML.Trig, "sin(" + NOT_SET + ")" } //
+			{ TypeSGET.Trig, "sin(" + NOT_SET + ")" } //
 	};
 
 	public ChangeNodeMenu() {
@@ -46,7 +46,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 		// Change buttons
 		for (Object[] type : types) {
-			TypeEquationXML toType = (TypeEquationXML) type[0];
+			TypeSGET toType = (TypeSGET) type[0];
 			TransformationButton changeButton = new ChangeNodeButton(
 					(String) type[1], changeButtons, toType);
 			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON + " "
@@ -65,9 +65,9 @@ public class ChangeNodeMenu extends CommunistPanel {
 	public void setNode(EquationNode node) {
 		this.node = node;
 
-		TypeEquationXML type = node.getType();
-		if (!TypeEquationXML.Number.equals(type)
-				&& !TypeEquationXML.Variable.equals(type)) {
+		TypeSGET type = node.getType();
+		if (!TypeSGET.Number.equals(type)
+				&& !TypeSGET.Variable.equals(type)) {
 			getWidget(0).removeFromParent();
 			getWidget(0).removeFromParent();
 			redistribute();
@@ -94,14 +94,14 @@ public class ChangeNodeMenu extends CommunistPanel {
 				if (node.getIndex() == 0) {
 					EquationNode nextOp = node.getNextSibling();
 					if (nextOp != null
-							&& TypeEquationXML.Operation.equals(nextOp
+							&& TypeSGET.Operation.equals(nextOp
 									.getType())
 							&& !Operator.MINUS.getSign().equals(
 									nextOp.getSymbol()))
 						nextOp.remove();
 				} else {
 					EquationNode prevOp = node.getPrevSibling();
-					if (TypeEquationXML.Operation.equals(prevOp.getType()))
+					if (TypeSGET.Operation.equals(prevOp.getType()))
 						prevOp.remove();
 				}
 				node.remove();
@@ -127,7 +127,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			case Equation:
 			case Trig:
 			case Log:
-				node.replace(TypeEquationXML.Variable, NOT_SET);
+				node.replace(TypeSGET.Variable, NOT_SET);
 				break;
 			}
 			Moderator.reloadEquationPanel(null, null);
@@ -138,11 +138,11 @@ public class ChangeNodeMenu extends CommunistPanel {
 	// Handle Change
 	// /////////////////////////////////////////
 	class ChangeNodeButton extends TransformationButton {
-		TypeEquationXML toType;
+		TypeSGET toType;
 
 		ChangeNodeButton(String html,
 				TransformationList<TransformationButton> changeButtons,
-				TypeEquationXML toType) {
+				TypeSGET toType) {
 			super(html, changeButtons);
 			this.toType = toType;
 		}
@@ -155,7 +155,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			boolean isSameTypeParent = toType.equals(node.getParentType());
 			int nodeindex = node.getIndex();
 
-			TypeEquationXML.Operator operator = null;
+			TypeSGET.Operator operator = null;
 
 			switch (toType) {
 			case Log:
@@ -164,7 +164,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 						@Override
 						public void onSpecify(String base) {
 							super.onSpecify(base);
-							EquationNode log = node.encase(TypeEquationXML.Log);
+							EquationNode log = node.encase(TypeSGET.Log);
 							log.setAttribute(MathAttribute.LogBase, base);
 							Moderator.reloadEquationPanel(null, null);
 						}
@@ -179,7 +179,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 						protected void onSpecify(String function) {
 							super.onSpecify(function);
 							EquationNode func = node
-									.encase(TypeEquationXML.Trig);
+									.encase(TypeSGET.Trig);
 							func.setAttribute(MathAttribute.Function, function);
 							Moderator.reloadEquationPanel(null, null);
 						}
@@ -197,22 +197,22 @@ public class ChangeNodeMenu extends CommunistPanel {
 				return;
 
 			case Sum:
-				operator = TypeEquationXML.Operator.PLUS;
+				operator = TypeSGET.Operator.PLUS;
 				// fall through
 			case Term:
 				if (operator == null) {
-					operator = TypeEquationXML.Operator.getMultiply();
+					operator = TypeSGET.Operator.getMultiply();
 				}
 				if (isSameTypeNode) {
 					// don't encase term in term just extend this term
-					node.append(TypeEquationXML.Operation, operator.getSign());
-					node.append(TypeEquationXML.Variable, NOT_SET);
+					node.append(TypeSGET.Operation, operator.getSign());
+					node.append(TypeSGET.Variable, NOT_SET);
 					break;
 				} else if (isSameTypeParent) {
 					// don't add sum in sum just extend parent sum
-					parent.addAfter(nodeindex, TypeEquationXML.Variable,
+					parent.addAfter(nodeindex, TypeSGET.Variable,
 							NOT_SET);
-					parent.addAfter(nodeindex, TypeEquationXML.Operation,
+					parent.addAfter(nodeindex, TypeSGET.Operation,
 							operator.getSign());
 					break;
 
@@ -227,10 +227,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 				EquationNode newNode = parent.addBefore(nodeindex, toType, "");
 				newNode.append(node);
 				if (operator != null) {
-					newNode.append(TypeEquationXML.Operation,
+					newNode.append(TypeSGET.Operation,
 							operator.getSign());
 				}
-				newNode.append(TypeEquationXML.Variable, NOT_SET);
+				newNode.append(TypeSGET.Variable, NOT_SET);
 				break;
 			}
 			Moderator.reloadEquationPanel(null, null);

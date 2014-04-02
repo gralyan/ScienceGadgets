@@ -9,13 +9,13 @@ import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.shared.TypeEquationXML;
+import com.sciencegadgets.shared.TypeSGET;
 
 public class SaveButtonHandler implements ClickHandler {
 
 	private final DatabaseHelperAsync dataBase = GWT
 			.create(DatabaseHelper.class);
-	private static final String RE_CREATE_UNITS = "recreateunits";
+	private static final String RE_CREATE_UNITS = "recreate";
 
 	@Override
 	public void onClick(ClickEvent arg0) {
@@ -29,7 +29,7 @@ public class SaveButtonHandler implements ClickHandler {
 				reCreateUnitsCheck(mathXML);
 				return;
 			}
-			if (!mathXML.contains("<" + TypeEquationXML.Variable.getTag())) {
+			if (!mathXML.contains("<" + TypeSGET.Variable.getTag())) {
 				Window.alert("The equation must contain at least one variable");
 				return;
 			}

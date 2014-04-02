@@ -7,7 +7,7 @@ import com.sciencegadgets.client.ui.CSS;
  * Types of equation xml nodes. See {@link MathAttribute} for attributes
  */
 
-public enum TypeEquationXML {
+public enum TypeSGET {
 	Equation("sget:equation",CSS.EQUATION, ChildRequirement.EQUATION), //
 	Number("sget:num",CSS.NUMBER, ChildRequirement.TERMINAL), //
 	Variable("sget:var",CSS.VARIABLE, ChildRequirement.TERMINAL), //
@@ -24,7 +24,7 @@ public enum TypeEquationXML {
 	private ChildRequirement childRequirement;
 	public static final String IN_PREFIX = "in-";
 
-	TypeEquationXML(String tag,String cssClassName, ChildRequirement childRequirement) {
+	TypeSGET(String tag,String cssClassName, ChildRequirement childRequirement) {
 		this.tag = tag;
 		this.childRequirement = childRequirement;
 		this.cssClassName = cssClassName;
@@ -70,9 +70,9 @@ public enum TypeEquationXML {
 
 	}
 
-	public static TypeEquationXML getType(String tag) {
+	public static TypeSGET getType(String tag) {
 		tag = tag.toLowerCase();
-		for (TypeEquationXML type : TypeEquationXML.values()) {
+		for (TypeSGET type : TypeSGET.values()) {
 			if (type.getTag().equals(tag)) {
 				return type;
 			}

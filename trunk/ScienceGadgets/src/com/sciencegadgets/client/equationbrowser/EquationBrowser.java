@@ -14,15 +14,20 @@
  */
 package com.sciencegadgets.client.equationbrowser;
 
+import java.util.LinkedHashMap;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.EquationGenerator;
+import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.shared.TypeSGET;
 
-//Uncomment to use as gadget////////////////////////////////////
-//
 public class EquationBrowser extends FlowPanel {
 
 	ScienceBrowser scienceBrowser = new ScienceBrowser(this);
@@ -38,11 +43,11 @@ public class EquationBrowser extends FlowPanel {
 
 		this.getElement().setId(CSS.EQUATION_BROWSER);
 
-//		Grid modes = new Grid(1, 2);
-//		modes.setWidget(0, 0, modeAlg);
-//		modes.setWidget(0, 1, modeSci);
-//		modes.setStyleName(CSS.MODES);
-//		this.add(modes);
+		// Grid modes = new Grid(1, 2);
+		// modes.setWidget(0, 0, modeAlg);
+		// modes.setWidget(0, 1, modeSci);
+		// modes.setStyleName(CSS.MODES);
+		// this.add(modes);
 
 		Grid modes2 = new Grid(1, 2);
 		modes2.setWidget(0, 0, modeSolve);
@@ -56,8 +61,9 @@ public class EquationBrowser extends FlowPanel {
 		modeSolve.addClickHandler(new ModeSelectHandler(Mode.solve));
 
 		modeAlg.setValue(true, true);
-			modeSolve.setValue(true, true);
+		modeSolve.setValue(true, true);
 		this.add(algebraBrowser);
+		this.add(new Button("generate", new GenerateEquationHandler()));
 	}
 
 	private enum Mode {
@@ -96,36 +102,35 @@ public class EquationBrowser extends FlowPanel {
 		}
 	}
 
-	// /**
-	// * Single selection handler for equation list
-	// */
-	// class EqClickHandler implements ClickHandler {
-	// HTMLTable table;
-	//
-	// public EqClickHandler(HTMLTable table) {
-	// this.table = table;
-	// }
-	//
-	// public void onClick(ClickEvent event) {
-	// Cell clickedCell = table.getCellForEvent(event);
-	// if (clickedCell != null) {
-	// Element clickedEl = clickedCell.getElement();
-	//
-	// if (!clickedEl.getId().equals("selectedEq")) {
-	// com.google.gwt.dom.client.Element prevSel = Document.get()
-	// .getElementById("selectedEq");
-	// if (prevSel != null) {
-	// prevSel.removeAttribute("id");
-	// }
-	// clickedEl.setId("selectedEq");
-	// }
-	//
-	// // For Algebra practice mode
-	// // For Science Mode
-	// } else if (scienceBrowser.eqGrid.equals(table) && modeSci.getValue()) {
-	// fillSummary(mathml);
-	// }
-	// }
-	// }
-	// }
+	class GenerateEquationHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+
+			LinkedHashMap<TypeSGET, Integer> expressionsVariableSide = new LinkedHashMap<TypeSGET, Integer>();
+			expressionsVariableSide.put(TypeSGET.Sum, 3);
+			expressionsVariableSide.put(TypeSGET.Term, 3);
+			expressionsVariableSide.put(TypeSGET.Fraction, 1);
+			expressionsVariableSide.put(TypeSGET.Exponential, 1);
+
+			LinkedHashMap<TypeSGET, Integer> expressionsOtherSide = new LinkedHashMap<TypeSGET, Integer>();
+			expressionsOtherSide.put(TypeSGET.Sum, 3);
+			expressionsOtherSide.put(TypeSGET.Term, 3);
+			expressionsOtherSide.put(TypeSGET.Fraction, 1);
+			expressionsOtherSide.put(TypeSGET.Exponential, 1);
+
+			boolean mustBeWholeAnswer = true;
+			boolean mustBePositives = false;
+			int maxAdd = 10;
+			int maxMultiply = 10;
+			int maxFraction = 4;
+			int maxExp = 4;
+
+			EquationTree eTree = EquationGenerator.GENERATE(expressionsVariableSide,
+					expressionsOtherSide, mustBeWholeAnswer, mustBePositives,
+					maxAdd, maxMultiply, maxFraction, maxExp);
+			Moderator.switchToAlgebra(eTree, false);
+		}
+
+	}
 }

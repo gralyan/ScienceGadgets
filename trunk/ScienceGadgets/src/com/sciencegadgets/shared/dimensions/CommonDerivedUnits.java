@@ -8,7 +8,7 @@ public enum CommonDerivedUnits {// ("conversion", m, kg, s, A, K, mol, cd)
 	CatalyticActivity_kat("Katal","1", "Time_s^-1*AmountOfSubstance_mol^1"),//
 	ElectricCharge_C("Coulomb","1", "Time_s^1*ElectricCurrent_A^1"),//
 	ElectricConductivity_S("Siemens","1", "Length_m^-2*Mass_kg^-1*Time_s^3*ElectricCurrent_A^2"),//
-	EnergyAndWork_J("Joule","1", "Length_m^2*Mass_kg^1*Time_s^-2"),//
+	Energy_J("Joule","1", "Length_m^2*Mass_kg^1*Time_s^-2"),//
 	EnergyPerElectricCharge_V("Volt","1", "Length_m^2*Mass_kg^1*Time_s^-3*ElectricCurrent_A^-1"),//
 	Force_N("Newton","1", "Length_m^1*Mass_kg^1*Time_s^-2"),//
 	ForcePerArea_Pa("Pascal","1", "Length_m^-1*Mass_kg^1*Time_s^-2"),//
@@ -33,11 +33,11 @@ public enum CommonDerivedUnits {// ("conversion", m, kg, s, A, K, mol, cd)
 	DynamicViscosity_P("Poise","0.1", "Length_m^-1*Mass_kg^1*Time_s^-1"),//
 	ElectricChargePerMass_R("Reotgen","2.58e−4", "Mass_kg^-1*Time_s^1*ElectricCurrent_A^1"),//
 	KinematicViscosity_St("Stokes","1e−4", "Length_m^2*Time_s^-1"),//
-	LinearAcceleration_G("Gravity","9.80665", "Length_m^1*Time_s^-2"),//
-	LinearVelocity_kn("Knot","0.514444444", "Length_m^1*Time_s^-1"),//
+	Acceleration_G("Gravity","9.80665", "Length_m^1*Time_s^-2"),//
+	Velocity_kn("Knot","0.514444444", "Length_m^1*Time_s^-1"),//
 	Luminance_L("Lambert","3183.098862", "Length_m^-2*LuminousIntensity_cd^1"),//
 	Luminance_sb("Stilb","1e4", "Length_m^-2*LuminousIntensity_cd^1"),//
-	ThermalInsulance_clo("Clo","0.155", "Mass_kg^-1*Time_s^3*ThermodynamicTemperature_K^1"),//
+	ThermalInsulance_clo("Clo","0.155", "Mass_kg^-1*Time_s^3*Temperature_K^1"),//
 	Volume_Bf("BoardFoot","0.00235973722", "Length_m^3"),//
 	Volume_L("Liter","0.001", "Length_m^3");//
 

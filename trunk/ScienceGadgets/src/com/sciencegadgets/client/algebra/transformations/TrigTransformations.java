@@ -7,8 +7,8 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class TrigTransformations extends
 		TransformationList<TrigTransformButton> {
@@ -18,7 +18,7 @@ public class TrigTransformations extends
 	EquationNode trig;
 	EquationNode argument;
 
-	TypeEquationXML argumentType;
+	TypeSGET argumentType;
 
 	TrigFunctions function;
 
@@ -59,7 +59,7 @@ public class TrigTransformations extends
 	 */
 	TrigUnravelButton inverseTrig_check() {
 		EquationNode trigChild = trig.getFirstChild();
-		if (TypeEquationXML.Trig.equals(trigChild.getType())) {
+		if (TypeSGET.Trig.equals(trigChild.getType())) {
 			String trigChildFunc = trigChild
 					.getAttribute(MathAttribute.Function);
 			String trigChildFuncInverse = TrigFunctions
@@ -81,7 +81,7 @@ class TrigTransformButton extends TransformationButton {
 	final EquationNode trig;
 	final EquationNode argument;
 
-	final TypeEquationXML argumentType;
+	final TypeSGET argumentType;
 	final TrigFunctions function;
 
 	protected boolean reloadAlgebraActivity;
@@ -141,15 +141,15 @@ class TrigDefineButton extends TrigTransformButton {
 		EquationNode otherTrig;
 
 		if (defIsTerm) {
-			EquationNode term = trig.encase(TypeEquationXML.Term);
+			EquationNode term = trig.encase(TypeSGET.Term);
 			int trigIndex = trig.getIndex();
-			otherTrig = term.addAfter(trigIndex, TypeEquationXML.Trig,
+			otherTrig = term.addAfter(trigIndex, TypeSGET.Trig,
 					funcDef[1].toString());
-			term.addAfter(trigIndex, TypeEquationXML.Operation, Operator
+			term.addAfter(trigIndex, TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 		} else {
-			EquationNode frac = trig.encase(TypeEquationXML.Fraction);
-			otherTrig = frac.addAfter(0, TypeEquationXML.Trig,
+			EquationNode frac = trig.encase(TypeSGET.Fraction);
+			otherTrig = frac.addAfter(0, TypeSGET.Trig,
 					funcDef[2].toString());
 		}
 		otherTrig.append(argument.clone());

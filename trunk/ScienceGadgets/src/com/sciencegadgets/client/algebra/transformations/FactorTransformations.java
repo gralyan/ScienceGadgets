@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.FactorTransformations.Match;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class FactorTransformations extends TransformationList<AddTransformButton> {
 	private static final long serialVersionUID = -6071971827855796001L;
@@ -150,21 +150,21 @@ class FactorButton extends AddTransformButton {
 			match.rightFactor.highlight();
 		}
 
-		EquationNode term = parent.addAfter(right.getIndex(), TypeEquationXML.Term,
+		EquationNode term = parent.addAfter(right.getIndex(), TypeSGET.Term,
 				"");
 		for (Match match : matches) {
 			term.append(match.leftFactor.clone());
-			term.append(TypeEquationXML.Operation, Operator.getMultiply()
+			term.append(TypeSGET.Operation, Operator.getMultiply()
 					.getSign());
 		}
-		EquationNode sum = term.append(TypeEquationXML.Sum, "");
+		EquationNode sum = term.append(TypeSGET.Sum, "");
 		sum.append(left);
 		sum.append(operation);
 		sum.append(right);
 
 		if (isMinusBeforeLeft) {
 			minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
-			sum.addFirst(TypeEquationXML.Operation, Operator.MINUS.getSign());
+			sum.addFirst(TypeSGET.Operation, Operator.MINUS.getSign());
 		}
 
 		for (Match match : matches) {
@@ -177,9 +177,9 @@ class FactorButton extends AddTransformButton {
 			EquationNode sumLeft = sum.getChildAt(0);
 			EquationNode sumOP = sum.getChildAt(1);
 			EquationNode sumRight = sum.getChildAt(2);
-			if (TypeEquationXML.Number.equals(sumLeft.getType())
-					&& TypeEquationXML.Operation.equals(sumOP.getType())
-					&& TypeEquationXML.Number.equals(sumRight.getType())) {
+			if (TypeSGET.Number.equals(sumLeft.getType())
+					&& TypeSGET.Operation.equals(sumOP.getType())
+					&& TypeSGET.Number.equals(sumRight.getType())) {
 				BigDecimal leftValue, rightValue, combinedValue;
 				leftValue = new BigDecimal(sumLeft.getSymbol());
 				rightValue = new BigDecimal(sumRight.getSymbol());
@@ -188,7 +188,7 @@ class FactorButton extends AddTransformButton {
 				} else {
 					combinedValue = leftValue.add(rightValue);
 				}
-				sum = sum.replace(TypeEquationXML.Number,
+				sum = sum.replace(TypeSGET.Number,
 						combinedValue.toString());
 				term.addFirst(sum.getPrevSibling());
 				term.addFirst(sum);
@@ -205,7 +205,7 @@ class FactorButton extends AddTransformButton {
 	
 	private void factorOut(EquationNode toFactor, EquationNode inSide) {
 		if (toFactor == inSide) {
-			toFactor.replace(TypeEquationXML.Number, "1");
+			toFactor.replace(TypeSGET.Number, "1");
 			return;
 		}
 
@@ -224,12 +224,12 @@ class FactorButton extends AddTransformButton {
 			toFactorParent.decase();
 			break;
 		case Fraction:
-			toFactor.replace(TypeEquationXML.Number, "1");
+			toFactor.replace(TypeSGET.Number, "1");
 			break;
 		case Exponential:
 			EquationNode exponent = toFactor.getNextSibling();
 			if (Moderator.isInEasyMode
-					&& TypeEquationXML.Number.equals(exponent.getType())) {
+					&& TypeSGET.Number.equals(exponent.getType())) {
 				BigDecimal expValue = new BigDecimal(exponent.getSymbol());
 				if (expValue.compareTo(new BigDecimal("2")) == 0) {
 					// No need to display 1 in exponent after 2 - 1
@@ -239,9 +239,9 @@ class FactorButton extends AddTransformButton {
 							.toString());
 				}
 			} else {
-				exponent = exponent.encase(TypeEquationXML.Term);
-				exponent.append(TypeEquationXML.Operation, Operator.MINUS.getSign());
-				exponent.append(TypeEquationXML.Number, "1");
+				exponent = exponent.encase(TypeSGET.Term);
+				exponent.append(TypeSGET.Operation, Operator.MINUS.getSign());
+				exponent.append(TypeSGET.Number, "1");
 			}
 		}
 	}

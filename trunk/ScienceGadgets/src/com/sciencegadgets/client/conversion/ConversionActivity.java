@@ -30,8 +30,8 @@ import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 import com.sciencegadgets.shared.dimensions.CommonDerivedUnits;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitHTML;
@@ -101,16 +101,16 @@ public class ConversionActivity extends AbsolutePanel {
 		selectedUnit = null;
 		selectedWrapper = null;
 
-		mTree = new EquationTree(TypeEquationXML.Term, "", TypeEquationXML.Term, "", false);
+		mTree = new EquationTree(TypeSGET.Term, "", TypeSGET.Term, "", false);
 
-		totalNode = mTree.getLeftSide().append(TypeEquationXML.Number, node.getSymbol());
+		totalNode = mTree.getLeftSide().append(TypeSGET.Number, node.getSymbol());
 		mTree.getRightSide().append(totalNode.clone());
 
 		UnitMultiple[] bases = node.getUnitAttribute().getUnitMultiples();
 
-		EquationNode fracRight = mTree.NEW_NODE(TypeEquationXML.Fraction, "");
-		EquationNode numerRight = fracRight.append(TypeEquationXML.Term, "");
-		EquationNode denomRight = fracRight.append(TypeEquationXML.Term, "");
+		EquationNode fracRight = mTree.NEW_NODE(TypeSGET.Fraction, "");
+		EquationNode numerRight = fracRight.append(TypeSGET.Term, "");
+		EquationNode denomRight = fracRight.append(TypeSGET.Term, "");
 
 		EquationNode fracLeft = wrapperFraction = fracRight.clone();
 		EquationNode numerLeft = fracLeft.getChildAt(0);
@@ -123,11 +123,11 @@ public class ConversionActivity extends AbsolutePanel {
 
 			EquationNode unitNode;
 			if ("1".equals(exp)) {
-				unitNode = mTree.NEW_NODE(TypeEquationXML.Variable, symbol);
+				unitNode = mTree.NEW_NODE(TypeSGET.Variable, symbol);
 			} else {
-				unitNode = mTree.NEW_NODE(TypeEquationXML.Exponential, "");
-				unitNode.append(TypeEquationXML.Variable, symbol);
-				unitNode.append(TypeEquationXML.Number, exp);
+				unitNode = mTree.NEW_NODE(TypeSGET.Exponential, "");
+				unitNode.append(TypeSGET.Variable, symbol);
+				unitNode.append(TypeSGET.Number, exp);
 			}
 			unitNode.setAttribute(MathAttribute.Unit,
 					base.toString().replace("-", ""));
@@ -147,7 +147,7 @@ public class ConversionActivity extends AbsolutePanel {
 		EquationNode[] numAndDens = { denomLeft, denomRight, numerLeft, numerRight };
 		for (EquationNode numOrDen : numAndDens) {
 			if (numOrDen.getChildCount() == 0) {
-				numOrDen.append(TypeEquationXML.Number, "1");
+				numOrDen.append(TypeSGET.Number, "1");
 
 			}
 		}
@@ -221,7 +221,7 @@ public class ConversionActivity extends AbsolutePanel {
 				unitDisplay.wrappedNode.getHTML(false, false)
 						.removeFromParent();
 
-				if (TypeEquationXML.Number.equals(jointNode.getType())) {
+				if (TypeSGET.Number.equals(jointNode.getType())) {
 					Element[] units = jointNode.getHTMLofUnits();
 					for (Element unit : units) {
 						unit.addClassName("lineThrough");
@@ -296,28 +296,28 @@ public class ConversionActivity extends AbsolutePanel {
 		String denMultiplier = !isSelectNum ? fromMultiplier : toMultiplier;
 
 		// History fraction of multipliers
-		mTree.getRightSide().append(TypeEquationXML.Operation,
+		mTree.getRightSide().append(TypeSGET.Operation,
 				Operator.getMultiply().getSign());
-		EquationNode newHistoryFrac = mTree.getRightSide().append(TypeEquationXML.Fraction,
+		EquationNode newHistoryFrac = mTree.getRightSide().append(TypeSGET.Fraction,
 				"");
-		EquationNode newHistoryNum = newHistoryFrac.append(TypeEquationXML.Sum, "");
-		EquationNode newHistoryDen = newHistoryFrac.append(TypeEquationXML.Sum, "");
+		EquationNode newHistoryNum = newHistoryFrac.append(TypeSGET.Sum, "");
+		EquationNode newHistoryDen = newHistoryFrac.append(TypeSGET.Sum, "");
 
-		EquationNode numMultiplierNode = mTree.NEW_NODE(TypeEquationXML.Number,
+		EquationNode numMultiplierNode = mTree.NEW_NODE(TypeSGET.Number,
 				numMultiplier);
-		EquationNode denMultiplierNode = mTree.NEW_NODE(TypeEquationXML.Number,
+		EquationNode denMultiplierNode = mTree.NEW_NODE(TypeSGET.Number,
 				denMultiplier);
 
 		if (expAbs == 1) {
 			newHistoryNum.append(numMultiplierNode);
 			newHistoryDen.append(denMultiplierNode);
 		} else {
-			EquationNode numExp = newHistoryNum.append(TypeEquationXML.Exponential, "");
-			EquationNode denExp = newHistoryDen.append(TypeEquationXML.Exponential, "");
+			EquationNode numExp = newHistoryNum.append(TypeSGET.Exponential, "");
+			EquationNode denExp = newHistoryDen.append(TypeSGET.Exponential, "");
 			numExp.append(numMultiplierNode);
 			denExp.append(denMultiplierNode);
-			numExp.append(TypeEquationXML.Number, expAbs + "");
-			denExp.append(TypeEquationXML.Number, expAbs + "");
+			numExp.append(TypeSGET.Number, expAbs + "");
+			denExp.append(TypeSGET.Number, expAbs + "");
 		}
 
 		// Update Working area
@@ -331,11 +331,11 @@ public class ConversionActivity extends AbsolutePanel {
 
 			String numSymbol = unitName.getSymbol();
 
-			EquationNode workingNode = mTree.NEW_NODE(TypeEquationXML.Variable, numSymbol);
+			EquationNode workingNode = mTree.NEW_NODE(TypeSGET.Variable, numSymbol);
 			if (unitExp > 1 || unitExp < -1) {
-				EquationNode workingExp = mTree.NEW_NODE(TypeEquationXML.Exponential, "");
+				EquationNode workingExp = mTree.NEW_NODE(TypeSGET.Exponential, "");
 				workingExp.append(workingNode);
-				workingExp.append(TypeEquationXML.Number, "" + unitExpAbs);
+				workingExp.append(TypeSGET.Number, "" + unitExpAbs);
 				workingNode = workingExp;
 			}
 			workingNode.setAttribute(MathAttribute.Unit, unitName

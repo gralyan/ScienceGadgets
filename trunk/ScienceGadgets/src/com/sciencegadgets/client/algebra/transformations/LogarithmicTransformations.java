@@ -7,8 +7,8 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.specification.LogBaseSpecification;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
 
 public class LogarithmicTransformations extends
@@ -20,7 +20,7 @@ public class LogarithmicTransformations extends
 	EquationNode argument;
 	String base;
 
-	TypeEquationXML logChildType;
+	TypeSGET logChildType;
 
 	static LogBaseSpecification logBaseSpec = null;
 
@@ -45,7 +45,7 @@ public class LogarithmicTransformations extends
 	}
 
 	LogEvaluateButton logEvaluateCheck() {
-		if (TypeEquationXML.Number.equals(argument.getType())) {
+		if (TypeSGET.Number.equals(argument.getType())) {
 			try {
 				Double argValue = Double.parseDouble(argument.getSymbol());
 				return new LogEvaluateButton(this, argValue);
@@ -79,9 +79,9 @@ public class LogarithmicTransformations extends
 	 */
 	LogUnravelButton unravelLogExp_check() {
 		EquationNode exponential = log.getFirstChild();
-		if (TypeEquationXML.Exponential.equals(exponential.getType())) {
+		if (TypeSGET.Exponential.equals(exponential.getType())) {
 			EquationNode exponentialBase = exponential.getFirstChild();
-			if (TypeEquationXML.Number.equals(exponentialBase.getType())
+			if (TypeSGET.Number.equals(exponentialBase.getType())
 					&& exponentialBase.getSymbol().equals(
 							log.getAttribute(MathAttribute.LogBase))) {
 				EquationNode exponentialExp = exponential.getChildAt(1);
@@ -155,7 +155,7 @@ class LogEvaluateButton extends LogTransformButton {
 			}
 		}
 
-		log.replace(TypeEquationXML.Number, total + "");
+		log.replace(TypeSGET.Number, total + "");
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("log<sub>" + base + "</sub>("
@@ -182,7 +182,7 @@ class LogChangeBaseButton extends LogTransformButton {
 	protected
 	void transform() {
 		if (!reloadAlgebraActivity) {
-			log.replace(TypeEquationXML.Variable, "Change Base");
+			log.replace(TypeSGET.Variable, "Change Base");
 		} else {
 			if (LogarithmicTransformations.logBaseSpec == null) {
 				LogarithmicTransformations.logBaseSpec = new LogBaseSpecification() {
@@ -191,12 +191,12 @@ class LogChangeBaseButton extends LogTransformButton {
 						super.onSpecify(newBase);
 
 						EquationNode fraction = log
-								.encase(TypeEquationXML.Fraction);
+								.encase(TypeSGET.Fraction);
 						log.setAttribute(MathAttribute.LogBase, newBase);
 
 						EquationNode denom = fraction.append(
-								TypeEquationXML.Log, "");
-						denom.append(TypeEquationXML.Number, base);
+								TypeSGET.Log, "");
+						denom.append(TypeSGET.Number, base);
 						denom.setAttribute(MathAttribute.LogBase, newBase);
 
 						if (reloadAlgebraActivity) {
@@ -231,18 +231,18 @@ class LogProductButton extends LogTransformButton {
 	@Override
 	protected
 	void transform() {
-		EquationNode sum = log.encase(TypeEquationXML.Sum);
+		EquationNode sum = log.encase(TypeSGET.Sum);
 		int logIndex = log.getIndex();
 
 		LinkedList<EquationNode> termChildren = logChild.getChildren();
 		for (int i = 0; i < termChildren.size(); i++) {
 			EquationNode termChild = termChildren.get(i);
-			if (TypeEquationXML.Operation.equals(termChild.getType())) {
-				sum.addBefore(logIndex + i, TypeEquationXML.Operation,
+			if (TypeSGET.Operation.equals(termChild.getType())) {
+				sum.addBefore(logIndex + i, TypeSGET.Operation,
 						Operator.PLUS.getSign());
 			} else {
 				EquationNode termChildLog = sum.addBefore(logIndex + i,
-						TypeEquationXML.Log, "");
+						TypeSGET.Log, "");
 				termChildLog.setAttribute(MathAttribute.LogBase, base);
 				termChildLog.append(termChild);
 			}
@@ -276,22 +276,22 @@ class LogQuotientButton extends LogTransformButton {
 	@Override
 	protected
 	void transform() {
-		EquationNode sum = log.encase(TypeEquationXML.Sum);
+		EquationNode sum = log.encase(TypeSGET.Sum);
 
 		EquationNode numerator = logChild.getFirstChild();
 		EquationNode denominator = logChild.getChildAt(1);
 		int logIndex = log.getIndex();
 
 		EquationNode denominatorLog = sum.addBefore(logIndex,
-				TypeEquationXML.Log, "");
+				TypeSGET.Log, "");
 		denominatorLog.setAttribute(MathAttribute.LogBase, base);
 		denominatorLog.append(denominator);
 
-		sum.addBefore(logIndex, TypeEquationXML.Operation,
+		sum.addBefore(logIndex, TypeSGET.Operation,
 				Operator.MINUS.getSign());
 
 		EquationNode numeratorLog = sum.addBefore(logIndex,
-				TypeEquationXML.Log, "");
+				TypeSGET.Log, "");
 		numeratorLog.setAttribute(MathAttribute.LogBase, base);
 		numeratorLog.append(numerator);
 
@@ -323,12 +323,12 @@ class LogPowerButton extends LogTransformButton {
 	@Override
 	protected
 	void transform() {
-		EquationNode term = log.encase(TypeEquationXML.Term);
+		EquationNode term = log.encase(TypeSGET.Term);
 
 		int logIndex = log.getIndex();
 		EquationNode exponent = logChild.getChildAt(1);
 
-		term.addBefore(logIndex, TypeEquationXML.Operation, Operator
+		term.addBefore(logIndex, TypeSGET.Operation, Operator
 				.getMultiply().getSign());
 		term.addBefore(logIndex, exponent);
 
@@ -359,7 +359,7 @@ class LogOneButton extends LogTransformButton {
 	@Override
 	protected
 	void transform() {
-		log.replace(TypeEquationXML.Number, "0");
+		log.replace(TypeSGET.Number, "0");
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("log<sub>b</sub>(1) = 0",
@@ -385,7 +385,7 @@ class LogSameBaseAsArgumentButton extends LogTransformButton {
 	@Override
 	protected
 	void transform() {
-		log.replace(TypeEquationXML.Number, "1");
+		log.replace(TypeSGET.Number, "1");
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("log<sub>b</sub>(b) = 1",

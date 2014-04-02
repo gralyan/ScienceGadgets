@@ -13,8 +13,8 @@ import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.FitParentHTML;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public abstract class TransformationButton extends SimplePanel implements
 		HasClickHandlers, HasTouchEndHandlers {
@@ -85,7 +85,7 @@ public abstract class TransformationButton extends SimplePanel implements
 					false);
 
 			EquationNode frame;
-			if (TypeEquationXML.Operation.equals(transformList.getNode()
+			if (TypeSGET.Operation.equals(transformList.getNode()
 					.getType())) {
 				EquationNode op = transformList.getNode();
 				frame = mTree.getLeftSide().replace(op.getParentType(), "");
@@ -95,7 +95,7 @@ public abstract class TransformationButton extends SimplePanel implements
 				if (possibleMinus != null
 						&& Operator.MINUS.getSign().equals(
 								possibleMinus.getSymbol())) {
-					frame.append(TypeEquationXML.Operation,
+					frame.append(TypeSGET.Operation,
 							Operator.MINUS.getSign());
 				}
 
@@ -117,8 +117,8 @@ public abstract class TransformationButton extends SimplePanel implements
 		EquationTree mTree = transformList.beforeAfterTree;
 		mTree.getRightSide().replace(mTree.getLeftSide().clone());
 		EquationNode previewContextNode = mTree.getRightSide();
-		if (TypeEquationXML.Sum.equals(previewContextNode.getType())
-				|| TypeEquationXML.Term.equals(previewContextNode.getType())) {
+		if (TypeSGET.Sum.equals(previewContextNode.getType())
+				|| TypeSGET.Term.equals(previewContextNode.getType())) {
 			int operationIndex = previewContextNode.getChildCount() == 3 ? 1
 					: 2;
 			previewContextNode = previewContextNode.getChildAt(operationIndex);

@@ -6,8 +6,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.Prompt;
-import com.sciencegadgets.shared.TypeEquationXML;
-import com.sciencegadgets.shared.TypeEquationXML.Operator;
+import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class NumberTransformations extends
 		TransformationList<NumberTransformationButton> {
@@ -142,11 +142,11 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 
 			numberNode.highlight();
 
-			EquationNode parent = numberNode.encase(TypeEquationXML.Term);
+			EquationNode parent = numberNode.encase(TypeSGET.Term);
 			int index = numberNode.getIndex();
-			parent.addBefore(index, TypeEquationXML.Operation, Operator
+			parent.addBefore(index, TypeSGET.Operation, Operator
 					.getMultiply().getSign());
-			parent.addBefore(index, TypeEquationXML.Number, factor + "");
+			parent.addBefore(index, TypeSGET.Number, factor + "");
 
 			numberNode.setSymbol(factored + "");
 
