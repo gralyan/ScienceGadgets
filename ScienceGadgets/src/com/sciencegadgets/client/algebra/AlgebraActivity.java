@@ -134,14 +134,6 @@ public class AlgebraActivity extends SimplePanel {
 		if (!inEditMode && changeComment != null) {
 			algOut.updateAlgebraHistory(changeComment, rule, equationTree);
 		}
-		if(changeComment == null) {
-			
-			System.out.println("NULL");
-		}else if("".equals(changeComment)) {
-			System.out.println("- -");
-			
-		}
-		System.out.println("INn "+changeComment);
 		
 		if(inProgramaticTransformMode) {
 			return;
