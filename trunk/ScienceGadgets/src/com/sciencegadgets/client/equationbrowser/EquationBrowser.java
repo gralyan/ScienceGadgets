@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationGenerator;
 import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.SolverUniVariable;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeSGET;
 
@@ -130,6 +131,8 @@ public class EquationBrowser extends FlowPanel {
 					expressionsOtherSide, mustBeWholeAnswer, mustBePositives,
 					maxAdd, maxMultiply, maxFraction, maxExp);
 			Moderator.switchToAlgebra(eTree, false);
+			SolverUniVariable.EVALUATE(eTree);
+			Moderator.reloadEquationPanel(null, null);
 		}
 
 	}

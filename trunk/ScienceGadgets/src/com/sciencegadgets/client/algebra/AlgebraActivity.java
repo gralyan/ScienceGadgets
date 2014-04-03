@@ -64,13 +64,10 @@ public class AlgebraActivity extends SimplePanel {
 	private TransformationPanel bothSidesPanelLeft = new TransformationPanel();
 	private TransformationPanel simplifyPanel = new TransformationPanel();
 	private TransformationPanel bothSidesPanelRight = new TransformationPanel();
-	// private TransformationButton simplifyButton = new
-	// TransformationButton("Simplify", null);
-	// private BothSidesPanelButton bothSidesLeft = new BothSidesPanelButton();
-	// private BothSidesPanelButton bothSidesRight = new BothSidesPanelButton();
 
 	public String focusLayerId = null;
 	public boolean inEditMode = false;
+	public boolean inProgramaticTransformMode = false;
 	public static VariableSpecification varSpec;
 	public static NumberSpecification numSpec;
 	private EquationTree equationTree = null;
@@ -104,7 +101,6 @@ public class AlgebraActivity extends SimplePanel {
 			bothSidesPanelLeft.addStyleName(CSS.BOTH_SIDES_PANEL);
 			simplifyPanel.addStyleName(CSS.SIMPLIFY_PANEL);
 			bothSidesPanelRight.addStyleName(CSS.BOTH_SIDES_PANEL);
-
 		}
 
 	}
@@ -134,6 +130,23 @@ public class AlgebraActivity extends SimplePanel {
 	 */
 	public void reloadEquationPanel(String changeComment, Rule rule,
 			boolean updateHistory) {
+		
+		if (!inEditMode && changeComment != null) {
+			algOut.updateAlgebraHistory(changeComment, rule, equationTree);
+		}
+		if(changeComment == null) {
+			
+			System.out.println("NULL");
+		}else if("".equals(changeComment)) {
+			System.out.println("- -");
+			
+		}
+		System.out.println("INn "+changeComment);
+		
+		if(inProgramaticTransformMode) {
+			return;
+		}
+		
 		try {
 			equationTree.validateTree();
 		} catch (IllegalStateException e) {
@@ -145,10 +158,6 @@ public class AlgebraActivity extends SimplePanel {
 			}
 			JSNICalls.error(e.getCause().toString());
 			return;
-		}
-
-		if (!inEditMode && changeComment != null) {
-			algOut.updateAlgebraHistory(changeComment, rule, equationTree);
 		}
 
 		eqPanelHolder.clear();

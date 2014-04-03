@@ -268,7 +268,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		String otherSymbol = other.getSymbol();
 
@@ -322,7 +322,7 @@ class MultiplyOneButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		String otherSymbol = other.getSymbol();
 
@@ -362,7 +362,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		String otherSymbol = other.getSymbol();
 
@@ -398,7 +398,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		final BigDecimal leftValue = new BigDecimal(left.getSymbol());
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
@@ -485,7 +485,7 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		for (EquationNode sumChild : sum.getChildren()) {
 			if (!TypeSGET.Operation.equals(sumChild.getType())) {
@@ -529,7 +529,7 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode leftBase = left.getChildAt(0);
 		EquationNode rightBase = right.getChildAt(0);
@@ -570,7 +570,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode leftExponential = left;
 		EquationNode rightExponential = right;
@@ -642,7 +642,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode numerator = fraction.getChildAt(0);
 		numerator = numerator.encase(TypeSGET.Term);
@@ -676,7 +676,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode numerator = right.getChildAt(0);
 		numerator = numerator.encase(TypeSGET.Term);
@@ -721,7 +721,7 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode exp = log.getFirstChild().encase(
 				TypeSGET.Exponential);

@@ -81,8 +81,10 @@ public class AlgebraHistory extends FlowPanel {
 		
 		add(new AlgebraHistoryRow(changeComment, rule, mathTree));
 
+		System.out.println("ADDING "+changeComment);
 		if (changeComment.contains(BothSidesTransformations.UP_ARROW)) {
 			add(new AlgebraHistoryRow(changeComment));
+			System.out.println("ADDING2");
 		}
 
 	}

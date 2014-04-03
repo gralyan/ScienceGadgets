@@ -142,7 +142,7 @@ class FactorButton extends AddTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 
 		for (Match match : matches) {

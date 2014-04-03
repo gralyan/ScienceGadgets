@@ -1,7 +1,7 @@
 package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.google.gwt.user.client.Random;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -27,7 +27,7 @@ public class EquationRandomizer {
 	 */
 	public static void randomizeNumbers(EquationTree mTree, boolean randomize) {
 
-		ArrayList<EquationNode> variables = mTree.getNodesByType(TypeSGET.Number);
+		LinkedList<EquationNode> variables = mTree.getNodesByType(TypeSGET.Number);
 
 		for (EquationNode var : variables) {
 			String varRandomness = var.getAttribute(MathAttribute.Randomness);

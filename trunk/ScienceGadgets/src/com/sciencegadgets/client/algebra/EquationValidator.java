@@ -58,8 +58,6 @@ public class EquationValidator {
 			break;
 		}
 
-		System.out.println(isWrongChildren+" "+type+" "+childCount);
-		
 		if (isWrongChildren) {
 			String errorMessage = "Wrong number of children in type: " + type
 					+ " which is a "+type.childRequirement() + "function, but has (" + childCount + ") children: "

@@ -83,7 +83,7 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
 
@@ -135,7 +135,7 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 		}
 
 		@Override
-		protected
+		public
 		void transform() {
 			String original = numberNode.getSymbol();
 			int factored = Integer.parseInt(original) / factor;
@@ -170,7 +170,7 @@ class UnitConversionButton extends NumberTransformationButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		Moderator.switchToConversion(numberNode);
 	}

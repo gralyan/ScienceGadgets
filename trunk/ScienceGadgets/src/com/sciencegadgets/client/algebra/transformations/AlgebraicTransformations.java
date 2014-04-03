@@ -308,7 +308,7 @@ class SeperateNegButton extends TransformationButton {
 		this.negNode = negNode;
 	}
 	@Override
-	protected
+	public
 	void transform() {
 
 		EquationNode prevSib = negNode.getPrevSibling();
@@ -351,7 +351,7 @@ class DenominatorFlipButton extends TransformationButton {
 		this.node = node;
 	}
 	@Override
-	protected
+	public
 	void transform() {
 
 		node.highlight();

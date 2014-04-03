@@ -206,7 +206,7 @@ class AddZeroButton extends AddTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		zero.highlight();
 
@@ -242,7 +242,7 @@ class AddNumbersButton extends AddTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 
 		if (!left.getUnitAttribute().equals(right.getUnitAttribute())) {
@@ -340,7 +340,7 @@ class AddSimilarButton extends AddTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 
 		right.highlight();
@@ -412,7 +412,7 @@ class ToCommonDenominatorButton extends AddTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 
 		if (nonFrac != null && fraction != null) {// One Fraction
@@ -483,7 +483,7 @@ class AddFractionsButton extends AddTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 
 		right.highlight();
@@ -527,7 +527,7 @@ class AddLogsButton extends AddTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		left.highlight();
 		right.highlight();

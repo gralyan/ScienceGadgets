@@ -135,7 +135,7 @@ class TrigDefineButton extends TrigTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		trig.setSymbol(funcDef[0].toString());
 		EquationNode otherTrig;
@@ -197,7 +197,7 @@ class TrigReciprocalButton extends TrigTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		AlgebraicTransformations.reciprocate(trig);
 
@@ -235,7 +235,7 @@ class TrigUnravelButton extends TrigTransformButton {
 		this.replacement = replacement;
 	}
 	@Override
-	protected
+	public
 	void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);

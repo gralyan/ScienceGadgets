@@ -154,7 +154,7 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	private void findFractionMergingNodes() {
-		ArrayList<EquationNode> fractions = mathTree
+		LinkedList<EquationNode> fractions = mathTree
 				.getNodesByType(TypeSGET.Fraction);
 
 		for (EquationNode frac : fractions) {

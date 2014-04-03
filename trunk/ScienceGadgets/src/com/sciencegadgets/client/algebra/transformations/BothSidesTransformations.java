@@ -32,12 +32,10 @@ public class BothSidesTransformations extends
 	public static final String UP_ARROW = "\u2191";
 
 	private static final String PLUS = TypeSGET.Operator.PLUS.getSign();
-	private static final String MINUS = TypeSGET.Operator.MINUS
+	private static final String MINUS = TypeSGET.Operator.MINUS.getSign();
+	private static final String MULTIPLY = TypeSGET.Operator.getMultiply()
 			.getSign();
-	private static final String MULTIPLY = TypeSGET.Operator
-			.getMultiply().getSign();
-	private static final String DIVIDE = TypeSGET.Operator.DIVIDE
-			.getSign();
+	private static final String DIVIDE = TypeSGET.Operator.DIVIDE.getSign();
 
 	public BothSidesTransformations(EquationNode node) {
 		super(node);
@@ -86,8 +84,7 @@ public class BothSidesTransformations extends
 			if (isTopLevel) {
 				this.add(Math.DIVIDE);
 			}
-			if (TypeSGET.Fraction
-					.equals(oldParent.getParent().getType())
+			if (TypeSGET.Fraction.equals(oldParent.getParent().getType())
 					&& !TypeSGET.Operation.equals(node.getType())) {
 				if (oldParent.getParent().isRightSide()
 						|| oldParent.getParent().isLeftSide()) {
@@ -114,8 +111,7 @@ public class BothSidesTransformations extends
 			if (isTopLevel) {
 				if (node.getIndex() == 1) {
 					this.add(Math.INVERSE_EXPONENT);
-				} else if (node.getIndex() == 0
-						&& TypeSGET.Number.equals(type)) {
+				} else if (node.getIndex() == 0 && TypeSGET.Number.equals(type)) {
 					this.add(Math.LOG);
 				}
 			}
@@ -304,7 +300,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void transform() {
+		public void transform() {
 			BothSidesButton joinedButton = this.getJoinedButton();
 
 			if (joinedButton.isSelected()) {
@@ -319,7 +315,7 @@ public class BothSidesTransformations extends
 			}
 		}
 
-		abstract protected void execute();
+		protected abstract void execute();
 	}
 
 	// ////////////////////////////////////////////////////////
@@ -386,8 +382,10 @@ public class BothSidesTransformations extends
 				topParent.append(node.clone());
 			}
 
-			Moderator.reloadEquationPanel(changeComment,
-					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel(changeComment,
+						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			}
 		}
 
 	}
@@ -409,8 +407,7 @@ public class BothSidesTransformations extends
 					oldParent.addFirst(TypeSGET.Number, "1");
 				} else if (isSide) {
 					// Leave 1 in old side if top node
-					oldParent.addBefore(node.getIndex(),
-							TypeSGET.Number, "1");
+					oldParent.addBefore(node.getIndex(), TypeSGET.Number, "1");
 				} else {
 					// take operation
 					if (node.getIndex() > 0) {
@@ -430,8 +427,8 @@ public class BothSidesTransformations extends
 				targetSide = targetSide.getChildAt(1);
 				targetSide = targetSide.encase(TypeSGET.Term);
 				if (operator == null) {
-					targetSide.append(TypeSGET.Operation,
-							TypeSGET.Operator.getMultiply().getSign());
+					targetSide.append(TypeSGET.Operation, TypeSGET.Operator
+							.getMultiply().getSign());
 				} else {
 					targetSide.append(operator);
 				}
@@ -445,8 +442,7 @@ public class BothSidesTransformations extends
 				if (!isSide) {
 					EquationNode oldFirstSib = oldParent.getFirstChild();
 					if (oldFirstSib != null
-							&& TypeSGET.Operation.equals(oldFirstSib
-									.getType())) {
+							&& TypeSGET.Operation.equals(oldFirstSib.getType())) {
 						oldFirstSib.remove();
 					}
 
@@ -457,8 +453,8 @@ public class BothSidesTransformations extends
 				if (TypeSGET.Fraction.equals(oldParent.getType())) {
 					EquationNode denominator = oldParent.getChildAt(1).encase(
 							TypeSGET.Term);
-					denominator.append(TypeSGET.Operation,
-							TypeSGET.Operator.getMultiply().getSign());
+					denominator.append(TypeSGET.Operation, TypeSGET.Operator
+							.getMultiply().getSign());
 					denominator.append(node.clone());
 				} else {
 					topParent = topParent.encase(TypeSGET.Fraction);
@@ -466,8 +462,10 @@ public class BothSidesTransformations extends
 				}
 			}
 
-			Moderator.reloadEquationPanel(changeComment,
-					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel(changeComment,
+						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			}
 		}
 	}
 
@@ -491,13 +489,12 @@ public class BothSidesTransformations extends
 					operation = node.getPrevSibling();
 				}
 				if (operation != null
-						&& TypeSGET.Operation
-								.equals(operation.getType())) {
+						&& TypeSGET.Operation.equals(operation.getType())) {
 					targetSide.append(operation);
 				}
 			} else if (isTopLevel || !Moderator.isInEasyMode) {
-				targetSide.append(TypeSGET.Operation,
-						TypeSGET.Operator.getMultiply().getSign());
+				targetSide.append(TypeSGET.Operation, TypeSGET.Operator
+						.getMultiply().getSign());
 			} else {
 				JSNICalls
 						.warn("Multiplying somethimg that's not top level or nested in a top level fraction: "
@@ -507,8 +504,8 @@ public class BothSidesTransformations extends
 			if (!Moderator.isInEasyMode) {
 				node = node.clone();
 				oldParent = oldParent.encase(TypeSGET.Term);
-				oldParent.append(TypeSGET.Operation, Operator
-						.getMultiply().getSign());
+				oldParent.append(TypeSGET.Operation, Operator.getMultiply()
+						.getSign());
 				oldParent.append(node.clone());
 			}
 
@@ -534,8 +531,10 @@ public class BothSidesTransformations extends
 				}
 			}
 
-			Moderator.reloadEquationPanel(changeComment,
-					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel(changeComment,
+						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			}
 		}
 	}
 
@@ -566,8 +565,8 @@ public class BothSidesTransformations extends
 			} else {
 				EquationNode targetExp = targetSide.getChildAt(1);
 				targetExp = targetExp.encase(TypeSGET.Term);
-				targetExp.append(TypeSGET.Operation, Operator
-						.getMultiply().getSign());
+				targetExp.append(TypeSGET.Operation, Operator.getMultiply()
+						.getSign());
 				target = targetExp;
 			}
 
@@ -596,14 +595,15 @@ public class BothSidesTransformations extends
 				oldParent.replace(oldParent.getFirstChild());
 			} else {
 				oldParent.encase(TypeSGET.Exponential);
-				EquationNode frac = oldParent.append(TypeSGET.Fraction,
-						"");
+				EquationNode frac = oldParent.append(TypeSGET.Fraction, "");
 				frac.append(TypeSGET.Number, "1");
 				frac.append(node.clone());
 			}
 
-			Moderator.reloadEquationPanel(changeComment,
-					Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel(changeComment,
+						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+			}
 		}
 	}
 
@@ -630,8 +630,7 @@ public class BothSidesTransformations extends
 		protected void execute() {
 
 			// Prepare Target side
-			EquationNode targetExp = targetSide
-					.encase(TypeSGET.Exponential);
+			EquationNode targetExp = targetSide.encase(TypeSGET.Exponential);
 			targetExp.addFirst(TypeSGET.Number, base);
 
 			if (Moderator.isInEasyMode) {
@@ -642,7 +641,9 @@ public class BothSidesTransformations extends
 				fromExp.addFirst(TypeSGET.Number, base);
 			}
 
-			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+			}
 		}
 	}
 
@@ -677,7 +678,9 @@ public class BothSidesTransformations extends
 				fromLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 			}
 
-			Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+			}
 		}
 	}
 
@@ -715,8 +718,10 @@ public class BothSidesTransformations extends
 				fromTrig.setAttribute(MathAttribute.Function, toFunction);
 			}
 
-			Moderator.reloadEquationPanel(changeComment,
-					Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
+			if (reloadAlgebraActivity) {
+				Moderator.reloadEquationPanel(changeComment,
+						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
+			}
 		}
 	}
 }
