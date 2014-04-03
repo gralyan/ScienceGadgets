@@ -131,7 +131,7 @@ public class EquationBrowser extends FlowPanel {
 					expressionsOtherSide, mustBeWholeAnswer, mustBePositives,
 					maxAdd, maxMultiply, maxFraction, maxExp);
 			Moderator.switchToAlgebra(eTree, false);
-			SolverUniVariable.EVALUATE(eTree);
+			SolverUniVariable.SOLVE(eTree);
 			Moderator.reloadEquationPanel(null, null);
 		}
 

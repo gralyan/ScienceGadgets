@@ -3,6 +3,7 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.shared.TypeSGET;
@@ -24,7 +25,9 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 
 	public static BothSidesTransformations FIND_ALL_BOTHSIDES(EquationNode node) {
 		BothSidesTransformations toBothSides = new BothSidesTransformations(node);
+		if(!Moderator.getCurrentAlgebraActivity().inProgramaticTransformMode) {
 		toBothSides.setPreviewLabels();
+		}
 		return toBothSides;
 	}
 
@@ -39,14 +42,14 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 			simplify.addAll(AlgebraicTransformations.operation(node));
 			break;
 		case Number:
+			simplify.addAll(new NumberTransformations(node));
 			simplify.add(AlgebraicTransformations.separateNegative_check(node,
 					simplify));
-			simplify.addAll(new NumberTransformations(node));
 			break;
 		case Variable:
+			simplify.addAll(new VariableTransformations(node));
 			simplify.add(AlgebraicTransformations.separateNegative_check(node,
 					simplify));
-			simplify.addAll(new VariableTransformations(node));
 			break;
 		case Log:
 			simplify.addAll(new LogarithmicTransformations(node));
@@ -69,8 +72,9 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 					simplify));
 		}
 
+		if(!Moderator.getCurrentAlgebraActivity().inProgramaticTransformMode) {
 		simplify.setPreviewLabels();
-
+		}
 		return simplify;
 	}
 
