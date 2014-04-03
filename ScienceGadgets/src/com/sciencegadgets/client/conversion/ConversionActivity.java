@@ -108,7 +108,7 @@ public class ConversionActivity extends AbsolutePanel {
 
 		UnitMultiple[] bases = node.getUnitAttribute().getUnitMultiples();
 
-		EquationNode fracRight = mTree.NEW_NODE(TypeSGET.Fraction, "");
+		EquationNode fracRight = mTree.newNode(TypeSGET.Fraction, "");
 		EquationNode numerRight = fracRight.append(TypeSGET.Term, "");
 		EquationNode denomRight = fracRight.append(TypeSGET.Term, "");
 
@@ -123,9 +123,9 @@ public class ConversionActivity extends AbsolutePanel {
 
 			EquationNode unitNode;
 			if ("1".equals(exp)) {
-				unitNode = mTree.NEW_NODE(TypeSGET.Variable, symbol);
+				unitNode = mTree.newNode(TypeSGET.Variable, symbol);
 			} else {
-				unitNode = mTree.NEW_NODE(TypeSGET.Exponential, "");
+				unitNode = mTree.newNode(TypeSGET.Exponential, "");
 				unitNode.append(TypeSGET.Variable, symbol);
 				unitNode.append(TypeSGET.Number, exp);
 			}
@@ -303,9 +303,9 @@ public class ConversionActivity extends AbsolutePanel {
 		EquationNode newHistoryNum = newHistoryFrac.append(TypeSGET.Sum, "");
 		EquationNode newHistoryDen = newHistoryFrac.append(TypeSGET.Sum, "");
 
-		EquationNode numMultiplierNode = mTree.NEW_NODE(TypeSGET.Number,
+		EquationNode numMultiplierNode = mTree.newNode(TypeSGET.Number,
 				numMultiplier);
-		EquationNode denMultiplierNode = mTree.NEW_NODE(TypeSGET.Number,
+		EquationNode denMultiplierNode = mTree.newNode(TypeSGET.Number,
 				denMultiplier);
 
 		if (expAbs == 1) {
@@ -331,9 +331,9 @@ public class ConversionActivity extends AbsolutePanel {
 
 			String numSymbol = unitName.getSymbol();
 
-			EquationNode workingNode = mTree.NEW_NODE(TypeSGET.Variable, numSymbol);
+			EquationNode workingNode = mTree.newNode(TypeSGET.Variable, numSymbol);
 			if (unitExp > 1 || unitExp < -1) {
-				EquationNode workingExp = mTree.NEW_NODE(TypeSGET.Exponential, "");
+				EquationNode workingExp = mTree.newNode(TypeSGET.Exponential, "");
 				workingExp.append(workingNode);
 				workingExp.append(TypeSGET.Number, "" + unitExpAbs);
 				workingNode = workingExp;

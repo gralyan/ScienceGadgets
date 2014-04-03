@@ -68,7 +68,7 @@ class SubstituteButton extends VariableTransformationButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		String quantityKind = variableNode.getUnitAttribute()
 				.getUnitMultiples()[0].getUnitName().getQuantityKind();
@@ -177,7 +177,7 @@ class PlugInButton extends VariableTransformationButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		AlgebraActivity.NUMBER_SPEC_PROMPT(variableNode, true);
 	}

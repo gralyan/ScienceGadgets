@@ -175,7 +175,7 @@ class ZeroBaseButton extends ExponentialTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		exponential.replace(base);
 
@@ -206,7 +206,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		final BigDecimal baseValue = new BigDecimal(base.getSymbol());
 		final BigDecimal totalValue = baseValue
@@ -275,7 +275,7 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		if (exp == 0) {
 			if (TypeSGET.Number.equals(base.getType())) {
@@ -340,7 +340,7 @@ class ExponentialExponentiateButton extends ExponentialTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode innerBase = base.getChildAt(0);
 		EquationNode innerExp = base.getChildAt(1);
@@ -377,7 +377,7 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		for (EquationNode baseChild : base.getChildren()) {
 			if (TypeSGET.Operation.equals(baseChild.getType())) {
@@ -413,7 +413,7 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		if (TypeSGET.Fraction.equals(base.getType())) {
 			base.append(base.getFirstChild());
@@ -460,7 +460,7 @@ class ExponentialUnravelButton extends ExponentialTransformButton {
 		this.replacement = replacement;
 	}
 	@Override
-	protected
+	public
 	void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);

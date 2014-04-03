@@ -311,8 +311,6 @@ public class EquationHTML extends HTML {
 					child = child.getFirstChildElement();
 				}
 				fractionChildrenHorizontal.add(child);
-				System.out.println(child.getChildCount() + ""
-						+ child.getString());
 				for (int i = 0; i < 2; i++) {
 					int fracChildHeight = ((Element) child.getChild(i))
 							.getClientHeight();

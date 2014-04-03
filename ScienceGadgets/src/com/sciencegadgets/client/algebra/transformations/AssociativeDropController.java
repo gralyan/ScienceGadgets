@@ -33,10 +33,10 @@ public class AssociativeDropController extends TransformationDropController {
 		EquationNode dragOp = drag.getPrevSibling();
 		if (dragOp == null || !TypeSGET.Operation.equals(dragOp.getType())) {
 			if (isSum) {
-				dragOp = drag.getTree().NEW_NODE(TypeSGET.Operation,
+				dragOp = drag.getTree().newNode(TypeSGET.Operation,
 						Operator.PLUS.getSign());
 			} else {
-				dragOp = drag.getTree().NEW_NODE(TypeSGET.Operation,
+				dragOp = drag.getTree().newNode(TypeSGET.Operation,
 						Operator.getMultiply().getSign());
 			}
 		}

@@ -15,7 +15,6 @@
 package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -46,7 +45,7 @@ public class EquationTree {
 
 	private EquationNode root;
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	public HashMap<String, EquationNode> idMap = new HashMap<String, EquationNode>();
+	private HashMap<String, EquationNode> idMap = new HashMap<String, EquationNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private HashMap<Element, String> idUnitHTMLMap = new HashMap<Element, String>();
@@ -236,7 +235,7 @@ public class EquationTree {
 		return node;
 	}
 
-	public EquationNode NEW_NODE(Element xmlNode) {
+	public EquationNode newNode(Element xmlNode) {
 		EquationNode newNode = new EquationNode(xmlNode);
 		AddToMaps(newNode);
 
@@ -249,7 +248,7 @@ public class EquationTree {
 		return newNode;
 	}
 
-	public EquationNode NEW_NODE(TypeSGET type, String symbol) {
+	public EquationNode newNode(TypeSGET type, String symbol) {
 		EquationNode newNode = new EquationNode(type, symbol);
 		AddToMaps(newNode);
 		return newNode;
@@ -288,16 +287,22 @@ public class EquationTree {
 
 	/**
 	 * Gets all nodes by specified type, use null for all nodes
-	 * 
 	 * @param type
 	 */
-	public ArrayList<EquationNode> getNodesByType(TypeSGET type) {
-		ArrayList<EquationNode> nodes = new ArrayList<EquationNode>();
+	public LinkedList<EquationNode> getNodesByType(TypeSGET type) {
+		return getNodesByType(type, root);
+	}
+	/**
+	 * Gets all nodes in the parent by specified type, use null for all nodes
+	 * @param type
+	 */
+	public LinkedList<EquationNode> getNodesByType(TypeSGET type, EquationNode parent) {
+		LinkedList<EquationNode> nodes = new LinkedList<EquationNode>();
 		String tag = "*";
 		if (type != null) {
 			tag = type.getTag();
 		}
-		NodeList<Element> elements = root.getXMLNode()
+		NodeList<Element> elements = parent.getXMLNode()
 				.getElementsByTagName(tag);
 		for (int i = 0; i < elements.getLength(); i++) {
 			String id = elements.getItem(i).getAttribute("id");
@@ -582,6 +587,10 @@ public class EquationTree {
 
 		public EquationNode addFirst(TypeSGET type, String symbol) {
 			return addBefore(0, type, symbol);
+		}
+		
+		public LinkedList<EquationNode> getNodesByType(TypeSGET type){
+			return EquationTree.this.getNodesByType(type, this);
 		}
 
 		public LinkedList<EquationNode> getChildren() {
@@ -937,9 +946,8 @@ public class EquationTree {
 		public Element getHTML(boolean hasSmallUnits, boolean hasSubscripts) {
 			Element el = idHTMLMap.get(getId());
 			if (el == null) {
-				getTree().reloadDisplay(hasSmallUnits, hasSubscripts);
+				EquationTree.this.reloadDisplay(hasSmallUnits, hasSubscripts);
 				Element el2 = idHTMLMap.get(getId());
-				JSNICalls.log("No HTML for node: " + toString());
 				return (Element) el2;
 			}
 			return (Element) el;

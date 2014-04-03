@@ -100,16 +100,16 @@ public abstract class TransformationButton extends SimplePanel implements
 				}
 
 				EquationNode leftClone, operationClone, rightClone;
-				leftClone = mTree.NEW_NODE(op.getPrevSibling().getXMLClone());
-				operationClone = mTree.NEW_NODE(op.getXMLClone());
-				rightClone = mTree.NEW_NODE(op.getNextSibling().getXMLClone());
+				leftClone = mTree.newNode(op.getPrevSibling().getXMLClone());
+				operationClone = mTree.newNode(op.getXMLClone());
+				rightClone = mTree.newNode(op.getNextSibling().getXMLClone());
 
 				frame.append(leftClone);
 				frame.append(operationClone);
 				frame.append(rightClone);
 
 			} else {
-				frame = mTree.NEW_NODE(transformList.getNode().getXMLClone());
+				frame = mTree.newNode(transformList.getNode().getXMLClone());
 				mTree.getLeftSide().replace(frame);
 			}
 		}
@@ -130,8 +130,9 @@ public abstract class TransformationButton extends SimplePanel implements
 		if (previewButton == null) {
 			return null;
 		}
-		previewButton.fireEvent(new ClickEvent() {
-		});
+		previewButton.transform();
+//		previewButton.fireEvent(new ClickEvent() {
+//		});
 		mTree.reloadDisplay(true, true);
 		return mTree;
 	}
@@ -149,5 +150,5 @@ public abstract class TransformationButton extends SimplePanel implements
 		return null;
 	}
 
-	protected abstract void transform();
+	public abstract void transform();
 }

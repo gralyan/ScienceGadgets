@@ -138,7 +138,7 @@ class LogEvaluateButton extends LogTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		Double total;
 
@@ -179,7 +179,7 @@ class LogChangeBaseButton extends LogTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		if (!reloadAlgebraActivity) {
 			log.replace(TypeSGET.Variable, "Change Base");
@@ -229,7 +229,7 @@ class LogProductButton extends LogTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode sum = log.encase(TypeSGET.Sum);
 		int logIndex = log.getIndex();
@@ -274,7 +274,7 @@ class LogQuotientButton extends LogTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode sum = log.encase(TypeSGET.Sum);
 
@@ -321,7 +321,7 @@ class LogPowerButton extends LogTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		EquationNode term = log.encase(TypeSGET.Term);
 
@@ -357,7 +357,7 @@ class LogOneButton extends LogTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		log.replace(TypeSGET.Number, "0");
 
@@ -383,7 +383,7 @@ class LogSameBaseAsArgumentButton extends LogTransformButton {
 	}
 
 	@Override
-	protected
+	public
 	void transform() {
 		log.replace(TypeSGET.Number, "1");
 
@@ -417,7 +417,7 @@ class LogUnravelButton extends LogTransformButton {
 		this.replacement = replacement;
 	}
 	@Override
-	protected
+	public
 	void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
