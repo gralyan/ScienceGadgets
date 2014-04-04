@@ -85,7 +85,7 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 	@Override
 	public
 	void transform() {
-		LinkedHashSet<Integer> primeFactors = findPrimeFactors(number);
+		LinkedHashSet<Integer> primeFactors = AlgebraicTransformations.FIND_PRIME_FACTORS(number);
 
 		Prompt prompt = new Prompt(false);
 		Label title = new Label();
@@ -97,28 +97,6 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 					context));
 		}
 		prompt.appear();
-	}
-
-	LinkedHashSet<Integer> findPrimeFactors(Integer number) {
-		LinkedHashSet<Integer> factors = new LinkedHashSet<Integer>();
-
-		if (number < 0) {
-			number = Math.abs(number);
-		}
-		factors.add(1);
-
-		int start = 2;
-		byte inc = 1;
-		if (number % 2 == 1) {// odd numbers can't have even factors
-			start = 3;
-			inc = 2;
-		}
-		for (int i = start; i <= Math.sqrt(number); i = i + inc) {
-			if (number % i == 0) {
-				factors.add(i);
-			}
-		}
-		return factors;
 	}
 
 	class FactorNumberButton extends NumberTransformationButton {

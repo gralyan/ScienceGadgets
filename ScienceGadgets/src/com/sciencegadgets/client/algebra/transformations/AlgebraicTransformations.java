@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 
 import com.google.gwt.user.client.ui.Label;
@@ -103,6 +104,28 @@ public class AlgebraicTransformations {
 		}
 	}
 
+	public static LinkedHashSet<Integer> FIND_PRIME_FACTORS(Integer number) {
+		LinkedHashSet<Integer> factors = new LinkedHashSet<Integer>();
+
+		if (number < 0) {
+			number = Math.abs(number);
+		}
+		factors.add(1);
+
+		int start = 2;
+		byte inc = 1;
+		if (number % 2 == 1) {// odd numbers can't have even factors
+			start = 3;
+			inc = 2;
+		}
+		for (int i = start; i <= Math.sqrt(number); i = i + inc) {
+			if (number % i == 0) {
+				factors.add(i);
+			}
+		}
+		return factors;
+	}
+	
 	/**
 	 * Reciprocates the given node and simplifies in one of two ways:<br/>
 	 * 1) If the node is in a fraction or a term in a fraction, it is moved over
