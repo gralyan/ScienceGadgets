@@ -34,6 +34,16 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 	public static TransformationList<TransformationButton> FIND_ALL_SIMPLIFY(EquationNode node) {
 		TransformationList<TransformationButton> simplify = new TransformationList<TransformationButton>(node);
 
+		if (TypeSGET.Fraction.equals(node.getParentType())
+				&& node.getIndex() == 1) {
+			simplify.add(new FractionTransformations(node.getParent()).denominatorFlip_check());
+		}
+//		if (TypeSGET.Fraction.equals(node.getParentType())
+//				&& node.getIndex() == 1) {
+//			simplify.add(AlgebraicTransformations.denominatorFlip_check(node,
+//					simplify));
+//		}
+		
 		switch (node.getType()) {
 		case Exponential:
 			simplify.addAll(new ExponentialTransformations(node));
@@ -64,12 +74,6 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 			// they would be merged into the top layer if direct children of the
 			// root
 			break;
-		}
-
-		if (TypeSGET.Fraction.equals(node.getParentType())
-				&& node.getIndex() == 1) {
-			simplify.add(AlgebraicTransformations.denominatorFlip_check(node,
-					simplify));
 		}
 
 		if(!Moderator.getCurrentAlgebraActivity().inProgramaticTransformMode) {

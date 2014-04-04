@@ -309,11 +309,10 @@ public class AlgebraicTransformations {
 		}
 	}
 
-	public static TransformationButton denominatorFlip_check(EquationNode node,
-			TransformationList<TransformationButton> context) {
-		return new DenominatorFlipButton(node, context);
-	}
-
+//	DenominatorFlipButton denominatorFlip_check(EquationNode node,
+//			TransformationList<TransformationButton> context) {
+//		return new DenominatorFlipButton(node, context);
+//	}
 }
 
 // /////////////////////////////////////////////////////////////
@@ -363,48 +362,49 @@ class SeperateNegButton extends TransformationButton {
 	}
 }
 
-/**
- * x / (y/z) = x &middot; (z/y)<br/>
- * x / y = x &middot; (1/y)
- */
-class DenominatorFlipButton extends TransformationButton {
-	private EquationNode node;
-	DenominatorFlipButton(final EquationNode node, TransformationList<TransformationButton> context) {
-		super("Flip Denominator",context);
-		this.node = node;
-	}
-	@Override
-	public
-	void transform() {
+///**
+// * x / (y/z) = x &middot; (z/y)<br/>
+// * x / y = x &middot; (1/y)
+// */
+//class DenominatorFlipButton extends FractionTransformButton {
+//	private EquationNode node;
+//	DenominatorFlipButton(final EquationNode node, TransformationList<TransformationButton> context) {
+//		super("Flip Denominator",context);
+//		this.node = node;
+//	}
+//	@Override
+//	public
+//	void transform() {
+//
+//		node.highlight();
+//
+//		EquationNode frac = node;
+//		if (!TypeSGET.Fraction.equals(node.getType())) {
+//			frac = node.encase(TypeSGET.Fraction);
+//			frac.append(TypeSGET.Number, "1");
+//		}
+//		// Flip
+//		frac.append(frac.getChildAt(0));
+//
+//		EquationNode parentFraction = frac.getParent();
+//		EquationNode grandParent = parentFraction.getParent();
+//		int index = parentFraction.getIndex();
+//
+//		if (!TypeSGET.Term.equals(grandParent.getType())) {
+//			grandParent = parentFraction.encase(TypeSGET.Term);
+//			index = 0;
+//		}
+//
+//		grandParent.addBefore(index, parentFraction.getChildAt(1));
+//		grandParent.addBefore(index, TypeSGET.Operation, Operator
+//				.getMultiply().getSign());
+//		grandParent.addBefore(index, parentFraction.getChildAt(0));
+//
+//		parentFraction.remove();
+//
+//		Moderator.reloadEquationPanel("Multiply by Resiprocal",
+//				Rule.FRACTION_DIVISION);
+//	}
+//}
 
-		node.highlight();
-
-		EquationNode frac = node;
-		if (!TypeSGET.Fraction.equals(node.getType())) {
-			frac = node.encase(TypeSGET.Fraction);
-			frac.append(TypeSGET.Number, "1");
-		}
-		// Flip
-		frac.append(frac.getChildAt(0));
-
-		EquationNode parentFraction = frac.getParent();
-		EquationNode grandParent = parentFraction.getParent();
-		int index = parentFraction.getIndex();
-
-		if (!TypeSGET.Term.equals(grandParent.getType())) {
-			grandParent = parentFraction.encase(TypeSGET.Term);
-			index = 0;
-		}
-
-		grandParent.addBefore(index, parentFraction.getChildAt(1));
-		grandParent.addBefore(index, TypeSGET.Operation, Operator
-				.getMultiply().getSign());
-		grandParent.addBefore(index, parentFraction.getChildAt(0));
-
-		parentFraction.remove();
-
-		Moderator.reloadEquationPanel("Multiply by Resiprocal",
-				Rule.FRACTION_DIVISION);
-	}
-}
 
