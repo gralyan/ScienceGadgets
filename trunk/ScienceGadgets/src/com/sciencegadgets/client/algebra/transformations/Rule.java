@@ -20,7 +20,8 @@ package com.sciencegadgets.client.algebra.transformations;
 		INVERSE_TRIGONOMETRIC_FUNCTIONS,//
 		TRIGONOMETRIC_FUNCTIONS,//
 		LOGARITHM,//
-		SUBSTITUTION;//
+		SUBSTITUTION,//
+		SIMPLIFY_FRACTIONS;//
 		
 
 		public static final String GOOGLE_SEARCH_PREFIX = "https://www.google.com/#q=";

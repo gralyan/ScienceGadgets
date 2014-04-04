@@ -1,16 +1,21 @@
 package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
+import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
-import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class SolverUniVariable {
@@ -27,18 +32,18 @@ public class SolverUniVariable {
 
 		EquationNode variable = ISOLATE_NODE(variables.getFirst());
 
-//		boolean areNumbersOnLeft;
-//		if (equationTree.getLeftSide() == variable) {
-//			areNumbersOnLeft = true;
-//		} else if (equationTree.getRightSide() == variable) {
-//			areNumbersOnLeft = false;
-//		} else {
-//			Window.alert("Solve didn't work :(");
-//			return null;
-//		}
-//
-//		return EVALUATE(equationTree, areNumbersOnLeft);
-		return new BigDecimal("0");
+		boolean areNumbersOnLeft;
+		if (equationTree.getLeftSide() == variable) {
+			areNumbersOnLeft = false;
+		} else if (equationTree.getRightSide() == variable) {
+			areNumbersOnLeft = true;
+		} else {
+			Window.alert("Solve didn't work :(");
+			return null;
+		}
+
+		return EVALUATE(equationTree, areNumbersOnLeft);
+		// return new BigDecimal("0");
 	}
 
 	private static EquationNode ISOLATE_NODE(EquationNode toIsolate)
@@ -181,45 +186,153 @@ public class SolverUniVariable {
 		} else {
 			side = eTree.getRightSide();
 		}
-
-		EquationNode toSimplify = null;
-		switch (side.getType()) {
-		case Number:
+		if (TypeSGET.Number.equals(side.getType())) {
 			return side;
-		case Sum:
-		case Term:
-			for (EquationNode child : side.getChildren()) {
-				if (TypeSGET.Operation.equals(child.getType())) {
-					toSimplify = child;
-					break;
+		} else if (TypeSGET.Fraction.equals(side.getType())
+				&& TypeSGET.Number.equals(side.getChildAt(0).getType())
+				&& TypeSGET.Number.equals(side.getChildAt(1).getType())) {
+			SIMPLIFY_FRACTION(side.getChildAt(0), side.getChildAt(1), true);
+			return side;
+		}
+
+		EquationNode toSimplify = GET_DEEPEST_EVALUATABLE(side);
+
+		if (TypeSGET.Fraction.equals(toSimplify.getType())) {
+			boolean simplified = SIMPLIFY_FRACTION(toSimplify.getChildAt(0),
+					toSimplify.getChildAt(1), true);
+
+		} else {
+			TransformationList<TransformationButton> trans = TransformationList
+					.FIND_ALL_SIMPLIFY(toSimplify);
+			if (trans.size() == 0) {
+				return side;
+				// throw new IllegalArgumentException(
+				// "There is no way to simplify:\n" + toSimplify);
+			}
+			System.out.println("");
+			System.out.println("trans " + trans);
+			System.out.println("fisrt " + trans.getFirst().getClass());
+			eTree.reloadDisplay(true, true);
+			TransformationButton transButton = trans.getFirst();
+			transButton.transform();
+		}
+		return EVALUATE_RECURSION(eTree, areNumbersOnLeft);
+	}
+
+	private static boolean SIMPLIFY_FRACTION(EquationNode numerator,
+			EquationNode denominator, boolean execute)
+			throws ArithmeticException {
+		Integer numValue = Integer.parseInt(numerator.getSymbol());
+		Integer denValue = Integer.parseInt(denominator.getSymbol());
+
+		LinkedHashSet<Integer> numFactors, denFactors;
+		numFactors = AlgebraicTransformations.FIND_PRIME_FACTORS(numValue);
+		denFactors = AlgebraicTransformations.FIND_PRIME_FACTORS(denValue);
+
+		HashMap<Integer, Integer> matches = new HashMap<Integer, Integer>();
+		a: for (Integer num : numFactors) {
+			for (Integer den : denFactors) {
+				if (num.equals(den) && !matches.containsValue(den)) {
+					matches.put(num, den);
+					continue a;
 				}
 			}
-			break;
+		}
+
+		if (matches.size() < 2) {// "1" is always a factor
+			System.out.println("no simpl: " + numValue + " " + denValue);
+			return false;
+		} else if (!execute) {
+			return true;
+		}
+		for (Entry<Integer, Integer> match : matches.entrySet()) {
+			numFactors.remove(match.getKey());
+			denFactors.remove(match.getValue());
+		}
+		Integer numNewValue = 1;
+		Integer denNewValue = 1;
+		for (Integer num : numFactors) {
+			numNewValue *= num;
+		}
+		for (Integer den : denFactors) {
+			denNewValue *= den;
+		}
+		numerator.setSymbol(numNewValue.toString());
+		denominator.setSymbol(denNewValue.toString());
+		System.out.println("simpl: " + numValue + "-" + numNewValue + " "
+				+ denValue + "-" + denNewValue);
+
+		numerator.highlight();
+		denominator.highlight();
+		Moderator.getCurrentAlgebraActivity().algOut.updateAlgebraHistory(
+				"Simplify Fraction", Rule.SIMPLIFY_FRACTIONS,
+				numerator.getTree());
+		return true;
+	}
+
+	private static EquationNode GET_DEEPEST_EVALUATABLE(EquationNode node)
+			throws IllegalArgumentException {
+
+		switch (node.getType()) {
+		case Sum:
+		case Term:
+			LinkedList<EquationNode> children = node.getChildren();
+			for (int i = 1; i < children.size(); i++) {
+				EquationNode child = children.get(i);
+				if (!TypeSGET.Operation.equals(child.getType())) {
+					continue;
+				}
+				EquationNode left = child.getPrevSibling();
+				EquationNode right = child.getNextSibling();
+				if (CAN_SIMPLIFY(left)) {
+					return GET_DEEPEST_EVALUATABLE(left);
+				} else if (CAN_SIMPLIFY(right)) {
+					return GET_DEEPEST_EVALUATABLE(right);
+				} else {
+					return child;
+				}
+			}
+			throw new IllegalArgumentException(
+					"No evaluatable operation in: \n" + node.toString());
 		case Fraction:
-			// TODO simplify if possible
-			return side;
-			// break;
 		case Exponential:
+			EquationNode first = node.getChildAt(0);
+			EquationNode second = node.getChildAt(1);
+			if (CAN_SIMPLIFY(first)) {
+				return GET_DEEPEST_EVALUATABLE(first);
+			} else if (CAN_SIMPLIFY(second)) {
+				return GET_DEEPEST_EVALUATABLE(second);
+			} else {
+				return node;
+			}
 		case Trig:
 		case Log:
-			toSimplify = side;
-			break;
+			if (CAN_SIMPLIFY(node.getFirstChild())) {
+				return GET_DEEPEST_EVALUATABLE(node);
+			} else {
+				return node;
+			}
+		default:
+			throw new IllegalArgumentException("Cannot go deeper into node: \n"
+					+ node.toString());
 		}
+	}
 
-		if (toSimplify == null) {
-			throw new IllegalArgumentException(
-					"There is nothing to simplify from: \n side: " + side);
+	private static boolean CAN_SIMPLIFY(EquationNode node) {
+		switch (node.getType()) {
+		case Number:
+			return false;
+		case Fraction:
+			if (TypeSGET.Number.equals(node.getChildAt(0).getType())
+					&& TypeSGET.Number.equals(node.getChildAt(1).getType())) {
+				return SIMPLIFY_FRACTION(node.getChildAt(0),
+						node.getChildAt(1), false);
+			} else {
+				return false;
+			}
+		default:
+			return true;
 		}
-		TransformationList<TransformationButton> trans = TransformationList
-				.FIND_ALL_SIMPLIFY(toSimplify);
-		if (trans.size() == 0) {
-			return null;
-		}
-		eTree.reloadDisplay(true, true);
-		TransformationButton transButton = trans.getFirst();
-		transButton.transform();
-
-		return EVALUATE_RECURSION(eTree, areNumbersOnLeft);
 	}
 
 }
