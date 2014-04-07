@@ -33,16 +33,13 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 
 	public static TransformationList<TransformationButton> FIND_ALL_SIMPLIFY(EquationNode node) {
 		TransformationList<TransformationButton> simplify = new TransformationList<TransformationButton>(node);
+		
+		simplify.addAll(new InterFractionTransformations(node));
 
 		if (TypeSGET.Fraction.equals(node.getParentType())
 				&& node.getIndex() == 1) {
 			simplify.add(new FractionTransformations(node.getParent()).denominatorFlip_check());
 		}
-//		if (TypeSGET.Fraction.equals(node.getParentType())
-//				&& node.getIndex() == 1) {
-//			simplify.add(AlgebraicTransformations.denominatorFlip_check(node,
-//					simplify));
-//		}
 		
 		switch (node.getType()) {
 		case Exponential:

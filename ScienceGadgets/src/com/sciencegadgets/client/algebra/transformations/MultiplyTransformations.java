@@ -75,7 +75,14 @@ public class MultiplyTransformations extends
 				return new MultiplyOneButton(this, left, right);
 			} else if (rightValue.compareTo(negOne) == same
 					&& "".equals(rightUnits)) {
-				return new MultiplyNegOneButton(this, left, right);
+				switch (left.getType()) {
+				case Number:
+				case Variable:
+				case Sum:
+				case Term:
+				case Fraction:
+					return new MultiplyNegOneButton(this, left, right);
+				}
 			}
 		} catch (NumberFormatException e) {
 		}
@@ -89,7 +96,14 @@ public class MultiplyTransformations extends
 				return new MultiplyOneButton(this, right, left);
 			} else if (leftValue.compareTo(negOne) == same
 					&& "".equals(leftUnits)) {
-				return new MultiplyNegOneButton(this, right, left);
+				switch (right.getType()) {
+				case Number:
+				case Variable:
+				case Sum:
+				case Term:
+				case Fraction:
+					return new MultiplyNegOneButton(this, right, left);
+				}
 			}
 		} catch (NumberFormatException e) {
 		}
@@ -268,8 +282,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		String otherSymbol = other.getSymbol();
 
 		// Remove residual operations
@@ -277,8 +290,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 		EquationNode second = zero.getIndex() > other.getIndex() ? zero : other;
 		EquationNode firstOp = first.getPrevSibling();
 		EquationNode secondNext = second.getNextSibling();
-		if (firstOp != null
-				&& TypeSGET.Operation.equals(firstOp.getType())) {
+		if (firstOp != null && TypeSGET.Operation.equals(firstOp.getType())) {
 			firstOp.remove();
 		} else if (secondNext != null
 				&& TypeSGET.Operation.equals(secondNext.getType())) {
@@ -322,8 +334,7 @@ class MultiplyOneButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		String otherSymbol = other.getSymbol();
 
 		one.remove();
@@ -362,8 +373,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		String otherSymbol = other.getSymbol();
 
 		AlgebraicTransformations.propagateNegative(other);
@@ -398,8 +408,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		final BigDecimal leftValue = new BigDecimal(left.getSymbol());
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		final BigDecimal totalValue = leftValue.multiply(rightValue);
@@ -485,13 +494,11 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		for (EquationNode sumChild : sum.getChildren()) {
 			if (!TypeSGET.Operation.equals(sumChild.getType())) {
 
-				EquationNode sumChildCasings = sumChild
-						.encase(TypeSGET.Term);
+				EquationNode sumChildCasings = sumChild.encase(TypeSGET.Term);
 
 				int index = isRightSum ? 0 : -1;
 				sumChildCasings.addBefore(index, operation.getType(),
@@ -529,8 +536,7 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode leftBase = left.getChildAt(0);
 		EquationNode rightBase = right.getChildAt(0);
 
@@ -570,8 +576,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode leftExponential = left;
 		EquationNode rightExponential = right;
 		if (!TypeSGET.Exponential.equals(left.getType())) {
@@ -586,22 +591,19 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 		EquationNode leftExp = leftExponential.getChildAt(1);
 		EquationNode rightExp = rightExponential.getChildAt(1);
 
-		if (Moderator.isInEasyMode
-				&& TypeSGET.Number.equals(leftExp.getType())
+		if (Moderator.isInEasyMode && TypeSGET.Number.equals(leftExp.getType())
 				&& TypeSGET.Number.equals(rightExp.getType())) {
 			BigDecimal leftValue = new BigDecimal(
 					leftExp.getAttribute(MathAttribute.Value));
 			BigDecimal rightValue = new BigDecimal(
 					rightExp.getAttribute(MathAttribute.Value));
 			BigDecimal combinedValue = leftValue.add(rightValue);
-			rightExp.replace(TypeSGET.Number,
-					combinedValue.toPlainString());
+			rightExp.replace(TypeSGET.Number, combinedValue.toPlainString());
 
 		} else {
 			EquationNode rightCasing = rightExp.encase(TypeSGET.Sum);
 
-			rightCasing.addFirst(TypeSGET.Operation,
-					Operator.PLUS.getSign());
+			rightCasing.addFirst(TypeSGET.Operation, Operator.PLUS.getSign());
 			rightCasing.addFirst(leftExp);
 		}
 
@@ -642,8 +644,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode numerator = fraction.getChildAt(0);
 		numerator = numerator.encase(TypeSGET.Term);
 
@@ -676,8 +677,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode numerator = right.getChildAt(0);
 		numerator = numerator.encase(TypeSGET.Term);
 		numerator.addFirst(operation);
@@ -721,10 +721,8 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
-		EquationNode exp = log.getFirstChild().encase(
-				TypeSGET.Exponential);
+	public void transform() {
+		EquationNode exp = log.getFirstChild().encase(TypeSGET.Exponential);
 		exp.append(other);
 
 		operation.remove();

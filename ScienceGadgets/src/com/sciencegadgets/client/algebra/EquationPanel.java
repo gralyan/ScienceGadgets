@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
-import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeSGET;
 
@@ -105,9 +104,9 @@ public class EquationPanel extends AbsolutePanel {
 			for (EquationNode merge : mergeFractionNodes) {
 				placeNextEqWrappers(merge, eqLayerMap.get(merge.getParent()));
 			}
-			for (EquationWrapper wrap : mathWrappers) {
-				AlgebraicTransformations.interFractionDrop_check(wrap.getNode());
-			}
+//			for (EquationWrapper wrap : mathWrappers) {
+//				new InterFractionTransformations(wrap.getNode());
+//			}
 		}
 		for (EquationWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
