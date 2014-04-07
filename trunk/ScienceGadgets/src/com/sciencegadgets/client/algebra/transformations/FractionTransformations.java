@@ -28,8 +28,8 @@ public class FractionTransformations extends
 		this.numeratorType = numerator.getType();
 		this.denominatorType = denominator.getType();
 
-		add(simplifyFraction_check());
 		add(denominatorFlip_check());
+		add(simplifyFraction_check());
 
 	}
 
@@ -38,69 +38,74 @@ public class FractionTransformations extends
 	}
 
 	public SimplifyFractionButton simplifyFraction_check() {
-		if (SIMPLIFY_FRACTION(numerator, denominator,
-				false)) {
-			return new SimplifyFractionButton(this);
-		} else {
+		try {
+			if (SIMPLIFY_FRACTION(numerator, denominator, false)) {
+				return new SimplifyFractionButton(this);
+			} else {
+				return null;
+			}
+		} catch (ArithmeticException|NumberFormatException e) {
 			return null;
 		}
 	}
-public static boolean SIMPLIFY_FRACTION(EquationNode numerator,
-		EquationNode denominator, boolean execute)
-		throws ArithmeticException, NumberFormatException {
-	Integer numValue = Integer.parseInt(new BigDecimal(numerator
-			.getSymbol()).toPlainString());
-	Integer denValue = Integer.parseInt(new BigDecimal(denominator
-			.getSymbol()).toPlainString());
 
-	// Whole Division
-	if ((numValue > denValue && numValue % denValue == 0)
-			|| (denValue > numValue && denValue % numValue == 0)) {
-		if (execute) {
-			int division = numValue > denValue ? numValue / denValue
-					: denValue / numValue;
-			EquationNode fraction = numerator.getParent();
-			fraction.replace(TypeSGET.Number, division + "");
+	public static boolean SIMPLIFY_FRACTION(EquationNode numerator,
+			EquationNode denominator, boolean execute)
+			throws ArithmeticException, NumberFormatException {
+		Integer numValue = Integer.parseInt(new BigDecimal(numerator
+				.getSymbol()).toPlainString());
+		Integer denValue = Integer.parseInt(new BigDecimal(denominator
+				.getSymbol()).toPlainString());
+
+		// Whole Division
+		if ((numValue > denValue && numValue % denValue == 0)
+				|| (denValue > numValue && denValue % numValue == 0)) {
+			if (execute) {
+				int division = numValue > denValue ? numValue / denValue
+						: denValue / numValue;
+				EquationNode fraction = numerator.getParent();
+				fraction.replace(TypeSGET.Number, division + "");
+			}
+			return true;
 		}
-		return true;
-	}
 
-	// Division by common factor
-	LinkedHashSet<Integer> numFactors, denFactors;
-	numFactors = AlgebraicTransformations.FIND_PRIME_FACTORS(numValue);
-	denFactors = AlgebraicTransformations.FIND_PRIME_FACTORS(denValue);
+		// Division by common factor
+		LinkedHashSet<Integer> numFactors, denFactors;
+		numFactors = AlgebraicTransformations.FIND_PRIME_FACTORS(numValue);
+		denFactors = AlgebraicTransformations.FIND_PRIME_FACTORS(denValue);
 
-	LinkedHashSet<Integer> matches = new LinkedHashSet<Integer>();
-	a: for (Integer num : numFactors) {
-		for (Integer den : denFactors) {
-			if (num.equals(den) && !matches.contains(den)) {
-				matches.add(den);
-				continue a;
+		LinkedHashSet<Integer> matches = new LinkedHashSet<Integer>();
+		a: for (Integer num : numFactors) {
+			for (Integer den : denFactors) {
+				if (num.equals(den) && !matches.contains(den)) {
+					matches.add(den);
+					continue a;
+				}
 			}
 		}
-	}
 
-	if (matches.size() < 2) {// "1" is always a factor
-		System.out.println("no simpl: " + numValue + " " + denValue);
-		return false;
-	} else if (!execute) {
+		if (matches.size() < 2) {// "1" is always a factor
+			System.out.println("no simpl: " + numValue + " " + denValue);
+			return false;
+		} else if (!execute) {
+			return true;
+		}
+		Integer numNewValue = numValue.intValue();
+		Integer denNewValue = denValue.intValue();
+		for (Integer match : matches) {
+			numNewValue /= match;
+			denNewValue /= match;
+		}
+		numerator.setSymbol(numNewValue.toString());
+		denominator.setSymbol(denNewValue.toString());
+		System.out.println("simpl: " + numValue + "-" + numNewValue + " "
+				+ denValue + "-" + denNewValue);
+
 		return true;
 	}
-	Integer numNewValue = numValue.intValue();
-	Integer denNewValue = denValue.intValue();
-	for (Integer match : matches) {
-		numNewValue /= match;
-		denNewValue /= match;
-	}
-	numerator.setSymbol(numNewValue.toString());
-	denominator.setSymbol(denNewValue.toString());
-	System.out.println("simpl: " + numValue + "-" + numNewValue + " "
-			+ denValue + "-" + denNewValue);
-
-	return true;
-}
 
 }
+
 abstract class FractionTransformButton extends TransformationButton {
 
 	EquationNode fraction;
@@ -111,16 +116,16 @@ abstract class FractionTransformButton extends TransformationButton {
 	TypeSGET denominatorType;
 
 	protected boolean reloadAlgebraActivity;
-	
+
 	public FractionTransformButton(String html, FractionTransformations context) {
 		super(html, context);
 		this.fraction = context.fraction;
 		this.numerator = context.numerator;
 		this.denominator = context.denominator;
-		
+
 		this.numeratorType = context.numeratorType;
 		this.denominatorType = context.denominatorType;
-		
+
 		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
 	}
 
@@ -140,10 +145,10 @@ class SimplifyFractionButton extends FractionTransformButton {
 		denominator.highlight();
 
 		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Simplify Fraction", Rule.SIMPLIFY_FRACTIONS);
+			Moderator.reloadEquationPanel("Simplify Fraction",
+					Rule.SIMPLIFY_FRACTIONS);
 		}
 	}
-
 
 }
 

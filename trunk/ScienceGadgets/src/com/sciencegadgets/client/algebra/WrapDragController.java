@@ -97,6 +97,10 @@ public class WrapDragController extends PickupDragController {
 
 		return proxy;
 	}
+	
+	public DragContext getContext() {
+		return context;
+	}
 
 //	@Override
 //	public void registerDropController(DropController dropC) {
