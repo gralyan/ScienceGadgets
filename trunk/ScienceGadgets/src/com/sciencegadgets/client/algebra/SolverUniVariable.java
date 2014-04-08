@@ -190,8 +190,8 @@ public class SolverUniVariable {
 			side = eTree.getRightSide();
 		}
 
-		if (count > 10) {
-//			 return side;
+		if (count > 30) {
+			 return side;
 		}
 		if (TypeSGET.Number.equals(side.getType())) {
 			return side;
