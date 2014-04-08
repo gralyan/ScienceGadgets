@@ -111,9 +111,6 @@ public class InterFractionTransformations extends
 				&& "1".equals(drag.getSymbol())
 				// Can't remove one if it's the numerator
 				&& !(TypeSGET.Fraction.equals(drag.getParentType()) && drag.getIndex() == 0)) {
-			System.out.println("-------------parent "+drag.getParent());
-			System.out.println("-------------parentType "+drag.getParentType());
-			System.out.println("-------------index "+drag.getIndex());
 			dropTargets.put(target, DropType.REMOVE_ONE);
 			return;
 		}

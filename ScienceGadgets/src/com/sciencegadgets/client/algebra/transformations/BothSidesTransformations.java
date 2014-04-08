@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
@@ -30,6 +31,9 @@ public class BothSidesTransformations extends
 	boolean isSide = false;
 
 	public static final String UP_ARROW = "\u2191";
+	public static final String UP_ARROW_HTML_START = "<div style=\"display:inline-block;vertical-align:middle;\">"
+			+ UP_ARROW;
+	public static final String UP_ARROW_HTML_END = "</div>";
 
 	private static final String PLUS = TypeSGET.Operator.PLUS.getSign();
 	private static final String MINUS = TypeSGET.Operator.MINUS.getSign();
@@ -151,19 +155,23 @@ public class BothSidesTransformations extends
 
 		switch (operation) {
 		case ADD:
-			html = UP_ARROW + PLUS + " " + node.getHTMLString(true, true);
+			html = UP_ARROW_HTML_START + PLUS + UP_ARROW_HTML_END
+					+ node.getHTMLString(true, true);
 			button = new AddOrSubBothButton(operation, html, this, joinedButton);
 			break;
 		case SUBTRACT:
-			html = UP_ARROW + MINUS + " " + node.getHTMLString(true, true);
+			html = UP_ARROW_HTML_START + MINUS + UP_ARROW_HTML_END
+					+ node.getHTMLString(true, true);
 			button = new AddOrSubBothButton(operation, html, this, joinedButton);
 			break;
 		case MULTIPLY:
-			html = UP_ARROW + MULTIPLY + " " + node.getHTMLString(true, true);
+			html = UP_ARROW_HTML_START + MULTIPLY + UP_ARROW_HTML_END
+					+ node.getHTMLString(true, true);
 			button = new MultiplyBothButton(operation, html, this, joinedButton);
 			break;
 		case DIVIDE:
-			html = UP_ARROW + DIVIDE + " " + node.getHTMLString(true, true);
+			html = UP_ARROW_HTML_START + DIVIDE + UP_ARROW_HTML_END
+					+ node.getHTMLString(true, true);
 			button = new DivideBothButton(operation, html, this, joinedButton);
 			break;
 		case INVERSE_EXPONENT:
@@ -260,17 +268,11 @@ public class BothSidesTransformations extends
 		}
 
 		void flash() {
+			final Style style = getElement().getStyle();
 			Animation flash = new Animation() {
-				private Style style;
 				boolean isGettingDarker;
 				int flashCounter = 0;
 				final int FLASH_COUNT = 20;
-
-				@Override
-				protected void onStart() {
-					super.onStart();
-					style = getElement().getStyle();
-				}
 
 				@Override
 				protected void onUpdate(double progress) {
@@ -450,8 +452,8 @@ public class BothSidesTransformations extends
 				}
 			} else {// create node on other side
 				targetSide.append(node.clone());
-				if (TypeSGET.Fraction.equals(oldParent.getType())) {
-					EquationNode denominator = oldParent.getChildAt(1).encase(
+				if (TypeSGET.Fraction.equals(topParent.getType()) && !isSide) {
+					EquationNode denominator = topParent.getChildAt(1).encase(
 							TypeSGET.Term);
 					denominator.append(TypeSGET.Operation, TypeSGET.Operator
 							.getMultiply().getSign());
@@ -479,6 +481,11 @@ public class BothSidesTransformations extends
 		protected void execute() {
 
 			// Prepare Target side
+			// multiplies directly into fraction
+			if ( Moderator.isInEasyMode && TypeSGET.Fraction
+					.equals(targetSide.getType())) {
+				targetSide = targetSide.getFirstChild();
+			}
 			targetSide = targetSide.encase(TypeSGET.Term);
 
 			if (isNestedInFraction && Moderator.isInEasyMode) {
@@ -501,21 +508,23 @@ public class BothSidesTransformations extends
 								+ node.toString());
 			}
 
-			if (!Moderator.isInEasyMode) {
-				node = node.clone();
-				oldParent = oldParent.encase(TypeSGET.Term);
-				oldParent.append(TypeSGET.Operation, Operator.getMultiply()
-						.getSign());
-				oldParent.append(node.clone());
+			if (Moderator.isInEasyMode) {
+				targetSide.append(node);
+			} else {
+				targetSide.append(node.clone());
 			}
 
-			if (TypeSGET.Term.equals(node.getType())) {// Termception
-				for (EquationNode transplants : node.getChildren()) {
-					targetSide.append(transplants);
+			if (!Moderator.isInEasyMode) {
+				node = node.clone();
+				EquationNode sameSideTarget = topParent;
+//				 multiplies directly into fraction
+				if (Moderator.isInEasyMode) {
+					sameSideTarget = topParent.getChildAt(0);
 				}
-				node.remove();
-			} else {
-				targetSide.append(node);
+				sameSideTarget = sameSideTarget.encase(TypeSGET.Term);
+				sameSideTarget.append(TypeSGET.Operation, Operator
+						.getMultiply().getSign());
+				sameSideTarget.append(node.clone());
 			}
 
 			if (Moderator.isInEasyMode) {

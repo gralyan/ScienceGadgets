@@ -354,14 +354,14 @@ public class EquationHTML extends HTML {
 		// lowestBottom = curEl.getAbsoluteBottom();
 
 		// Lift exponents of fraction bases to top
-		if (TypeSGET.Exponential.equals(curType)) {
-			Element base = ((Element) curEl.getChild(0));
-			Element exp = ((Element) curEl.getChild(1));
-			int lift = (exp.getOffsetTop() - base.getOffsetTop());
-			exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
+//		if (TypeSGET.Exponential.equals(curType)) {
+//			Element base = ((Element) curEl.getChild(0));
+//			Element exp = ((Element) curEl.getChild(1));
+//			int lift = (exp.getOffsetTop() - base.getOffsetTop());
+//			exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
 
 			// Align inline siblings flush using padding at highest and lowest
-		} else {
+//		} else {
 			// for (Element child : childrenHorizontal) {
 			// Style s = child.getStyle();
 			//
@@ -382,7 +382,7 @@ public class EquationHTML extends HTML {
 			// s.setPaddingTop(childTopPad / pxPerEm, Unit.EM);
 			// s.setPaddingBottom(childBottomPad / pxPerEm, Unit.EM);
 			// }
-		}
+//		}
 
 	}
 
