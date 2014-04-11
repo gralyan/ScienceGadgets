@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dev.util.collect.HashSet;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -38,9 +39,11 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
-import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.entities.users.Badge;
+import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Prompt;
@@ -65,6 +68,7 @@ public class Moderator implements EntryPoint {
 	private static ConversionActivity conversionActivity;
 
 	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
+	public static Student student;
 	public static boolean isInEasyMode = false;
 
 	@Override
@@ -91,7 +95,7 @@ public class Moderator implements EntryPoint {
 		// } catch (Exception e) {
 		// e.printStackTrace();
 		// }
-		
+
 	}
 
 	public enum ActivityType {
@@ -110,15 +114,23 @@ public class Moderator implements EntryPoint {
 	public static void switchToAlgebra(Element equationXML, boolean inEditMode) {
 		switchToAlgebra(equationXML, inEditMode, true);
 	}
-	public static void switchToAlgebra(Element equationXML, boolean inEditMode, boolean updateHistory) {
-		switchToAlgebra(new EquationTree(equationXML, inEditMode), inEditMode, updateHistory);
+
+	public static void switchToAlgebra(Element equationXML, boolean inEditMode,
+			boolean updateHistory) {
+		switchToAlgebra(new EquationTree(equationXML, inEditMode), inEditMode,
+				updateHistory);
 	}
-	public static void switchToAlgebra(EquationTree equationTree, boolean inEditMode) {
+
+	public static void switchToAlgebra(EquationTree equationTree,
+			boolean inEditMode) {
 		switchToAlgebra(equationTree, inEditMode, true);
 	}
-	public static void switchToAlgebra(EquationTree equationTree, boolean inEditMode, boolean updateHistory) {
+
+	public static void switchToAlgebra(EquationTree equationTree,
+			boolean inEditMode, boolean updateHistory) {
 		try {
-			if (algebraActivity == null || algebraActivity.inEditMode != inEditMode) {
+			if (algebraActivity == null
+					|| algebraActivity.inEditMode != inEditMode) {
 				algebraActivity = new AlgebraActivity(equationTree, inEditMode);
 			} else {
 				algebraActivity.setEquationTree(equationTree);
@@ -163,7 +175,7 @@ public class Moderator implements EntryPoint {
 		return algebraActivity.getEquationTree();
 	}
 
-	public static void reloadEquationPanel(String changeComment, Rule rule) {
+	public static void reloadEquationPanel(String changeComment, Skill rule) {
 		algebraActivity.reloadEquationPanel(changeComment, rule);
 	}
 
@@ -186,6 +198,26 @@ public class Moderator implements EntryPoint {
 		@Override
 		public void onResize(ResizeEvent event) {
 			resizeTimer.schedule(250);
+		}
+	}
+
+	public static boolean meetsRequirement(Badge badge) {
+		if (student == null || badge == null) {
+			return false;
+		} else if (isInEasyMode) {
+			return true;
+		} else {
+			return student.hasBadge(badge);
+		}
+	}
+
+	public static boolean meetsRequirements(HashSet<Badge> badges) {
+		if (student == null || badges == null) {
+			return false;
+		} else if (isInEasyMode) {
+			return true;
+		} else {
+			return student.hasBadges(badges);
 		}
 	}
 
@@ -221,7 +253,7 @@ public class Moderator implements EntryPoint {
 
 		@Override
 		public void onValueChange(ValueChangeEvent<String> event) {
-//			String token = event.getValue();
+			// String token = event.getValue();
 
 			HashMap<Parameter, String> parameterMap = URLParameters
 					.getParameterMap();
@@ -237,7 +269,8 @@ public class Moderator implements EntryPoint {
 					Element equationXML = new HTML(equationString).getElement()
 							.getFirstChildElement();
 					switchToAlgebra(equationXML,
-							ActivityType.algebraedit.equals(activityType), false);
+							ActivityType.algebraedit.equals(activityType),
+							false);
 					break;
 				default:
 					throw new IllegalArgumentException();

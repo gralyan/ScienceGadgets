@@ -71,7 +71,7 @@ public class AssociativeDropController extends TransformationDropController {
 			parent.addBefore(dropIndex, drag);
 
 		}
-		Moderator.reloadEquationPanel("Associative Property", Rule.COMMUNATIVE_PROPERTY);
+		Moderator.reloadEquationPanel("Associative Property", Skill.COMMUNATIVE_PROPERTY);
 	}
 
 }

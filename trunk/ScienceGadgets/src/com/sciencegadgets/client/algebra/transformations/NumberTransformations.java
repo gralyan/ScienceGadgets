@@ -130,7 +130,7 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 
 			Moderator.reloadEquationPanel(original + " = " + factor + " "
 					+ Operator.getMultiply().getSign() + " " + factored,
-					Rule.INTEGER_FACTORIZATION);
+					Skill.INTEGER_FACTORIZATION);
 
 			prompt.disappear();
 		}

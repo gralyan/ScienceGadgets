@@ -22,7 +22,7 @@ import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
-import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.ui.CSS;
@@ -118,7 +118,7 @@ public class AlgebraActivity extends SimplePanel {
 		equationTree = eTree;
 	}
 
-	public void reloadEquationPanel(String changeComment, Rule rule) {
+	public void reloadEquationPanel(String changeComment, Skill rule) {
 		reloadEquationPanel(changeComment, rule, true);
 	}
 
@@ -128,7 +128,7 @@ public class AlgebraActivity extends SimplePanel {
 	 * @param changeComment
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
-	public void reloadEquationPanel(String changeComment, Rule rule,
+	public void reloadEquationPanel(String changeComment, Skill rule,
 			boolean updateHistory) {
 		
 		if (!inEditMode && changeComment != null) {

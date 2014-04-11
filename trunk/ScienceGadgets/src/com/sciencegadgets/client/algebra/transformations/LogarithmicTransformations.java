@@ -85,7 +85,7 @@ public class LogarithmicTransformations extends
 					&& exponentialBase.getSymbol().equals(
 							log.getAttribute(MathAttribute.LogBase))) {
 				EquationNode exponentialExp = exponential.getChildAt(1);
-				return new LogUnravelButton(log, exponentialExp, Rule.LOGARITHM,
+				return new LogUnravelButton(log, exponentialExp, Skill.LOG_INVERSE,
 						this);
 			}
 		}
@@ -159,7 +159,7 @@ class LogEvaluateButton extends LogTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("log<sub>" + base + "</sub>("
-					+ argValue + ") = " + total, Rule.LOGARITHM);
+					+ argValue + ") = " + total, Skill.LOG_EVALUATE);
 		}
 	}
 
@@ -203,7 +203,7 @@ class LogChangeBaseButton extends LogTransformButton {
 							Moderator
 									.reloadEquationPanel(
 											"log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)",
-											Rule.LOGARITHM);
+											Skill.LOG_CHANGE_BASE);
 						}
 					}
 				};
@@ -254,7 +254,7 @@ class LogProductButton extends LogTransformButton {
 			Moderator
 					.reloadEquationPanel(
 							"log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)",
-							Rule.LOGARITHM);
+							Skill.LOG_PRODUCT);
 		}
 	}
 
@@ -301,7 +301,7 @@ class LogQuotientButton extends LogTransformButton {
 			Moderator
 					.reloadEquationPanel(
 							"log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)",
-							Rule.LOGARITHM);
+							Skill.LOG_QUOTIENT);
 		}
 	}
 
@@ -337,7 +337,7 @@ class LogPowerButton extends LogTransformButton {
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(
 					"log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)",
-					Rule.LOGARITHM);
+					Skill.LOG_POWER);
 		}
 	}
 
@@ -363,7 +363,7 @@ class LogOneButton extends LogTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("log<sub>b</sub>(1) = 0",
-					Rule.LOGARITHM);
+					Skill.LOG_ONE);
 		}
 	}
 
@@ -389,7 +389,7 @@ class LogSameBaseAsArgumentButton extends LogTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("log<sub>b</sub>(b) = 1",
-					Rule.LOGARITHM);
+					Skill.LOG_SAME_BASE_ARGUMENT);
 		}
 	}
 
@@ -407,10 +407,10 @@ class LogUnravelButton extends LogTransformButton {
 
 	private EquationNode toReplace;
 	private EquationNode replacement;
-	private Rule rule;
+	private Skill rule;
 
 	public LogUnravelButton(final EquationNode toReplace, final EquationNode replacement,
-			final Rule rule, LogarithmicTransformations context) {
+			final Skill rule, LogarithmicTransformations context) {
 		super(context, replacement.getHTMLString(true, true));
 		this.rule = rule;
 		this.toReplace = toReplace;

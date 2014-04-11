@@ -10,6 +10,7 @@ import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
+import com.sciencegadgets.client.entities.users.Badge;
 
 public class AdditionTransformations extends
 		TransformationList<AddTransformButton> {
@@ -136,8 +137,7 @@ public class AdditionTransformations extends
 		if (isMinusBeforeLeft) {
 			return null;
 		}
-		if (!TypeSGET.Log.equals(leftType)
-				|| !TypeSGET.Log.equals(rightType)) {
+		if (!TypeSGET.Log.equals(leftType) || !TypeSGET.Log.equals(rightType)) {
 			return null;
 		}
 		if (left.getAttribute(MathAttribute.LogBase).equals(
@@ -206,8 +206,7 @@ class AddZeroButton extends AddTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		zero.highlight();
 
 		if (isMinus && other.getIndex() > zero.getIndex()) {
@@ -220,7 +219,7 @@ class AddZeroButton extends AddTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(other.getHTML(true, true) + " + 0 = "
-					+ other.getHTML(true, true), Rule.ADDITION);
+					+ other.getHTML(true, true), Skill.ADDITION_WITH_ZERO);
 		}
 	}
 
@@ -242,8 +241,7 @@ class AddNumbersButton extends AddTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 
 		if (!left.getUnitAttribute().equals(right.getUnitAttribute())) {
 			Window.alert("You can only add quantities with similar units.\nPlease convert first.");
@@ -267,7 +265,10 @@ class AddNumbersButton extends AddTransformButton {
 		}
 		final BigDecimal totalValue = total;
 
-		if (Moderator.isInEasyMode) {
+		boolean meetsRequirements = Moderator.meetsRequirements(Badge
+				.getRequiredBadges(operation.getOperation(), left, right));
+
+		if (meetsRequirements) {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else if (!reloadAlgebraActivity) {
@@ -316,7 +317,7 @@ class AddNumbersButton extends AddTransformButton {
 					+ rightValue.stripTrailingZeros().toEngineeringString()
 					+ " = "
 					+ totalValue.stripTrailingZeros().toEngineeringString(),
-					Rule.ADDITION);
+					Skill.ADDITION);
 		}
 	}
 
@@ -340,8 +341,7 @@ class AddSimilarButton extends AddTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 
 		right.highlight();
 		operation.highlight();
@@ -363,8 +363,7 @@ class AddSimilarButton extends AddTransformButton {
 			// Remove residual operations
 			EquationNode leftOp = left.getPrevSibling();
 			EquationNode rightNext = right.getNextSibling();
-			if (leftOp != null
-					&& TypeSGET.Operation.equals(leftOp.getType())) {
+			if (leftOp != null && TypeSGET.Operation.equals(leftOp.getType())) {
 				leftOp.remove();
 			} else if (rightNext != null
 					&& TypeSGET.Operation.equals(rightNext.getType())) {
@@ -380,7 +379,7 @@ class AddSimilarButton extends AddTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Add similar",
-					Rule.COMBINING_LIKE_TERMS);
+					Skill.COMBINING_LIKE_TERMS);
 		}
 	}
 
@@ -412,8 +411,7 @@ class ToCommonDenominatorButton extends AddTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 
 		if (nonFrac != null && fraction != null) {// One Fraction
 			nonFrac.highlight();
@@ -421,8 +419,8 @@ class ToCommonDenominatorButton extends AddTransformButton {
 			EquationNode commonDenominator = fraction.getChildAt(1);
 
 			EquationNode nonFracTerm = nonFrac.encase(TypeSGET.Term);
-			nonFracTerm.append(TypeSGET.Operation, Operator
-					.getMultiply().getSign());
+			nonFracTerm.append(TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
 			nonFracTerm.append(commonDenominator.clone());
 
 			EquationNode nonFracFraction = nonFracTerm
@@ -436,34 +434,32 @@ class ToCommonDenominatorButton extends AddTransformButton {
 			EquationNode commonLeft = left.getChildAt(1).clone();
 			EquationNode commonRight = right.getChildAt(1).clone();
 
-			EquationNode leftNumTerm = left.getChildAt(0).encase(
-					TypeSGET.Term);
-			leftNumTerm.append(TypeSGET.Operation, Operator
-					.getMultiply().getSign());
+			EquationNode leftNumTerm = left.getChildAt(0).encase(TypeSGET.Term);
+			leftNumTerm.append(TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
 			leftNumTerm.append(commonRight.clone());
 
 			EquationNode rightNumTerm = right.getChildAt(0).encase(
 					TypeSGET.Term);
-			rightNumTerm.append(TypeSGET.Operation, Operator
-					.getMultiply().getSign());
+			rightNumTerm.append(TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
 			rightNumTerm.append(commonLeft.clone());
 
-			EquationNode leftDenTerm = left.getChildAt(1).encase(
-					TypeSGET.Term);
-			leftDenTerm.append(TypeSGET.Operation, Operator
-					.getMultiply().getSign());
+			EquationNode leftDenTerm = left.getChildAt(1).encase(TypeSGET.Term);
+			leftDenTerm.append(TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
 			leftDenTerm.append(commonRight);
 
 			EquationNode rightDenTerm = right.getChildAt(1).encase(
 					TypeSGET.Term);
-			rightDenTerm.append(TypeSGET.Operation, Operator
-					.getMultiply().getSign());
+			rightDenTerm.append(TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
 			rightDenTerm.append(commonLeft);
 		}
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Common Denominator",
-					Rule.FRACTION_ADDITION);
+					Skill.COMMON_DENOMINATOR);
 		}
 	}
 
@@ -483,8 +479,7 @@ class AddFractionsButton extends AddTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 
 		right.highlight();
 		operation.highlight();
@@ -495,8 +490,7 @@ class AddFractionsButton extends AddTransformButton {
 			AlgebraicTransformations.propagateNegative(left);
 		}
 
-		EquationNode numeratorCasing = right.getChildAt(0).encase(
-				TypeSGET.Sum);
+		EquationNode numeratorCasing = right.getChildAt(0).encase(TypeSGET.Sum);
 		numeratorCasing.addFirst(operation);
 		numeratorCasing.addFirst(left.getChildAt(0));
 
@@ -505,7 +499,7 @@ class AddFractionsButton extends AddTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Add Fractions",
-					Rule.FRACTION_ADDITION);
+					Skill.ADDING_FRACTIONS);
 		}
 	}
 
@@ -527,8 +521,7 @@ class AddLogsButton extends AddTransformButton {
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		left.highlight();
 		right.highlight();
 
@@ -538,8 +531,8 @@ class AddLogsButton extends AddTransformButton {
 			newLogChild = leftChild.encase(TypeSGET.Fraction);
 		} else {
 			newLogChild = leftChild.encase(TypeSGET.Term);
-			newLogChild.append(TypeSGET.Operation, Operator
-					.getMultiply().getSign());
+			newLogChild.append(TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
 		}
 		newLogChild.append(right.getFirstChild());
 
@@ -549,7 +542,7 @@ class AddLogsButton extends AddTransformButton {
 		parent.decase();
 
 		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Combine Log", Rule.LOGARITHM);
+			Moderator.reloadEquationPanel("Combine Log", Skill.LOG_ADDITION);
 		}
 
 	}

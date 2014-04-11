@@ -6,6 +6,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
@@ -306,7 +307,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(
 					otherSymbol + " " + operation.toString() + " 0 = 0",
-					Rule.MULTIPLICATION);
+					Skill.MULTIPLY_WITH_ZERO);
 
 		}
 	}
@@ -345,7 +346,7 @@ class MultiplyOneButton extends MultiplyTransformButton {
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(
 					otherSymbol + " " + operation.toString() + " 1 = "
-							+ otherSymbol, Rule.MULTIPLICATION);
+							+ otherSymbol, Skill.MULTIPLY_WITH_ONE);
 
 		}
 	}
@@ -386,7 +387,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(
 					otherSymbol + " " + operation.toString() + " -1 = -"
-							+ otherSymbol, Rule.MULTIPLICATION);
+							+ otherSymbol, Skill.MULTIPLY_WITH_NEGATIVE_ONE);
 
 		}
 	}
@@ -413,7 +414,10 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		final BigDecimal totalValue = leftValue.multiply(rightValue);
 
-		if (Moderator.isInEasyMode) {
+		boolean meetsRequirements = Moderator.meetsRequirements(Badge
+				.getRequiredBadges(operation.getOperation(), left, right));
+
+		if (meetsRequirements) {
 			multiplyNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else if (!reloadAlgebraActivity) {
@@ -465,7 +469,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 					+ rightValue.stripTrailingZeros().toEngineeringString()
 					+ " = "
 					+ totalValue.stripTrailingZeros().toEngineeringString(),
-					Rule.MULTIPLICATION);
+					Skill.MULTIPLICATION);
 		}
 	}
 
@@ -514,7 +518,7 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Distribute",
-					Rule.DISTRIBUTIVE_PROPERTY);
+					Skill.DISTRIBUTIVE_PROPERTY);
 
 		}
 	}
@@ -551,7 +555,7 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Combine Exponents",
-					Rule.EXPONENT_PROPERTIES);
+					Skill.MULTIPLY_SIMILAR_EXPONENTS);
 
 		}
 	}
@@ -591,7 +595,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 		EquationNode leftExp = leftExponential.getChildAt(1);
 		EquationNode rightExp = rightExponential.getChildAt(1);
 
-		if (Moderator.isInEasyMode && TypeSGET.Number.equals(leftExp.getType())
+		if (Moderator.meetsRequirement(Badge.MULTIPLY_COMBINE_BASES) && TypeSGET.Number.equals(leftExp.getType())
 				&& TypeSGET.Number.equals(rightExp.getType())) {
 			BigDecimal leftValue = new BigDecimal(
 					leftExp.getAttribute(MathAttribute.Value));
@@ -614,7 +618,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Combine Bases",
-					Rule.EXPONENT_PROPERTIES);
+					Skill.MULTIPLY_SIMILAR_BASES);
 
 		}
 	}
@@ -656,7 +660,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Multiply with Fraction",
-					Rule.FRACTION_MULTIPLICATION);
+					Skill.MULTIPLYING_WITH_FRACTIONs);
 
 		}
 	}
@@ -694,7 +698,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Multiply Fractions",
-					Rule.FRACTION_MULTIPLICATION);
+					Skill.MULTIPLYING_FRACTIONs);
 
 		}
 	}
@@ -730,7 +734,7 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 		parent.decase();
 
 		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Log Power Rule", Rule.LOGARITHM);
+			Moderator.reloadEquationPanel("Log Power Rule", Skill.MULTIPLY_WITH_LOG);
 		}
 	}
 
