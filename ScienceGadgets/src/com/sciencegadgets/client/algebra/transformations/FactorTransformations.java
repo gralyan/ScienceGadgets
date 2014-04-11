@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.FactorTransformations.Match;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
 
@@ -173,7 +174,7 @@ class FactorButton extends AddTransformButton {
 		}
 
 		// Combine like terms if appropriate
-		if (Moderator.isInEasyMode && sum.getChildCount() == 3) {
+		if (Moderator.meetsRequirement(Badge.COMBINE_LIKE_TERMS) && sum.getChildCount() == 3) {
 			EquationNode sumLeft = sum.getChildAt(0);
 			EquationNode sumOP = sum.getChildAt(1);
 			EquationNode sumRight = sum.getChildAt(2);
@@ -199,7 +200,7 @@ class FactorButton extends AddTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Factor " + getHTML(),
-					Rule.FACTORIZATION);
+					Skill.FACTORIZATION);
 		}
 	}
 	
@@ -228,7 +229,7 @@ class FactorButton extends AddTransformButton {
 			break;
 		case Exponential:
 			EquationNode exponent = toFactor.getNextSibling();
-			if (Moderator.isInEasyMode
+			if (Moderator.meetsRequirement(Badge.EXP_ONE)
 					&& TypeSGET.Number.equals(exponent.getType())) {
 				BigDecimal expValue = new BigDecimal(exponent.getSymbol());
 				if (expValue.compareTo(new BigDecimal("2")) == 0) {

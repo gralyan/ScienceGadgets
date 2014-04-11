@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
-import com.sciencegadgets.client.algebra.transformations.Rule;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.CSS;
 
 public class AlgebraHistory extends FlowPanel {
@@ -75,7 +75,7 @@ public class AlgebraHistory extends FlowPanel {
 		firstRow.setSize("100%", getOffsetHeight() + "px");
 	}
 
-	public void updateAlgebraHistory(String changeComment, Rule rule, EquationTree mathTree) {
+	public void updateAlgebraHistory(String changeComment, Skill rule, EquationTree mathTree) {
 
 		changeComment = changeComment.replace("lineThrough", "");
 		
@@ -108,7 +108,7 @@ public class AlgebraHistory extends FlowPanel {
 		}
 
 		// Equation row
-		AlgebraHistoryRow(String changeComment, Rule rule, EquationTree mathTree) {
+		AlgebraHistoryRow(String changeComment, Skill rule, EquationTree mathTree) {
 			this(mathTree.getDisplay());
 
 			ruleSide.setHTML(changeComment);

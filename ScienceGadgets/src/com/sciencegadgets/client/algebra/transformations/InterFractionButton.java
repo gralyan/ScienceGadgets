@@ -8,6 +8,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.InterFractionTransformations.DropType;
 import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeSGET;
@@ -108,7 +109,10 @@ public EquationNode getTarget() {
 			final BigDecimal total = targetNumber.divide(dragNumber,
 					MathContext.DECIMAL128);
 
-			if (Moderator.isInEasyMode) {
+			boolean meetsRequirements = Moderator.meetsRequirements(Badge
+					.getRequiredBadges(TypeSGET.Operator.DIVIDE, target, drag));
+
+			if (meetsRequirements) {
 				divide(total);
 
 			} else {// prompt
@@ -210,7 +214,7 @@ public EquationNode getTarget() {
 	private void exponentialDrop() {
 		EquationNode dragExp = drag.getChildAt(1);
 		EquationNode targetExp = target.getChildAt(1);
-		if (Moderator.isInEasyMode && TypeSGET.Number.equals(dragExp.getType())
+		if (Moderator.meetsRequirement(Badge.EXP_DROP_ARITHMETIC) && TypeSGET.Number.equals(dragExp.getType())
 				&& TypeSGET.Number.equals(targetExp.getType())) {
 			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
 			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
@@ -242,20 +246,20 @@ public EquationNode getTarget() {
 		switch (dropType) {
 		case CANCEL:
 		case REMOVE_ONE:
-			Moderator.reloadEquationPanel(dropHTML, Rule.CANCELLING_FRACTIONS);
+			Moderator.reloadEquationPanel(dropHTML, Skill.CANCELLING_FRACTIONS);
 			break;
 		case DIVIDE:
-			Moderator.reloadEquationPanel(dropHTML, Rule.DIVISION);
+			Moderator.reloadEquationPanel(dropHTML, Skill.DIVISION);
 			break;
 		case EXPONENTIAL:
-			Moderator.reloadEquationPanel(dropHTML, Rule.EXPONENT_PROPERTIES);
+			Moderator.reloadEquationPanel(dropHTML, Skill.DIVIDING_EXPONENTIALS);
 			break;
 		case LOG_COMBINE:
-			Moderator.reloadEquationPanel(dropHTML, Rule.LOGARITHM);
+			Moderator.reloadEquationPanel(dropHTML, Skill.LOG_CHANGE_BASE_DIVIDE);
 			break;
 		case TRIG_COMBINE:
 			Moderator.reloadEquationPanel(dropHTML,
-					Rule.TRIGONOMETRIC_FUNCTIONS);
+					Skill.COMBINE_TRIG);
 			break;
 		}
 	}

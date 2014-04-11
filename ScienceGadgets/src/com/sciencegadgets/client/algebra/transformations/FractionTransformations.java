@@ -146,7 +146,7 @@ class SimplifyFractionButton extends FractionTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Simplify Fraction",
-					Rule.SIMPLIFY_FRACTIONS);
+					Skill.SIMPLIFY_FRACTIONS);
 		}
 	}
 
@@ -191,6 +191,6 @@ class DenominatorFlipButton extends FractionTransformButton {
 		parentFraction.remove();
 
 		Moderator.reloadEquationPanel("Multiply by Resiprocal",
-				Rule.FRACTION_DIVISION);
+				Skill.DIVIDING_FRACTIONS);
 	}
 }

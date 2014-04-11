@@ -101,7 +101,7 @@ public enum TypeSGET {
 	public enum Operator {
 		Equals("\u003D", "&#x3d;"), DOT("\u00B7", "&middot;"), SPACE("\u00A0",
 				"&nbsp;"), CROSS("\u00D7", "&times;"), PLUS("\u002B", "&#43;"), MINUS(
-				"\u002D", "&#45;"), DIVIDE("\u00F7", "&#247;");
+				"\u002D", "&#45;"), DIVIDE("\u00F7", "&#247;"), POW("\u0302","&#770;");
 
 		private String sign;
 		private String html;

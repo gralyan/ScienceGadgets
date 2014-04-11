@@ -67,7 +67,7 @@ public class TrigTransformations extends
 			String trigFunc = trig.getAttribute(MathAttribute.Function);
 			if (trigFunc.equals(trigChildFuncInverse)) {
 				return new TrigUnravelButton(trig, trigChild.getFirstChild(),
-						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS, this);
+						Skill.TRIG_FUNCTIONS_INVERSE, this);
 			}
 		}
 		return null;
@@ -156,7 +156,7 @@ class TrigDefineButton extends TrigTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(getHTML(),
-					Rule.TRIGONOMETRIC_FUNCTIONS);
+					Skill.TRIGONOMETRIC_FUNCTIONS);
 		}
 	}
 
@@ -205,7 +205,7 @@ class TrigReciprocalButton extends TrigTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(getHTML(),
-					Rule.TRIGONOMETRIC_FUNCTIONS);
+					Skill.TRIG_FUNCTIONS_RECIPROCAL);
 		}
 	}
 
@@ -224,10 +224,10 @@ class TrigUnravelButton extends TrigTransformButton {
 
 	private EquationNode toReplace;
 	private EquationNode replacement;
-	private Rule rule;
+	private Skill rule;
 
 	public TrigUnravelButton(final EquationNode toReplace, final EquationNode replacement,
-			final Rule rule, TrigTransformations context) {
+			final Skill rule, TrigTransformations context) {
 		super(context);
 		setHTML(replacement.getHTMLString(true, true));
 		this.rule = rule;

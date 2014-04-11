@@ -2,7 +2,6 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
@@ -10,6 +9,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
@@ -152,45 +152,54 @@ public class BothSidesTransformations extends
 			BothSidesButton joinedButton) {
 		String html;
 		BothSidesButton button = null;
+		Badge badge = null;
 
 		switch (operation) {
 		case ADD:
+			badge = Badge.BOTH_SIDES_ADD;
 			html = UP_ARROW_HTML_START + PLUS + UP_ARROW_HTML_END
 					+ node.getHTMLString(true, true);
 			button = new AddOrSubBothButton(operation, html, this, joinedButton);
 			break;
 		case SUBTRACT:
+			badge = Badge.BOTH_SIDES_SUBTRACT;
 			html = UP_ARROW_HTML_START + MINUS + UP_ARROW_HTML_END
 					+ node.getHTMLString(true, true);
 			button = new AddOrSubBothButton(operation, html, this, joinedButton);
 			break;
 		case MULTIPLY:
+			badge = Badge.BOTH_SIDES_MULTIPLY;
 			html = UP_ARROW_HTML_START + MULTIPLY + UP_ARROW_HTML_END
 					+ node.getHTMLString(true, true);
 			button = new MultiplyBothButton(operation, html, this, joinedButton);
 			break;
 		case DIVIDE:
+			badge = Badge.BOTH_SIDES_DIVIDE;
 			html = UP_ARROW_HTML_START + DIVIDE + UP_ARROW_HTML_END
 					+ node.getHTMLString(true, true);
 			button = new DivideBothButton(operation, html, this, joinedButton);
 			break;
 		case INVERSE_EXPONENT:
+			badge = Badge.BOTH_SIDES_INVERSE_EXPONENT;
 			html = UP_ARROW + "<sup>1/" + node.getHTMLString(true, true)
 					+ "</sup>";
 			button = new RootBothButton(operation, html, this, joinedButton);
 			break;
 		case RAISE:
+			badge = Badge.BOTH_SIDES_RAISE;
 			String base = node.getAttribute(MathAttribute.LogBase);
 			html = base + "<sup>" + UP_ARROW + "</sup>";
 			button = new RaiseBothButton(operation, base, html, this,
 					joinedButton);
 			break;
 		case LOG:
+			badge = Badge.BOTH_SIDES_LOG;
 			html = "log<sub>" + node.getHTMLString(true, true) + "</sub>"
 					+ UP_ARROW;
 			button = new LogBothButton(operation, html, this, joinedButton);
 			break;
 		case INVERSE_TRIG:
+			badge = Badge.BOTH_SIDES_INVERSE_TRIG;
 			String func = node.getAttribute(MathAttribute.Function);
 			String inverseFunc = TrigFunctions.getInverseName(func);
 			html = inverseFunc + "(" + UP_ARROW + ")";
@@ -198,6 +207,7 @@ public class BothSidesTransformations extends
 					this, joinedButton);
 			break;
 		}
+		button.autoCancel = Moderator.meetsRequirement(badge);
 		return button;
 	}
 
@@ -212,6 +222,7 @@ public class BothSidesTransformations extends
 		protected EquationNode targetSide = null;
 		protected String changeComment;
 		EquationNode topParent = null;
+		boolean autoCancel = false;
 
 		BothSidesButton(Math operation, String html,
 				BothSidesTransformations context) {
@@ -332,20 +343,24 @@ public class BothSidesTransformations extends
 
 		@Override
 		protected void execute() {
+			boolean isSubtraction = false;
+
 			// Prepare Target side
 			targetSide = targetSide.encase(TypeSGET.Sum);
 
 			// take operation
 			EquationNode operator = node.getPrevSibling();
 			if (node.getIndex() > 0 && !isSide) {
-				if (!Moderator.isInEasyMode) {
+				if (!autoCancel) {
 					operator = operator.clone();
 				}
 				// Flip sign
 				if (MINUS.equals(operator.getSymbol())) {
 					operator.setSymbol(PLUS);
+					isSubtraction = false;
 				} else if (PLUS.equals(operator.getSymbol())) {
 					operator.setSymbol(MINUS);
+					isSubtraction = true;
 				} else {
 					JSNICalls.warn("Unknown operation, can't flip");
 				}
@@ -354,7 +369,7 @@ public class BothSidesTransformations extends
 				targetSide.append(TypeSGET.Operation, MINUS);
 			}
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				// Leave 0 in old side if top node
 				if (isSide) {
 					node.getParent().addBefore(node.getIndex(),
@@ -385,8 +400,9 @@ public class BothSidesTransformations extends
 			}
 
 			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment,
-						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+				Skill skill = isSubtraction ? Skill.SOLVING_EQUATIONS_SUBTRACT
+						: Skill.SOLVING_EQUATIONS_ADD;
+				Moderator.reloadEquationPanel(changeComment, skill);
 			}
 		}
 
@@ -403,7 +419,7 @@ public class BothSidesTransformations extends
 
 			EquationNode operator = null;
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				if (TypeSGET.Fraction.equals(oldParent.getType())) {
 					// leave 1 in numerator
 					oldParent.addFirst(TypeSGET.Number, "1");
@@ -436,7 +452,7 @@ public class BothSidesTransformations extends
 				}
 			}
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				// move node to other side
 				targetSide.append(node);
 
@@ -466,7 +482,7 @@ public class BothSidesTransformations extends
 
 			if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel(changeComment,
-						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+						Skill.SOLVING_EQUATIONS_DIVIDE);
 			}
 		}
 	}
@@ -480,15 +496,17 @@ public class BothSidesTransformations extends
 		@Override
 		protected void execute() {
 
+			boolean AutoIntoFraction = Moderator
+					.meetsRequirement(Badge.MULTIPLY_WITH_FRACTION);
+
 			// Prepare Target side
-			// multiplies directly into fraction
-			if ( Moderator.isInEasyMode && TypeSGET.Fraction
-					.equals(targetSide.getType())) {
+			if (AutoIntoFraction
+					&& TypeSGET.Fraction.equals(targetSide.getType())) {
 				targetSide = targetSide.getFirstChild();
 			}
 			targetSide = targetSide.encase(TypeSGET.Term);
 
-			if (isNestedInFraction && Moderator.isInEasyMode) {
+			if (isNestedInFraction && autoCancel) {
 				EquationNode operation = null;
 				if (node.getIndex() == 0) {
 					operation = node.getNextSibling();
@@ -499,7 +517,7 @@ public class BothSidesTransformations extends
 						&& TypeSGET.Operation.equals(operation.getType())) {
 					targetSide.append(operation);
 				}
-			} else if (isTopLevel || !Moderator.isInEasyMode) {
+			} else if (isTopLevel || !autoCancel) {
 				targetSide.append(TypeSGET.Operation, TypeSGET.Operator
 						.getMultiply().getSign());
 			} else {
@@ -508,17 +526,16 @@ public class BothSidesTransformations extends
 								+ node.toString());
 			}
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				targetSide.append(node);
 			} else {
 				targetSide.append(node.clone());
 			}
 
-			if (!Moderator.isInEasyMode) {
+			if (!autoCancel) {
 				node = node.clone();
 				EquationNode sameSideTarget = topParent;
-//				 multiplies directly into fraction
-				if (Moderator.isInEasyMode) {
+				if (AutoIntoFraction) {
 					sameSideTarget = topParent.getChildAt(0);
 				}
 				sameSideTarget = sameSideTarget.encase(TypeSGET.Term);
@@ -527,7 +544,7 @@ public class BothSidesTransformations extends
 				sameSideTarget.append(node.clone());
 			}
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				// clean source side
 				if (TypeSGET.Fraction.equals(oldParent.getType())) {
 					// remove unnecessary intermediate fraction
@@ -542,7 +559,7 @@ public class BothSidesTransformations extends
 
 			if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel(changeComment,
-						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+						Skill.SOLVING_EQUATIONS_MULTIPLY);
 			}
 		}
 	}
@@ -579,7 +596,7 @@ public class BothSidesTransformations extends
 				target = targetExp;
 			}
 
-			if (!Moderator.isInEasyMode) {
+			if (!autoCancel) {
 				node = node.clone();
 			}
 
@@ -599,7 +616,7 @@ public class BothSidesTransformations extends
 				frac.append(node);
 			}
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				// clean source side
 				oldParent.replace(oldParent.getFirstChild());
 			} else {
@@ -611,7 +628,7 @@ public class BothSidesTransformations extends
 
 			if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel(changeComment,
-						Rule.SOLVING_ALGEBRAIC_EQUATIONS);
+						Skill.SOLVING_EQUATIONS_EXPONENTIAL);
 			}
 		}
 	}
@@ -642,7 +659,7 @@ public class BothSidesTransformations extends
 			EquationNode targetExp = targetSide.encase(TypeSGET.Exponential);
 			targetExp.addFirst(TypeSGET.Number, base);
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				// clean source side
 				node.replace(node.getFirstChild());
 			} else {
@@ -651,7 +668,8 @@ public class BothSidesTransformations extends
 			}
 
 			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+				Moderator.reloadEquationPanel(changeComment,
+						Skill.SOLVING_EQUATIONS_RAISE);
 			}
 		}
 	}
@@ -679,7 +697,7 @@ public class BothSidesTransformations extends
 			EquationNode targetLog = targetSide.encase(TypeSGET.Log);
 			targetLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				// clean source side
 				node.replace(node.getChildAt(1));
 			} else {
@@ -688,7 +706,8 @@ public class BothSidesTransformations extends
 			}
 
 			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment, Rule.LOGARITHM);
+				Moderator.reloadEquationPanel(changeComment,
+						Skill.SOLVING_EQUATIONS_LOG);
 			}
 		}
 	}
@@ -719,7 +738,7 @@ public class BothSidesTransformations extends
 			EquationNode targetTrig = targetSide.encase(TypeSGET.Trig);
 			targetTrig.setAttribute(MathAttribute.Function, toFunction);
 
-			if (Moderator.isInEasyMode) {
+			if (autoCancel) {
 				// clean source side
 				node.replace(node.getFirstChild());
 			} else {
@@ -729,7 +748,7 @@ public class BothSidesTransformations extends
 
 			if (reloadAlgebraActivity) {
 				Moderator.reloadEquationPanel(changeComment,
-						Rule.INVERSE_TRIGONOMETRIC_FUNCTIONS);
+						Skill.SOLVING_EQUATIONS_INVERSE_TRIG);
 			}
 		}
 	}
