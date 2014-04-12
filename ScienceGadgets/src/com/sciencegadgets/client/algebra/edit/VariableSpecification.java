@@ -16,9 +16,7 @@ import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.shared.TypeSGET;
-import com.sciencegadgets.shared.dimensions.CommonDerivedUnits;
 import com.sciencegadgets.shared.dimensions.CommonVariables;
-import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class VariableSpecification extends QuantitySpecification {
@@ -29,11 +27,8 @@ public class VariableSpecification extends QuantitySpecification {
 	SymbolClickHandler symbolClick = new SymbolClickHandler();
 	SymbolTouchHandler symbolTouch = new SymbolTouchHandler();
 
-	public VariableSpecification(EquationNode mathNode) {
-		super(mathNode, true);
-	}
-	public VariableSpecification(EquationNode mathNode, boolean clearDisplays) {
-		super(mathNode, clearDisplays);
+	public VariableSpecification(EquationNode equationNode, boolean clearDisplays, boolean mustCheckUnits) {
+		super(equationNode, clearDisplays, mustCheckUnits);
 
 		// Symbol Selection
 		symbolPalette.add(new Label("Latin"));
@@ -62,7 +57,7 @@ public class VariableSpecification extends QuantitySpecification {
 					int changed = button.getText().toCharArray()[0] + latinDiff;
 					button.setText("" + (char) changed);
 				}
-				int greekDiff = isLower ?  'Α' - 'α': 'α' - 'Α';
+				int greekDiff = isLower ? 'Α' - 'α' : 'α' - 'Α';
 				for (SymbolButton button : greekButtons) {
 
 					int changed = button.getText().toCharArray()[0] + greekDiff;
@@ -76,12 +71,11 @@ public class VariableSpecification extends QuantitySpecification {
 		unitPalette.add(quantityBox);
 		quantityBox.addStyleName(CSS.FILL_PARENT);
 		quantityBox.quantityBox.addSelectionHandler(new UnitSelectionHandler());
-		
+
 		// Established Selection
 		for (CommonVariables var : CommonVariables.values()) {
-			establishedSelection.add(
-					var.getSymbol() + " - "+var.toString(), null,
-					var);
+			establishedSelection.add(var.getSymbol() + " - " + var.toString(),
+					null, var);
 		}
 		// Handle Established Selection
 		establishedSelection.addSelectionHandler(new SelectionHandler() {
@@ -101,9 +95,9 @@ public class VariableSpecification extends QuantitySpecification {
 	class SymbolButton extends Button {
 		public SymbolButton(String string) {
 			super(string);
-			if(Moderator.isTouch) {
+			if (Moderator.isTouch) {
 				addTouchStartHandler(symbolTouch);
-			}else {
+			} else {
 				addClickHandler(symbolClick);
 			}
 			addStyleName(CSS.SMALLEST_BUTTON);
@@ -118,6 +112,7 @@ public class VariableSpecification extends QuantitySpecification {
 					+ ((Button) event.getSource()).getText());
 		}
 	}
+
 	private class SymbolTouchHandler implements TouchStartHandler {
 		@Override
 		public void onTouchStart(TouchStartEvent event) {
@@ -127,7 +122,8 @@ public class VariableSpecification extends QuantitySpecification {
 		}
 	}
 
-	String extractSymbol() {
+	@Override
+	protected String extractSymbol() {
 		String inputString = symbolDisplay.getText();
 
 		if (inputString == null || inputString.equals("")) {
@@ -145,7 +141,7 @@ public class VariableSpecification extends QuantitySpecification {
 	}
 
 	@Override
-	void setNode(String symbol) {
+	protected void setNode(String symbol) {
 		node = node.replace(TypeSGET.Variable, symbol);
 	}
 }

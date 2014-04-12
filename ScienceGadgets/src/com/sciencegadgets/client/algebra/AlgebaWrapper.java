@@ -16,6 +16,7 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
@@ -48,6 +49,18 @@ public class AlgebaWrapper extends EquationWrapper {
 
 	}
 
+	public void attachButtons() {
+		JSNICalls.TIME_ELAPSED("ATTATCH ");
+		if (simplifyTransformations == null) {
+			simplifyTransformations = TransformationList
+					.FIND_ALL_SIMPLIFY(node);
+			JSNICalls.TIME_ELAPSED("d");
+		}
+		if (bothSidesTransformations == null) {
+			bothSidesTransformations = new BothSidesTransformations(node);
+		}
+	}
+
 	/**
 	 * Highlights the selected wrapper and joiner as well as all the drop
 	 * targets associated with the selected
@@ -56,28 +69,33 @@ public class AlgebaWrapper extends EquationWrapper {
 	public void select() {
 		super.select();
 
+		JSNICalls.TIME_ELAPSED("                  ");
+
 		if (this.equals(eqPanel.selectedWrapper)) {
-			
-			if (simplifyTransformations == null || bothSidesTransformations == null) {
-				simplifyTransformations = TransformationList.FIND_ALL_SIMPLIFY(node);
-				bothSidesTransformations = new BothSidesTransformations(node);
-			}
+			JSNICalls.TIME_ELAPSED("b");
+
+			JSNICalls.TIME_ELAPSED("c");
+			attachButtons();
+			JSNICalls.TIME_ELAPSED("e");
+			JSNICalls.TIME_ELAPSED("f");
 
 			Moderator.getCurrentAlgebraActivity().fillTransformLists(
 					simplifyTransformations, bothSidesTransformations);
+			JSNICalls.TIME_ELAPSED("g");
 		}
+		JSNICalls.TIME_ELAPSED("h");
 	}
 
 	public void unselect() {
 		super.unselect();
-		
-		if(bothSidesTransformations != null) {
-			for(BothSidesButton button : bothSidesTransformations) {
+
+		if (bothSidesTransformations != null) {
+			for (BothSidesButton button : bothSidesTransformations) {
 				button.deselect();
 				button.getJoinedButton().deselect();
 			}
 		}
-		
+
 		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
 	}
 

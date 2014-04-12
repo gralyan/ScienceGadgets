@@ -14,6 +14,7 @@ import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
+import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class NumberSpecification extends QuantitySpecification {
 
@@ -23,11 +24,8 @@ public class NumberSpecification extends QuantitySpecification {
 	String randomness = "";
 	CommonConstants constantSeleced = null;
 
-	public NumberSpecification(EquationNode mathNode) {
-		super(mathNode, true);
-	}
-	public NumberSpecification(EquationNode mathNode, boolean clearDisplays) {
-		super(mathNode, clearDisplays);
+	public NumberSpecification(EquationNode equationNode, boolean clearDisplays, boolean mustCheckUnits) {
+		super(equationNode, clearDisplays, mustCheckUnits);
 
 		// Number Pad
 		numPad = new KeyPadNumerical(symbolDisplay);
@@ -91,7 +89,7 @@ public class NumberSpecification extends QuantitySpecification {
 	}
 
 	@Override
-	String extractSymbol() {
+	protected String extractSymbol() {
 		String inputString = null;
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbolDisplay.getText())) {
 			symbolDisplay.removeStyleName(CSS.INVALID_INPUT);
@@ -112,7 +110,7 @@ public class NumberSpecification extends QuantitySpecification {
 	}
 
 	@Override
-	void setNode(String symbol) {
+	protected void setNode(String symbol) {
 
 		node = node.replace(TypeSGET.Number, symbol);
 

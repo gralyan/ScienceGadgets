@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.animation.client.Animation;
-import com.google.gwt.core.client.Duration;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -13,6 +14,7 @@ import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -83,7 +85,7 @@ public class EquationPanel extends AbsolutePanel {
 	protected void onLoad() {
 		super.onLoad();
 		rootNode = mathTree.getRoot();
-		
+
 		modelEqLayer = new EquationLayer(null, mathTree.getDisplayClone());
 		this.add(modelEqLayer);
 
@@ -93,7 +95,6 @@ public class EquationPanel extends AbsolutePanel {
 		}
 		draw(rootNode, null);
 
-		
 		modelEqLayer.removeFromParent();
 
 		if (!algebraActivity.inEditMode) {
@@ -104,9 +105,9 @@ public class EquationPanel extends AbsolutePanel {
 			for (EquationNode merge : mergeFractionNodes) {
 				placeNextEqWrappers(merge, eqLayerMap.get(merge.getParent()));
 			}
-//			for (EquationWrapper wrap : mathWrappers) {
-//				new InterFractionTransformations(wrap.getNode());
-//			}
+			// for (EquationWrapper wrap : mathWrappers) {
+			// new InterFractionTransformations(wrap.getNode());
+			// }
 		}
 		for (EquationWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
@@ -117,12 +118,11 @@ public class EquationPanel extends AbsolutePanel {
 		}
 
 		// Initialize focus to previous focus before reload
-		focusLayer = setFocus(algebraActivity.focusLayerId);
-		if (focusLayer == null) {
-			focusLayer = eqLayerMap.get(rootNode);
+		if (algebraActivity.focusLayerId == null) {
+			setFocus(eqLayerMap.get(rootNode));
+		} else {
+			setFocus(algebraActivity.focusLayerId);
 		}
-		focusLayer.setVisible(true);
-
 	}
 
 	/**
@@ -181,14 +181,14 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayer = rootLayer;
 
 		} else {
-//			eqLayer = new EquationLayer(node);
+			// eqLayer = new EquationLayer(node);
 			eqLayer = modelEqLayer.clone(node);
 
-//			AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
-//			menuPanel.getElement().setAttribute("id",
-//					"menuLayer-" + node.getId());
-//			menuPanel.addStyleName(CSS.FILL_PARENT);
-//			this.add(menuPanel, 0, 0);
+			// AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
+			// menuPanel.getElement().setAttribute("id",
+			// "menuLayer-" + node.getId());
+			// menuPanel.addStyleName(CSS.FILL_PARENT);
+			// this.add(menuPanel, 0, 0);
 
 			eqLayer.setParentLayer(parentLayer);
 			eqLayerMap.put(node, eqLayer);
@@ -211,50 +211,50 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
-	private void placeNextEqWrappers(EquationNode parentNode, EquationLayer eqLayer) {
+	private void placeNextEqWrappers(EquationNode parentNode,
+			EquationLayer eqLayer) {
 
 		LinkedList<EquationNode> childNodes = parentNode.getChildren();
-			if(parentNode.equals(mathTree.getRoot())) {
-				childNodes.remove(1);
-			}
-			
-			if (mergeRootNodes.contains(parentNode)) {
-				parentNode = rootNode;
-			} else if (mergeFractionNodes.contains(parentNode)) {
-				parentNode = parentNode.getParent();
-			}
-			
-			String parentId = parentNode.getId();
-			
-			Element layerParentNode = DOM
-					.getElementById(parentId + OF_LAYER
-							+ parentId);
-			if(layerParentNode != null) {
-				layerParentNode.addClassName(CSS.DISPLAY_WRAPPER);
-			}else if(TypeSGET.Equation.equals(parentNode.getType())){
-				Element layerEqNode = DOM
-						.getElementById(EQ_OF_LAYER	+ parentId);
-				layerEqNode.addClassName(CSS.DISPLAY_WRAPPER);
-			}
-				
+		if (parentNode.equals(mathTree.getRoot())) {
+			childNodes.remove(1);
+		}
+
+		if (mergeRootNodes.contains(parentNode)) {
+			parentNode = rootNode;
+		} else if (mergeFractionNodes.contains(parentNode)) {
+			parentNode = parentNode.getParent();
+		}
+
+		String parentId = parentNode.getId();
+
+		Element layerParentNode = DOM.getElementById(parentId + OF_LAYER
+				+ parentId);
+		if (layerParentNode != null) {
+			layerParentNode.addClassName(CSS.DISPLAY_WRAPPER);
+		} else if (TypeSGET.Equation.equals(parentNode.getType())) {
+			Element layerEqNode = DOM.getElementById(EQ_OF_LAYER + parentId);
+			layerEqNode.addClassName(CSS.DISPLAY_WRAPPER);
+		}
+
 		for (EquationNode node : childNodes) {
-			
+
 			if (!algebraActivity.inEditMode) {
 				if (mergeRootNodes.contains(node)
 						|| mergeFractionNodes.contains(node)) {
 					continue;
 				}
 			}
-			Element layerNode = DOM
-					.getElementById(node.getId() + OF_LAYER
-							+ parentId);
+			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
+					+ parentId);
 
 			if (algebraActivity.inEditMode) {// Edit Mode
-				EditWrapper wrap = new EditWrapper(node, algebraActivity, layerNode);
+				EditWrapper wrap = new EditWrapper(node, algebraActivity,
+						layerNode);
 				eqLayer.addWrapper(wrap);
 				mathWrappers.add(wrap);
 			} else {// Solver Mode
-				AlgebaWrapper wrap = new AlgebaWrapper(node, algebraActivity, layerNode);
+				AlgebaWrapper wrap = new AlgebaWrapper(node, algebraActivity,
+						layerNode);
 				eqLayer.addWrapper(wrap);
 				mathWrappers.add(wrap);
 			}
@@ -294,15 +294,51 @@ public class EquationPanel extends AbsolutePanel {
 			}
 		}
 
-		newFocus.setOpacity(0);
 		newFocus.setVisible(true);
+		if (prevFocus != null) {
+			prevFocus.setVisible(false);
+		}
 
-		Animation fade = new LayerFade(newFocus, prevFocus);
-		fade.run(300, Duration.currentTimeMillis() - 100);
+		// newFocus.setOpacity(0);
+		// Animation fade = new LayerFade(newFocus, prevFocus);
+		// fade.run(3, Duration.currentTimeMillis() - 100);
 
 		focusLayer = newFocus;
 		algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
 				"id");
+
+		JSNICalls.warn("setF 5");
+		if (!algebraActivity.inEditMode) {
+			JSNICalls.warn("setF 6");
+			Scheduler.get().scheduleIncremental(
+					new PrepareWrappersInLayer(newFocus.getWrappers()));
+		}
+	}
+
+	private class PrepareWrappersInLayer implements RepeatingCommand {
+		LinkedList<Wrapper> wrappers;
+		int wrapperCount = 0;
+		int currentIndex = 0;
+
+		PrepareWrappersInLayer(LinkedList<Wrapper> wrappers) {
+			JSNICalls.debug(" WRAPPERS " + wrappers.size() + wrappers);
+			this.wrappers = wrappers;
+			this.wrapperCount = wrappers.size();
+		}
+
+		@Override
+		public boolean execute() {
+			if (currentIndex >= wrapperCount) {
+				return false;
+			}
+			JSNICalls.debug("RELOAD WRAPPERS " + wrappers.size() + wrappers);
+			JSNICalls.TIME_ELAPSED("INCREM ");
+			JSNICalls.TIME_ELAPSED("WRAP ");
+			((AlgebaWrapper) wrappers.get(currentIndex)).attachButtons();
+			JSNICalls.TIME_ELAPSED("WRAP2 ");
+			currentIndex++;
+			return true;
+		}
 
 	}
 

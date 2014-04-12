@@ -4,13 +4,16 @@ import com.google.gwt.dom.client.Element;
 
 public class JSNICalls {
 
-	public static native void parseMathJax(String areaId) /*-{
-		$doc.prettify(areaId);
-	}-*/;
+	private static long lastTime = 0;
 
-	public static native void parseMathJax(Element element) /*-{
-		$doc.prettify(element);
-	}-*/;
+	public static void TIME_ELAPSED(String placementMessage) {
+		long current = System.currentTimeMillis();
+		long elapsed = (current - lastTime);
+		if(elapsed > 50) {
+		JSNICalls.log(placementMessage + " " + elapsed);
+		}
+		lastTime = current;
+	}
 
 	public static native double getElementWidth(Element elm) /*-{
 
@@ -59,6 +62,5 @@ public class JSNICalls {
 			return element.xml;
 		}
 	}-*/;
-	
 
 }

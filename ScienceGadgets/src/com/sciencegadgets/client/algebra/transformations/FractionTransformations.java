@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
 
@@ -44,7 +45,7 @@ public class FractionTransformations extends
 			} else {
 				return null;
 			}
-		} catch (ArithmeticException|NumberFormatException e) {
+		} catch (ArithmeticException | NumberFormatException e) {
 			return null;
 		}
 	}
@@ -166,29 +167,67 @@ class DenominatorFlipButton extends FractionTransformButton {
 
 		denominator.highlight();
 
-		EquationNode frac = denominator;
-		if (!TypeSGET.Fraction.equals(denominator.getType())) {
-			frac = denominator.encase(TypeSGET.Fraction);
-			frac.append(TypeSGET.Number, "1");
+		// The easy mode is only useful if the numerator or denominator are fractions
+		if (Moderator.meetsRequirement(Badge.DENIMINATOR_FLIP_MULTIPLY) && (TypeSGET.Fraction.equals(denominatorType) || TypeSGET.Fraction.equals(numeratorType))) {
+			
+			boolean removeOldDenominator = false;
+			EquationNode bottomNumerator = null, bottomDenominator = null;
+			if(TypeSGET.Fraction.equals(denominatorType)) {
+				bottomNumerator = denominator.getChildAt(0);
+				bottomDenominator = denominator.getChildAt(1);
+				removeOldDenominator = true;
+			}else {
+				bottomNumerator = denominator;
+			}
+			
+			EquationNode topNumerator = null, topDenominator = null;
+			if (TypeSGET.Fraction.equals(numeratorType)) {
+				topDenominator = numerator.getChildAt(1);
+				topDenominator.encase(TypeSGET.Term);
+				topDenominator.append(TypeSGET.Operation, Operator
+						.getMultiply().getSign());
+				topDenominator.append(bottomNumerator);
+			} else {
+				numerator = numerator.encase(TypeSGET.Fraction);
+				numerator.append(bottomNumerator);
+			}
+			
+			if(bottomDenominator != null) {
+			topNumerator = numerator.getChildAt(0);
+			topNumerator.encase(TypeSGET.Term);
+			topNumerator.append(TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
+			topNumerator.append(bottomDenominator);
+			}
+			
+			if(removeOldDenominator) {
+				denominator.remove();
+			}
+		} else {
+
+			if (!TypeSGET.Fraction.equals(denominatorType)) {
+				denominator = denominator.encase(TypeSGET.Fraction);
+				denominator.append(TypeSGET.Number, "1");
+			}
+			// Flip
+			denominator.append(denominator.getChildAt(0));
+
+			EquationNode grandParent = fraction.getParent();
+			int parentFractionIndex = fraction.getIndex();
+
+			if (!TypeSGET.Term.equals(grandParent.getType())) {
+				grandParent = fraction.encase(TypeSGET.Term);
+				parentFractionIndex = 0;
+			}
+
+			grandParent.addBefore(parentFractionIndex, denominator);
+			grandParent.addBefore(parentFractionIndex, TypeSGET.Operation,
+					Operator.getMultiply().getSign());
+			grandParent.addBefore(parentFractionIndex, numerator);
+
 		}
-		// Flip
-		frac.append(frac.getChildAt(0));
-
-		EquationNode parentFraction = frac.getParent();
-		EquationNode grandParent = parentFraction.getParent();
-		int index = parentFraction.getIndex();
-
-		if (!TypeSGET.Term.equals(grandParent.getType())) {
-			grandParent = parentFraction.encase(TypeSGET.Term);
-			index = 0;
-		}
-
-		grandParent.addBefore(index, parentFraction.getChildAt(1));
-		grandParent.addBefore(index, TypeSGET.Operation, Operator.getMultiply()
-				.getSign());
-		grandParent.addBefore(index, parentFraction.getChildAt(0));
-
-		parentFraction.remove();
+		
+		fraction.remove();
 
 		Moderator.reloadEquationPanel("Multiply by Resiprocal",
 				Skill.DIVIDING_FRACTIONS);

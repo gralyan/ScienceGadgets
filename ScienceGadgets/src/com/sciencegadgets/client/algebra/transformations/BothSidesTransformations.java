@@ -437,11 +437,7 @@ public class BothSidesTransformations extends
 			}
 
 			// Prepare Target side
-			if (!TypeSGET.Fraction.equals(targetSide.getType())) {
-				targetSide = targetSide.encase(TypeSGET.Fraction);
-				if (operator != null)
-					operator.remove();
-			} else {
+			if (Moderator.meetsRequirement(Badge.BOTH_SIDES_DIVIDE_INTO_DENOMINATOR) && TypeSGET.Fraction.equals(targetSide.getType())) {
 				targetSide = targetSide.getChildAt(1);
 				targetSide = targetSide.encase(TypeSGET.Term);
 				if (operator == null) {
@@ -450,6 +446,10 @@ public class BothSidesTransformations extends
 				} else {
 					targetSide.append(operator);
 				}
+			} else {
+				targetSide = targetSide.encase(TypeSGET.Fraction);
+				if (operator != null) {
+					operator.remove();}
 			}
 
 			if (autoCancel) {
