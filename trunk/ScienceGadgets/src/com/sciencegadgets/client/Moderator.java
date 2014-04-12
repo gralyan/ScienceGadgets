@@ -15,10 +15,10 @@
 package com.sciencegadgets.client;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.dev.util.collect.HashSet;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -41,16 +41,11 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.conversion.ConversionActivity;
-import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Prompt;
-import com.sciencegadgets.client.ui.UnitSelection;
-import com.sciencegadgets.shared.dimensions.BaseUnit;
-import com.sciencegadgets.shared.dimensions.CommonVariables;
-import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class Moderator implements EntryPoint {
 
@@ -68,7 +63,7 @@ public class Moderator implements EntryPoint {
 	private static ConversionActivity conversionActivity;
 
 	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
-	public static Student student;
+	private static Student student = new Student("guest");
 	public static boolean isInEasyMode = false;
 
 	@Override
@@ -96,6 +91,10 @@ public class Moderator implements EntryPoint {
 		// e.printStackTrace();
 		// }
 
+	}
+	
+	public static  Student getStudent() {
+		return student;
 	}
 
 	public enum ActivityType {

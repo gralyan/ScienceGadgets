@@ -3,6 +3,7 @@ package com.sciencegadgets.client.algebra;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.URLParameters;
@@ -128,11 +130,11 @@ public class AlgebraActivity extends SimplePanel {
 	 * @param changeComment
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
-	public void reloadEquationPanel(String changeComment, Skill rule,
+	public void reloadEquationPanel(String changeComment, Skill skill,
 			boolean updateHistory) {
 		
 		if (!inEditMode && changeComment != null) {
-			algOut.updateAlgebraHistory(changeComment, rule, equationTree);
+			algOut.updateAlgebraHistory(changeComment, skill, equationTree);
 		}
 		
 		if(inProgramaticTransformMode) {
@@ -177,6 +179,9 @@ public class AlgebraActivity extends SimplePanel {
 					equationTree.getEquationXMLString());
 			URLParameters.setParameters(parameterMap, false);
 		}
+		
+		Moderator.getStudent().increaseSkill(skill, 1);
+		JSNICalls.log(skill+" "+Moderator.getStudent().getSkills()+"\nbadges "+Moderator.getStudent().getBadges()+"\n");
 	}
 
 	public void fillTransformLists(
@@ -198,13 +203,13 @@ public class AlgebraActivity extends SimplePanel {
 	}
 
 	public static void NUMBER_SPEC_PROMPT(EquationNode equationNode,
-			boolean clearDisplays) {
+			boolean clearDisplays, boolean mustCheckUnits) {
 
 		if (AlgebraActivity.numSpec == null) {
 			AlgebraActivity.numSpec = new NumberSpecification(equationNode,
-					clearDisplays);
+					clearDisplays, mustCheckUnits);
 		} else {
-			AlgebraActivity.numSpec.reload(equationNode, clearDisplays);
+			AlgebraActivity.numSpec.reload(equationNode, clearDisplays, mustCheckUnits);
 		}
 		AlgebraActivity.numSpec.appear();
 	}
@@ -213,9 +218,9 @@ public class AlgebraActivity extends SimplePanel {
 			boolean clearDisplays) {
 		if (AlgebraActivity.varSpec == null) {
 			AlgebraActivity.varSpec = new VariableSpecification(equationNode,
-					clearDisplays);
+					clearDisplays, false);
 		} else {
-			AlgebraActivity.varSpec.reload(equationNode, clearDisplays);
+			AlgebraActivity.varSpec.reload(equationNode, clearDisplays, false);
 		}
 		AlgebraActivity.varSpec.appear();
 	}

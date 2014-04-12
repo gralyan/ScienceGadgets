@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
@@ -59,19 +60,22 @@ public abstract class QuantitySpecification extends Prompt {
 
 	protected EquationNode node;
 	private boolean isReciprocal = false;
+	protected boolean mustCheckUnits;
 
 	// Stores the unit name and associated exponent
 	protected UnitMap unitMap = new UnitMap();
 	protected UnitAttribute dataUnit = new UnitAttribute("");
-	protected FitParentHTML unitH = new FitParentHTML();
+	protected FitParentHTML unitHTML = new FitParentHTML();
 
-	public QuantitySpecification(EquationNode mathNode, boolean clearDisplays) {
+	public QuantitySpecification(EquationNode equationNode,
+			boolean clearDisplays, boolean mustCheckUnits) {
 		super();
-		this.node = mathNode;
+		this.node = equationNode;
+		this.mustCheckUnits = mustCheckUnits;
 
 		add(mainPanel);
 
-		unitDisplay.add(unitH);
+		unitDisplay.add(unitHTML);
 
 		if (Moderator.isTouch) {
 			// Unit Display Touch - clear
@@ -80,7 +84,7 @@ public abstract class QuantitySpecification extends Prompt {
 				public void onTouchStart(TouchStartEvent event) {
 					dataUnit.setString("");
 					unitMap.clear();
-					unitH.setHTML("");
+					unitHTML.setHTML("");
 				}
 			}, TouchStartEvent.getType());
 
@@ -98,7 +102,7 @@ public abstract class QuantitySpecification extends Prompt {
 				public void onClick(ClickEvent event) {
 					dataUnit.setString("");
 					unitMap.clear();
-					unitH.setHTML("");
+					unitHTML.setHTML("");
 				}
 			}, ClickEvent.getType());
 
@@ -126,20 +130,17 @@ public abstract class QuantitySpecification extends Prompt {
 		// OK button
 		addOkHandler(new OkHandler());
 
-		reload(mathNode, clearDisplays);
+		reload(equationNode, clearDisplays, mustCheckUnits);
 	}
 
-	public void reload(EquationNode mathNode) {
-		reload(mathNode, true);
-	}
-
-	public void reload(EquationNode mathNode, boolean clearDisplays) {
+	public void reload(EquationNode mathNode, boolean clearDisplays,
+			boolean mustCheckUnits) {
 
 		this.node = mathNode;
 
 		dataUnit.setString("");
 		unitMap.clear();
-		unitH.setHTML("");
+		unitHTML.setHTML("");
 
 		// Symbol Display
 		String oldSymbol = node.getSymbol();
@@ -163,8 +164,8 @@ public abstract class QuantitySpecification extends Prompt {
 		dataUnit = unitMap.getUnitAttribute();
 		Element unitElement = UnitHTML.create(dataUnit, null, false);
 		String unitHTMLString = JSNICalls.elementToString(unitElement);
-		unitH.setHTML(unitHTMLString);
-		unitH.resize();
+		unitHTML.setHTML(unitHTMLString);
+		unitHTML.resize();
 	}
 
 	class UnitSelectionHandler implements SelectionHandler {
@@ -209,6 +210,12 @@ public abstract class QuantitySpecification extends Prompt {
 
 		@Override
 		public void onClick(ClickEvent event) {
+			
+			if(mustCheckUnits && !unitMap.isConvertableTo(node.getUnitMap())) {
+				Window.alert("Units must match:\n"+unitMap);
+				return;
+			}
+			
 			String symbol = extractSymbol();
 
 			if (symbol == null) {
@@ -224,7 +231,7 @@ public abstract class QuantitySpecification extends Prompt {
 		}
 	}
 
-	abstract void setNode(String symbol);
+	protected abstract void setNode(String symbol);
 
-	abstract String extractSymbol();
+	protected abstract String extractSymbol();
 }

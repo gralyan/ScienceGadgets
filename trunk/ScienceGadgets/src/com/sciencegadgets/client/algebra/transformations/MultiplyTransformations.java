@@ -26,34 +26,101 @@ public class MultiplyTransformations extends
 
 	TypeSGET leftType;
 	TypeSGET rightType;
-
+	
 	public MultiplyTransformations(EquationNode multiplyNode) {
 		super(multiplyNode);
 
+		JSNICalls.TIME_ELAPSED("MULT1 ");
 		this.parent = multiplyNode.getParent();
+		JSNICalls.TIME_ELAPSED("MULT2 ");
 
 		this.left = multiplyNode.getPrevSibling();
 		this.operation = multiplyNode;
 		this.right = multiplyNode.getNextSibling();
 
+		JSNICalls.TIME_ELAPSED("MULT3 ");
 		this.leftType = left.getType();
 		this.rightType = right.getType();
 
+		JSNICalls.TIME_ELAPSED("MULT4 ");
 		if (add(multiplySpecialNumber_check())) {
 			return;
 		}
+		JSNICalls.TIME_ELAPSED("MULT5 ");
 		add(multiplyNumbers_check());
+		JSNICalls.TIME_ELAPSED("MULT6 ");
 		add(multiplyFraction_check());
+		JSNICalls.TIME_ELAPSED("MULT7 ");
 		add(multiplyDistribution_check());
+		JSNICalls.TIME_ELAPSED("MULT8 ");
 		add(multiplyCombineBases_check());
+		JSNICalls.TIME_ELAPSED("MULT9 ");
 		add(multiplyCombineExponents_check());
+		JSNICalls.TIME_ELAPSED("MULT10 ");
 		add(multiplyLogRule_check());
+		JSNICalls.TIME_ELAPSED("MULT11 ");
 
 	}
 
 	/**
 	 * Multiplying by one of the specially designated numbers (-1, 0 1)
 	 */
+//	MultiplyTransformButton multiplySpecialNumber_check() {
+//		
+//		if (!TypeSGET.Number.equals(leftType)
+//				&& !TypeSGET.Number.equals(rightType)) {
+//			return null;
+//		}
+//		
+//		final int same = 0;
+//		BigDecimal negOne = new BigDecimal(-1);
+//		BigDecimal zero = new BigDecimal(0);
+//		BigDecimal one = new BigDecimal(1);
+//		
+//		try {
+//			BigDecimal rightValue = new BigDecimal(right.getSymbol());
+//			String rightUnits = right.getAttribute(MathAttribute.Unit);
+//			if (rightValue.compareTo(zero) == same) {
+//				return new MultiplyZeroButton(this, left, right);
+//			} else if (rightValue.compareTo(one) == same
+//					&& "".equals(rightUnits)) {
+//				return new MultiplyOneButton(this, left, right);
+//			} else if (rightValue.compareTo(negOne) == same
+//					&& "".equals(rightUnits)) {
+//				switch (left.getType()) {
+//				case Number:
+//				case Variable:
+//				case Sum:
+//				case Term:
+//				case Fraction:
+//					return new MultiplyNegOneButton(this, left, right);
+//				}
+//			}
+//		} catch (NumberFormatException e) {
+//		}
+//		
+//		try {
+//			BigDecimal leftValue = new BigDecimal(left.getSymbol());
+//			String leftUnits = right.getAttribute(MathAttribute.Unit);
+//			if (leftValue.compareTo(zero) == same) {
+//				return new MultiplyZeroButton(this, right, left);
+//			} else if (leftValue.compareTo(one) == same && "".equals(leftUnits)) {
+//				return new MultiplyOneButton(this, right, left);
+//			} else if (leftValue.compareTo(negOne) == same
+//					&& "".equals(leftUnits)) {
+//				switch (right.getType()) {
+//				case Number:
+//				case Variable:
+//				case Sum:
+//				case Term:
+//				case Fraction:
+//					return new MultiplyNegOneButton(this, right, left);
+//				}
+//			}
+//		} catch (NumberFormatException e) {
+//		}
+//		return null;
+//	}
 	MultiplyTransformButton multiplySpecialNumber_check() {
 
 		if (!TypeSGET.Number.equals(leftType)
@@ -61,20 +128,14 @@ public class MultiplyTransformations extends
 			return null;
 		}
 
-		final int same = 0;
-		BigDecimal negOne = new BigDecimal(-1);
-		BigDecimal zero = new BigDecimal(0);
-		BigDecimal one = new BigDecimal(1);
-
-		try {
-			BigDecimal rightValue = new BigDecimal(right.getSymbol());
+			String rightValue = right.getSymbol();
 			String rightUnits = right.getAttribute(MathAttribute.Unit);
-			if (rightValue.compareTo(zero) == same) {
+			if ("0".equals(rightValue)) {
 				return new MultiplyZeroButton(this, left, right);
-			} else if (rightValue.compareTo(one) == same
+			} else if ("1".equals(rightValue)
 					&& "".equals(rightUnits)) {
 				return new MultiplyOneButton(this, left, right);
-			} else if (rightValue.compareTo(negOne) == same
+			} else if ("-1".equals(rightValue)
 					&& "".equals(rightUnits)) {
 				switch (left.getType()) {
 				case Number:
@@ -85,17 +146,14 @@ public class MultiplyTransformations extends
 					return new MultiplyNegOneButton(this, left, right);
 				}
 			}
-		} catch (NumberFormatException e) {
-		}
 
-		try {
-			BigDecimal leftValue = new BigDecimal(left.getSymbol());
+			String leftValue = left.getSymbol();
 			String leftUnits = right.getAttribute(MathAttribute.Unit);
-			if (leftValue.compareTo(zero) == same) {
+			if ("0".equals(leftValue)) {
 				return new MultiplyZeroButton(this, right, left);
-			} else if (leftValue.compareTo(one) == same && "".equals(leftUnits)) {
+			} else if ("1".equals(leftValue) && "".equals(leftUnits)) {
 				return new MultiplyOneButton(this, right, left);
-			} else if (leftValue.compareTo(negOne) == same
+			} else if ("-1".equals(leftValue)
 					&& "".equals(leftUnits)) {
 				switch (right.getType()) {
 				case Number:
@@ -106,8 +164,6 @@ public class MultiplyTransformations extends
 					return new MultiplyNegOneButton(this, right, left);
 				}
 			}
-		} catch (NumberFormatException e) {
-		}
 		return null;
 	}
 
@@ -171,6 +227,11 @@ public class MultiplyTransformations extends
 	 * ex: x<sup>a</sup> &middot; x = x<sup>a+1</sup>
 	 */
 	MultiplyCombineBasesButton multiplyCombineBases_check() {
+		
+		//Combining numbers is rare and this is time consuming
+		if(TypeSGET.Number.equals(leftType) || TypeSGET.Number.equals(rightType)) {
+			return null;
+		}
 
 		// May not already be in exponent eg. a = a^1
 		// could factor out entire side rather than just base

@@ -2,12 +2,10 @@ package com.sciencegadgets.client.entities.users;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 
-import com.google.gwt.dev.util.collect.HashSet;
-import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Parent;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
@@ -21,14 +19,22 @@ public class Student implements Serializable{
 	HashMap<Skill, Integer> skills;
 	HashSet<Badge> badges;
 
-	public Student() {
-	}
 	public Student(String name) {
 		this.name=name;
+		skills = new HashMap<Skill, Integer>();
+		badges = new HashSet<Badge>();
 	}
 
 	public UnitName getName() {
 		return new UnitName(name);
+	}
+	
+	public HashMap<Skill, Integer> getSkills() {
+		return skills;
+	}
+	
+	public HashSet<Badge> getBadges() {
+		return badges;
 	}
 	
 	public Integer getSkillLevel(Skill skill) {
@@ -47,7 +53,9 @@ public class Student implements Serializable{
 		if(prevLevel == null) {
 			prevLevel = 0;
 		}
+		
 		int newLevel = prevLevel + increase;
+		skills.put(skill, newLevel);
 		
 		HashSet<Badge> earnedBadges = Badge.getBadgesEarned(skill, newLevel);
 		for(Badge earnedBadge : earnedBadges) {
@@ -56,6 +64,7 @@ public class Student implements Serializable{
 				earnedBadges.remove(earnedBadge);
 			}
 		}
+		
 		return earnedBadges;
 	}
 	
