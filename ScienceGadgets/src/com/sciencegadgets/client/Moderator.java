@@ -174,8 +174,13 @@ public class Moderator implements EntryPoint {
 		return algebraActivity.getEquationTree();
 	}
 
-	public static void reloadEquationPanel(String changeComment, Skill rule) {
-		algebraActivity.reloadEquationPanel(changeComment, rule);
+	public static void reloadEquationPanel(String changeComment, Skill skill) {
+		Skill[] skills = {skill};
+		reloadEquationPanel(changeComment, skills);
+	}
+	
+	public static void reloadEquationPanel(String changeComment, Skill[] skills) {
+		algebraActivity.reloadEquationPanel(changeComment, skills);
 	}
 
 	class ResizeAreaHandler implements ResizeHandler {
@@ -186,7 +191,7 @@ public class Moderator implements EntryPoint {
 				if (ActivityType.algebraedit.equals(currentActivityType)
 						|| ActivityType.algebrasolve
 								.equals(currentActivityType)) {
-					reloadEquationPanel(null, null);
+					reloadEquationPanel(null, (Skill[])null);
 				}
 				for (Prompt prompt : prompts) {
 					prompt.resize();
@@ -210,6 +215,14 @@ public class Moderator implements EntryPoint {
 		}
 	}
 
+	public static boolean meetsRequirements(Badge... badges) {
+		HashSet<Badge> badgeSet = new HashSet<Badge>();
+		for(Badge badge : badges) {
+		badgeSet.add(badge);
+		}
+		return meetsRequirements(badgeSet);
+	}
+	
 	public static boolean meetsRequirements(HashSet<Badge> badges) {
 		if (student == null || badges == null) {
 			return false;

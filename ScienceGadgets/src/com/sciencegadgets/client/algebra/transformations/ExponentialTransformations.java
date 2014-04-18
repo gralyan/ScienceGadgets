@@ -230,9 +230,10 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 			String question = exponential.getHTMLString(true, true) + " = ";
 			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 				@Override
-				public void onCorrect() {
+				public void onCorrect(int skillIncrease) {
 					evaluateExponential(baseValue, exp, totalValue,
 							totalUnitMap);
+					Moderator.getStudent().increaseSkill(Skill.EVALUATING_EXPONENTS, skillIncrease);
 				}
 			};
 			prompt.appear();

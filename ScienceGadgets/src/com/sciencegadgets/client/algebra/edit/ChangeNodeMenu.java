@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Style;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.specification.LogBaseSpecification;
@@ -130,7 +131,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 				node.replace(TypeSGET.Variable, NOT_SET);
 				break;
 			}
-			Moderator.reloadEquationPanel(null, null);
+			Moderator.reloadEquationPanel(null, (Skill[])null);
 		}
 	}
 
@@ -166,7 +167,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 							super.onSpecify(base);
 							EquationNode log = node.encase(TypeSGET.Log);
 							log.setAttribute(MathAttribute.LogBase, base);
-							Moderator.reloadEquationPanel(null, null);
+							Moderator.reloadEquationPanel(null, (Skill[])null);
 						}
 					};
 				}
@@ -181,7 +182,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 							EquationNode func = node
 									.encase(TypeSGET.Trig);
 							func.setAttribute(MathAttribute.Function, function);
-							Moderator.reloadEquationPanel(null, null);
+							Moderator.reloadEquationPanel(null, (Skill[])null);
 						}
 					};
 				}
@@ -233,7 +234,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 				newNode.append(TypeSGET.Variable, NOT_SET);
 				break;
 			}
-			Moderator.reloadEquationPanel(null, null);
+			Moderator.reloadEquationPanel(null, (Skill[])null);
 
 		}
 	}

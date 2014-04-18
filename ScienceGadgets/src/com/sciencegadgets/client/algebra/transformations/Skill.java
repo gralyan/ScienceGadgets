@@ -8,6 +8,11 @@ package com.sciencegadgets.client.algebra.transformations;
 		INTEGER_FACTORIZATION,//
 		//
 		ADDITION,//
+		ADD_NUMBERS_TO_10,//
+		ADD_NUMBERS_TO_100,//
+		ADD_NUMBERS_LARGE,//
+		SUBTRACTION,//
+		ADDITION_WITH_NEGATIVES,//
 		ADDITION_WITH_ZERO,//
 		COMBINING_LIKE_TERMS, //
 		ADDING_FRACTIONS,//

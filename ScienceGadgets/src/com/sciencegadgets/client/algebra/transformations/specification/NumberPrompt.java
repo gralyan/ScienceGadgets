@@ -19,6 +19,7 @@ public abstract class NumberPrompt extends Prompt {
 	private static final int lessThan = -1;
 	final KeyPadNumerical keyPad = new KeyPadNumerical();
 	final SymbolDisplay display = keyPad.getSymbolDisplay();
+	protected int incorrectCount = 0;
 
 	public NumberPrompt(String question, final BigDecimal totalValue) {
 
@@ -51,9 +52,11 @@ public abstract class NumberPrompt extends Prompt {
 					if (error.compareTo(ACCEPTABLE_ERROR) == lessThan) {
 						// correct
 						disappear();
-						onCorrect();
+						int skillIncrease = 1 - incorrectCount;
+						onCorrect(skillIncrease);
 					} else {
 						// incorrect
+						incorrectCount++;
 						incorrectResponse.setHTML(incorrectResponse.getHTML()
 								+ "<br/>" + inputValue);
 						add(incorrectResponse);
@@ -72,6 +75,6 @@ public abstract class NumberPrompt extends Prompt {
 			}
 		});
 	}
-
-	public abstract void onCorrect();
+	
+	public abstract void onCorrect(int skillIncrease);
 }

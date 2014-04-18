@@ -116,12 +116,13 @@ public class AlgebraActivity extends SimplePanel {
 		equationTree = new EquationTree(equationXML, inEditMode);
 		return equationTree;
 	}
+
 	public void setEquationTree(EquationTree eTree) {
 		equationTree = eTree;
 	}
 
-	public void reloadEquationPanel(String changeComment, Skill rule) {
-		reloadEquationPanel(changeComment, rule, true);
+	public void reloadEquationPanel(String changeComment, Skill[] skills) {
+		reloadEquationPanel(changeComment, skills, true);
 	}
 
 	/**
@@ -130,17 +131,17 @@ public class AlgebraActivity extends SimplePanel {
 	 * @param changeComment
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
-	public void reloadEquationPanel(String changeComment, Skill skill,
+	public void reloadEquationPanel(String changeComment, Skill[] skills,
 			boolean updateHistory) {
-		
-		if (!inEditMode && changeComment != null) {
-			algOut.updateAlgebraHistory(changeComment, skill, equationTree);
+
+		if (!inEditMode && changeComment != null && skills != null) {
+			algOut.updateAlgebraHistory(changeComment, skills[0], equationTree);
 		}
-		
-		if(inProgramaticTransformMode) {
+
+		if (inProgramaticTransformMode) {
 			return;
 		}
-		
+
 		try {
 			equationTree.validateTree();
 		} catch (IllegalStateException e) {
@@ -179,9 +180,15 @@ public class AlgebraActivity extends SimplePanel {
 					equationTree.getEquationXMLString());
 			URLParameters.setParameters(parameterMap, false);
 		}
-		
-		Moderator.getStudent().increaseSkill(skill, 1);
-		JSNICalls.log(skill+" "+Moderator.getStudent().getSkills()+"\nbadges "+Moderator.getStudent().getBadges()+"\n");
+
+		if (skills != null) {
+			for (Skill skill : skills) {
+				Moderator.getStudent().increaseSkill(skill, 1);
+				JSNICalls.log(skill + " " + Moderator.getStudent().getSkills()
+						+ "\nbadges " + Moderator.getStudent().getBadges()
+						+ "\n");
+			}
+		}
 	}
 
 	public void fillTransformLists(
@@ -209,7 +216,8 @@ public class AlgebraActivity extends SimplePanel {
 			AlgebraActivity.numSpec = new NumberSpecification(equationNode,
 					clearDisplays, mustCheckUnits);
 		} else {
-			AlgebraActivity.numSpec.reload(equationNode, clearDisplays, mustCheckUnits);
+			AlgebraActivity.numSpec.reload(equationNode, clearDisplays,
+					mustCheckUnits);
 		}
 		AlgebraActivity.numSpec.appear();
 	}

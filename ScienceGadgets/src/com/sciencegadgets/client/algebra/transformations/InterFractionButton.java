@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.HashSet;
 
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
@@ -104,6 +105,11 @@ public EquationNode getTarget() {
 	 */
 	private void dividePrompt() {
 		try {
+			if(Moderator.meetsRequirements(Badge.CANCEL, Badge.FACTOR_NUMBERS) && FractionTransformations.SIMPLIFY_FRACTION(drag, target, true)) {
+				complete(false);
+				return;
+			}
+
 			BigDecimal targetNumber = new BigDecimal(target.getSymbol());
 			BigDecimal dragNumber = new BigDecimal(drag.getSymbol());
 			final BigDecimal total = targetNumber.divide(dragNumber,
@@ -122,8 +128,9 @@ public EquationNode getTarget() {
 						+ " = ";
 				NumberPrompt prompt = new NumberPrompt(question, total) {
 					@Override
-					public void onCorrect() {
+					public void onCorrect(int skillIncrease) {
 						divide(total);
+						Moderator.getStudent().increaseSkill(Skill.DIVISION, skillIncrease);
 					}
 				};
 				prompt.appear();

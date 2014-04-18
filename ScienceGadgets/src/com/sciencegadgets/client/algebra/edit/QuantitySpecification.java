@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.SelectionPanel;
@@ -227,7 +228,7 @@ public abstract class QuantitySpecification extends Prompt {
 					MathAttribute.Unit.getAttributeName(), dataUnit.toString());
 
 			disappear();
-			Moderator.reloadEquationPanel(null, null);
+			Moderator.reloadEquationPanel(null, (Skill[])null);
 		}
 	}
 
