@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.ToggleSlide;
 
 public class OptionsHandler implements ClickHandler {
@@ -87,7 +88,7 @@ class EasyHardClickHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		OptionsHandler.optionsPopup.hide();
 		Moderator.isInEasyMode = !Moderator.isInEasyMode;
-		Moderator.reloadEquationPanel(null, null);
+		Moderator.reloadEquationPanel(null, (Skill[])null);
 	}
 
 }

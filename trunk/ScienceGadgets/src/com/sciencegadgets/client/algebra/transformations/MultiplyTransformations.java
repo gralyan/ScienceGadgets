@@ -494,9 +494,10 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 					+ " = ";
 			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 				@Override
-				public void onCorrect() {
+				public void onCorrect(int skillIncrease) {
 					multiplyNumbers(left, right, totalValue, leftValue,
 							rightValue);
+					Moderator.getStudent().increaseSkill(Skill.MULTIPLICATION, skillIncrease);
 				}
 			};
 

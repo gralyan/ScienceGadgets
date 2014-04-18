@@ -117,12 +117,7 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayer.setVisible(false);
 		}
 
-		// Initialize focus to previous focus before reload
-		if (algebraActivity.focusLayerId == null) {
-			setFocus(eqLayerMap.get(rootNode));
-		} else {
-			setFocus(algebraActivity.focusLayerId);
-		}
+		setFocus(algebraActivity.focusLayerId);
 	}
 
 	/**
@@ -281,6 +276,8 @@ public class EquationPanel extends AbsolutePanel {
 				}
 			}
 		}
+		// If no layer found, focus on root
+		setFocus(eqLayerMap.get(rootNode));
 		return null;
 	}
 
@@ -321,7 +318,6 @@ public class EquationPanel extends AbsolutePanel {
 		int currentIndex = 0;
 
 		PrepareWrappersInLayer(LinkedList<Wrapper> wrappers) {
-			JSNICalls.debug(" WRAPPERS " + wrappers.size() + wrappers);
 			this.wrappers = wrappers;
 			this.wrapperCount = wrappers.size();
 		}
@@ -331,8 +327,6 @@ public class EquationPanel extends AbsolutePanel {
 			if (currentIndex >= wrapperCount) {
 				return false;
 			}
-			JSNICalls.debug("RELOAD WRAPPERS " + wrappers.size() + wrappers);
-			JSNICalls.TIME_ELAPSED("INCREM ");
 			JSNICalls.TIME_ELAPSED("WRAP ");
 			((AlgebaWrapper) wrappers.get(currentIndex)).attachButtons();
 			JSNICalls.TIME_ELAPSED("WRAP2 ");

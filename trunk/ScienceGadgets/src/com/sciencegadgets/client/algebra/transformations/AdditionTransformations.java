@@ -1,16 +1,17 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
-import com.sciencegadgets.client.entities.users.Badge;
 
 public class AdditionTransformations extends
 		TransformationList<AddTransformButton> {
@@ -77,12 +78,18 @@ public class AdditionTransformations extends
 		if (TypeSGET.Number.equals(leftType)) {
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
 			if (leftValue.compareTo(new BigDecimal(0)) == same) {
-				return new AddZeroButton(this, right, left);
+				if (!TypeSGET.Number.equals(rightType)
+						|| Moderator.meetsRequirement(Badge.ADD_ZERO)) {
+					return new AddZeroButton(this, right, left);
+				}
 			}
 		} else if (TypeSGET.Number.equals(rightType)) {
 			BigDecimal rightValue = new BigDecimal(right.getSymbol());
 			if (rightValue.compareTo(new BigDecimal(0)) == same) {
-				return new AddZeroButton(this, left, right);
+				if (!TypeSGET.Number.equals(leftType)
+						|| Moderator.meetsRequirement(Badge.ADD_ZERO)) {
+					return new AddZeroButton(this, left, right);
+				}
 			}
 		}
 		return null;
@@ -236,6 +243,8 @@ class AddZeroButton extends AddTransformButton {
  * ex: 1+2=3
  */
 class AddNumbersButton extends AddTransformButton {
+	private boolean includesNegatives;
+
 	AddNumbersButton(AdditionTransformations context) {
 		super(context, "# + #");
 	}
@@ -248,25 +257,42 @@ class AddNumbersButton extends AddTransformButton {
 			return;
 		}
 
-		BigDecimal leftV;
-		if (isMinusBeforeLeft) {
-			leftV = new BigDecimal(left.getSymbol()).negate();
-		} else {
-			leftV = new BigDecimal(left.getSymbol());
-		}
-		final BigDecimal leftValue = leftV;
+		BigDecimal leftV = new BigDecimal(left.getSymbol());
+		final BigDecimal leftValue = isMinusBeforeLeft ? leftV.negate() : leftV;
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
-		BigDecimal total;
+		final BigDecimal totalValue = isMinus ? leftValue.subtract(rightValue)
+				: leftValue.add(rightValue);
 
-		if (!isMinus) {
-			total = leftValue.add(rightValue);
-		} else {
-			total = leftValue.subtract(rightValue);
+		Skill nMagSkill = Skill.ADDITION;
+		Badge numberMagnitudeBadge = Badge.ADD_NUMBERS_LARGE;
+		int totalAbs = totalValue.abs().intValue();
+		if(totalAbs <10) {
+			nMagSkill = Skill.ADD_NUMBERS_TO_10;
+			numberMagnitudeBadge = Badge.ADD_NUMBERS_10;
+		}else if(totalAbs <100) {
+			nMagSkill = Skill.ADD_NUMBERS_TO_100;
+			numberMagnitudeBadge = Badge.ADD_NUMBERS_100;
 		}
-		final BigDecimal totalValue = total;
+		final Skill numberMagnitudeSkill = nMagSkill;
 
-		boolean meetsRequirements = Moderator.meetsRequirements(Badge
-				.getRequiredBadges(operation.getOperation(), left, right));
+		includesNegatives = isMinusBeforeLeft || leftV.intValue() < 0
+				|| rightValue.intValue() < 0;
+		BigDecimal zero = new BigDecimal(0);
+		final boolean includesZero = zero.compareTo(rightValue) == 0 || zero.compareTo(leftValue) == 0;
+
+		HashSet<Badge> badgesRequired = new HashSet<Badge>();
+		badgesRequired.add(numberMagnitudeBadge);
+		if(includesNegatives) {
+			badgesRequired.add(Badge.ADD_NUMBERS_NEGATIVE);
+		}
+		if(isMinus) {
+			badgesRequired.add(Badge.SUBTRACTION);
+		}
+		if(includesZero) {
+			badgesRequired.add(Badge.ADD_ZERO);
+		}
+		
+		boolean meetsRequirements = Moderator.meetsRequirements(badgesRequired);
 
 		if (meetsRequirements) {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
@@ -283,8 +309,24 @@ class AddNumbersButton extends AddTransformButton {
 					+ " = ";
 			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
 				@Override
-				public void onCorrect() {
+				public void onCorrect(int skillIncrease) {
 					addNumbers(left, right, totalValue, leftValue, rightValue);
+					
+					Moderator.getStudent().increaseSkill(numberMagnitudeSkill,
+							skillIncrease);
+					
+					if (isMinus) {
+						Moderator.getStudent().increaseSkill(Skill.SUBTRACTION,
+								skillIncrease);
+					}
+					if (includesNegatives) {
+						Moderator.getStudent().increaseSkill(
+								Skill.ADDITION_WITH_NEGATIVES, skillIncrease);
+					}
+					if (includesZero) {
+						Moderator.getStudent().increaseSkill(
+								Skill.ADDITION_WITH_ZERO, skillIncrease);
+					}
 				}
 			};
 			prompt.appear();

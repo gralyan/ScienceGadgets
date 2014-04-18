@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.shared.TypeSGET;
 
@@ -79,7 +80,7 @@ public class EditWrapper extends EquationWrapper {
 			node.setSymbol(TypeSGET.Operator.MINUS.getSign());
 			break;
 		}
-		 Moderator.reloadEquationPanel(null, null);
+		 Moderator.reloadEquationPanel(null, (Skill[])null);
 	}
 	private class OperationTouchHandler implements TouchStartHandler{
 		@Override

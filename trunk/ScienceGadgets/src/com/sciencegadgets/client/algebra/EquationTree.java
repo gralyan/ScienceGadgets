@@ -91,13 +91,11 @@ public class EquationTree {
 		eq.setInnerText("=");
 		eq.setAttribute("id", "dummyNodeEquals");
 
-		Element dummyLeft = DOM
-				.createElement(TypeSGET.Variable.getTag());
+		Element dummyLeft = DOM.createElement(TypeSGET.Variable.getTag());
 		dummyLeft.setInnerText("a");
 		dummyLeft.setAttribute("id", "dummyNodeLeft");
 
-		Element dummyRight = DOM.createElement(TypeSGET.Variable
-				.getTag());
+		Element dummyRight = DOM.createElement(TypeSGET.Variable.getTag());
 		dummyRight.setInnerText("a");
 		dummyRight.setAttribute("id", "dummyNodeRight");
 
@@ -287,23 +285,27 @@ public class EquationTree {
 
 	/**
 	 * Gets all nodes by specified type, use null for all nodes
+	 * 
 	 * @param type
 	 */
 	public LinkedList<EquationNode> getNodesByType(TypeSGET type) {
 		return getNodesByType(type, root);
 	}
+
 	/**
 	 * Gets all nodes in the parent by specified type, use null for all nodes
+	 * 
 	 * @param type
 	 */
-	public LinkedList<EquationNode> getNodesByType(TypeSGET type, EquationNode parent) {
+	public LinkedList<EquationNode> getNodesByType(TypeSGET type,
+			EquationNode parent) {
 		LinkedList<EquationNode> nodes = new LinkedList<EquationNode>();
 		String tag = "*";
 		if (type != null) {
 			tag = type.getTag();
 		}
-		NodeList<Element> elements = parent.getXMLNode()
-				.getElementsByTagName(tag);
+		NodeList<Element> elements = parent.getXMLNode().getElementsByTagName(
+				tag);
 		for (int i = 0; i < elements.getLength(); i++) {
 			String id = elements.getItem(i).getAttribute("id");
 			nodes.add(idMap.get(id));
@@ -553,8 +555,7 @@ public class EquationTree {
 			add(index, node, true);
 		}
 
-		public EquationNode addAfter(int index, TypeSGET type,
-				String symbol) {
+		public EquationNode addAfter(int index, TypeSGET type, String symbol) {
 			EquationNode newNode = new EquationNode(type, symbol);
 			this.addAfter(index, newNode);
 			return newNode;
@@ -564,8 +565,7 @@ public class EquationTree {
 			add(index, node, false);
 		}
 
-		public EquationNode addBefore(int index, TypeSGET type,
-				String symbol) {
+		public EquationNode addBefore(int index, TypeSGET type, String symbol) {
 			EquationNode newNode = new EquationNode(type, symbol);
 			this.addBefore(index, newNode);
 			return newNode;
@@ -588,8 +588,8 @@ public class EquationTree {
 		public EquationNode addFirst(TypeSGET type, String symbol) {
 			return addBefore(0, type, symbol);
 		}
-		
-		public LinkedList<EquationNode> getNodesByType(TypeSGET type){
+
+		public LinkedList<EquationNode> getNodesByType(TypeSGET type) {
 			return EquationTree.this.getNodesByType(type, this);
 		}
 
@@ -799,17 +799,31 @@ public class EquationTree {
 		}
 
 		public String getSymbol() {
+
 			switch (getType()) {
 			case Number:
+				JSNICalls.TIME_ELAPSED("getSymbol1");
 				String valueAttr = getAttribute(MathAttribute.Value);
-				try {
-					return CommonConstants.valueOf(valueAttr).getValue();
-				} catch (IllegalArgumentException e) {
-				}
+				JSNICalls.TIME_ELAPSED("getSymbol2");
 				try {
 					return new BigDecimal(valueAttr).toString();
 				} catch (NumberFormatException e) {
 				}
+				JSNICalls.TIME_ELAPSED("getSymbol3");
+				// if (innerText.matches(".*\\d.*")) {
+				// try {
+				// return new BigDecimal(valueAttr).toString();
+				// } catch (NumberFormatException e) {
+				// }
+				// JSNICalls.TIME_ELAPSED("getSymbol3");
+				// } else {
+				// try {
+				// return CommonConstants.valueOf(valueAttr).getValue();
+				// } catch (IllegalArgumentException e) {
+				// }
+				// JSNICalls.TIME_ELAPSED("getSymbol4");
+				// }
+				JSNICalls.TIME_ELAPSED("getSymbol5");
 			case Variable:
 			case Operation:
 				return xmlNode.getInnerText();
@@ -885,8 +899,7 @@ public class EquationTree {
 			if (TypeSGET.Operation.equals(getType())) {
 				String symbol = getSymbol();
 
-				for (TypeSGET.Operator op : TypeSGET.Operator
-						.values()) {
+				for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
 					if (op.getSign().equalsIgnoreCase(symbol)
 							|| op.getHTML().equalsIgnoreCase(symbol)) {
 						return op;
@@ -977,6 +990,8 @@ public class EquationTree {
 				return false;
 			}
 
+			JSNICalls.TIME_ELAPSED("like1 ");
+
 			// breaks not needed, returns at each step
 			switch (getType()) {
 			case Term:
@@ -1020,15 +1035,20 @@ public class EquationTree {
 					return true;
 				}
 			case Number:
+				JSNICalls.TIME_ELAPSED("like2 ");
 				if (!this.getUnitAttribute().equals(another.getUnitAttribute())
 						&& !new UnitMap(this).equals(new UnitMap(another))) {
 					return false;
 				}
+				JSNICalls.TIME_ELAPSED("like3 ");
 				// fall through
 			case Variable:
+				JSNICalls.TIME_ELAPSED("like4 ");
 				if (getSymbol().equals(another.getSymbol())) {
+					JSNICalls.TIME_ELAPSED("like5 ");
 					return true;
 				} else {
+					JSNICalls.TIME_ELAPSED("like5 ");
 					return false;
 				}
 			case Log:
@@ -1058,14 +1078,14 @@ public class EquationTree {
 		Element rootNode = (Element) equationXMLNode;
 
 		root = bindXMLtoNodeRecursive(rootNode);
-		
+
 		try {
 			validateTree();
 		} catch (IllegalStateException e) {
 			String message = e.getMessage();
-			if(message == null) {
+			if (message == null) {
 				Window.alert("Oops, an error occured, please refresh the page");
-			}else {
+			} else {
 				Window.alert(message);
 			}
 			JSNICalls.error(e.getCause().toString());

@@ -366,7 +366,7 @@ class SeperateNegButton extends TransformationButton {
 			parent.addBefore(nodeIndex, TypeSGET.Number, "-1");
 		}
 		Moderator.reloadEquationPanel("-" + newSymbol + " = -1"
-				+ Operator.getMultiply().getSign() + newSymbol, null);
+				+ Operator.getMultiply().getSign() + newSymbol, (Skill[])null);
 	}
 }
 
