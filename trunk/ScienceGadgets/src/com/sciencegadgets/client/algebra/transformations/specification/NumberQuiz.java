@@ -10,18 +10,18 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.KeyPadNumerical;
 import com.sciencegadgets.client.ui.Prompt;
+import com.sciencegadgets.client.ui.Quiz;
 import com.sciencegadgets.client.ui.SymbolDisplay;
 
-public abstract class NumberPrompt extends Prompt {
+public abstract class NumberQuiz extends Quiz {
 
 	static final BigDecimal ACCEPTABLE_ERROR = new BigDecimal(".01");
 	private static final int same = 0;
 	private static final int lessThan = -1;
 	final KeyPadNumerical keyPad = new KeyPadNumerical();
 	final SymbolDisplay display = keyPad.getSymbolDisplay();
-	protected int incorrectCount = 0;
 
-	public NumberPrompt(String question, final BigDecimal totalValue) {
+	public NumberQuiz(String question, final BigDecimal totalValue) {
 
 		Label questionDisplay = new HTML(question);
 		questionDisplay.addStyleName(CSS.LAYOUT_ROW+" "+CSS.DOUBLE_FONT_SIZE);
@@ -48,19 +48,18 @@ public abstract class NumberPrompt extends Prompt {
 					}else {
 						error = inputValue.divide(totalValue, MathContext.DECIMAL32).subtract(new BigDecimal("1")).abs();
 					}
-					
+
 					if (error.compareTo(ACCEPTABLE_ERROR) == lessThan) {
 						// correct
 						disappear();
-						int skillIncrease = 1 - incorrectCount;
-						onCorrect(skillIncrease);
+						onCorrect();
 					} else {
 						// incorrect
-						incorrectCount++;
 						incorrectResponse.setHTML(incorrectResponse.getHTML()
 								+ "<br/>" + inputValue);
 						add(incorrectResponse);
 						keyPad.displaySelect();
+						onIncorrect();
 					}
 				} catch (NumberFormatException e) {
 					if ("".equals(display.getText())) {
@@ -76,5 +75,4 @@ public abstract class NumberPrompt extends Prompt {
 		});
 	}
 	
-	public abstract void onCorrect(int skillIncrease);
 }

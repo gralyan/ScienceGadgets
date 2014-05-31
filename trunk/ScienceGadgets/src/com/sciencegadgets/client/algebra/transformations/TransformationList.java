@@ -3,7 +3,6 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -23,6 +22,10 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 	public EquationNode getNode() {
 		return contextNode;
 	}
+	
+	public void setNode(EquationNode node){
+		contextNode = node;
+	}
 
 	public static BothSidesTransformations FIND_ALL_BOTHSIDES(EquationNode node) {
 		BothSidesTransformations toBothSides = new BothSidesTransformations(node);
@@ -35,15 +38,12 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 	public static TransformationList<TransformationButton> FIND_ALL_SIMPLIFY(EquationNode node) {
 		TransformationList<TransformationButton> simplify = new TransformationList<TransformationButton>(node);
 
-		JSNICalls.TIME_ELAPSED("FIND_ALL_SIMPLIFY a");
 		simplify.addAll(new InterFractionTransformations(node));
-		JSNICalls.TIME_ELAPSED("FIND_ALL_SIMPLIFY b");
 
 		if (TypeSGET.Fraction.equals(node.getParentType())
 				&& node.getIndex() == 1) {
 			simplify.add(new FractionTransformations(node.getParent()).denominatorFlip_check());
 		}
-		JSNICalls.TIME_ELAPSED("FIND_ALL_SIMPLIFY c");
 		
 		switch (node.getType()) {
 		case Exponential:
@@ -53,12 +53,9 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 			simplify.addAll(AlgebraicTransformations.operation(node));
 			break;
 		case Number:
-			JSNICalls.TIME_ELAPSED("FIND_ALL_SIMPLIFY d");
 			simplify.addAll(new NumberTransformations(node));
-			JSNICalls.TIME_ELAPSED("FIND_ALL_SIMPLIFY new NumberTransformations");
 			simplify.add(AlgebraicTransformations.separateNegative_check(node,
 					simplify));
-			JSNICalls.TIME_ELAPSED("FIND_ALL_SIMPLIFY separateNegative_check");
 			break;
 		case Variable:
 			simplify.addAll(new VariableTransformations(node));
@@ -80,11 +77,9 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 			break;
 		}
 
-		JSNICalls.TIME_ELAPSED("get simpl");
 		if(!Moderator.getCurrentAlgebraActivity().inProgramaticTransformMode) {
 		simplify.setPreviewLabels();
 		}
-		JSNICalls.TIME_ELAPSED("preview");
 		return simplify;
 	}
 
@@ -93,10 +88,11 @@ public class TransformationList<E extends TransformationButton> extends LinkedLi
 		for (TransformationButton button : this) {
 			String buttonHTML = button.getHTML();
 			if (buttonHTML == null || "".equals(buttonHTML)) {
-				EquationTree previewEq = button.getPreview();
+				EquationNode previewEq = button.getPreview();
 				String preview = null;
 				if (previewEq != null) {
-					preview = previewEq.getRightDisplay();
+					previewEq.getTree().reloadDisplay(true, true);
+					preview = previewEq.getHTMLString(true, true);
 				} else {
 					preview = "no label";
 				}

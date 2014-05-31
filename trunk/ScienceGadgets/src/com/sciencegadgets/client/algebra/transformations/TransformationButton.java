@@ -1,26 +1,21 @@
 package com.sciencegadgets.client.algebra.transformations;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasTouchEndHandlers;
-import com.google.gwt.event.dom.client.TouchEndEvent;
-import com.google.gwt.event.dom.client.TouchEndHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.FitParentHTML;
+import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
 
-public abstract class TransformationButton extends SimplePanel implements
+public abstract class TransformationButton extends SelectionButton implements
 		HasClickHandlers, HasTouchEndHandlers {
 
 	FitParentHTML buttonHTML;
 	private TransformationList<? extends TransformationButton> transformList;
+	public EquationNode previewNode = null;
 
 	public TransformationButton(
 			TransformationList<? extends TransformationButton> context) {
@@ -28,22 +23,22 @@ public abstract class TransformationButton extends SimplePanel implements
 		this.transformList = context;
 
 		addStyleName(CSS.TRANSFORMATION_BUTTON + " " + CSS.LAYOUT_ROW);
-
-		if (Moderator.isTouch) {
-			addTouchEndHandler(new TouchEndHandler() {
-				@Override
-				public void onTouchEnd(TouchEndEvent event) {
-					transform();
-				}
-			});
-		} else {
-			addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					transform();
-				}
-			});
-		}
+		//
+		// if (Moderator.isTouch) {
+		// addTouchEndHandler(new TouchEndHandler() {
+		// @Override
+		// public void onTouchEnd(TouchEndEvent event) {
+		// simplifyAttempt();
+		// }
+		// });
+		// } else {
+		// addClickHandler(new ClickHandler() {
+		// @Override
+		// public void onClick(ClickEvent event) {
+		// simplifyAttempt();
+		// }
+		// });
+		// }
 	}
 
 	public TransformationButton(String html,
@@ -78,15 +73,17 @@ public abstract class TransformationButton extends SimplePanel implements
 	/**
 	 * @return The HTML display version of the transformation
 	 */
-	public EquationTree getPreview() {
+	public EquationNode getPreview() {
+
+		if (previewNode != null) {
+			return previewNode;
+		}
 
 		if (transformList.beforeAfterTree == null) {
-			EquationTree mTree = transformList.beforeAfterTree = new EquationTree(
-					false);
+			EquationTree mTree = new EquationTree(false);
 
 			EquationNode frame;
-			if (TypeSGET.Operation.equals(transformList.getNode()
-					.getType())) {
+			if (TypeSGET.Operation.equals(transformList.getNode().getType())) {
 				EquationNode op = transformList.getNode();
 				frame = mTree.getLeftSide().replace(op.getParentType(), "");
 
@@ -95,8 +92,7 @@ public abstract class TransformationButton extends SimplePanel implements
 				if (possibleMinus != null
 						&& Operator.MINUS.getSign().equals(
 								possibleMinus.getSymbol())) {
-					frame.append(TypeSGET.Operation,
-							Operator.MINUS.getSign());
+					frame.append(TypeSGET.Operation, Operator.MINUS.getSign());
 				}
 
 				EquationNode leftClone, operationClone, rightClone;
@@ -112,11 +108,13 @@ public abstract class TransformationButton extends SimplePanel implements
 				frame = mTree.newNode(transformList.getNode().getXMLClone());
 				mTree.getLeftSide().replace(frame);
 			}
+			transformList.beforeAfterTree = mTree;
 		}
 
-		EquationTree mTree = transformList.beforeAfterTree;
-		mTree.getRightSide().replace(mTree.getLeftSide().clone());
-		EquationNode previewContextNode = mTree.getRightSide();
+		EquationTree previewTree = new EquationTree(
+				transformList.beforeAfterTree.getEquationXMLClone(), false);
+		previewTree.getRightSide().replace(previewTree.getLeftSide().clone());
+		EquationNode previewContextNode = previewTree.getRightSide();
 		if (TypeSGET.Sum.equals(previewContextNode.getType())
 				|| TypeSGET.Term.equals(previewContextNode.getType())) {
 			int operationIndex = previewContextNode.getChildCount() == 3 ? 1
@@ -131,24 +129,44 @@ public abstract class TransformationButton extends SimplePanel implements
 			return null;
 		}
 		previewButton.transform();
-//		previewButton.fireEvent(new ClickEvent() {
-//		});
-		mTree.reloadDisplay(true, true);
-		return mTree;
+		// previewButton.fireEvent(new ClickEvent() {
+		// });
+		// previewTree.reloadDisplay(true, true);
+		previewNode = previewTree.getRightSide();
+		return previewNode;
 	}
 
-	@Override
-	public HandlerRegistration addClickHandler(ClickHandler handler) {
-		return addDomHandler(handler, ClickEvent.getType());
-	}
+	//
+	// @Override
+	// public HandlerRegistration addClickHandler(ClickHandler handler) {
+	// return addDomHandler(handler, ClickEvent.getType());
+	// }
+	//
+	// public HandlerRegistration addTouchEndHandler(TouchEndHandler handler) {
+	// return addDomHandler(handler, TouchEndEvent.getType());
+	// }
 
-	public HandlerRegistration addTouchEndHandler(TouchEndHandler handler) {
-		return addDomHandler(handler, TouchEndEvent.getType());
-	}
-
+	// Buttons with a preview must override this method
 	TransformationButton getPreviewButton(EquationNode newNode) {
 		return null;
 	}
 
+	// private void simplifyAttempt() {
+	// if (transformList.getNode().getTree().isInEditMode() ||
+	// meetsAutoTransform()) {
+	// transform();
+	// } else {
+	// SimplifyQuiz sQuiz = new SimplifyQuiz(TransformationButton.this);
+	// sQuiz.appear();
+	// }
+	// }
+
+	@Override
+	protected void onSelect() {
+		transform();
+	}
+
 	public abstract void transform();
+
+	public abstract boolean meetsAutoTransform();
 }

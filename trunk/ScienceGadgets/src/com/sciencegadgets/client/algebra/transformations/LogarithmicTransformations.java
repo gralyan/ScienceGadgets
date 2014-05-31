@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.specification.LogBaseSpecification;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
@@ -136,6 +137,10 @@ class LogEvaluateButton extends LogTransformButton {
 		super(context, "Evaluate");
 		this.argValue = argValue;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public
@@ -176,6 +181,10 @@ class LogEvaluateButton extends LogTransformButton {
 class LogChangeBaseButton extends LogTransformButton {
 	LogChangeBaseButton(LogarithmicTransformations context) {
 		super(context, "Change base");
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
 	}
 
 	@Override
@@ -225,7 +234,10 @@ class LogChangeBaseButton extends LogTransformButton {
 class LogProductButton extends LogTransformButton {
 	LogProductButton(LogarithmicTransformations context) {
 		super(context, "Log Product");
-
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.LOG_PRODUCT);
 	}
 
 	@Override
@@ -271,6 +283,10 @@ class LogProductButton extends LogTransformButton {
 class LogQuotientButton extends LogTransformButton {
 	LogQuotientButton(LogarithmicTransformations context) {
 		super(context, "Log Quotient");
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.LOG_QUOTIENT);
 	}
 
 	@Override
@@ -319,6 +335,10 @@ class LogPowerButton extends LogTransformButton {
 	LogPowerButton(LogarithmicTransformations context) {
 		super(context, "Log Power");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.LOG_POWER);
+	}
 
 	@Override
 	public
@@ -355,6 +375,10 @@ class LogOneButton extends LogTransformButton {
 	LogOneButton(LogarithmicTransformations context) {
 		super(context, "Log of One");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.LOG_ONE);
+	}
 
 	@Override
 	public
@@ -380,6 +404,10 @@ class LogOneButton extends LogTransformButton {
 class LogSameBaseAsArgumentButton extends LogTransformButton {
 	LogSameBaseAsArgumentButton(LogarithmicTransformations context) {
 		super(context, "log<sub>b</sub>(b) = 1");
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.LOG_SAME_BASE_ARGUMENT);
 	}
 
 	@Override
@@ -415,6 +443,10 @@ class LogUnravelButton extends LogTransformButton {
 		this.rule = rule;
 		this.toReplace = toReplace;
 		this.replacement = replacement;
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.LOG_INVERSE);
 	}
 	@Override
 	public

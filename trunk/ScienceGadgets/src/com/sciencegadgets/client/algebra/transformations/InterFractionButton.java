@@ -8,7 +8,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.InterFractionTransformations.DropType;
-import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.algebra.transformations.specification.NumberQuiz;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
@@ -26,7 +26,7 @@ public class InterFractionButton extends TransformationButton {
 	public InterFractionButton(InterFractionTransformations context,
 			EquationNode drag, EquationNode target, DropType dropType) {
 		super(context);
-		
+
 		this.drag = drag;
 		this.target = target;
 		this.dropType = dropType;
@@ -75,12 +75,15 @@ public class InterFractionButton extends TransformationButton {
 				+ "<div style=\"display:inline-block; vertical-align:middle;\">="
 				+ total + "</div>";
 	}
-public EquationNode getTarget() {
-	return target;
-}
+
+	public EquationNode getTarget() {
+		return target;
+	}
+
 	public DropType getDropType() {
 		return dropType;
 	}
+
 	/**
 	 * Already assured from {@link AlgebraicTransformations#addDropTarget} that:<br/>
 	 * 1. Both nodes (drag and target) are of equivalent<br/>
@@ -105,7 +108,9 @@ public EquationNode getTarget() {
 	 */
 	private void dividePrompt() {
 		try {
-			if(Moderator.meetsRequirements(Badge.CANCEL, Badge.FACTOR_NUMBERS) && FractionTransformations.SIMPLIFY_FRACTION(drag, target, true)) {
+			if (Moderator.meetsRequirements(Badge.CANCEL, Badge.FACTOR_NUMBERS)
+					&& FractionTransformations.SIMPLIFY_FRACTION(drag, target,
+							true)) {
 				complete(false);
 				return;
 			}
@@ -126,11 +131,15 @@ public EquationNode getTarget() {
 				String question = target.getSymbol() + " "
 						+ Operator.DIVIDE.getSign() + " " + drag.toString()
 						+ " = ";
-				NumberPrompt prompt = new NumberPrompt(question, total) {
+				NumberQuiz prompt = new NumberQuiz(question, total) {
 					@Override
-					public void onCorrect(int skillIncrease) {
+					public void onIncorrect() {
+					}
+
+					@Override
+					public void onCorrect() {
 						divide(total);
-						Moderator.getStudent().increaseSkill(Skill.DIVISION, skillIncrease);
+						Moderator.getStudent().increaseSkill(Skill.DIVISION, 1);
 					}
 				};
 				prompt.appear();
@@ -221,7 +230,8 @@ public EquationNode getTarget() {
 	private void exponentialDrop() {
 		EquationNode dragExp = drag.getChildAt(1);
 		EquationNode targetExp = target.getChildAt(1);
-		if (Moderator.meetsRequirement(Badge.EXP_DROP_ARITHMETIC) && TypeSGET.Number.equals(dragExp.getType())
+		if (Moderator.meetsRequirement(Badge.EXP_DROP_ARITHMETIC)
+				&& TypeSGET.Number.equals(dragExp.getType())
 				&& TypeSGET.Number.equals(targetExp.getType())) {
 			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
 			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
@@ -259,14 +269,15 @@ public EquationNode getTarget() {
 			Moderator.reloadEquationPanel(dropHTML, Skill.DIVISION);
 			break;
 		case EXPONENTIAL:
-			Moderator.reloadEquationPanel(dropHTML, Skill.DIVIDING_EXPONENTIALS);
+			Moderator
+					.reloadEquationPanel(dropHTML, Skill.DIVIDING_EXPONENTIALS);
 			break;
 		case LOG_COMBINE:
-			Moderator.reloadEquationPanel(dropHTML, Skill.LOG_CHANGE_BASE_DIVIDE);
+			Moderator.reloadEquationPanel(dropHTML,
+					Skill.LOG_CHANGE_BASE_DIVIDE);
 			break;
 		case TRIG_COMBINE:
-			Moderator.reloadEquationPanel(dropHTML,
-					Skill.COMBINE_TRIG);
+			Moderator.reloadEquationPanel(dropHTML, Skill.COMBINE_TRIG);
 			break;
 		}
 	}
@@ -297,4 +308,8 @@ public EquationNode getTarget() {
 		}
 	}
 
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 }

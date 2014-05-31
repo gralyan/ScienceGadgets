@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import java.util.HashMap;
+
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -71,7 +73,10 @@ public class AssociativeDropController extends TransformationDropController {
 			parent.addBefore(dropIndex, drag);
 
 		}
-		Moderator.reloadEquationPanel("Associative Property", Skill.COMMUNATIVE_PROPERTY);
+		HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
+		skills.put(Skill.COMMUNATIVE_PROPERTY, 1);
+		((EquationWrapper)getDropTarget()).getAlgebraActivity().reloadEquationPanel("Associative Property", skills, false);
+//		Moderator.reloadEquationPanel("Associative Property", Skill.COMMUNATIVE_PROPERTY);
 	}
 
 }

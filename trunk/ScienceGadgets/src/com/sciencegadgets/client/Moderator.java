@@ -17,6 +17,7 @@ package com.sciencegadgets.client;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
@@ -65,6 +66,7 @@ public class Moderator implements EntryPoint {
 	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
 	private static Student student = new Student("guest");
 	public static boolean isInEasyMode = false;
+	public static int idCounter = 0;
 
 	@Override
 	public void onModuleLoad() {
@@ -92,8 +94,8 @@ public class Moderator implements EntryPoint {
 		// }
 
 	}
-	
-	public static  Student getStudent() {
+
+	public static Student getStudent() {
 		return student;
 	}
 
@@ -130,7 +132,7 @@ public class Moderator implements EntryPoint {
 		try {
 			if (algebraActivity == null
 					|| algebraActivity.inEditMode != inEditMode) {
-				algebraActivity = new AlgebraActivity(equationTree, inEditMode);
+				algebraActivity = new AlgebraActivity(equationTree, inEditMode, false);
 			} else {
 				algebraActivity.setEquationTree(equationTree);
 			}
@@ -174,13 +176,40 @@ public class Moderator implements EntryPoint {
 		return algebraActivity.getEquationTree();
 	}
 
+	public static void reloadEquationPanel() {
+		reloadEquationPanel(null);
+	}
+
+	public static void reloadEquationPanel(String changeComment) {
+		reloadEquationPanel(changeComment, (HashMap<Skill, Integer>) null);
+	}
+
 	public static void reloadEquationPanel(String changeComment, Skill skill) {
-		Skill[] skills = {skill};
-		reloadEquationPanel(changeComment, skills);
+		HashMap<Skill, Integer> skillsIncrease = new HashMap<Skill, Integer>();
+		skillsIncrease.put(skill, 1);
+		reloadEquationPanel(changeComment, skillsIncrease);
+	}
+
+	public static void reloadEquationPanel(String changeComment,
+			HashMap<Skill, Integer> skillsIncrease) {
+		increaseSkills(skillsIncrease);
+		algebraActivity.reloadEquationPanel(changeComment, skillsIncrease, true);
 	}
 	
-	public static void reloadEquationPanel(String changeComment, Skill[] skills) {
-		algebraActivity.reloadEquationPanel(changeComment, skills);
+	public static void increaseSkills(HashMap<Skill, Integer> skillsIncrease) {
+
+		if (skillsIncrease != null) {
+			for (Entry<Skill, Integer> skillEntry : skillsIncrease.entrySet()) {
+				HashSet<Badge> newBadges = Moderator.getStudent().increaseSkill(skillEntry.getKey(), skillEntry.getValue());
+				for(Badge newBadge : newBadges) {
+					JSNICalls.log("newBadge "+newBadge);
+					Window.alert("New Badge!\n"+newBadge.toString());
+				}
+				JSNICalls.log("Skill up - "+skillEntry.getKey()+"-"+skillEntry.getValue() + "\nskills: " + Moderator.getStudent().getSkills()
+						+ "\nbadges " + Moderator.getStudent().getBadges()
+						+ "\n");
+			}
+		}
 	}
 
 	class ResizeAreaHandler implements ResizeHandler {
@@ -191,7 +220,7 @@ public class Moderator implements EntryPoint {
 				if (ActivityType.algebraedit.equals(currentActivityType)
 						|| ActivityType.algebrasolve
 								.equals(currentActivityType)) {
-					reloadEquationPanel(null, (Skill[])null);
+					reloadEquationPanel();
 				}
 				for (Prompt prompt : prompts) {
 					prompt.resize();
@@ -217,18 +246,22 @@ public class Moderator implements EntryPoint {
 
 	public static boolean meetsRequirements(Badge... badges) {
 		HashSet<Badge> badgeSet = new HashSet<Badge>();
-		for(Badge badge : badges) {
-		badgeSet.add(badge);
+		for (Badge badge : badges) {
+			badgeSet.add(badge);
 		}
 		return meetsRequirements(badgeSet);
 	}
-	
+
 	public static boolean meetsRequirements(HashSet<Badge> badges) {
 		if (student == null || badges == null) {
+			JSNICalls.warn("student: " + student + ", badges:" + badges);
 			return false;
 		} else if (isInEasyMode) {
+			JSNICalls.warn("isInEasyMode " + isInEasyMode);
 			return true;
 		} else {
+			JSNICalls.warn("has: " + student.getBadges() + ", needs: " + badges
+					+ ", fulfilled? " + student.hasBadges(badges));
 			return student.hasBadges(badges);
 		}
 	}

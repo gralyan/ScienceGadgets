@@ -4,7 +4,7 @@ import com.google.gwt.dom.client.Style;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.transformations.Skill;
+import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.specification.LogBaseSpecification;
@@ -22,6 +22,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 	private EquationNode node;
 	private LogBaseSpecification logBaseSpec = null;
 	private TrigFunctionSpecification trigFuncSpec = null;
+	AlgebraActivity algebraActivity = null;
 	TransformationList<TransformationButton> changeButtons;
 
 	private static final Object[][] types = {//
@@ -44,6 +45,9 @@ public class ChangeNodeMenu extends CommunistPanel {
 		addStyleName(CSS.FILL_PARENT);
 
 		changeButtons = new TransformationList<TransformationButton>(node);
+		if(node !=null) {
+		algebraActivity = ((EquationWrapper)node.getWrapper()).getAlgebraActivity();
+		}
 
 		// Change buttons
 		for (Object[] type : types) {
@@ -66,6 +70,9 @@ public class ChangeNodeMenu extends CommunistPanel {
 	public void setNode(EquationNode node) {
 		this.node = node;
 
+		algebraActivity = ((EquationWrapper)node.getWrapper()).getAlgebraActivity();
+		changeButtons.setNode(node);
+
 		TypeSGET type = node.getType();
 		if (!TypeSGET.Number.equals(type)
 				&& !TypeSGET.Variable.equals(type)) {
@@ -84,6 +91,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 			Style style = getElement().getStyle();
 			style.setColor("red");
 			style.setBackgroundColor("black");
+		}
+		@Override
+		public boolean meetsAutoTransform() {
+			return true;
 		}
 
 		public void transform() {
@@ -131,7 +142,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 				node.replace(TypeSGET.Variable, NOT_SET);
 				break;
 			}
-			Moderator.reloadEquationPanel(null, (Skill[])null);
+			algebraActivity.reloadEquationPanel(null, null, false);
+//			Moderator.reloadEquationPanel();
 		}
 	}
 
@@ -147,6 +159,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 			super(html, changeButtons);
 			this.toType = toType;
 		}
+		@Override
+		public boolean meetsAutoTransform() {
+			return true;
+		}
 
 		@Override
 		public void transform() {
@@ -157,7 +173,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			int nodeindex = node.getIndex();
 
 			TypeSGET.Operator operator = null;
-
+			
 			switch (toType) {
 			case Log:
 				if (logBaseSpec == null) {
@@ -167,7 +183,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 							super.onSpecify(base);
 							EquationNode log = node.encase(TypeSGET.Log);
 							log.setAttribute(MathAttribute.LogBase, base);
-							Moderator.reloadEquationPanel(null, (Skill[])null);
+							algebraActivity.reloadEquationPanel(null, null, false);
+//							Moderator.reloadEquationPanel();
 						}
 					};
 				}
@@ -182,7 +199,8 @@ public class ChangeNodeMenu extends CommunistPanel {
 							EquationNode func = node
 									.encase(TypeSGET.Trig);
 							func.setAttribute(MathAttribute.Function, function);
-							Moderator.reloadEquationPanel(null, (Skill[])null);
+							algebraActivity.reloadEquationPanel(null, null, false);
+//							Moderator.reloadEquationPanel();
 						}
 					};
 				}
@@ -234,8 +252,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 				newNode.append(TypeSGET.Variable, NOT_SET);
 				break;
 			}
-			Moderator.reloadEquationPanel(null, (Skill[])null);
+			algebraActivity.reloadEquationPanel(null, null, false);
+//			Moderator.reloadEquationPanel();
 
 		}
+
 	}
 }

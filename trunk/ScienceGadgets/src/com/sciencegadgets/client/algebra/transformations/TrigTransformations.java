@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
@@ -133,6 +134,10 @@ class TrigDefineButton extends TrigTransformButton {
 
 		setHTML(html);
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.TRIGONOMETRIC_FUNCTIONS);
+	}
 
 	@Override
 	public
@@ -185,15 +190,17 @@ class TrigReciprocalButton extends TrigTransformButton {
 		super(context);
 
 		reciprocalFunction = function.getReciprocal();
-
 		setHTML("1/" + reciprocalFunction);
 
 		addClickHandler(new ClickHandler() {
-
 			@Override
 			public void onClick(ClickEvent event) {
 			}
 		});
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.TRIG_FUNCTIONS_RECIPROCAL);
 	}
 
 	@Override
@@ -224,22 +231,27 @@ class TrigUnravelButton extends TrigTransformButton {
 
 	private EquationNode toReplace;
 	private EquationNode replacement;
-	private Skill rule;
+	private Skill skill;
 
 	public TrigUnravelButton(final EquationNode toReplace, final EquationNode replacement,
-			final Skill rule, TrigTransformations context) {
+			final Skill skill, TrigTransformations context) {
 		super(context);
 		setHTML(replacement.getHTMLString(true, true));
-		this.rule = rule;
+		this.skill = skill;
 		this.toReplace = toReplace;
 		this.replacement = replacement;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.TRIG_FUNCTIONS_INVERSE);
+	}
+	
 	@Override
 	public
 	void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
-		Moderator.reloadEquationPanel(changeComment, rule);
+		Moderator.reloadEquationPanel(changeComment, skill);
 	}
 }

@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
 
@@ -339,6 +340,10 @@ class SeperateNegButton extends TransformationButton {
 		super("Seperate (-)", context);
 		this.negNode = negNode;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public void transform() {
@@ -366,7 +371,7 @@ class SeperateNegButton extends TransformationButton {
 			parent.addBefore(nodeIndex, TypeSGET.Number, "-1");
 		}
 		Moderator.reloadEquationPanel("-" + newSymbol + " = -1"
-				+ Operator.getMultiply().getSign() + newSymbol, (Skill[])null);
+				+ Operator.getMultiply().getSign() + newSymbol);
 	}
 }
 

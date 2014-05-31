@@ -313,6 +313,11 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
+		public boolean meetsAutoTransform() {
+			return true;
+		}
+		
+		@Override
 		public void transform() {
 			BothSidesButton joinedButton = this.getJoinedButton();
 
@@ -620,7 +625,7 @@ public class BothSidesTransformations extends
 				// clean source side
 				oldParent.replace(oldParent.getFirstChild());
 			} else {
-				oldParent.encase(TypeSGET.Exponential);
+				oldParent = oldParent.encase(TypeSGET.Exponential);
 				EquationNode frac = oldParent.append(TypeSGET.Fraction, "");
 				frac.append(TypeSGET.Number, "1");
 				frac.append(node.clone());

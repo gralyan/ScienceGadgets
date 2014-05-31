@@ -14,7 +14,6 @@ import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
@@ -22,11 +21,11 @@ import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class EquationPanel extends AbsolutePanel {
-	public HashMap<EquationNode, EquationLayer> eqLayerMap = new HashMap<EquationNode, EquationLayer>();
+	private HashMap<EquationNode, EquationLayer> eqLayerMap = new HashMap<EquationNode, EquationLayer>();
 
 	private EquationTree mathTree;
 	private EquationLayer rootLayer;
-	private static EquationLayer focusLayer;
+	private EquationLayer focusLayer;
 	public Wrapper selectedWrapper;
 	private ArrayList<EquationNode> mergeRootNodes = new ArrayList<EquationNode>();
 	private ArrayList<EquationNode> mergeFractionNodes = new ArrayList<EquationNode>();
@@ -34,6 +33,7 @@ public class EquationPanel extends AbsolutePanel {
 	private AlgebraActivity algebraActivity;
 
 	public static final String EQ_OF_LAYER = "Equation-ofLayer-";
+	public static final String EQ_LAYER = "eqLayer-";
 	public static final String OF_LAYER = "-ofLayer-";
 
 	private EquationNode rootNode;
@@ -93,6 +93,7 @@ public class EquationPanel extends AbsolutePanel {
 			findRootLayerMergingNodes(rootNode);
 			findFractionMergingNodes();
 		}
+		
 		draw(rootNode, null);
 
 		modelEqLayer.removeFromParent();
@@ -109,14 +110,14 @@ public class EquationPanel extends AbsolutePanel {
 			// new InterFractionTransformations(wrap.getNode());
 			// }
 		}
+
 		for (EquationWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
 		}
-
 		for (EquationLayer eqLayer : eqLayerMap.values()) {
 			eqLayer.setVisible(false);
 		}
-
+		
 		setFocus(algebraActivity.focusLayerId);
 	}
 
@@ -187,7 +188,7 @@ public class EquationPanel extends AbsolutePanel {
 
 			eqLayer.setParentLayer(parentLayer);
 			eqLayerMap.put(node, eqLayer);
-			eqLayer.getElement().setAttribute("id", "eqLayer-" + node.getId());
+			eqLayer.getElement().setAttribute("id", EQ_LAYER + node.getId());
 			eqLayer.addStyleName(CSS.INTERACTIVE_EQUATION);
 			this.add(eqLayer, 0, 0);
 
@@ -238,6 +239,8 @@ public class EquationPanel extends AbsolutePanel {
 						|| mergeFractionNodes.contains(node)) {
 					continue;
 				}
+			}else if(!node.hasWrapper) {
+				continue;
 			}
 			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
 					+ parentId);
@@ -267,7 +270,10 @@ public class EquationPanel extends AbsolutePanel {
 			setFocus(parentLayer);
 	}
 
-	EquationLayer setFocus(String layerId) {
+	void setFocus(EquationNode node) {
+		setFocus(eqLayerMap.get(node));
+	}
+	public EquationLayer setFocus(String layerId) {
 		if (layerId != null) {
 			for (EquationLayer eqLayer : eqLayerMap.values()) {
 				if (layerId.equals(eqLayer.getElement().getAttribute("id"))) {
@@ -282,7 +288,7 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	void setFocus(final EquationLayer newFocus) {
-		final EquationLayer prevFocus = focusLayer;
+		EquationLayer prevFocus = focusLayer;
 		if (selectedWrapper != null) {
 			if (selectedWrapper instanceof EditWrapper) {
 				((EditWrapper) selectedWrapper).unselect();
@@ -304,9 +310,7 @@ public class EquationPanel extends AbsolutePanel {
 		algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
 				"id");
 
-		JSNICalls.warn("setF 5");
 		if (!algebraActivity.inEditMode) {
-			JSNICalls.warn("setF 6");
 			Scheduler.get().scheduleIncremental(
 					new PrepareWrappersInLayer(newFocus.getWrappers()));
 		}
@@ -327,34 +331,36 @@ public class EquationPanel extends AbsolutePanel {
 			if (currentIndex >= wrapperCount) {
 				return false;
 			}
-			JSNICalls.TIME_ELAPSED("WRAP ");
 			((AlgebaWrapper) wrappers.get(currentIndex)).attachButtons();
-			JSNICalls.TIME_ELAPSED("WRAP2 ");
 			currentIndex++;
 			return true;
 		}
 
 	}
-
-	class LayerFade extends Animation {
-		EquationLayer newFocus, prevFocus;
-
-		LayerFade(EquationLayer newFocus, EquationLayer prevFocus) {
-			this.newFocus = newFocus;
-			this.prevFocus = prevFocus;
-		}
-
-		@Override
-		protected void onUpdate(double progress) {
-			newFocus.setOpacity(progress);
-			prevFocus.setOpacity(1 - progress);
-		}
-
-		@Override
-		protected void onComplete() {
-			super.onComplete();
-			prevFocus.setVisible(false);
-		}
+	
+	public AlgebraActivity getAlgebraActivity() {
+		return algebraActivity;
 	}
+
+//	class LayerFade extends Animation {
+//		EquationLayer newFocus, prevFocus;
+//
+//		LayerFade(EquationLayer newFocus, EquationLayer prevFocus) {
+//			this.newFocus = newFocus;
+//			this.prevFocus = prevFocus;
+//		}
+//
+//		@Override
+//		protected void onUpdate(double progress) {
+//			newFocus.setOpacity(progress);
+//			prevFocus.setOpacity(1 - progress);
+//		}
+//
+//		@Override
+//		protected void onComplete() {
+//			super.onComplete();
+//			prevFocus.setVisible(false);
+//		}
+//	}
 
 }

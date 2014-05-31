@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
@@ -81,6 +82,10 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 		this.number = number;
 		this.context = context;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public
@@ -110,6 +115,10 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 			this.factor = factor;
 			this.prompt = prompt;
 			setSize("50%", "50%");
+		}
+		@Override
+		public boolean meetsAutoTransform() {
+			return true;
 		}
 
 		@Override
@@ -145,6 +154,10 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 class UnitConversionButton extends NumberTransformationButton {
 	UnitConversionButton(final NumberTransformations context) {
 		super("Convert Units", context);
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
 	}
 
 	@Override

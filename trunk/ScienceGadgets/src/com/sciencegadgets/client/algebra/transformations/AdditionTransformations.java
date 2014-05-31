@@ -1,12 +1,15 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import com.google.gwt.user.client.Window;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.algebra.transformations.specification.NumberQuiz;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
@@ -104,17 +107,6 @@ public class AdditionTransformations extends
 		return new AddNumbersButton(this);
 	}
 
-	AddSimilarButton addSimilar_check() {
-		if (leftType != rightType) {
-			return null;
-		}
-		if (left.isLike(right)) {
-			return new AddSimilarButton(this);
-		} else {
-			return null;
-		}
-	}
-
 	AddTransformButton addFractions_check() {
 		boolean isLeftFraction = TypeSGET.Fraction.equals(leftType);
 		boolean isRightFraction = TypeSGET.Fraction.equals(rightType);
@@ -150,6 +142,17 @@ public class AdditionTransformations extends
 		if (left.getAttribute(MathAttribute.LogBase).equals(
 				right.getAttribute(MathAttribute.LogBase))) {
 			return new AddLogsButton(this);
+		} else {
+			return null;
+		}
+	}
+
+	AddSimilarButton addSimilar_check() {
+		if (leftType != rightType) {
+			return null;
+		}
+		if (left.isLike(right)) {
+			return new AddSimilarButton(this);
 		} else {
 			return null;
 		}
@@ -211,6 +214,11 @@ class AddZeroButton extends AddTransformButton {
 		this.other = other;
 		this.zero = zero;
 	}
+	
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.ADD_ZERO);
+	}
 
 	@Override
 	public void transform() {
@@ -248,6 +256,10 @@ class AddNumbersButton extends AddTransformButton {
 	AddNumbersButton(AdditionTransformations context) {
 		super(context, "# + #");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public void transform() {
@@ -266,13 +278,14 @@ class AddNumbersButton extends AddTransformButton {
 		Skill nMagSkill = Skill.ADDITION;
 		Badge numberMagnitudeBadge = Badge.ADD_NUMBERS_LARGE;
 		int totalAbs = totalValue.abs().intValue();
-		if(totalAbs <10) {
+		if(totalAbs <=10) {
 			nMagSkill = Skill.ADD_NUMBERS_TO_10;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_10;
-		}else if(totalAbs <100) {
+		}else if(totalAbs <=100) {
 			nMagSkill = Skill.ADD_NUMBERS_TO_100;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_100;
 		}
+		JSNICalls.warn("magnitude: "+totalAbs+", increasesSkill: "+nMagSkill);
 		final Skill numberMagnitudeSkill = nMagSkill;
 
 		includesNegatives = isMinusBeforeLeft || leftV.intValue() < 0
@@ -307,26 +320,37 @@ class AddNumbersButton extends AddTransformButton {
 			String question = leftValue.toString() + " "
 					+ operation.getSymbol() + " " + rightValue.toString()
 					+ " = ";
-			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
+
+			final HashMap<Skill, Integer> skillsIncrease = new HashMap<Skill, Integer>();
+			skillsIncrease.put(numberMagnitudeSkill, 0);
+			if (isMinus) {
+				skillsIncrease.put(Skill.SUBTRACTION, 0);
+			}
+			if (includesNegatives) {
+				skillsIncrease.put(Skill.ADDITION_WITH_NEGATIVES, 0);
+			}
+			if (includesZero) {
+				skillsIncrease.put(Skill.ADDITION_WITH_ZERO, 0);
+			}
+			if (includesZero) {
+				skillsIncrease.put(Skill.ADD_NUMBERS_TO_10, 0);
+			}
+			
+			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
-				public void onCorrect(int skillIncrease) {
+				public void onIncorrect() {
+					for(Entry<Skill, Integer> entry : skillsIncrease.entrySet()) {
+						entry.setValue(-1);
+					}
+					Moderator.increaseSkills(skillsIncrease);
+				}
+				@Override
+				public void onCorrect() {
+					for(Entry<Skill, Integer> entry : skillsIncrease.entrySet()) {
+						entry.setValue(1);
+					}
+					Moderator.increaseSkills(skillsIncrease);
 					addNumbers(left, right, totalValue, leftValue, rightValue);
-					
-					Moderator.getStudent().increaseSkill(numberMagnitudeSkill,
-							skillIncrease);
-					
-					if (isMinus) {
-						Moderator.getStudent().increaseSkill(Skill.SUBTRACTION,
-								skillIncrease);
-					}
-					if (includesNegatives) {
-						Moderator.getStudent().increaseSkill(
-								Skill.ADDITION_WITH_NEGATIVES, skillIncrease);
-					}
-					if (includesZero) {
-						Moderator.getStudent().increaseSkill(
-								Skill.ADDITION_WITH_ZERO, skillIncrease);
-					}
 				}
 			};
 			prompt.appear();
@@ -381,7 +405,11 @@ class AddSimilarButton extends AddTransformButton {
 		super(context, "x+x = 2x");
 
 	}
-
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.COMBINE_LIKE_TERMS);
+	}
+	
 	@Override
 	public void transform() {
 
@@ -451,6 +479,10 @@ class ToCommonDenominatorButton extends AddTransformButton {
 	ToCommonDenominatorButton(AdditionTransformations context) {
 		super(context, "Common Denominator");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	}
 
 	@Override
 	public void transform() {
@@ -519,6 +551,10 @@ class AddFractionsButton extends AddTransformButton {
 	AddFractionsButton(AdditionTransformations context) {
 		super(context, "a/b +c/b = (a+c)/b");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.ADD_FRACTIONS);
+	}
 
 	@Override
 	public void transform() {
@@ -560,6 +596,10 @@ class AddLogsButton extends AddTransformButton {
 	AddLogsButton(AdditionTransformations context) {
 		super(context,
 				"log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)");
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.ADD_LOGS);
 	}
 
 	@Override

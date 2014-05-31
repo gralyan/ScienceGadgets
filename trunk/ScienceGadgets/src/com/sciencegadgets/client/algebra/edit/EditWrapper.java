@@ -28,7 +28,8 @@ public class EditWrapper extends EquationWrapper {
 			}
 		}else{
 			changeNodeMenu.setNode(node);
-			Moderator.getCurrentAlgebraActivity().lowerEqArea.add(changeNodeMenu);
+			eqPanel.getAlgebraActivity().lowerEqArea.add(changeNodeMenu);
+//			Moderator.getCurrentAlgebraActivity().lowerEqArea.add(changeNodeMenu);
 			changeNodeMenu.setVisible(false);
 		}
 	}
@@ -80,7 +81,7 @@ public class EditWrapper extends EquationWrapper {
 			node.setSymbol(TypeSGET.Operator.MINUS.getSign());
 			break;
 		}
-		 Moderator.reloadEquationPanel(null, (Skill[])null);
+		 Moderator.reloadEquationPanel();
 	}
 	private class OperationTouchHandler implements TouchStartHandler{
 		@Override
