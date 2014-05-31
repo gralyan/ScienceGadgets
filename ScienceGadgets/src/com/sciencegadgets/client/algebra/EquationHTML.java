@@ -218,6 +218,7 @@ public class EquationHTML extends HTML {
 				for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
 					if (op.getHTML().equals(txt)) {
 						txt = op.getSign();
+						break;
 					}
 				}
 			}

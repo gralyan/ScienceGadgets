@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.WrapDragController;
@@ -33,10 +32,8 @@ public class InterFractionTransformations extends
 	 */
 	public InterFractionTransformations(EquationNode drag) {
 		super(drag);
-		JSNICalls.TIME_ELAPSED("inter1 ");
 		this.drag = drag;
 
-		JSNICalls.TIME_ELAPSED("inter2 ");
 		EquationNode thisSide = null;
 		EquationNode parent = drag.getParent();
 		switch (parent.getType()) {
@@ -53,13 +50,11 @@ public class InterFractionTransformations extends
 			return;
 		}
 
-		JSNICalls.TIME_ELAPSED("inter3 ");
 		EquationNode otherSide = thisSide.getIndex() == 0 ? thisSide
 				.getNextSibling() : thisSide.getPrevSibling();
 
 		HashMap<EquationNode, DropType> dropTargets = new HashMap<EquationTree.EquationNode, DropType>();
 
-		JSNICalls.TIME_ELAPSED("inter4 ");
 		if (drag.isLike(otherSide)) {// Cancel drop on entire other sides
 			dropTargets.put(otherSide, DropType.CANCEL);
 
@@ -69,24 +64,16 @@ public class InterFractionTransformations extends
 				if (TypeSGET.Operation.equals(child.getType())) {
 					continue;
 				}
-				JSNICalls.TIME_ELAPSED("inter4.1 ");
 				if (drag.isLike(child)) {// Cancel drop on child
-					JSNICalls.TIME_ELAPSED("inter4.2 ");
 					dropTargets.put(child, DropType.CANCEL);
-					JSNICalls.TIME_ELAPSED("inter4.3 ");
 				} else {// Drop on child
-					JSNICalls.TIME_ELAPSED("inter4.4 ");
 					addDropTarget(child, drag, dropTargets);
-					JSNICalls.TIME_ELAPSED("inter4.5 ");
 				}
-				JSNICalls.TIME_ELAPSED("inter4.6 ");
 			}
 
-			JSNICalls.TIME_ELAPSED("inter5 ");
 		} else {// Drop on entire other side
 			addDropTarget(otherSide, drag, dropTargets);
 		}
-		JSNICalls.TIME_ELAPSED("inter6 ");
 
 		LinkedList<InterFractionDrop> dropControllers = new LinkedList<InterFractionDrop>();
 		if (dropTargets.size() > 0) {
@@ -95,25 +82,18 @@ public class InterFractionTransformations extends
 			if (drag.getWrapper() != null) {
 				dragController = drag.getWrapper().addDragController();
 			}
-			JSNICalls.TIME_ELAPSED("inter7 ");
 			for (Entry<EquationNode, DropType> dropTarget : dropTargets
 					.entrySet()) {
 
-				JSNICalls.TIME_ELAPSED("interFOR 1");
 				InterFractionButton butt = new InterFractionButton(this, drag,
 						dropTarget.getKey(), dropTarget.getValue());
-				JSNICalls.TIME_ELAPSED("interFOR 2");
 				add(butt);
-				JSNICalls.TIME_ELAPSED("interFOR 3");
 
 				if (dragController != null && butt.getTarget().getWrapper() != null) {
 					InterFractionDrop drop = new InterFractionDrop(
 							dragController, butt);
-					JSNICalls.TIME_ELAPSED("interFOR 4");
 					dropControllers.add(drop);
-					JSNICalls.TIME_ELAPSED("interFOR 5");
 					dragController.registerDropController(drop);
-					JSNICalls.TIME_ELAPSED("interFOR 6");
 				}
 			}
 		}

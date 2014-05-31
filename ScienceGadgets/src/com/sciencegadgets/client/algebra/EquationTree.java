@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -26,7 +27,10 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.core.java.util.Collections;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
@@ -45,14 +49,13 @@ public class EquationTree {
 
 	private EquationNode root;
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	private HashMap<String, EquationNode> idMap = new HashMap<String, EquationNode>();
+	public HashMap<String, EquationNode> idMap = new HashMap<String, EquationNode>();
 	private HashMap<String, Element> idMLMap = new HashMap<String, Element>();
 	private HashMap<String, Element> idHTMLMap = new HashMap<String, Element>();
 	private HashMap<Element, String> idUnitHTMLMap = new HashMap<Element, String>();
 	private Element equationXML;
 	private EquationHTML eqHTML;
 	private boolean inEditMode;
-	private int idCounter = 0;
 	private EquationValidator eqValidator;
 
 	/**
@@ -115,7 +118,8 @@ public class EquationTree {
 	}
 
 	public Element getEquationXMLClone() {
-		return (Element) equationXML.cloneNode(true);
+		// return (Element) equationXML.cloneNode(true);
+		return root.getXMLClone();
 	}
 
 	public String getEquationXMLString() {
@@ -152,7 +156,9 @@ public class EquationTree {
 			throw new IllegalStateException(errorMessage, new Throwable(
 					errorMessage));
 		}
-		if (!"=".equals(root.getChildAt(1).getSymbol())) {
+		String rootSymbol = root.getChildAt(1).getSymbol();
+		if (!(TypeSGET.Operator.EQUALS.getSign().equals(rootSymbol) || TypeSGET.Operator.ARROW_RIGHT
+				.getSign().equals(rootSymbol))) {
 			String errorMessage = "[=] isn't the root's second child, not side=side "
 					+ getEquationXMLClone().getString();
 			throw new IllegalStateException(errorMessage, new Throwable(
@@ -226,9 +232,11 @@ public class EquationTree {
 
 		EquationNode node = idMap.get(id);
 		if (node == null) {
-			JSNICalls.error("Can't get node by id: " + id + "\n"
-					+ getEquationXMLClone().getString());
-			throw new NoSuchElementException("Can't get node by id: " + id);
+			String error = "Can't get node by id: " + id + "\n"
+					+ getEquationXMLString() + "\n\n" + "Map: "
+					+ idMap.keySet();
+			JSNICalls.error(error);
+			throw new NoSuchElementException(error);
 		}
 		return node;
 	}
@@ -265,10 +273,47 @@ public class EquationTree {
 		if (!inEditMode) {
 			eqValidator.validateQuantityKinds(this);
 		}
+		
+		validateMaps();
 
-		if (idMap.size() != idMLMap.size()) {
-			String errorMessage = "The binding maps must have the same size: idMap.size()="
-					+ idMap.size() + " idMLMap.size()=" + idMLMap.size();
+	}
+
+	public void validateMaps() throws IllegalStateException {
+
+		LinkedList<String> treeIds = new LinkedList<String>();
+		for (EquationNode tNode : getNodes()) {
+			treeIds.add(tNode.getId());
+		}
+		LinkedList<String> idMapIds = new LinkedList<String>(idMap.keySet());
+		LinkedList<String> idMLMapIds = new LinkedList<String>(idMLMap.keySet());
+
+		java.util.Collections.sort(treeIds);
+		java.util.Collections.sort(idMapIds);
+		java.util.Collections.sort(idMLMapIds);
+		
+		String errorMessage ="The binding maps are not in aggreement:\n"+getEquationXMLString()
+				+ "\ngetNodes =\t" + treeIds + "\nidMap =\t\t" + idMapIds
+				+ "\nidMLMap =\t" + idMLMapIds;
+
+		if (treeIds.size() != idMapIds.size()
+				|| treeIds.size() != idMLMapIds.size()) {
+			JSNICalls.error(errorMessage);
+			throw new IllegalStateException(errorMessage, new Throwable(
+					errorMessage));
+		}
+		
+		// Make sure both maps contain every id in the tree
+		for(String treeId : treeIds) {
+			if(!idMapIds.remove(treeId) || !idMLMapIds.remove(treeId)){
+				JSNICalls.error(errorMessage);
+				throw new IllegalStateException(errorMessage, new Throwable(
+						errorMessage));
+			}
+		}
+		
+		// The list of map Id's should be emptied out from the last step or else they contain more id's than in the tree
+		if(idMapIds.size() > 0 || idMapIds.size() > 0) {
+			JSNICalls.error(errorMessage);
 			throw new IllegalStateException(errorMessage, new Throwable(
 					errorMessage));
 		}
@@ -284,7 +329,19 @@ public class EquationTree {
 	}
 
 	/**
-	 * Gets all nodes by specified type, use null for all nodes
+	 * Gets all nodes in the tree including the root
+	 * 
+	 * @param type
+	 */
+	public LinkedList<EquationNode> getNodes() {
+		LinkedList<EquationNode> nodes = getNodesByType(null, root);
+		nodes.add(root);
+		return nodes;
+	}
+
+	/**
+	 * Gets all nodes in the tree by specified type.</br>Use {@link #getNodes()}
+	 * for all nodes in the tree including the root
 	 * 
 	 * @param type
 	 */
@@ -293,7 +350,10 @@ public class EquationTree {
 	}
 
 	/**
-	 * Gets all nodes in the parent by specified type, use null for all nodes
+	 * Gets all nodes in the parent by specified type.</br>Use type == null for
+	 * all nodes within this node.</br>Use {@link #getNodesByType(TypeSGET type)}
+	 * for all nodes by type.</br>Use {@link #getNodes()} for all nodes in the
+	 * tree including the root
 	 * 
 	 * @param type
 	 */
@@ -320,6 +380,7 @@ public class EquationTree {
 	public class EquationNode {
 		private Element xmlNode;
 		private Wrapper wrapper;
+		public boolean hasWrapper = true;
 
 		/**
 		 * Wrap existing equation XML node
@@ -362,15 +423,16 @@ public class EquationTree {
 		 * Returns a copy of this node
 		 */
 		public EquationNode clone() {
-			Element newEl = (Element) xmlNode.cloneNode(true);
-			newEl.removeAttribute("id");
+			Element newEl = getXMLClone();
+			// Element newEl = (Element) xmlNode.cloneNode(true);
+			// newEl.removeAttribute("id");
 			EquationNode top = new EquationNode(newEl);
 			AddToMaps(top);
 
 			NodeList<Element> descendants = newEl.getElementsByTagName("*");
 			for (int i = 0; i < descendants.getLength(); i++) {
 				Element descendantEl = descendants.getItem(i);
-				descendantEl.removeAttribute("id");
+				// descendantEl.removeAttribute("id");
 				AddToMaps(new EquationNode(descendantEl));
 			}
 
@@ -379,14 +441,14 @@ public class EquationTree {
 
 		private String createId(String prevId) {
 			if (prevId != null && !"".equals(prevId)) {
-				if (!idMap.containsKey(prevId)
-						|| this.equals(idMap.get(prevId))) {
-					return prevId;
-				}
+				// if (!idMap.containsKey(prevId)
+				// || this.equals(idMap.get(prevId))) {
+				return prevId;
+				// }
 			}
-			String id = "ML" + idCounter++;
+			String id = "ML" + Moderator.idCounter++;
 			while (idMap.containsKey(id)) {
-				id = "ML" + idCounter++;
+				id = "ML" + Moderator.idCounter++;
 			}
 			return id;
 		}
@@ -725,7 +787,17 @@ public class EquationTree {
 		}
 
 		public Element getXMLClone() {
-			return (Element) xmlNode.cloneNode(true);
+			Element xmlClone = (Element) xmlNode.cloneNode(true);
+
+			xmlClone.removeAttribute("id");
+
+			NodeList<Element> descendants = xmlClone.getElementsByTagName("*");
+			for (int i = 0; i < descendants.getLength(); i++) {
+				Element descendantEl = descendants.getItem(i);
+				descendantEl.removeAttribute("id");
+			}
+
+			return xmlClone;
 		}
 
 		public String toString() {
@@ -802,28 +874,11 @@ public class EquationTree {
 
 			switch (getType()) {
 			case Number:
-				JSNICalls.TIME_ELAPSED("getSymbol1");
 				String valueAttr = getAttribute(MathAttribute.Value);
-				JSNICalls.TIME_ELAPSED("getSymbol2");
 				try {
 					return new BigDecimal(valueAttr).toString();
 				} catch (NumberFormatException e) {
 				}
-				JSNICalls.TIME_ELAPSED("getSymbol3");
-				// if (innerText.matches(".*\\d.*")) {
-				// try {
-				// return new BigDecimal(valueAttr).toString();
-				// } catch (NumberFormatException e) {
-				// }
-				// JSNICalls.TIME_ELAPSED("getSymbol3");
-				// } else {
-				// try {
-				// return CommonConstants.valueOf(valueAttr).getValue();
-				// } catch (IllegalArgumentException e) {
-				// }
-				// JSNICalls.TIME_ELAPSED("getSymbol4");
-				// }
-				JSNICalls.TIME_ELAPSED("getSymbol5");
 			case Variable:
 			case Operation:
 				return xmlNode.getInnerText();
@@ -990,8 +1045,6 @@ public class EquationTree {
 				return false;
 			}
 
-			JSNICalls.TIME_ELAPSED("like1 ");
-
 			// breaks not needed, returns at each step
 			switch (getType()) {
 			case Term:
@@ -1035,20 +1088,15 @@ public class EquationTree {
 					return true;
 				}
 			case Number:
-				JSNICalls.TIME_ELAPSED("like2 ");
 				if (!this.getUnitAttribute().equals(another.getUnitAttribute())
 						&& !new UnitMap(this).equals(new UnitMap(another))) {
 					return false;
 				}
-				JSNICalls.TIME_ELAPSED("like3 ");
 				// fall through
 			case Variable:
-				JSNICalls.TIME_ELAPSED("like4 ");
 				if (getSymbol().equals(another.getSymbol())) {
-					JSNICalls.TIME_ELAPSED("like5 ");
 					return true;
 				} else {
-					JSNICalls.TIME_ELAPSED("like5 ");
 					return false;
 				}
 			case Log:

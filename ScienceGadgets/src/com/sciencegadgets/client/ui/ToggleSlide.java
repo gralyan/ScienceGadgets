@@ -2,6 +2,7 @@ package com.sciencegadgets.client.ui;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -78,6 +79,15 @@ public class ToggleSlide extends FlowPanel implements HasClickHandlers, HasTouch
 		});
 		
 		
+	}
+	
+	public void enable(boolean enable) {
+		Style style = getElement().getStyle();
+		if(enable) {
+			style.clearColor();
+		}else {
+			style.setColor("gray");
+		}
 	}
 	
 	public void setOptions(String first, String second, boolean firstIsSelected) {

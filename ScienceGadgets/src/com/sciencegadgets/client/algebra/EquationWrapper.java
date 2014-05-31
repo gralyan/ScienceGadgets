@@ -43,6 +43,10 @@ public class EquationWrapper extends Wrapper {
 	public EquationPanel getEqPanel() {
 		return eqPanel;
 	}
+	
+	public AlgebraActivity getAlgebraActivity() {
+		return algebraActivity;
+	}
 
 	private void fillSelectionDetails() {
 		FlowPanel details = algebraActivity.selectionDetails;
@@ -84,7 +88,8 @@ public class EquationWrapper extends Wrapper {
 			if (node.hasChildElements()
 					&& (dragController == null || !dragController.isDragging())) {
 				unselect();
-				eqPanel.setFocus(eqPanel.eqLayerMap.get(node));
+//				eqPanel.setFocus(eqPanel.eqLayerMap.get(node));
+				eqPanel.setFocus(node);
 			}
 		} else {
 

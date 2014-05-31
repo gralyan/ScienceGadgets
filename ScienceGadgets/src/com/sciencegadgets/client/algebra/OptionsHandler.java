@@ -20,6 +20,8 @@ public class OptionsHandler implements ClickHandler {
 	OptionsPanel optionsPanel = new OptionsPanel();
 	Button closeOption = new Button("Close",new CloseClickHandler());
 	AlgebraActivity algebraActivity;
+	private ToggleSlide editSolveOption;
+	private ToggleSlide easyHardOption;
 
 	public OptionsHandler(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
@@ -54,16 +56,19 @@ public class OptionsHandler implements ClickHandler {
 //			Button exportOption = new Button("Export", new ExportClickHandler(algebraActivity));
 //			optionsPanel.add(exportOption);
 		}else {
-			ToggleSlide easyHardOption = new ToggleSlide("Easy", "Hard", Moderator.isInEasyMode, new EasyHardClickHandler());
+			easyHardOption = new ToggleSlide("Easy", "Hard", Moderator.isInEasyMode, new EasyHardClickHandler());
 			optionsPanel.add(easyHardOption);
 		}
 		
-		ToggleSlide editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.inEditMode, new EditSolveClickHandler(algebraActivity));
+		editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.inEditMode, new EditSolveClickHandler(algebraActivity));
 		optionsPanel.add(editSolveOption);
 		
 		optionsPopup.show();
 	}
 
+	public void enableEditSolve(boolean enable) {
+		editSolveOption.enable(enable);
+	}
 }
 
 class OptionsPanel extends FlowPanel{
@@ -88,7 +93,7 @@ class EasyHardClickHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		OptionsHandler.optionsPopup.hide();
 		Moderator.isInEasyMode = !Moderator.isInEasyMode;
-		Moderator.reloadEquationPanel(null, (Skill[])null);
+		Moderator.reloadEquationPanel();
 	}
 
 }

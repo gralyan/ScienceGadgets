@@ -13,7 +13,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.Prompt;
@@ -212,6 +214,8 @@ public abstract class QuantitySpecification extends Prompt {
 		@Override
 		public void onClick(ClickEvent event) {
 			
+			AlgebraActivity algebraActivity = ((EquationWrapper)node.getWrapper()).getAlgebraActivity();
+			
 			if(mustCheckUnits && !unitMap.isConvertableTo(node.getUnitMap())) {
 				Window.alert("Units must match:\n"+unitMap);
 				return;
@@ -228,7 +232,8 @@ public abstract class QuantitySpecification extends Prompt {
 					MathAttribute.Unit.getAttributeName(), dataUnit.toString());
 
 			disappear();
-			Moderator.reloadEquationPanel(null, (Skill[])null);
+			System.out.println();
+			algebraActivity.reloadEquationPanel(null, null, false);
 		}
 	}
 

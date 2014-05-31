@@ -55,6 +55,8 @@ public class Student implements Serializable{
 		}
 		
 		int newLevel = prevLevel + increase;
+		//Some incorrect answers decrease skill level, don't go below zero
+		newLevel = newLevel < 0 ? 0 : newLevel;
 		skills.put(skill, newLevel);
 		
 		HashSet<Badge> earnedBadges = Badge.getBadgesEarned(skill, newLevel);
@@ -68,12 +70,12 @@ public class Student implements Serializable{
 		return earnedBadges;
 	}
 	
-	public boolean hasBadge(Badge badge) {
-		return badges.contains(badge);
+	public boolean hasBadge(Badge b) {
+		return badges.contains(b);
 	}
 	
-	public boolean hasBadges(HashSet<Badge> badges) {
-		return badges.containsAll(badges);
+	public boolean hasBadges(HashSet<Badge> b) {
+		return badges.containsAll(b);
 	}
 
 }

@@ -1,11 +1,14 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
 
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.algebra.transformations.specification.NumberQuiz;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
@@ -26,101 +29,34 @@ public class MultiplyTransformations extends
 
 	TypeSGET leftType;
 	TypeSGET rightType;
-	
+
 	public MultiplyTransformations(EquationNode multiplyNode) {
 		super(multiplyNode);
 
-		JSNICalls.TIME_ELAPSED("MULT1 ");
 		this.parent = multiplyNode.getParent();
-		JSNICalls.TIME_ELAPSED("MULT2 ");
 
 		this.left = multiplyNode.getPrevSibling();
 		this.operation = multiplyNode;
 		this.right = multiplyNode.getNextSibling();
 
-		JSNICalls.TIME_ELAPSED("MULT3 ");
 		this.leftType = left.getType();
 		this.rightType = right.getType();
 
-		JSNICalls.TIME_ELAPSED("MULT4 ");
 		if (add(multiplySpecialNumber_check())) {
 			return;
 		}
-		JSNICalls.TIME_ELAPSED("MULT5 ");
 		add(multiplyNumbers_check());
-		JSNICalls.TIME_ELAPSED("MULT6 ");
 		add(multiplyFraction_check());
-		JSNICalls.TIME_ELAPSED("MULT7 ");
 		add(multiplyDistribution_check());
-		JSNICalls.TIME_ELAPSED("MULT8 ");
 		add(multiplyCombineBases_check());
-		JSNICalls.TIME_ELAPSED("MULT9 ");
 		add(multiplyCombineExponents_check());
-		JSNICalls.TIME_ELAPSED("MULT10 ");
 		add(multiplyLogRule_check());
-		JSNICalls.TIME_ELAPSED("MULT11 ");
 
 	}
 
 	/**
 	 * Multiplying by one of the specially designated numbers (-1, 0 1)
 	 */
-//	MultiplyTransformButton multiplySpecialNumber_check() {
-//		
-//		if (!TypeSGET.Number.equals(leftType)
-//				&& !TypeSGET.Number.equals(rightType)) {
-//			return null;
-//		}
-//		
-//		final int same = 0;
-//		BigDecimal negOne = new BigDecimal(-1);
-//		BigDecimal zero = new BigDecimal(0);
-//		BigDecimal one = new BigDecimal(1);
-//		
-//		try {
-//			BigDecimal rightValue = new BigDecimal(right.getSymbol());
-//			String rightUnits = right.getAttribute(MathAttribute.Unit);
-//			if (rightValue.compareTo(zero) == same) {
-//				return new MultiplyZeroButton(this, left, right);
-//			} else if (rightValue.compareTo(one) == same
-//					&& "".equals(rightUnits)) {
-//				return new MultiplyOneButton(this, left, right);
-//			} else if (rightValue.compareTo(negOne) == same
-//					&& "".equals(rightUnits)) {
-//				switch (left.getType()) {
-//				case Number:
-//				case Variable:
-//				case Sum:
-//				case Term:
-//				case Fraction:
-//					return new MultiplyNegOneButton(this, left, right);
-//				}
-//			}
-//		} catch (NumberFormatException e) {
-//		}
-//		
-//		try {
-//			BigDecimal leftValue = new BigDecimal(left.getSymbol());
-//			String leftUnits = right.getAttribute(MathAttribute.Unit);
-//			if (leftValue.compareTo(zero) == same) {
-//				return new MultiplyZeroButton(this, right, left);
-//			} else if (leftValue.compareTo(one) == same && "".equals(leftUnits)) {
-//				return new MultiplyOneButton(this, right, left);
-//			} else if (leftValue.compareTo(negOne) == same
-//					&& "".equals(leftUnits)) {
-//				switch (right.getType()) {
-//				case Number:
-//				case Variable:
-//				case Sum:
-//				case Term:
-//				case Fraction:
-//					return new MultiplyNegOneButton(this, right, left);
-//				}
-//			}
-//		} catch (NumberFormatException e) {
-//		}
-//		return null;
-//	}
 	MultiplyTransformButton multiplySpecialNumber_check() {
 
 		if (!TypeSGET.Number.equals(leftType)
@@ -128,42 +64,39 @@ public class MultiplyTransformations extends
 			return null;
 		}
 
-			String rightValue = right.getSymbol();
-			String rightUnits = right.getAttribute(MathAttribute.Unit);
-			if ("0".equals(rightValue)) {
+		String rightValue = right.getSymbol();
+		String rightUnits = right.getAttribute(MathAttribute.Unit);
+		if ("0".equals(rightValue)) {
 				return new MultiplyZeroButton(this, left, right);
-			} else if ("1".equals(rightValue)
-					&& "".equals(rightUnits)) {
+		} else if ("1".equals(rightValue) && "".equals(rightUnits)) {
 				return new MultiplyOneButton(this, left, right);
-			} else if ("-1".equals(rightValue)
-					&& "".equals(rightUnits)) {
-				switch (left.getType()) {
-				case Number:
-				case Variable:
-				case Sum:
-				case Term:
-				case Fraction:
+		} else if ("-1".equals(rightValue) && "".equals(rightUnits)) {
+			switch (left.getType()) {
+			case Number:
+			case Variable:
+			case Sum:
+			case Term:
+			case Fraction:
 					return new MultiplyNegOneButton(this, left, right);
-				}
 			}
+		}
 
-			String leftValue = left.getSymbol();
-			String leftUnits = right.getAttribute(MathAttribute.Unit);
-			if ("0".equals(leftValue)) {
-				return new MultiplyZeroButton(this, right, left);
-			} else if ("1".equals(leftValue) && "".equals(leftUnits)) {
-				return new MultiplyOneButton(this, right, left);
-			} else if ("-1".equals(leftValue)
-					&& "".equals(leftUnits)) {
-				switch (right.getType()) {
-				case Number:
-				case Variable:
-				case Sum:
-				case Term:
-				case Fraction:
-					return new MultiplyNegOneButton(this, right, left);
-				}
+		String leftValue = left.getSymbol();
+		String leftUnits = right.getAttribute(MathAttribute.Unit);
+		if ("0".equals(leftValue)) {
+			return new MultiplyZeroButton(this, right, left);
+		} else if ("1".equals(leftValue) && "".equals(leftUnits)) {
+			return new MultiplyOneButton(this, right, left);
+		} else if ("-1".equals(leftValue) && "".equals(leftUnits)) {
+			switch (right.getType()) {
+			case Number:
+			case Variable:
+			case Sum:
+			case Term:
+			case Fraction:
+				return new MultiplyNegOneButton(this, right, left);
 			}
+		}
 		return null;
 	}
 
@@ -227,9 +160,10 @@ public class MultiplyTransformations extends
 	 * ex: x<sup>a</sup> &middot; x = x<sup>a+1</sup>
 	 */
 	MultiplyCombineBasesButton multiplyCombineBases_check() {
-		
-		//Combining numbers is rare and this is time consuming
-		if(TypeSGET.Number.equals(leftType) || TypeSGET.Number.equals(rightType)) {
+
+		// Combining numbers is rare and this is time consuming
+		if (TypeSGET.Number.equals(leftType)
+				|| TypeSGET.Number.equals(rightType)) {
 			return null;
 		}
 
@@ -342,6 +276,10 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 		this.zero = zero;
 		this.other = other;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_ZERO);
+	}
 
 	@Override
 	public void transform() {
@@ -394,6 +332,10 @@ class MultiplyOneButton extends MultiplyTransformButton {
 		this.one = one;
 		this.other = other;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_ONE);
+	}
 
 	@Override
 	public void transform() {
@@ -433,6 +375,10 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 		this.negOne = negOne;
 		this.other = other;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_NEGATIVE_ONE);
+	}
 
 	@Override
 	public void transform() {
@@ -468,6 +414,10 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 	MultiplyNumbersButton(MultiplyTransformations context) {
 		super(context, "# · #");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public void transform() {
@@ -475,8 +425,22 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 		final BigDecimal rightValue = new BigDecimal(right.getSymbol());
 		final BigDecimal totalValue = leftValue.multiply(rightValue);
 
-		boolean meetsRequirements = Moderator.meetsRequirements(Badge
-				.getRequiredBadges(operation.getOperation(), left, right));
+
+		Skill nMagSkill = Skill.MULTIPLICATION;
+		Badge numberMagnitudeBadge = Badge.MULTIPLY_NUMBERS_LARGE;
+		int totalAbs = totalValue.abs().intValue();
+		if(totalAbs <=10) {
+			nMagSkill = Skill.MULTIPLY_NUMBERS_TO_10;
+			numberMagnitudeBadge = Badge.ADD_NUMBERS_10;
+		}else if(totalAbs <=100) {
+			nMagSkill = Skill.MULTIPLY_NUMBERS_TO_100;
+			numberMagnitudeBadge = Badge.ADD_NUMBERS_100;
+		}
+		JSNICalls.warn("magnitude: "+totalAbs+", increasesSkill: "+nMagSkill);
+		final Skill numberMagnitudeSkill = nMagSkill;
+		
+		boolean meetsRequirements = Moderator.meetsRequirement(numberMagnitudeBadge);
+
 
 		if (meetsRequirements) {
 			multiplyNumbers(left, right, totalValue, leftValue, rightValue);
@@ -492,12 +456,27 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 			String question = leftValue.toString() + " "
 					+ operation.getSymbol() + " " + rightValue.toString()
 					+ " = ";
-			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
+			
+			final HashMap<Skill, Integer> skillsIncrease = new HashMap<Skill, Integer>();
+			skillsIncrease.put(numberMagnitudeSkill, 0);
+			
+			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
-				public void onCorrect(int skillIncrease) {
+				public void onIncorrect() {
+					for(Entry<Skill, Integer> entry : skillsIncrease.entrySet()) {
+						entry.setValue(-1);
+					}
+					Moderator.increaseSkills(skillsIncrease);
+				}
+
+				@Override
+				public void onCorrect() {
+					for(Entry<Skill, Integer> entry : skillsIncrease.entrySet()) {
+						entry.setValue(1);
+					}
+					Moderator.increaseSkills(skillsIncrease);
 					multiplyNumbers(left, right, totalValue, leftValue,
 							rightValue);
-					Moderator.getStudent().increaseSkill(Skill.MULTIPLICATION, skillIncrease);
 				}
 			};
 
@@ -558,6 +537,10 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 		this.sum = sum;
 		this.isRightSum = isRightSum;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_DISTRIBUTE);
+	}
 
 	@Override
 	public void transform() {
@@ -598,7 +581,10 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 	MultiplyCombineExponentsButton(MultiplyTransformations context) {
 		super(context, "x<sup>a</sup>·y<sup>a</sup>=(x·y)<sup>a</sup>");
-
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_COMBINE_EXPONENTS);
 	}
 
 	@Override
@@ -640,6 +626,10 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 	MultiplyCombineBasesButton(MultiplyTransformations context) {
 		super(context, "x<sup>a</sup>·x<sup>b</sup>=x<sup>a+b</sup>");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public void transform() {
@@ -657,7 +647,8 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 		EquationNode leftExp = leftExponential.getChildAt(1);
 		EquationNode rightExp = rightExponential.getChildAt(1);
 
-		if (Moderator.meetsRequirement(Badge.MULTIPLY_COMBINE_BASES) && TypeSGET.Number.equals(leftExp.getType())
+		if (Moderator.meetsRequirement(Badge.MULTIPLY_COMBINE_BASES)
+				&& TypeSGET.Number.equals(leftExp.getType())
 				&& TypeSGET.Number.equals(rightExp.getType())) {
 			BigDecimal leftValue = new BigDecimal(
 					leftExp.getAttribute(MathAttribute.Value));
@@ -708,6 +699,10 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 		this.fraction = fraction;
 		this.isRightFraction = isRightFraction;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_WITH_FRACTION);
+	}
 
 	@Override
 	public void transform() {
@@ -722,7 +717,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Multiply with Fraction",
-					Skill.MULTIPLYING_WITH_FRACTIONs);
+					Skill.MULTIPLYING_WITH_FRACTIONS);
 
 		}
 	}
@@ -740,6 +735,10 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 class MultiplyFractionsButton extends MultiplyTransformButton {
 	MultiplyFractionsButton(MultiplyTransformations context) {
 		super(context, "x/y·a/b=(xa)/(yb)");
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_FRACTIONS);
 	}
 
 	@Override
@@ -760,7 +759,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 
 		if (reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel("Multiply Fractions",
-					Skill.MULTIPLYING_FRACTIONs);
+					Skill.MULTIPLYING_FRACTIONS);
 
 		}
 	}
@@ -785,6 +784,10 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 		this.other = other;
 		this.log = log;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.MULTIPLY_LOG_RULE);
+	}
 
 	@Override
 	public void transform() {
@@ -796,7 +799,8 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 		parent.decase();
 
 		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Log Power Rule", Skill.MULTIPLY_WITH_LOG);
+			Moderator.reloadEquationPanel("Log Power Rule",
+					Skill.MULTIPLY_WITH_LOG);
 		}
 	}
 

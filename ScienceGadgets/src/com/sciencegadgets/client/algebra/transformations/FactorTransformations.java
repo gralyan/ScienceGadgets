@@ -141,6 +141,10 @@ class FactorButton extends AddTransformButton {
 		super(context, "Factor " + matches);
 		this.matches = matches;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.FACTORIZATION);
+	}
 
 	@Override
 	public

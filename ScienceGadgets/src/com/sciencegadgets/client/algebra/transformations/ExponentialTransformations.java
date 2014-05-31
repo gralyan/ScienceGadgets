@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.transformations.specification.NumberPrompt;
+import com.sciencegadgets.client.algebra.transformations.specification.NumberQuiz;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
@@ -174,6 +174,10 @@ class ZeroBaseButton extends ExponentialTransformButton {
 	ZeroBaseButton(ExponentialTransformations context) {
 		super(context, "0<sup>x</sup> = 0");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.EXPONENT_BASE_ZERO);
+	}
 
 	@Override
 	public
@@ -205,6 +209,10 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 		super(context, "Evaluate Exponential");
 		this.exp = exp;
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public
@@ -228,12 +236,15 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 		} else {// prompt
 
 			String question = exponential.getHTMLString(true, true) + " = ";
-			NumberPrompt prompt = new NumberPrompt(question, totalValue) {
+			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
-				public void onCorrect(int skillIncrease) {
+				public void onIncorrect() {
+				}
+				@Override
+				public void onCorrect() {
 					evaluateExponential(baseValue, exp, totalValue,
 							totalUnitMap);
-					Moderator.getStudent().increaseSkill(Skill.EVALUATING_EXPONENTS, skillIncrease);
+					Moderator.getStudent().increaseSkill(Skill.EVALUATING_EXPONENTS, 1);
 				}
 			};
 			prompt.appear();
@@ -277,6 +288,10 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 	ExponentialExpandButton(ExponentialTransformations context, final int exp) {
 		super(context, "Expand Exponential");
 		this.exp = exp;
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.EXPONENT_EXPAND);
 	}
 
 	@Override
@@ -343,6 +358,10 @@ class ExponentialExponentiateButton extends ExponentialTransformButton {
 	ExponentialExponentiateButton(ExponentialTransformations context) {
 		super(context, "(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	}
 
 	@Override
 	public
@@ -380,6 +399,10 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 	ExponentialPropagateButton(ExponentialTransformations context) {
 		super(context, "(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)");
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	}
 
 	@Override
 	public
@@ -415,6 +438,10 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 
 	ExponentialFlipButton(ExponentialTransformations context) {
 		super(context, "x<sup>-b</sup> = (1/x)<sup>b</sup>");
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
 	}
 
 	@Override
@@ -465,8 +492,11 @@ class ExponentialUnravelButton extends ExponentialTransformButton {
 		this.replacement = replacement;
 	}
 	@Override
-	public
-	void transform() {
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	}
+	@Override
+	public void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);

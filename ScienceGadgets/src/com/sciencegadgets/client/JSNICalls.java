@@ -10,7 +10,7 @@ public class JSNICalls {
 		long current = System.currentTimeMillis();
 		long elapsed = (current - lastTime);
 		if(elapsed > 50) {
-		JSNICalls.log(placementMessage + " " + elapsed);
+		JSNICalls.warn(placementMessage + " " + elapsed);
 		}
 		lastTime = current;
 	}

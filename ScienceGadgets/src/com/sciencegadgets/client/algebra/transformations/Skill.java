@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import java.util.HashSet;
+
 
 	public enum Skill {
 		CONVERSION, //
@@ -8,22 +10,25 @@ package com.sciencegadgets.client.algebra.transformations;
 		INTEGER_FACTORIZATION,//
 		//
 		ADDITION,//
+		ADDITION_WITH_ZERO(ADDITION),//
 		ADD_NUMBERS_TO_10,//
-		ADD_NUMBERS_TO_100,//
-		ADD_NUMBERS_LARGE,//
-		SUBTRACTION,//
+		ADD_NUMBERS_TO_100(ADD_NUMBERS_TO_10),//
+		ADD_NUMBERS_LARGE(ADD_NUMBERS_TO_100),//
+		SUBTRACTION(ADDITION),//
 		ADDITION_WITH_NEGATIVES,//
-		ADDITION_WITH_ZERO,//
-		COMBINING_LIKE_TERMS, //
-		ADDING_FRACTIONS,//
+		COMBINING_LIKE_TERMS(ADDITION), //
+		ADDING_FRACTIONS(ADDITION),//
 		COMMON_DENOMINATOR,//
 		//
 		MULTIPLICATION,//
 		MULTIPLY_WITH_ZERO,//
 		MULTIPLY_WITH_ONE,//
 		MULTIPLY_WITH_NEGATIVE_ONE,//
-		MULTIPLYING_FRACTIONs,//
-		MULTIPLYING_WITH_FRACTIONs,//
+		MULTIPLY_NUMBERS_TO_10,//
+		MULTIPLY_NUMBERS_TO_100(MULTIPLY_NUMBERS_TO_10),//
+		MULTIPLY_NUMBERS_LARGE(MULTIPLY_NUMBERS_TO_100),//
+		MULTIPLYING_FRACTIONS,//
+		MULTIPLYING_WITH_FRACTIONS,//
 		DISTRIBUTIVE_PROPERTY,//
 		MULTIPLY_WITH_LOG,//
 		//
@@ -68,6 +73,24 @@ package com.sciencegadgets.client.algebra.transformations;
 		SOLVING_EQUATIONS_LOG, //
 		SOLVING_EQUATIONS_INVERSE_TRIG; //
 		
+		
+		private Skill[] prerequisiteSkills;
+
+		private Skill(Skill...prerequisiteSkills) {
+			this.prerequisiteSkills = prerequisiteSkills;
+		}
+		
+		public HashSet<Skill> getPrerequisiteSkills(){
+			HashSet<Skill> preSkills = new HashSet<Skill>();
+			fillWithPrerequisiteSkills(preSkills);
+			return preSkills;
+		}
+		private void fillWithPrerequisiteSkills(HashSet<Skill> preSkills){
+			for(Skill pSkill : prerequisiteSkills) {
+				preSkills.add(pSkill);
+				pSkill.fillWithPrerequisiteSkills(preSkills);
+			}
+		}
 
 		public static final String GOOGLE_SEARCH_PREFIX = "https://www.google.com/#q=";
 

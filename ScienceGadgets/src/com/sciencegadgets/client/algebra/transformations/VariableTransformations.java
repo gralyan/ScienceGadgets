@@ -11,6 +11,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
@@ -65,6 +66,10 @@ abstract class VariableTransformationButton extends TransformationButton {
 class SubstituteButton extends VariableTransformationButton {
 	SubstituteButton(VariableTransformations context) {
 		super("Substitute", context);
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
 	}
 
 	@Override
@@ -174,6 +179,10 @@ class SubstituteButton extends VariableTransformationButton {
 class PlugInButton extends VariableTransformationButton {
 	PlugInButton(VariableTransformations context) {
 		super("Plug In", context);
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
 	}
 
 	@Override

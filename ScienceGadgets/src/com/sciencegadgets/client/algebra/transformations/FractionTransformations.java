@@ -86,7 +86,6 @@ public class FractionTransformations extends
 		}
 
 		if (matches.size() < 2) {// "1" is always a factor
-			System.out.println("no simpl: " + numValue + " " + denValue);
 			return false;
 		} else if (!execute) {
 			return true;
@@ -99,8 +98,6 @@ public class FractionTransformations extends
 		}
 		numerator.setSymbol(numNewValue.toString());
 		denominator.setSymbol(denNewValue.toString());
-		System.out.println("simpl: " + numValue + "-" + numNewValue + " "
-				+ denValue + "-" + denNewValue);
 
 		return true;
 	}
@@ -137,6 +134,10 @@ class SimplifyFractionButton extends FractionTransformButton {
 	public SimplifyFractionButton(FractionTransformations context) {
 		super("Simplify Fraction", context);
 	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
 
 	@Override
 	public void transform() {
@@ -160,6 +161,10 @@ class SimplifyFractionButton extends FractionTransformButton {
 class DenominatorFlipButton extends FractionTransformButton {
 	DenominatorFlipButton(FractionTransformations context) {
 		super("Flip Denominator", context);
+	}
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
 	}
 
 	@Override

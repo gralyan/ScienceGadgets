@@ -16,7 +16,6 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
@@ -50,11 +49,9 @@ public class AlgebaWrapper extends EquationWrapper {
 	}
 
 	public void attachButtons() {
-		JSNICalls.TIME_ELAPSED("ATTATCH ");
 		if (simplifyTransformations == null) {
 			simplifyTransformations = TransformationList
 					.FIND_ALL_SIMPLIFY(node);
-			JSNICalls.TIME_ELAPSED("d");
 		}
 		if (bothSidesTransformations == null) {
 			bothSidesTransformations = new BothSidesTransformations(node);
@@ -69,21 +66,14 @@ public class AlgebaWrapper extends EquationWrapper {
 	public void select() {
 		super.select();
 
-		JSNICalls.TIME_ELAPSED("                  ");
-
 		if (this.equals(eqPanel.selectedWrapper)) {
-			JSNICalls.TIME_ELAPSED("b");
-
-			JSNICalls.TIME_ELAPSED("c");
 			attachButtons();
-			JSNICalls.TIME_ELAPSED("e");
-			JSNICalls.TIME_ELAPSED("f");
 
-			Moderator.getCurrentAlgebraActivity().fillTransformLists(
+			eqPanel.getAlgebraActivity().fillTransformLists(
 					simplifyTransformations, bothSidesTransformations);
-			JSNICalls.TIME_ELAPSED("g");
+//			Moderator.getCurrentAlgebraActivity().fillTransformLists(
+//					simplifyTransformations, bothSidesTransformations);
 		}
-		JSNICalls.TIME_ELAPSED("h");
 	}
 
 	public void unselect() {
@@ -96,7 +86,8 @@ public class AlgebaWrapper extends EquationWrapper {
 			}
 		}
 
-		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
+		eqPanel.getAlgebraActivity().lowerEqArea.clear();
+//		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
 	}
 
 }
