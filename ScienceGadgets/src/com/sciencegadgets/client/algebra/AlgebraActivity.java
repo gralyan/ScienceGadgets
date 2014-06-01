@@ -282,7 +282,8 @@ public class AlgebraActivity extends SimplePanel {
 		
 		SimplifyPromptButton(){
 			addStyleName(CSS.FILL_PARENT);
-			addStyleName(CSS.TEXT_CENTER);
+//			addStyleName(CSS.TEXT_CENTER);
+			addStyleName(CSS.TRANSFORMATION_BUTTON + " " + CSS.LAYOUT_ROW);
 			
 			add(html);
 		}
