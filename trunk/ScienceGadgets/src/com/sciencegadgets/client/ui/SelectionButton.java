@@ -12,8 +12,13 @@ import com.sciencegadgets.client.Moderator;
 
 public abstract class SelectionButton extends SimplePanel implements HasClickHandlers,
 		HasTouchEndHandlers {
+
+	FitParentHTML buttonHTML;
 	
 	protected SelectionButton(){
+		
+		addStyleName(CSS.TRANSFORMATION_BUTTON);
+		
 		if (Moderator.isTouch) {
 			addTouchEndHandler(new TouchEndHandler() {
 				@Override
@@ -42,5 +47,25 @@ public abstract class SelectionButton extends SimplePanel implements HasClickHan
 	}
 	
 	abstract protected void onSelect();
+	
+
+	public void resize() {
+		buttonHTML.resize();
+	}
+
+	public void setHTML(String html) {
+		clear();
+		buttonHTML = new FitParentHTML(html);
+		buttonHTML.percentOfParent = 85;
+		add(buttonHTML);
+	}
+
+	public String getHTML() {
+		if (buttonHTML == null) {
+			return null;
+		} else {
+			return buttonHTML.getHTML();
+		}
+	}
 
 }

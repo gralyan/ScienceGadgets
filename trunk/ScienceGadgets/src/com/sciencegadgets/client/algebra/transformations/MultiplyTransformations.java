@@ -43,7 +43,7 @@ public class MultiplyTransformations extends
 		this.rightType = right.getType();
 
 		if (add(multiplySpecialNumber_check())) {
-			return;
+//			return;
 		}
 		add(multiplyNumbers_check());
 		add(multiplyFraction_check());
@@ -413,6 +413,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 class MultiplyNumbersButton extends MultiplyTransformButton {
 	MultiplyNumbersButton(MultiplyTransformations context) {
 		super(context, "# · #");
+		this.isEvaluation = true;
 	}
 	@Override
 	public boolean meetsAutoTransform() {

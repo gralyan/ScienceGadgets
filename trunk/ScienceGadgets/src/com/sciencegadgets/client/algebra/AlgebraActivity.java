@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.algebra;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -66,7 +67,7 @@ public class AlgebraActivity extends SimplePanel {
 
 	private FlowPanel transformMain = new FlowPanel();
 	private TransformationPanel bothSidesPanelLeft = new TransformationPanel();
-	private SimplePanel simplifyButtonsPanel = new SimplePanel();
+	private TransformationPanel simplifyButtonsPanel = new TransformationPanel();
 	private TransformationPanel bothSidesPanelRight = new TransformationPanel();
 	public SimplifyQuiz simplifyQuiz;
 	private SimplifyPromptButton simplifyPromptButton = new SimplifyPromptButton();
@@ -79,11 +80,14 @@ public class AlgebraActivity extends SimplePanel {
 	public static NumberSpecification numSpec;
 	private EquationTree equationTree = null;
 
-	public AlgebraActivity(Element equationXML, boolean inEditMode, boolean isSimplifyQuiz) {
-		this(new EquationTree(equationXML, inEditMode), inEditMode, isSimplifyQuiz);
+	public AlgebraActivity(Element equationXML, boolean inEditMode,
+			boolean isSimplifyQuiz) {
+		this(new EquationTree(equationXML, inEditMode), inEditMode,
+				isSimplifyQuiz);
 	}
 
-	public AlgebraActivity(EquationTree eTree, boolean inEditMode, boolean isSimplifyQuiz) {
+	public AlgebraActivity(EquationTree eTree, boolean inEditMode,
+			boolean isSimplifyQuiz) {
 		add(mainPanel);
 
 		this.addStyleName(CSS.FILL_PARENT);
@@ -92,19 +96,19 @@ public class AlgebraActivity extends SimplePanel {
 		this.inEditMode = inEditMode;
 		this.isSimplifyQuiz = isSimplifyQuiz;
 
-		if(isSimplifyQuiz) {
+		if (isSimplifyQuiz) {
 			optionsButton.setVisible(false);
-		}else {
+		} else {
 			optionsHandler = new OptionsHandler(this);
 			optionsButton.addClickHandler(optionsHandler);
 		}
 
 		if (inEditMode) {
-			if(!isSimplifyQuiz) {
-			Button saveEquationButton = new Button("Save Equation",
-					new SaveButtonHandler());
-			saveEquationButton.setStyleName("saveEquationButton");
-			upperMidEqArea.add(saveEquationButton);
+			if (!isSimplifyQuiz) {
+				Button saveEquationButton = new Button("Save Equation",
+						new SaveButtonHandler());
+				saveEquationButton.setStyleName("saveEquationButton");
+				upperMidEqArea.add(saveEquationButton);
 			}
 		} else {
 			algOut = new AlgebraHistory(this);
@@ -158,33 +162,33 @@ public class AlgebraActivity extends SimplePanel {
 
 		if (inProgramaticTransformMode) {
 			return;
-		}else if(isSimplifyQuiz) {
-			equationTree.getEquals().setSymbol(TypeSGET.Operator.ARROW_RIGHT.getSign());
-		}else if(simplifyQuiz != null) {
+		} else if (isSimplifyQuiz) {
+			equationTree.getEquals().setSymbol(
+					TypeSGET.Operator.ARROW_RIGHT.getSign());
+		} else if (simplifyQuiz != null) {
 			simplifyQuiz.disappear();
 			simplifyQuiz = null;
 		}
-			try {
-				equationTree.validateTree();
-			} catch (IllegalStateException e) {
-				String message = e.getMessage();
-				if (message == null) {
-					Window.alert("Oops, an error occured, please refresh the page");
-				} else {
-					Window.alert(message);
-				}
-				JSNICalls.error(e.getCause().toString());
-				return;
+		try {
+			equationTree.validateTree();
+		} catch (IllegalStateException e) {
+			String message = e.getMessage();
+			if (message == null) {
+				Window.alert("Oops, an error occured, please refresh the page");
+			} else {
+				Window.alert(message);
 			}
-			
-			eqPanelHolder.clear();
-			selectionDetails.clear();
+			JSNICalls.error(e.getCause().toString());
+			return;
+		}
 
-			equationTree.reloadDisplay(true, true);
-			eqPanel = new EquationPanel(this);
+		eqPanelHolder.clear();
+		selectionDetails.clear();
 
-			eqPanelHolder.add(eqPanel);
-			
+		equationTree.reloadDisplay(true, true);
+		eqPanel = new EquationPanel(this);
+
+		eqPanelHolder.add(eqPanel);
 
 		if (!inEditMode) {
 			lowerEqArea.clear();
@@ -211,20 +215,36 @@ public class AlgebraActivity extends SimplePanel {
 			TransformationList<TransformationButton> transSimplify,
 			BothSidesTransformations transBothSides) {
 
-		simplifyPromptButton.setTransformationList(transSimplify);
-		
+		// Both Sides Buttons
 		bothSidesPanelLeft.clear();
-		simplifyButtonsPanel.clear();
 		bothSidesPanelRight.clear();
-		simplifyButtonsPanel.add(simplifyPromptButton);
 		bothSidesPanelLeft.addAll(transBothSides);
-		
-		
 
 		for (int i = transBothSides.size(); i > 0; i--) {
 			BothSidesButton button = transBothSides.get(i - 1);
 			bothSidesPanelRight.add(button.getJoinedButton());
 		}
+
+		// Simplify Buttons
+		simplifyButtonsPanel.clear();
+
+		LinkedList<SelectionButton> buttonsShown = new LinkedList<SelectionButton>();
+		buttonsShown.add(simplifyPromptButton);
+		simplifyPromptButton.setTransformationList(transSimplify);
+
+//		for (TransformationButton tButt : transSimplify) {
+//			if (tButt.isEvaluation() || ) {// if evaluation(eg. #+#), allow #prompt
+//				buttonsShown.add(tButt);
+//			}
+//		}
+
+		for (TransformationButton tButt : transSimplify) {
+			if (tButt.meetsAutoTransform()) {
+				buttonsShown.add(tButt);
+			}
+		}
+		simplifyButtonsPanel.addAll(buttonsShown);
+
 		lowerEqArea.clear();
 		lowerEqArea.add(transformMain);
 	}
@@ -270,27 +290,24 @@ public class AlgebraActivity extends SimplePanel {
 		protected void onAttach() {
 			super.onAttach();
 			for (Widget child : getChildren()) {
-				((TransformationButton) child).resize();
+				((SelectionButton) child).resize();
 			}
 		}
 	}
-	
-	class SimplifyPromptButton extends SelectionButton{
+
+	class SimplifyPromptButton extends SelectionButton {
 
 		TransformationList<TransformationButton> transSimplify;
-		FitParentHTML html = new FitParentHTML("Simlify");
-		
-		SimplifyPromptButton(){
-			addStyleName(CSS.FILL_PARENT);
-//			addStyleName(CSS.TEXT_CENTER);
+
+		SimplifyPromptButton() {
+			setHTML("Simplify");
 			addStyleName(CSS.TRANSFORMATION_BUTTON + " " + CSS.LAYOUT_ROW);
-			
-			add(html);
 		}
-		
+
 		@Override
 		protected void onSelect() {
-			simplifyQuiz = new SimplifyQuiz(eqPanel.selectedWrapper.node, transSimplify);
+			simplifyQuiz = new SimplifyQuiz(eqPanel.selectedWrapper.node,
+					transSimplify);
 			simplifyQuiz.appear();
 		}
 

@@ -207,6 +207,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 	public ExponentialEvaluateButton(ExponentialTransformations context,
 			final int exp) {
 		super(context, "Evaluate Exponential");
+		this.isEvaluation = true;
 		this.exp = exp;
 	}
 	@Override
