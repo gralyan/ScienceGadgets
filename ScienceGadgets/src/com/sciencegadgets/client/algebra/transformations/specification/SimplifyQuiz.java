@@ -1,5 +1,7 @@
 package com.sciencegadgets.client.algebra.transformations.specification;
 
+import java.util.HashSet;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -10,7 +12,9 @@ import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Quiz;
+import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class SimplifyQuiz extends Quiz {
@@ -44,7 +48,7 @@ public class SimplifyQuiz extends Quiz {
 		EquationNode workingRight = workingTree.newNode(hostXML);
 		workingTree.getLeftSide().replace(workingLeft);
 		workingTree.getRightSide().replace(workingRight);
-		
+
 		// Set Up Activity
 		if (simplifyActivity == null) {
 			simplifyActivity = new AlgebraActivity(workingTree, true, true);
@@ -55,12 +59,8 @@ public class SimplifyQuiz extends Quiz {
 
 		simplifyActivity.upperMidEqArea.clear();
 		TransformationPanel tButtonPanel = simplifyActivity.new TransformationPanel();
-		for (TransformationButton tButt : tButtons) {
-			if (tButt.meetsAutoTransform()) {
-				tButtonPanel.add(tButt);
-			}
-		}
 		simplifyActivity.upperMidEqArea.add(tButtonPanel);
+		tButtonPanel.add(new HelpButton(tButtonPanel));
 
 		this.add(simplifyActivity);
 
@@ -73,14 +73,17 @@ public class SimplifyQuiz extends Quiz {
 				response.getTree().validateMaps();
 				for (TransformationButton tButt : tButtons) {
 					EquationNode possibleCorrectResponse = tButt.getPreview();
-					
+
 					if (response.isLike(possibleCorrectResponse)) {
 						onCorrect();
 						tButt.transform();
-//						AlgebraActivity hostActivity = ((EquationWrapper)hostNode.getWrapper()).getAlgebraActivity();
-//						EquationNode replacement = hostNode.getTree().newNode(response.getXMLClone());
-//						hostNode.replace(replacement);
-//						hostActivity.reloadEquationPanel(changeComment, skillsIncrease, updateHistory)
+						// AlgebraActivity hostActivity =
+						// ((EquationWrapper)hostNode.getWrapper()).getAlgebraActivity();
+						// EquationNode replacement =
+						// hostNode.getTree().newNode(response.getXMLClone());
+						// hostNode.replace(replacement);
+						// hostActivity.reloadEquationPanel(changeComment,
+						// skillsIncrease, updateHistory)
 						return;
 					}
 				}
@@ -99,7 +102,7 @@ public class SimplifyQuiz extends Quiz {
 	@Override
 	public void onCorrect() {
 		disappear();
-		
+
 	}
 
 	@Override
@@ -107,4 +110,30 @@ public class SimplifyQuiz extends Quiz {
 		Window.alert("incorrect");
 	}
 
+	class HelpButton extends SelectionButton {
+		TransformationPanel tButtonPanel;
+
+		HelpButton(TransformationPanel tButtonPanel) {
+			this.tButtonPanel = tButtonPanel;
+			addStyleName(CSS.LAYOUT_ROW);
+			setHTML("Help!!! :(");
+		}
+
+		@Override
+		protected void onSelect() {
+			tButtonPanel.clear();
+
+			// Show only the buttons that are not already shown on the main
+			// Algebra Activity which have their requirements already met
+			HashSet<SelectionButton> autoButtonsShown = new HashSet<SelectionButton>();
+			for (TransformationButton tButt : tButtons) {
+				if (!tButt.meetsAutoTransform()) {
+					autoButtonsShown.add(tButt);
+				}
+			}
+			tButtonPanel.addAll(autoButtonsShown);
+
+		}
+
+	}
 }

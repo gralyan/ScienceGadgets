@@ -13,9 +13,9 @@ import com.sciencegadgets.shared.TypeSGET.Operator;
 public abstract class TransformationButton extends SelectionButton implements
 		HasClickHandlers, HasTouchEndHandlers {
 
-	FitParentHTML buttonHTML;
 	private TransformationList<? extends TransformationButton> transformList;
 	public EquationNode previewNode = null;
+	protected boolean isEvaluation = false;
 
 	public TransformationButton(
 			TransformationList<? extends TransformationButton> context) {
@@ -45,25 +45,6 @@ public abstract class TransformationButton extends SelectionButton implements
 			TransformationList<? extends TransformationButton> context) {
 		this(context);
 		setHTML(html);
-	}
-
-	public void resize() {
-		buttonHTML.resize();
-	}
-
-	public void setHTML(String html) {
-		clear();
-		buttonHTML = new FitParentHTML(html);
-		buttonHTML.percentOfParent = 85;
-		add(buttonHTML);
-	}
-
-	public String getHTML() {
-		if (buttonHTML == null) {
-			return null;
-		} else {
-			return buttonHTML.getHTML();
-		}
 	}
 
 	public TransformationList<? extends TransformationButton> getTransformList() {
@@ -161,6 +142,10 @@ public abstract class TransformationButton extends SelectionButton implements
 	// }
 	// }
 
+	public boolean isEvaluation() {
+		return isEvaluation;
+	}
+	
 	@Override
 	protected void onSelect() {
 		transform();

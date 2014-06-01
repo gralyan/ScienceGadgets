@@ -255,6 +255,7 @@ class AddNumbersButton extends AddTransformButton {
 
 	AddNumbersButton(AdditionTransformations context) {
 		super(context, "# + #");
+		this.isEvaluation = true;
 	}
 	@Override
 	public boolean meetsAutoTransform() {

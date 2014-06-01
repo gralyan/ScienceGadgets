@@ -60,14 +60,16 @@ public class Student implements Serializable{
 		skills.put(skill, newLevel);
 		
 		HashSet<Badge> earnedBadges = Badge.getBadgesEarned(skill, newLevel);
+		HashSet<Badge> newBadges = new HashSet<Badge>();
+		
 		for(Badge earnedBadge : earnedBadges) {
-			boolean newBadge = badges.add(earnedBadge);
-			if(!newBadge) {
-				earnedBadges.remove(earnedBadge);
+			boolean isNewBadge = badges.add(earnedBadge);
+			if(isNewBadge) {
+				newBadges.add(earnedBadge);
 			}
 		}
 		
-		return earnedBadges;
+		return newBadges;
 	}
 	
 	public boolean hasBadge(Badge b) {
