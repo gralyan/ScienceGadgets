@@ -435,7 +435,7 @@ public class EquationTree {
 				// descendantEl.removeAttribute("id");
 				AddToMaps(new EquationNode(descendantEl));
 			}
-
+			
 			return top;
 		}
 

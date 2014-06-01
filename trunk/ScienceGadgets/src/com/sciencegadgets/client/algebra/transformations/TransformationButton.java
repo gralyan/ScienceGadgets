@@ -81,8 +81,8 @@ public abstract class TransformationButton extends SelectionButton implements
 
 		if (transformList.beforeAfterTree == null) {
 			EquationTree mTree = new EquationTree(false);
-
 			EquationNode frame;
+			
 			if (TypeSGET.Operation.equals(transformList.getNode().getType())) {
 				EquationNode op = transformList.getNode();
 				frame = mTree.getLeftSide().replace(op.getParentType(), "");

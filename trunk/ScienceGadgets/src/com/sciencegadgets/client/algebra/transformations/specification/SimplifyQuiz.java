@@ -1,17 +1,9 @@
 package com.sciencegadgets.client.algebra.transformations.specification;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map.Entry;
-
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.core.java.util.Collections;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.AlgebraActivity.TransformationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
@@ -26,18 +18,17 @@ public class SimplifyQuiz extends Quiz {
 	private static AlgebraActivity simplifyActivity;
 	TransformationList<TransformationButton> tButtons;
 
-	public SimplifyQuiz(final EquationNode hostNode,
+	public SimplifyQuiz(EquationNode hostNode,
 			final TransformationList<TransformationButton> tButtons) {
 
 		this.tButtons = tButtons;
 
 		// Make Tree
-		// final EquationNode hostNode = tButtons.getFirst().getTransformList()
-		// .getNode();
 		Element hostXML = hostNode.getXMLClone();
 		if (TypeSGET.Operation.equals(hostNode.getType())) {
 			Element hostParentOperation = (Element) hostNode.getParent()
 					.getXMLNode().cloneNode(false);
+			hostParentOperation.removeAttribute("id");
 			Element hostLeft = hostNode.getPrevSibling().getXMLClone();
 			Element hostRight = hostNode.getNextSibling().getXMLClone();
 			hostParentOperation.appendChild(hostLeft);
@@ -84,13 +75,12 @@ public class SimplifyQuiz extends Quiz {
 					EquationNode possibleCorrectResponse = tButt.getPreview();
 					
 					if (response.isLike(possibleCorrectResponse)) {
-						tButt.transform();
-//						EquationNode replacement = hostNode.getTree().newNode(response.getXMLClone());
-//						JSNICalls.log("replace "+replacement);
-//						JSNICalls.log("hostNode.getTree() "+hostNode.getTree());
-//						hostNode.replace(replacement);
-//						JSNICalls.log("hostNode.getTree() "+hostNode.getTree());
 						onCorrect();
+						tButt.transform();
+//						AlgebraActivity hostActivity = ((EquationWrapper)hostNode.getWrapper()).getAlgebraActivity();
+//						EquationNode replacement = hostNode.getTree().newNode(response.getXMLClone());
+//						hostNode.replace(replacement);
+//						hostActivity.reloadEquationPanel(changeComment, skillsIncrease, updateHistory)
 						return;
 					}
 				}
@@ -109,6 +99,7 @@ public class SimplifyQuiz extends Quiz {
 	@Override
 	public void onCorrect() {
 		disappear();
+		
 	}
 
 	@Override
