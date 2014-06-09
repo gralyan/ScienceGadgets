@@ -229,20 +229,17 @@ public class AlgebraActivity extends SimplePanel {
 		simplifyButtonsPanel.clear();
 
 		LinkedList<SelectionButton> buttonsShown = new LinkedList<SelectionButton>();
-		buttonsShown.add(simplifyPromptButton);
 		simplifyPromptButton.setTransformationList(transSimplify);
-
-//		for (TransformationButton tButt : transSimplify) {
-//			if (tButt.isEvaluation() || ) {// if evaluation(eg. #+#), allow #prompt
-//				buttonsShown.add(tButt);
-//			}
-//		}
 
 		for (TransformationButton tButt : transSimplify) {
 			if (tButt.meetsAutoTransform()) {
 				buttonsShown.add(tButt);
 			}
 		}
+		if(transSimplify.size() > buttonsShown.size()) {
+			buttonsShown.add(simplifyPromptButton);
+		}
+		
 		simplifyButtonsPanel.addAll(buttonsShown);
 
 		lowerEqArea.clear();

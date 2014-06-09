@@ -83,6 +83,10 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 		this.context = context;
 	}
 	@Override
+	public Badge getAssociatedBadge() {
+		return null;
+	}
+	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
@@ -117,6 +121,10 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 			setSize("50%", "50%");
 		}
 		@Override
+		public Badge getAssociatedBadge() {
+			return Badge.FACTOR_NUMBERS;
+		}
+		@Override
 		public boolean meetsAutoTransform() {
 			return true;
 		}
@@ -137,9 +145,8 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 
 			numberNode.setSymbol(factored + "");
 
-			Moderator.reloadEquationPanel(original + " = " + factor + " "
-					+ Operator.getMultiply().getSign() + " " + factored,
-					Skill.INTEGER_FACTORIZATION);
+			onTransformationEnd(original + " = " + factor + " "
+					+ Operator.getMultiply().getSign() + " " + factored);
 
 			prompt.disappear();
 		}
@@ -154,6 +161,10 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 class UnitConversionButton extends NumberTransformationButton {
 	UnitConversionButton(final NumberTransformations context) {
 		super("Convert Units", context);
+	}
+	@Override
+	public Badge getAssociatedBadge() {
+		return null;
 	}
 	@Override
 	public boolean meetsAutoTransform() {

@@ -1,11 +1,19 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasTouchEndHandlers;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.FitParentHTML;
+import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
@@ -16,6 +24,7 @@ public abstract class TransformationButton extends SelectionButton implements
 	private TransformationList<? extends TransformationButton> transformList;
 	public EquationNode previewNode = null;
 	protected boolean isEvaluation = false;
+	protected boolean allowSkillIncrease = false;
 
 	public TransformationButton(
 			TransformationList<? extends TransformationButton> context) {
@@ -23,22 +32,6 @@ public abstract class TransformationButton extends SelectionButton implements
 		this.transformList = context;
 
 		addStyleName(CSS.TRANSFORMATION_BUTTON + " " + CSS.LAYOUT_ROW);
-		//
-		// if (Moderator.isTouch) {
-		// addTouchEndHandler(new TouchEndHandler() {
-		// @Override
-		// public void onTouchEnd(TouchEndEvent event) {
-		// simplifyAttempt();
-		// }
-		// });
-		// } else {
-		// addClickHandler(new ClickHandler() {
-		// @Override
-		// public void onClick(ClickEvent event) {
-		// simplifyAttempt();
-		// }
-		// });
-		// }
 	}
 
 	public TransformationButton(String html,
@@ -63,7 +56,7 @@ public abstract class TransformationButton extends SelectionButton implements
 		if (transformList.beforeAfterTree == null) {
 			EquationTree mTree = new EquationTree(false);
 			EquationNode frame;
-			
+
 			if (TypeSGET.Operation.equals(transformList.getNode().getType())) {
 				EquationNode op = transformList.getNode();
 				frame = mTree.getLeftSide().replace(op.getParentType(), "");
@@ -110,48 +103,50 @@ public abstract class TransformationButton extends SelectionButton implements
 			return null;
 		}
 		previewButton.transform();
-		// previewButton.fireEvent(new ClickEvent() {
-		// });
-		// previewTree.reloadDisplay(true, true);
 		previewNode = previewTree.getRightSide();
 		return previewNode;
 	}
-
-	//
-	// @Override
-	// public HandlerRegistration addClickHandler(ClickHandler handler) {
-	// return addDomHandler(handler, ClickEvent.getType());
-	// }
-	//
-	// public HandlerRegistration addTouchEndHandler(TouchEndHandler handler) {
-	// return addDomHandler(handler, TouchEndEvent.getType());
-	// }
 
 	// Buttons with a preview must override this method
 	TransformationButton getPreviewButton(EquationNode newNode) {
 		return null;
 	}
 
-	// private void simplifyAttempt() {
-	// if (transformList.getNode().getTree().isInEditMode() ||
-	// meetsAutoTransform()) {
-	// transform();
-	// } else {
-	// SimplifyQuiz sQuiz = new SimplifyQuiz(TransformationButton.this);
-	// sQuiz.appear();
-	// }
-	// }
-
 	public boolean isEvaluation() {
 		return isEvaluation;
 	}
-	
+
 	@Override
 	protected void onSelect() {
 		transform();
 	}
 
+	public void allowSkillIncrease(boolean allow) {
+		allowSkillIncrease = allow;
+	}
+
+	protected void onTransformationEnd(String changeComment) {
+
+		Skill skills = getAssociatedBadge().getSkill();
+		
+		if (allowSkillIncrease) {
+			Moderator.increaseSkill(skills, 1);
+		}
+
+		if (transformList.reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel(changeComment, skills);
+		}
+	}
+
 	public abstract void transform();
 
-	public abstract boolean meetsAutoTransform();
+	public boolean meetsAutoTransform() {
+		return Moderator.meetsRequirement(getAssociatedBadge());
+	}
+
+	public abstract Badge getAssociatedBadge();
+
+	public String getExampleHTML() {
+		return "";
+	}
 }

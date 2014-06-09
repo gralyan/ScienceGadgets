@@ -96,6 +96,8 @@ public static final String PROMPT_MAIN = "promptMain";
 public static final String KEY_PAD_NUMERICAL = "keyPadNumerical";
 public static final String DOUBLE_FONT_SIZE = "doubleFontSize";
 public static final String INVALID_INPUT = "invalidInput";
+public static final String OK_GAP = "okGap";
+public static final String EXAMPLE_HTML = "exampleHtml";
 
 
 //////////////////////////////////////////////

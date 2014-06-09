@@ -9,6 +9,7 @@ import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
+import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.Math;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
@@ -224,6 +225,8 @@ public class BothSidesTransformations extends
 		EquationNode topParent = null;
 		boolean autoCancel = false;
 
+		private Math operation;
+
 		BothSidesButton(Math operation, String html,
 				BothSidesTransformations context) {
 			this(operation, html, context, null);
@@ -232,6 +235,8 @@ public class BothSidesTransformations extends
 		BothSidesButton(Math operation, String html,
 				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(html, context);
+
+			this.operation = operation;
 
 			if (joinedButton == null) {
 				this.joinedButton = makeButton(operation, this);
@@ -313,10 +318,34 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
+		public Badge getAssociatedBadge() {
+			switch (operation) {
+			case ADD:
+				return Badge.BOTH_SIDES_ADD;
+			case SUBTRACT:
+				return Badge.BOTH_SIDES_SUBTRACT;
+			case MULTIPLY:
+				return Badge.BOTH_SIDES_MULTIPLY;
+			case DIVIDE:
+				return Badge.BOTH_SIDES_DIVIDE;
+			case INVERSE_EXPONENT:
+				return Badge.BOTH_SIDES_INVERSE_EXPONENT;
+			case RAISE:
+				return Badge.BOTH_SIDES_RAISE;
+			case LOG:
+				return Badge.BOTH_SIDES_LOG;
+			case INVERSE_TRIG:
+				return Badge.BOTH_SIDES_INVERSE_TRIG;
+			}
+			throw new IllegalArgumentException(
+					"No associated badge for operation: " + operation);
+		}
+
+		@Override
 		public boolean meetsAutoTransform() {
 			return true;
 		}
-		
+
 		@Override
 		public void transform() {
 			BothSidesButton joinedButton = this.getJoinedButton();
@@ -348,7 +377,6 @@ public class BothSidesTransformations extends
 
 		@Override
 		protected void execute() {
-			boolean isSubtraction = false;
 
 			// Prepare Target side
 			targetSide = targetSide.encase(TypeSGET.Sum);
@@ -362,10 +390,8 @@ public class BothSidesTransformations extends
 				// Flip sign
 				if (MINUS.equals(operator.getSymbol())) {
 					operator.setSymbol(PLUS);
-					isSubtraction = false;
 				} else if (PLUS.equals(operator.getSymbol())) {
 					operator.setSymbol(MINUS);
-					isSubtraction = true;
 				} else {
 					JSNICalls.warn("Unknown operation, can't flip");
 				}
@@ -404,11 +430,7 @@ public class BothSidesTransformations extends
 				topParent.append(node.clone());
 			}
 
-			if (reloadAlgebraActivity) {
-				Skill skill = isSubtraction ? Skill.SOLVING_EQUATIONS_SUBTRACT
-						: Skill.SOLVING_EQUATIONS_ADD;
-				Moderator.reloadEquationPanel(changeComment, skill);
-			}
+			onTransformationEnd(changeComment);
 		}
 
 	}
@@ -442,7 +464,9 @@ public class BothSidesTransformations extends
 			}
 
 			// Prepare Target side
-			if (Moderator.meetsRequirement(Badge.BOTH_SIDES_DIVIDE_INTO_DENOMINATOR) && TypeSGET.Fraction.equals(targetSide.getType())) {
+			if (Moderator
+					.meetsRequirement(Badge.BOTH_SIDES_DIVIDE_INTO_DENOMINATOR)
+					&& TypeSGET.Fraction.equals(targetSide.getType())) {
 				targetSide = targetSide.getChildAt(1);
 				targetSide = targetSide.encase(TypeSGET.Term);
 				if (operator == null) {
@@ -454,7 +478,8 @@ public class BothSidesTransformations extends
 			} else {
 				targetSide = targetSide.encase(TypeSGET.Fraction);
 				if (operator != null) {
-					operator.remove();}
+					operator.remove();
+				}
 			}
 
 			if (autoCancel) {
@@ -485,10 +510,7 @@ public class BothSidesTransformations extends
 				}
 			}
 
-			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment,
-						Skill.SOLVING_EQUATIONS_DIVIDE);
-			}
+			onTransformationEnd(changeComment);
 		}
 	}
 
@@ -562,10 +584,7 @@ public class BothSidesTransformations extends
 				}
 			}
 
-			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment,
-						Skill.SOLVING_EQUATIONS_MULTIPLY);
-			}
+			onTransformationEnd(changeComment);
 		}
 	}
 
@@ -631,10 +650,7 @@ public class BothSidesTransformations extends
 				frac.append(node.clone());
 			}
 
-			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment,
-						Skill.SOLVING_EQUATIONS_EXPONENTIAL);
-			}
+			onTransformationEnd(changeComment);
 		}
 	}
 
@@ -672,10 +688,7 @@ public class BothSidesTransformations extends
 				fromExp.addFirst(TypeSGET.Number, base);
 			}
 
-			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment,
-						Skill.SOLVING_EQUATIONS_RAISE);
-			}
+			onTransformationEnd(changeComment);
 		}
 	}
 
@@ -710,10 +723,7 @@ public class BothSidesTransformations extends
 				fromLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 			}
 
-			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment,
-						Skill.SOLVING_EQUATIONS_LOG);
-			}
+			onTransformationEnd(changeComment);
 		}
 	}
 
@@ -751,10 +761,7 @@ public class BothSidesTransformations extends
 				fromTrig.setAttribute(MathAttribute.Function, toFunction);
 			}
 
-			if (reloadAlgebraActivity) {
-				Moderator.reloadEquationPanel(changeComment,
-						Skill.SOLVING_EQUATIONS_INVERSE_TRIG);
-			}
+			onTransformationEnd(changeComment);
 		}
 	}
 }

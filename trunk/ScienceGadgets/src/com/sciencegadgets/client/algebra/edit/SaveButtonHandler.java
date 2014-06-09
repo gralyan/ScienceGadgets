@@ -29,10 +29,10 @@ public class SaveButtonHandler implements ClickHandler {
 				reCreateUnitsCheck(mathXML);
 				return;
 			}
-			if (!mathXML.contains("<" + TypeSGET.Variable.getTag())) {
-				Window.alert("The equation must contain at least one variable");
-				return;
-			}
+//			if (!mathXML.contains("<" + TypeSGET.Variable.getTag())) {
+//				Window.alert("The equation must contain at least one variable");
+//				return;
+//			}
 			
 			try {
 				Moderator.getCurrentEquationTree().validateTree();
@@ -50,27 +50,41 @@ public class SaveButtonHandler implements ClickHandler {
 			String html = JSNICalls.elementToString(Moderator
 					.getCurrentEquationTree().getDisplayClone().getElement());
 
-			dataBase.saveEquation(mathXML, html, new AsyncCallback<String>() {
-
-				@Override
-				public void onSuccess(String result) {
-					if (result != null) {
-						Window.alert("Saved!");
-						JSNICalls.log("Saved: " + result);
-					} else {
-						Window.alert("Save didn't work");
-						JSNICalls.error("Save Failed, MathML not well formed: "
-								+ mathXML);
-					}
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("Save didn't work");
-					JSNICalls.error("Save RPC Failed: "
-							+ caught.getCause().toString());
-				}
-			});
+//			dataBase.saveEquation(mathXML, html, new AsyncCallback<String>() {
+//
+//				@Override
+//				public void onSuccess(String result) {
+//					if (result != null) {
+//						Window.alert("Saved!");
+//						JSNICalls.log("Saved: " + result);
+//					} else {
+//						Window.alert("Save didn't work");
+//						JSNICalls.error("Save Failed, MathML not well formed: "
+//								+ mathXML);
+//					}
+//				}
+//
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					Window.alert("Save didn't work");
+//					JSNICalls.error("Save RPC Failed: "
+//							+ caught.getCause().toString());
+//				}
+//			});
+			
+			
+			///////////////////////////////////////////////
+			//Show HTML
+			/////////////////////////////////////////////
+			System.out.println(",// \n\""+html.replace("\"", "\\\"")+"\"\n\n");
+			JSNICalls.log(",// \n\""+html.replace("\"", "\\\"")+"\"\n\n");
+			
+			
+			
+			
+			
+			
+			
 		} catch (Exception e) {
 			Window.alert("Could not save equation");
 			JSNICalls.error("Save Fail: " + e.toString());

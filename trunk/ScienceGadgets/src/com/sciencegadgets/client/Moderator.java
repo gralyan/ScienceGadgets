@@ -185,17 +185,21 @@ public class Moderator implements EntryPoint {
 	}
 
 	public static void reloadEquationPanel(String changeComment, Skill skill) {
-		HashMap<Skill, Integer> skillsIncrease = new HashMap<Skill, Integer>();
-		skillsIncrease.put(skill, 1);
-		reloadEquationPanel(changeComment, skillsIncrease);
+		HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
+		skills.put(skill, 1);
+		reloadEquationPanel(changeComment, skills);
 	}
 
 	public static void reloadEquationPanel(String changeComment,
-			HashMap<Skill, Integer> skillsIncrease) {
-		increaseSkills(skillsIncrease);
-		algebraActivity.reloadEquationPanel(changeComment, skillsIncrease, true);
+			HashMap<Skill, Integer> skills) {
+		algebraActivity.reloadEquationPanel(changeComment, skills, true);
 	}
 	
+	public static void increaseSkill(Skill skill, int increase) {
+		HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
+		skills.put(skill, increase);
+		increaseSkills(skills);
+	}
 	public static void increaseSkills(HashMap<Skill, Integer> skillsIncrease) {
 
 		if (skillsIncrease != null) {
@@ -254,7 +258,7 @@ public class Moderator implements EntryPoint {
 
 	public static boolean meetsRequirements(HashSet<Badge> badges) {
 		if (student == null || badges == null) {
-			JSNICalls.warn("student: " + student + ", badges:" + badges);
+			JSNICalls.error("NO STUDENT or BADGES: student: " + student + ", badges:" + badges);
 			return false;
 		} else if (isInEasyMode) {
 			JSNICalls.warn("isInEasyMode " + isInEasyMode);

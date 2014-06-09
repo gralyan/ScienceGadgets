@@ -12,10 +12,10 @@ import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class AssociativeDropController extends TransformationDropController {
-	
+
 	public AssociativeDropController(EquationWrapper dropWrapper) {
 		super(dropWrapper);
-		
+
 		response.setText(ResponseNote.Switch.toString());
 	}
 
@@ -24,8 +24,7 @@ public class AssociativeDropController extends TransformationDropController {
 		super.onDrop(context);
 
 		EquationNode drag = ((Wrapper) context.draggable).getNode();
-		EquationNode target = ((Wrapper) getDropTarget())
-				.getNode();
+		EquationNode target = ((Wrapper) getDropTarget()).getNode();
 		EquationNode parent = drag.getParent();
 		boolean isSum = TypeSGET.Sum.equals(parent.getType());
 
@@ -49,16 +48,18 @@ public class AssociativeDropController extends TransformationDropController {
 			parent.addAfter(dragOp.getIndex(), drag);
 
 			EquationNode firstNode = parent.getFirstChild();
-			if (TypeSGET.Operation.equals(firstNode.getType()) && !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
+			if (TypeSGET.Operation.equals(firstNode.getType())
+					&& !Operator.MINUS.getSign().equals(firstNode.getSymbol())) {
 				firstNode.remove();
 			}
 		} else {// add before drop
-			
-			if(target.getIndex() == 0){
-				if(isSum){
+
+			if (target.getIndex() == 0) {
+				if (isSum) {
 					parent.addFirst(TypeSGET.Operation, Operator.PLUS.getSign());
-				}else{
-				parent.addFirst(TypeSGET.Operation, Operator.getMultiply().getSign());
+				} else {
+					parent.addFirst(TypeSGET.Operation, Operator.getMultiply()
+							.getSign());
 				}
 			}
 			int dropIndex = target.getPrevSibling().getIndex();
@@ -75,8 +76,10 @@ public class AssociativeDropController extends TransformationDropController {
 		}
 		HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
 		skills.put(Skill.COMMUNATIVE_PROPERTY, 1);
-		((EquationWrapper)getDropTarget()).getAlgebraActivity().reloadEquationPanel("Associative Property", skills, false);
-//		Moderator.reloadEquationPanel("Associative Property", Skill.COMMUNATIVE_PROPERTY);
+		((EquationWrapper) getDropTarget()).getAlgebraActivity()
+				.reloadEquationPanel("Associative Property", skills, false);
+		// Moderator.reloadEquationPanel("Associative Property",
+		// Skill.COMMUNATIVE_PROPERTY);
 	}
 
 }

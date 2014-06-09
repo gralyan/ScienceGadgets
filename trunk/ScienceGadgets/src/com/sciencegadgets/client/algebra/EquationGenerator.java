@@ -98,7 +98,7 @@ public class EquationGenerator {
 			}
 
 			int expressionCount = expressions.get(type) - 1;
-			if (expressionCount < 0) {
+			if (expressionCount > 0) {
 				expressions.put(type, expressionCount);
 			} else {
 				expressions.remove(type);

@@ -68,6 +68,10 @@ class SubstituteButton extends VariableTransformationButton {
 		super("Substitute", context);
 	}
 	@Override
+	public Badge getAssociatedBadge() {
+		return null;
+	}
+	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
@@ -179,6 +183,10 @@ class SubstituteButton extends VariableTransformationButton {
 class PlugInButton extends VariableTransformationButton {
 	PlugInButton(VariableTransformations context) {
 		super("Plug In", context);
+	}
+	@Override
+	public Badge getAssociatedBadge() {
+		return null;
 	}
 	@Override
 	public boolean meetsAutoTransform() {

@@ -135,6 +135,10 @@ class SimplifyFractionButton extends FractionTransformButton {
 		super("Simplify Fraction", context);
 	}
 	@Override
+	public Badge getAssociatedBadge() {
+		return Badge.SIMPLIFY_FRACTIONS;
+	}
+	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
@@ -147,8 +151,7 @@ class SimplifyFractionButton extends FractionTransformButton {
 		denominator.highlight();
 
 		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Simplify Fraction",
-					Skill.SIMPLIFY_FRACTIONS);
+			onTransformationEnd("Simplify Fraction");
 		}
 	}
 
@@ -161,6 +164,10 @@ class SimplifyFractionButton extends FractionTransformButton {
 class DenominatorFlipButton extends FractionTransformButton {
 	DenominatorFlipButton(FractionTransformations context) {
 		super("Flip Denominator", context);
+	}
+	@Override
+	public Badge getAssociatedBadge() {
+		return Badge.DIVIDING_FRACTIONS;
 	}
 	@Override
 	public boolean meetsAutoTransform() {
@@ -234,7 +241,6 @@ class DenominatorFlipButton extends FractionTransformButton {
 		
 		fraction.remove();
 
-		Moderator.reloadEquationPanel("Multiply by Resiprocal",
-				Skill.DIVIDING_FRACTIONS);
+		onTransformationEnd("Multiply by Resiprocal");
 	}
 }
