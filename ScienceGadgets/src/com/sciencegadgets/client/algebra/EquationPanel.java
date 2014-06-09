@@ -244,6 +244,9 @@ public class EquationPanel extends AbsolutePanel {
 			}
 			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
 					+ parentId);
+			
+			System.out.println(node.getId() + OF_LAYER
+					+ parentId);
 
 			if (algebraActivity.inEditMode) {// Edit Mode
 				EditWrapper wrap = new EditWrapper(node, algebraActivity,

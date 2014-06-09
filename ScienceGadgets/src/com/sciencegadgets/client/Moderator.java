@@ -66,7 +66,6 @@ public class Moderator implements EntryPoint {
 	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
 	private static Student student = new Student("guest");
 	public static boolean isInEasyMode = false;
-	public static int idCounter = 0;
 
 	@Override
 	public void onModuleLoad() {

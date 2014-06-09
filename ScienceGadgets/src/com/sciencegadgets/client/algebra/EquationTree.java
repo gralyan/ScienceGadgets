@@ -16,6 +16,7 @@ package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -26,6 +27,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.core.java.util.Collections;
 import com.sciencegadgets.client.JSNICalls;
@@ -57,6 +59,11 @@ public class EquationTree {
 	private EquationHTML eqHTML;
 	private boolean inEditMode;
 	private EquationValidator eqValidator;
+	
+	public static final HashSet<String> IDS = new HashSet<String>();
+	public static int ID_COUNTER = 0;
+	public static final String ID_PREFIX = "ML";
+	
 
 	/**
 	 * A tree representation of an equation.
@@ -72,6 +79,8 @@ public class EquationTree {
 		this.inEditMode = inEditMode;
 
 		bindXMLtoNodes(equationXML);
+		
+		System.out.println(IDS);
 
 		EquationRandomizer.randomizeNumbers(this, !inEditMode);
 
@@ -446,10 +455,12 @@ public class EquationTree {
 				return prevId;
 				// }
 			}
-			String id = "ML" + Moderator.idCounter++;
-			while (idMap.containsKey(id)) {
-				id = "ML" + Moderator.idCounter++;
+			String id = ID_PREFIX + ID_COUNTER++;
+			while (IDS.contains(id)) {
+				id = ID_PREFIX + ID_COUNTER++;
 			}
+			
+			IDS.add(id);
 			return id;
 		}
 
@@ -1125,8 +1136,10 @@ public class EquationTree {
 	private void bindXMLtoNodes(Node equationXMLNode) {
 		Element rootNode = (Element) equationXMLNode;
 
+//		root = newNode(rootNode);
 		root = bindXMLtoNodeRecursive(rootNode);
 
+		
 		try {
 			validateTree();
 		} catch (IllegalStateException e) {
@@ -1147,6 +1160,7 @@ public class EquationTree {
 		String id = eqNode.getId();
 		idMap.put(id, eqNode);
 		idMLMap.put(id, equationXMLNode);
+		IDS.add(id);
 
 		NodeList<Node> equationXMLNodeChildren = equationXMLNode
 				.getChildNodes();

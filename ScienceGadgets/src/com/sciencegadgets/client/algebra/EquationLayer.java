@@ -87,7 +87,7 @@ public class EquationLayer extends SimplePanel {
 		if (oldId != null) {
 			if(oldId.contains(EquationPanel.OF_LAYER)) {
 				curEl.setAttribute("id", oldId.split(EquationPanel.OF_LAYER)[0] + EquationPanel.OF_LAYER + layerId);
-			}else if (oldId.contains("ML")) {
+			}else if (oldId.contains(EquationTree.ID_PREFIX)) {
 				curEl.setAttribute("id", oldId + EquationPanel.OF_LAYER + layerId);
 //			} else if (oldId.contains("Root")) {
 //				curEl.setAttribute("id", "Root-ofLayer-" + layerId);
