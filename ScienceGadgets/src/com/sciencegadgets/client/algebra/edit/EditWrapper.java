@@ -81,7 +81,8 @@ public class EditWrapper extends EquationWrapper {
 			node.setSymbol(TypeSGET.Operator.MINUS.getSign());
 			break;
 		}
-		 Moderator.reloadEquationPanel();
+		getAlgebraActivity().reloadEquationPanel(null, null, false);
+//		 Moderator.reloadEquationPanel();
 	}
 	private class OperationTouchHandler implements TouchStartHandler{
 		@Override

@@ -341,6 +341,10 @@ class SeperateNegButton extends TransformationButton {
 		this.negNode = negNode;
 	}
 	@Override
+	public Badge getAssociatedBadge() {
+		return null;
+	}
+	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}

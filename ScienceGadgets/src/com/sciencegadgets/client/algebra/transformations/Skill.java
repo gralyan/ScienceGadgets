@@ -2,100 +2,248 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.util.HashSet;
 
+public enum Skill {
 
-	public enum Skill {
-		CONVERSION, //
-		COMMUNATIVE_PROPERTY, //
-		FACTORIZATION, //
-		INTEGER_FACTORIZATION,//
-		//
-		ADDITION,//
-		ADDITION_WITH_ZERO(ADDITION),//
-		ADD_NUMBERS_TO_10,//
-		ADD_NUMBERS_TO_100(ADD_NUMBERS_TO_10),//
-		ADD_NUMBERS_LARGE(ADD_NUMBERS_TO_100),//
-		SUBTRACTION(ADDITION),//
-		ADDITION_WITH_NEGATIVES,//
-		COMBINING_LIKE_TERMS(ADDITION), //
-		ADDING_FRACTIONS(ADDITION),//
-		COMMON_DENOMINATOR,//
-		//
-		MULTIPLICATION,//
-		MULTIPLY_WITH_ZERO,//
-		MULTIPLY_WITH_ONE,//
-		MULTIPLY_WITH_NEGATIVE_ONE,//
-		MULTIPLY_NUMBERS_TO_10,//
-		MULTIPLY_NUMBERS_TO_100(MULTIPLY_NUMBERS_TO_10),//
-		MULTIPLY_NUMBERS_LARGE(MULTIPLY_NUMBERS_TO_100),//
-		MULTIPLYING_FRACTIONS,//
-		MULTIPLYING_WITH_FRACTIONS,//
-		DISTRIBUTIVE_PROPERTY,//
-		MULTIPLY_WITH_LOG,//
-		//
-		DIVISION,//
-		DIVIDING_FRACTIONS,//
-		CANCELLING_FRACTIONS,//
-		SIMPLIFY_FRACTIONS,//
-		//
-		EVALUATING_EXPONENTS,//
-		DIVIDING_EXPONENTIALS,//
-		EXPANDED_EXPONENTIAL,//
-		EXPONENTIAL_WITH_EXPONENT,//
-		EXPONENT_NEGATIVE,//
-		EXPRESSIONS_WITH_EXPONENTS,//
-		MULTIPLY_SIMILAR_BASES,//
-		MULTIPLY_SIMILAR_EXPONENTS,//
-		EXPONENT_BASE_ZERO,//
-		EXPONENTIAL_INVERSE,//
-		//
-		TRIG_FUNCTIONS_INVERSE,//
-		TRIG_FUNCTIONS_RECIPROCAL,//
-		TRIGONOMETRIC_FUNCTIONS,//
-		COMBINE_TRIG,//
-		//
-		LOG_CHANGE_BASE,//
-		LOG_CHANGE_BASE_DIVIDE,//
-		LOG_ADDITION,//
-		LOG_EVALUATE,//
-		LOG_ONE,//
-		LOG_POWER,//
-		LOG_PRODUCT,//
-		LOG_QUOTIENT,//
-		LOG_SAME_BASE_ARGUMENT,//
-		LOG_INVERSE,//
-		//
-		SOLVING_EQUATIONS_ADD, //
-		SOLVING_EQUATIONS_SUBTRACT, //
-		SOLVING_EQUATIONS_MULTIPLY, //
-		SOLVING_EQUATIONS_DIVIDE, //
-		SOLVING_EQUATIONS_EXPONENTIAL, //
-		SOLVING_EQUATIONS_RAISE, //
-		SOLVING_EQUATIONS_LOG, //
-		SOLVING_EQUATIONS_INVERSE_TRIG; //
-		
-		
-		private Skill[] prerequisiteSkills;
+	// Evaluate
+	FACTOR_NUMBERS(
+			"Integer Factorization",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML7\" class=\"in-equation Number\">8<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML9\" class=\"in-equation Term\"><div id=\"ML12\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML13\" class=\"in-term Operation\">·</div><div id=\"ML8\" class=\"in-term Number\">4<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>"), //
+	DIVIDE_NUMBERS(
+			"Division",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML14\" class=\"in-equation Fraction\"><div id=\"ML7\" class=\"in-fraction-numerator Number\">8<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML16\" class=\"in-fraction-denominator Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML8\" class=\"in-equation Number\">4<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	EXPONENTIATE_NUMBERS(
+			"Evaluate Exponents",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML17\" class=\"in-equation Exponential\"><div id=\"ML20\" class=\"in-exponential-base Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML19\" class=\"in-exponential-exponent Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML21\" class=\"in-equation Number\">9<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
 
-		private Skill(Skill...prerequisiteSkills) {
-			this.prerequisiteSkills = prerequisiteSkills;
-		}
-		
-		public HashSet<Skill> getPrerequisiteSkills(){
-			HashSet<Skill> preSkills = new HashSet<Skill>();
-			fillWithPrerequisiteSkills(preSkills);
-			return preSkills;
-		}
-		private void fillWithPrerequisiteSkills(HashSet<Skill> preSkills){
-			for(Skill pSkill : prerequisiteSkills) {
-				preSkills.add(pSkill);
-				pSkill.fillWithPrerequisiteSkills(preSkills);
-			}
-		}
+	// DROP
+	DROP_CANCEL(
+			"Cancelling Fractions",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML24\" class=\"in-equation Fraction\"><div id=\"ML26\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML27\" class=\"in-fraction-denominator Variable\">a</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML28\" class=\"in-equation Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	DROP_DIVIDE(
+			"Division",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML14\" class=\"in-equation Fraction\"><div id=\"ML7\" class=\"in-fraction-numerator Number\">8<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML16\" class=\"in-fraction-denominator Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML8\" class=\"in-equation Number\">4<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	DROP_EXPONENTIAL(
+			"Divide Exponentials",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML24\" class=\"in-equation Fraction\"><div id=\"ML29\" class=\"in-fraction-numerator Exponential\"><div id=\"ML26\" class=\"in-exponential-base Variable\">a</div><div id=\"ML31\" class=\"in-exponential-exponent Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML32\" class=\"in-fraction-denominator Exponential\"><div id=\"ML27\" class=\"in-exponential-base Variable\">a</div><div id=\"ML34\" class=\"in-exponential-exponent Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML36\" class=\"in-equation Exponential\"><div id=\"ML35\" class=\"in-exponential-base Variable\">a</div><div id=\"ML38\" class=\"in-exponential-exponent Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML24\" class=\"in-equation Fraction\"><div id=\"ML29\" class=\"in-fraction-numerator Exponential\"><div id=\"ML26\" class=\"in-exponential-base Variable\">a</div><div id=\"ML39\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML32\" class=\"in-fraction-denominator Exponential\"><div id=\"ML27\" class=\"in-exponential-base Variable\">a</div><div id=\"ML40\" class=\"in-exponential-exponent Variable\">m</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML36\" class=\"in-equation Exponential\"><div id=\"ML35\" class=\"in-exponential-base Variable\">a</div><div id=\"ML42\" class=\"in-exponential-exponent Sum\"><div class=\"fenced\"><div id=\"ML41\" class=\"in-sum Variable\">n</div><div id=\"ML43\" class=\"in-sum Operation\">-</div><div id=\"ML45\" class=\"in-sum Variable\">m</div></div></div></div></div>"), //
+	DROP_LOG(
+			"Divide Logs",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML50\" class=\"in-equation Fraction\"><div id=\"ML48\" class=\"in-fraction-numerator Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML49\" class=\"in-log Variable\">a</div></div><div id=\"ML56\" class=\"in-fraction-denominator Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML58\" class=\"in-log Variable\">e</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML54\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">e</div><div id=\"ML59\" class=\"in-log Variable\">a</div></div></div>"), //
+	DROP_TRIG(
+			"Trigonometric Identities",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML62\" class=\"in-equation Fraction\"><div id=\"ML64\" class=\"in-fraction-numerator Trig\"><div class=\"functionName\">sin</div><div id=\"ML65\" class=\"in-trig Variable\">θ</div></div><div id=\"ML66\" class=\"in-fraction-denominator Trig\"><div class=\"functionName\">cos</div><div id=\"ML67\" class=\"in-trig Variable\">θ</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML68\" class=\"in-equation Trig\"><div class=\"functionName\">tan</div><div id=\"ML69\" class=\"in-trig Variable\">θ</div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML73\" class=\"in-equation Fraction\"><div id=\"ML72\" class=\"in-fraction-numerator Trig\"><div class=\"functionName\">cos</div><div id=\"ML76\" class=\"in-trig Variable\">θ</div></div><div id=\"ML75\" class=\"in-fraction-denominator Trig\"><div class=\"functionName\">sin</div><div id=\"ML77\" class=\"in-trig Variable\">θ</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML79\" class=\"in-equation Trig\"><div class=\"functionName\">cot</div><div id=\"ML80\" class=\"in-trig Variable\">θ</div></div></div>"), //
+	SIMPLIFY_FRACTIONS(
+			"Simplify Fractions",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML84\" class=\"in-equation Fraction\"><div id=\"ML83\" class=\"in-fraction-numerator Number\">8<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML86\" class=\"in-fraction-denominator Number\">6<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML88\" class=\"in-equation Fraction\"><div id=\"ML87\" class=\"in-fraction-numerator Number\">4<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML90\" class=\"in-fraction-denominator Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>"), //
 
-		public static final String GOOGLE_SEARCH_PREFIX = "https://www.google.com/#q=";
+	// ADD
+	ADD(
+			"Addition",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML92\" class=\"in-sum Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML94\" class=\"in-sum Operation\">+</div><div id=\"ML96\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML98\" class=\"in-equation Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML92\" class=\"in-sum Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML94\" class=\"in-sum Operation\">-</div><div id=\"ML96\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML99\" class=\"in-equation Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML100\" class=\"in-sum Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML94\" class=\"in-sum Operation\">+</div><div id=\"ML96\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML101\" class=\"in-equation Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML100\" class=\"in-sum Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML94\" class=\"in-sum Operation\">-</div><div id=\"ML96\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML102\" class=\"in-equation Number\"><div class=\"fenced\">-5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML103\" class=\"in-sum Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML94\" class=\"in-sum Operation\">-</div><div id=\"ML104\" class=\"in-sum Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML105\" class=\"in-equation Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML106\" class=\"in-sum Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML94\" class=\"in-sum Operation\">-</div><div id=\"ML104\" class=\"in-sum Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML107\" class=\"in-equation Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	ADD_WITH_ZERO("Addition with Zero", ADD), //
+	ADD_NUMBERS_10("Addition"), //
+	ADD_NUMBERS_100("Addition", ADD_NUMBERS_10), //
+	ADD_NUMBERS_LARGE("Addition", ADD_NUMBERS_100), //
+	SUBTRACTION("Subtraction", ADD), //
+	ADDITION_WITH_NEGATIVES("Addition with negatives"), //
+	ADD_FRACTIONS("Fraction Addition",
+			ADD,//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML111\" class=\"in-equation Sum\"><div id=\"ML109\" class=\"in-sum Fraction\"><div id=\"ML116\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML118\" class=\"in-fraction-denominator Variable\">c</div></div><div id=\"ML112\" class=\"in-sum Operation\">+</div><div id=\"ML114\" class=\"in-sum Fraction\"><div id=\"ML117\" class=\"in-fraction-numerator Variable\">b</div><div id=\"ML119\" class=\"in-fraction-denominator Variable\">c</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML120\" class=\"in-equation Fraction\"><div id=\"ML124\" class=\"in-fraction-numerator Sum\"><div id=\"ML123\" class=\"in-sum Variable\">a</div><div id=\"ML125\" class=\"in-sum Operation\">+</div><div id=\"ML127\" class=\"in-sum Variable\">b</div></div><div id=\"ML122\" class=\"in-fraction-denominator Variable\">c</div></div></div>"), //
+	COMMON_DENOMINATOR(
+			"Common denominator",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML111\" class=\"in-equation Sum\"><div id=\"ML109\" class=\"in-sum Fraction\"><div id=\"ML116\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML118\" class=\"in-fraction-denominator Variable\">c</div></div><div id=\"ML112\" class=\"in-sum Operation\">+</div><div id=\"ML117\" class=\"in-sum Variable\">b</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML128\" class=\"in-equation Sum\"><div id=\"ML120\" class=\"in-sum Fraction\"><div id=\"ML123\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML122\" class=\"in-fraction-denominator Variable\">c</div></div><div id=\"ML129\" class=\"in-sum Operation\">+</div><div id=\"ML136\" class=\"in-sum Fraction\"><div id=\"ML132\" class=\"in-fraction-numerator Term\"><div id=\"ML131\" class=\"in-term Variable\">b</div><div id=\"ML133\" class=\"in-term Operation\">·</div><div id=\"ML135\" class=\"in-term Variable\">c</div></div><div id=\"ML138\" class=\"in-fraction-denominator Variable\">c</div></div></div></div>"), //
+	COMBINE_LIKE_TERMS("Combining Like Terms",
+			ADD,//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML142\" class=\"in-equation Sum\"><div id=\"ML145\" class=\"in-sum Term\"><div id=\"ML141\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML146\" class=\"in-term Operation\">·</div><div id=\"ML148\" class=\"in-term Variable\">a</div></div><div id=\"ML143\" class=\"in-sum Operation\">+</div><div id=\"ML150\" class=\"in-sum Term\"><div id=\"ML149\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML151\" class=\"in-term Operation\">·</div><div id=\"ML153\" class=\"in-term Variable\">a</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML155\" class=\"in-equation Term\"><div id=\"ML154\" class=\"in-term Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML156\" class=\"in-term Operation\">·</div><div id=\"ML158\" class=\"in-term Variable\">a</div></div></div>"), //
+	FACTOR_POLYNOMIAL(
+			"Factor Polynomial",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML142\" class=\"in-equation Sum\"><div id=\"ML145\" class=\"in-sum Term\"><div id=\"ML148\" class=\"in-term Variable\">a</div><div id=\"ML164\" class=\"in-term Operation\">·</div><div id=\"ML166\" class=\"in-term Variable\">x</div></div><div id=\"ML143\" class=\"in-sum Operation\">+</div><div id=\"ML150\" class=\"in-sum Term\"><div id=\"ML153\" class=\"in-term Variable\">a</div><div id=\"ML165\" class=\"in-term Operation\">·</div><div id=\"ML167\" class=\"in-term Variable\">y</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML155\" class=\"in-equation Term\"><div id=\"ML158\" class=\"in-term Variable\">a</div><div id=\"ML168\" class=\"in-term Operation\">·</div><div id=\"ML161\" class=\"in-term Sum\"><div class=\"fenced\"><div id=\"ML169\" class=\"in-sum Variable\">x</div><div id=\"ML162\" class=\"in-sum Operation\">+</div><div id=\"ML170\" class=\"in-sum Variable\">y</div></div></div></div></div>"), //
+	ADD_LOGS(
+			"Log Addition",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML174\" class=\"in-equation Sum\"><div id=\"ML173\" class=\"in-sum Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML179\" class=\"in-log Variable\">a</div></div><div id=\"ML175\" class=\"in-sum Operation\">+</div><div id=\"ML177\" class=\"in-sum Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML180\" class=\"in-log Variable\">b</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML178\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML182\" class=\"in-log Term\"><div id=\"ML181\" class=\"in-term Variable\">a</div><div id=\"ML183\" class=\"in-term Operation\">·</div><div id=\"ML185\" class=\"in-term Variable\">b</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML174\" class=\"in-equation Sum\"><div id=\"ML173\" class=\"in-sum Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML179\" class=\"in-log Variable\">a</div></div><div id=\"ML175\" class=\"in-sum Operation\">-</div><div id=\"ML177\" class=\"in-sum Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML180\" class=\"in-log Variable\">b</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML178\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML186\" class=\"in-log Fraction\"><div id=\"ML181\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML188\" class=\"in-fraction-denominator Variable\">b</div></div></div></div>"), //
 
-		public String getPage() {
-			return GOOGLE_SEARCH_PREFIX + toString().toLowerCase().replace("_", "+");
-		}
+	// BOTH SIDES
+	BOTH_SIDES_ADD("Solving Equations Addition"), //
+	BOTH_SIDES_SUBTRACT("Solving Equations Subtraction"), //
+	BOTH_SIDES_MULTIPLY("Solving Equations Multiply"), //
+	BOTH_SIDES_DIVIDE("Solving Equations Divide"), //
+	BOTH_SIDES_INVERSE_EXPONENT("Solving Equations Exponential"), //
+	BOTH_SIDES_RAISE("Solving Equations Raise Both Sides"), //
+	BOTH_SIDES_LOG("Solving Equations Logs"), //
+	BOTH_SIDES_INVERSE_TRIG("Solving Equations Inverse Trig"), //
+
+	EXPONENT_EXPAND(
+			"Expand Exponential",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML192\" class=\"in-equation Exponential\"><div id=\"ML191\" class=\"in-exponential-base Variable\">a</div><div id=\"ML195\" class=\"in-exponential-exponent Number\">0<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML196\" class=\"in-equation Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML192\" class=\"in-equation Exponential\"><div id=\"ML191\" class=\"in-exponential-base Variable\">a</div><div id=\"ML197\" class=\"in-exponential-exponent Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML198\" class=\"in-equation Variable\">a</div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML192\" class=\"in-equation Exponential\"><div id=\"ML191\" class=\"in-exponential-base Variable\">a</div><div id=\"ML199\" class=\"in-exponential-exponent Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML200\" class=\"in-equation Term\"><div id=\"ML198\" class=\"in-term Variable\">a</div><div id=\"ML201\" class=\"in-term Operation\">·</div><div id=\"ML203\" class=\"in-term Variable\">a</div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML192\" class=\"in-equation Exponential\"><div id=\"ML191\" class=\"in-exponential-base Variable\">a</div><div id=\"ML204\" class=\"in-exponential-exponent Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML200\" class=\"in-equation Term\"><div id=\"ML198\" class=\"in-term Variable\">a</div><div id=\"ML201\" class=\"in-term Operation\">·</div><div id=\"ML203\" class=\"in-term Variable\">a</div><div id=\"ML205\" class=\"in-term Operation\">·</div><div id=\"ML211\" class=\"in-term Variable\">a</div><div id=\"ML207\" class=\"in-term Operation\">·</div><div id=\"ML212\" class=\"in-term Variable\">a</div><div id=\"ML209\" class=\"in-term Operation\">·</div><div id=\"ML213\" class=\"in-term Variable\">a</div></div></div>"), //
+	EXPONENT_EXPONENTIATE(
+			"Exponential with Exponent",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML215\" class=\"in-equation Exponential\"><div id=\"ML192\" class=\"in-exponential-base Exponential\"><div class=\"fenced\"><div id=\"ML191\" class=\"in-exponential-base Variable\">a</div><div id=\"ML214\" class=\"in-exponential-exponent Variable\">n</div></div></div><div id=\"ML217\" class=\"in-exponential-exponent Variable\">m</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML220\" class=\"in-equation Exponential\"><div id=\"ML219\" class=\"in-exponential-base Variable\">a</div><div id=\"ML223\" class=\"in-exponential-exponent Term\"><div class=\"fenced\"><div id=\"ML222\" class=\"in-term Variable\">n</div><div id=\"ML224\" class=\"in-term Operation\">·</div><div id=\"ML226\" class=\"in-term Variable\">m</div></div></div></div></div>"), //
+	EXPONENT_NEGATIVE(
+			"Negative Exponent",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML232\" class=\"in-equation Exponential\"><div id=\"ML231\" class=\"in-exponential-base Variable\">a</div><div id=\"ML234\" class=\"in-exponential-exponent Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML236\" class=\"in-equation Fraction\"><div id=\"ML235\" class=\"in-fraction-numerator Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML239\" class=\"in-fraction-denominator Exponential\"><div id=\"ML238\" class=\"in-exponential-base Variable\">a</div><div id=\"ML241\" class=\"in-exponential-exponent Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML245\" class=\"in-equation Fraction\"><div id=\"ML244\" class=\"in-fraction-numerator Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML248\" class=\"in-fraction-denominator Exponential\"><div id=\"ML247\" class=\"in-exponential-base Variable\">a</div><div id=\"ML250\" class=\"in-exponential-exponent Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML239\" class=\"in-equation Exponential\"><div id=\"ML238\" class=\"in-exponential-base Variable\">a</div><div id=\"ML241\" class=\"in-exponential-exponent Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML9\" class=\"in-equation Fraction\"><div id=\"ML12\" class=\"in-fraction-numerator Exponential\"><div id=\"ML8\" class=\"in-exponential-base Variable\">a</div><div id=\"ML14\" class=\"in-exponential-exponent Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML11\" class=\"in-fraction-denominator Variable\">b</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML16\" class=\"in-equation Fraction\"><div id=\"ML15\" class=\"in-fraction-numerator Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML19\" class=\"in-fraction-denominator Term\"><div id=\"ML18\" class=\"in-term Variable\">a</div><div id=\"ML20\" class=\"in-term Operation\">·</div><div id=\"ML22\" class=\"in-term Variable\">b</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML9\" class=\"in-equation Fraction\"><div id=\"ML8\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML23\" class=\"in-fraction-denominator Exponential\"><div id=\"ML11\" class=\"in-exponential-base Variable\">b</div><div id=\"ML25\" class=\"in-exponential-exponent Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML19\" class=\"in-equation Term\"><div id=\"ML18\" class=\"in-term Variable\">a</div><div id=\"ML20\" class=\"in-term Operation\">·</div><div id=\"ML22\" class=\"in-term Variable\">b</div></div></div>"), //
+	EXPONENT_EXPRESSION(
+			"Expression with Exponent",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML31\" class=\"in-equation Exponential\"><div id=\"ML26\" class=\"in-exponential-base Term\"><div class=\"fenced\"><div id=\"ML8\" class=\"in-term Variable\">a</div><div id=\"ML27\" class=\"in-term Operation\">·</div><div id=\"ML29\" class=\"in-term Variable\">b</div></div></div><div id=\"ML33\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML19\" class=\"in-equation Term\"><div id=\"ML37\" class=\"in-term Exponential\"><div id=\"ML18\" class=\"in-exponential-base Variable\">a</div><div id=\"ML49\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML20\" class=\"in-term Operation\">·</div><div id=\"ML39\" class=\"in-term Exponential\"><div id=\"ML22\" class=\"in-exponential-base Variable\">b</div><div id=\"ML50\" class=\"in-exponential-exponent Variable\">n</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML31\" class=\"in-equation Exponential\"><div id=\"ML53\" class=\"in-exponential-base Fraction\"><div class=\"fenced\"><div id=\"ML8\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML55\" class=\"in-fraction-denominator Variable\">b</div></div></div><div id=\"ML33\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML56\" class=\"in-equation Fraction\"><div id=\"ML37\" class=\"in-fraction-numerator Exponential\"><div id=\"ML18\" class=\"in-exponential-base Variable\">a</div><div id=\"ML49\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML59\" class=\"in-fraction-denominator Exponential\"><div id=\"ML58\" class=\"in-exponential-base Variable\">b</div><div id=\"ML61\" class=\"in-exponential-exponent Variable\">n</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML31\" class=\"in-equation Exponential\"><div id=\"ML9\" class=\"in-exponential-base Fraction\"><div class=\"fenced\"><div id=\"ML26\" class=\"in-fraction-numerator Term\"><div id=\"ML8\" class=\"in-term Variable\">a</div><div id=\"ML27\" class=\"in-term Operation\">·</div><div id=\"ML29\" class=\"in-term Variable\">b</div></div><div id=\"ML30\" class=\"in-fraction-denominator Variable\">c</div></div></div><div id=\"ML33\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML43\" class=\"in-equation Term\"><div id=\"ML34\" class=\"in-term Fraction\"><div id=\"ML19\" class=\"in-fraction-numerator Term\"><div id=\"ML37\" class=\"in-term Exponential\"><div id=\"ML18\" class=\"in-exponential-base Variable\">a</div><div id=\"ML49\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML20\" class=\"in-term Operation\">·</div><div id=\"ML39\" class=\"in-term Exponential\"><div id=\"ML22\" class=\"in-exponential-base Variable\">b</div><div id=\"ML50\" class=\"in-exponential-exponent Variable\">n</div></div></div><div id=\"ML41\" class=\"in-fraction-denominator Exponential\"><div id=\"ML36\" class=\"in-exponential-base Variable\">c</div><div id=\"ML51\" class=\"in-exponential-exponent Variable\">n</div></div></div><div id=\"ML44\" class=\"in-term Operation\">·</div><div id=\"ML47\" class=\"in-term Exponential\"><div id=\"ML46\" class=\"in-exponential-base Variable\">d</div><div id=\"ML52\" class=\"in-exponential-exponent Variable\">n</div></div></div></div>"), //
+	EXPONENT_BASE_ZERO(
+			"Exponent Base Zero",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML65\" class=\"in-equation Exponential\"><div id=\"ML64\" class=\"in-exponential-base Number\">0<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML67\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML68\" class=\"in-equation Number\">0<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	EXPONENTIAL_INVERSE(
+			"Exponential Inverse",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML71\" class=\"in-equation Exponential\"><div id=\"ML74\" class=\"in-exponential-base Number\">10<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML73\" class=\"in-exponential-exponent Log\"><div class=\"fenced\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML75\" class=\"in-log Variable\">a</div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML76\" class=\"in-equation Variable\">a</div></div>"), //
+	//
+
+	CONVERSION("Unit Conversion"), //
+	COMMUNATIVE_PROPERTY(
+			"Communative Property",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML79\" class=\"in-equation Term\"><div id=\"ML78\" class=\"in-term Variable\">a</div><div id=\"ML80\" class=\"in-term Operation\">·</div><div id=\"ML82\" class=\"in-term Variable\">b</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML83\" class=\"in-equation Term\"><div id=\"ML86\" class=\"in-term Variable\">b</div><div id=\"ML87\" class=\"in-term Operation\">·</div><div id=\"ML76\" class=\"in-term Variable\">a</div></div></div>"), //
+	//
+	MULTIPLY(
+			"Multiplication",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML90\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML94\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML95\" class=\"in-equation Number\">6<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML96\" class=\"in-term Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML94\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML97\" class=\"in-equation Number\"><div class=\"fenced\">-6<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML98\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML99\" class=\"in-term Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML97\" class=\"in-equation Number\"><div class=\"fenced\">-6<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML100\" class=\"in-term Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML99\" class=\"in-term Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML101\" class=\"in-equation Number\">6<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	MULTIPLY_WITH_ZERO(
+			"Multiplication with Zero",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML102\" class=\"in-term Number\">0<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML103\" class=\"in-term Variable\">a</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML105\" class=\"in-equation Number\">0<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	MULTIPLY_WITH_ONE(
+			"Multiplication with One",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML106\" class=\"in-term Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML103\" class=\"in-term Variable\">a</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML107\" class=\"in-equation Variable\">a</div></div>"), //
+	MULTIPLY_WITH_NEGATIVE_ONE(
+			"Multiplication with Negative One",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML108\" class=\"in-term Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML109\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML110\" class=\"in-equation Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML108\" class=\"in-term Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML111\" class=\"in-term Sum\"><div class=\"fenced\"><div id=\"ML109\" class=\"in-sum Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML112\" class=\"in-sum Operation\">+</div><div id=\"ML114\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML115\" class=\"in-equation Sum\"><div id=\"ML110\" class=\"in-sum Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML116\" class=\"in-sum Operation\">-</div><div id=\"ML118\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML119\" class=\"in-equation Term\"><div id=\"ML108\" class=\"in-term Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML120\" class=\"in-term Operation\">·</div><div id=\"ML124\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML122\" class=\"in-term Operation\">·</div><div id=\"ML125\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML126\" class=\"in-equation Term\"><div id=\"ML110\" class=\"in-term Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML127\" class=\"in-term Operation\">·</div><div id=\"ML129\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>"), //
+	MULTIPLY_NUMBERS_TO_10("Multiplication"), //
+	MULTIPLY_NUMBERS_TO_100("Multiplication", MULTIPLY_NUMBERS_TO_10), //
+	MULTIPLY_NUMBERS_LARGE("Multiplication", MULTIPLY_NUMBERS_TO_100), //
+	MULTIPLY_WITH_FRACTION(
+			"Multiplication with a Fraction",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML133\" class=\"in-equation Term\"><div id=\"ML132\" class=\"in-term Variable\">a</div><div id=\"ML134\" class=\"in-term Operation\">·</div><div id=\"ML137\" class=\"in-term Fraction\"><div id=\"ML136\" class=\"in-fraction-numerator Variable\">b</div><div id=\"ML139\" class=\"in-fraction-denominator Variable\">c</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML145\" class=\"in-equation Fraction\"><div id=\"ML141\" class=\"in-fraction-numerator Term\"><div id=\"ML140\" class=\"in-term Variable\">a</div><div id=\"ML142\" class=\"in-term Operation\">·</div><div id=\"ML144\" class=\"in-term Variable\">b</div></div><div id=\"ML147\" class=\"in-fraction-denominator Variable\">c</div></div></div>"), //
+	MULTIPLY_FRACTIONS(
+			"Multiplication of Fractions",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML133\" class=\"in-equation Term\"><div id=\"ML148\" class=\"in-term Fraction\"><div id=\"ML132\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML150\" class=\"in-fraction-denominator Variable\">b</div></div><div id=\"ML134\" class=\"in-term Operation\">·</div><div id=\"ML137\" class=\"in-term Fraction\"><div id=\"ML151\" class=\"in-fraction-numerator Variable\">c</div><div id=\"ML152\" class=\"in-fraction-denominator Variable\">d</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML145\" class=\"in-equation Fraction\"><div id=\"ML141\" class=\"in-fraction-numerator Term\"><div id=\"ML140\" class=\"in-term Variable\">a</div><div id=\"ML142\" class=\"in-term Operation\">·</div><div id=\"ML153\" class=\"in-term Variable\">c</div></div><div id=\"ML154\" class=\"in-fraction-denominator Term\"><div id=\"ML157\" class=\"in-term Variable\">b</div><div id=\"ML155\" class=\"in-term Operation\">·</div><div id=\"ML158\" class=\"in-term Variable\">d</div></div></div></div>"), //
+	MULTIPLY_DISTRIBUTE(
+			"Distributive Property",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML162\" class=\"in-equation Term\"><div id=\"ML161\" class=\"in-term Variable\">a</div><div id=\"ML163\" class=\"in-term Operation\">·</div><div id=\"ML166\" class=\"in-term Sum\"><div class=\"fenced\"><div id=\"ML165\" class=\"in-sum Variable\">b</div><div id=\"ML167\" class=\"in-sum Operation\">+</div><div id=\"ML169\" class=\"in-sum Variable\">c</div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML175\" class=\"in-equation Sum\"><div id=\"ML171\" class=\"in-sum Term\"><div id=\"ML170\" class=\"in-term Variable\">a</div><div id=\"ML172\" class=\"in-term Operation\">·</div><div id=\"ML174\" class=\"in-term Variable\">b</div></div><div id=\"ML176\" class=\"in-sum Operation\">+</div><div id=\"ML179\" class=\"in-sum Term\"><div id=\"ML178\" class=\"in-term Variable\">a</div><div id=\"ML180\" class=\"in-term Operation\">·</div><div id=\"ML182\" class=\"in-term Variable\">c</div></div></div></div>"), //
+	MULTIPLY_LOG_RULE(
+			"Log Power Rule",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML186\" class=\"in-equation Term\"><div id=\"ML185\" class=\"in-term Variable\">a</div><div id=\"ML187\" class=\"in-term Operation\">·</div><div id=\"ML189\" class=\"in-term Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML190\" class=\"in-log Variable\">b</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML191\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML193\" class=\"in-log Exponential\"><div id=\"ML192\" class=\"in-exponential-base Variable\">b</div><div id=\"ML195\" class=\"in-exponential-exponent Variable\">a</div></div></div></div>"), //
+	MULTIPLY_COMBINE_BASES(
+			"Multiplying with Similar Bases",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML199\" class=\"in-equation Term\"><div id=\"ML203\" class=\"in-term Exponential\"><div id=\"ML198\" class=\"in-exponential-base Variable\">a</div><div id=\"ML207\" class=\"in-exponential-exponent Variable\">m</div></div><div id=\"ML200\" class=\"in-term Operation\">·</div><div id=\"ML205\" class=\"in-term Exponential\"><div id=\"ML202\" class=\"in-exponential-base Variable\">a</div><div id=\"ML208\" class=\"in-exponential-exponent Variable\">n</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML210\" class=\"in-equation Exponential\"><div id=\"ML209\" class=\"in-exponential-base Variable\">a</div><div id=\"ML213\" class=\"in-exponential-exponent Sum\"><div class=\"fenced\"><div id=\"ML212\" class=\"in-sum Variable\">m</div><div id=\"ML214\" class=\"in-sum Operation\">+</div><div id=\"ML216\" class=\"in-sum Variable\">n</div></div></div></div></div>"), //
+	MULTIPLY_COMBINE_EXPONENTS(
+			"Multiplying with Similar Exponents",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML199\" class=\"in-equation Term\"><div id=\"ML203\" class=\"in-term Exponential\"><div id=\"ML198\" class=\"in-exponential-base Variable\">a</div><div id=\"ML223\" class=\"in-exponential-exponent Variable\">n</div></div><div id=\"ML200\" class=\"in-term Operation\">·</div><div id=\"ML205\" class=\"in-term Exponential\"><div id=\"ML222\" class=\"in-exponential-base Variable\">b</div><div id=\"ML224\" class=\"in-exponential-exponent Variable\">n</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML219\" class=\"in-equation Exponential\"><div id=\"ML225\" class=\"in-exponential-base Term\"><div class=\"fenced\"><div id=\"ML209\" class=\"in-term Variable\">a</div><div id=\"ML226\" class=\"in-term Operation\">·</div><div id=\"ML228\" class=\"in-term Variable\">b</div></div></div><div id=\"ML229\" class=\"in-exponential-exponent Variable\">n</div></div></div>"), //
+	MULTIPLY_COMBINE_BASES_ARITHMETIC(
+			"Multiplying with Similar Bases",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML199\" class=\"in-equation Term\"><div id=\"ML203\" class=\"in-term Exponential\"><div id=\"ML198\" class=\"in-exponential-base Variable\">a</div><div id=\"ML217\" class=\"in-exponential-exponent Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML200\" class=\"in-term Operation\">·</div><div id=\"ML205\" class=\"in-term Exponential\"><div id=\"ML202\" class=\"in-exponential-base Variable\">a</div><div id=\"ML218\" class=\"in-exponential-exponent Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML219\" class=\"in-equation Exponential\"><div id=\"ML209\" class=\"in-exponential-base Variable\">a</div><div id=\"ML221\" class=\"in-exponential-exponent Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>"),
+	//
+	DIVIDING_FRACTIONS(
+			"Dividing Fractions Flip",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML233\" class=\"in-equation Fraction\"><div id=\"ML232\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML235\" class=\"in-fraction-denominator Fraction\"><div id=\"ML237\" class=\"in-fraction-numerator Variable\">b</div><div id=\"ML238\" class=\"in-fraction-denominator Variable\">c</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML240\" class=\"in-equation Term\"><div id=\"ML239\" class=\"in-term Variable\">a</div><div id=\"ML241\" class=\"in-term Operation\">·</div><div id=\"ML244\" class=\"in-term Fraction\"><div id=\"ML243\" class=\"in-fraction-numerator Variable\">c</div><div id=\"ML246\" class=\"in-fraction-denominator Variable\">b</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML233\" class=\"in-equation Fraction\"><div id=\"ML252\" class=\"in-fraction-numerator Fraction\"><div id=\"ML232\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML254\" class=\"in-fraction-denominator Variable\">b</div></div><div id=\"ML235\" class=\"in-fraction-denominator Fraction\"><div id=\"ML255\" class=\"in-fraction-numerator Variable\">c</div><div id=\"ML256\" class=\"in-fraction-denominator Variable\">d</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML257\" class=\"in-equation Term\"><div id=\"ML244\" class=\"in-term Fraction\"><div id=\"ML250\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML246\" class=\"in-fraction-denominator Variable\">b</div></div><div id=\"ML258\" class=\"in-term Operation\">·</div><div id=\"ML261\" class=\"in-term Fraction\"><div id=\"ML260\" class=\"in-fraction-numerator Variable\">d</div><div id=\"ML263\" class=\"in-fraction-denominator Variable\">c</div></div></div></div>"), //
+	DENIMINATOR_FLIP_MULTIPLY(
+			"Dividing Fractions Flip",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML233\" class=\"in-equation Fraction\"><div id=\"ML252\" class=\"in-fraction-numerator Fraction\"><div id=\"ML232\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML254\" class=\"in-fraction-denominator Variable\">b</div></div><div id=\"ML235\" class=\"in-fraction-denominator Fraction\"><div id=\"ML255\" class=\"in-fraction-numerator Variable\">c</div><div id=\"ML256\" class=\"in-fraction-denominator Variable\">d</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML244\" class=\"in-equation Fraction\"><div id=\"ML264\" class=\"in-fraction-numerator Term\"><div id=\"ML250\" class=\"in-term Variable\">a</div><div id=\"ML265\" class=\"in-term Operation\">·</div><div id=\"ML272\" class=\"in-term Variable\">d</div></div><div id=\"ML267\" class=\"in-fraction-denominator Term\"><div id=\"ML246\" class=\"in-term Variable\">b</div><div id=\"ML268\" class=\"in-term Operation\">·</div><div id=\"ML271\" class=\"in-term Variable\">c</div></div></div></div>"), //
+	//
+	TRIG_FUNCTIONS_INVERSE(
+			"Inverse Trigonometric Functions",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML275\" class=\"in-equation Trig\"><div class=\"functionName\">sin</div><div id=\"ML276\" class=\"in-trig Trig\"><div class=\"functionName\">arcsin</div><div id=\"ML277\" class=\"in-trig Variable\">θ</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML278\" class=\"in-equation Variable\">θ</div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML281\" class=\"in-equation Trig\"><div class=\"functionName\">arcsin</div><div id=\"ML275\" class=\"in-trig Trig\"><div class=\"functionName\">sin</div><div id=\"ML280\" class=\"in-trig Variable\">θ</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML278\" class=\"in-equation Variable\">θ</div></div>"), //
+	TRIG_FUNCTIONS_RECIPROCAL(
+			"Reciprocal Trigonometric Functions",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML283\" class=\"in-equation Trig\"><div class=\"functionName\">sin</div><div id=\"ML284\" class=\"in-trig Variable\">θ</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML285\" class=\"in-equation Fraction\"><div id=\"ML287\" class=\"in-fraction-numerator Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML288\" class=\"in-fraction-denominator Trig\"><div class=\"functionName\">csc</div><div id=\"ML289\" class=\"in-trig Variable\">θ</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML8\" class=\"in-equation Trig\"><div class=\"functionName\">cos</div><div id=\"ML9\" class=\"in-trig Variable\">θ</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML11\" class=\"in-equation Fraction\"><div id=\"ML10\" class=\"in-fraction-numerator Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML13\" class=\"in-fraction-denominator Trig\"><div class=\"functionName\">sec</div><div id=\"ML14\" class=\"in-trig Variable\">θ</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML16\" class=\"in-equation Trig\"><div class=\"functionName\">tan</div><div id=\"ML17\" class=\"in-trig Variable\">θ</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML18\" class=\"in-equation Fraction\"><div id=\"ML10\" class=\"in-fraction-numerator Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML20\" class=\"in-fraction-denominator Trig\"><div class=\"functionName\">cot</div><div id=\"ML21\" class=\"in-trig Variable\">θ</div></div></div></div>"), //
+	TRIGONOMETRIC_FUNCTIONS(
+			"Trigonometric Functions",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML16\" class=\"in-equation Trig\"><div class=\"functionName\">tan</div><div id=\"ML17\" class=\"in-trig Variable\">θ</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML24\" class=\"in-equation Fraction\"><div id=\"ML22\" class=\"in-fraction-numerator Trig\"><div class=\"functionName\">sin</div><div id=\"ML23\" class=\"in-trig Variable\">θ</div></div><div id=\"ML26\" class=\"in-fraction-denominator Trig\"><div class=\"functionName\">cos</div><div id=\"ML27\" class=\"in-trig Variable\">θ</div></div></div></div>",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML30\" class=\"in-equation Trig\"><div class=\"functionName\">cot</div><div id=\"ML31\" class=\"in-trig Variable\">θ</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML34\" class=\"in-equation Fraction\"><div id=\"ML32\" class=\"in-fraction-numerator Trig\"><div class=\"functionName\">csc</div><div id=\"ML33\" class=\"in-trig Variable\">θ</div></div><div id=\"ML36\" class=\"in-fraction-denominator Trig\"><div class=\"functionName\">sec</div><div id=\"ML37\" class=\"in-trig Variable\">θ</div></div></div></div>"), //
+	//
+	LOG_CHANGE_BASE(
+			"Logarithm Change Base",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML41\" class=\"in-log Variable\">a</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML44\" class=\"in-equation Fraction\"><div id=\"ML42\" class=\"in-fraction-numerator Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">e</div><div id=\"ML43\" class=\"in-log Variable\">a</div></div><div id=\"ML46\" class=\"in-fraction-denominator Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">e</div><div id=\"ML47\" class=\"in-log Number\">10<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div></div>"), //
+	LOG_EVALUATE(
+			"Evaluating Logarithms",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML54\" class=\"in-log Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML55\" class=\"in-equation Number\">100<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	LOG_ONE(
+			"Logarithm of One",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML56\" class=\"in-log Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML57\" class=\"in-equation Number\">0<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	LOG_POWER(
+			"Logarithm Power Rule",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML59\" class=\"in-log Exponential\"><div id=\"ML58\" class=\"in-exponential-base Variable\">a</div><div id=\"ML61\" class=\"in-exponential-exponent Variable\">n</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML63\" class=\"in-equation Term\"><div id=\"ML62\" class=\"in-term Variable\">n</div><div id=\"ML64\" class=\"in-term Operation\">·</div><div id=\"ML66\" class=\"in-term Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML67\" class=\"in-log Variable\">a</div></div></div></div>"), //
+	LOG_PRODUCT(
+			"Logarithm Product Rule",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML73\" class=\"in-log Term\"><div id=\"ML58\" class=\"in-term Variable\">a</div><div id=\"ML74\" class=\"in-term Operation\">·</div><div id=\"ML76\" class=\"in-term Variable\">b</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML68\" class=\"in-equation Term\"><div id=\"ML66\" class=\"in-term Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML67\" class=\"in-log Variable\">a</div></div><div id=\"ML69\" class=\"in-term Operation\">·</div><div id=\"ML71\" class=\"in-term Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML72\" class=\"in-log Variable\">b</div></div></div></div>"), //
+	LOG_QUOTIENT(
+			"Logarithm Quotient Rule",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML77\" class=\"in-log Fraction\"><div id=\"ML58\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML79\" class=\"in-fraction-denominator Variable\">b</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML80\" class=\"in-equation Sum\"><div id=\"ML66\" class=\"in-sum Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML67\" class=\"in-log Variable\">a</div></div><div id=\"ML81\" class=\"in-sum Operation\">-</div><div id=\"ML83\" class=\"in-sum Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML84\" class=\"in-log Variable\">b</div></div></div></div>"), //
+	LOG_SAME_BASE_ARGUMENT(
+			"Logarithm Same Base as Argument",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML86\" class=\"in-log Number\">10<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML88\" class=\"in-equation Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
+	LOG_INVERSE(
+			"Inverse Logarithm",//
+			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML89\" class=\"in-log Exponential\"><div id=\"ML86\" class=\"in-exponential-base Number\">10<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML91\" class=\"in-exponential-exponent Variable\">a</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML92\" class=\"in-equation Variable\">a</div></div>");//
+
+	private String[] exampleHTML;
+	private Skill prerequisiteSkills;
+
+	private Skill(String search) {
+	}
+
+	private Skill(String search, String... exampleHTML) {
+		this.exampleHTML = exampleHTML;
+	}
+
+	private Skill(String search, Skill prerequisiteSkills,
+			String... exampleHTML) {
+		this.prerequisiteSkills = prerequisiteSkills;
+		this.exampleHTML = exampleHTML;
+	}
+
+	private Skill(String search, Skill prerequisiteSkills) {
+		this.prerequisiteSkills = prerequisiteSkills;
+	}
+
+	// TODO
+	public HashSet<Skill> getPrerequisiteSkills() {
+		HashSet<Skill> preSkills = new HashSet<Skill>();
+		// fillWithPrerequisiteSkills(preSkills);
+		return preSkills;
+	}
+
+	// private void fillWithPrerequisiteSkills(HashSet<Skill> preSkills) {
+	// for (Skill pSkill : prerequisiteSkills) {
+	// preSkills.add(pSkill);
+	// pSkill.fillWithPrerequisiteSkills(preSkills);
+	// }
+	// }
+
+	public static final String GOOGLE_SEARCH_PREFIX = "https://www.google.com/#q=";
+
+	public String getPage() {
+		return GOOGLE_SEARCH_PREFIX
+				+ toString().toLowerCase().replace("_", "+");
+	}
+
+	public String[] getExampleHTMLs() {
+		return exampleHTML;
+	}
 
 }

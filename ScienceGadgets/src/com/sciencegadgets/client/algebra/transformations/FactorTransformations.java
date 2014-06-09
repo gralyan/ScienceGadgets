@@ -10,7 +10,8 @@ import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
 
-public class FactorTransformations extends TransformationList<AddTransformButton> {
+public class FactorTransformations extends
+		TransformationList<AddTransformButton> {
 	private static final long serialVersionUID = -6071971827855796001L;
 
 	private AdditionTransformations addT;
@@ -138,29 +139,34 @@ class FactorButton extends AddTransformButton {
 
 	FactorButton(AdditionTransformations context,
 			final LinkedList<Match> matches) {
-		super(context, "Factor " + matches);
+		super(context);
 		this.matches = matches;
-	}
-	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.FACTORIZATION);
+		
+		String matchHTML = "";
+		for(Match m : matches) {
+			matchHTML = matchHTML + m.leftFactor.getHTMLString(true, true);
+		}
+		setHTML("Factor: "+matchHTML);
 	}
 
 	@Override
-	public
-	void transform() {
+	public Badge getAssociatedBadge() {
+		return Badge.FACTOR_POLYNOMIAL;
+	}
+
+	@Override
+	public void transform() {
 
 		for (Match match : matches) {
 			match.leftFactor.highlight();
 			match.rightFactor.highlight();
 		}
 
-		EquationNode term = parent.addAfter(right.getIndex(), TypeSGET.Term,
-				"");
+		EquationNode term = parent
+				.addAfter(right.getIndex(), TypeSGET.Term, "");
 		for (Match match : matches) {
 			term.append(match.leftFactor.clone());
-			term.append(TypeSGET.Operation, Operator.getMultiply()
-					.getSign());
+			term.append(TypeSGET.Operation, Operator.getMultiply().getSign());
 		}
 		EquationNode sum = term.append(TypeSGET.Sum, "");
 		sum.append(left);
@@ -178,7 +184,8 @@ class FactorButton extends AddTransformButton {
 		}
 
 		// Combine like terms if appropriate
-		if (Moderator.meetsRequirement(Badge.COMBINE_LIKE_TERMS) && sum.getChildCount() == 3) {
+		if (Moderator.meetsRequirement(Badge.COMBINE_LIKE_TERMS)
+				&& sum.getChildCount() == 3) {
 			EquationNode sumLeft = sum.getChildAt(0);
 			EquationNode sumOP = sum.getChildAt(1);
 			EquationNode sumRight = sum.getChildAt(2);
@@ -193,8 +200,7 @@ class FactorButton extends AddTransformButton {
 				} else {
 					combinedValue = leftValue.add(rightValue);
 				}
-				sum = sum.replace(TypeSGET.Number,
-						combinedValue.toString());
+				sum = sum.replace(TypeSGET.Number, combinedValue.toString());
 				term.addFirst(sum.getPrevSibling());
 				term.addFirst(sum);
 			}
@@ -202,12 +208,9 @@ class FactorButton extends AddTransformButton {
 
 		parent.decase();
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Factor " + getHTML(),
-					Skill.FACTORIZATION);
-		}
+		onTransformationEnd("Factor " + getHTML());
 	}
-	
+
 	private void factorOut(EquationNode toFactor, EquationNode inSide) {
 		if (toFactor == inSide) {
 			toFactor.replace(TypeSGET.Number, "1");

@@ -68,7 +68,7 @@ public class TrigTransformations extends
 			String trigFunc = trig.getAttribute(MathAttribute.Function);
 			if (trigFunc.equals(trigChildFuncInverse)) {
 				return new TrigUnravelButton(trig, trigChild.getFirstChild(),
-						Skill.TRIG_FUNCTIONS_INVERSE, this);
+						this);
 			}
 		}
 		return null;
@@ -134,14 +134,14 @@ class TrigDefineButton extends TrigTransformButton {
 
 		setHTML(html);
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.TRIGONOMETRIC_FUNCTIONS);
+	public Badge getAssociatedBadge() {
+		return Badge.TRIGONOMETRIC_FUNCTIONS;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		trig.setSymbol(funcDef[0].toString());
 		EquationNode otherTrig;
 
@@ -150,19 +150,15 @@ class TrigDefineButton extends TrigTransformButton {
 			int trigIndex = trig.getIndex();
 			otherTrig = term.addAfter(trigIndex, TypeSGET.Trig,
 					funcDef[1].toString());
-			term.addAfter(trigIndex, TypeSGET.Operation, Operator
-					.getMultiply().getSign());
+			term.addAfter(trigIndex, TypeSGET.Operation, Operator.getMultiply()
+					.getSign());
 		} else {
 			EquationNode frac = trig.encase(TypeSGET.Fraction);
-			otherTrig = frac.addAfter(0, TypeSGET.Trig,
-					funcDef[2].toString());
+			otherTrig = frac.addAfter(0, TypeSGET.Trig, funcDef[2].toString());
 		}
 		otherTrig.append(argument.clone());
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(getHTML(),
-					Skill.TRIGONOMETRIC_FUNCTIONS);
-		}
+		onTransformationEnd(getHTML());
 	}
 
 	@Override
@@ -198,22 +194,19 @@ class TrigReciprocalButton extends TrigTransformButton {
 			}
 		});
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.TRIG_FUNCTIONS_RECIPROCAL);
+	public Badge getAssociatedBadge() {
+		return Badge.TRIG_FUNCTIONS_RECIPROCAL;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		AlgebraicTransformations.reciprocate(trig);
 
 		trig.setAttribute(MathAttribute.Function, reciprocalFunction.toString());
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(getHTML(),
-					Skill.TRIG_FUNCTIONS_RECIPROCAL);
-		}
+		onTransformationEnd(getHTML());
 	}
 
 	@Override
@@ -231,27 +224,25 @@ class TrigUnravelButton extends TrigTransformButton {
 
 	private EquationNode toReplace;
 	private EquationNode replacement;
-	private Skill skill;
 
-	public TrigUnravelButton(final EquationNode toReplace, final EquationNode replacement,
-			final Skill skill, TrigTransformations context) {
+	public TrigUnravelButton(final EquationNode toReplace,
+			final EquationNode replacement, TrigTransformations context) {
 		super(context);
 		setHTML(replacement.getHTMLString(true, true));
-		this.skill = skill;
 		this.toReplace = toReplace;
 		this.replacement = replacement;
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.TRIG_FUNCTIONS_INVERSE);
+	public Badge getAssociatedBadge() {
+		return Badge.TRIG_FUNCTIONS_INVERSE;
 	}
-	
+
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
-		Moderator.reloadEquationPanel(changeComment, skill);
+		onTransformationEnd(changeComment);
 	}
 }

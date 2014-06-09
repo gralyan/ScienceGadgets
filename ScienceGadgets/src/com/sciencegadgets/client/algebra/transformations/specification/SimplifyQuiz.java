@@ -1,18 +1,24 @@
 package com.sciencegadgets.client.algebra.transformations.specification;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.AlgebraActivity.TransformationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.FitParentHTML;
+import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.Quiz;
 import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
@@ -76,6 +82,7 @@ public class SimplifyQuiz extends Quiz {
 
 					if (response.isLike(possibleCorrectResponse)) {
 						onCorrect();
+						tButt.allowSkillIncrease(true);
 						tButt.transform();
 						// AlgebraActivity hostActivity =
 						// ((EquationWrapper)hostNode.getWrapper()).getAlgebraActivity();
@@ -116,7 +123,7 @@ public class SimplifyQuiz extends Quiz {
 		HelpButton(TransformationPanel tButtonPanel) {
 			this.tButtonPanel = tButtonPanel;
 			addStyleName(CSS.LAYOUT_ROW);
-			setHTML("Help!!! :(");
+			setHTML("Hints");
 		}
 
 		@Override
@@ -125,13 +132,37 @@ public class SimplifyQuiz extends Quiz {
 
 			// Show only the buttons that are not already shown on the main
 			// Algebra Activity which have their requirements already met
-			HashSet<SelectionButton> autoButtonsShown = new HashSet<SelectionButton>();
+			// HashSet<SelectionButton> autoButtonsShown = new
+			// HashSet<SelectionButton>();
+
+			ArrayList<String> exampleHtmls = new ArrayList<String>();
 			for (TransformationButton tButt : tButtons) {
 				if (!tButt.meetsAutoTransform()) {
-					autoButtonsShown.add(tButt);
+					// tButt.isHelpButton = true;
+					// autoButtonsShown.add(tButt);
+
+					for (String ex : tButt.getAssociatedBadge().getSkill()
+							.getExampleHTMLs()) {
+						exampleHtmls.add(ex);
+					}
 				}
 			}
-			tButtonPanel.addAll(autoButtonsShown);
+
+			final Prompt examplePrompt = new Prompt();
+			for (String exampleHTML : exampleHtmls) {
+				HTML exHTML = new HTML(exampleHTML);
+				exHTML.addStyleName(CSS.EXAMPLE_HTML);
+				examplePrompt.add(exHTML);
+			}
+			examplePrompt.addOkHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent arg0) {
+					examplePrompt.disappear();
+				}
+			});
+			examplePrompt.appear();
+
+			// tButtonPanel.addAll(autoButtonsShown);
 
 		}
 

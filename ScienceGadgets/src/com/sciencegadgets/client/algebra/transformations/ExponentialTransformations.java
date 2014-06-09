@@ -49,8 +49,7 @@ public class ExponentialTransformations extends
 	}
 
 	ZeroBaseButton zeroBase_check() {
-		if (TypeSGET.Number.equals(baseType)
-				&& "0".equals(base.getSymbol())) {
+		if (TypeSGET.Number.equals(baseType) && "0".equals(base.getSymbol())) {
 			return new ZeroBaseButton(this);
 		}
 		return null;
@@ -125,8 +124,8 @@ public class ExponentialTransformations extends
 			EquationNode exponentialBase = exponential.getFirstChild();
 			if (TypeSGET.Number.equals(exponentialBase.getType())
 					&& exponentialBase.getSymbol().equals(logBase)) {
-				return new ExponentialUnravelButton(exponential, log.getFirstChild(),
-						Skill.EXPONENTIAL_INVERSE, this);
+				return new ExponentialUnravelButton(exponential,
+						log.getFirstChild(), this);
 
 			}
 		}
@@ -174,20 +173,17 @@ class ZeroBaseButton extends ExponentialTransformButton {
 	ZeroBaseButton(ExponentialTransformations context) {
 		super(context, "0<sup>x</sup> = 0");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.EXPONENT_BASE_ZERO);
+	public Badge getAssociatedBadge() {
+		return Badge.EXPONENT_BASE_ZERO;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		exponential.replace(base);
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("0<sup>x</sup> = 0",
-					Skill.EXPONENT_BASE_ZERO);
-		}
+		onTransformationEnd("0<sup>x</sup> = 0");
 	}
 
 	@Override
@@ -210,22 +206,27 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 		this.isEvaluation = true;
 		this.exp = exp;
 	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
 
 	@Override
-	public
-	void transform() {
+	public Badge getAssociatedBadge() {
+		return Badge.EXPONENTIATE_NUMBERS;
+	}
+
+	@Override
+	public void transform() {
 		final BigDecimal baseValue = new BigDecimal(base.getSymbol());
 		final BigDecimal totalValue = baseValue
 				.pow(exp, MathContext.DECIMAL128);
 
 		final UnitMap totalUnitMap = new UnitMap(base).getExponential(exp);
 
-		boolean meetsRequirements = Moderator.meetsRequirements(Badge
-				.getRequiredBadges(TypeSGET.Operator.POW, base, exponent));
+		boolean meetsRequirements = Moderator
+				.meetsRequirements(Badge.EXPONENTIATE_NUMBERS);
 
 		if (meetsRequirements) {
 			evaluateExponential(baseValue, exp, totalValue, totalUnitMap);
@@ -241,11 +242,13 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 				@Override
 				public void onIncorrect() {
 				}
+
 				@Override
 				public void onCorrect() {
 					evaluateExponential(baseValue, exp, totalValue,
 							totalUnitMap);
-					Moderator.getStudent().increaseSkill(Skill.EVALUATING_EXPONENTS, 1);
+					Moderator.getStudent().increaseSkill(
+							Skill.EXPONENTIATE_NUMBERS, 1);
 				}
 			};
 			prompt.appear();
@@ -260,15 +263,12 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 		String newUnit = newUnitMap.getUnitAttribute().toString();
 		evaluated.setAttribute(MathAttribute.Unit, newUnit);
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(baseValue.stripTrailingZeros()
-					.toEngineeringString()
-					+ " ^ "
-					+ expValue
-					+ " = "
-					+ totalValue.stripTrailingZeros().toEngineeringString(),
-					Skill.EVALUATING_EXPONENTS);
-		}
+		onTransformationEnd(baseValue.stripTrailingZeros()
+				.toEngineeringString()
+				+ " ^ "
+				+ expValue
+				+ " = "
+				+ totalValue.stripTrailingZeros().toEngineeringString());
 	}
 
 	@Override
@@ -290,14 +290,14 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 		super(context, "Expand Exponential");
 		this.exp = exp;
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.EXPONENT_EXPAND);
+	public Badge getAssociatedBadge() {
+		return Badge.EXPONENT_EXPAND;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		if (exp == 0) {
 			if (TypeSGET.Number.equals(base.getType())) {
 				if ("0".equals(base.getSymbol())) {
@@ -306,7 +306,7 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 					exponential.replace(TypeSGET.Number, "1");
 				}
 			} else {
-				if(reloadAlgebraActivity) {
+				if (reloadAlgebraActivity) {
 					Window.alert("Warning: You are now assuming that the base is not equivalent to 0");
 				}
 				exponential.replace(TypeSGET.Number, "1");
@@ -319,8 +319,8 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 			if (TypeSGET.Term.equals(base.getType())) {
 				LinkedList<EquationNode> baseChildren = base.getChildren();
 				for (int i = 1; i < exp; i++) {
-					base.append(TypeSGET.Operation,
-							TypeSGET.Operator.getMultiply().getSign());
+					base.append(TypeSGET.Operation, TypeSGET.Operator
+							.getMultiply().getSign());
 					for (EquationNode baseChild : baseChildren) {
 						base.append(baseChild.clone());
 					}
@@ -339,9 +339,7 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 			}
 		}
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Expand", Skill.EXPANDED_EXPONENTIAL);
-		}
+		onTransformationEnd("Expand");
 	}
 
 	@Override
@@ -359,29 +357,24 @@ class ExponentialExponentiateButton extends ExponentialTransformButton {
 	ExponentialExponentiateButton(ExponentialTransformations context) {
 		super(context, "(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	public Badge getAssociatedBadge() {
+		return Badge.EXPONENT_EXPONENTIATE;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode innerBase = base.getChildAt(0);
 		EquationNode innerExp = base.getChildAt(1);
 
 		EquationNode expTerm = exponent.encase(TypeSGET.Term);
-		expTerm.addFirst(TypeSGET.Operation, Operator.getMultiply()
-				.getSign());
+		expTerm.addFirst(TypeSGET.Operation, Operator.getMultiply().getSign());
 		expTerm.addFirst(innerExp);
 
 		base.replace(innerBase);
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(
-					"(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
-					Skill.EXPONENTIAL_WITH_EXPONENT);
-		}
+		onTransformationEnd("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>");
 	}
 
 	@Override
@@ -400,14 +393,14 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 	ExponentialPropagateButton(ExponentialTransformations context) {
 		super(context, "(x/y)<sup>b</sup> = (x<sup>b</sup>)/(y<sup>b</sup>)");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	public Badge getAssociatedBadge() {
+		return Badge.EXPONENT_EXPRESSION;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		for (EquationNode baseChild : base.getChildren()) {
 			if (TypeSGET.Operation.equals(baseChild.getType())) {
 				continue;
@@ -417,11 +410,7 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 		}
 		exponential.replace(base);
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(
-					"(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>",
-					Skill.EXPRESSIONS_WITH_EXPONENTS);
-		}
+		onTransformationEnd("(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>");
 	}
 
 	@Override
@@ -440,14 +429,14 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 	ExponentialFlipButton(ExponentialTransformations context) {
 		super(context, "x<sup>-b</sup> = (1/x)<sup>b</sup>");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	public Badge getAssociatedBadge() {
+		return Badge.EXPONENT_NEGATIVE;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		if (TypeSGET.Fraction.equals(base.getType())) {
 			base.append(base.getFirstChild());
 
@@ -463,10 +452,7 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 			exponent.setSymbol(expSymbol.replace(Operator.MINUS.getSign(), ""));
 		}
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("x<sup>-b</sup> = (1/x)<sup>b</sup>",
-					Skill.EXPONENT_NEGATIVE);
-		}
+		onTransformationEnd("x<sup>-b</sup> = (1/x)<sup>b</sup>");
 	}
 
 	@Override
@@ -483,24 +469,24 @@ class ExponentialUnravelButton extends ExponentialTransformButton {
 
 	private EquationNode toReplace;
 	private EquationNode replacement;
-	private Skill rule;
 
-	public ExponentialUnravelButton(final EquationNode toReplace, final EquationNode replacement,
-			final Skill rule, ExponentialTransformations context) {
+	public ExponentialUnravelButton(final EquationNode toReplace,
+			final EquationNode replacement, ExponentialTransformations context) {
 		super(context, replacement.getHTMLString(true, true));
-		this.rule = rule;
 		this.toReplace = toReplace;
 		this.replacement = replacement;
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	public Badge getAssociatedBadge() {
+		return Badge.EXPONENTIAL_INVERSE;
 	}
+
 	@Override
 	public void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
-		Moderator.reloadEquationPanel(changeComment, rule);
+		onTransformationEnd(changeComment);
 	}
 }

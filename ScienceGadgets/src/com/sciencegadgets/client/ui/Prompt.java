@@ -38,7 +38,7 @@ public class Prompt extends DialogBox {
 		mainPanel.add(flowPanel);
 		if (hasOkButton) {
 			FlowPanel gap = new FlowPanel();
-			gap.setHeight("10px");
+			gap.addStyleName(CSS.OK_GAP);
 			mainPanel.add(gap);
 			mainPanel.add(okButton);
 		}

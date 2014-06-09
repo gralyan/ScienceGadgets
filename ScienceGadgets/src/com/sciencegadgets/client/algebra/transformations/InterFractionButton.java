@@ -2,7 +2,6 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.HashSet;
 
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
@@ -108,7 +107,7 @@ public class InterFractionButton extends TransformationButton {
 	 */
 	private void dividePrompt() {
 		try {
-			if (Moderator.meetsRequirements(Badge.CANCEL, Badge.FACTOR_NUMBERS)
+			if (Moderator.meetsRequirements(Badge.DROP_CANCEL, Badge.FACTOR_NUMBERS)
 					&& FractionTransformations.SIMPLIFY_FRACTION(drag, target,
 							true)) {
 				complete(false);
@@ -121,7 +120,7 @@ public class InterFractionButton extends TransformationButton {
 					MathContext.DECIMAL128);
 
 			boolean meetsRequirements = Moderator.meetsRequirements(Badge
-					.getRequiredBadges(TypeSGET.Operator.DIVIDE, target, drag));
+					.DIVIDE_NUMBERS);
 
 			if (meetsRequirements) {
 				divide(total);
@@ -129,7 +128,7 @@ public class InterFractionButton extends TransformationButton {
 			} else {// prompt
 
 				String question = target.getSymbol() + " "
-						+ Operator.DIVIDE.getSign() + " " + drag.toString()
+						+ Operator.DIVIDE.getSign() + " " + drag.getSymbol()
 						+ " = ";
 				NumberQuiz prompt = new NumberQuiz(question, total) {
 					@Override
@@ -139,7 +138,7 @@ public class InterFractionButton extends TransformationButton {
 					@Override
 					public void onCorrect() {
 						divide(total);
-						Moderator.getStudent().increaseSkill(Skill.DIVISION, 1);
+						Moderator.getStudent().increaseSkill(Skill.DIVIDE_NUMBERS, 1);
 					}
 				};
 				prompt.appear();
@@ -230,8 +229,8 @@ public class InterFractionButton extends TransformationButton {
 	private void exponentialDrop() {
 		EquationNode dragExp = drag.getChildAt(1);
 		EquationNode targetExp = target.getChildAt(1);
-		if (Moderator.meetsRequirement(Badge.EXP_DROP_ARITHMETIC)
-				&& TypeSGET.Number.equals(dragExp.getType())
+		if (//Moderator.meetsRequirement(Badge.EXP_DROP_ARITHMETIC)&& 
+				TypeSGET.Number.equals(dragExp.getType())
 				&& TypeSGET.Number.equals(targetExp.getType())) {
 			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
 			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
@@ -259,27 +258,29 @@ public class InterFractionButton extends TransformationButton {
 
 		drag.lineThrough();
 		target.highlight();
+		
+		onTransformationEnd(dropHTML);
 
-		switch (dropType) {
-		case CANCEL:
-		case REMOVE_ONE:
-			Moderator.reloadEquationPanel(dropHTML, Skill.CANCELLING_FRACTIONS);
-			break;
-		case DIVIDE:
-			Moderator.reloadEquationPanel(dropHTML, Skill.DIVISION);
-			break;
-		case EXPONENTIAL:
-			Moderator
-					.reloadEquationPanel(dropHTML, Skill.DIVIDING_EXPONENTIALS);
-			break;
-		case LOG_COMBINE:
-			Moderator.reloadEquationPanel(dropHTML,
-					Skill.LOG_CHANGE_BASE_DIVIDE);
-			break;
-		case TRIG_COMBINE:
-			Moderator.reloadEquationPanel(dropHTML, Skill.COMBINE_TRIG);
-			break;
-		}
+//		switch (dropType) {
+//		case CANCEL:
+//		case REMOVE_ONE:
+//			Moderator.reloadEquationPanel(dropHTML, Skill.DROP_CANCEL);
+//			break;
+//		case DIVIDE:
+//			Moderator.reloadEquationPanel(dropHTML, Skill.DROP_DIVIDE);
+//			break;
+//		case EXPONENTIAL:
+//			Moderator
+//					.reloadEquationPanel(dropHTML, Skill.DROP_EXPONENTIAL);
+//			break;
+//		case LOG_COMBINE:
+//			Moderator.reloadEquationPanel(dropHTML,
+//					Skill.DROP_LOG);
+//			break;
+//		case TRIG_COMBINE:
+//			Moderator.reloadEquationPanel(dropHTML, Skill.DROP_TRIG);
+//			break;
+//		}
 	}
 
 	// Clean up both drag side and target side
@@ -308,6 +309,25 @@ public class InterFractionButton extends TransformationButton {
 		}
 	}
 
+	@Override
+	public Badge getAssociatedBadge() {
+
+		switch (dropType) {
+		case CANCEL:
+			return Badge.DROP_CANCEL;
+		case DIVIDE:
+			return Badge.DROP_DIVIDE;
+		case EXPONENTIAL:
+			return Badge.DROP_EXPONENTIAL;
+		case LOG_COMBINE:
+			return Badge.DROP_LOG;
+		case TRIG_COMBINE:
+			return Badge.DROP_TRIG;
+		case REMOVE_ONE:
+			return null;
+		}
+		return null;
+	}
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;

@@ -9,6 +9,7 @@ import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.algebra.transformations.specification.LogBaseSpecification;
 import com.sciencegadgets.client.algebra.transformations.specification.TrigFunctionSpecification;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.shared.MathAttribute;
@@ -93,6 +94,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 			style.setBackgroundColor("black");
 		}
 		@Override
+		public Badge getAssociatedBadge() {
+			return null;
+		}
+		@Override
 		public boolean meetsAutoTransform() {
 			return true;
 		}
@@ -158,6 +163,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 				TypeSGET toType) {
 			super(html, changeButtons);
 			this.toType = toType;
+		}
+		@Override
+		public Badge getAssociatedBadge() {
+			return null;
 		}
 		@Override
 		public boolean meetsAutoTransform() {

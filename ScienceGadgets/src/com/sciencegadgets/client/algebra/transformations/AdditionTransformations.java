@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
@@ -82,7 +84,7 @@ public class AdditionTransformations extends
 			BigDecimal leftValue = new BigDecimal(left.getSymbol());
 			if (leftValue.compareTo(new BigDecimal(0)) == same) {
 				if (!TypeSGET.Number.equals(rightType)
-						|| Moderator.meetsRequirement(Badge.ADD_ZERO)) {
+						|| Moderator.meetsRequirement(Badge.ADD_WITH_ZERO)) {
 					return new AddZeroButton(this, right, left);
 				}
 			}
@@ -90,7 +92,7 @@ public class AdditionTransformations extends
 			BigDecimal rightValue = new BigDecimal(right.getSymbol());
 			if (rightValue.compareTo(new BigDecimal(0)) == same) {
 				if (!TypeSGET.Number.equals(leftType)
-						|| Moderator.meetsRequirement(Badge.ADD_ZERO)) {
+						|| Moderator.meetsRequirement(Badge.ADD_WITH_ZERO)) {
 					return new AddZeroButton(this, left, right);
 				}
 			}
@@ -175,8 +177,8 @@ abstract class AddTransformButton extends TransformationButton {
 	protected boolean reloadAlgebraActivity;
 	protected AdditionTransformations previewContext;
 
-	AddTransformButton(AdditionTransformations context, String html) {
-		super(html, context);
+	AddTransformButton(AdditionTransformations context) {
+		super(context);
 		addStyleName(CSS.SUM + " " + CSS.DISPLAY_WRAPPER);
 
 		this.isMinus = context.isMinus;
@@ -210,14 +212,19 @@ class AddZeroButton extends AddTransformButton {
 
 	AddZeroButton(AdditionTransformations context, final EquationNode other,
 			final EquationNode zero) {
-		super(context, "x+0=x");
+		super(context);
 		this.other = other;
 		this.zero = zero;
 	}
-	
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.ADD_ZERO);
+	public String getExampleHTML() {
+		return "x + 0 = x<br/>0 + x = x";
+	}
+
+	@Override
+	public Badge getAssociatedBadge() {
+		return Badge.ADD_WITH_ZERO;
 	}
 
 	@Override
@@ -232,10 +239,8 @@ class AddZeroButton extends AddTransformButton {
 
 		parent.decase();
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(other.getHTML(true, true) + " + 0 = "
-					+ other.getHTML(true, true), Skill.ADDITION_WITH_ZERO);
-		}
+		onTransformationEnd(other.getHTML(true, true) + " + 0 = "
+				+ other.getHTML(true, true));
 	}
 
 	@Override
@@ -254,9 +259,15 @@ class AddNumbersButton extends AddTransformButton {
 	private boolean includesNegatives;
 
 	AddNumbersButton(AdditionTransformations context) {
-		super(context, "# + #");
+		super(context);
 		this.isEvaluation = true;
 	}
+
+	@Override
+	public Badge getAssociatedBadge() {
+		return Badge.ADD;
+	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
@@ -276,36 +287,36 @@ class AddNumbersButton extends AddTransformButton {
 		final BigDecimal totalValue = isMinus ? leftValue.subtract(rightValue)
 				: leftValue.add(rightValue);
 
-		Skill nMagSkill = Skill.ADDITION;
+		Skill nMagSkill = Skill.ADD;
 		Badge numberMagnitudeBadge = Badge.ADD_NUMBERS_LARGE;
 		int totalAbs = totalValue.abs().intValue();
-		if(totalAbs <=10) {
-			nMagSkill = Skill.ADD_NUMBERS_TO_10;
+		if (totalAbs <= 10) {
+			nMagSkill = Skill.ADD_NUMBERS_10;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_10;
-		}else if(totalAbs <=100) {
-			nMagSkill = Skill.ADD_NUMBERS_TO_100;
+		} else if (totalAbs <= 100) {
+			nMagSkill = Skill.ADD_NUMBERS_100;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_100;
 		}
-		JSNICalls.warn("magnitude: "+totalAbs+", increasesSkill: "+nMagSkill);
 		final Skill numberMagnitudeSkill = nMagSkill;
 
 		includesNegatives = isMinusBeforeLeft || leftV.intValue() < 0
 				|| rightValue.intValue() < 0;
 		BigDecimal zero = new BigDecimal(0);
-		final boolean includesZero = zero.compareTo(rightValue) == 0 || zero.compareTo(leftValue) == 0;
+		final boolean includesZero = zero.compareTo(rightValue) == 0
+				|| zero.compareTo(leftValue) == 0;
 
 		HashSet<Badge> badgesRequired = new HashSet<Badge>();
 		badgesRequired.add(numberMagnitudeBadge);
-		if(includesNegatives) {
-			badgesRequired.add(Badge.ADD_NUMBERS_NEGATIVE);
+		if (includesNegatives) {
+			badgesRequired.add(Badge.ADDITION_WITH_NEGATIVES);
 		}
-		if(isMinus) {
+		if (isMinus) {
 			badgesRequired.add(Badge.SUBTRACTION);
 		}
-		if(includesZero) {
-			badgesRequired.add(Badge.ADD_ZERO);
+		if (includesZero) {
+			badgesRequired.add(Badge.ADD_WITH_ZERO);
 		}
-		
+
 		boolean meetsRequirements = Moderator.meetsRequirements(badgesRequired);
 
 		if (meetsRequirements) {
@@ -318,9 +329,15 @@ class AddNumbersButton extends AddTransformButton {
 			// parent.append(TypeML.Variable, " #");
 
 		} else {// prompt
-			String question = leftValue.toString() + " "
-					+ operation.getSymbol() + " " + rightValue.toString()
-					+ " = ";
+
+			// leftValue was already negated for the calculation, this is for
+			// display only
+			String leftSideOfQuestion = isMinusBeforeLeft
+					&& leftValue.compareTo(zero) > 0 ? "-("
+					+ leftValue.negate().toPlainString() + ")" : leftValue
+					.toString();
+			String question = leftSideOfQuestion + " " + operation.getSymbol()
+					+ " " + rightValue.toPlainString() + " = ";
 
 			final HashMap<Skill, Integer> skillsIncrease = new HashMap<Skill, Integer>();
 			skillsIncrease.put(numberMagnitudeSkill, 0);
@@ -331,23 +348,26 @@ class AddNumbersButton extends AddTransformButton {
 				skillsIncrease.put(Skill.ADDITION_WITH_NEGATIVES, 0);
 			}
 			if (includesZero) {
-				skillsIncrease.put(Skill.ADDITION_WITH_ZERO, 0);
+				skillsIncrease.put(Skill.ADD_WITH_ZERO, 0);
 			}
 			if (includesZero) {
-				skillsIncrease.put(Skill.ADD_NUMBERS_TO_10, 0);
+				skillsIncrease.put(Skill.ADD_NUMBERS_10, 0);
 			}
-			
+
 			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
 				public void onIncorrect() {
-					for(Entry<Skill, Integer> entry : skillsIncrease.entrySet()) {
+					for (Entry<Skill, Integer> entry : skillsIncrease
+							.entrySet()) {
 						entry.setValue(-1);
 					}
 					Moderator.increaseSkills(skillsIncrease);
 				}
+
 				@Override
 				public void onCorrect() {
-					for(Entry<Skill, Integer> entry : skillsIncrease.entrySet()) {
+					for (Entry<Skill, Integer> entry : skillsIncrease
+							.entrySet()) {
 						entry.setValue(1);
 					}
 					Moderator.increaseSkills(skillsIncrease);
@@ -375,17 +395,14 @@ class AddNumbersButton extends AddTransformButton {
 		operation.remove();
 		parent.decase();
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(leftValue.stripTrailingZeros()
-					.toEngineeringString()
-					+ " "
-					+ operation.toString()
-					+ " "
-					+ rightValue.stripTrailingZeros().toEngineeringString()
-					+ " = "
-					+ totalValue.stripTrailingZeros().toEngineeringString(),
-					Skill.ADDITION);
-		}
+		onTransformationEnd(leftValue.stripTrailingZeros()
+				.toEngineeringString()
+				+ " "
+				+ operation.toString()
+				+ " "
+				+ rightValue.stripTrailingZeros().toEngineeringString()
+				+ " = "
+				+ totalValue.stripTrailingZeros().toEngineeringString());
 	}
 
 	@Override
@@ -403,14 +420,15 @@ class AddNumbersButton extends AddTransformButton {
  */
 class AddSimilarButton extends AddTransformButton {
 	AddSimilarButton(AdditionTransformations context) {
-		super(context, "x+x = 2x");
+		super(context);
 
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.COMBINE_LIKE_TERMS);
+	public Badge getAssociatedBadge() {
+		return Badge.COMBINE_LIKE_TERMS;
 	}
-	
+
 	@Override
 	public void transform() {
 
@@ -448,10 +466,7 @@ class AddSimilarButton extends AddTransformButton {
 		operation.remove();
 		parent.decase();
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Add similar",
-					Skill.COMBINING_LIKE_TERMS);
-		}
+		onTransformationEnd("Add similar");
 	}
 
 	@Override
@@ -478,11 +493,16 @@ class ToCommonDenominatorButton extends AddTransformButton {
 	}
 
 	ToCommonDenominatorButton(AdditionTransformations context) {
-		super(context, "Common Denominator");
+		super(context);
+		setHTML("Common Denominator");
 	}
+@Override
+public String getExampleHTML() {
+	return null;
+}
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.COMMON_DENOMINATOR);
+	public Badge getAssociatedBadge() {
+		return Badge.COMMON_DENOMINATOR;
 	}
 
 	@Override
@@ -532,10 +552,7 @@ class ToCommonDenominatorButton extends AddTransformButton {
 			rightDenTerm.append(commonLeft);
 		}
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Common Denominator",
-					Skill.COMMON_DENOMINATOR);
-		}
+		onTransformationEnd("Common Denominator");
 	}
 
 	@Override
@@ -550,11 +567,12 @@ class ToCommonDenominatorButton extends AddTransformButton {
  */
 class AddFractionsButton extends AddTransformButton {
 	AddFractionsButton(AdditionTransformations context) {
-		super(context, "a/b +c/b = (a+c)/b");
+		super(context);
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.ADD_FRACTIONS);
+	public Badge getAssociatedBadge() {
+		return Badge.ADD_FRACTIONS;
 	}
 
 	@Override
@@ -576,10 +594,7 @@ class AddFractionsButton extends AddTransformButton {
 		left.remove();
 		parent.decase();
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Add Fractions",
-					Skill.ADDING_FRACTIONS);
-		}
+		onTransformationEnd("Add Fractions");
 	}
 
 	@Override
@@ -595,12 +610,12 @@ class AddFractionsButton extends AddTransformButton {
  */
 class AddLogsButton extends AddTransformButton {
 	AddLogsButton(AdditionTransformations context) {
-		super(context,
-				"log<sub>b</sub>(x) + log<sub>b</sub>(y) = log<sub>b</sub>(x·y)");
+		super(context);
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.ADD_LOGS);
+	public Badge getAssociatedBadge() {
+		return Badge.ADD_LOGS;
 	}
 
 	@Override
@@ -624,9 +639,7 @@ class AddLogsButton extends AddTransformButton {
 
 		parent.decase();
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("Combine Log", Skill.LOG_ADDITION);
-		}
+		onTransformationEnd("Combine Log");
 
 	}
 

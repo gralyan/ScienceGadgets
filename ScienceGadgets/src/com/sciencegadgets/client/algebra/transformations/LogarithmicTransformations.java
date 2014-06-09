@@ -86,8 +86,7 @@ public class LogarithmicTransformations extends
 					&& exponentialBase.getSymbol().equals(
 							log.getAttribute(MathAttribute.LogBase))) {
 				EquationNode exponentialExp = exponential.getChildAt(1);
-				return new LogUnravelButton(log, exponentialExp, Skill.LOG_INVERSE,
-						this);
+				return new LogUnravelButton(log, exponentialExp, this);
 			}
 		}
 		return null;
@@ -137,14 +136,19 @@ class LogEvaluateButton extends LogTransformButton {
 		super(context, "Evaluate");
 		this.argValue = argValue;
 	}
+
+	@Override
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_EVALUATE;
+	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		Double total;
 
 		if (CommonConstants.EULER.getSymbol().equals(base)) {
@@ -162,10 +166,8 @@ class LogEvaluateButton extends LogTransformButton {
 
 		log.replace(TypeSGET.Number, total + "");
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("log<sub>" + base + "</sub>("
-					+ argValue + ") = " + total, Skill.LOG_EVALUATE);
-		}
+		onTransformationEnd("log<sub>" + base + "</sub>(" + argValue + ") = "
+				+ total);
 	}
 
 	@Override
@@ -182,14 +184,19 @@ class LogChangeBaseButton extends LogTransformButton {
 	LogChangeBaseButton(LogarithmicTransformations context) {
 		super(context, "Change base");
 	}
+
+	@Override
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_CHANGE_BASE;
+	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		if (!reloadAlgebraActivity) {
 			log.replace(TypeSGET.Variable, "Change Base");
 		} else {
@@ -199,21 +206,14 @@ class LogChangeBaseButton extends LogTransformButton {
 					public void onSpecify(String newBase) {
 						super.onSpecify(newBase);
 
-						EquationNode fraction = log
-								.encase(TypeSGET.Fraction);
+						EquationNode fraction = log.encase(TypeSGET.Fraction);
 						log.setAttribute(MathAttribute.LogBase, newBase);
 
-						EquationNode denom = fraction.append(
-								TypeSGET.Log, "");
+						EquationNode denom = fraction.append(TypeSGET.Log, "");
 						denom.append(TypeSGET.Number, base);
 						denom.setAttribute(MathAttribute.LogBase, newBase);
 
-						if (reloadAlgebraActivity) {
-							Moderator
-									.reloadEquationPanel(
-											"log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)",
-											Skill.LOG_CHANGE_BASE);
-						}
+						onTransformationEnd("log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)");
 					}
 				};
 			}
@@ -235,14 +235,14 @@ class LogProductButton extends LogTransformButton {
 	LogProductButton(LogarithmicTransformations context) {
 		super(context, "Log Product");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.LOG_PRODUCT);
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_PRODUCT;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode sum = log.encase(TypeSGET.Sum);
 		int logIndex = log.getIndex();
 
@@ -262,12 +262,7 @@ class LogProductButton extends LogTransformButton {
 
 		log.remove();
 
-		if (reloadAlgebraActivity) {
-			Moderator
-					.reloadEquationPanel(
-							"log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)",
-							Skill.LOG_PRODUCT);
-		}
+		onTransformationEnd("log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)");
 	}
 
 	@Override
@@ -284,41 +279,33 @@ class LogQuotientButton extends LogTransformButton {
 	LogQuotientButton(LogarithmicTransformations context) {
 		super(context, "Log Quotient");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.LOG_QUOTIENT);
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_QUOTIENT;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode sum = log.encase(TypeSGET.Sum);
 
 		EquationNode numerator = argument.getFirstChild();
 		EquationNode denominator = argument.getChildAt(1);
 		int logIndex = log.getIndex();
 
-		EquationNode denominatorLog = sum.addBefore(logIndex,
-				TypeSGET.Log, "");
+		EquationNode denominatorLog = sum.addBefore(logIndex, TypeSGET.Log, "");
 		denominatorLog.setAttribute(MathAttribute.LogBase, base);
 		denominatorLog.append(denominator);
 
-		sum.addBefore(logIndex, TypeSGET.Operation,
-				Operator.MINUS.getSign());
+		sum.addBefore(logIndex, TypeSGET.Operation, Operator.MINUS.getSign());
 
-		EquationNode numeratorLog = sum.addBefore(logIndex,
-				TypeSGET.Log, "");
+		EquationNode numeratorLog = sum.addBefore(logIndex, TypeSGET.Log, "");
 		numeratorLog.setAttribute(MathAttribute.LogBase, base);
 		numeratorLog.append(numerator);
 
 		log.remove();
 
-		if (reloadAlgebraActivity) {
-			Moderator
-					.reloadEquationPanel(
-							"log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)",
-							Skill.LOG_QUOTIENT);
-		}
+		onTransformationEnd("log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)");
 	}
 
 	@Override
@@ -335,30 +322,26 @@ class LogPowerButton extends LogTransformButton {
 	LogPowerButton(LogarithmicTransformations context) {
 		super(context, "Log Power");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.LOG_POWER);
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_POWER;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		EquationNode term = log.encase(TypeSGET.Term);
 
 		int logIndex = log.getIndex();
 		EquationNode exponent = argument.getChildAt(1);
 
-		term.addBefore(logIndex, TypeSGET.Operation, Operator
-				.getMultiply().getSign());
+		term.addBefore(logIndex, TypeSGET.Operation, Operator.getMultiply()
+				.getSign());
 		term.addBefore(logIndex, exponent);
 
 		argument.replace(argument.getFirstChild());
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(
-					"log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)",
-					Skill.LOG_POWER);
-		}
+		onTransformationEnd("log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)");
 	}
 
 	@Override
@@ -375,20 +358,17 @@ class LogOneButton extends LogTransformButton {
 	LogOneButton(LogarithmicTransformations context) {
 		super(context, "Log of One");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.LOG_ONE);
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_ONE;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		log.replace(TypeSGET.Number, "0");
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("log<sub>b</sub>(1) = 0",
-					Skill.LOG_ONE);
-		}
+		onTransformationEnd("log<sub>b</sub>(1) = 0");
 	}
 
 	@Override
@@ -405,20 +385,17 @@ class LogSameBaseAsArgumentButton extends LogTransformButton {
 	LogSameBaseAsArgumentButton(LogarithmicTransformations context) {
 		super(context, "log<sub>b</sub>(b) = 1");
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.LOG_SAME_BASE_ARGUMENT);
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_SAME_BASE_ARGUMENT;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		log.replace(TypeSGET.Number, "1");
 
-		if (reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel("log<sub>b</sub>(b) = 1",
-					Skill.LOG_SAME_BASE_ARGUMENT);
-		}
+		onTransformationEnd("log<sub>b</sub>(b) = 1");
 	}
 
 	@Override
@@ -435,25 +412,24 @@ class LogUnravelButton extends LogTransformButton {
 
 	private EquationNode toReplace;
 	private EquationNode replacement;
-	private Skill rule;
 
-	public LogUnravelButton(final EquationNode toReplace, final EquationNode replacement,
-			final Skill rule, LogarithmicTransformations context) {
+	public LogUnravelButton(final EquationNode toReplace,
+			final EquationNode replacement, LogarithmicTransformations context) {
 		super(context, replacement.getHTMLString(true, true));
-		this.rule = rule;
 		this.toReplace = toReplace;
 		this.replacement = replacement;
 	}
+
 	@Override
-	public boolean meetsAutoTransform() {
-		return Moderator.meetsRequirement(Badge.LOG_INVERSE);
+	public Badge getAssociatedBadge() {
+		return Badge.LOG_INVERSE;
 	}
+
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
-		Moderator.reloadEquationPanel(changeComment, rule);
+		onTransformationEnd(changeComment);
 	}
 }
