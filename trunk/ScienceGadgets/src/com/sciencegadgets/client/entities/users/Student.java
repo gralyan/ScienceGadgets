@@ -3,10 +3,15 @@ package com.sciencegadgets.client.entities.users;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.transformations.Skill;
+import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
 @Entity
@@ -23,6 +28,7 @@ public class Student implements Serializable{
 		this.name=name;
 		skills = new HashMap<Skill, Integer>();
 		badges = new HashSet<Badge>();
+		badges.add(Badge.ADD);
 	}
 
 	public UnitName getName() {
@@ -66,6 +72,7 @@ public class Student implements Serializable{
 			boolean isNewBadge = badges.add(earnedBadge);
 			if(isNewBadge) {
 				newBadges.add(earnedBadge);
+				Moderator.equationBrowser.algebraBrowser.addProblemsForNewBadge(earnedBadge);
 			}
 		}
 		

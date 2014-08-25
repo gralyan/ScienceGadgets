@@ -1,7 +1,7 @@
 package com.sciencegadgets.client.algebra.edit;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.EquationWrapper;
@@ -12,6 +12,7 @@ import com.sciencegadgets.client.algebra.transformations.specification.TrigFunct
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
+import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
@@ -20,11 +21,16 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 	public static final String NOT_SET = "\u25A1";
 	private TransformationButton removeButton;
+	private CopyNodeButton copyButton;
+	private PasteNodeButton pasteButton;
 	private EquationNode node;
 	private LogBaseSpecification logBaseSpec = null;
 	private TrigFunctionSpecification trigFuncSpec = null;
 	AlgebraActivity algebraActivity = null;
 	TransformationList<TransformationButton> changeButtons;
+	
+	public static FitParentHTML copiedNodeHTML = new FitParentHTML("Paste");
+	private static Element copiedNodeXML = null;
 
 	private static final Object[][] types = {//
 			{ TypeSGET.Number, "#" }, //
@@ -63,6 +69,15 @@ public class ChangeNodeMenu extends CommunistPanel {
 		// Remove button
 		this.removeButton = new RemoveNodeButton(changeButtons);
 		changeButtons.add(removeButton);
+		
+		//Copy button
+		this.copyButton = new CopyNodeButton(changeButtons);
+		changeButtons.add(copyButton);
+		
+		//Paste button
+		this.pasteButton = new PasteNodeButton(changeButtons);
+		changeButtons.add(pasteButton);
+		
 
 		addAll(changeButtons);
 
@@ -83,8 +98,60 @@ public class ChangeNodeMenu extends CommunistPanel {
 		}
 	}
 
+	public void updatePaste() {
+		pasteButton.clear();
+		pasteButton.add(copiedNodeHTML);
+	}
+	
 	// //////////////////////////////////////////
-	// Handle Remove
+	// Copy Handle
+	// /////////////////////////////////////////
+	private class CopyNodeButton extends TransformationButton {
+		
+		CopyNodeButton(TransformationList<TransformationButton> changeButtons) {
+			super("Copy", changeButtons);
+		}
+		@Override
+		public Badge getAssociatedBadge() {
+			return null;
+		}
+		@Override
+		public boolean meetsAutoTransform() {
+			return true;
+		}
+		@Override
+		public void transform() {
+			copiedNodeXML = node.getXMLClone();
+			
+			String html = node.getHTMLString(true, true);
+			copiedNodeHTML = new FitParentHTML(html);
+			updatePaste();
+		}
+	}
+	// //////////////////////////////////////////
+	// Paste Handle
+	// /////////////////////////////////////////
+	private class PasteNodeButton extends TransformationButton {
+		PasteNodeButton(TransformationList<TransformationButton> changeButtons) {
+			super("Paste", changeButtons);
+		}
+		@Override
+		public Badge getAssociatedBadge() {
+			return null;
+		}
+		@Override
+		public boolean meetsAutoTransform() {
+			return true;
+		}
+		@Override
+		public void transform() {
+			node.replace(node.getTree().newNode(copiedNodeXML));
+
+			algebraActivity.reloadEquationPanel(null, null, false);
+		}
+	}
+	// //////////////////////////////////////////
+	// Remove Handle
 	// /////////////////////////////////////////
 	private class RemoveNodeButton extends TransformationButton {
 		RemoveNodeButton(TransformationList<TransformationButton> changeButtons) {
@@ -153,7 +220,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 	}
 
 	// //////////////////////////////////////////
-	// Handle Change
+	// Change Handle
 	// /////////////////////////////////////////
 	class ChangeNodeButton extends TransformationButton {
 		TypeSGET toType;
@@ -267,4 +334,5 @@ public class ChangeNodeMenu extends CommunistPanel {
 		}
 
 	}
+
 }

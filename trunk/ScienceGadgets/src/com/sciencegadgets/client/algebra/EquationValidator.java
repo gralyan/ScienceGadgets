@@ -2,6 +2,7 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Node;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
@@ -74,7 +75,10 @@ public class EquationValidator {
 			// Confirm that the symbol is a number in solve mode
 			if (!isInEditMode) {
 				try {
-					Double.parseDouble(node.getSymbol());
+					String symbol = node.getSymbol();
+					if (!RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
+						Double.parseDouble(symbol);
+					}
 				} catch (NumberFormatException e) {
 					try {
 						CommonConstants.valueOf(node

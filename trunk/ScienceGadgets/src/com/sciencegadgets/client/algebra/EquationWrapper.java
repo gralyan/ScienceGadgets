@@ -6,6 +6,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
@@ -83,17 +84,22 @@ public class EquationWrapper extends Wrapper {
 	public void select() {
 
 		if (this.equals(eqPanel.selectedWrapper)) {
-
 			// If this was already selected, focus in on it
+			
+			Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
+			
 			if (node.hasChildElements()
 					&& (dragController == null || !dragController.isDragging())) {
 				unselect();
 //				eqPanel.setFocus(eqPanel.eqLayerMap.get(node));
 				eqPanel.setFocus(node);
 			}
+			
 		} else {
-
-			// If there is another selection, unselect it
+			// If there is another selection, unselect it, select new
+			
+			super.select();
+			
 			if (eqPanel.selectedWrapper != null) {
 				eqPanel.selectedWrapper.unselect();
 			}
@@ -106,8 +112,6 @@ public class EquationWrapper extends Wrapper {
 			}
 
 			eqPanel.selectedWrapper = this;
-
-			super.select();
 		}
 	}
 

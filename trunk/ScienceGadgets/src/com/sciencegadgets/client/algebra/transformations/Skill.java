@@ -1,6 +1,8 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import static java.util.Arrays.asList;
 import java.util.HashSet;
+import java.util.List;
 
 public enum Skill {
 
@@ -46,20 +48,20 @@ public enum Skill {
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML100\" class=\"in-sum Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML94\" class=\"in-sum Operation\">-</div><div id=\"ML96\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML102\" class=\"in-equation Number\"><div class=\"fenced\">-5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML103\" class=\"in-sum Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML94\" class=\"in-sum Operation\">-</div><div id=\"ML104\" class=\"in-sum Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML105\" class=\"in-equation Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>",//
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML93\" class=\"in-equation Sum\"><div id=\"ML106\" class=\"in-sum Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML94\" class=\"in-sum Operation\">-</div><div id=\"ML104\" class=\"in-sum Number\"><div class=\"fenced\">-3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML107\" class=\"in-equation Number\">1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div>"), //
-	ADD_WITH_ZERO("Addition with Zero", ADD), //
+	ADD_WITH_ZERO("Addition with Zero", asList(ADD)), //
 	ADD_NUMBERS_10("Addition"), //
-	ADD_NUMBERS_100("Addition", ADD_NUMBERS_10), //
-	ADD_NUMBERS_LARGE("Addition", ADD_NUMBERS_100), //
-	SUBTRACTION("Subtraction", ADD), //
-	ADDITION_WITH_NEGATIVES("Addition with negatives"), //
+	ADD_NUMBERS_100("Addition", asList(ADD_NUMBERS_10)), //
+	ADD_NUMBERS_LARGE("Addition", asList(ADD_NUMBERS_100)), //
+	SUBTRACTION("Subtraction", asList(ADD)), //
+	ADDITION_WITH_NEGATIVES("Addition with negatives", asList(SUBTRACTION)), //
 	ADD_FRACTIONS("Fraction Addition",
-			ADD,//
+			asList(ADD),//
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML111\" class=\"in-equation Sum\"><div id=\"ML109\" class=\"in-sum Fraction\"><div id=\"ML116\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML118\" class=\"in-fraction-denominator Variable\">c</div></div><div id=\"ML112\" class=\"in-sum Operation\">+</div><div id=\"ML114\" class=\"in-sum Fraction\"><div id=\"ML117\" class=\"in-fraction-numerator Variable\">b</div><div id=\"ML119\" class=\"in-fraction-denominator Variable\">c</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML120\" class=\"in-equation Fraction\"><div id=\"ML124\" class=\"in-fraction-numerator Sum\"><div id=\"ML123\" class=\"in-sum Variable\">a</div><div id=\"ML125\" class=\"in-sum Operation\">+</div><div id=\"ML127\" class=\"in-sum Variable\">b</div></div><div id=\"ML122\" class=\"in-fraction-denominator Variable\">c</div></div></div>"), //
 	COMMON_DENOMINATOR(
 			"Common denominator",//
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML111\" class=\"in-equation Sum\"><div id=\"ML109\" class=\"in-sum Fraction\"><div id=\"ML116\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML118\" class=\"in-fraction-denominator Variable\">c</div></div><div id=\"ML112\" class=\"in-sum Operation\">+</div><div id=\"ML117\" class=\"in-sum Variable\">b</div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML128\" class=\"in-equation Sum\"><div id=\"ML120\" class=\"in-sum Fraction\"><div id=\"ML123\" class=\"in-fraction-numerator Variable\">a</div><div id=\"ML122\" class=\"in-fraction-denominator Variable\">c</div></div><div id=\"ML129\" class=\"in-sum Operation\">+</div><div id=\"ML136\" class=\"in-sum Fraction\"><div id=\"ML132\" class=\"in-fraction-numerator Term\"><div id=\"ML131\" class=\"in-term Variable\">b</div><div id=\"ML133\" class=\"in-term Operation\">·</div><div id=\"ML135\" class=\"in-term Variable\">c</div></div><div id=\"ML138\" class=\"in-fraction-denominator Variable\">c</div></div></div></div>"), //
 	COMBINE_LIKE_TERMS("Combining Like Terms",
-			ADD,//
+			asList(ADD),//
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML142\" class=\"in-equation Sum\"><div id=\"ML145\" class=\"in-sum Term\"><div id=\"ML141\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML146\" class=\"in-term Operation\">·</div><div id=\"ML148\" class=\"in-term Variable\">a</div></div><div id=\"ML143\" class=\"in-sum Operation\">+</div><div id=\"ML150\" class=\"in-sum Term\"><div id=\"ML149\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML151\" class=\"in-term Operation\">·</div><div id=\"ML153\" class=\"in-term Variable\">a</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML155\" class=\"in-equation Term\"><div id=\"ML154\" class=\"in-term Number\">5<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML156\" class=\"in-term Operation\">·</div><div id=\"ML158\" class=\"in-term Variable\">a</div></div></div>"), //
 	FACTOR_POLYNOMIAL(
 			"Factor Polynomial",//
@@ -130,8 +132,8 @@ public enum Skill {
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML91\" class=\"in-equation Term\"><div id=\"ML108\" class=\"in-term Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML92\" class=\"in-term Operation\">·</div><div id=\"ML111\" class=\"in-term Sum\"><div class=\"fenced\"><div id=\"ML109\" class=\"in-sum Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML112\" class=\"in-sum Operation\">+</div><div id=\"ML114\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML115\" class=\"in-equation Sum\"><div id=\"ML110\" class=\"in-sum Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML116\" class=\"in-sum Operation\">-</div><div id=\"ML118\" class=\"in-sum Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>",//
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML119\" class=\"in-equation Term\"><div id=\"ML108\" class=\"in-term Number\"><div class=\"fenced\">-1<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML120\" class=\"in-term Operation\">·</div><div id=\"ML124\" class=\"in-term Number\">2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML122\" class=\"in-term Operation\">·</div><div id=\"ML125\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML126\" class=\"in-equation Term\"><div id=\"ML110\" class=\"in-term Number\"><div class=\"fenced\">-2<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div><div id=\"ML127\" class=\"in-term Operation\">·</div><div id=\"ML129\" class=\"in-term Number\">3<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div></div></div>"), //
 	MULTIPLY_NUMBERS_TO_10("Multiplication"), //
-	MULTIPLY_NUMBERS_TO_100("Multiplication", MULTIPLY_NUMBERS_TO_10), //
-	MULTIPLY_NUMBERS_LARGE("Multiplication", MULTIPLY_NUMBERS_TO_100), //
+	MULTIPLY_NUMBERS_TO_100("Multiplication", asList(MULTIPLY_NUMBERS_TO_10)), //
+	MULTIPLY_NUMBERS_LARGE("Multiplication", asList(MULTIPLY_NUMBERS_TO_100)), //
 	MULTIPLY_WITH_FRACTION(
 			"Multiplication with a Fraction",//
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML133\" class=\"in-equation Term\"><div id=\"ML132\" class=\"in-term Variable\">a</div><div id=\"ML134\" class=\"in-term Operation\">·</div><div id=\"ML137\" class=\"in-term Fraction\"><div id=\"ML136\" class=\"in-fraction-numerator Variable\">b</div><div id=\"ML139\" class=\"in-fraction-denominator Variable\">c</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML145\" class=\"in-equation Fraction\"><div id=\"ML141\" class=\"in-fraction-numerator Term\"><div id=\"ML140\" class=\"in-term Variable\">a</div><div id=\"ML142\" class=\"in-term Operation\">·</div><div id=\"ML144\" class=\"in-term Variable\">b</div></div><div id=\"ML147\" class=\"in-fraction-denominator Variable\">c</div></div></div>"), //
@@ -202,7 +204,7 @@ public enum Skill {
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"Equation\"><div id=\"ML40\" class=\"in-equation Log\"><div class=\"functionName\">log</div><div class=\"in-log-base\">10</div><div id=\"ML89\" class=\"in-log Exponential\"><div id=\"ML86\" class=\"in-exponential-base Number\">10<div class=\"in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML91\" class=\"in-exponential-exponent Variable\">a</div></div></div><div id=\"ML2\" class=\"in-equation Operation\">=</div><div id=\"ML92\" class=\"in-equation Variable\">a</div></div>");//
 
 	private String[] exampleHTML;
-	private Skill prerequisiteSkills;
+	private List<Skill> prerequisiteSkills;
 
 	private Skill(String search) {
 	}
@@ -211,13 +213,13 @@ public enum Skill {
 		this.exampleHTML = exampleHTML;
 	}
 
-	private Skill(String search, Skill prerequisiteSkills,
+	private Skill(String search, List<Skill> prerequisiteSkills,
 			String... exampleHTML) {
 		this.prerequisiteSkills = prerequisiteSkills;
 		this.exampleHTML = exampleHTML;
 	}
 
-	private Skill(String search, Skill prerequisiteSkills) {
+	private Skill(String search, List<Skill> prerequisiteSkills) {
 		this.prerequisiteSkills = prerequisiteSkills;
 	}
 

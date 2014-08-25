@@ -59,11 +59,10 @@ public class EquationTree {
 	private EquationHTML eqHTML;
 	private boolean inEditMode;
 	private EquationValidator eqValidator;
-	
-	public static final HashSet<String> IDS = new HashSet<String>();
+
+	public static final HashMap<String, EquationNode> IDS = new HashMap<String, EquationNode>();
 	public static int ID_COUNTER = 0;
 	public static final String ID_PREFIX = "ML";
-	
 
 	/**
 	 * A tree representation of an equation.
@@ -79,8 +78,6 @@ public class EquationTree {
 		this.inEditMode = inEditMode;
 
 		bindXMLtoNodes(equationXML);
-		
-		System.out.println(IDS);
 
 		EquationRandomizer.randomizeNumbers(this, !inEditMode);
 
@@ -132,6 +129,7 @@ public class EquationTree {
 	}
 
 	public String getEquationXMLString() {
+		equationXML.setAttribute("xmlns:sget", "http://www.sciencegadgets.org/Data");
 		String equationString = JSNICalls.elementToString(equationXML);
 		equationString = equationString.replace(
 				" xmlns=\"http://www.w3.org/1998/Math/MathML\"", "").replace(
@@ -282,7 +280,7 @@ public class EquationTree {
 		if (!inEditMode) {
 			eqValidator.validateQuantityKinds(this);
 		}
-		
+
 		validateMaps();
 
 	}
@@ -296,36 +294,68 @@ public class EquationTree {
 		LinkedList<String> idMapIds = new LinkedList<String>(idMap.keySet());
 		LinkedList<String> idMLMapIds = new LinkedList<String>(idMLMap.keySet());
 
-		java.util.Collections.sort(treeIds);
-		java.util.Collections.sort(idMapIds);
-		java.util.Collections.sort(idMLMapIds);
+		HashSet<String> missingTreeIds = new HashSet<String>();
+		HashSet<String> missingMapIds = new HashSet<String>();
+		HashSet<String> missingMLMapIds = new HashSet<String>();
 		
-		String errorMessage ="The binding maps are not in aggreement:\n"+getEquationXMLString()
-				+ "\ngetNodes =\t" + treeIds + "\nidMap =\t\t" + idMapIds
-				+ "\nidMLMap =\t" + idMLMapIds;
-
-		if (treeIds.size() != idMapIds.size()
-				|| treeIds.size() != idMLMapIds.size()) {
-			JSNICalls.error(errorMessage);
-			throw new IllegalStateException(errorMessage, new Throwable(
-					errorMessage));
-		}
-		
-		// Make sure both maps contain every id in the tree
 		for(String treeId : treeIds) {
-			if(!idMapIds.remove(treeId) || !idMLMapIds.remove(treeId)){
-				JSNICalls.error(errorMessage);
-				throw new IllegalStateException(errorMessage, new Throwable(
-						errorMessage));
+			if(!idMapIds.contains(treeId)){
+				missingMapIds.add(treeId);
+			}
+			if(!idMLMapIds.contains(treeId)){
+				missingMLMapIds.add(treeId);
+			}
+		}
+		for(String idMapId : idMapIds) {
+			if(!treeIds.contains(idMapId)){
+				missingTreeIds.add(idMapId);
+			}
+			if(!idMLMapIds.contains(idMapId)){
+				missingMLMapIds.add(idMapId);
+			}
+		}
+		for(String idMLMapId : idMLMapIds) {
+			if(!treeIds.contains(idMLMapId)){
+				missingTreeIds.add(idMLMapId);
+			}
+			if(!idMapIds.contains(idMLMapId)){
+				missingMapIds.add(idMLMapId);
 			}
 		}
 		
-		// The list of map Id's should be emptied out from the last step or else they contain more id's than in the tree
-		if(idMapIds.size() > 0 || idMapIds.size() > 0) {
+		if(!missingTreeIds.isEmpty() || !missingMapIds.isEmpty() || !missingMLMapIds.isEmpty()) {
+
+			java.util.Collections.sort(treeIds);
+			java.util.Collections.sort(idMapIds);
+			java.util.Collections.sort(idMLMapIds);
+
+			String idMapString = "";
+			for(Entry<String, EquationNode> entry : idMap.entrySet()) {
+				idMapString = idMapString + "\n"+entry.getKey()+"\n"+entry.getValue();
+			}
+
+			String errorMessage ="The binding maps are not in aggreement:"+
+			//
+			"\ngetNodes =\t" + treeIds + 
+			"\nidMap =\t\t" + idMapIds+ 
+			"\nidMLMap =\t" + idMLMapIds+
+			//
+			"\nmissing:"+
+			//
+			"\ngetNodes =\t" + missingTreeIds + 
+			"\nidMap =\t\t" + missingMapIds+ 
+			"\nidMLMap =\t" + missingMLMapIds+
+			//
+			"\n\neqation:\n"+getEquationXMLString()+ 
+			//
+			"\n\nidMap:\n"+idMapString;
+
 			JSNICalls.error(errorMessage);
 			throw new IllegalStateException(errorMessage, new Throwable(
 					errorMessage));
 		}
+		
+		
 	}
 
 	private void AddToMaps(EquationNode node) {
@@ -444,23 +474,23 @@ public class EquationTree {
 				// descendantEl.removeAttribute("id");
 				AddToMaps(new EquationNode(descendantEl));
 			}
-			
+
 			return top;
 		}
 
 		private String createId(String prevId) {
 			if (prevId != null && !"".equals(prevId)) {
-				// if (!idMap.containsKey(prevId)
-				// || this.equals(idMap.get(prevId))) {
-				return prevId;
-				// }
+				if (!idMap.containsKey(prevId)
+						|| this.equals(idMap.get(prevId))) {
+					return prevId;
+				}
 			}
 			String id = ID_PREFIX + ID_COUNTER++;
-			while (IDS.contains(id)) {
+			while (IDS.containsKey(id)) {
 				id = ID_PREFIX + ID_COUNTER++;
 			}
-			
-			IDS.add(id);
+
+			IDS.put(id, this);
 			return id;
 		}
 
@@ -1136,10 +1166,9 @@ public class EquationTree {
 	private void bindXMLtoNodes(Node equationXMLNode) {
 		Element rootNode = (Element) equationXMLNode;
 
-//		root = newNode(rootNode);
+		// root = newNode(rootNode);
 		root = bindXMLtoNodeRecursive(rootNode);
 
-		
 		try {
 			validateTree();
 		} catch (IllegalStateException e) {
@@ -1160,7 +1189,7 @@ public class EquationTree {
 		String id = eqNode.getId();
 		idMap.put(id, eqNode);
 		idMLMap.put(id, equationXMLNode);
-		IDS.add(id);
+		IDS.put(id, eqNode);
 
 		NodeList<Node> equationXMLNodeChildren = equationXMLNode
 				.getChildNodes();

@@ -8,7 +8,7 @@ public class SymbolDisplay extends Label {
 	SymbolDisplay() {
 	}
 
-	SymbolDisplay(KeyPadNumerical keyPad) {
+	public SymbolDisplay(KeyPadNumerical keyPad) {
 		this.keyPad = keyPad;
 	}
 

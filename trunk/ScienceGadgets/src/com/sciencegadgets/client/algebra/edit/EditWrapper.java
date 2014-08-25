@@ -48,6 +48,7 @@ public class EditWrapper extends EquationWrapper {
 
 		if (this.equals(eqPanel.selectedWrapper)) {
 			if (changeNodeMenu != null) {
+				changeNodeMenu.updatePaste();
 				changeNodeMenu.setVisible(true);
 			}
 		}

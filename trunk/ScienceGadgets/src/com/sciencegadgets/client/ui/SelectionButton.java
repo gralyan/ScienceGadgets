@@ -16,7 +16,11 @@ public abstract class SelectionButton extends SimplePanel implements HasClickHan
 	FitParentHTML buttonHTML;
 	
 	protected SelectionButton(){
+		this("");
+	}
+	protected SelectionButton(String html) {
 		
+		setHTML(html);
 		addStyleName(CSS.TRANSFORMATION_BUTTON);
 		
 		if (Moderator.isTouch) {

@@ -555,23 +555,7 @@ public class BothSidesTransformations extends
 
 			if (autoCancel) {
 				targetSide.append(node);
-			} else {
-				targetSide.append(node.clone());
-			}
 
-			if (!autoCancel) {
-				node = node.clone();
-				EquationNode sameSideTarget = topParent;
-				if (AutoIntoFraction) {
-					sameSideTarget = topParent.getChildAt(0);
-				}
-				sameSideTarget = sameSideTarget.encase(TypeSGET.Term);
-				sameSideTarget.append(TypeSGET.Operation, Operator
-						.getMultiply().getSign());
-				sameSideTarget.append(node.clone());
-			}
-
-			if (autoCancel) {
 				// clean source side
 				if (TypeSGET.Fraction.equals(oldParent.getType())) {
 					// remove unnecessary intermediate fraction
@@ -582,6 +566,18 @@ public class BothSidesTransformations extends
 					JSNICalls
 							.warn("The parent of the divideBothSides must either be a term or fraction with index=0");
 				}
+			} else {
+				targetSide.append(node.clone());
+
+//				node = node.clone();
+				EquationNode sameSideTarget = topParent;
+				if (AutoIntoFraction) {
+					sameSideTarget = topParent.getChildAt(0);
+				}
+				sameSideTarget = sameSideTarget.encase(TypeSGET.Term);
+				sameSideTarget.append(TypeSGET.Operation, Operator
+						.getMultiply().getSign());
+				sameSideTarget.append(node.clone());
 			}
 
 			onTransformationEnd(changeComment);

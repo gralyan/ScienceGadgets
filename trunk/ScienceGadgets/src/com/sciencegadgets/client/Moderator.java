@@ -19,7 +19,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import com.allen_sauer.gwt.voices.client.Sound;
+import com.allen_sauer.gwt.voices.client.SoundController;
+import com.allen_sauer.gwt.voices.client.handler.PlaybackCompleteEvent;
+import com.allen_sauer.gwt.voices.client.handler.SoundLoadStateChangeEvent;
+import com.allen_sauer.gwt.voices.client.handler.SoundHandler;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -28,6 +34,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.media.client.Audio;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -42,6 +49,7 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.conversion.ConversionActivity;
+import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
@@ -53,23 +61,25 @@ public class Moderator implements EntryPoint {
 	private int SGAWidth;
 	private static int SGAHeight;
 	public static RandomSpecPanel randomSpec = null;
-	public static AbsolutePanel scienceGadgetArea = RootPanel
+	public static final AbsolutePanel scienceGadgetArea = RootPanel
 			.get(CSS.SCIENCE_GADGET_AREA);
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
 	private static ActivityType currentActivityType = null;
 	private static AlgebraActivity algebraActivity;
-	private static EquationBrowser equationBrowser;
+	public static EquationBrowser equationBrowser;
 	private static ConversionActivity conversionActivity;
 
 	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
 	private static Student student = new Student("guest");
 	public static boolean isInEasyMode = false;
+	public final static Sounds SOUNDS = new Sounds();
 
 	@Override
 	public void onModuleLoad() {
-
+		
+	    
 		HistoryChange historyChange = new HistoryChange();
 		History.addValueChangeHandler(historyChange);
 
@@ -80,17 +90,17 @@ public class Moderator implements EntryPoint {
 		detectTouch();
 
 		History.fireCurrentHistoryState();
-
-		// Blobs
-		// scienceGadgetArea.add(new UploadButton());
-
-		// try {
-		// TestBot_Addition.deployTestBot();
-		// } catch (TopNodesNotFoundException e) {
-		// e.printStackTrace();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
+		//
+		// // Blobs
+		// // scienceGadgetArea.add(new UploadButton());
+		//
+		// // try {
+		// // TestBot_Addition.deployTestBot();
+		// // } catch (TopNodesNotFoundException e) {
+		// // e.printStackTrace();
+		// // } catch (Exception e) {
+		// // e.printStackTrace();
+		// // }
 
 	}
 
@@ -129,9 +139,11 @@ public class Moderator implements EntryPoint {
 	public static void switchToAlgebra(EquationTree equationTree,
 			boolean inEditMode, boolean updateHistory) {
 		try {
+
 			if (algebraActivity == null
 					|| algebraActivity.inEditMode != inEditMode) {
-				algebraActivity = new AlgebraActivity(equationTree, inEditMode, false);
+				algebraActivity = new AlgebraActivity(equationTree, inEditMode,
+						false);
 			} else {
 				algebraActivity.setEquationTree(equationTree);
 			}
@@ -148,14 +160,14 @@ public class Moderator implements EntryPoint {
 		}
 	}
 
-	public static void switchToConversion(EquationNode node) {
+	public static void switchToConversion(EquationNode node, Equation variableEquation) {
 
 		if (conversionActivity == null) {
 			conversionActivity = new ConversionActivity();
 			conversionActivity.getElement().setAttribute("id",
 					CSS.CONVERSION_ACTIVITY);
 		}
-		conversionActivity.load(node);
+		conversionActivity.load(node, variableEquation);
 
 		setActivity(ActivityType.conversion, conversionActivity);
 	}
@@ -184,33 +196,41 @@ public class Moderator implements EntryPoint {
 	}
 
 	public static void reloadEquationPanel(String changeComment, Skill skill) {
-		HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
-		skills.put(skill, 1);
-		reloadEquationPanel(changeComment, skills);
+		if (skill == null) {
+			reloadEquationPanel(changeComment);
+		} else {
+			HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
+			skills.put(skill, 1);
+			reloadEquationPanel(changeComment, skills);
+		}
 	}
 
 	public static void reloadEquationPanel(String changeComment,
 			HashMap<Skill, Integer> skills) {
 		algebraActivity.reloadEquationPanel(changeComment, skills, true);
 	}
-	
+
 	public static void increaseSkill(Skill skill, int increase) {
 		HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
 		skills.put(skill, increase);
 		increaseSkills(skills);
 	}
+
 	public static void increaseSkills(HashMap<Skill, Integer> skillsIncrease) {
 
 		if (skillsIncrease != null) {
 			for (Entry<Skill, Integer> skillEntry : skillsIncrease.entrySet()) {
-				HashSet<Badge> newBadges = Moderator.getStudent().increaseSkill(skillEntry.getKey(), skillEntry.getValue());
-				for(Badge newBadge : newBadges) {
-					JSNICalls.log("newBadge "+newBadge);
-					Window.alert("New Badge!\n"+newBadge.toString());
+				HashSet<Badge> newBadges = Moderator.getStudent()
+						.increaseSkill(skillEntry.getKey(),
+								skillEntry.getValue());
+				for (Badge newBadge : newBadges) {
+					JSNICalls.log("newBadge " + newBadge);
+					Window.alert("New Badge!\n" + newBadge.toString());
 				}
-				JSNICalls.log("Skill up - "+skillEntry.getKey()+"-"+skillEntry.getValue() + "\nskills: " + Moderator.getStudent().getSkills()
-						+ "\nbadges " + Moderator.getStudent().getBadges()
-						+ "\n");
+				JSNICalls.log("Skill up - " + skillEntry.getKey() + "-"
+						+ skillEntry.getValue() + "\nskills: "
+						+ Moderator.getStudent().getSkills() + "\nbadges "
+						+ Moderator.getStudent().getBadges() + "\n");
 			}
 		}
 	}
@@ -257,7 +277,8 @@ public class Moderator implements EntryPoint {
 
 	public static boolean meetsRequirements(HashSet<Badge> badges) {
 		if (student == null || badges == null) {
-			JSNICalls.error("NO STUDENT or BADGES: student: " + student + ", badges:" + badges);
+			JSNICalls.error("NO STUDENT or BADGES: student: " + student
+					+ ", badges:" + badges);
 			return false;
 		} else if (isInEasyMode) {
 			JSNICalls.warn("isInEasyMode " + isInEasyMode);

@@ -2,6 +2,7 @@ package com.sciencegadgets.server;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,8 +18,10 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.entities.Equation;
+import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
+import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitName;
@@ -31,6 +34,7 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		ObjectifyService.register(Equation.class);
 		ObjectifyService.register(Unit.class);
 		ObjectifyService.register(QuantityKind.class);
+		ObjectifyService.register(Problem.class);
 	}
 
 	@Override
@@ -42,17 +46,33 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String saveEquation(String mathML, String html)
-			throws IllegalArgumentException {
-		ArrayList<Key<QuantityKind>> quantityKinds = new ArrayList<Key<QuantityKind>>();
+	public Problem saveProblem(String title, String description,
+			Badge requiredBadge, Equation equation) {
+
+		Problem problem = new Problem(title, description, requiredBadge,
+				equation);
+		ObjectifyService.ofy().save().entity(problem).now();
+		return problem;
+	}
+
+	@Override
+	public Equation saveEquation(String mathXML, String html) {
+
 		try {
-			Document doc = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder()
-					.parse(new InputSource(new StringReader(mathML)));
-			NodeList variables = doc.getElementsByTagName(TypeSGET.Variable
-					.getTag());
+
+			ArrayList<Key<QuantityKind>> quantityKinds = new ArrayList<Key<QuantityKind>>();
+			
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new InputSource(new StringReader(mathXML)));
+			
+			NodeList variables = doc.getElementsByTagName(TypeSGET.Variable.getTag());
+			
+			if(variables == null) {
+				return null;
+			}
 
 			for (int i = 0; i < variables.getLength(); i++) {
+				
 				Element var = (Element) variables.item(i);
 				String quantityKind = var.getAttribute(MathAttribute.Unit
 						.getAttributeName());
@@ -62,15 +82,14 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 					quantityKinds.add(qKey);
 				}
 			}
-
-			Equation e = new Equation(mathML, html, quantityKinds);
-			ObjectifyService.ofy().save().entity(e).now();
-			return e.getMathML();
-
+			
+			Equation eq = new Equation(mathXML, html, quantityKinds);
+			ObjectifyService.ofy().save().entity(eq).now();
+			return eq;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	@Override
@@ -105,9 +124,28 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public ArrayList<Problem> getProblemsByBadge(Badge badge) {
+		List<Problem> probs = ObjectifyService.ofy().load().type(Problem.class)
+				.filter("requiredBadge =", badge).list();
+		ArrayList<Problem> problems = new ArrayList<Problem>();
+		problems.addAll(probs);
+		return problems;
+	}
+
+	@Override
+	public ArrayList<Problem> getProblemsByBadges(HashSet<Badge> badges) {
+		List<Problem> probs = ObjectifyService.ofy().load().type(Problem.class)
+				.filter("requiredBadge in", badges).list();
+		ArrayList<Problem> problems = new ArrayList<Problem>();
+		problems.addAll(probs);
+		return problems;
+	}
+
+	@Override
 	public LinkedList<String> getQuantityKinds() {
 		List<QuantityKind> list = ObjectifyService.ofy().load()
-				.type(QuantityKind.class).order("id").list();
+				.type(QuantityKind.class)// .order("id")
+				.list();
 
 		LinkedList<String> linkedList = new LinkedList<String>();
 		for (QuantityKind qKind : list) {
@@ -120,6 +158,7 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	public String getBlobURL() {
 		return BlobstoreUtil.getUrl();
 	}
+
 	@Override
 	public void reCreateUnits() {
 		new OwlMiner().recreateUnitsFromOwl();

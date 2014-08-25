@@ -52,10 +52,17 @@ public static final String EQUATION_BROWSER = "equationBrowser";
 public static final String MODES = "modes";
 public static final String ROW_HEADER = "rowHeader";
 public static final String ALG_BROWSER = "algBrowser";
+public static final String ALG_BROWSER_PANEL = "algBrowserPanel";
+public static final String GENERATE_BUTTON = "generateButton";
+public static final String ALG_BROWSER_DETAILS = "algBrowserDetails";
+public static final String EQUATION_SOLVE_BUTTON = "equationSolveButton";
 public static final String SCI_BROWSER = "sciBrowser";
 public static final String SCI_BROWSER_VAR = "sciBrowseVar";
 public static final String SCI_BROWSER_EQ = "sciBrowseEq";
 public static final String SCI_BROWSER_SUM = "sciBrowseSum";
+public static final String PROBLEM_DETAILS_VARIABLE_PANEL = "problemDetailsVariablePanel";
+public static final String PROBLEM_DETAILS_EQUATION_PANEL = "problemDetailsEquationPanel";
+public static final String PROBLEM_DETAILS_DESCRIPTION = "problemDetailsDescription";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "conversionActivity";
 /*---------------SelectionPanel---------------*/
