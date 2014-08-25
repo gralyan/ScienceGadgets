@@ -14,7 +14,6 @@
  */
 package com.sciencegadgets.client.equationbrowser;
 
-import java.util.LinkedHashMap;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,23 +21,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.EquationGenerator;
-import com.sciencegadgets.client.algebra.EquationTree;
-import com.sciencegadgets.client.algebra.SolverUniVariable;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.shared.TypeSGET;
 
 public class EquationBrowser extends FlowPanel {
 
+	private ProblemDetails problemDetails = new ProblemDetails();
 	ScienceBrowser scienceBrowser = new ScienceBrowser(this);
-	AlgebraBrowser algebraBrowser = new AlgebraBrowser(this);
+	public AlgebraBrowser algebraBrowser = new AlgebraBrowser(problemDetails);
 	private RadioButton modeAlg = new RadioButton("mode", "Algebra");
 	private RadioButton modeSci = new RadioButton("mode", "Science");
 	private RadioButton modeEdit = new RadioButton("mode2", "Edit");
 	private RadioButton modeSolve = new RadioButton("mode2", "Solve");
-	EquationBrowser equationBrowser = this;
 	public boolean inEditMode;
 
 	public EquationBrowser() {
@@ -64,8 +57,17 @@ public class EquationBrowser extends FlowPanel {
 
 		modeAlg.setValue(true, true);
 		modeSolve.setValue(true, true);
-		this.add(algebraBrowser);
-		this.add(new Button("generate", new GenerateEquationHandler()));
+		
+		FlowPanel browserPanel = new FlowPanel();
+		browserPanel.getElement().setId(CSS.ALG_BROWSER_PANEL);
+		browserPanel.add(algebraBrowser);
+		Button generateButton = new Button("generate", new GenerateEquationHandler());
+		generateButton.getElement().setId(CSS.GENERATE_BUTTON);
+		browserPanel.add(generateButton);
+		this.add(browserPanel);
+		
+		problemDetails.getElement().setId(CSS.ALG_BROWSER_DETAILS);
+		this.add(problemDetails);
 	}
 
 	private enum Mode {
@@ -86,12 +88,12 @@ public class EquationBrowser extends FlowPanel {
 			switch (mode) {
 			case algebra:
 				scienceBrowser.removeFromParent();
-				equationBrowser.add(algebraBrowser);
+				EquationBrowser.this.add(algebraBrowser);
 				break;
 			case science:
 				scienceBrowser.sumGrid.clear(true);
 				algebraBrowser.removeFromParent();
-				equationBrowser.add(scienceBrowser);
+				EquationBrowser.this.add(scienceBrowser);
 				break;
 			case edit:
 				inEditMode = true;
@@ -102,39 +104,5 @@ public class EquationBrowser extends FlowPanel {
 
 			}
 		}
-	}
-
-	class GenerateEquationHandler implements ClickHandler {
-
-		@Override
-		public void onClick(ClickEvent event) {
-
-			LinkedHashMap<TypeSGET, Integer> expressionsVariableSide = new LinkedHashMap<TypeSGET, Integer>();
-			expressionsVariableSide.put(TypeSGET.Sum, 3);
-			expressionsVariableSide.put(TypeSGET.Term, 3);
-			expressionsVariableSide.put(TypeSGET.Fraction, 1);
-			expressionsVariableSide.put(TypeSGET.Exponential, 1);
-
-			LinkedHashMap<TypeSGET, Integer> expressionsOtherSide = new LinkedHashMap<TypeSGET, Integer>();
-			expressionsOtherSide.put(TypeSGET.Sum, 3);
-			expressionsOtherSide.put(TypeSGET.Term, 3);
-			expressionsOtherSide.put(TypeSGET.Fraction, 1);
-			expressionsOtherSide.put(TypeSGET.Exponential, 1);
-
-			boolean mustBeWholeAnswer = true;
-			boolean mustBePositives = false;
-			int maxAdd = 10;
-			int maxMultiply = 10;
-			int maxFraction = 4;
-			int maxExp = 4;
-
-			EquationTree eTree = EquationGenerator.GENERATE(expressionsVariableSide,
-					expressionsOtherSide, mustBeWholeAnswer, mustBePositives,
-					maxAdd, maxMultiply, maxFraction, maxExp);
-			Moderator.switchToAlgebra(eTree, false);
-//			SolverUniVariable.SOLVE(eTree);
-//			Moderator.reloadEquationPanel(null, null);
-		}
-
 	}
 }

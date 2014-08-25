@@ -11,8 +11,6 @@ import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.UnitSelection;
-import com.sciencegadgets.shared.dimensions.BaseUnit;
-import com.sciencegadgets.shared.dimensions.CommonVariables;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class DataModerator {

@@ -244,9 +244,6 @@ public class EquationPanel extends AbsolutePanel {
 			}
 			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
 					+ parentId);
-			
-			System.out.println(node.getId() + OF_LAYER
-					+ parentId);
 
 			if (algebraActivity.inEditMode) {// Edit Mode
 				EditWrapper wrap = new EditWrapper(node, algebraActivity,
@@ -269,8 +266,10 @@ public class EquationPanel extends AbsolutePanel {
 
 	void setFocusOut() {
 		EquationLayer parentLayer = focusLayer.getParentLayer();
-		if (parentLayer != null)
+		if (parentLayer != null) {
 			setFocus(parentLayer);
+			Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
+		}
 	}
 
 	void setFocus(EquationNode node) {

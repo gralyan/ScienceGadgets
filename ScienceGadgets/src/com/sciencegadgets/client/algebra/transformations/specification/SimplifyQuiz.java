@@ -1,23 +1,19 @@
 package com.sciencegadgets.client.algebra.transformations.specification;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.AlgebraActivity.TransformationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.Quiz;
 import com.sciencegadgets.client.ui.SelectionButton;
@@ -108,12 +104,14 @@ public class SimplifyQuiz extends Quiz {
 
 	@Override
 	public void onCorrect() {
+	super.onCorrect();
 		disappear();
 
 	}
 
 	@Override
 	public void onIncorrect() {
+		super.onIncorrect();
 		Window.alert("incorrect");
 	}
 

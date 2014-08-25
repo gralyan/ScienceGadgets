@@ -25,6 +25,7 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionPanel;
@@ -80,9 +81,13 @@ public class ConversionActivity extends AbsolutePanel {
 
 	private Element workingHTML;
 
+	public Equation variableEquation;
+
 	public ConversionActivity() {
 
 		add(conversionUiBinder.createAndBindUi(this));
+
+		this.variableEquation = variableEquation;
 
 		getElement().setAttribute("id", CSS.CONVERSION_ACTIVITY);
 
@@ -97,15 +102,17 @@ public class ConversionActivity extends AbsolutePanel {
 		convertButton.addClickHandler(new ConvertCompleteClickHandler());
 	}
 
-	public void load(EquationNode node) {
+	public void load(EquationNode node, Equation variableEquation) {
 		this.node = node;
+		this.variableEquation = variableEquation;
 		unitDisplays.clear();
 		selectedUnit = null;
 		selectedWrapper = null;
 
 		mTree = new EquationTree(TypeSGET.Term, "", TypeSGET.Term, "", false);
 
-		totalNode = mTree.getLeftSide().append(TypeSGET.Number, node.getSymbol());
+		totalNode = mTree.getLeftSide().append(TypeSGET.Number,
+				node.getSymbol());
 		mTree.getRightSide().append(totalNode.clone());
 
 		UnitMultiple[] bases = node.getUnitAttribute().getUnitMultiples();
@@ -146,7 +153,8 @@ public class ConversionActivity extends AbsolutePanel {
 					!negExp));
 		}
 
-		EquationNode[] numAndDens = { denomLeft, denomRight, numerLeft, numerRight };
+		EquationNode[] numAndDens = { denomLeft, denomRight, numerLeft,
+				numerRight };
 		for (EquationNode numOrDen : numAndDens) {
 			if (numOrDen.getChildCount() == 0) {
 				numOrDen.append(TypeSGET.Number, "1");
@@ -204,11 +212,12 @@ public class ConversionActivity extends AbsolutePanel {
 		workingHTML.getStyle().setFontSize(fontPercent,
 				com.google.gwt.dom.client.Style.Unit.PCT);
 
-//		HashMap<Parameter, String> parameterMap = new HashMap<Parameter, String>();
-//		parameterMap
-//				.put(Parameter.activity, ActivityType.conversion.toString());
-//		parameterMap.put(Parameter.equation, mTree.getMathXMLString());
-//		URLParameters.setParameters(parameterMap, false);
+		// HashMap<Parameter, String> parameterMap = new HashMap<Parameter,
+		// String>();
+		// parameterMap
+		// .put(Parameter.activity, ActivityType.conversion.toString());
+		// parameterMap.put(Parameter.equation, mTree.getMathXMLString());
+		// URLParameters.setParameters(parameterMap, false);
 	}
 
 	private void placeWrappers() {
@@ -260,7 +269,8 @@ public class ConversionActivity extends AbsolutePanel {
 		derivedUnitsSelection.clear();
 
 		try {// Deconstruct option for derived units
-			CommonDerivedUnits derivedUnit = CommonDerivedUnits.valueOf(unitName);
+			CommonDerivedUnits derivedUnit = CommonDerivedUnits
+					.valueOf(unitName);
 			UnitAttribute dataUnitAttribute = derivedUnit.getDerivedMap()
 					.getUnitAttribute();
 			Element derivedUnitElement = UnitHTML.create(dataUnitAttribute,
@@ -300,8 +310,8 @@ public class ConversionActivity extends AbsolutePanel {
 		// History fraction of multipliers
 		mTree.getRightSide().append(TypeSGET.Operation,
 				Operator.getMultiply().getSign());
-		EquationNode newHistoryFrac = mTree.getRightSide().append(TypeSGET.Fraction,
-				"");
+		EquationNode newHistoryFrac = mTree.getRightSide().append(
+				TypeSGET.Fraction, "");
 		EquationNode newHistoryNum = newHistoryFrac.append(TypeSGET.Sum, "");
 		EquationNode newHistoryDen = newHistoryFrac.append(TypeSGET.Sum, "");
 
@@ -314,8 +324,10 @@ public class ConversionActivity extends AbsolutePanel {
 			newHistoryNum.append(numMultiplierNode);
 			newHistoryDen.append(denMultiplierNode);
 		} else {
-			EquationNode numExp = newHistoryNum.append(TypeSGET.Exponential, "");
-			EquationNode denExp = newHistoryDen.append(TypeSGET.Exponential, "");
+			EquationNode numExp = newHistoryNum
+					.append(TypeSGET.Exponential, "");
+			EquationNode denExp = newHistoryDen
+					.append(TypeSGET.Exponential, "");
 			numExp.append(numMultiplierNode);
 			denExp.append(denMultiplierNode);
 			numExp.append(TypeSGET.Number, expAbs + "");
@@ -333,9 +345,11 @@ public class ConversionActivity extends AbsolutePanel {
 
 			String numSymbol = unitName.getSymbol();
 
-			EquationNode workingNode = mTree.newNode(TypeSGET.Variable, numSymbol);
+			EquationNode workingNode = mTree.newNode(TypeSGET.Variable,
+					numSymbol);
 			if (unitExp > 1 || unitExp < -1) {
-				EquationNode workingExp = mTree.newNode(TypeSGET.Exponential, "");
+				EquationNode workingExp = mTree.newNode(TypeSGET.Exponential,
+						"");
 				workingExp.append(workingNode);
 				workingExp.append(TypeSGET.Number, "" + unitExpAbs);
 				workingNode = workingExp;
@@ -428,9 +442,18 @@ public class ConversionActivity extends AbsolutePanel {
 					UnitAttribute.BASE_DELIMITER_REGEX, "");
 			node.setSymbol(totalNode.getSymbol());
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
-			Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(), false);
-			AlgebraActivity aActivity = Moderator.getCurrentAlgebraActivity();
-			aActivity.algOut.updateAlgebraHistory("Conversion", Skill.CONVERSION, aActivity.getEquationTree());
+			if (variableEquation == null) {
+				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(),
+						false);
+				AlgebraActivity aActivity = Moderator
+						.getCurrentAlgebraActivity();
+				aActivity.algOut.updateAlgebraHistory("Conversion",
+						Skill.CONVERSION, aActivity.getEquationTree());
+			} else {
+				variableEquation.reCreate(node.getTree());
+				Moderator.switchToBrowser();
+
+			}
 		}
 	}
 }

@@ -454,10 +454,10 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 			multiplyNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else if (!reloadAlgebraActivity) {
-			parent.replace(TypeSGET.Term, "");
-			parent.append(TypeSGET.Variable, "# ");
-			parent.append(TypeSGET.Variable, operation.getSymbol());
-			parent.append(TypeSGET.Variable, " #");
+//			parent.replace(TypeSGET.Term, "");
+//			parent.append(TypeSGET.Variable, "# ");
+//			parent.append(TypeSGET.Variable, operation.getSymbol());
+//			parent.append(TypeSGET.Variable, " #");
 
 		} else {// prompt
 
@@ -471,6 +471,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
 				public void onIncorrect() {
+					super.onIncorrect();
 					for (Entry<Skill, Integer> entry : skillsIncrease
 							.entrySet()) {
 						entry.setValue(-1);
@@ -480,6 +481,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 
 				@Override
 				public void onCorrect() {
+					super.onCorrect();
 					for (Entry<Skill, Integer> entry : skillsIncrease
 							.entrySet()) {
 						entry.setValue(1);

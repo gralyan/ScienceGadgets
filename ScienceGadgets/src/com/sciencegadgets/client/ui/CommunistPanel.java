@@ -13,6 +13,9 @@ public class CommunistPanel extends FlowPanel {
 
 	boolean isHorizontal = false;
 
+	public CommunistPanel() {
+		this(false);
+	}
 	public CommunistPanel(boolean isHorizontal) {
 		this.isHorizontal = isHorizontal;
 	}
@@ -35,6 +38,12 @@ public class CommunistPanel extends FlowPanel {
 	public void add(Widget widget) {
 		super.add(widget);
 		redistribute();
+	}
+	
+	public void clear() {
+		for(int i=0 ; i<getWidgetCount() ; i++) {
+			getWidget(i).removeFromParent();
+		}
 	}
 
 	protected void redistribute() {

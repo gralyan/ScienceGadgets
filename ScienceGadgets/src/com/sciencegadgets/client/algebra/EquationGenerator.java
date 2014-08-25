@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.algebra;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -55,13 +56,18 @@ public class EquationGenerator {
 			int maxMultiply,//
 			int maxFraction,//
 			int maxExp) {
+		
+		HashSet<TypeSGET> toRemove = new HashSet<TypeSGET>();
 
 		for (Entry<TypeSGET, Integer> entry : expressions.entrySet()) {
 			if (entry.getValue() == 0) {
-				expressions.remove(entry.getKey());
+				toRemove.add(entry.getKey());
 			}
 		}
-
+		for(TypeSGET type : toRemove) {
+			expressions.remove(type);
+		}
+		
 		while (!expressions.isEmpty()) {
 			int index = Random.nextInt(expressions.size());
 			TypeSGET[] array = expressions.keySet().toArray(

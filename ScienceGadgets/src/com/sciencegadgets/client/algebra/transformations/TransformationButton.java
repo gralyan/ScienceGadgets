@@ -127,9 +127,10 @@ public abstract class TransformationButton extends SelectionButton implements
 
 	protected void onTransformationEnd(String changeComment) {
 
-		Skill skills = getAssociatedBadge().getSkill();
+		Badge badge = getAssociatedBadge();
+		Skill skills = badge == null ? null : badge.getSkill();
 		
-		if (allowSkillIncrease) {
+		if (allowSkillIncrease && skills != null) {
 			Moderator.increaseSkill(skills, 1);
 		}
 

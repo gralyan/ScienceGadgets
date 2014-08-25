@@ -323,9 +323,9 @@ class AddNumbersButton extends AddTransformButton {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else if (!reloadAlgebraActivity) {
-			parent.replace(TypeSGET.Sum, "");
-			parent.append(TypeSGET.Variable, "# ");
-			parent.append(TypeSGET.Variable, operation.getSymbol());
+//			parent.replace(TypeSGET.Sum, "");
+//			parent.append(TypeSGET.Variable, "# ");
+//			parent.append(TypeSGET.Variable, operation.getSymbol());
 			// parent.append(TypeML.Variable, " #");
 
 		} else {// prompt
@@ -357,6 +357,7 @@ class AddNumbersButton extends AddTransformButton {
 			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
 				public void onIncorrect() {
+					super.onIncorrect();
 					for (Entry<Skill, Integer> entry : skillsIncrease
 							.entrySet()) {
 						entry.setValue(-1);
@@ -366,6 +367,7 @@ class AddNumbersButton extends AddTransformButton {
 
 				@Override
 				public void onCorrect() {
+					super.onCorrect();
 					for (Entry<Skill, Integer> entry : skillsIncrease
 							.entrySet()) {
 						entry.setValue(1);

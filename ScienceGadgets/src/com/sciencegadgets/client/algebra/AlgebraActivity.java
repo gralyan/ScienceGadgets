@@ -13,9 +13,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
@@ -33,6 +36,7 @@ import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.SelectionButton;
+import com.sciencegadgets.client.ui.SolvedPrompt;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class AlgebraActivity extends SimplePanel {
@@ -193,6 +197,14 @@ public class AlgebraActivity extends SimplePanel {
 		if (!inEditMode) {
 			lowerEqArea.clear();
 			algOut.scrollToBottom();
+			
+			TypeSGET rightType = equationTree.getRightSide().getType();
+			TypeSGET leftType = equationTree.getLeftSide().getType();
+			if ((TypeSGET.Variable.equals(leftType) && TypeSGET.Number.equals(rightType))
+			|| (TypeSGET.Variable.equals(rightType) && TypeSGET.Number.equals(leftType))) {
+				SolvedPrompt solvedPrompt = new SolvedPrompt();
+				solvedPrompt.appear();
+			}
 		}
 
 		if (updateHistory) {
@@ -209,6 +221,7 @@ public class AlgebraActivity extends SimplePanel {
 			URLParameters.setParameters(parameterMap, false);
 		}
 
+		
 	}
 
 	public void fillTransformLists(
@@ -236,10 +249,10 @@ public class AlgebraActivity extends SimplePanel {
 				buttonsShown.add(tButt);
 			}
 		}
-		if(transSimplify.size() > buttonsShown.size()) {
+		if (transSimplify.size() > buttonsShown.size()) {
 			buttonsShown.add(simplifyPromptButton);
 		}
-		
+
 		simplifyButtonsPanel.addAll(buttonsShown);
 
 		lowerEqArea.clear();

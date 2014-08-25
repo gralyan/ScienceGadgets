@@ -174,6 +174,6 @@ class UnitConversionButton extends NumberTransformationButton {
 	@Override
 	public
 	void transform() {
-		Moderator.switchToConversion(numberNode);
+		Moderator.switchToConversion(numberNode, null);
 	}
 }

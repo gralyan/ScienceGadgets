@@ -133,10 +133,12 @@ public class InterFractionButton extends TransformationButton {
 				NumberQuiz prompt = new NumberQuiz(question, total) {
 					@Override
 					public void onIncorrect() {
+						super.onIncorrect();
 					}
 
 					@Override
 					public void onCorrect() {
+						super.onCorrect();
 						divide(total);
 						Moderator.getStudent().increaseSkill(Skill.DIVIDE_NUMBERS, 1);
 					}

@@ -33,9 +33,14 @@ public class EquationRandomizer {
 			String varRandomness = var.getAttribute(MathAttribute.Randomness);
 
 			if (varRandomness.contains(RandomSpecPanel.DELIMITER)) {
+				
 				if (randomize) {
-					String randonNumber = getRandomNumber(varRandomness);
-					var.setSymbol(randonNumber);
+					if(RandomSpecPanel.RANDOM_SYMBOL.equals(var.getSymbol())) {
+						String randonNumber = getRandomNumber(varRandomness);
+						var.setSymbol(randonNumber);
+					}else {
+						var.setAttribute(MathAttribute.Randomness, null);
+					}
 				} else {
 					var.setSymbol(RandomSpecPanel.RANDOM_SYMBOL);
 				}

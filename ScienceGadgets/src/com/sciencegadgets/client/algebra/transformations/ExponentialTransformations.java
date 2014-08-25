@@ -232,8 +232,8 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 			evaluateExponential(baseValue, exp, totalValue, totalUnitMap);
 
 		} else if (!reloadAlgebraActivity) {
-			base.replace(TypeSGET.Variable, "#");
-			exponent.replace(TypeSGET.Variable, "#");
+//			base.replace(TypeSGET.Variable, "#");
+//			exponent.replace(TypeSGET.Variable, "#");
 
 		} else {// prompt
 
@@ -241,10 +241,12 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
 				public void onIncorrect() {
+					super.onIncorrect();
 				}
 
 				@Override
 				public void onCorrect() {
+					super.onCorrect();
 					evaluateExponential(baseValue, exp, totalValue,
 							totalUnitMap);
 					Moderator.getStudent().increaseSkill(
