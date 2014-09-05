@@ -15,6 +15,7 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -68,11 +69,9 @@ public class AlgebaWrapper extends EquationWrapper {
 
 		if (this.equals(eqPanel.selectedWrapper)) {
 			attachButtons();
-
+			
 			eqPanel.getAlgebraActivity().fillTransformLists(
 					simplifyTransformations, bothSidesTransformations);
-//			Moderator.getCurrentAlgebraActivity().fillTransformLists(
-//					simplifyTransformations, bothSidesTransformations);
 		}
 	}
 
@@ -86,8 +85,7 @@ public class AlgebaWrapper extends EquationWrapper {
 			}
 		}
 
-		eqPanel.getAlgebraActivity().lowerEqArea.clear();
-//		Moderator.getCurrentAlgebraActivity().lowerEqArea.clear();
+		eqPanel.getAlgebraActivity().clearTransformLists();
 	}
 
 }

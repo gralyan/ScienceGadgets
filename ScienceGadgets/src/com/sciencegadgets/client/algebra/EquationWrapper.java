@@ -86,23 +86,21 @@ public class EquationWrapper extends Wrapper {
 		if (this.equals(eqPanel.selectedWrapper)) {
 			// If this was already selected, focus in on it
 			
-			Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
-			
 			if (node.hasChildElements()
 					&& (dragController == null || !dragController.isDragging())) {
+				Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
 				unselect();
-//				eqPanel.setFocus(eqPanel.eqLayerMap.get(node));
 				eqPanel.setFocus(node);
 			}
 			
 		} else {
 			// If there is another selection, unselect it, select new
 			
-			super.select();
-			
 			if (eqPanel.selectedWrapper != null) {
 				eqPanel.selectedWrapper.unselect();
 			}
+			
+			super.select();
 
 			fillSelectionDetails();
 

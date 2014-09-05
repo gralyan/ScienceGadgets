@@ -25,9 +25,8 @@ import com.sciencegadgets.client.ui.CSS;
 
 public class EquationBrowser extends FlowPanel {
 
-	private ProblemDetails problemDetails = new ProblemDetails();
 	ScienceBrowser scienceBrowser = new ScienceBrowser(this);
-	public AlgebraBrowser algebraBrowser = new AlgebraBrowser(problemDetails);
+	public AlgebraBrowser algebraBrowser = new AlgebraBrowser();
 	private RadioButton modeAlg = new RadioButton("mode", "Algebra");
 	private RadioButton modeSci = new RadioButton("mode", "Science");
 	private RadioButton modeEdit = new RadioButton("mode2", "Edit");
@@ -65,9 +64,6 @@ public class EquationBrowser extends FlowPanel {
 		generateButton.getElement().setId(CSS.GENERATE_BUTTON);
 		browserPanel.add(generateButton);
 		this.add(browserPanel);
-		
-		problemDetails.getElement().setId(CSS.ALG_BROWSER_DETAILS);
-		this.add(problemDetails);
 	}
 
 	private enum Mode {

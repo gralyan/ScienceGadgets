@@ -55,4 +55,7 @@ public class Problem  implements Serializable{
 	public HashSet<Equation> getEquations() throws NullPointerException {
 		return equations;
 	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

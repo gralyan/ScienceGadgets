@@ -3,9 +3,18 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:sg="urn:import:com.sciencegadgets.client.ui">
 	
 	<ui:style>
-	.problemTitle {
+	.problemDetails{
+	display: block;
+	width: 80%;
+	height: 80%;
+	margin: auto;
+	text-align: center;
+	background-color: white;
+	vertical-align: top;
+	overflow: auto; 
+	}
+	.problemTitleContainer {
 		font-weight: bold;
-		font-size: large;
 		border-bottom: solid 1px silver;
 		height: 10%;
 		width: 100%;
@@ -20,9 +29,9 @@
 	}
 	</ui:style>
 	
-	<g:HTMLPanel>
+	<g:HTMLPanel styleName="{style.problemDetails}">
 		
-		<g:Label styleName="{style.problemTitle}" ui:field="problemTitle"/>
+		<g:SimplePanel styleName="{style.problemTitleContainer}" ui:field="problemTitleContainer"></g:SimplePanel>
 		
 		<sg:CommunistPanel styleName="{style.tabsPanel}" ui:field="tabsPanel"></sg:CommunistPanel>
 		

@@ -1189,7 +1189,6 @@ public class EquationTree {
 		String id = eqNode.getId();
 		idMap.put(id, eqNode);
 		idMLMap.put(id, equationXMLNode);
-		IDS.put(id, eqNode);
 
 		NodeList<Node> equationXMLNodeChildren = equationXMLNode
 				.getChildNodes();

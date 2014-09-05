@@ -37,7 +37,7 @@ class GenerateEquationHandler implements ClickHandler {
 				expressionsVariableSide, expressionsOtherSide,
 				mustBeWholeAnswer, mustBePositives, maxAdd, maxMultiply,
 				maxFraction, maxExp);
-		Moderator.switchToAlgebra(eTree, false);
+		Moderator.switchToAlgebra(eTree, null, false, true);
 		// SolverUniVariable.SOLVE(eTree);
 		// Moderator.reloadEquationPanel(null, null);
 

@@ -54,15 +54,11 @@ public static final String ROW_HEADER = "rowHeader";
 public static final String ALG_BROWSER = "algBrowser";
 public static final String ALG_BROWSER_PANEL = "algBrowserPanel";
 public static final String GENERATE_BUTTON = "generateButton";
-public static final String ALG_BROWSER_DETAILS = "algBrowserDetails";
 public static final String EQUATION_SOLVE_BUTTON = "equationSolveButton";
 public static final String SCI_BROWSER = "sciBrowser";
 public static final String SCI_BROWSER_VAR = "sciBrowseVar";
 public static final String SCI_BROWSER_EQ = "sciBrowseEq";
 public static final String SCI_BROWSER_SUM = "sciBrowseSum";
-public static final String PROBLEM_DETAILS_VARIABLE_PANEL = "problemDetailsVariablePanel";
-public static final String PROBLEM_DETAILS_EQUATION_PANEL = "problemDetailsEquationPanel";
-public static final String PROBLEM_DETAILS_DESCRIPTION = "problemDetailsDescription";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "conversionActivity";
 /*---------------SelectionPanel---------------*/
@@ -115,6 +111,7 @@ public static final String TRANSFORMATION_BUTTON = "transformationButton";
 public static final String SAVE_EQUATION_BUTTON = "saveEquationButton";
 public static final String CHANGE_NODE_BUTTON = "changeNodeButton";
 public static final String BOTH_SIDES_BUTTON = "bothSidesButton";
+public static final String TAB = "tab";
 public static final String SMALLEST_BUTTON = "smallestButton";
 public static final String MEDIUM_BUTTON = "mediumButton";
 public static final String BOTH_SIDES_BUTTON_SELECTED = "bothSidesButtonSelected";

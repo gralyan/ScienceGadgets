@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.ui;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -10,34 +11,40 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.Moderator;
 
-public abstract class SelectionButton extends SimplePanel implements HasClickHandlers,
-		HasTouchEndHandlers {
+public abstract class SelectionButton extends SimplePanel implements
+		HasClickHandlers, HasTouchEndHandlers {
 
 	FitParentHTML buttonHTML;
-	
-	protected SelectionButton(){
-		this("");
-	}
-	protected SelectionButton(String html) {
-		
-		setHTML(html);
+	boolean isEnabled = true;
+
+	protected SelectionButton() {
 		addStyleName(CSS.TRANSFORMATION_BUTTON);
-		
+
 		if (Moderator.isTouch) {
 			addTouchEndHandler(new TouchEndHandler() {
 				@Override
 				public void onTouchEnd(TouchEndEvent event) {
-					onSelect();
+					if (isEnabled) {
+						onSelect();
+					}
 				}
 			});
 		} else {
 			addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					onSelect();
+					if (isEnabled) {
+						onSelect();
+					}
 				}
 			});
 		}
+
+	}
+
+	protected SelectionButton(String html) {
+		this();
+		setHTML(html);
 	}
 
 	@Override
@@ -49,9 +56,8 @@ public abstract class SelectionButton extends SimplePanel implements HasClickHan
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return addDomHandler(handler, ClickEvent.getType());
 	}
-	
+
 	abstract protected void onSelect();
-	
 
 	public void resize() {
 		buttonHTML.resize();
@@ -59,7 +65,11 @@ public abstract class SelectionButton extends SimplePanel implements HasClickHan
 
 	public void setHTML(String html) {
 		clear();
-		buttonHTML = new FitParentHTML(html);
+		if (buttonHTML == null) {
+			buttonHTML = new FitParentHTML(html);
+		} else {
+			buttonHTML.setHTML(html);
+		}
 		buttonHTML.percentOfParent = 85;
 		add(buttonHTML);
 	}
@@ -69,6 +79,18 @@ public abstract class SelectionButton extends SimplePanel implements HasClickHan
 			return null;
 		} else {
 			return buttonHTML.getHTML();
+		}
+	}
+
+	public void setEnabled(boolean enable) {
+		this.isEnabled = enable;
+		Style style = getElement().getStyle();
+		if (enable) {
+			addStyleName(CSS.TRANSFORMATION_BUTTON);
+			style.clearColor();
+		} else {
+			removeStyleName(CSS.TRANSFORMATION_BUTTON);
+			style.setColor("gray");
 		}
 	}
 

@@ -1,10 +1,13 @@
 package com.sciencegadgets.client.ui;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Moderator;
 
-public class FitParentHTML extends HTML {
+public class FitParentHTML extends HTML implements Resizable {
 
 	public static final int DEFAULT_PERCENT_OF_PARENT = 95;
 
@@ -32,16 +35,31 @@ public class FitParentHTML extends HTML {
 	}
 
 	@Override
-	protected void onAttach() {
-		super.onAttach();
-
-		resize();
+	protected void onLoad() {
+		super.onLoad();
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				resize();
+			}
+		});
+		Moderator.resizables.add(this);
+	}
+	
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		Moderator.resizables.remove(this);
 	}
 
+	@Override
 	public void resize() {
 		Element htmlElement = this.getElement();
 
 		htmlElement.getStyle().clearFontSize();
+		
+		if(this.getParent() == null) {
+		}
 
 		Element parentElement = this.getParent().getElement();
 

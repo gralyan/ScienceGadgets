@@ -87,8 +87,6 @@ public class ConversionActivity extends AbsolutePanel {
 
 		add(conversionUiBinder.createAndBindUi(this));
 
-		this.variableEquation = variableEquation;
-
 		getElement().setAttribute("id", CSS.CONVERSION_ACTIVITY);
 
 		unitSelection.unitBox.addSelectionHandler(new ConvertSelectHandler());
@@ -173,7 +171,7 @@ public class ConversionActivity extends AbsolutePanel {
 		reloadEquation();
 	}
 
-	void reloadEquation() {
+	public void reloadEquation() {
 		// Make and add entire equation before moving left
 		dimensionalAnalysisArea.clear();
 		EquationHTML eqHTML = mTree.reloadDisplay(false, false);
@@ -443,16 +441,15 @@ public class ConversionActivity extends AbsolutePanel {
 			node.setSymbol(totalNode.getSymbol());
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
 			if (variableEquation == null) {
-				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(),
-						false);
+				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(), true,
+						false, true);
 				AlgebraActivity aActivity = Moderator
 						.getCurrentAlgebraActivity();
 				aActivity.algOut.updateAlgebraHistory("Conversion",
 						Skill.CONVERSION, aActivity.getEquationTree());
 			} else {
 				variableEquation.reCreate(node.getTree());
-				Moderator.switchToBrowser();
-
+				Moderator.switchToProblem(null);
 			}
 		}
 	}
