@@ -60,7 +60,10 @@ public class ScienceBrowser extends FlowPanel {
 					// XMLParser.parse(mathmlStr).getDocumentElement();
 					Element equationXML = new HTML(equationXMLStr)
 							.getElement().getFirstChildElement();
-					Moderator.switchToAlgebra(equationXML, equationBrowser.inEditMode);
+					
+					Window.alert("NotWorking, see Science Browser");
+					//TODO deal with equation
+//					Moderator.switchToAlgebra(equationXML, equationBrowser.inEditMode, true);
 				}
 			}
 		});
@@ -228,6 +231,7 @@ public class ScienceBrowser extends FlowPanel {
 
 		@Override
 		public void onClick(ClickEvent arg0) {
+			
 
 			// Replace known variables with given values inputed
 			for (TextBox box : inputBinding.keySet()) {
@@ -247,8 +251,11 @@ public class ScienceBrowser extends FlowPanel {
 					}
 				}
 			}
-			Moderator.switchToAlgebra(labelSumEq.getElement()
-					.getFirstChildElement(), equationBrowser.inEditMode);
+			
+			Window.alert("Not Working, see ScienceBrowser");
+			//TODO deal with equation
+//			Moderator.switchToAlgebra(labelSumEq.getElement()
+//					.getFirstChildElement(), equationBrowser.inEditMode, true);
 		}
 
 	}

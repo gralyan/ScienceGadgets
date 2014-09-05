@@ -16,12 +16,13 @@ import com.sciencegadgets.client.Moderator;
  * A common method of presenting a user with a window without creating an
  * entirely new activity. Prompts are particularly useful for inquiring for a
  * specification on an action requiring user input.<br/>
- * <b>Do not launch with a {@link com.google.gwt.event.dom.client.TouchStartHandler} because some browsers
- * autoHide the Prompt immediately after appearing</b><br/>
+ * <b>Do not launch with a
+ * {@link com.google.gwt.event.dom.client.TouchStartHandler} because some
+ * browsers autoHide the Prompt immediately after appearing</b><br/>
  * Launch with {@link Prompt#appear()}<br/>
  * Remove with {@link Prompt#disappear()}<br/>
  */
-public class Prompt extends DialogBox {
+public class Prompt extends DialogBox implements Resizable {
 
 	private static final double HEIGHT_FRACTION = 0.7;
 	private static final double WIDTH_FRACTION = 0.8;
@@ -49,7 +50,7 @@ public class Prompt extends DialogBox {
 
 		flowPanel.getElement().getStyle().setOverflowY(Overflow.AUTO);
 
-//		getElement().getStyle().setBackgroundColor("#ADD850");
+		// getElement().getStyle().setBackgroundColor("#ADD850");
 		addStyleName(CSS.PROMPT_MAIN);
 		okButton.addStyleName(CSS.SMALLEST_BUTTON);
 
@@ -82,21 +83,13 @@ public class Prompt extends DialogBox {
 	public void disappear() {
 		super.hide();
 		removeFromParent();
-		Moderator.prompts.remove(this);
-
+		Moderator.resizables.remove(this);
 	}
 
 	public void appear() {
 		resize();
 		super.center();
-		Moderator.prompts.add(this);
-
-	}
-
-	public void resize() {
-		flowPanel.setPixelSize(
-				(int) (Window.getClientWidth() * WIDTH_FRACTION),
-				(int) (Window.getClientHeight() * HEIGHT_FRACTION));
+		Moderator.resizables.add(this);
 	}
 
 	@Override
@@ -107,6 +100,13 @@ public class Prompt extends DialogBox {
 	@Override
 	public void center() {
 		appear();
+	}
+
+	@Override
+	public void resize() {
+		flowPanel.setPixelSize(
+				(int) (Window.getClientWidth() * WIDTH_FRACTION),
+				(int) (Window.getClientHeight() * HEIGHT_FRACTION));
 	}
 
 }

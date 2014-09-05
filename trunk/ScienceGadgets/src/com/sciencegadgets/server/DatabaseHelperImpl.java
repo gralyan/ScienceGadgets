@@ -36,6 +36,11 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		ObjectifyService.register(QuantityKind.class);
 		ObjectifyService.register(Problem.class);
 	}
+	
+	@Override
+	public void saveEntity(Problem problem) {
+		ObjectifyService.ofy().save().entity(problem).now();
+	}
 
 	@Override
 	public Unit getUnit(String unitName) {
@@ -134,8 +139,14 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 
 	@Override
 	public ArrayList<Problem> getProblemsByBadges(HashSet<Badge> badges) {
-		List<Problem> probs = ObjectifyService.ofy().load().type(Problem.class)
+		List<Problem> probs;
+		if(badges == null) {
+			probs = ObjectifyService.ofy().load().type(Problem.class)
+					.list();
+		}else {
+		 probs = ObjectifyService.ofy().load().type(Problem.class)
 				.filter("requiredBadge in", badges).list();
+		}
 		ArrayList<Problem> problems = new ArrayList<Problem>();
 		problems.addAll(probs);
 		return problems;

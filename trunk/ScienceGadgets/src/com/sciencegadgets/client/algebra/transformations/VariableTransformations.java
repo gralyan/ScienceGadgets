@@ -168,7 +168,10 @@ class SubstituteButton extends VariableTransformationButton {
 			} else {
 				subParent.replaceChild(substitute, possibleSub);
 			}
-			Moderator.switchToAlgebra(subIntoEqEl, false);
+			
+			Window.alert("Not working, see VariableTransformations");
+			//TODO Equation
+//			Moderator.switchToAlgebra(subIntoEqEl, false, true);
 			break;
 
 		}

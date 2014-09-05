@@ -31,4 +31,5 @@ public interface DatabaseHelper extends RemoteService {
 	ArrayList<Problem> getProblemsByBadges(HashSet<Badge> badges);
 	Problem saveProblem(String title, String description, Badge requiredBadge,
 			Equation equation);
+	void saveEntity(Problem entity);
 }

@@ -19,13 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import com.allen_sauer.gwt.voices.client.Sound;
-import com.allen_sauer.gwt.voices.client.SoundController;
-import com.allen_sauer.gwt.voices.client.handler.PlaybackCompleteEvent;
-import com.allen_sauer.gwt.voices.client.handler.SoundLoadStateChangeEvent;
-import com.allen_sauer.gwt.voices.client.handler.SoundHandler;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -34,7 +28,6 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.media.client.Audio;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -50,11 +43,14 @@ import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.entities.Equation;
+import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
+import com.sciencegadgets.client.equationbrowser.ProblemDetails;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Prompt;
+import com.sciencegadgets.client.ui.Resizable;
 
 public class Moderator implements EntryPoint {
 
@@ -70,16 +66,16 @@ public class Moderator implements EntryPoint {
 	private static AlgebraActivity algebraActivity;
 	public static EquationBrowser equationBrowser;
 	private static ConversionActivity conversionActivity;
+	private static ProblemDetails problemActivity;
 
-	public static final LinkedList<Prompt> prompts = new LinkedList<Prompt>();
+	public static final LinkedList<Resizable> resizables = new LinkedList<Resizable>();
 	private static Student student = new Student("guest");
 	public static boolean isInEasyMode = false;
 	public final static Sounds SOUNDS = new Sounds();
 
 	@Override
 	public void onModuleLoad() {
-		
-	    
+
 		HistoryChange historyChange = new HistoryChange();
 		History.addValueChangeHandler(historyChange);
 
@@ -109,7 +105,7 @@ public class Moderator implements EntryPoint {
 	}
 
 	public enum ActivityType {
-		browser, algebrasolve, algebraedit, conversion;
+		browser, problem, algebrasolve, algebraedit, conversion;
 	}
 
 	public static void setActivity(ActivityType activityType, Widget activity) {
@@ -121,31 +117,28 @@ public class Moderator implements EntryPoint {
 		currentActivityType = activityType;
 	}
 
-	public static void switchToAlgebra(Element equationXML, boolean inEditMode) {
-		switchToAlgebra(equationXML, inEditMode, true);
-	}
-
-	public static void switchToAlgebra(Element equationXML, boolean inEditMode,
+	public static void switchToAlgebra(Element equationXML, boolean sameEquation, boolean inEditMode,
 			boolean updateHistory) {
-		switchToAlgebra(new EquationTree(equationXML, inEditMode), inEditMode,
-				updateHistory);
+		Equation eq = sameEquation && algebraActivity != null ? algebraActivity.getEquation(): null ;
+		switchToAlgebra(equationXML, eq, inEditMode, updateHistory);
 	}
 
-	public static void switchToAlgebra(EquationTree equationTree,
-			boolean inEditMode) {
-		switchToAlgebra(equationTree, inEditMode, true);
-	}
-
-	public static void switchToAlgebra(EquationTree equationTree,
+	public static void switchToAlgebra(Element equationXML, Equation equation,
 			boolean inEditMode, boolean updateHistory) {
+		switchToAlgebra(new EquationTree(equationXML, inEditMode), equation,
+				inEditMode, updateHistory);
+	}
+
+	public static void switchToAlgebra(EquationTree equationTree,
+			Equation equation, boolean inEditMode, boolean updateHistory) {
 		try {
 
 			if (algebraActivity == null
 					|| algebraActivity.inEditMode != inEditMode) {
-				algebraActivity = new AlgebraActivity(equationTree, inEditMode,
-						false);
+				algebraActivity = new AlgebraActivity(equationTree, equation,
+						inEditMode, false);
 			} else {
-				algebraActivity.setEquationTree(equationTree);
+				algebraActivity.setEquationTree(equationTree, equation);
 			}
 			algebraActivity.reloadEquationPanel(null, null, updateHistory);
 			ActivityType type = inEditMode ? ActivityType.algebraedit
@@ -160,7 +153,8 @@ public class Moderator implements EntryPoint {
 		}
 	}
 
-	public static void switchToConversion(EquationNode node, Equation variableEquation) {
+	public static void switchToConversion(EquationNode node,
+			Equation variableEquation) {
 
 		if (conversionActivity == null) {
 			conversionActivity = new ConversionActivity();
@@ -170,6 +164,18 @@ public class Moderator implements EntryPoint {
 		conversionActivity.load(node, variableEquation);
 
 		setActivity(ActivityType.conversion, conversionActivity);
+	}
+	
+	public static void switchToProblem(Problem problem) {
+		if (problemActivity == null) {
+			problemActivity = new ProblemDetails();
+		}
+		if(problem == null) {
+			problemActivity.getSummaryPanel().updateSolvedEquation();
+		}else {
+			problemActivity.loadProblem(problem);
+		}
+		setActivity(ActivityType.problem, problemActivity);
 	}
 
 	public static void switchToBrowser() {
@@ -240,13 +246,19 @@ public class Moderator implements EntryPoint {
 			@Override
 			public void run() {
 				fitWindow();
-				if (ActivityType.algebraedit.equals(currentActivityType)
-						|| ActivityType.algebrasolve
-								.equals(currentActivityType)) {
+				switch (currentActivityType) {
+				case algebraedit:
+				case algebrasolve:
 					reloadEquationPanel();
+					break;
+				case conversion:
+					conversionActivity.reloadEquation();
+					break;
+				default:
+					break;
 				}
-				for (Prompt prompt : prompts) {
-					prompt.resize();
+				for (Resizable resizable : resizables) {
+					resizable.resize();
 				}
 			}
 		};
@@ -337,10 +349,11 @@ public class Moderator implements EntryPoint {
 							.get(Parameter.equation);
 					Element equationXML = new HTML(equationString).getElement()
 							.getFirstChildElement();
-					switchToAlgebra(equationXML,
+					switchToAlgebra(equationXML, null,
 							ActivityType.algebraedit.equals(activityType),
 							false);
 					break;
+					//TODO case problem:
 				default:
 					throw new IllegalArgumentException();
 				}

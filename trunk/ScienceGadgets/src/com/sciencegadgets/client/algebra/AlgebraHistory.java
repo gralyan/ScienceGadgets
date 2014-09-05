@@ -39,8 +39,9 @@ public class AlgebraHistory extends FlowPanel {
 	boolean expanded = false;
 	public String origionalHeightStr;
 	public boolean scrolled = false;
-	FlowPanel firstRow = new FlowPanel();
+	private FlowPanel firstRow = new FlowPanel();
 	boolean wasTouchMoved = false;
+	public boolean isSolved = false;
 
 	public AlgebraHistory(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
@@ -72,7 +73,11 @@ public class AlgebraHistory extends FlowPanel {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		firstRow.setSize("100%", getOffsetHeight() + "px");
+		if(isSolved) {
+			firstRow.getElement().getStyle().clearHeight();
+		}else {
+			firstRow.setHeight(getOffsetHeight() + "px");
+		}
 	}
 
 	public void updateAlgebraHistory(String changeComment, Skill rule, EquationTree mathTree) {
@@ -84,7 +89,6 @@ public class AlgebraHistory extends FlowPanel {
 		if (changeComment.contains(BothSidesTransformations.UP_ARROW)) {
 			add(new AlgebraHistoryRow(changeComment));
 		}
-
 	}
 
 	void scrollToBottom() {

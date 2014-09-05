@@ -24,8 +24,8 @@ public class AlgebraBrowser extends SelectionPanel {
 	
 	public HashSet<Problem> problemsAvailable = new HashSet<Problem>();
 
-	public AlgebraBrowser(final ProblemDetails problemDetails) {
-		super("Algebra Practice", new ProblemSelectHandler(problemDetails));
+	public AlgebraBrowser() {
+		super("Algebra Practice", new ProblemSelectHandler());
 		
 		getElement().setId(CSS.ALG_BROWSER);
 
@@ -100,18 +100,11 @@ public class AlgebraBrowser extends SelectionPanel {
 
 
 class ProblemSelectHandler implements SelectionHandler{
-	
-	ProblemDetails problemDetails;
-
-	public ProblemSelectHandler(ProblemDetails problemDetails) {
-		this.problemDetails = problemDetails;
-	}
 
 	@Override
 	public void onSelect(Cell selected) {
 		Problem problem = (Problem)selected.getEntity();
-		problemDetails.loadProblem(problem);
-		
+		Moderator.switchToProblem(problem);
 	}
 }
 

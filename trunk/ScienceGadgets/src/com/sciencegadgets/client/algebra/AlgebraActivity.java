@@ -32,6 +32,7 @@ import com.sciencegadgets.client.algebra.transformations.specification.SimplifyQ
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
+import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.client.ui.FitParentHTML;
@@ -83,20 +84,22 @@ public class AlgebraActivity extends SimplePanel {
 	public static VariableSpecification varSpec;
 	public static NumberSpecification numSpec;
 	private EquationTree equationTree = null;
+	private Equation equation = null;
 
-	public AlgebraActivity(Element equationXML, boolean inEditMode,
-			boolean isSimplifyQuiz) {
-		this(new EquationTree(equationXML, inEditMode), inEditMode,
-				isSimplifyQuiz);
-	}
+//	public AlgebraActivity(Element equationXML, boolean inEditMode,
+//			boolean isSimplifyQuiz) {
+//		this(new EquationTree(equationXML, inEditMode), inEditMode,
+//				isSimplifyQuiz);
+//	}
 
-	public AlgebraActivity(EquationTree eTree, boolean inEditMode,
+	public AlgebraActivity(EquationTree eTree, Equation equation, boolean inEditMode,
 			boolean isSimplifyQuiz) {
 		add(mainPanel);
 
 		this.addStyleName(CSS.FILL_PARENT);
 		mainPanel.addStyleName(CSS.FILL_PARENT);
 
+		this.equation = equation;
 		this.inEditMode = inEditMode;
 		this.isSimplifyQuiz = isSimplifyQuiz;
 
@@ -130,11 +133,19 @@ public class AlgebraActivity extends SimplePanel {
 		this.equationTree = eTree;
 	}
 
+	public Equation getEquation() {
+		return equation;
+	}
+	
+	public void updateEquation() {
+		equation.reCreate(equationTree);
+	}
 	public EquationTree getEquationTree() {
 		return equationTree;
 	}
 
-	public void setEquationTree(EquationTree eTree) {
+	public void setEquationTree(EquationTree eTree, Equation equation) {
+		this.equation = equation;
 		equationTree = eTree;
 	}
 
@@ -203,7 +214,7 @@ public class AlgebraActivity extends SimplePanel {
 			if ((TypeSGET.Variable.equals(leftType) && TypeSGET.Number.equals(rightType))
 			|| (TypeSGET.Variable.equals(rightType) && TypeSGET.Number.equals(leftType))) {
 				SolvedPrompt solvedPrompt = new SolvedPrompt();
-				solvedPrompt.appear();
+				solvedPrompt.solved(this);
 			}
 		}
 
@@ -220,17 +231,22 @@ public class AlgebraActivity extends SimplePanel {
 					equationTree.getEquationXMLString());
 			URLParameters.setParameters(parameterMap, false);
 		}
-
-		
+	}
+	
+	public void clearTransformLists() {
+		bothSidesPanelLeft.clear();
+		bothSidesPanelRight.clear();
+		simplifyButtonsPanel.clear();
+		lowerEqArea.clear();
 	}
 
 	public void fillTransformLists(
 			TransformationList<TransformationButton> transSimplify,
 			BothSidesTransformations transBothSides) {
+		
+		clearTransformLists();
 
 		// Both Sides Buttons
-		bothSidesPanelLeft.clear();
-		bothSidesPanelRight.clear();
 		bothSidesPanelLeft.addAll(transBothSides);
 
 		for (int i = transBothSides.size(); i > 0; i--) {
@@ -239,8 +255,6 @@ public class AlgebraActivity extends SimplePanel {
 		}
 
 		// Simplify Buttons
-		simplifyButtonsPanel.clear();
-
 		LinkedList<SelectionButton> buttonsShown = new LinkedList<SelectionButton>();
 		simplifyPromptButton.setTransformationList(transSimplify);
 
@@ -254,8 +268,7 @@ public class AlgebraActivity extends SimplePanel {
 		}
 
 		simplifyButtonsPanel.addAll(buttonsShown);
-
-		lowerEqArea.clear();
+		
 		lowerEqArea.add(transformMain);
 	}
 

@@ -31,4 +31,7 @@ public interface DatabaseHelperAsync {
 			Badge requiredBadge, Equation equation,
 			AsyncCallback<Problem> asyncCallback);
 
+	void saveEntity(Problem entity,
+			AsyncCallback<Void> asyncCallback);
+
 }

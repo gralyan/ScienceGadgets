@@ -162,6 +162,10 @@ public class SelectionPanel extends FlowPanel {
 	public void addSelectionHandler(SelectionHandler handler) {
 		selectionHandler = handler;
 	}
+	
+	public boolean hasSelectionHandler() {
+		return selectionHandler != null;
+	}
 
 	public interface SelectionHandler {
 		void onSelect(SelectionPanel.Cell selected);
