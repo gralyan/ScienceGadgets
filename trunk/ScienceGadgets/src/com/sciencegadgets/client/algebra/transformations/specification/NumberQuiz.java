@@ -23,7 +23,7 @@ public abstract class NumberQuiz extends Quiz {
 
 	public NumberQuiz(String question, final BigDecimal totalValue) {
 
-		Label questionDisplay = new HTML(question);
+		HTML questionDisplay = new HTML(question + " = ");
 		questionDisplay.addStyleName(CSS.LAYOUT_ROW+" "+CSS.DOUBLE_FONT_SIZE);
 		add(questionDisplay);
 

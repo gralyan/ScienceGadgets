@@ -49,7 +49,6 @@ import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.equationbrowser.ProblemDetails;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.Resizable;
 
 public class Moderator implements EntryPoint {
@@ -59,6 +58,8 @@ public class Moderator implements EntryPoint {
 	public static RandomSpecPanel randomSpec = null;
 	public static final AbsolutePanel scienceGadgetArea = RootPanel
 			.get(CSS.SCIENCE_GADGET_AREA);
+	public static final AbsolutePanel blogArea = RootPanel
+			.get(CSS.BLOG_AREA);
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
@@ -171,7 +172,10 @@ public class Moderator implements EntryPoint {
 			problemActivity = new ProblemDetails();
 		}
 		if(problem == null) {
-			problemActivity.getSummaryPanel().updateSolvedEquation();
+			boolean isProblemSolved =  problemActivity.updateSolvedEquation();
+			if(isProblemSolved) {
+				return;
+			}
 		}else {
 			problemActivity.loadProblem(problem);
 		}
@@ -357,16 +361,17 @@ public class Moderator implements EntryPoint {
 				default:
 					throw new IllegalArgumentException();
 				}
-			} catch (NullPointerException | IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				switchToBrowser();
 				HashMap<Parameter, String> pMap = new HashMap<Parameter, String>();
 				pMap.put(Parameter.activity, ActivityType.browser.toString());
 				URLParameters.setParameters(pMap, false);
+			}catch (NullPointerException e) {
+				JSNICalls.log("null url parameter");
+				Window.Location.replace("/blog/index.html");
 			}
-
 		}
 	}
-
 }
 
 // String[] testNumbers = { ".00000010"//

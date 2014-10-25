@@ -5,26 +5,34 @@
 	<ui:style>
 	.problemDetails{
 	display: block;
-	width: 80%;
-	height: 80%;
+	width: 100%;
+	height: 100%;
 	margin: auto;
 	text-align: center;
 	background-color: white;
 	vertical-align: top;
 	overflow: auto; 
+	background-image: url("CSStyles/images/blue-clouds.png");
+		background-color: LightBlue;
+	background-size: 100% 100%;
 	}
 	.problemTitleContainer {
 		font-weight: bold;
-		border-bottom: solid 1px silver;
 		height: 10%;
 		width: 100%;
+		background-color: #4444FF;
+	}
+	.problemDescriptionContainer{
+		height: 10%;
+		width: 100%;
+		background-color: #BBBBFF;
 	}
 	.tabsPanel{
 		height: 10%;
 		width: 100%;
 	}
 	.detailContainer{
-		height: 80%;
+		height: 70%;
 		width: 100%;
 	}
 	</ui:style>
@@ -32,6 +40,8 @@
 	<g:HTMLPanel styleName="{style.problemDetails}">
 		
 		<g:SimplePanel styleName="{style.problemTitleContainer}" ui:field="problemTitleContainer"></g:SimplePanel>
+		
+		<g:SimplePanel styleName="{style.problemDescriptionContainer}" ui:field="problemDescriptionContainer"></g:SimplePanel>
 		
 		<sg:CommunistPanel styleName="{style.tabsPanel}" ui:field="tabsPanel"></sg:CommunistPanel>
 		

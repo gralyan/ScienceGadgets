@@ -10,6 +10,7 @@ import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.entities.users.Badge;
+import com.sciencegadgets.shared.Diagram;
 
 /**
  * The client side stub for the RPC service.
@@ -30,6 +31,7 @@ public interface DatabaseHelper extends RemoteService {
 	ArrayList<Problem> getProblemsByBadge(Badge badge);
 	ArrayList<Problem> getProblemsByBadges(HashSet<Badge> badges);
 	Problem saveProblem(String title, String description, Badge requiredBadge,
-			Equation equation);
+			Diagram diagram,
+			Equation equation, String toSolveID);
 	void saveEntity(Problem entity);
 }

@@ -9,6 +9,7 @@ import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.entities.users.Badge;
+import com.sciencegadgets.shared.Diagram;
 
 public interface DatabaseHelperAsync {
 	void getAlgebraEquations(AsyncCallback<Equation[]> asyncCallback);
@@ -28,8 +29,9 @@ public interface DatabaseHelperAsync {
 	void saveProblem(
 			String title,
 			String description,
-			Badge requiredBadge, Equation equation,
-			AsyncCallback<Problem> asyncCallback);
+ Badge requiredBadge,
+ Diagram diagram, Equation equation,
+			String toSolveID, AsyncCallback<Problem> asyncCallback);
 
 	void saveEntity(Problem entity,
 			AsyncCallback<Void> asyncCallback);

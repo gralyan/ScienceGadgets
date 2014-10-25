@@ -6,25 +6,21 @@
 		width: 100%;
 		height: 100%;
 	}
-	.problemDescription {
-		height: 30%;
-	}
 	.varPanel {
 		display: inline-block;
 		vertical-align: top;
 		width: 30%;
-		height: 70%;
+		height: 100%;
 	}
 	.eqPanel {
 		display: inline-block;
 		vertical-align: top;
-		width: 69%;
-		height: 70%;
-		border-left: solid silver 1px;
+		width: 68%;
+		height: 100%;
+		border-left: solid black 1px;
 	}
 	</ui:style>
 	<g:FlowPanel styleName="{style.summaryPanel}">
-		<g:Label styleName="{style.problemDescription}" ui:field="problemDescription" />
 		<g:FlowPanel styleName="{style.varPanel}" ui:field="varPanel"></g:FlowPanel>
 		<g:FlowPanel styleName="{style.eqPanel}" ui:field="eqPanel"></g:FlowPanel>
 	</g:FlowPanel>

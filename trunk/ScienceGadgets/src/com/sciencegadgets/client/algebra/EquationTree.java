@@ -15,24 +15,20 @@
 package com.sciencegadgets.client.algebra;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.core.java.util.Collections;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
@@ -60,7 +56,7 @@ public class EquationTree {
 	private boolean inEditMode;
 	private EquationValidator eqValidator;
 
-	public static final HashMap<String, EquationNode> IDS = new HashMap<String, EquationNode>();
+	public static final HashSet<String> IDS_USED = new HashSet<String>();
 	public static int ID_COUNTER = 0;
 	public static final String ID_PREFIX = "ML";
 
@@ -79,8 +75,9 @@ public class EquationTree {
 
 		bindXMLtoNodes(equationXML);
 
-		EquationRandomizer.randomizeNumbers(this, !inEditMode);
-
+		if (inEditMode) {
+			ConstantRandomizer.randomizeNumbers(this, !inEditMode);
+		}
 		// reloadDisplay(true);
 	}
 
@@ -98,15 +95,15 @@ public class EquationTree {
 	private static Element newDummyElement() {
 		Element eq = DOM.createElement(TypeSGET.Operation.getTag());
 		eq.setInnerText("=");
-		eq.setAttribute("id", "dummyNodeEquals");
+		eq.setAttribute(MathAttribute.ID.getAttributeName(), "dummyNodeEquals");
 
 		Element dummyLeft = DOM.createElement(TypeSGET.Variable.getTag());
 		dummyLeft.setInnerText("a");
-		dummyLeft.setAttribute("id", "dummyNodeLeft");
+		dummyLeft.setAttribute(MathAttribute.ID.getAttributeName(), "dummyNodeLeft");
 
 		Element dummyRight = DOM.createElement(TypeSGET.Variable.getTag());
 		dummyRight.setInnerText("a");
-		dummyRight.setAttribute("id", "dummyNodeRight");
+		dummyRight.setAttribute(MathAttribute.ID.getAttributeName(), "dummyNodeRight");
 
 		Element root = DOM.createElement(TypeSGET.Equation.getTag());
 		root.appendChild(dummyLeft);
@@ -129,7 +126,8 @@ public class EquationTree {
 	}
 
 	public String getEquationXMLString() {
-		equationXML.setAttribute("xmlns:sget", "http://www.sciencegadgets.org/Data");
+		equationXML.setAttribute("xmlns:sget",
+				"http://www.sciencegadgets.org/Data");
 		String equationString = JSNICalls.elementToString(equationXML);
 		equationString = equationString.replace(
 				" xmlns=\"http://www.w3.org/1998/Math/MathML\"", "").replace(
@@ -210,14 +208,14 @@ public class EquationTree {
 
 		for (int i = 0; i < allElements.getLength(); i++) {
 			Element el = (Element) allElements.getItem(i);
-			String elId = el.getAttribute("id");
+			String elId = el.getAttribute(MathAttribute.ID.getAttributeName());
 			if (elId.contains(UnitHTML.UNIT_NODE_DELIMITER)) {
 				String parentElId = elId.split(UnitHTML.UNIT_NODE_DELIMITER)[1];
 				idUnitHTMLMap.put(el, parentElId);
 			} else {
 				idHTMLMap.put(elId, el);
 			}
-			el.removeAttribute("id");
+			el.removeAttribute(MathAttribute.ID.getAttributeName());
 		}
 	}
 
@@ -250,12 +248,12 @@ public class EquationTree {
 
 	public EquationNode newNode(Element xmlNode) {
 		EquationNode newNode = new EquationNode(xmlNode);
-		AddToMaps(newNode);
+		addToMaps(newNode);
 
 		NodeList<Element> descendants = xmlNode.getElementsByTagName("*");
 		for (int i = 0; i < descendants.getLength(); i++) {
 			Element descendantEl = descendants.getItem(i);
-			AddToMaps(new EquationNode(descendantEl));
+			addToMaps(new EquationNode(descendantEl));
 		}
 
 		return newNode;
@@ -263,7 +261,7 @@ public class EquationTree {
 
 	public EquationNode newNode(TypeSGET type, String symbol) {
 		EquationNode newNode = new EquationNode(type, symbol);
-		AddToMaps(newNode);
+		addToMaps(newNode);
 		return newNode;
 	}
 
@@ -297,72 +295,74 @@ public class EquationTree {
 		HashSet<String> missingTreeIds = new HashSet<String>();
 		HashSet<String> missingMapIds = new HashSet<String>();
 		HashSet<String> missingMLMapIds = new HashSet<String>();
-		
-		for(String treeId : treeIds) {
-			if(!idMapIds.contains(treeId)){
+
+		for (String treeId : treeIds) {
+			if (!idMapIds.contains(treeId)) {
 				missingMapIds.add(treeId);
 			}
-			if(!idMLMapIds.contains(treeId)){
+			if (!idMLMapIds.contains(treeId)) {
 				missingMLMapIds.add(treeId);
 			}
 		}
-		for(String idMapId : idMapIds) {
-			if(!treeIds.contains(idMapId)){
+		for (String idMapId : idMapIds) {
+			if (!treeIds.contains(idMapId)) {
 				missingTreeIds.add(idMapId);
 			}
-			if(!idMLMapIds.contains(idMapId)){
+			if (!idMLMapIds.contains(idMapId)) {
 				missingMLMapIds.add(idMapId);
 			}
 		}
-		for(String idMLMapId : idMLMapIds) {
-			if(!treeIds.contains(idMLMapId)){
+		for (String idMLMapId : idMLMapIds) {
+			if (!treeIds.contains(idMLMapId)) {
 				missingTreeIds.add(idMLMapId);
 			}
-			if(!idMapIds.contains(idMLMapId)){
+			if (!idMapIds.contains(idMLMapId)) {
 				missingMapIds.add(idMLMapId);
 			}
 		}
-		
-		if(!missingTreeIds.isEmpty() || !missingMapIds.isEmpty() || !missingMLMapIds.isEmpty()) {
+
+		if (!missingTreeIds.isEmpty() || !missingMapIds.isEmpty()
+				|| !missingMLMapIds.isEmpty()) {
 
 			java.util.Collections.sort(treeIds);
 			java.util.Collections.sort(idMapIds);
 			java.util.Collections.sort(idMLMapIds);
 
 			String idMapString = "";
-			for(Entry<String, EquationNode> entry : idMap.entrySet()) {
-				idMapString = idMapString + "\n"+entry.getKey()+"\n"+entry.getValue();
+			for (Entry<String, EquationNode> entry : idMap.entrySet()) {
+				idMapString = idMapString + "\n" + entry.getKey() + "\n"
+						+ entry.getValue();
 			}
 
-			String errorMessage ="The binding maps are not in aggreement:"+
-			//
-			"\ngetNodes =\t" + treeIds + 
-			"\nidMap =\t\t" + idMapIds+ 
-			"\nidMLMap =\t" + idMLMapIds+
-			//
-			"\nmissing:"+
-			//
-			"\ngetNodes =\t" + missingTreeIds + 
-			"\nidMap =\t\t" + missingMapIds+ 
-			"\nidMLMap =\t" + missingMLMapIds+
-			//
-			"\n\neqation:\n"+getEquationXMLString()+ 
-			//
-			"\n\nidMap:\n"+idMapString;
+			String errorMessage = "The binding maps are not in aggreement:"
+					+
+					//
+					"\ngetNodes =\t" + treeIds + "\nidMap =\t\t" + idMapIds
+					+ "\nidMLMap =\t" + idMLMapIds
+					+
+					//
+					"\nmissing:"
+					+
+					//
+					"\ngetNodes =\t" + missingTreeIds + "\nidMap =\t\t"
+					+ missingMapIds + "\nidMLMap =\t" + missingMLMapIds +
+					//
+					"\n\neqation:\n" + getEquationXMLString() +
+					//
+					"\n\nidMap:\n" + idMapString;
 
 			JSNICalls.error(errorMessage);
 			throw new IllegalStateException(errorMessage, new Throwable(
 					errorMessage));
 		}
-		
-		
+
 	}
 
-	private void AddToMaps(EquationNode node) {
+	private void addToMaps(EquationNode node) {
 		String id = node.getId();
 		id = node.createId(id);
 
-		node.xmlNode.setAttribute("id", id);
+		node.xmlNode.setAttribute(MathAttribute.ID.getAttributeName(), id);
 		idMap.put(id, node);
 		idMLMap.put(id, node.getXMLNode());
 	}
@@ -406,7 +406,7 @@ public class EquationTree {
 		NodeList<Element> elements = parent.getXMLNode().getElementsByTagName(
 				tag);
 		for (int i = 0; i < elements.getLength(); i++) {
-			String id = elements.getItem(i).getAttribute("id");
+			String id = elements.getItem(i).getAttribute(MathAttribute.ID.getAttributeName());
 			nodes.add(idMap.get(id));
 		}
 		return nodes;
@@ -426,9 +426,9 @@ public class EquationTree {
 		 */
 		public EquationNode(Element xmlNode) {
 
-			String id = xmlNode.getAttribute("id");
+			String id = xmlNode.getAttribute(MathAttribute.ID.getAttributeName());
 			id = createId(id);
-			xmlNode.setAttribute("id", id);
+			xmlNode.setAttribute(MathAttribute.ID.getAttributeName(), id);
 
 			this.xmlNode = xmlNode;
 		}
@@ -450,7 +450,7 @@ public class EquationTree {
 			String tag = type.getTag();
 
 			Element newNode = DOM.createElement(tag);
-			newNode.setAttribute("id", createId(""));
+			newNode.setAttribute(MathAttribute.ID.getAttributeName(), createId(""));
 
 			this.xmlNode = newNode;
 
@@ -464,15 +464,15 @@ public class EquationTree {
 		public EquationNode clone() {
 			Element newEl = getXMLClone();
 			// Element newEl = (Element) xmlNode.cloneNode(true);
-			// newEl.removeAttribute("id");
+			// newEl.removeAttribute(MathAttribute.ID.getAttributeName());
 			EquationNode top = new EquationNode(newEl);
-			AddToMaps(top);
+			addToMaps(top);
 
 			NodeList<Element> descendants = newEl.getElementsByTagName("*");
 			for (int i = 0; i < descendants.getLength(); i++) {
 				Element descendantEl = descendants.getItem(i);
-				// descendantEl.removeAttribute("id");
-				AddToMaps(new EquationNode(descendantEl));
+				// descendantEl.removeAttribute(MathAttribute.ID.getAttributeName());
+				addToMaps(new EquationNode(descendantEl));
 			}
 
 			return top;
@@ -486,12 +486,25 @@ public class EquationTree {
 				}
 			}
 			String id = ID_PREFIX + ID_COUNTER++;
-			while (IDS.containsKey(id)) {
+			while (IDS_USED.contains(id)) {
 				id = ID_PREFIX + ID_COUNTER++;
 			}
 
-			IDS.put(id, this);
+			IDS_USED.add(id);
 			return id;
+		}
+
+		public void changeId(ArrayList<String> used) {
+			idMap.remove(getId());
+			idMLMap.remove(getId());
+
+			IDS_USED.addAll(used);
+
+			String id = createId(null);
+			xmlNode.setAttribute(MathAttribute.ID.getAttributeName(), id);
+
+			idMap.put(id, this);
+			idMLMap.put(id, this.getXMLNode());
 		}
 
 		/**
@@ -650,7 +663,7 @@ public class EquationTree {
 					xmlNode.insertBefore(elementNode, referenceChild);
 				}
 
-				AddToMaps(node);
+				addToMaps(node);
 			}
 		}
 
@@ -705,7 +718,7 @@ public class EquationTree {
 
 				if (curNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element childElement = ((Element) curNode);
-					String childId = childElement.getAttribute("id");
+					String childId = childElement.getAttribute(MathAttribute.ID.getAttributeName());
 					childrenNodes.add(getNodeById(childId));
 				}
 			}
@@ -727,7 +740,7 @@ public class EquationTree {
 						+ toString();
 				throw new IllegalArgumentException(response);
 			}
-			String id = ((Element) node).getAttribute("id");
+			String id = ((Element) node).getAttribute(MathAttribute.ID.getAttributeName());
 			return getNodeById(id);
 		}
 
@@ -818,7 +831,7 @@ public class EquationTree {
 								+ toString());
 			}
 			Element parentElement = getXMLNode().getParentElement();
-			String parentId = parentElement.getAttribute("id");
+			String parentId = parentElement.getAttribute(MathAttribute.ID.getAttributeName());
 			EquationNode parentNode = getNodeById(parentId);
 			return parentNode;
 		}
@@ -830,12 +843,12 @@ public class EquationTree {
 		public Element getXMLClone() {
 			Element xmlClone = (Element) xmlNode.cloneNode(true);
 
-			xmlClone.removeAttribute("id");
+			xmlClone.removeAttribute(MathAttribute.ID.getAttributeName());
 
 			NodeList<Element> descendants = xmlClone.getElementsByTagName("*");
 			for (int i = 0; i < descendants.getLength(); i++) {
 				Element descendantEl = descendants.getItem(i);
-				descendantEl.removeAttribute("id");
+				descendantEl.removeAttribute(MathAttribute.ID.getAttributeName());
 			}
 
 			return xmlClone;
@@ -953,7 +966,7 @@ public class EquationTree {
 		}
 
 		public String getId() {
-			return getXMLNode().getAttribute("id");
+			return getXMLNode().getAttribute(MathAttribute.ID.getAttributeName());
 		}
 
 		public UnitAttribute getUnitAttribute() {

@@ -128,8 +128,7 @@ public class InterFractionButton extends TransformationButton {
 			} else {// prompt
 
 				String question = target.getSymbol() + " "
-						+ Operator.DIVIDE.getSign() + " " + drag.getSymbol()
-						+ " = ";
+						+ Operator.DIVIDE.getSign() + " " + drag.getSymbol();
 				NumberQuiz prompt = new NumberQuiz(question, total) {
 					@Override
 					public void onIncorrect() {

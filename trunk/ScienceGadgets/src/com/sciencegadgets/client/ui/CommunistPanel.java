@@ -14,7 +14,7 @@ public class CommunistPanel extends FlowPanel {
 	boolean isHorizontal = false;
 
 	public CommunistPanel() {
-		this(false);
+		this(true);
 	}
 	public CommunistPanel(boolean isHorizontal) {
 		this.isHorizontal = isHorizontal;
@@ -41,8 +41,9 @@ public class CommunistPanel extends FlowPanel {
 	}
 	
 	public void clear() {
-		for(int i=0 ; i<getWidgetCount() ; i++) {
-			getWidget(i).removeFromParent();
+		int count = getWidgetCount();
+		for(int i=0 ; i<count ; i++) {
+			getWidget(0).removeFromParent();
 		}
 	}
 

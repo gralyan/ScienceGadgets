@@ -43,9 +43,10 @@ public static final String NUMBER_VALUE = "numberValue";
 //ScienceGadgets.css
 //////////////////////////////////////////////
 
+public static final String SCIENCE_GADGET_AREA = "scienceGadgetArea";
+public static final String BLOG_AREA = "blogArea";
 public static final String TEXT_CENTER = "textCenter";
 public static final String FILL_PARENT = "fillParent";
-public static final String SCIENCE_GADGET_AREA = "scienceGadgetArea";
 public static final String FIT_PARENT_HTML = "fitParentHTML";
 /*---------------Browsers---------------*/
 public static final String EQUATION_BROWSER = "equationBrowser";
@@ -59,6 +60,7 @@ public static final String SCI_BROWSER = "sciBrowser";
 public static final String SCI_BROWSER_VAR = "sciBrowseVar";
 public static final String SCI_BROWSER_EQ = "sciBrowseEq";
 public static final String SCI_BROWSER_SUM = "sciBrowseSum";
+public static final String DIAGRAM_MEASURE = "diagramMeasure";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "conversionActivity";
 /*---------------SelectionPanel---------------*/
@@ -117,6 +119,11 @@ public static final String MEDIUM_BUTTON = "mediumButton";
 public static final String BOTH_SIDES_BUTTON_SELECTED = "bothSidesButtonSelected";
 public static final String BOTH_SIDES_PANEL = "bothSidesPanel";
 public static final String SIMPLIFY_PANEL = "simplifyPanel";
+public static final String INSERT_VAR_DESCRIPTION = "insertVarDescription";
+public static final String INSERT_VAR_IMAGE = "insertVarImage";
+public static final String INSERT_VAR_IMAGE_ACTIVE = "insertVarImageActive";
+public static final String INSERT_VAR_SOLVE = "insertVarSolve";
+public static final String INSERT_VAR_SOLVE_ACTIVE = "insertVarSolveActive";
 
 
 }

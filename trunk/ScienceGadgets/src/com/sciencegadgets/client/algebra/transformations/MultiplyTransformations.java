@@ -462,8 +462,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 		} else {// prompt
 
 			String question = leftValue.toPlainString() + " "
-					+ operation.getSymbol() + " " + rightValue.toPlainString()
-					+ " = ";
+					+ operation.getSymbol() + " " + rightValue.toPlainString();
 
 			final HashMap<Skill, Integer> skillsIncrease = new HashMap<Skill, Integer>();
 			skillsIncrease.put(numberMagnitudeSkill, 0);

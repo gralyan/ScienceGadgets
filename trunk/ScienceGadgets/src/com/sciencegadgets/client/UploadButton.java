@@ -38,9 +38,7 @@ public class UploadButton extends Composite {
         	DataModerator.database.getBlobURL(new AsyncCallback<String>() {
 				@Override
 				public void onSuccess(String url) {
-					System.out.println("url: "+url);
 					url = url.replace("Silverado", "localhost");
-					System.out.println("url: "+url);
 					uploadButton.setAction(url);
 				}
 				@Override
@@ -76,7 +74,6 @@ public class UploadButton extends Composite {
                         @Override
                         public void onSubmitComplete(SubmitCompleteEvent event) {
                                 String newUrl = event.getResults();
-                                System.out.println("first SUB "+newUrl);
                                 setAction(newUrl);
                         }
                 });
