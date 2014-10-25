@@ -8,8 +8,8 @@ import com.google.gwt.user.client.History;
 
 public class URLParameters {
 	
-	public static final String PARAMETER_DELIMETER = "pardel";
-	public static final String PARAMETER_VALUE_DELIMETER = "parval";
+	public static final String PARAMETER_DELIMETER = "parameter";
+	public static final String PARAMETER_VALUE_DELIMETER = "value";
 	
 	public enum Parameter{
 		activity, equation;

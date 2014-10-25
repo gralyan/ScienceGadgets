@@ -16,6 +16,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 
 @Entity
@@ -55,8 +56,20 @@ public class Equation implements Serializable {
 		return PARSE_DOCUMENT(mathXML).getElementsByTagName(
 				TypeSGET.Variable.getTag());
 	}
-
-	public boolean isSolved() throws Exception {
+	
+	public boolean isSolved() {
+		try {
+			return getVarIdIfSolved() != null;
+		}catch (Exception e) {
+			return false;
+		}
+	}
+/**
+ * Checks if the equation is solved, (in the form [variable = number]). 
+ * @return variable id - If solved, the variable ID is returned. If not solved, null is returned.
+ * @throws Exception
+ */
+	public String getVarIdIfSolved() throws Exception {
 		Document doc = PARSE_DOCUMENT(mathML);
 		Node eqRootNode = doc.getFirstChild();
 		NodeList elements = eqRootNode.getChildNodes();
@@ -70,7 +83,7 @@ public class Equation implements Serializable {
 			Element el = (Element) elements.item(i);
 			boolean containedTag = tagsRequired.remove(el.getTagName());
 			if (!containedTag) {
-				return false;
+				return null;
 			}
 		}
 
@@ -80,8 +93,9 @@ public class Equation implements Serializable {
 			mathML = eqRootNode.toString();
 			reCreateHTML();
 		}
-
-		return true;
+		
+		Element var = (Element)elements.item(0);
+		return var.getAttribute(MathAttribute.ID.getAttributeName());
 	}
 	
 	public void reCreateHTML() {
@@ -94,6 +108,9 @@ public class Equation implements Serializable {
 		html = JSNICalls.elementToString(eTree.getDisplayClone().getElement());
 	}
 
+	public void setMathML(String mathML) {
+		this.mathML = mathML;
+	}
 	public String getMathML() {
 		return mathML;
 	}

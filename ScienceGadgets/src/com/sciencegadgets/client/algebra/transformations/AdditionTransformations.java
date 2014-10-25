@@ -337,7 +337,7 @@ class AddNumbersButton extends AddTransformButton {
 					+ leftValue.negate().toPlainString() + ")" : leftValue
 					.toString();
 			String question = leftSideOfQuestion + " " + operation.getSymbol()
-					+ " " + rightValue.toPlainString() + " = ";
+					+ " " + rightValue.toPlainString();
 
 			final HashMap<Skill, Integer> skillsIncrease = new HashMap<Skill, Integer>();
 			skillsIncrease.put(numberMagnitudeSkill, 0);

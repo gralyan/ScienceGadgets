@@ -22,6 +22,7 @@ import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.entities.users.Badge;
+import com.sciencegadgets.shared.Diagram;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitName;
@@ -52,10 +53,11 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 
 	@Override
 	public Problem saveProblem(String title, String description,
-			Badge requiredBadge, Equation equation) {
+			Badge requiredBadge,
+			Diagram diagram, Equation equation, String toSolveID) {
 
 		Problem problem = new Problem(title, description, requiredBadge,
-				equation);
+				equation, diagram, toSolveID);
 		ObjectifyService.ofy().save().entity(problem).now();
 		return problem;
 	}

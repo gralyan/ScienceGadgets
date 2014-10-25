@@ -383,6 +383,9 @@ public class BothSidesTransformations extends
 
 			// take operation
 			EquationNode operator = node.getPrevSibling();
+			if (operator != null && Operator.EQUALS.equals(operator.getOperation())) {
+				operator = null;
+			}
 			if (node.getIndex() > 0 && !isSide) {
 				if (!autoCancel) {
 					operator = operator.clone();
@@ -569,7 +572,7 @@ public class BothSidesTransformations extends
 			} else {
 				targetSide.append(node.clone());
 
-//				node = node.clone();
+				// node = node.clone();
 				EquationNode sameSideTarget = topParent;
 				if (AutoIntoFraction) {
 					sameSideTarget = topParent.getChildAt(0);

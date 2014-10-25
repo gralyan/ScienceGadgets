@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.equationbrowser;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 import com.google.gwt.core.client.GWT;
@@ -9,7 +10,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
@@ -29,28 +29,23 @@ public class ProblemSummayPanel extends Composite {
 	}
 
 	@UiField
-	Label problemDescription;
-	@UiField
 	FlowPanel varPanel;
 	@UiField
 	FlowPanel eqPanel;
-	
+
 	EquationSolveButton currentEqButton;
 
 	public ProblemSummayPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
-	public void loadProblem(Problem problem) {
+	public void loadProblem(Problem problem, HashMap<String, String> randomMap) {
 		currentEqButton = null;
-		
-		problemDescription.setText(problem.getDescription());
 
 		varPanel.clear();
 		eqPanel.clear();
 
 		HashSet<Equation> equations = problem.getEquations();
-
 		if (equations != null) {
 			for (Equation eq : equations) {
 				try {
@@ -67,15 +62,10 @@ public class ProblemSummayPanel extends Composite {
 	}
 
 	public void updateSolvedEquation() {
-		try {
-			if(currentEqButton.equation.isSolved()) {
-				varPanel.add(currentEqButton);
-				currentEqButton.isSolved = true;
-			}
-		}catch (Exception e) {
-		}
+		varPanel.add(currentEqButton);
+		currentEqButton.isSolved = true;
 	}
-	
+
 	class EquationSolveButton extends SelectionButton {
 		Equation equation;
 		boolean isSolved = false;
@@ -90,13 +80,14 @@ public class ProblemSummayPanel extends Composite {
 		@Override
 		protected void onLoad() {
 			super.onLoad();
+			equation.reCreateHTML();
 			setHTML(equation.getHtml());
 		};
 
 		@Override
 		protected void onSelect() {
 			currentEqButton = this;
-			
+
 			String equationXMLStr = equation.getMathML();
 			if (isSolved) {
 				EquationNode node = (new EquationTree(new HTML(equationXMLStr)

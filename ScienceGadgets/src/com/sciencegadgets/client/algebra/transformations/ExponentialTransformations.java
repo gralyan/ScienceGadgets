@@ -237,7 +237,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 
 		} else {// prompt
 
-			String question = exponential.getHTMLString(true, true) + " = ";
+			String question = exponential.getHTMLString(true, true);
 			NumberQuiz prompt = new NumberQuiz(question, totalValue) {
 				@Override
 				public void onIncorrect() {

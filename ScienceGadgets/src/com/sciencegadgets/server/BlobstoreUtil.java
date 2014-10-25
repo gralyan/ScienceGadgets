@@ -100,15 +100,22 @@ public class BlobstoreUtil {
 	}
 
 	/**
-	 * Gets the serving url of an image to serve from the blobstore using the string value of its blob key
-	 * @param blobKey - The blob key of the image to serve as a string
+	 * Gets the serving url of an image to serve from the blobstore using the
+	 * string value of its blob key
+	 * 
+	 * @param blobKey
+	 *            - The blob key of the image to serve as a string
 	 * @return
 	 */
 	public static String getImageURL(BlobKey blobKey) {
-		ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey)
-				.imageSize(100).secureUrl(false);
-		String servingUrl = ImagesServiceFactory.getImagesService()
-				.getServingUrl(options);
-		return servingUrl;
+		try {
+			ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(
+					blobKey).secureUrl(false);
+			String servingUrl = ImagesServiceFactory.getImagesService()
+					.getServingUrl(options);
+			return servingUrl;
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 }
