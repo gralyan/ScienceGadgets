@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+
+h1{
+	text-align: center;
+	padding: 2%;
+	background-color: green;
+}
+#blogArea{
+	width:100%;
+}
+
+#navigationPanel{
+	width:30%;
+	display: inline-block;
+	vertical-align: top;
+	padding: 1%;
+	
+	
+}
+
+#blogEntryPanel{
+	width:65%;
+	display: inline-block;
+	vertical-align: top;
+	padding: 1%;
+	
+}
