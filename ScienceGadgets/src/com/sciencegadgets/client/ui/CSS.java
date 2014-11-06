@@ -44,6 +44,7 @@ public static final String NUMBER_VALUE = "numberValue";
 //////////////////////////////////////////////
 
 public static final String SCIENCE_GADGET_AREA = "scienceGadgetArea";
+public static final String WELCOME_PAGE_AREA = "welcomePageArea";
 public static final String BLOG_AREA = "blogArea";
 public static final String TEXT_CENTER = "textCenter";
 public static final String FILL_PARENT = "fillParent";

@@ -233,7 +233,7 @@ public abstract class QuantitySpecification extends Prompt {
 
 			disappear();
 			System.out.println();
-			algebraActivity.reloadEquationPanel(null, null, false);
+			algebraActivity.reloadEquationPanel(null, null, true);
 		}
 	}
 

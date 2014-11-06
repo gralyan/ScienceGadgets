@@ -186,7 +186,7 @@ public class EquationHTML extends HTML {
 			break;
 		case Number:
 			UnitAttribute unitName = mNode.getUnitAttribute();
-			if (!"".equals(unitName)) {
+			if (!"".equals(unitName.toString())) {
 				unit = UnitHTML.create(unitName, id, hasSmallUnits);
 			}
 			// falls through

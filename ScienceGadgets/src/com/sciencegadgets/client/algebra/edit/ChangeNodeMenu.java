@@ -147,7 +147,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 		public void transform() {
 			node.replace(node.getTree().newNode(copiedNodeXML));
 
-			algebraActivity.reloadEquationPanel(null, null, false);
+			algebraActivity.reloadEquationPanel(null, null, true);
 		}
 	}
 	// //////////////////////////////////////////
@@ -214,7 +214,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 				node.replace(TypeSGET.Variable, NOT_SET);
 				break;
 			}
-			algebraActivity.reloadEquationPanel(null, null, false);
+			algebraActivity.reloadEquationPanel(null, null, true);
 //			Moderator.reloadEquationPanel();
 		}
 	}
@@ -259,7 +259,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 							super.onSpecify(base);
 							EquationNode log = node.encase(TypeSGET.Log);
 							log.setAttribute(MathAttribute.LogBase, base);
-							algebraActivity.reloadEquationPanel(null, null, false);
+							algebraActivity.reloadEquationPanel(null, null, true);
 //							Moderator.reloadEquationPanel();
 						}
 					};
@@ -275,7 +275,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 							EquationNode func = node
 									.encase(TypeSGET.Trig);
 							func.setAttribute(MathAttribute.Function, function);
-							algebraActivity.reloadEquationPanel(null, null, false);
+							algebraActivity.reloadEquationPanel(null, null, true);
 //							Moderator.reloadEquationPanel();
 						}
 					};
@@ -328,7 +328,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 				newNode.append(TypeSGET.Variable, NOT_SET);
 				break;
 			}
-			algebraActivity.reloadEquationPanel(null, null, false);
+			algebraActivity.reloadEquationPanel(null, null, true);
 //			Moderator.reloadEquationPanel();
 
 		}

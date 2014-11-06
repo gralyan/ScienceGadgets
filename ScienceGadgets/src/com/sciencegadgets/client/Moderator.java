@@ -58,8 +58,8 @@ public class Moderator implements EntryPoint {
 	public static RandomSpecPanel randomSpec = null;
 	public static final AbsolutePanel scienceGadgetArea = RootPanel
 			.get(CSS.SCIENCE_GADGET_AREA);
-	public static final AbsolutePanel blogArea = RootPanel
-			.get(CSS.BLOG_AREA);
+	private static final AbsolutePanel welcomePageArea = RootPanel
+			.get(CSS.WELCOME_PAGE_AREA);
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
@@ -118,9 +118,10 @@ public class Moderator implements EntryPoint {
 		currentActivityType = activityType;
 	}
 
-	public static void switchToAlgebra(Element equationXML, boolean sameEquation, boolean inEditMode,
-			boolean updateHistory) {
-		Equation eq = sameEquation && algebraActivity != null ? algebraActivity.getEquation(): null ;
+	public static void switchToAlgebra(Element equationXML,
+			boolean sameEquation, boolean inEditMode, boolean updateHistory) {
+		Equation eq = sameEquation && algebraActivity != null ? algebraActivity
+				.getEquation() : null;
 		switchToAlgebra(equationXML, eq, inEditMode, updateHistory);
 	}
 
@@ -166,17 +167,17 @@ public class Moderator implements EntryPoint {
 
 		setActivity(ActivityType.conversion, conversionActivity);
 	}
-	
+
 	public static void switchToProblem(Problem problem) {
 		if (problemActivity == null) {
 			problemActivity = new ProblemDetails();
 		}
-		if(problem == null) {
-			boolean isProblemSolved =  problemActivity.updateSolvedEquation();
-			if(isProblemSolved) {
+		if (problem == null) {
+			boolean isProblemSolved = problemActivity.updateSolvedEquation();
+			if (isProblemSolved) {
 				return;
 			}
-		}else {
+		} else {
 			problemActivity.loadProblem(problem);
 		}
 		setActivity(ActivityType.problem, problemActivity);
@@ -343,6 +344,10 @@ public class Moderator implements EntryPoint {
 			HashMap<Parameter, String> parameterMap = URLParameters
 					.getParameterMap();
 			String activityParameter = parameterMap.get(Parameter.activity);
+			
+			welcomePageArea.setVisible(false);
+			scienceGadgetArea.setVisible(true);
+			
 			try {
 				ActivityType activityType = ActivityType
 						.valueOf(activityParameter);
@@ -357,18 +362,25 @@ public class Moderator implements EntryPoint {
 							ActivityType.algebraedit.equals(activityType),
 							false);
 					break;
-					//TODO case problem:
+				case browser:
+					switchToBrowser();
+					// TODO case problem:
 				default:
 					throw new IllegalArgumentException();
 				}
-			} catch (IllegalArgumentException e) {
-				switchToBrowser();
-				HashMap<Parameter, String> pMap = new HashMap<Parameter, String>();
-				pMap.put(Parameter.activity, ActivityType.browser.toString());
-				URLParameters.setParameters(pMap, false);
-			}catch (NullPointerException e) {
-				JSNICalls.log("null url parameter");
-				Window.Location.replace("/blog/index.html");
+
+			} catch (NullPointerException | IllegalArgumentException e) {
+				// switchToBrowser();
+				// HashMap<Parameter, String> pMap = new HashMap<Parameter,
+				// String>();
+				// pMap.put(Parameter.activity,
+				// ActivityType.browser.toString());
+				// URLParameters.setParameters(pMap, false);
+
+				// Window.Location.replace("/blog/index.html");
+
+				scienceGadgetArea.setVisible(false);
+				welcomePageArea.setVisible(true);
 			}
 		}
 	}
