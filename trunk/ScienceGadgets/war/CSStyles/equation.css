@@ -1,17 +1,5 @@
 @CHARSET "UTF-8";
 
-@font-face {
-	font-family: 'math';
-	src: url('fonts/math.eot?') format('eot'), url('fonts/math.woff')
-		format('woff'), url('fonts/math.otf') format('opentype');
-}
-
-/* Note */
-/* There should be no spaces, auto-formatting adds space*/
-body {
-	font-family: math;
-}
-
 .interactiveEquation {
 	/* 	gray out the background of the equation to make wrappers stand out */
 	color: #A0A0A0;
@@ -24,31 +12,37 @@ body {
 }
 
 /*---------------Wrappers---------------*/
+
+
+/* Note * There should be no spaces, auto-formatting adds space*/
 .displayWrapper.in-sum.Operation { /* add/subtract(+/-) */
-/* 	background-image: url('images/tile_sumOp.png'); */
-/* 	background-repeat: no-repeat; */
-/* 	background-size: 100% 100%; */
+	/* 	background-image: url('images/tile_sumOp.png'); */
+	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
+	
 }
 
-.displayWrapper.Sum { /* Note */
+/* Note * There should be no spaces, auto-formatting adds space*/
+.displayWrapper.Sum {
 	/* 	background-image: url('images/tile_sumChild.png'); */
 	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
 	background-color: gold;
 }
 
-.displayWrapper>.fenced.Sum { /* Note */
+/* Note * There should be no spaces, auto-formatting adds space*/
+.displayWrapper>.fenced.Sum {
 	background-image: url('images/tile_sumChild.png');
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 }
 
+/* Note * There should be no spaces, auto-formatting adds space*/
 .displayWrapper.in-term.Operation { /* multiply(x) */
-/* 	background-image: url('images/tile_termOp.png'); */
-/* 	background-repeat: no-repeat; */
-/* 	background-size: 100% 100%; */
+	/* 	background-image: url('images/tile_termOp.png'); */
+	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
+	
 }
 
-.displayWrapper.Term { /* Note */
+.displayWrapper.Term {
 	/* 	background-image: url('images/tile_termChild.png'); */
 	/* 	background-repeat: repeat; */
 	background-color: red;
@@ -77,8 +71,9 @@ body {
 .displayWrapper.Variable {
 	background-color: blue;
 }
-.displayWrapper.Equation {
-/* 	background-color: white; */
+
+.displayWrapper.Equation { /* 	background-color: white; */
+	
 }
 /*---------------EquationHTML (display)---------------*/
 .Equation {
@@ -92,34 +87,36 @@ body {
 
 .in-equation {
 	display: inline-block;
-/* 	position: relative; */
+	/* 	position: relative; */
 }
 
 .in-sum {
 	display: inline-block;
-/* 	position: relative; */
+	/* 	position: relative; */
 }
 
 .in-term {
 	display: inline-block;
-/* 	position: relative; */
+	/* 	position: relative; */
 }
 
 .in-exponential-base {
 	display: inline-block;
 }
 
-.in-exponential-exponent {
-/* 	font-size: 40%; */
+.in-exponential-exponent { /* 	font-size: 40%; */
 	display: inline-block;
 	vertical-align: super;
 	position: relative;
 }
 
-.in-exponential-exponent.Fraction{
+/* Note * There should be no spaces, auto-formatting adds space*/
+.in-exponential-exponent.Fraction {
 	font-size: 20%;
 }
-.in-exponential-exponent:not(.Fraction){
+
+/* Note * There should be no spaces, auto-formatting adds space*/
+.in-exponential-exponent:not(.Fraction ){
 	font-size: 40%;
 }
 
@@ -134,14 +131,14 @@ body {
 .in-fraction-denominator {
 	padding-left: 0.7em;
 	padding-right: 0.7em;
-	text-decoration: none;
+/* 	text-decoration: none; */
 	text-align: center;
 	border-top: 1px solid;
 }
 
 .in-log {
 	display: inline-block;
-/* 	position: relative; */
+	/* 	position: relative; */
 	border-right: solid .05em;
 	border-left: solid .05em;
 	border-radius: 1em;
@@ -152,7 +149,7 @@ body {
 
 .in-trig {
 	display: inline-block;
-/* 	position: relative; */
+	/* 	position: relative; */
 	border-right: solid .05em;
 	border-left: solid .05em;
 	border-radius: 1em;
@@ -165,7 +162,7 @@ body {
 	font-size: 40%;
 	display: inline-block;
 	vertical-align: sub;
-/* 	position: relative; */
+	/* 	position: relative; */
 }
 
 .fenced {
@@ -179,7 +176,7 @@ body {
 
 .functionName {
 	display: inline-block;
-/* 	position: relative; */
+	/* 	position: relative; */
 	vertical-align: middle;
 }
 
@@ -187,12 +184,13 @@ body {
 	font-family: sans-serif;
 }
 
-.subscript{
+.subscript {
 	vertical-align: sub;
 	display: inline-block;
 	font-size: 50%;
 }
-.numberValue{
+
+.numberValue {
 	z-index: 3;
 	overflow: hidden;
 	color: gray;
@@ -218,7 +216,9 @@ body {
 /* } */
 /* .displayWrapper.in-term:not(.Operation) { */
 /* 	/* Note */
+
  
+
 *
 /
 /* 	background-image: url('images/tile_termChild.png'); */
@@ -226,7 +226,9 @@ body {
 /* } */
 /* .displayWrapper.in-equation:not(.Operation) { */
 /* 	/* Note */
+
  
+
 *
 /
 /* 	background-color: teal; */
