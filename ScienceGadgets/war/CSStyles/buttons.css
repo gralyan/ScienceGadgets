@@ -5,20 +5,10 @@
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
-/* 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa */
-/* 		), color-stop(1, #80b5ea) ); */
-/* 	background: -moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%); */
-/* 	background: -webkit-linear-gradient(top, #bddbfa 5%, #80b5ea 100%); */
-/* 	background: -o-linear-gradient(top, #bddbfa 5%, #80b5ea 100%); */
-/* 	background: -ms-linear-gradient(top, #bddbfa 5%, #80b5ea 100%); */
-/* 	background: linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); */
-/* 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', */
-/* 		endColorstr='#80b5ea', GradientType=0 ); */
-/* 	background-color: #50faa8; */
 	text-align: center;
-	-moz-box-shadow: inset #000000 1px 0 0 0;
-	-webkit-box-shadow: inset #000000 1px 0 0 0;
-	box-shadow: inset #000000 1px 0 0 0;
+	-moz-box-shadow: #000000 0 0 1px 1px;
+	-webkit-box-shadow: #000000 0 0 1px 1px;
+	box-shadow: #000000 0 0 1px 1px;
 }
 
 .transformationButton:disabled {
@@ -27,10 +17,17 @@
 }
 
 .transformationButton:hover {
+	-moz-box-shadow: #000000 0 0 2px 2px;
+	-webkit-box-shadow: #000000 0 0 2px 2px;
+	box-shadow: #000000 0 0 2px 2px;
 	text-shadow: 1px 3px 4px #000000;
 }
 
 .transformationButton:active {
+	-moz-box-shadow: #000000 0 0 3px 3px;
+	-webkit-box-shadow: #000000 0 0 3px 3px;
+	box-shadow: #000000 0 0 3px 3px;
+	text-shadow: 2px 3px 4px #000000;
 	position: relative;
 	top: 1px;
 }
@@ -46,6 +43,41 @@
 
 .bothSidesButton {
 	background-color: white;
+}
+
+.bothSidesButtonSelected {
+	background-color: black;
+	color: white;
+}
+
+.tab {
+	background-image: url('images/tab.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	display: inline-block;
+}
+.insertVarDescription{
+	background-color: gray;
+	color: white;
+	border: 2px solid black;
+}
+.insertVarImage{
+	background-color: white;
+	color: black;
+	border: 2px solid silver;
+}
+.insertVarImageActive{
+	background-color: silver;
+	color: black;
+}
+.insertVarSolve{
+	background-color: gray;
+	color: white;
+	border: 2px solid black;
+}
+.insertVarSolveActive{
+	background-color: silver;
+	color: black;
 }
 
 .smallestButton {
