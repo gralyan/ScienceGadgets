@@ -77,7 +77,7 @@ public class AssociativeDropController extends TransformationDropController {
 		HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
 		skills.put(Skill.COMMUNATIVE_PROPERTY, 1);
 		((EquationWrapper) getDropTarget()).getAlgebraActivity()
-				.reloadEquationPanel("Associative Property", skills, false);
+				.reloadEquationPanel("Associative Property", skills, true);
 		// Moderator.reloadEquationPanel("Associative Property",
 		// Skill.COMMUNATIVE_PROPERTY);
 	}
