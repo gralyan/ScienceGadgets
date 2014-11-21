@@ -4,38 +4,34 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.HasTouchEndHandlers;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.edit.LinkPrompt;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
-import com.sciencegadgets.client.algebra.transformations.specification.SimplifyQuiz;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
+import com.sciencegadgets.client.algebra.transformations.specification.SimplifyQuiz;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
-import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.client.ui.SolvedPrompt;
 import com.sciencegadgets.shared.TypeSGET;
@@ -112,10 +108,23 @@ public class AlgebraActivity extends SimplePanel {
 
 		if (inEditMode) {
 			if (!isSimplifyQuiz) {
-				Button saveEquationButton = new Button("Save Equation",
-						new SaveButtonHandler());
-				saveEquationButton.setStyleName("saveEquationButton");
-				upperMidEqArea.add(saveEquationButton);
+				String user = URLParameters.getParameter(Parameter.user);
+				if(URLParameters.USER_ADMIN.equals(user)) {
+					Button createLinkButton = new Button("Create Link",
+							new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent arg0) {
+									new LinkPrompt(AlgebraActivity.this).appear();
+								}
+							});
+					createLinkButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
+					upperMidEqArea.add(createLinkButton);
+				}else{
+					Button saveEquationButton = new Button("Save Equation",
+							new SaveButtonHandler());
+					saveEquationButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
+					upperMidEqArea.add(saveEquationButton);
+				}
 			}
 		} else {
 			algOut = new AlgebraHistory(this);

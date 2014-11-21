@@ -1056,7 +1056,7 @@ public class EquationTree {
 		}
 
 		public String getHTMLString(boolean hasSmallUnits, boolean hasSubscripts) {
-			return getHTMLClone(hasSmallUnits, hasSubscripts).getString();
+			return JSNICalls.elementToString(getHTMLClone(hasSmallUnits, hasSubscripts));
 		}
 
 		/**

@@ -106,7 +106,7 @@ public class Moderator implements EntryPoint {
 	}
 
 	public enum ActivityType {
-		browser, problem, algebrasolve, algebraedit, conversion;
+		browser, problem, algebrasolve, algebraedit, conversion, blog;
 	}
 
 	public static void setActivity(ActivityType activityType, Widget activity) {
@@ -343,6 +343,12 @@ public class Moderator implements EntryPoint {
 
 			HashMap<Parameter, String> parameterMap = URLParameters
 					.getParameterMap();
+			
+			String easyParameter = parameterMap.get(Parameter.easy);
+			if(URLParameters.TRUE.equalsIgnoreCase(easyParameter)) {
+				isInEasyMode = true;
+			}
+			
 			String activityParameter = parameterMap.get(Parameter.activity);
 			
 			welcomePageArea.setVisible(false);
@@ -381,6 +387,8 @@ public class Moderator implements EntryPoint {
 
 				scienceGadgetArea.setVisible(false);
 				welcomePageArea.setVisible(true);
+				
+				currentActivityType = ActivityType.blog;
 			}
 		}
 	}

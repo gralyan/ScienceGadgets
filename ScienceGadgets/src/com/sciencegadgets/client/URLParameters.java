@@ -10,9 +10,12 @@ public class URLParameters {
 	
 	public static final String PARAMETER_DELIMETER = "parameter";
 	public static final String PARAMETER_VALUE_DELIMETER = "value";
+	public static final String TRUE = "true";
+	public static final String False = "false";
+	public static final String USER_ADMIN = "admin";
 	
 	public enum Parameter{
-		activity, equation;
+		activity, equation, easy, user;
 	}
 
 	public static HashMap<Parameter, String> getParameterMap() {
@@ -39,13 +42,18 @@ public class URLParameters {
 	}
 	
 	public static void setParameters(HashMap<Parameter, String> parameterMap, boolean issueEvent) {
+		String historyToken = makeTolken(parameterMap);
+		History.newItem(historyToken, issueEvent);
+	}
+	
+	public static String makeTolken(HashMap<Parameter, String> parameterMap) {
 		String historyToken = "";
 		for(Entry<Parameter, String> entry : parameterMap.entrySet()) {
 			historyToken = historyToken + PARAMETER_DELIMETER + entry.getKey()+PARAMETER_VALUE_DELIMETER+entry.getValue();
 		}
 		historyToken = historyToken.substring(PARAMETER_DELIMETER.length());
-		historyToken = URL.encodePathSegment(historyToken);
-		History.newItem(historyToken, issueEvent);
+		return URL.encodePathSegment(historyToken);
+		
 	}
 	
 }

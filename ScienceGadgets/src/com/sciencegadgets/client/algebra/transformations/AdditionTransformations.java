@@ -229,6 +229,7 @@ class AddZeroButton extends AddTransformButton {
 
 	@Override
 	public void transform() {
+		operation.highlight();
 		zero.highlight();
 
 		if (isMinus && other.getIndex() > zero.getIndex()) {
@@ -239,8 +240,8 @@ class AddZeroButton extends AddTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd(other.getHTML(true, true) + " + 0 = "
-				+ other.getHTML(true, true));
+		onTransformationEnd(other.getHTMLString(true, true) + " + 0 = "
+				+ other.getHTMLString(true, true));
 	}
 
 	@Override
