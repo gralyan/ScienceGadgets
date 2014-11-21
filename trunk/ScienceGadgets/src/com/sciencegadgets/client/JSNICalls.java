@@ -9,8 +9,8 @@ public class JSNICalls {
 	public static void TIME_ELAPSED(String placementMessage) {
 		long current = System.currentTimeMillis();
 		long elapsed = (current - lastTime);
-		if(elapsed > 50) {
-		JSNICalls.warn(placementMessage + " " + elapsed);
+		if (elapsed > 50) {
+			JSNICalls.warn(placementMessage + " " + elapsed);
 		}
 		lastTime = current;
 	}

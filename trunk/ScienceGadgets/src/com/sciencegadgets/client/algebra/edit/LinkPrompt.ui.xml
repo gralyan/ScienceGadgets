@@ -1,0 +1,49 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:com.google.gwt.dom.client">
+	<ui:style>
+	.params {
+		height: 60px;
+	}
+	
+	.code {
+		display: inline-block;
+		width: 50%;
+		overflow: scroll;
+		font-family: monospace;
+		background-color: gray;
+		vertical-align: top;
+	}
+	
+	.display {
+		display: inline-block;
+		width: 50%;
+		vertical-align: top;
+	}
+	</ui:style>
+
+	<g:FlowPanel>
+	
+		<g:FlowPanel styleName="{style.params}" ui:field="params"></g:FlowPanel>
+
+		<g:FlowPanel>
+			<g:FlowPanel styleName="{style.code}">
+				<g:Label ui:field="linkCode"></g:Label>
+			</g:FlowPanel>
+			<g:FlowPanel styleName="{style.display}">
+				<g:Anchor ui:field="linkDisplay"></g:Anchor>
+			</g:FlowPanel>
+
+		</g:FlowPanel>
+
+		<g:FlowPanel>
+			<g:FlowPanel styleName="{style.code}">
+				<g:Label ui:field="iframeCode"></g:Label>
+			</g:FlowPanel>
+			<g:FlowPanel styleName="{style.display}" ui:field="iFrameContainer">
+			</g:FlowPanel>
+		</g:FlowPanel>
+		
+	</g:FlowPanel>
+	
+</ui:UiBinder>
