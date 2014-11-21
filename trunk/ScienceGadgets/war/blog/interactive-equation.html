@@ -14,6 +14,12 @@
 
 <link type="text/css" rel="stylesheet" href="../CSStyles/equation.css"></link>
 
+<style type="text/css">
+dt{
+padding-top:1em;
+}
+</style>
+
 </head>
 
 <body>
@@ -29,18 +35,22 @@
 
 		<div id="blogArea">
 			<div id="navigationPanel">
-				<a href="../ScienceGadgets.html">Home</a><br />
+				<a href="http://sciencegadgets.org">Home</a>
 				<!---->
-				<a href="blog/thesis.html">Research</a><br />
+				<a href="http://sciencegadgets.org/blog/applying_gadgets.html">Applying Gadgets</a>
 				<!---->
-				Interactive Equation<br />
+				<a href="http://sciencegadgets.org/blog/thesis.html">Research</a>
 				<!---->
-				<a href="http://sciencegadgets.org/#activityvaluebrowser">Browser</a><br />
+				<a href="http://sciencegadgets.org/blog/presentation-summary.html">ISTE Presentation</a>
+				<!---->
+				<a href="http://sciencegadgets.org/blog/interactive-equation.html">Interactive Equation</a>
+				<!---->
+				<a href="http://sciencegadgets.org/#activityvaluebrowser">Browser</a>
 				<!---->
 			</div>
 
 			<div id="blogEntryPanel">
-				<h2>Interactive Equation</h2>
+				<h1>Interactive Equation</h1>
 				<p>
 					The interactive equation in Science Gadgets was designed to help
 					students understand the structure of equations and the relationship
@@ -62,7 +72,7 @@
 					encourage focus on appropriate skills. For more background
 					information, please see the <a href="blog/thesis.html">research</a>
 				</p>
-				<h3>Structure</h3>
+				<h2 id="equation_structure">Equation Structure</h2>
 				<p>Equations are not linear, they are hierarchical. Yet it's
 					very common for students to attempt "reading" equations from left
 					to right because most languages are read from left to right. The
@@ -96,7 +106,7 @@
 					</div>
 				</div>
 
-				<h4>Problems</h4>
+				<h3>Problems</h3>
 
 				<p>
 					One of which common problem involves the use of the order of
@@ -126,20 +136,78 @@
 					the <em>b</em>'s cannot be cancelled.
 				</p>
 
-				<h4>Solution</h4>
+				<h3>Solution</h3>
 				<p>The interactive equation gadget helps clear up these concepts
 					by providing a tangible interface that allows users to visually
-					explore the equation's structure. By clicking into expressions of
-					interest, groupings of contained expressions are exposed. Only one
-					layer is shown at a time which allows students to narrow their
-					focus and reduces overwhelming mental parsing challenges. Color
-					coding of expressions of focus by operation type help reduce the
-					users field of view and clearly distinguish expressions. Try
-					exploring the equation below to see for yourself.</p>
+					explore the equation's structure. By clicking or touching
+					expressions of interest, groupings of contained expressions are
+					exposed. Clicking or touching away from colored expressions brings
+					you back up the hierarchy. Only one layer is shown at a time which
+					allows students to narrow their focus and reduces overwhelming
+					mental parsing challenges. Color coding of the expressions of focus
+					by operation type help reduce the users field of view and clearly
+					distinguish expressions. Let's try an example with the equation
+					below:</p>
 
 				<iframe
 					src="http://sciencegadgets.org#equationvalue%253Csget%253Aequation%2520xmlns%253Asget%253D%2522http%253A%252F%252Fwww.sciencegadgets.org%252FData%2522%2520id%253D%2522ML23%2522%253E%253Csget%253Afrac%2520id%253D%2522ML24%2522%253E%253Csget%253Asum%2520id%253D%2522ML25%2522%253E%253Csget%253Avar%2520unit%253D%2522%2522%2520id%253D%2522ML26%2522%253Ea%253C%252Fsget%253Avar%253E%253Csget%253Aop%2520id%253D%2522ML27%2522%253E%252B%253C%252Fsget%253Aop%253E%253Csget%253Avar%2520unit%253D%2522%2522%2520id%253D%2522ML28%2522%253Eb%253C%252Fsget%253Avar%253E%253C%252Fsget%253Asum%253E%253Csget%253Avar%2520unit%253D%2522%2522%2520id%253D%2522ML29%2522%253Eb%253C%252Fsget%253Avar%253E%253C%252Fsget%253Afrac%253E%253Csget%253Aop%2520id%253D%2522ML30%2522%253E%253D%253C%252Fsget%253Aop%253E%253Csget%253Asum%2520id%253D%2522ML31%2522%253E%253Csget%253Anum%2520value%253D%25221%2522%2520unit%253D%2522%2522%2520id%253D%2522ML32%2522%253E1%253C%252Fsget%253Anum%253E%253Csget%253Aop%2520id%253D%2522ML33%2522%253E-%253C%252Fsget%253Aop%253E%253Csget%253Aterm%2520id%253D%2522ML34%2522%253E%253Csget%253Aexp%2520id%253D%2522ML35%2522%253E%253Csget%253Anum%2520unit%253D%2522%2522%2520value%253D%25222%2522%2520id%253D%2522ML36%2522%253E2%253C%252Fsget%253Anum%253E%253Csget%253Anum%2520unit%253D%2522%2522%2520value%253D%25222%2522%2520id%253D%2522ML37%2522%253E2%253C%252Fsget%253Anum%253E%253C%252Fsget%253Aexp%253E%253Csget%253Aop%2520id%253D%2522ML38%2522%253E%25C2%25B7%253C%252Fsget%253Aop%253E%253Csget%253Anum%2520unit%253D%2522%2522%2520value%253D%25223%2522%2520id%253D%2522ML39%2522%253E3%253C%252Fsget%253Anum%253E%253C%252Fsget%253Aterm%253E%253C%252Fsget%253Asum%253E%253C%252Fsget%253Aequation%253Eparameteractivityvaluealgebrasolve"
-					title="" name="Interactive Equation" width="400px" height="200px"></iframe>
+					title="" name="Interactive Equation" width="100%" height="100%"></iframe>
+				<dl>
+					<dt>Click or touch the term 2^2*3</dt>
+					<dd>
+						You'll notice a few things immediately when any selection is made.
+						The selection is distinguished visually, information about the
+						selection is presented, and the lower area presents new buttons
+						allowing transformations. We will discuss these buttons in the
+						next <a href="#expression_transformations">section.</a>
+					</dd>
+					<dt>Click or touch the term 2^2*3 again while it's highlighted</dt>
+					<dd>When a selection is selected a second time while it's
+						highlighted the focus is narrowed down to this expression alone,
+						exposing it's child expressions as well. Notice that all parts of
+						the equation other than this term are visually less distinguished.
+						This allows users to mentally set aside everything but the
+						expression of interest.</dd>
+					<dt>Click or touch the exponential 2^2</dt>
+					<dd>Once again, the details of the selection and
+						transformation buttons are displayed.</dd>
+					<dt>Click or touch the exponential 2^2 again</dt>
+					<dd>Now the focus is down to the most detailed level.
+						Constants and variables are terminal entities that cannot be
+						stepped into and further. They can only be selected to display
+						their details.</dd>
+					<dt>Click or touch any part of the equation that is not
+						highlighted</dt>
+					<dd>This allows you to step back up the hierarchy one level.
+						This can be done again until the highest level is reached.</dd>
+				</dl>
+
+				<h2 id="expression_transformations">Expression Transformations</h2>
+				<p>
+					One of the vital set of skills in algebra is the ability to
+					recognize expression patterns and transform them into equivalent
+					forms in order to simplify and solve an equation. The prerequisite
+					skill of visually parsing the equation is explained <a
+						href="#equation_structure">above</a> and guided by the color
+					coding of the parent and child expressions of focus in the
+					interactive equation. Along with stepping into the structure is the
+					ability to analyze the relationships among the expressions and
+					transform them. Let's go through a guided example as a
+					demonstration.
+				</p>
+				<dl>
+					<dt></dt>
+					<dd>Since this term is a child of a sum in the highest layer
+						of the equation, it is possible to negate it by adding its inverse
+						to both sides and essentially "bringing it to the other side"</dd>
+
+					<dt></dt>
+					<dd></dd>
+
+					<dt></dt>
+					<dd></dd>
+				</dl>
+
 			</div>
 		</div>
 	</div>
