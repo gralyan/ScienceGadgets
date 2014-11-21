@@ -5,12 +5,9 @@ body {
 	padding: 0px;
 	background-color: green;
 	color: white;
-	text-shadow: 0 0 0.2em darkgreen;
+	text-shadow: 0 0 0.2em lime;
 }
 
-a{
-	font-weight: bold;
-}
 h1{
 	margin: 0px; 
 }
@@ -24,12 +21,8 @@ h1{
 }
 
 #header{        
-/* 	background-color: #2C6700; */
-/*     border-radius: 15px 15px 15px 15px; */
-/*     margin: 15px 0 15px 0; */
     padding: 2em 0 2em 0;
     text-align: center;
-/* 	box-shadow: lime 0 0 10px 5px; */
 	color: white;
 	text-shadow: 0 0 0.3em lime;
 }
@@ -39,20 +32,26 @@ h1{
 
 #navigationPanel{    
 	box-shadow: lightGreen 0 0 0.5em 0.3em inset;
-/* 	background-color: lime; */
     border-radius: 1em 1em 1em 1em;
-    display: inline-block;
+/*     display: inline-block; */
     padding: 1em 0 1em 1em;
     vertical-align: top;
-    width: 25%;
+/*     width: 25%; */
 	background-color: limeGreen;
+	margin: 0 0 1em 0;
+}
+
+#navigationPanel>a{
+	font-weight: bold;
+	margin-right: 2em;
+	text-shadow: 0 0 0.1em darkgreen;
 }
 
 #blogEntryPanel{
 	box-shadow: 0 0 .7em 0.1em lime inset;
     border-radius: 1em 1em 1em 1em ;
-	width:70%;
-	display: inline-block;
+/* 	width:70%; */
+/* 	display: inline-block; */
 	vertical-align: top;
 	padding: 1em;
 	background-color: darkGreen;
