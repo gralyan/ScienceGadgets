@@ -17,6 +17,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.sciencegadgets.client.DatabaseHelper;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.QuantityKind;
@@ -38,9 +39,21 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		ObjectifyService.register(Problem.class);
 	}
 	
+	public Problem getProblem(String problemKeyString) {
+		Key<Problem> problemKey = Key.create(problemKeyString);
+		return ObjectifyService.ofy().load().key(problemKey).now();
+	}
+	
 	@Override
-	public void saveEntity(Problem problem) {
-		ObjectifyService.ofy().save().entity(problem).now();
+	public String saveProblem(Problem problem) {
+		Key<Problem> problemKey = ObjectifyService.ofy().save().entity(problem).now();
+
+		JSNICalls.error("to "+problemKey.toString());
+		JSNICalls.error("get "+problemKey.getString());
+		
+		System.out.println("to "+problemKey.toString());
+		System.out.println("get "+problemKey.getString());
+		return problemKey.getString();
 	}
 
 	@Override
@@ -52,14 +65,14 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Problem saveProblem(String title, String description,
+	public String newProblem(String title, String description,
 			Badge requiredBadge,
 			Diagram diagram, Equation equation, String toSolveID) {
 
 		Problem problem = new Problem(title, description, requiredBadge,
 				equation, diagram, toSolveID);
-		ObjectifyService.ofy().save().entity(problem).now();
-		return problem;
+		Key<Problem> problemKey = ObjectifyService.ofy().save().entity(problem).now();
+		return problemKey.getString();
 	}
 
 	@Override

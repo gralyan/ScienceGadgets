@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.googlecode.objectify.Key;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.Unit;
@@ -30,8 +31,9 @@ public interface DatabaseHelper extends RemoteService {
 	void reCreateUnits();
 	ArrayList<Problem> getProblemsByBadge(Badge badge);
 	ArrayList<Problem> getProblemsByBadges(HashSet<Badge> badges);
-	Problem saveProblem(String title, String description, Badge requiredBadge,
+	String newProblem(String title, String description, Badge requiredBadge,
 			Diagram diagram,
 			Equation equation, String toSolveID);
-	void saveEntity(Problem entity);
+	String saveProblem(Problem problem);
+	Problem getProblem(String problemKeyString);
 }

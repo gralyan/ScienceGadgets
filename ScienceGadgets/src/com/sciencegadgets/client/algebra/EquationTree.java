@@ -75,9 +75,9 @@ public class EquationTree {
 
 		bindXMLtoNodes(equationXML);
 
-		if (inEditMode) {
+//		if (inEditMode) {
 			ConstantRandomizer.randomizeNumbers(this, !inEditMode);
-		}
+//		}
 		// reloadDisplay(true);
 	}
 

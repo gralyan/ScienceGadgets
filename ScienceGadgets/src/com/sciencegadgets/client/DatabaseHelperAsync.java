@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.googlecode.objectify.Key;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.Unit;
@@ -13,27 +14,36 @@ import com.sciencegadgets.shared.Diagram;
 
 public interface DatabaseHelperAsync {
 	void getAlgebraEquations(AsyncCallback<Equation[]> asyncCallback);
-	void saveEquation(String mathML, String html, AsyncCallback<Equation> callback)
-			throws IllegalArgumentException;
-	void getEquationsWithQuantities(ArrayList<String> quantityKinds, AsyncCallback<Equation[]> callback)
-			throws IllegalArgumentException;
-	void getUnitsByQuantity(String quantityKind, AsyncCallback<LinkedList<Unit>> callback)
-			throws IllegalArgumentException;
-	void getQuantityKinds(AsyncCallback<LinkedList<String>> callback);
-	
-	void getBlobURL(AsyncCallback<String> callback);
-	void getUnit(String unitName, AsyncCallback<Unit> callback);
-	void reCreateUnits(AsyncCallback<Void> callback);
-	void getProblemsByBadge(Badge badge, AsyncCallback<ArrayList<Problem>> asyncCallback);
-	void getProblemsByBadges(HashSet<Badge> badges, AsyncCallback<ArrayList<Problem>> asyncCallback);
-	void saveProblem(
-			String title,
-			String description,
- Badge requiredBadge,
- Diagram diagram, Equation equation,
-			String toSolveID, AsyncCallback<Problem> asyncCallback);
 
-	void saveEntity(Problem entity,
-			AsyncCallback<Void> asyncCallback);
+	void saveEquation(String mathML, String html,
+			AsyncCallback<Equation> callback) throws IllegalArgumentException;
+
+	void getEquationsWithQuantities(ArrayList<String> quantityKinds,
+			AsyncCallback<Equation[]> callback) throws IllegalArgumentException;
+
+	void getUnitsByQuantity(String quantityKind,
+			AsyncCallback<LinkedList<Unit>> callback)
+			throws IllegalArgumentException;
+
+	void getQuantityKinds(AsyncCallback<LinkedList<String>> callback);
+
+	void getBlobURL(AsyncCallback<String> callback);
+
+	void getUnit(String unitName, AsyncCallback<Unit> callback);
+
+	void reCreateUnits(AsyncCallback<Void> callback);
+
+	void getProblemsByBadge(Badge badge,
+			AsyncCallback<ArrayList<Problem>> asyncCallback);
+
+	void getProblemsByBadges(HashSet<Badge> badges,
+			AsyncCallback<ArrayList<Problem>> asyncCallback);
+
+	void newProblem(String title, String description, Badge requiredBadge,
+			Diagram diagram, Equation equation, String toSolveID,
+			AsyncCallback<String> asyncCallback);
+
+	void saveProblem(Problem problem, AsyncCallback<String> asyncCallback);
+	void getProblem(String problemKeyString, AsyncCallback<Problem> asyncCallback);
 
 }

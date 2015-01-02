@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.equationbrowser;
+package com.sciencegadgets.client.challenge;
 
 import java.util.HashMap;
 import java.util.Map.Entry;

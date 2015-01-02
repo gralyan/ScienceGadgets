@@ -19,7 +19,7 @@ import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.edit.LinkPrompt;
+import com.sciencegadgets.client.algebra.edit.LinkPrompt_Equation;
 import com.sciencegadgets.client.algebra.edit.NumberSpecification;
 import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariableSpecification;
@@ -32,6 +32,7 @@ import com.sciencegadgets.client.algebra.transformations.specification.SimplifyQ
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
+import com.sciencegadgets.client.ui.LinkPrompt;
 import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.client.ui.SolvedPrompt;
 import com.sciencegadgets.shared.TypeSGET;
@@ -108,23 +109,24 @@ public class AlgebraActivity extends SimplePanel {
 
 		if (inEditMode) {
 			if (!isSimplifyQuiz) {
-				String user = URLParameters.getParameter(Parameter.user);
-				if(URLParameters.USER_ADMIN.equals(user)) {
+//				String user = URLParameters.getParameter(Parameter.user);
+
+//				if(URLParameters.USER_ADMIN.equals(user)) {
 					Button createLinkButton = new Button("Create Link",
 							new ClickHandler() {
 								@Override
 								public void onClick(ClickEvent arg0) {
-									new LinkPrompt(AlgebraActivity.this).appear();
+									new LinkPrompt_Equation(AlgebraActivity.this).appear();
 								}
 							});
 					createLinkButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
 					upperMidEqArea.add(createLinkButton);
-				}else{
-					Button saveEquationButton = new Button("Save Equation",
+
+					Button saveEquationButton = new Button("Create Challenge",
 							new SaveButtonHandler());
 					saveEquationButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
 					upperMidEqArea.add(saveEquationButton);
-				}
+//				}
 			}
 		} else {
 			algOut = new AlgebraHistory(this);

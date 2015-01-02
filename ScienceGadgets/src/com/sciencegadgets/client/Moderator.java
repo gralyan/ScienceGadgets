@@ -31,6 +31,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -41,13 +42,14 @@ import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Skill;
+import com.sciencegadgets.client.challenge.ProblemDetails;
 import com.sciencegadgets.client.conversion.ConversionActivity;
+import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
-import com.sciencegadgets.client.equationbrowser.ProblemDetails;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Resizable;
 
@@ -127,7 +129,8 @@ public class Moderator implements EntryPoint {
 
 	public static void switchToAlgebra(Element equationXML, Equation equation,
 			boolean inEditMode, boolean updateHistory) {
-		switchToAlgebra(new EquationTree(equationXML, inEditMode), equation,
+		EquationTree eTree = new EquationTree(equationXML, inEditMode);
+		switchToAlgebra(eTree, equation,
 				inEditMode, updateHistory);
 	}
 
@@ -366,8 +369,25 @@ public class Moderator implements EntryPoint {
 							.getFirstChildElement();
 					switchToAlgebra(equationXML, null,
 							ActivityType.algebraedit.equals(activityType),
-							false);
+							true);
 					break;
+				case problem:
+					
+					String problemKeyString = parameterMap
+					.get(Parameter.problemkey);
+					
+				DataModerator.database.getProblem(problemKeyString, new AsyncCallback<Problem>() {
+					@Override
+					public void onSuccess(Problem problem) {
+						switchToProblem(problem);
+					}
+					@Override
+					public void onFailure(Throwable arg0) {
+						Window.alert("Challenge Not Found");
+					}
+				});
+				break;
+				
 				case browser:
 					switchToBrowser();
 					// TODO case problem:
