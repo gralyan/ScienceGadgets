@@ -4,11 +4,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.googlecode.objectify.Key;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationValidator;
+import com.sciencegadgets.client.challenge.LinkPrompt_Challenge;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
@@ -66,16 +68,16 @@ public class SaveButtonHandler implements ClickHandler {
 				public void onClick(ClickEvent arg0) {
 
 					if (problemSpec.problemSelected != null) {
-						saveEquation(eTree, problemSpec.problemSelected);
 						problemSpec.disappear();
+						saveEquation(eTree, problemSpec.problemSelected);
 					} else if (!"".equals(problemSpec.titleInput.getText())
 							&& !"".equals(problemSpec.descriptionInput
 									.getText())
 							&& problemSpec.requiredBadge != null
 							&& !problemSpec.varIdPanel.toSolve.getTitle()
 									.equals("")) {
-						saveEquation(eTree, null);
 						problemSpec.disappear();
+						saveEquation(eTree, null);
 					} else {
 						String errors = "The following are required:\n";
 						if("".equals(problemSpec.titleInput.getText())) {
@@ -145,20 +147,20 @@ public class SaveButtonHandler implements ClickHandler {
 							//TODO possibly update image
 //							problem.setImage(problemDetails.imageBlobKey,
 //									problemDetails.imageURL);
-							dataBase.saveEntity(problem,
-									new AsyncCallback<Void>() {
+							dataBase.saveProblem(problem,
+									new AsyncCallback<String>() {
 
 										@Override
-										public void onSuccess(Void arg0) {
-											Window.alert("Saved equation!");
-											JSNICalls.log("Saved equation");
+										public void onSuccess(String problemKey) {
+											JSNICalls.log("Updated challenge");
+											new LinkPrompt_Challenge(problemKey).appear();
 										}
 
 										@Override
 										public void onFailure(Throwable caught) {
-											Window.alert("Update problem failed");
+											Window.alert("Update challenge failed");
 											JSNICalls
-													.error("Update problem Failed: "
+													.error("Update challenge Failed: "
 															+ caught.toString());
 											JSNICalls.error(caught.getMessage());
 											JSNICalls.error(caught.getCause()
@@ -169,25 +171,25 @@ public class SaveButtonHandler implements ClickHandler {
 						} else {
 							// save new problem
 
-							dataBase.saveProblem(
+							dataBase.newProblem(
 									problemSpec.titleInput.getText(),
 									problemSpec.descriptionInput.getText(),
 									problemSpec.requiredBadge,problemSpec.diagram, equation,problemSpec.varIdPanel.toSolve.getTitle(),
-									new AsyncCallback<Problem>() {
+									new AsyncCallback<String>() {
 
 										@Override
-										public void onSuccess(Problem problem) {
-											if (problem != null) {
-												Window.alert("Saved problem!");
-												JSNICalls.log("Saved problem");
+										public void onSuccess(String problemKey) {
+											if (problemKey != null) {
+												JSNICalls.log("Saved challenge");
+												new LinkPrompt_Challenge(problemKey).appear();
 											}
 										}
 
 										@Override
 										public void onFailure(Throwable caught) {
-											Window.alert("Save problem failed");
+											Window.alert("Save challenge failed");
 											JSNICalls
-													.error("Save Problem Failed: "
+													.error("Save challenge Failed: "
 															+ caught.toString());
 											JSNICalls.error(caught.getMessage());
 											JSNICalls.error(caught.getCause()

@@ -4,6 +4,7 @@
 
 	<ui:style>
 		.spec {
+	color: black;
 			height: 76%;
 			width: 98%;
 			display: inline-block;
@@ -38,6 +39,7 @@
 		}
 		
 		.established {
+	color:black;
 			height: 100%;
 			width: 24%;
 			display: inline-block;
