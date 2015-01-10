@@ -144,6 +144,8 @@ public class EquationPanel extends AbsolutePanel {
 			case Sum:
 				mergeRootNodes.add(side);
 				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -226,10 +228,10 @@ public class EquationPanel extends AbsolutePanel {
 		Element layerParentNode = DOM.getElementById(parentId + OF_LAYER
 				+ parentId);
 		if (layerParentNode != null) {
-			layerParentNode.addClassName(CSS.DISPLAY_WRAPPER);
+			layerParentNode.addClassName(CSS.PARENT_WRAPPER);
 		} else if (TypeSGET.Equation.equals(parentNode.getType())) {
 			Element layerEqNode = DOM.getElementById(EQ_OF_LAYER + parentId);
-			layerEqNode.addClassName(CSS.DISPLAY_WRAPPER);
+			layerEqNode.addClassName(CSS.PARENT_WRAPPER);
 		}
 
 		for (EquationNode node : childNodes) {
@@ -268,7 +270,7 @@ public class EquationPanel extends AbsolutePanel {
 		EquationLayer parentLayer = focusLayer.getParentLayer();
 		if (parentLayer != null) {
 			setFocus(parentLayer);
-			Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
+//			Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
 		}
 	}
 

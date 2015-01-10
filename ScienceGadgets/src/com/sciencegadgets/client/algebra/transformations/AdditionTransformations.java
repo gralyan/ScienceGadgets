@@ -179,7 +179,7 @@ abstract class AddTransformButton extends TransformationButton {
 
 	AddTransformButton(AdditionTransformations context) {
 		super(context);
-		addStyleName(CSS.SUM + " " + CSS.DISPLAY_WRAPPER);
+		addStyleName(CSS.SUM + " " + CSS.PARENT_WRAPPER);
 
 		this.isMinus = context.isMinus;
 		this.isMinusBeforeLeft = context.isMinusBeforeLeft;

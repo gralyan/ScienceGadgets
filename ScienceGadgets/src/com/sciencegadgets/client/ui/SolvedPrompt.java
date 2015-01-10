@@ -30,7 +30,7 @@ public class SolvedPrompt extends Prompt {
 	}
 
 	public void solved(AlgebraActivity algebraActivity) {
-		Moderator.SOUNDS.RESPONSE_SUCCESS.play();
+//		Moderator.SOUNDS.RESPONSE_SUCCESS.play();
 		historyContainer.clear();
 		algebraActivity.algOut.isSolved = true;
 		historyContainer.add(algebraActivity.algOut);

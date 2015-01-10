@@ -253,7 +253,7 @@ abstract class MultiplyTransformButton extends TransformationButton {
 
 	MultiplyTransformButton(MultiplyTransformations context, String html) {
 		super(html, context);
-		addStyleName(CSS.TERM + " " + CSS.DISPLAY_WRAPPER);
+		addStyleName(CSS.TERM + " " + CSS.PARENT_WRAPPER);
 
 		this.left = context.left;
 		this.right = context.right;
