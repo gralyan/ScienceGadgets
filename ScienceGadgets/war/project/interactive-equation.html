@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+
+<head>
+
+<title>Educational tools for Math and Science</title>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="description"
+	content="Educational technology tools for math and science classes. Algebra learning method" />
+<meta name="keywords" content="education, algebra, math, equation" />
+
+<link type="text/css" rel="stylesheet" href="blog.css"></link>
+
+<link type="text/css" rel="stylesheet" href="../CSStyles/equation.css"></link>
+
+<style type="text/css">
+dt{
+padding-top:1em;
+}
+</style>
+
+</head>
+
+<body>
+
+	<div id="welcomePageArea">
+
+		<div id="header">
+			<h1>Science Gadgets</h1>
+			<p id="headerDescription">A set of open source educational tools
+				dedicated to helping redesign the next generation of learning
+				strategies</p>
+		</div>
+
+		<div id="blogArea">
+			<div id="navigationPanel">
+				<a href="index.html">Home</a>
+				<!---->
+				<a href="applying_gadgets.html">Applying Gadgets</a>
+				<!---->
+				<a href="thesis.html">Research</a>
+				<!---->
+				<a href="presentation-summary.html">ISTE Presentation</a>
+				<!---->
+				<a href="interactive-equation.html">Interactive Equation</a>
+				<!---->
+				<a href="http://sciencegadgets.org/#activityvaluebrowser">Browser</a>
+				<!---->
+			</div>
+
+			<div id="blogEntryPanel">
+				<h1>Interactive Equation</h1>
+				<p>
+					The interactive equation in Science Gadgets was designed to help
+					students understand the structure of equations and the relationship
+					between their expressions. The traditional method of displaying
+					equations is very minimalistic in its depiction of the natural
+					hierarchical architecture of expressions. Thus, students are
+					required to be very familiar with mathematical conventions and
+					proficient in the ability to mentally parse expressions using
+					mnemonic devices in order to use the equation. The traditional
+					extensive training required to attain such proficiencies requires
+					significant time and focus which naturally deters students from
+					proceeding in mathematically intensive courses and careers. The
+					interactive equation reduces these barriers by providing an
+					intuitive aid for students to explore the relationships between
+					expressions. Built in resources also allow users to learn about
+					algebraic transformations that may be used to simplify and solve
+					the equation. Competences can also be saved, allowing for
+					assessment measurement and progressive rewarding shortcuts which
+					encourage focus on appropriate skills. For more background
+					information, please see the <a href="project/thesis.html">research</a>
+				</p>
+				<h2 id="equation_structure">Equation Structure</h2>
+				<p>Equations are not linear, they are hierarchical. Yet it's
+					very common for students to attempt "reading" equations from left
+					to right because most languages are read from left to right. The
+					language of math however, requires groupings of functions with
+					varying precedence which may not be immediately obvious with the
+					traditional spatial arrangements of symbols. An example which
+					demonstrates a few common pitfalls is demonstrated in the following
+					equation:</p>
+
+				<div class="Equation" style="font-size: 300%;">
+					<div class="in-equation Fraction">
+						<div class="in-fraction-numerator Sum">
+							<div class="in-sum Variable">a</div>
+							<div class="in-sum Operation">+</div>
+							<div class="in-sum Variable">b</div>
+						</div>
+						<div class="in-fraction-denominator Variable">b</div>
+					</div>
+					<div class="in-equation Operation">=</div>
+					<div class="in-equation Sum">
+						<div class="in-sum Number">1</div>
+						<div class="in-sum Operation">-</div>
+						<div class="in-sum Term">
+							<div class="in-term Exponential">
+								<div class="in-exponential-base Number">2</div>
+								<div class="in-exponential-exponent Number">2</div>
+							</div>
+							<div class="in-term Operation">·</div>
+							<div class="in-term Number">3</div>
+						</div>
+					</div>
+				</div>
+
+				<h3>Problems</h3>
+
+				<p>
+					One of which common problem involves the use of the order of
+					operations commonly referred to by the mnemonic device PEMDAS. The
+					exponential <em>2</em> squared is a group within the product with <em>3</em>.
+					This product is in another expression, its subtraction from one. To
+					the trained eye, the numbers <em>1</em> and <em>2</em> are not in
+					the same group (in fast they are two layers away) and therefore
+					cannot interact with one another directly. Their proximity and lack
+					of barriers such as parentheses often leads to mistakes such as
+					subtracting <em>2</em> from <em>1</em>.
+				</p>
+				<p>
+					Another problem is the group that is negated by the subtraction.
+					The convention that must be used in this case is that exponentials
+					are of higher precedence than a subtraction. The appropriate
+					disambiguation of this expression would be shown as <em>1-(2^2)*3</em>
+				</p>
+				<p>
+					The last common misconception in this equation is that the
+					variables labeled <em>b</em> may be cancelled. This would be
+					possible if the numerator was a product of <em>a</em> and <em>b</em>
+					because the division would be equivalent to multiplication with the
+					reciprocal of <em>b</em> and therefore in the same order of
+					precedence as the numerator. Since the numerator is instead a sum,
+					it is a separately grouped layer than the fraction and therefore
+					the <em>b</em>'s cannot be cancelled.
+				</p>
+
+				<h3>Solution</h3>
+				<p>The interactive equation gadget helps clear up these concepts
+					by providing a tangible interface that allows users to visually
+					explore the equation's structure. By clicking or touching
+					expressions of interest, groupings of contained expressions are
+					exposed. Clicking or touching away from colored expressions brings
+					you back up the hierarchy. Only one layer is shown at a time which
+					allows students to narrow their focus and reduces overwhelming
+					mental parsing challenges. Color coding of the expressions of focus
+					by operation type help reduce the users field of view and clearly
+					distinguish expressions. Let's try an example with the equation
+					below:</p>
+
+				<iframe
+					src="http://sciencegadgets.org#equationvalue%253Csget%253Aequation%2520xmlns%253Asget%253D%2522http%253A%252F%252Fwww.sciencegadgets.org%252FData%2522%2520id%253D%2522ML23%2522%253E%253Csget%253Afrac%2520id%253D%2522ML24%2522%253E%253Csget%253Asum%2520id%253D%2522ML25%2522%253E%253Csget%253Avar%2520unit%253D%2522%2522%2520id%253D%2522ML26%2522%253Ea%253C%252Fsget%253Avar%253E%253Csget%253Aop%2520id%253D%2522ML27%2522%253E%252B%253C%252Fsget%253Aop%253E%253Csget%253Avar%2520unit%253D%2522%2522%2520id%253D%2522ML28%2522%253Eb%253C%252Fsget%253Avar%253E%253C%252Fsget%253Asum%253E%253Csget%253Avar%2520unit%253D%2522%2522%2520id%253D%2522ML29%2522%253Eb%253C%252Fsget%253Avar%253E%253C%252Fsget%253Afrac%253E%253Csget%253Aop%2520id%253D%2522ML30%2522%253E%253D%253C%252Fsget%253Aop%253E%253Csget%253Asum%2520id%253D%2522ML31%2522%253E%253Csget%253Anum%2520value%253D%25221%2522%2520unit%253D%2522%2522%2520id%253D%2522ML32%2522%253E1%253C%252Fsget%253Anum%253E%253Csget%253Aop%2520id%253D%2522ML33%2522%253E-%253C%252Fsget%253Aop%253E%253Csget%253Aterm%2520id%253D%2522ML34%2522%253E%253Csget%253Aexp%2520id%253D%2522ML35%2522%253E%253Csget%253Anum%2520unit%253D%2522%2522%2520value%253D%25222%2522%2520id%253D%2522ML36%2522%253E2%253C%252Fsget%253Anum%253E%253Csget%253Anum%2520unit%253D%2522%2522%2520value%253D%25222%2522%2520id%253D%2522ML37%2522%253E2%253C%252Fsget%253Anum%253E%253C%252Fsget%253Aexp%253E%253Csget%253Aop%2520id%253D%2522ML38%2522%253E%25C2%25B7%253C%252Fsget%253Aop%253E%253Csget%253Anum%2520unit%253D%2522%2522%2520value%253D%25223%2522%2520id%253D%2522ML39%2522%253E3%253C%252Fsget%253Anum%253E%253C%252Fsget%253Aterm%253E%253C%252Fsget%253Asum%253E%253C%252Fsget%253Aequation%253Eparameteractivityvaluealgebrasolve"
+					title="" name="Interactive Equation" width="100%" height="100%"></iframe>
+				<dl>
+					<dt>Click or touch the term 2^2*3</dt>
+					<dd>
+						You'll notice a few things immediately when any selection is made.
+						The selection is distinguished visually, information about the
+						selection is presented, and the lower area presents new buttons
+						allowing transformations. We will discuss these buttons in the
+						next <a href="#expression_transformations">section.</a>
+					</dd>
+					<dt>Click or touch the term 2^2*3 again while it's highlighted</dt>
+					<dd>When a selection is selected a second time while it's
+						highlighted the focus is narrowed down to this expression alone,
+						exposing it's child expressions as well. Notice that all parts of
+						the equation other than this term are visually less distinguished.
+						This allows users to mentally set aside everything but the
+						expression of interest.</dd>
+					<dt>Click or touch the exponential 2^2</dt>
+					<dd>Once again, the details of the selection and
+						transformation buttons are displayed.</dd>
+					<dt>Click or touch the exponential 2^2 again</dt>
+					<dd>Now the focus is down to the most detailed level.
+						Constants and variables are terminal entities that cannot be
+						stepped into and further. They can only be selected to display
+						their details.</dd>
+					<dt>Click or touch any part of the equation that is not
+						highlighted</dt>
+					<dd>This allows you to step back up the hierarchy one level.
+						This can be done again until the highest level is reached.</dd>
+				</dl>
+
+				<h2 id="expression_transformations">Expression Transformations</h2>
+				<p>
+					One of the vital set of skills in algebra is the ability to
+					recognize expression patterns and transform them into equivalent
+					forms in order to simplify and solve an equation. The prerequisite
+					skill of visually parsing the equation is explained <a
+						href="#equation_structure">above</a> and guided by the color
+					coding of the parent and child expressions of focus in the
+					interactive equation. Along with stepping into the structure is the
+					ability to analyze the relationships among the expressions and
+					transform them. Let's go through a guided example as a
+					demonstration.
+				</p>
+				<dl>
+					<dt></dt>
+					<dd>Since this term is a child of a sum in the highest layer
+						of the equation, it is possible to negate it by adding its inverse
+						to both sides and essentially "bringing it to the other side"</dd>
+
+					<dt></dt>
+					<dd></dd>
+
+					<dt></dt>
+					<dd></dd>
+				</dl>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
