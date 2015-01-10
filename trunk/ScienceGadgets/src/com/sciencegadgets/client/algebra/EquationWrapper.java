@@ -6,7 +6,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
@@ -55,7 +54,7 @@ public class EquationWrapper extends Wrapper {
 		TypeSGET type = node.getType();
 		Label typeLabel = new Label(type.name());
 		typeLabel.addStyleName(type.toString());
-		typeLabel.addStyleName(CSS.DISPLAY_WRAPPER);
+		typeLabel.addStyleName(CSS.PARENT_WRAPPER);
 		details.add(typeLabel);
 
 		switch (type) {
@@ -77,6 +76,8 @@ public class EquationWrapper extends Wrapper {
 				details.add(new Label(qKind));
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -88,7 +89,7 @@ public class EquationWrapper extends Wrapper {
 			
 			if (node.hasChildElements()
 					&& (dragController == null || !dragController.isDragging())) {
-				Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
+//				Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
 				unselect();
 				eqPanel.setFocus(node);
 			}

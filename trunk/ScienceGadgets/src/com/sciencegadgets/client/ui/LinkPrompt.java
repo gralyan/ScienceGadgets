@@ -97,9 +97,9 @@ public abstract class LinkPrompt extends Prompt {
 		linkCode.setText(JSNICalls.elementToString(linkDisplay.getElement()));
 		
 		iframeDisplay.setSrc(url);
+		iframeCode.setText(JSNICalls.elementToString(iframeDisplay));
+		
 		iframeDisplay.getStyle().setWidth(100, Unit.PCT);
 		iframeDisplay.getStyle().setHeight(100, Unit.PCT);
-		
-		iframeCode.setText(JSNICalls.elementToString(iframeDisplay));
 	}
 }

@@ -146,7 +146,7 @@ abstract class ExponentialTransformButton extends TransformationButton {
 
 	ExponentialTransformButton(ExponentialTransformations context, String html) {
 		super(context);
-		addStyleName(CSS.EXPONENTIAL + " " + CSS.DISPLAY_WRAPPER);
+		addStyleName(CSS.EXPONENTIAL + " " + CSS.PARENT_WRAPPER);
 
 		this.exponential = context.exponential;
 		this.base = context.base;

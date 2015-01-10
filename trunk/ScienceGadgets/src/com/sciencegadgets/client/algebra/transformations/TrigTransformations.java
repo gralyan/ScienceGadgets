@@ -90,7 +90,7 @@ class TrigTransformButton extends TransformationButton {
 
 	TrigTransformButton(TrigTransformations context) {
 		super(context);
-		addStyleName(CSS.TRIG + " " + CSS.DISPLAY_WRAPPER);
+		addStyleName(CSS.TRIG + " " + CSS.PARENT_WRAPPER);
 
 		this.trig = context.trig;
 		this.argument = context.argument;

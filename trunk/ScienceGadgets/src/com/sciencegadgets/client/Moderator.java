@@ -60,8 +60,8 @@ public class Moderator implements EntryPoint {
 	public static RandomSpecPanel randomSpec = null;
 	public static final AbsolutePanel scienceGadgetArea = RootPanel
 			.get(CSS.SCIENCE_GADGET_AREA);
-	private static final AbsolutePanel welcomePageArea = RootPanel
-			.get(CSS.WELCOME_PAGE_AREA);
+//	private static final AbsolutePanel welcomePageArea = RootPanel
+//			.get(CSS.WELCOME_PAGE_AREA);
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
@@ -74,7 +74,7 @@ public class Moderator implements EntryPoint {
 	public static final LinkedList<Resizable> resizables = new LinkedList<Resizable>();
 	private static Student student = new Student("guest");
 	public static boolean isInEasyMode = false;
-	public final static Sounds SOUNDS = new Sounds();
+//	public final static Sounds SOUNDS = new Sounds();
 
 	@Override
 	public void onModuleLoad() {
@@ -108,7 +108,7 @@ public class Moderator implements EntryPoint {
 	}
 
 	public enum ActivityType {
-		browser, problem, algebrasolve, algebraedit, conversion, blog;
+		browser, problem, algebrasolve, algebraedit, conversion;
 	}
 
 	public static void setActivity(ActivityType activityType, Widget activity) {
@@ -354,8 +354,8 @@ public class Moderator implements EntryPoint {
 			
 			String activityParameter = parameterMap.get(Parameter.activity);
 			
-			welcomePageArea.setVisible(false);
-			scienceGadgetArea.setVisible(true);
+//			welcomePageArea.setVisible(false);
+//			scienceGadgetArea.setVisible(true);
 			
 			try {
 				ActivityType activityType = ActivityType
@@ -390,13 +390,12 @@ public class Moderator implements EntryPoint {
 				
 				case browser:
 					switchToBrowser();
-					// TODO case problem:
 				default:
 					throw new IllegalArgumentException();
 				}
 
 			} catch (NullPointerException | IllegalArgumentException e) {
-				// switchToBrowser();
+				 switchToBrowser();
 				// HashMap<Parameter, String> pMap = new HashMap<Parameter,
 				// String>();
 				// pMap.put(Parameter.activity,
@@ -405,10 +404,10 @@ public class Moderator implements EntryPoint {
 
 				// Window.Location.replace("/blog/index.html");
 
-				scienceGadgetArea.setVisible(false);
-				welcomePageArea.setVisible(true);
+//				scienceGadgetArea.setVisible(false);
+//				welcomePageArea.setVisible(true);
 				
-				currentActivityType = ActivityType.blog;
+//				currentActivityType = ActivityType.blog;
 			}
 		}
 	}

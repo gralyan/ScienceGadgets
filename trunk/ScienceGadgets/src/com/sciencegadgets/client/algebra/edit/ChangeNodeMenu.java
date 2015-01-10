@@ -62,7 +62,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			TransformationButton changeButton = new ChangeNodeButton(
 					(String) type[1], changeButtons, toType);
 			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON + " "
-					+ toType.toString() + " " + CSS.DISPLAY_WRAPPER);
+					+ toType.toString() + " " + CSS.PARENT_WRAPPER);
 			changeButtons.add(changeButton);
 		}
 

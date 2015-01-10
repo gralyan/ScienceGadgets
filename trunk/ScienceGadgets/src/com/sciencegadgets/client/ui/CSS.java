@@ -8,6 +8,7 @@ public class CSS {
 	
 public static final String INTERACTIVE_EQUATION = "interactiveEquation";
 public static final String DISPLAY_WRAPPER = "displayWrapper";
+public static final String PARENT_WRAPPER = "parentWrapper";
 
 /*---------------Wrappers---------------*/
 public static final String EQUATION = "Equation";

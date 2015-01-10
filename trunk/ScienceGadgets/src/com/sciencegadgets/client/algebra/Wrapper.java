@@ -68,7 +68,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	}
 
 	public void select() {
-		Moderator.SOUNDS.WRAPPER_SELECT.play();
+//		Moderator.SOUNDS.WRAPPER_SELECT.play();
 		
 		this.getElement().addClassName(CSS.SELECTED_WRAPPER);
 		if(TypeSGET.Operation.equals(node.getType())) {
