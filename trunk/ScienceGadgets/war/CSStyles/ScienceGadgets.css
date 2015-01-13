@@ -124,6 +124,7 @@ body {
 .selectionPanel {
 	overflow-y: scroll;
 	background-color: white;
+	color: black;
 	cursor: pointer;
 	height: 100%;
 }
@@ -211,20 +212,24 @@ body {
 }
 
 /*---------------wrappers---------------*/
+
 .selectedWrapper {
-	-moz-box-shadow: .15em .15em .15em #000000;
-	-webkit-box-shadow: .15em .15em .15em #000000;
-	box-shadow: .15em .15em .15em #000000;
-	opacity: 0.8;
+/* 	-moz-box-shadow: .15em .15em .15em #000000; */
+/* 	-webkit-box-shadow: .15em .15em .15em #000000; */
+/* 	box-shadow: .15em .15em .15em #000000; */
+	text-shadow: .15em .15em .15em #000000;
+	opacity: 1;
 	position: relative;
 	top: -0.05em;
 	left: -0.05em;
 }
 
 .selectedDropWrapper {
-	-moz-box-shadow: 0 0 .7em #ffffff;
-	-webkit-box-shadow: 0 0 .7em #ffffff;
-	box-shadow: 0 0 .7em #ffffff;
+	text-shadow: .15em .15em .15em #000000;
+/* 	-moz-box-shadow: 0 0 .7em #ffffff inset; */
+/* 	-webkit-box-shadow: 0 0 .7em #ffffff inset; */
+/* 	box-shadow: 0 0 .7em #ffffff inset; */
+/* 	text-shadow: 0 0 .7em #ffffff; */
 }
 
 .conversionWrapper {
