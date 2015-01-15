@@ -41,7 +41,8 @@
 		<g:SimplePanel ui:field="eqPanelHolder" width="100%"
 			height="70%"></g:SimplePanel>
 
-		<g:FlowPanel ui:field="lowerEqArea" addStyleNames='{style.lowerEqArea}' width="100%" height="15%"></g:FlowPanel>
+		<g:FlowPanel ui:field="lowerEqArea" addStyleNames='{style.lowerEqArea}' width="100%" height="15%">
+		</g:FlowPanel>
 
 	</g:AbsolutePanel>
 

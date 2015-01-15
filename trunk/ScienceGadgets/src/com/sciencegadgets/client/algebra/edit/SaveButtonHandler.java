@@ -20,7 +20,6 @@ import com.sciencegadgets.shared.TypeSGET;
 public class SaveButtonHandler implements ClickHandler {
 
 	private DatabaseHelperAsync dataBase = DataModerator.database;
-	private EquationValidator eqValidator;
 	private static final String RE_CREATE_UNITS = "recreate";
 
 	static ProblemSpecification problemSpec = null;
@@ -44,10 +43,7 @@ public class SaveButtonHandler implements ClickHandler {
 
 		try {
 			eTree.validateTree();
-			if (eqValidator == null) {
-				eqValidator = new EquationValidator();
-			}
-			eqValidator.validateQuantityKinds(eTree);
+			eTree.getValidator().validateQuantityKinds(eTree);
 		} catch (IllegalStateException e) {
 			String message = e.getMessage();
 			if (message == null) {
@@ -55,7 +51,7 @@ public class SaveButtonHandler implements ClickHandler {
 			} else {
 				Window.alert(message);
 			}
-			JSNICalls.error(e.getCause().toString());
+			JSNICalls.log(e.getCause().toString());
 			return;
 		}
 

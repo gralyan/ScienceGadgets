@@ -34,6 +34,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.URLParameters.Parameter;
@@ -51,6 +52,8 @@ import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.FitParentHTML;
+import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.Resizable;
 
 public class Moderator implements EntryPoint {
@@ -239,9 +242,14 @@ public class Moderator implements EntryPoint {
 								skillEntry.getValue());
 				for (Badge newBadge : newBadges) {
 					JSNICalls.log("newBadge " + newBadge);
-					Window.alert("New Badge!\n" + newBadge.toString());
+//					Window.alert("New Badge!\n" + newBadge.toString());
+
+					FitParentHTML newBadgeResponse = new FitParentHTML();
+					newBadgeResponse.addStyleName(CSS.DROP_ENTER_RESPONSE);
+					newBadgeResponse.setText("New Badge! - " + newBadge.toString());
+					algebraActivity.lowerEqArea.add(newBadgeResponse);
 				}
-				JSNICalls.log("Skill up - " + skillEntry.getKey() + "-"
+				JSNICalls.log("Skill up of " + skillEntry.getKey() + " by "
 						+ skillEntry.getValue() + "\nskills: "
 						+ Moderator.getStudent().getSkills() + "\nbadges "
 						+ Moderator.getStudent().getBadges() + "\n");

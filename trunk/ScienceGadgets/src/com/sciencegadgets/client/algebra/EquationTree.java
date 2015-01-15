@@ -264,23 +264,25 @@ public class EquationTree {
 		addToMaps(newNode);
 		return newNode;
 	}
-
-	public void validateTree() throws IllegalStateException {
-
+	
+	public EquationValidator getValidator(){
 		if (eqValidator == null) {
 			eqValidator = new EquationValidator();
 		}
+		return eqValidator;
+	}
 
+	public void validateTree() throws IllegalStateException {
+		if (eqValidator == null) {
+			eqValidator = new EquationValidator();
+		}
 		for (EquationNode node : idMap.values()) {
 			eqValidator.validateEquationNode(node);
 		}
-
 		if (!inEditMode) {
 			eqValidator.validateQuantityKinds(this);
 		}
-
 		validateMaps();
-
 	}
 
 	public void validateMaps() throws IllegalStateException {

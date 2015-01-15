@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.URLParameters;
@@ -15,6 +16,7 @@ import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationHTML;
+import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.ui.LinkPrompt;
 import com.sciencegadgets.client.ui.ToggleSlide;
 
@@ -44,6 +46,27 @@ public class LinkPrompt_Equation extends LinkPrompt {
 //		params.add(easyToggle);
 	}
 
+	@Override
+	public void appear() {
+
+		try {
+			EquationTree eTree = algebraActivity.getEquationTree();
+			eTree.validateTree();
+			eTree.getValidator().validateQuantityKinds(eTree);
+		} catch (IllegalStateException e) {
+			String message = e.getMessage();
+			if (message == null) {
+				Window.alert("This equation is invalid, please rebuild it and try again");
+			} else {
+				Window.alert(message);
+			}
+			JSNICalls.log(e.getCause().toString());
+			return;
+		}
+		
+		super.appear();
+	}
+	
 	public void setMapParameters() {
 		String eqString = URLParameters.getParameter(Parameter.equation);
 

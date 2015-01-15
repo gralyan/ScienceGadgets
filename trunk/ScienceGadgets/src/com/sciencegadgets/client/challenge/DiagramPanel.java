@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
@@ -20,7 +21,11 @@ public class DiagramPanel extends AbsolutePanel implements Resizable {
 
 		DiagramPanel() {
 			setSize("100%", "100%");
-			getElement().getStyle().setProperty("backgroundSize", "100% 100%");
+			Style style = getElement().getStyle();
+			style.setProperty("backgroundSize", "100% 100%");
+//			style.setProperty("backgroundSize", "contain");
+//			style.setProperty("backgroundRepeat", "no-repeat");
+//			style.setProperty("backgroundPosition", "center center");
 			
 
 		}

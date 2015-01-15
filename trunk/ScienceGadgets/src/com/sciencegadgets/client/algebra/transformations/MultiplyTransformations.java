@@ -485,9 +485,9 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 							.entrySet()) {
 						entry.setValue(1);
 					}
-					Moderator.increaseSkills(skillsIncrease);
 					multiplyNumbers(left, right, totalValue, leftValue,
 							rightValue);
+					Moderator.increaseSkills(skillsIncrease);
 				}
 			};
 

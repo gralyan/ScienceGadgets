@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.HasTouchEndHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -129,13 +130,13 @@ public abstract class TransformationButton extends SelectionButton implements
 
 		Badge badge = getAssociatedBadge();
 		Skill skills = badge == null ? null : badge.getSkill();
-		
-		if (allowSkillIncrease && skills != null) {
-			Moderator.increaseSkill(skills, 1);
-		}
 
 		if (transformList.reloadAlgebraActivity) {
 			Moderator.reloadEquationPanel(changeComment, skills);
+		}
+		
+		if (allowSkillIncrease && skills != null) {
+			Moderator.increaseSkill(skills, 1);
 		}
 	}
 
