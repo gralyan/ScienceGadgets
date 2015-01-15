@@ -373,8 +373,8 @@ class AddNumbersButton extends AddTransformButton {
 							.entrySet()) {
 						entry.setValue(1);
 					}
-					Moderator.increaseSkills(skillsIncrease);
 					addNumbers(left, right, totalValue, leftValue, rightValue);
+					Moderator.increaseSkills(skillsIncrease);
 				}
 			};
 			prompt.appear();

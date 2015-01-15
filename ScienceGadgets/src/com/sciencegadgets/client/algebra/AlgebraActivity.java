@@ -350,4 +350,5 @@ public class AlgebraActivity extends SimplePanel {
 			this.transSimplify = transSimplify;
 		}
 	}
+	
 }

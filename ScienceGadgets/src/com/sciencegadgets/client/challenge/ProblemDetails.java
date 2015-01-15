@@ -47,11 +47,13 @@ public class ProblemDetails extends Composite {
 	@UiField
 	SimplePanel problemDescriptionContainer;
 	@UiField
+	SimplePanel equationsContainer;
+	@UiField
 	CommunistPanel tabsPanel;
 	@UiField
 	SimplePanel detailContainer;
 
-	private ProblemSummayPanel summaryPanel = new ProblemSummayPanel();
+	private ProblemSummayPanel equationsPanel = new ProblemSummayPanel();
 	private DiagramPanel diagramPanel = new DiagramPanel();
 	private Problem currentProblem;
 
@@ -64,6 +66,7 @@ public class ProblemDetails extends Composite {
 		problemDescriptionContainer.clear();
 		tabsPanel.clear();
 		detailContainer.clear();
+		equationsContainer.clear();
 		currentProblem = null;
 	}
 
@@ -99,26 +102,25 @@ public class ProblemDetails extends Composite {
 			detailContainer.add(diagramPanel);
 		}
 
-		summaryPanel.loadProblem(problem, randomMap);
-		tabsPanel.add(new ProblemDetailTab("Summary", summaryPanel));
-		if (detailContainer.getWidget() == null) {
-			detailContainer.add(summaryPanel);
-		}
-
-		Abs ab = new Abs();
-		tabsPanel.add(new ProblemDetailTab("Abs", ab));
+		equationsPanel.loadProblem(problem, randomMap);
+//		tabsPanel.add(new ProblemDetailTab("Summary", equationsPanel));
+//		if (detailContainer.getWidget() == null) {
+//			detailContainer.add(equationsPanel);
+//		}
+		
+		equationsContainer.add(equationsPanel);
 	}
 
 	public ProblemSummayPanel getSummaryPanel() {
-		return summaryPanel;
+		return equationsPanel;
 	}
 
 	public boolean updateSolvedEquation() {
 		try {
-			String varId = summaryPanel.currentEqButton.equation
+			String varId = equationsPanel.currentEqButton.equation
 					.getVarIdIfSolved();
 			if (varId != null) {
-				summaryPanel.updateSolvedEquation();
+				equationsPanel.updateSolvedEquation();
 				if (varId.equals(currentProblem.getToSolveID())) {
 					return true;
 				}
@@ -144,51 +146,5 @@ public class ProblemDetails extends Composite {
 		}
 	}
 
-}
 
-class Abs extends AbsolutePanel {
-	Abs() {
-
-		setSize("100%", "100%");
-		getElement().getStyle().setBackgroundColor("blue");
-
-		if (Moderator.isTouch) {
-			this.addDomHandler(new TouchEndHandler() {
-				@Override
-				public void onTouchEnd(TouchEndEvent event) {
-					Touch touch = event.getTouches().get(0);
-					// TODO
-					JSNICalls.log("touch");
-					JSNICalls.log("client x:"+ touch.getClientX()+" y: "+ touch.getClientY());
-					JSNICalls.log("page x:"+ touch.getPageX()+" y: "+ touch.getPageY());
-					JSNICalls.log("relative x:"+ touch.getRelativeX(Abs.this.getElement())+" y: "+ touch.getRelativeY(Abs.this.getElement()));
-					JSNICalls.log("screen x:"+ touch.getScreenX()+" y: "+ touch.getScreenY());
-
-					add(new Label("client"), touch.getClientX(), touch.getClientY());
-					add(new Label("page"), touch.getPageX(), touch.getPageY());
-					add(new Label("relative"), touch.getRelativeX(Abs.this.getElement()),
-							touch.getRelativeY(Abs.this.getElement()));
-					add(new Label("screen"), touch.getScreenX(), touch.getScreenY());
-					
-//					pointSelection(touch);
-				}
-			}, TouchEndEvent.getType());
-		}
-		this.addDomHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				JSNICalls.log("click x:"+ event.getX()+" y: "+ event.getY());
-				add(new Label("click"), event.getX(), event.getY());
-			}
-		}, ClickEvent.getType());
-	}
-
-	void pointSelection(Touch touch) {
-
-		add(new Label("client"), touch.getClientX(), touch.getClientY());
-		add(new Label("page"), touch.getPageX(), touch.getPageY());
-		add(new Label("relative"), touch.getRelativeX(this.getElement()),
-				touch.getRelativeY(this.getElement()));
-		add(new Label("screen"), touch.getScreenX(), touch.getScreenY());
-	}
 }

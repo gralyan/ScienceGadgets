@@ -15,6 +15,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -71,6 +72,7 @@ public abstract class LinkPrompt extends Prompt {
 
 	@Override
 	public void appear() {
+		
 
 		setMapParameters();
 		
