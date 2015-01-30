@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 
@@ -23,8 +24,9 @@ public class SolvedPrompt extends Prompt {
 
 			@Override
 			public void onClick(ClickEvent arg0) {
+				JSNICalls.debug("solvClick 1");
 				disappear();
-				Moderator.switchToProblem(null);
+				Moderator.switchBackToProblem();
 			}
 		});
 	}
@@ -34,7 +36,9 @@ public class SolvedPrompt extends Prompt {
 		historyContainer.clear();
 		algebraActivity.algOut.isSolved = true;
 		historyContainer.add(algebraActivity.algOut);
-		algebraActivity.updateEquation();
+		if(algebraActivity.getEquation() != null) {
+			algebraActivity.updateEquation();
+		}
 		appear();
 	}
 }

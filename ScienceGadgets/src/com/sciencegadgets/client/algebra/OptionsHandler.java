@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.ToggleSlide;
@@ -51,16 +52,12 @@ public class OptionsHandler implements ClickHandler {
 		
 		optionsPanel.add(closeOption);
 
-		if (algebraActivity.inEditMode) {
-			//TODO Equation HTML requires CSS to display
-//			Button exportOption = new Button("Export", new ExportClickHandler(algebraActivity));
-//			optionsPanel.add(exportOption);
-		}else {
+		if (!algebraActivity.isInEditMode()) {
 			easyHardOption = new ToggleSlide("Easy", "Hard", Moderator.isInEasyMode, new EasyHardClickHandler());
 			optionsPanel.add(easyHardOption);
 		}
 		
-		editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.inEditMode, new EditSolveClickHandler(algebraActivity));
+		editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.isInEditMode(), new EditSolveClickHandler(algebraActivity));
 		optionsPanel.add(editSolveOption);
 		
 		optionsPopup.show();
@@ -116,29 +113,8 @@ class EditSolveClickHandler implements ClickHandler {
 		if (algebraActivity.eqPanel != null && algebraActivity.eqPanel.selectedWrapper != null) {
 			algebraActivity.eqPanel.selectedWrapper.unselect();
 		}
-		Moderator.switchToAlgebra(Moderator.getCurrentEquationTree().getEquationXMLClone(), true, !algebraActivity.inEditMode, true);
+		ActivityType activityType = algebraActivity.getActivityType() == ActivityType.algebraedit ? ActivityType.algebrasolve : ActivityType.algebraedit;
+		Moderator.switchToAlgebra(Moderator.getCurrentEquationTree().getEquationXMLClone(), true, activityType, true);
 	}
 
 }
-
-//class ExportClickHandler implements ClickHandler {
-//	AlgebraActivity algebraActivity;
-//	ExportClickHandler(AlgebraActivity algebraActivity){
-//		this.algebraActivity = algebraActivity;
-//	}
-//	@Override
-//	public void onClick(ClickEvent event) {
-//		OptionsHandler.optionsPopup.hide();
-//		
-//		EquationHTML html = algebraActivity.getMathTree().reloadDisplay(true);
-//		
-//		Prompt prompt = new Prompt();
-//		TextBox text = new TextBox();
-//		text.setSize("100%", "100%");
-//		text.setText(html.getHTML());
-//		prompt.add(text);
-//		prompt.appear();
-//		
-//	}
-//	
-//}

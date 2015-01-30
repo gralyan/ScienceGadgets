@@ -232,7 +232,6 @@ public abstract class QuantitySpecification extends Prompt {
 					MathAttribute.Unit.getAttributeName(), dataUnit.toString());
 
 			disappear();
-			System.out.println();
 			algebraActivity.reloadEquationPanel(null, null, true);
 		}
 	}

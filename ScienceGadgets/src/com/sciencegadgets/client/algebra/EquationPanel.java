@@ -89,7 +89,7 @@ public class EquationPanel extends AbsolutePanel {
 		modelEqLayer = new EquationLayer(null, mathTree.getDisplayClone());
 		this.add(modelEqLayer);
 
-		if (!algebraActivity.inEditMode) {
+		if (!algebraActivity.isInEditMode()) {
 			findRootLayerMergingNodes(rootNode);
 			findFractionMergingNodes();
 		}
@@ -98,7 +98,7 @@ public class EquationPanel extends AbsolutePanel {
 
 		modelEqLayer.removeFromParent();
 
-		if (!algebraActivity.inEditMode) {
+		if (!algebraActivity.isInEditMode()) {
 			// Seperately place into root layer, skipped in draw()
 			for (EquationNode merge : mergeRootNodes) {
 				placeNextEqWrappers(merge, rootLayer);
@@ -172,10 +172,10 @@ public class EquationPanel extends AbsolutePanel {
 	private void draw(EquationNode node, EquationLayer parentLayer) {
 
 		EquationLayer eqLayer;
-		if (!algebraActivity.inEditMode && mergeFractionNodes.contains(node)) {
+		if (!algebraActivity.isInEditMode() && mergeFractionNodes.contains(node)) {
 			eqLayer = parentLayer;
 
-		} else if (!algebraActivity.inEditMode && mergeRootNodes.contains(node)) {
+		} else if (!algebraActivity.isInEditMode() && mergeRootNodes.contains(node)) {
 			eqLayer = rootLayer;
 
 		} else {
@@ -236,7 +236,7 @@ public class EquationPanel extends AbsolutePanel {
 
 		for (EquationNode node : childNodes) {
 
-			if (!algebraActivity.inEditMode) {
+			if (!algebraActivity.isInEditMode()) {
 				if (mergeRootNodes.contains(node)
 						|| mergeFractionNodes.contains(node)) {
 					continue;
@@ -247,7 +247,7 @@ public class EquationPanel extends AbsolutePanel {
 			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
 					+ parentId);
 
-			if (algebraActivity.inEditMode) {// Edit Mode
+			if (algebraActivity.isInEditMode()) {// Edit Mode
 				EditWrapper wrap = new EditWrapper(node, algebraActivity,
 						layerNode);
 				eqLayer.addWrapper(wrap);
@@ -314,7 +314,7 @@ public class EquationPanel extends AbsolutePanel {
 		algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
 				"id");
 
-		if (!algebraActivity.inEditMode) {
+		if (!algebraActivity.isInEditMode()) {
 			Scheduler.get().scheduleIncremental(
 					new PrepareWrappersInLayer(newFocus.getWrappers()));
 		}

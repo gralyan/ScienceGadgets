@@ -15,7 +15,7 @@ public class URLParameters {
 	public static final String USER_ADMIN = "admin";
 
 	public enum Parameter {
-		activity, equation, easy, user, problemkey;
+		activity, equation, easy, user, problemkey, goal;
 	}
 
 	public static HashMap<Parameter, String> getParameterMap() {
@@ -24,11 +24,15 @@ public class URLParameters {
 		if (historyToken != null && historyToken.length() > 1) {
 			for (String kvPair : historyToken.split(PARAMETER_DELIMETER)) {
 				String[] kv = kvPair.split(PARAMETER_VALUE_DELIMETER, 2);
+				try {
 				Parameter parameter = Parameter.valueOf(kv[0]);
 				if (kv.length > 1) {
 					paramMap.put(parameter, URL.decodePathSegment(kv[1]));
 				} else {
 					paramMap.put(parameter, "");
+				}
+				}catch(IllegalArgumentException e) {
+					JSNICalls.error("Illegal Parameter: "+e.getMessage());
 				}
 			}
 		}

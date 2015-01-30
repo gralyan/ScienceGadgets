@@ -36,7 +36,8 @@ public abstract class LinkPrompt extends Prompt {
 	}
 
 	@UiField
-	FlowPanel params;
+	protected
+	FlowPanel upperArea;
 	@UiField
 	protected
 	Label linkCode;

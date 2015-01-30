@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.entities.Equation;
@@ -97,7 +98,7 @@ public class ProblemSummayPanel extends Composite {
 			} else {
 				Element mathml = new HTML(equationXMLStr).getElement()
 						.getFirstChildElement();
-				Moderator.switchToAlgebra(mathml, equation, false, true);
+				Moderator.switchToAlgebra(mathml, equation, ActivityType.algebrasolve, true);
 			}
 		}
 
