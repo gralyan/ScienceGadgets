@@ -145,7 +145,9 @@ public class ChangeNodeMenu extends CommunistPanel {
 		}
 		@Override
 		public void transform() {
-			node.replace(node.getTree().newNode(copiedNodeXML));
+			Element replacementEl = (Element)copiedNodeXML.cloneNode(true);
+			EquationNode replacement = node.getTree().newNode(replacementEl);
+			node.replace(replacement);
 
 			algebraActivity.reloadEquationPanel(null, null, true);
 		}

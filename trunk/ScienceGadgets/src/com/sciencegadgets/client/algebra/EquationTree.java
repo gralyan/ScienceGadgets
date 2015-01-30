@@ -413,6 +413,31 @@ public class EquationTree {
 		}
 		return nodes;
 	}
+	
+	public boolean isLike(EquationTree other) {
+		EquationNode thisRight = getRightSide();
+		EquationNode thisLeft = getLeftSide();
+		EquationNode otherRight = other.getRightSide();
+		EquationNode otherLeft = other.getLeftSide();
+		
+		JSNICalls.debug("thisRight: " + thisRight);
+		JSNICalls.debug("thisLeft: " + thisLeft);
+		JSNICalls.debug("otherRight: " + otherRight);
+		JSNICalls.debug("otherLeft: " + otherLeft);
+		
+		if(thisRight.isLike(otherRight) && thisLeft.isLike(otherLeft)) {
+			return true;
+		}else if(thisRight.isLike(otherLeft) && thisLeft.isLike(otherRight)) {
+			return true;
+		}
+		JSNICalls.debug("NOT ALIKES");
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() +" xmlString: "+ getEquationXMLString();
+	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Node Class

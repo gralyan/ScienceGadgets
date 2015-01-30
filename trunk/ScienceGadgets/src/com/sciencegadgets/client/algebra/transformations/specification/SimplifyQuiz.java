@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.AlgebraActivity.TransformationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
@@ -53,14 +54,14 @@ public class SimplifyQuiz extends Quiz {
 
 		// Set Up Activity
 		if (simplifyActivity == null) {
-			simplifyActivity = new AlgebraActivity(workingTree, null, true, true);
+			simplifyActivity = new AlgebraActivity(workingTree, null, ActivityType.algebrasimplifyquiz);
 		} else {
 			simplifyActivity.setEquationTree(workingTree, null);
 		}
 		simplifyActivity.reloadEquationPanel(null, null, false);
 
 		simplifyActivity.upperMidEqArea.clear();
-		TransformationPanel tButtonPanel = simplifyActivity.new TransformationPanel();
+		TransformationPanel tButtonPanel = simplifyActivity.new TransformationPanel(false);
 		simplifyActivity.upperMidEqArea.add(tButtonPanel);
 		tButtonPanel.add(new HelpButton(tButtonPanel));
 

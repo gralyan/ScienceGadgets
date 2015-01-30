@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.EquationTree;
@@ -442,14 +443,14 @@ public class ConversionActivity extends AbsolutePanel {
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
 			if (variableEquation == null) {
 				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(), true,
-						false, true);
+						ActivityType.algebrasolve, true);
 				AlgebraActivity aActivity = Moderator
 						.getCurrentAlgebraActivity();
 				aActivity.algOut.updateAlgebraHistory("Conversion",
 						Skill.CONVERSION, aActivity.getEquationTree());
 			} else {
 				variableEquation.reCreate(node.getTree());
-				Moderator.switchToProblem(null);
+				Moderator.switchBackToProblem();
 			}
 		}
 	}

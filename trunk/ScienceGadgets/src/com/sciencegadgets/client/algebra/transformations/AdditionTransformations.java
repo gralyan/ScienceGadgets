@@ -397,7 +397,6 @@ class AddNumbersButton extends AddTransformButton {
 		left.remove();
 		operation.remove();
 		parent.decase();
-
 		onTransformationEnd(leftValue.stripTrailingZeros()
 				.toEngineeringString()
 				+ " "

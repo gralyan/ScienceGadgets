@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.EquationGenerator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.shared.TypeSGET;
@@ -21,7 +22,7 @@ class GenerateEquationHandler implements ClickHandler {
 		expressionsVariableSide.put(TypeSGET.Exponential, 0);
 
 		LinkedHashMap<TypeSGET, Integer> expressionsOtherSide = new LinkedHashMap<TypeSGET, Integer>();
-		expressionsOtherSide.put(TypeSGET.Sum, 1);
+		expressionsOtherSide.put(TypeSGET.Sum, 2);
 		expressionsOtherSide.put(TypeSGET.Term, 0);
 		expressionsOtherSide.put(TypeSGET.Fraction, 0);
 		expressionsOtherSide.put(TypeSGET.Exponential, 0);
@@ -37,7 +38,7 @@ class GenerateEquationHandler implements ClickHandler {
 				expressionsVariableSide, expressionsOtherSide,
 				mustBeWholeAnswer, mustBePositives, maxAdd, maxMultiply,
 				maxFraction, maxExp);
-		Moderator.switchToAlgebra(eTree, null, false, true);
+		Moderator.switchToAlgebra(eTree, null, ActivityType.algebrasolve, true);
 		// SolverUniVariable.SOLVE(eTree);
 		// Moderator.reloadEquationPanel(null, null);
 

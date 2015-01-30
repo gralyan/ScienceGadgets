@@ -1,6 +1,7 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Node;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
@@ -172,6 +173,12 @@ public class EquationValidator {
 				if (sumMap == null) {
 					sumMap = childMap;
 				} else if (!sumMap.isConvertableTo(childMap)) {
+					Throwable t = new Throwable();
+					String s = "";
+					for (StackTraceElement a : t.getStackTrace()) {
+						s = s + "\n" + a.toString();
+					}
+					JSNICalls.log("Validate sum eq: " + s);
 					throw new IllegalStateException(
 							"Units must be similar in sides of the equation and in sums, these are not convertable:\n"
 									+ sumMap + "\n" + childMap,
@@ -185,7 +192,9 @@ public class EquationValidator {
 											+ sumMap.getBaseQKMap()
 											+ " -vs- "
 											+ childMap.getBaseQKMap()
-											+ "\nof node: " + child));
+											+ "\nof node: "
+											+ node
+											+ "\ntested child: " + child));
 				}
 			}
 			if (sumMap == null) {

@@ -2,10 +2,6 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:com.google.gwt.dom.client">
 	<ui:style>
-	.params {
-		height: 60px;
-	}
-	
 	.code {
 		display: inline-block;
 		width: 50%;
@@ -13,19 +9,22 @@
 		font-family: monospace;
 		background-color: gray;
 		vertical-align: top;
+		border-bottom: medium solid black;
 	}
 	
 	.display {
 		display: inline-block;
 		width: 50%;
 		vertical-align: top;
+		border-bottom: medium solid black;
 	}
 	</ui:style>
 
 	<g:FlowPanel>
 	
-		<g:FlowPanel styleName="{style.params}" ui:field="params"></g:FlowPanel>
-
+			<g:FlowPanel ui:field="upperArea">
+			</g:FlowPanel>
+			
 		<g:FlowPanel>
 			<g:FlowPanel styleName="{style.code}">
 				<g:Label ui:field="linkCode"></g:Label>
