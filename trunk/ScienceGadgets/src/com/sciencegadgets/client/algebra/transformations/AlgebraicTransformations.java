@@ -191,132 +191,136 @@ public class AlgebraicTransformations {
 		}
 		return null;
 	}
-//
-//	/**
-//	 * Place drop targets on drag controller, allowing for operations between
-//	 * terms of the numerator and denominator. This allows users to cancel,
-//	 * divide, and combine terms on either side of the fraction
-//	 * 
-//	 * @param node
-//	 * @return
-//	 */
-//	public static LinkedList<InterFractionDrop> interFractionDrop_check(
-//			EquationNode node) {
-//
-//		EquationNode thisSide = null;
-//		EquationNode parent = node.getParent();
-//		switch (parent.getType()) {
-//		case Fraction:
-//			thisSide = node;
-//			break;
-//		case Term:
-//			if (TypeSGET.Fraction.equals(parent.getParentType()) && !TypeSGET.Operation.equals(node.getType())) {
-//				thisSide = parent;
-//				break;
-//			}// else fall through
-//		default:
-//			return null;
-//		}
-//
-//		EquationNode otherSide = thisSide.getIndex() == 0 ? thisSide
-//				.getNextSibling() : thisSide.getPrevSibling();
-//
-//		HashMap<EquationNode, DropType> dropTargets = new HashMap<EquationTree.EquationNode, DropType>();
-//
-//		if (node.isLike(otherSide)) {// Cancel drop on entire other sides
-//			dropTargets.put(otherSide, DropType.CANCEL);
-//
-//		} else if (TypeSGET.Term.equals(otherSide.getType())) {
-//			// Drop on each term child
-//			for (EquationNode child : otherSide.getChildren()) {
-//				if(TypeSGET.Operation.equals(child.getType())) {
-//					continue;
-//				}
-//				if (node.isLike(child)) {// Cancel drop on child
-//					dropTargets.put(child, DropType.CANCEL);
-//				} else {// Drop on child
-//					addDropTarget(child, node, dropTargets);
-//				}
-//			}
-//
-//		} else {// Drop on entire other side
-//			addDropTarget(otherSide, node, dropTargets);
-//		}
-//
-//		LinkedList<InterFractionDrop> dropControllers = new LinkedList<InterFractionDrop>();
-//		if (dropTargets.size() > 0) {
-//			if(node.getWrapper() == null){
-//			AlgebaWrapper wrap = new AlgebaWrapper(node, Moderator.getCurrentAlgebraActivity(), DOM.createDiv());
-//		}
-//			WrapDragController dragController = node.getWrapper()
-//					.addDragController();
-//			for (Entry<EquationNode, DropType> dropTarget : dropTargets
-//					.entrySet()) {
-//
-//				System.out.println(dropTarget);
-//				InterFractionDrop drop = new InterFractionDrop(dragController,
-//						(AlgebaWrapper) dropTarget.getKey().getWrapper(),
-//						dropTarget.getValue());
-//				dropControllers.add(drop);
-//				dragController.registerDropController(drop);
-//			}
-//		}
-//		return dropControllers;
-//	}
-//
-//	/**
-//	 * To be used by {@link #interFractionDrop_check}
-//	 */
-//	private static void addDropTarget(EquationNode target, EquationNode drag,
-//			HashMap<EquationTree.EquationNode, DropType> dropTargets) {
-//
-//		TypeSGET dragType = drag.getType();
-//
-//		if (TypeSGET.Number.equals(dragType) && "1".equals(drag.getSymbol())) {
-//			dropTargets.put(target, DropType.REMOVE_ONE);
-//			return;
-//		}
-//
-//		// The rest of this method is only applicable if
-//		if (!dragType.equals(target.getType())) {
-//			return;
-//		}
-//
-//		switch (dragType) {
-//		case Number:
-//			if (!"0".equals(drag.getSymbol())) {
-//				dropTargets.put(target, DropType.DIVIDE);
-//			}
-//			break;
-//		case Exponential:
-//			if (drag.getFirstChild().isLike(target.getFirstChild())) {
-//				dropTargets.put(target, DropType.EXPONENTIAL);
-//			}
-//			break;
-//		case Log:
-//			if (drag.getAttribute(MathAttribute.LogBase).equals(
-//					target.getAttribute(MathAttribute.LogBase))
-//					&& TypeSGET.Number.equals(drag.getFirstChild().getType())) {
-//				dropTargets.put(target, DropType.LOG_COMBINE);
-//			}
-//			break;
-//		case Trig:
-//			if (target.getFirstChild().isLike(drag.getFirstChild())) {
-//				// Make sure (drag or target) is sin and other is cos
-//				TrigFunctions dragFunc = TrigFunctions.valueOf(drag
-//						.getAttribute(MathAttribute.Function));
-//				TrigFunctions targetfunc = TrigFunctions.valueOf(target
-//						.getAttribute(MathAttribute.Function));
-//				TrigFunctions sin = TrigFunctions.sin;
-//				TrigFunctions cos = TrigFunctions.cos;
-//				if ((sin.equals(dragFunc) && cos.equals(targetfunc))
-//						|| (cos.equals(dragFunc) && sin.equals(targetfunc))) {
-//					dropTargets.put(target, DropType.TRIG_COMBINE);
-//				}
-//			}
-//			break;
-//		}
-//	}
+	//
+	// /**
+	// * Place drop targets on drag controller, allowing for operations between
+	// * terms of the numerator and denominator. This allows users to cancel,
+	// * divide, and combine terms on either side of the fraction
+	// *
+	// * @param node
+	// * @return
+	// */
+	// public static LinkedList<InterFractionDrop> interFractionDrop_check(
+	// EquationNode node) {
+	//
+	// EquationNode thisSide = null;
+	// EquationNode parent = node.getParent();
+	// switch (parent.getType()) {
+	// case Fraction:
+	// thisSide = node;
+	// break;
+	// case Term:
+	// if (TypeSGET.Fraction.equals(parent.getParentType()) &&
+	// !TypeSGET.Operation.equals(node.getType())) {
+	// thisSide = parent;
+	// break;
+	// }// else fall through
+	// default:
+	// return null;
+	// }
+	//
+	// EquationNode otherSide = thisSide.getIndex() == 0 ? thisSide
+	// .getNextSibling() : thisSide.getPrevSibling();
+	//
+	// HashMap<EquationNode, DropType> dropTargets = new
+	// HashMap<EquationTree.EquationNode, DropType>();
+	//
+	// if (node.isLike(otherSide)) {// Cancel drop on entire other sides
+	// dropTargets.put(otherSide, DropType.CANCEL);
+	//
+	// } else if (TypeSGET.Term.equals(otherSide.getType())) {
+	// // Drop on each term child
+	// for (EquationNode child : otherSide.getChildren()) {
+	// if(TypeSGET.Operation.equals(child.getType())) {
+	// continue;
+	// }
+	// if (node.isLike(child)) {// Cancel drop on child
+	// dropTargets.put(child, DropType.CANCEL);
+	// } else {// Drop on child
+	// addDropTarget(child, node, dropTargets);
+	// }
+	// }
+	//
+	// } else {// Drop on entire other side
+	// addDropTarget(otherSide, node, dropTargets);
+	// }
+	//
+	// LinkedList<InterFractionDrop> dropControllers = new
+	// LinkedList<InterFractionDrop>();
+	// if (dropTargets.size() > 0) {
+	// if(node.getWrapper() == null){
+	// AlgebaWrapper wrap = new AlgebaWrapper(node,
+	// Moderator.getCurrentAlgebraActivity(), DOM.createDiv());
+	// }
+	// WrapDragController dragController = node.getWrapper()
+	// .addDragController();
+	// for (Entry<EquationNode, DropType> dropTarget : dropTargets
+	// .entrySet()) {
+	//
+	// System.out.println(dropTarget);
+	// InterFractionDrop drop = new InterFractionDrop(dragController,
+	// (AlgebaWrapper) dropTarget.getKey().getWrapper(),
+	// dropTarget.getValue());
+	// dropControllers.add(drop);
+	// dragController.registerDropController(drop);
+	// }
+	// }
+	// return dropControllers;
+	// }
+	//
+	// /**
+	// * To be used by {@link #interFractionDrop_check}
+	// */
+	// private static void addDropTarget(EquationNode target, EquationNode drag,
+	// HashMap<EquationTree.EquationNode, DropType> dropTargets) {
+	//
+	// TypeSGET dragType = drag.getType();
+	//
+	// if (TypeSGET.Number.equals(dragType) && "1".equals(drag.getSymbol())) {
+	// dropTargets.put(target, DropType.REMOVE_ONE);
+	// return;
+	// }
+	//
+	// // The rest of this method is only applicable if
+	// if (!dragType.equals(target.getType())) {
+	// return;
+	// }
+	//
+	// switch (dragType) {
+	// case Number:
+	// if (!"0".equals(drag.getSymbol())) {
+	// dropTargets.put(target, DropType.DIVIDE);
+	// }
+	// break;
+	// case Exponential:
+	// if (drag.getFirstChild().isLike(target.getFirstChild())) {
+	// dropTargets.put(target, DropType.EXPONENTIAL);
+	// }
+	// break;
+	// case Log:
+	// if (drag.getAttribute(MathAttribute.LogBase).equals(
+	// target.getAttribute(MathAttribute.LogBase))
+	// && TypeSGET.Number.equals(drag.getFirstChild().getType())) {
+	// dropTargets.put(target, DropType.LOG_COMBINE);
+	// }
+	// break;
+	// case Trig:
+	// if (target.getFirstChild().isLike(drag.getFirstChild())) {
+	// // Make sure (drag or target) is sin and other is cos
+	// TrigFunctions dragFunc = TrigFunctions.valueOf(drag
+	// .getAttribute(MathAttribute.Function));
+	// TrigFunctions targetfunc = TrigFunctions.valueOf(target
+	// .getAttribute(MathAttribute.Function));
+	// TrigFunctions sin = TrigFunctions.sin;
+	// TrigFunctions cos = TrigFunctions.cos;
+	// if ((sin.equals(dragFunc) && cos.equals(targetfunc))
+	// || (cos.equals(dragFunc) && sin.equals(targetfunc))) {
+	// dropTargets.put(target, DropType.TRIG_COMBINE);
+	// }
+	// }
+	// break;
+	// }
+	// }
 
 	// DenominatorFlipButton denominatorFlip_check(EquationNode node,
 	// TransformationList<TransformationButton> context) {
@@ -340,10 +344,12 @@ class SeperateNegButton extends TransformationButton {
 		super("Seperate (-)", context);
 		this.negNode = negNode;
 	}
+
 	@Override
 	public Badge getAssociatedBadge() {
 		return null;
 	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
@@ -357,14 +363,14 @@ class SeperateNegButton extends TransformationButton {
 				TypeSGET.Operator.MINUS.getSign(), "");
 		negNode.setSymbol(newSymbol);
 
-		if (prevSib != null && TypeSGET.Operation.equals(prevSib.getType())) {
+		if (prevSib != null && TypeSGET.Operation.equals(prevSib.getType()) && TypeSGET.Sum.equals(negNode.getParentType())) {
 			if (Operator.PLUS.getSign().equals(prevSib.getSymbol())) {
 				prevSib.setSymbol(Operator.MINUS.getSign());
 			} else if (Operator.MINUS.getSign().equals(prevSib.getSymbol())) {
 				prevSib.setSymbol(Operator.PLUS.getSign());
 			} else {
-				JSNICalls.error("The previous operator contains "
-						+ "neither a plus or minus");
+				JSNICalls
+						.error("The previous operator contains neither a plus or minus");
 			}
 		} else {
 			EquationNode parent = negNode.getParent();

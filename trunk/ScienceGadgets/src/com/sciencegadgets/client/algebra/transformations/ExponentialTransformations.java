@@ -37,7 +37,7 @@ public class ExponentialTransformations extends
 		this.baseType = base.getType();
 		this.exponentType = exponent.getType();
 
-		if (add(zeroBase_check())) {
+		if (add(zeroOrOneBase_check())) {
 			return;
 		}
 		add(exponentialExpand_check());
@@ -48,9 +48,14 @@ public class ExponentialTransformations extends
 		add(unravelExpLog_check());
 	}
 
-	ZeroBaseButton zeroBase_check() {
-		if (TypeSGET.Number.equals(baseType) && "0".equals(base.getSymbol())) {
-			return new ZeroBaseButton(this);
+	ZeroOrOneBaseButton zeroOrOneBase_check() {
+		if (!TypeSGET.Number.equals(baseType)) {
+			return null;
+		}
+		if ("0".equals(base.getSymbol())) {
+			return new ZeroOrOneBaseButton(this, 0);
+		} else if ("1".equals(base.getSymbol())) {
+			return new ZeroOrOneBaseButton(this, 1);
 		}
 		return null;
 	}
@@ -64,6 +69,7 @@ public class ExponentialTransformations extends
 				return null;
 			}
 			try {
+				new BigDecimal(base.getSymbol());
 				int exp = Integer.parseInt(expValue);
 				return new ExponentialEvaluateButton(this, (int) exp);
 			} catch (NumberFormatException e) {
@@ -168,28 +174,48 @@ abstract class ExponentialTransformButton extends TransformationButton {
 /**
  * 0<sup>x</sup> = 0
  */
-class ZeroBaseButton extends ExponentialTransformButton {
+class ZeroOrOneBaseButton extends ExponentialTransformButton {
+	int baseValue;
 
-	ZeroBaseButton(ExponentialTransformations context) {
-		super(context, "0<sup>x</sup> = 0");
+	ZeroOrOneBaseButton(ExponentialTransformations context, int baseValue) {
+		super(context, getHTML(baseValue));
+		this.baseValue = baseValue;
+	}
+
+	static String getHTML(int baseValue) {
+		switch (baseValue) {
+		case 0:
+			return "0<sup>x</sup> = 0";
+		case 1:
+			return "1<sup>x</sup> = 1";
+		default:
+			return "should be base 0 or 1???";
+		}
 	}
 
 	@Override
 	public Badge getAssociatedBadge() {
-		return Badge.EXPONENT_BASE_ZERO;
+		switch (baseValue) {
+		case 0:
+			return Badge.EXPONENT_BASE_ZERO;
+		case 1:
+			return Badge.EXPONENT_BASE_ONE;
+		default:
+			return null;
+		}
 	}
 
 	@Override
 	public void transform() {
 		exponential.replace(base);
 
-		onTransformationEnd("0<sup>x</sup> = 0");
+		onTransformationEnd(getHTML(baseValue));
 	}
 
 	@Override
 	TransformationButton getPreviewButton(EquationNode operation) {
 		super.getPreviewButton(operation);
-		return previewContext.zeroBase_check();
+		return previewContext.zeroOrOneBase_check();
 	}
 }
 
@@ -232,8 +258,8 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 			evaluateExponential(baseValue, exp, totalValue, totalUnitMap);
 
 		} else if (!reloadAlgebraActivity) {
-//			base.replace(TypeSGET.Variable, "#");
-//			exponent.replace(TypeSGET.Variable, "#");
+			// base.replace(TypeSGET.Variable, "#");
+			// exponent.replace(TypeSGET.Variable, "#");
 
 		} else {// prompt
 

@@ -21,50 +21,64 @@ public class KeyPadNumerical extends FlowPanel {
 	NumberButton eButton = new NumberButton("E");
 	NumberButton expButton = new NumberButton("^");
 
-	public KeyPadNumerical(SymbolDisplay symbolDisplay) {
+	public KeyPadNumerical(SymbolDisplay symbolDisplay, Boolean includeNumbers,
+			Boolean includeNegative, Boolean includeOtherSymbols) {
 		super();
 		symbolDisplay.setKeyPad(this);
-		initialize(symbolDisplay, false);
+		initialize(symbolDisplay, includeNumbers, includeNegative,
+				includeOtherSymbols);
 	}
-	public KeyPadNumerical(boolean numbersOnly) {
+
+	public KeyPadNumerical(SymbolDisplay symbolDisplay) {
+		this(symbolDisplay, true, true, true);
+	}
+
+	public KeyPadNumerical(Boolean includeNumbers, Boolean includeNegative,
+			Boolean includeOtherSymbols) {
 		super();
-		initialize(new SymbolDisplay(this), numbersOnly);
+		initialize(new SymbolDisplay(this), includeNumbers, includeNegative,
+				includeOtherSymbols);
 	}
+
 	public KeyPadNumerical() {
-		super();
-		initialize(new SymbolDisplay(this), false);
+		this(true, true, true);
 	}
-	
-	private void initialize(SymbolDisplay symbolDisplay, boolean numbersOnly) {
+
+	private void initialize(SymbolDisplay symbolDisplay,
+			Boolean includeNumbers, Boolean includeNegative,
+			Boolean includeOtherSymbols) {
 		addStyleName(CSS.KEY_PAD_NUMERICAL);
 
 		this.symbolDisplay = symbolDisplay;
 		this.symbolDisplay.addStyleName(CSS.NUMBER_DISPLAY);
 
-		for (int i = 0; i < 10; i++) {
-			NumberButton b = new NumberButton(i + "");
-			buttons.add(b);
-			this.add(b);
+		if (includeNumbers) {
+			for (int i = 0; i < 10; i++) {
+				NumberButton b = new NumberButton(i + "");
+				buttons.add(b);
+				this.add(b);
+			}
 		}
 		// separate numbers from special characters with a div
 		this.add(new FlowPanel());
 
-		if(!numbersOnly) {
-		negButton.setTitle("negative");
-		buttons.add(negButton);
-		this.add(negButton);
+		if (includeNegative) {
+			negButton.setTitle("negative");
+			buttons.add(negButton);
+			this.add(negButton);
+		}
+		if (includeOtherSymbols) {
+			periodButton.setTitle("decimal dot");
+			buttons.add(periodButton);
+			this.add(periodButton);
 
-		periodButton.setTitle("decimal dot");
-		buttons.add(periodButton);
-		this.add(periodButton);
+			eButton.setTitle("x10^");
+			buttons.add(eButton);
+			this.add(eButton);
 
-		eButton.setTitle("x10^");
-		buttons.add(eButton);
-		this.add(eButton);
-
-		expButton.setTitle("exponent");
-		buttons.add(expButton);
-		this.add(expButton);
+			expButton.setTitle("exponent");
+			buttons.add(expButton);
+			this.add(expButton);
 		}
 
 		if (Moderator.isTouch) {
@@ -100,6 +114,8 @@ public class KeyPadNumerical extends FlowPanel {
 			});
 		}
 
+		//reload to reset keys enabled
+		symbolDisplay.setText(symbolDisplay.getText());
 	}
 
 	public void addNumberClickHandler(ClickHandler handler) {
@@ -135,7 +151,6 @@ public class KeyPadNumerical extends FlowPanel {
 	}
 
 }
-	
 
 class NumberButton extends Button {
 	public NumberButton(String string) {

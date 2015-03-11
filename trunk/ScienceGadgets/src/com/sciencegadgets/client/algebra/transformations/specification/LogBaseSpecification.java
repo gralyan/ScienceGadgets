@@ -13,7 +13,7 @@ import com.sciencegadgets.shared.dimensions.CommonConstants;
 public class LogBaseSpecification extends Prompt {
 	public final String[] bases = { "2", "10", CommonConstants.EULER.getSymbol() };
 	private SymbolDisplay symbolDisplay;
-	KeyPadNumerical keyPad = new KeyPadNumerical(true);
+	KeyPadNumerical keyPad = new KeyPadNumerical(true, false, false);
 
 	public LogBaseSpecification() {
 		super();

@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.googlecode.objectify.Key;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
+import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.Diagram;
@@ -21,6 +22,8 @@ public interface DatabaseHelperAsync {
 	void getEquationsWithQuantities(ArrayList<String> quantityKinds,
 			AsyncCallback<Equation[]> callback) throws IllegalArgumentException;
 
+	void getUnitsAll(AsyncCallback<LinkedList<Unit>> callback)
+			throws IllegalArgumentException;
 	void getUnitsByQuantity(String quantityKind,
 			AsyncCallback<LinkedList<Unit>> callback)
 			throws IllegalArgumentException;
@@ -29,7 +32,7 @@ public interface DatabaseHelperAsync {
 
 	void getBlobURL(AsyncCallback<String> callback);
 
-	void getUnit(String unitName, AsyncCallback<Unit> callback);
+	void getUnitQuantityKindName(String unitName, AsyncCallback<String> callback);
 
 	void reCreateUnits(AsyncCallback<Void> callback);
 
@@ -44,6 +47,6 @@ public interface DatabaseHelperAsync {
 			AsyncCallback<String> asyncCallback);
 
 	void saveProblem(Problem problem, AsyncCallback<String> asyncCallback);
-	void getProblem(String problemKeyString, AsyncCallback<Problem> asyncCallback);
+	void getProblem(long id, AsyncCallback<Problem> asyncCallback);
 
 }

@@ -54,15 +54,19 @@ public static final String FIT_PARENT_HTML = "fitParentHTML";
 public static final String EQUATION_BROWSER = "equationBrowser";
 public static final String MODES = "modes";
 public static final String ROW_HEADER = "rowHeader";
+public static final String ROW_SUB_HEADER = "rowSubHeader";
 public static final String ALG_BROWSER = "algBrowser";
 public static final String ALG_BROWSER_PANEL = "algBrowserPanel";
-public static final String GENERATE_BUTTON = "generateButton";
+public static final String EQ_GENERATOR_PANEL = "eqGeneratorPanel";
+public static final String CHALLENGE_GENERATOR_PANEL = "challengeBrowserPanel";
 public static final String EQUATION_SOLVE_BUTTON = "equationSolveButton";
 public static final String SCI_BROWSER = "sciBrowser";
 public static final String SCI_BROWSER_VAR = "sciBrowseVar";
 public static final String SCI_BROWSER_EQ = "sciBrowseEq";
 public static final String SCI_BROWSER_SUM = "sciBrowseSum";
 public static final String DIAGRAM_MEASURE = "diagramMeasure";
+public static final String ACTIVITY_SELECTION_PANEL = "activitySelectionPanel";
+public static final String ACTIVITY_DETAILS_PANEL = "activityDetailsPanel";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "conversionActivity";
 /*---------------SelectionPanel---------------*/
@@ -85,6 +89,7 @@ public static final String LINE_THROUGH = "lineThrough";
 /*---------------wrappers---------------*/
 public static final String SELECTED_WRAPPER = "selectedWrapper";
 public static final String SELECTED_DROP_WRAPPER = "selectedDropWrapper";
+public static final String SELECTION_DETAILS = "selectionDetails";
 public static final String CONVERSION_WRAPPER = "conversionWrapper";
 public static final String DROP_ENTER_RESPONSE = "dropEnterResponse";
 public static final String EQ_PANEL = "eqPanel";
@@ -105,6 +110,8 @@ public static final String DOUBLE_FONT_SIZE = "doubleFontSize";
 public static final String INVALID_INPUT = "invalidInput";
 public static final String OK_GAP = "okGap";
 public static final String EXAMPLE_HTML = "exampleHtml";
+public static final String ESTABLISHED_QUANTITY_SELECTION = "establishedQuantitySelection";
+public static final String QUANTITY_PROMPT_SPEC = "quantityPromptSpec";
 
 
 //////////////////////////////////////////////
@@ -126,6 +133,10 @@ public static final String INSERT_VAR_IMAGE = "insertVarImage";
 public static final String INSERT_VAR_IMAGE_ACTIVE = "insertVarImageActive";
 public static final String INSERT_VAR_SOLVE = "insertVarSolve";
 public static final String INSERT_VAR_SOLVE_ACTIVE = "insertVarSolveActive";
+public static final String GENERATE_BUTTON = "generateButton";
+public static final String ACTIVITY_SELECTION_BUTTON = "activitySelectionButton";
+public static final String ACTIVITY_SELECTION_BUTTON_SELECTED = "activitySelectionButtonSelected";
+public static final String MAKE_EQ_BUTTON = "makeEqButton";
 
 
 }

@@ -33,6 +33,7 @@ import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 import com.sciencegadgets.client.ui.UnitSelection;
+import com.sciencegadgets.client.ui.specification.NumberSpecification;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
@@ -63,8 +64,7 @@ public class ConversionActivity extends AbsolutePanel {
 	@UiField
 	Button convertButton;
 
-	static final UnitSelection unitSelection = new UnitSelection(false, true,
-			false);
+	static final UnitSelection unitSelection = new UnitSelection(false, true);
 	static final SelectionPanel derivedUnitsSelection = new SelectionPanel(
 			"Base Units");
 	private EquationTree mTree = null;
@@ -74,7 +74,7 @@ public class ConversionActivity extends AbsolutePanel {
 
 	LinkedList<UnitDisplay> unitDisplays = new LinkedList<UnitDisplay>();
 
-	private Unit selectedUnit = null;
+//	private Unit selectedUnit = null;
 	static ConversionWrapper selectedWrapper = null;
 
 	private EquationNode totalNode;
@@ -101,20 +101,27 @@ public class ConversionActivity extends AbsolutePanel {
 		convertButton.addClickHandler(new ConvertCompleteClickHandler());
 	}
 
-	public void load(EquationNode node, Equation variableEquation) {
+	public void setNode(EquationNode node) {
 		this.node = node;
+	}
+
+	public void setVariableEquation(Equation variableEquation) {
 		this.variableEquation = variableEquation;
+	}
+
+	public void load(String initialValue, UnitAttribute unitAttribute, boolean allowConvertButton) {
 		unitDisplays.clear();
-		selectedUnit = null;
+//		selectedUnit = null;
 		selectedWrapper = null;
+		convertButton.setVisible(allowConvertButton);
 
 		mTree = new EquationTree(TypeSGET.Term, "", TypeSGET.Term, "", false);
 
 		totalNode = mTree.getLeftSide().append(TypeSGET.Number,
-				node.getSymbol());
+				initialValue);
 		mTree.getRightSide().append(totalNode.clone());
 
-		UnitMultiple[] bases = node.getUnitAttribute().getUnitMultiples();
+		UnitMultiple[] bases = unitAttribute.getUnitMultiples();
 
 		EquationNode fracRight = mTree.newNode(TypeSGET.Fraction, "");
 		EquationNode numerRight = fracRight.append(TypeSGET.Term, "");
@@ -250,18 +257,20 @@ public class ConversionActivity extends AbsolutePanel {
 
 	void fillUnitSelection(final String unitName) {
 
-		DataModerator.database.getUnit(unitName, new AsyncCallback<Unit>() {
+		DataModerator.database.getUnitQuantityKindName(unitName, new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				JSNICalls.error("getUnit Failed: "+caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(Unit result) {
-				selectedUnit = result;
-				String quantityKind = selectedUnit.getQuantityKindName();
-				String excludedUnitName = selectedUnit.getName().toString();
+			public void onSuccess(String qkName) {
+//				selectedUnit = result;
+//				String quantityKind = selectedUnit.getQuantityKindName();
+//				String excludedUnitName = selectedUnit.getName().toString();
 
-				unitSelection.reloadUnitBox(quantityKind, excludedUnitName);
+//				unitSelection.reloadUnitBox(quantityKind, excludedUnitName);
+				unitSelection.reloadUnitBox(qkName, unitName, false);
 			}
 		});
 
@@ -292,6 +301,11 @@ public class ConversionActivity extends AbsolutePanel {
 		String exp = selectedWrapper.getNode().getUnitAttribute()
 				.getUnitMultiples()[0].getUnitExponent();
 		int expAbs = Math.abs(Integer.parseInt(exp));
+		
+		Unit selectedUnit = selectedWrapper.getUnit();
+		if(selectedUnit == null) {
+			return;
+		}
 
 		UnitAttribute fromUnitAttribute = new UnitAttribute(
 				selectedUnit.getName() + UnitAttribute.EXP_DELIMITER + 1);

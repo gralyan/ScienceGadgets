@@ -28,9 +28,8 @@ public class EditWrapper extends EquationWrapper {
 			}
 		}else{
 			changeNodeMenu.setNode(node);
-			eqPanel.getAlgebraActivity().lowerEqArea.add(changeNodeMenu);
-//			Moderator.getCurrentAlgebraActivity().lowerEqArea.add(changeNodeMenu);
-			changeNodeMenu.setVisible(false);
+//			eqPanel.getAlgebraActivity().lowerEqArea.add(changeNodeMenu);
+//			changeNodeMenu.setVisible(false);
 		}
 	}
 
@@ -49,7 +48,8 @@ public class EditWrapper extends EquationWrapper {
 		if (this.equals(eqPanel.selectedWrapper)) {
 			if (changeNodeMenu != null) {
 				changeNodeMenu.updatePaste();
-				changeNodeMenu.setVisible(true);
+				eqPanel.getAlgebraActivity().lowerEqArea.add(changeNodeMenu);
+//				changeNodeMenu.setVisible(true);
 			}
 		}
 	}
@@ -57,7 +57,8 @@ public class EditWrapper extends EquationWrapper {
 	public void unselect() {
 
 		if (changeNodeMenu != null) {
-		changeNodeMenu.setVisible(false);
+//		changeNodeMenu.setVisible(false);
+		changeNodeMenu.removeFromParent();
 		}
 		
 		super.unselect();

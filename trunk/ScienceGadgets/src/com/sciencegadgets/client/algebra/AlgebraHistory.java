@@ -28,6 +28,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.URLParameters;
+import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.CSS;
@@ -57,7 +59,13 @@ public class AlgebraHistory extends FlowPanel {
 			this.addDomHandler(new AlgOutClickHandler(), ClickEvent.getType());
 		}
 
-		Label firstRowEq = new Label("Solve");
+		Label firstRowEq;
+		String goalStr = URLParameters.getParameter(Parameter.goal);
+		if (goalStr != null && !"".equals(goalStr)) {
+			firstRowEq = new HTML("Simplify to: " + goalStr);
+		} else {
+			firstRowEq = new Label("Solve");
+		}
 		firstRowEq.addStyleName(CSS.ALG_OUT_EQ_ROW);
 		firstRow.add(firstRowEq);
 
@@ -73,22 +81,27 @@ public class AlgebraHistory extends FlowPanel {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		if(isSolved) {
+		if (isSolved) {
 			firstRow.getElement().getStyle().clearHeight();
-		}else {
+		} else {
 			firstRow.setHeight(getOffsetHeight() + "px");
 		}
 	}
 
-	public void updateAlgebraHistory(String changeComment, Skill rule, EquationTree mathTree) {
-
-		changeComment = changeComment.replace("lineThrough", "");
+	public void updateAlgebraHistory(String changeComment, Skill rule,
+			EquationTree mathTree) {
 		
+		changeComment = changeComment.replace("lineThrough", "");
+
 		add(new AlgebraHistoryRow(changeComment, rule, mathTree));
 
 		if (changeComment.contains(BothSidesTransformations.UP_ARROW)) {
 			add(new AlgebraHistoryRow(changeComment));
 		}
+	}
+	
+	public void solvedUpdate(EquationTree mathTree) {
+		add(new AlgebraHistoryRow(mathTree.getDisplay()));
 	}
 
 	void scrollToBottom() {
@@ -104,15 +117,16 @@ public class AlgebraHistory extends FlowPanel {
 
 		// Change row
 		AlgebraHistoryRow(String changeComment) {
-			this(new HTML("<div>" + changeComment
-					+ "</div><div></div><div>" + changeComment + "</div>"));
+			this(new HTML("<div>" + changeComment + "</div><div></div><div>"
+					+ changeComment + "</div>"));
 
 			addStyleName(CSS.ALG_OUT_CHANGE_ROW);
 
 		}
 
 		// Equation row
-		AlgebraHistoryRow(String changeComment, Skill rule, EquationTree mathTree) {
+		AlgebraHistoryRow(String changeComment, Skill rule,
+				EquationTree mathTree) {
 			this(mathTree.getDisplay());
 
 			ruleSide.setHTML(changeComment);
@@ -133,7 +147,7 @@ public class AlgebraHistory extends FlowPanel {
 
 			Element rootEl = root.getElement();
 			rootEl.addClassName(CSS.FILL_PARENT);
-			
+
 			Element rightCase = DOM.createDiv();
 			Element leftCase = DOM.createDiv();
 			rightCase.appendChild(rootEl.getChild(2));

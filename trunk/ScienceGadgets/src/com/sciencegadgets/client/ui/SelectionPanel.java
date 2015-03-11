@@ -39,7 +39,7 @@ public class SelectionPanel extends FlowPanel {
 	
 	public void addSectionTitle(String title) {
 		Label sectionTitle = new Label(title);
-		sectionTitle.setStylePrimaryName(CSS.ROW_HEADER);
+		sectionTitle.setStylePrimaryName(CSS.ROW_SUB_HEADER);
 		add(sectionTitle);
 	}
 
@@ -74,22 +74,24 @@ public class SelectionPanel extends FlowPanel {
 		addStyleName(CSS.TEXT_CENTER);
 	}
 
-	public void add(String html) {
-		this.add(html, null, null);
+	public Cell add(String html) {
+		return this.add(html, null, null);
 	}
 
-	public void add(String html, String value) {
-		this.add(html, value, null);
+	public Cell add(String html, String value) {
+		return this.add(html, value, null);
 	}
-	public void add(String html, String value, Object entity) {
+	public Cell add(String html, String value, Object entity) {
 		Cell cell = new Cell(html, value, entity);
 		cells .add(cell);
 		super.add(cell);
+		return cell;
 	}
-	public void insert(int index, String html, String value, Object entity) {
+	public Cell insert(int index, String html, String value, Object entity) {
 		Cell cell = new Cell(html, value, entity);
 		cells .add(cell);
 		super.insert(cell, index+1);
+		return cell;
 	}
 
 	public String getSelectedText() {
@@ -118,6 +120,18 @@ public class SelectionPanel extends FlowPanel {
 
 	public Cell getSelection() {
 		return selectedCell;
+	}
+	
+	public void clearSelection() {
+		if (selectedCell != null) {
+			selectedCell.removeStyleName(CSS.SELECTED_CELL);
+			selectedCell = null;
+		}
+	}
+	@Override
+	protected void onDetach() {
+		clearSelection();
+		super.onDetach();
 	}
 
 	public class Cell extends HTML {

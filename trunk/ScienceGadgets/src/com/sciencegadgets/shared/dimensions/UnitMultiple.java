@@ -1,5 +1,14 @@
 package com.sciencegadgets.shared.dimensions;
 
+/**
+ * [quantityKind] + UnitAttribute.NAME_DELIMITER + [symbol]
+ * +UnitAttribute.EXP_DELIMITER_REGEX+ [exp]
+ * 
+ * <br/>
+ * examples: <br/>
+ * <b>liter:</b> Volume_L^1 <br/>
+ * <b>meter squared:</b> Length_m^2
+ */
 public class UnitMultiple {
 
 	String unitMultiple;
@@ -14,7 +23,8 @@ public class UnitMultiple {
 	}
 
 	public UnitName getUnitName() {
-		return new UnitName(unitMultiple.split(UnitAttribute.EXP_DELIMITER_REGEX)[0]);
+		return new UnitName(
+				unitMultiple.split(UnitAttribute.EXP_DELIMITER_REGEX)[0]);
 	}
 
 	public String getUnitExponent() {
@@ -27,10 +37,10 @@ public class UnitMultiple {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof UnitMultiple) {
-			if(toString().equals(((UnitMultiple)obj).toString())) {
+		if (obj instanceof UnitMultiple) {
+			if (toString().equals(((UnitMultiple) obj).toString())) {
 				return true;
-			}else {
+			} else {
 				return false;
 			}
 		} else {

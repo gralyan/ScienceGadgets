@@ -106,6 +106,12 @@ public class AdditionTransformations extends
 				|| !TypeSGET.Number.equals(rightType)) {
 			return null;
 		}
+		try {
+			new BigDecimal(left.getSymbol());
+			new BigDecimal(right.getSymbol());
+		}catch(NumberFormatException e) {
+			return null;
+		}
 		return new AddNumbersButton(this);
 	}
 
@@ -297,6 +303,9 @@ class AddNumbersButton extends AddTransformButton {
 		} else if (totalAbs <= 100) {
 			nMagSkill = Skill.ADD_NUMBERS_100;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_100;
+		}else {
+			nMagSkill = Skill.ADD_NUMBERS_LARGE;
+			numberMagnitudeBadge = Badge.ADD_NUMBERS_LARGE;
 		}
 		final Skill numberMagnitudeSkill = nMagSkill;
 
@@ -308,25 +317,25 @@ class AddNumbersButton extends AddTransformButton {
 
 		HashSet<Badge> badgesRequired = new HashSet<Badge>();
 		badgesRequired.add(numberMagnitudeBadge);
-		if (includesNegatives) {
-			badgesRequired.add(Badge.ADDITION_WITH_NEGATIVES);
-		}
-		if (isMinus) {
-			badgesRequired.add(Badge.SUBTRACTION);
-		}
 		if (includesZero) {
 			badgesRequired.add(Badge.ADD_WITH_ZERO);
+		} else {
+			if (includesNegatives) {
+				badgesRequired.add(Badge.ADDITION_WITH_NEGATIVES);
+			}
+			if (isMinus) {
+				badgesRequired.add(Badge.SUBTRACTION);
+			}
 		}
-
 		boolean meetsRequirements = Moderator.meetsRequirements(badgesRequired);
 
 		if (meetsRequirements) {
 			addNumbers(left, right, totalValue, leftValue, rightValue);
 
 		} else if (!reloadAlgebraActivity) {
-//			parent.replace(TypeSGET.Sum, "");
-//			parent.append(TypeSGET.Variable, "# ");
-//			parent.append(TypeSGET.Variable, operation.getSymbol());
+			// parent.replace(TypeSGET.Sum, "");
+			// parent.append(TypeSGET.Variable, "# ");
+			// parent.append(TypeSGET.Variable, operation.getSymbol());
 			// parent.append(TypeML.Variable, " #");
 
 		} else {// prompt
@@ -373,8 +382,8 @@ class AddNumbersButton extends AddTransformButton {
 							.entrySet()) {
 						entry.setValue(1);
 					}
-					addNumbers(left, right, totalValue, leftValue, rightValue);
 					Moderator.increaseSkills(skillsIncrease);
+					addNumbers(left, right, totalValue, leftValue, rightValue);
 				}
 			};
 			prompt.appear();
@@ -498,10 +507,12 @@ class ToCommonDenominatorButton extends AddTransformButton {
 		super(context);
 		setHTML("Common Denominator");
 	}
-@Override
-public String getExampleHTML() {
-	return null;
-}
+
+	@Override
+	public String getExampleHTML() {
+		return null;
+	}
+
 	@Override
 	public Badge getAssociatedBadge() {
 		return Badge.COMMON_DENOMINATOR;

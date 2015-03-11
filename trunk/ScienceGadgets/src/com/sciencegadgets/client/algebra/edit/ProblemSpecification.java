@@ -257,7 +257,7 @@ public class ProblemSpecification extends Prompt {
 		static final int INSERT_SOLVE = 2;
 		private int mode;
 		VarIDButton activeButton = null;
-		public final Button toSolve = new Button(ChangeNodeMenu.NOT_SET, new ClickHandler() {
+		public final Button toSolve = new Button(TypeSGET.NOT_SET, new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -269,7 +269,7 @@ public class ProblemSpecification extends Prompt {
 			clear();
 			
 			toSolve.setTitle("");
-			toSolve.setText(ChangeNodeMenu.NOT_SET);
+			toSolve.setText(TypeSGET.NOT_SET);
 
 			add(new Label("Measurements: "));
 

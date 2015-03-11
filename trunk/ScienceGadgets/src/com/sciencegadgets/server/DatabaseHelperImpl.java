@@ -39,29 +39,24 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		ObjectifyService.register(Problem.class);
 	}
 	
-	public Problem getProblem(String problemKeyString) {
-		Key<Problem> problemKey = Key.create(problemKeyString);
+	public Problem getProblem(long id) {
+		Key<Problem> problemKey = Key.create(Problem.class, id);
 		return ObjectifyService.ofy().load().key(problemKey).now();
 	}
 	
 	@Override
 	public String saveProblem(Problem problem) {
 		Key<Problem> problemKey = ObjectifyService.ofy().save().entity(problem).now();
-
-		JSNICalls.error("to "+problemKey.toString());
-		JSNICalls.error("get "+problemKey.getString());
-		
-		System.out.println("to "+problemKey.toString());
-		System.out.println("get "+problemKey.getString());
 		return problemKey.getString();
 	}
 
 	@Override
-	public Unit getUnit(String unitName) {
+	public String getUnitQuantityKindName(String unitName) {
 		String parent = new UnitName(unitName).getQuantityKind();
 		Key<QuantityKind> parentKey = Key.create(QuantityKind.class, parent);
-		return ObjectifyService.ofy().load().type(Unit.class).parent(parentKey)
+		Unit unit = ObjectifyService.ofy().load().type(Unit.class).parent(parentKey)
 				.id(unitName).now();
+		return unit.getQuantityKindName();
 	}
 
 	@Override
@@ -116,8 +111,19 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 	public Equation[] getAlgebraEquations() throws IllegalArgumentException {
 		List<Equation> eqList = ObjectifyService.ofy().load()
 				.type(Equation.class).list();
-		// .type(Equation.class).limit(20).list();
 		return eqList.toArray(new Equation[eqList.size()]);
+	}
+
+	@Override
+	public LinkedList<Unit> getUnitsAll()
+			throws IllegalArgumentException {
+		List<Unit> list = ObjectifyService.ofy().load().type(Unit.class).list();
+		LinkedList<Unit> linkedList = new LinkedList<Unit>();
+		for(Unit u : list) {
+			u.removeQuantityKindKey();
+			linkedList.add(u);
+		}
+		return linkedList;
 	}
 
 	@Override
@@ -126,7 +132,10 @@ public class DatabaseHelperImpl extends RemoteServiceServlet implements
 		List<Unit> list = ObjectifyService.ofy().load().type(Unit.class)
 				.ancestor(Key.create(QuantityKind.class, quantityKind)).list();
 		LinkedList<Unit> linkedList = new LinkedList<Unit>();
-		linkedList.addAll(list);
+		for(Unit u : list) {
+			u.removeQuantityKindKey();
+			linkedList.add(u);
+		}
 		return linkedList;
 	}
 

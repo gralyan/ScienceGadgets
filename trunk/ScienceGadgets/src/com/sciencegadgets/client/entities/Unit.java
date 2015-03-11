@@ -2,6 +2,7 @@ package com.sciencegadgets.client.entities;
 
 import java.io.Serializable;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -9,9 +10,8 @@ import com.googlecode.objectify.annotation.Parent;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
 @Entity
-public class Unit implements Serializable{
-
-	private static final long serialVersionUID = -6353142243407326936L;
+public class Unit implements Serializable, IsSerializable{
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	String name;
@@ -19,6 +19,7 @@ public class Unit implements Serializable{
 	@Parent
 	Key<QuantityKind> quantityKind;
 	
+	String quantityKindName;
 	String label;
 	String description;
 	String conversionMultiplier;
@@ -45,7 +46,11 @@ public class Unit implements Serializable{
 		return quantityKind;
 	}
 	public String getQuantityKindName() {
-		return quantityKind.getName();
+		if(quantityKind != null) {
+			return quantityKind.getName();
+		}else {
+			return quantityKindName;
+		}
 	}
 
 	public String getDescription() {
@@ -58,6 +63,11 @@ public class Unit implements Serializable{
 
 	public String getSymbol() {
 		return getName().getSymbol();
+	}
+	
+	public void removeQuantityKindKey() {
+		quantityKindName = quantityKind.getName();
+		quantityKind = null;
 	}
 
 }

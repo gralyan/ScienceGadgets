@@ -53,6 +53,7 @@ public class Student implements Serializable {
 	 * 
 	 * @param skill
 	 * @param increase
+	 * @return 
 	 * @return - The new badges this increase earned
 	 */
 	public HashSet<Badge> increaseSkill(Skill skill, int increase) {
@@ -75,8 +76,8 @@ public class Student implements Serializable {
 			if (isNewBadge) {
 				newBadges.add(earnedBadge);
 				if (Moderator.equationBrowser != null
-						&& Moderator.equationBrowser.algebraBrowser != null) {
-					Moderator.equationBrowser.algebraBrowser
+						&& Moderator.equationBrowser.challengeBrowser != null) {
+					Moderator.equationBrowser.challengeBrowser
 							.addProblemsForNewBadge(earnedBadge);
 				}
 			}

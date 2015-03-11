@@ -90,14 +90,11 @@ public abstract class LinkPrompt extends Prompt {
 
 	protected void updateLinks() {
 		
-		//<link type="text/css" rel="stylesheet" href="equation.css">
 		String url = "http://sciencegadgets.org/#"
-				+ URLParameters.makeTolken(pMap);
-//		String url = "http://sciencegadgets.org/#"
-//				+ URL.encodePathSegment(URLParameters.makeTolken(pMap));
+				+ URLParameters.makeTolken(pMap, true);
 		linkDisplay.setHref(url);
 		
-		linkCode.setText(JSNICalls.elementToString(linkDisplay.getElement()));
+		linkCode.setText(JSNICalls.elementToString(linkDisplay.getElement()).replace("&amp;", "&"));
 		
 		iframeDisplay.setSrc(url);
 		iframeCode.setText(JSNICalls.elementToString(iframeDisplay));

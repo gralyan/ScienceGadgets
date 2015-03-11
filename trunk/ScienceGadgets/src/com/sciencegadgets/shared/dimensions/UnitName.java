@@ -1,5 +1,13 @@
 package com.sciencegadgets.shared.dimensions;
 
+/**
+ * [quantityKind] + UnitAttribute.NAME_DELIMITER + [symbol]
+ * 
+ * <br/>
+ * examples: <br/>
+ * <b>liter:</b> Volume_L <br/>
+ * <b>meter:</b> Length_m
+ */
 public class UnitName {
 
 	String unitName;
@@ -15,9 +23,9 @@ public class UnitName {
 
 	public String getSymbol() {
 		String[] parts = unitName.split(UnitAttribute.NAME_DELIMITER);
-		if(parts.length >1) {
+		if (parts.length > 1) {
 			return parts[1];
-		}else {
+		} else {
 			return "";
 		}
 	}

@@ -1,18 +1,20 @@
 package com.sciencegadgets.client.algebra;
 
+import java.math.BigDecimal;
+
 import com.google.gwt.dom.client.Node;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
+import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitMap;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class EquationValidator {
-
-	private static final String ANGLE = "Angle";
 
 	/**
 	 * Validates the structure of the node, looks at:<br/>
@@ -82,9 +84,8 @@ public class EquationValidator {
 					}
 				} catch (NumberFormatException e) {
 					try {
-						CommonConstants.valueOf(node
-								.getAttribute(MathAttribute.Value));
-					} catch (IllegalArgumentException ex) {
+						new BigDecimal(node.getAttribute(MathAttribute.Value));
+					} catch (NumberFormatException ex) {
 						String errorMessage = "The number node must have a valid number: "
 								+ toString();
 						throw new IllegalStateException(errorMessage,
@@ -259,20 +260,37 @@ public class EquationValidator {
 			}
 			// unreachable
 		case Trig:
-			UnitMap trigArgumentMap = getQuantityKind(node.getChildAt(0));
-			UnitMap comparison = new UnitMap();
-			comparison.put(new UnitName(ANGLE), 1);
-			if (comparison.equals(trigArgumentMap)) {
-				break;
-			} else {
+			try {
+				TrigFunctions function = TrigFunctions.valueOf(node
+						.getAttribute(MathAttribute.Function));
+				if (function.isArc()) {
+					return getQuantityKind(node.getChildAt(0));
+				} else {
+					UnitMap trigArgumentMap = getQuantityKind(node
+							.getChildAt(0));
+					UnitMap comparison = new UnitMap();
+					comparison.put(new UnitName(UnitAttribute.ANGLE), 1);
+					if (comparison.isConvertableTo(trigArgumentMap)) {
+						break;
+					} else {
+						throw new IllegalStateException(
+								"The argument of a trigonometric function must have the unit type of "
+										+ UnitAttribute.ANGLE, new Throwable(
+										"The child of a trig function doesn't have units of "
+												+ UnitAttribute.ANGLE + ": \n"
+												+ trigArgumentMap
+												+ "\nof node: " + node));
+					}
+				}
+			} catch (IllegalArgumentException e) {
 				throw new IllegalStateException(
-						"The argument of a trigonometric function must have the unit type of "
-								+ ANGLE, new Throwable(
-								"The child of a trig function doesn't have units of "
-										+ ANGLE + ": \n" + trigArgumentMap
-										+ "\nof node: " + node));
+						"Trig node doesn't have function attribute",
+						new Throwable(
+								"Trig node doesn't have function attribute "
+										+ "\n node: " + node));
 			}
 		}
+		
 		return new UnitMap();
 	}
 }

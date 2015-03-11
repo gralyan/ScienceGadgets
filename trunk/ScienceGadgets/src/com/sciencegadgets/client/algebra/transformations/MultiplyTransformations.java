@@ -112,15 +112,14 @@ public class MultiplyTransformations extends
 				.equals(rightType))) {
 			return null;
 		}
-
 		try {
-			return new MultiplyNumbersButton(this);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			JSNICalls
-					.error("A number node couldn't be parsed: " + e.toString());
+			new BigDecimal(left.getSymbol());
+			new BigDecimal(right.getSymbol());
+		}catch(NumberFormatException e) {
 			return null;
 		}
+		
+		return new MultiplyNumbersButton(this);
 	}
 
 	/**
@@ -175,28 +174,39 @@ public class MultiplyTransformations extends
 		// could factor out entire side rather than just base
 		EquationNode leftBase;
 		TypeSGET leftExpType;
+		String leftExpValue;
 		if (TypeSGET.Exponential.equals(left.getType())) {
 			leftBase = left.getChildAt(0);
 			leftExpType = left.getChildAt(1).getType();
+			leftExpValue = left.getChildAt(1).getSymbol();
 		} else {
 			leftBase = left;
 			leftExpType = TypeSGET.Number;
+			leftExpValue = "1";
 		}
 		EquationNode rightBase;
 		TypeSGET rightExpType;
+		String rightExpValue;
 		if (TypeSGET.Exponential.equals(right.getType())) {
 			rightBase = right.getChildAt(0);
 			rightExpType = right.getChildAt(1).getType();
+			rightExpValue = right.getChildAt(1).getSymbol();
 		} else {
 			rightBase = right;
 			rightExpType = TypeSGET.Number;
+			rightExpValue = "1";
 		}
 
 		if (leftBase.isLike(rightBase)) {
 			buttons[0] = new MultiplyCombineBasesButton(this, false);
 			if (TypeSGET.Number.equals(leftExpType)
 					&& TypeSGET.Number.equals(rightExpType)) {
-				buttons[1] = new MultiplyCombineBasesButton(this, true);
+				try {
+					new BigDecimal(leftExpValue);
+					new BigDecimal(rightExpValue);
+					buttons[1] = new MultiplyCombineBasesButton(this, true);
+				}catch(NumberFormatException e) {
+				}
 			}
 		}
 		return buttons;
@@ -252,7 +262,8 @@ abstract class MultiplyTransformButton extends TransformationButton {
 	protected MultiplyTransformations previewContext;
 
 	MultiplyTransformButton(MultiplyTransformations context, String html) {
-		super(html, context);
+		super(context);
+//		super(html, context);
 		addStyleName(CSS.TERM + " " + CSS.PARENT_WRAPPER);
 
 		this.left = context.left;
@@ -444,6 +455,9 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 		} else if (totalAbs <= 100) {
 			nMagSkill = Skill.MULTIPLY_NUMBERS_TO_100;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_100;
+		}else {
+			nMagSkill = Skill.MULTIPLY_NUMBERS_LARGE;
+			numberMagnitudeBadge = Badge.MULTIPLY_NUMBERS_LARGE;
 		}
 		final Skill numberMagnitudeSkill = nMagSkill;
 
@@ -485,9 +499,9 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 							.entrySet()) {
 						entry.setValue(1);
 					}
+					Moderator.increaseSkills(skillsIncrease);
 					multiplyNumbers(left, right, totalValue, leftValue,
 							rightValue);
-					Moderator.increaseSkills(skillsIncrease);
 				}
 			};
 

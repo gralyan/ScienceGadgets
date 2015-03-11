@@ -3,15 +3,19 @@ package com.sciencegadgets.client.entities;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.googlecode.objectify.Key;
 import com.sciencegadgets.client.DatabaseHelper;
 import com.sciencegadgets.client.DatabaseHelperAsync;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class DataModerator {
 
@@ -21,10 +25,17 @@ public class DataModerator {
 	private static boolean quantityKindsQueried = false;
 	private static ArrayList<UnitSelection> toPopulate = new ArrayList<UnitSelection>();
 
+	// /**
+	// * Holds only previously queried Unit groups by parent QuantityKind
+	// */
+	// private static HashMap<String, LinkedList<Unit>> unitsQuantity = new
+	// HashMap<String, LinkedList<Unit>>();
 	/**
 	 * Holds only previously queried Unit groups by parent QuantityKind
 	 */
-	private static HashMap<String, LinkedList<Unit>> unitsQuantity = new HashMap<String, LinkedList<Unit>>();
+	private static LinkedList<Unit> unitsAll = null;
+	private static String updatedUnitQuery = null;
+	private static HashMap<Unit, UnitName> unitToBeSetWaitingList = null;
 	/**
 	 * Holds only previously queried Unit groups by parent QuantityKind
 	 */
@@ -34,46 +45,154 @@ public class DataModerator {
 	 */
 	private static LinkedList<String> quantityKinds = null;
 
+	/**
+	 * Uses the unit name to query for the Unit.
+	 * 
+	 * @param unitToBeSet
+	 *            - empty unit will be set to the unit found
+	 * @param unitName
+	 */
+	public static void findUnit(final Unit unitToBeSet, final UnitName unitName) {
+
+		if (unitsAll != null) {
+			setUnit(unitToBeSet, unitName);
+			return;
+		}
+
+		if (unitToBeSetWaitingList != null) {
+			unitToBeSetWaitingList.put(unitToBeSet, unitName);
+			return;
+		}
+
+		unitToBeSetWaitingList = new HashMap<Unit, UnitName>();
+
+		database.getUnitsAll(new AsyncCallback<LinkedList<Unit>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				JSNICalls.error("Could not find units");
+			}
+
+			@Override
+			public void onSuccess(LinkedList<Unit> result) {
+				unitsAll = result;
+				setUnit(unitToBeSet, unitName);
+				for (Entry<Unit, UnitName> nextInLine : unitToBeSetWaitingList
+						.entrySet()) {
+					setUnit(nextInLine.getKey(), nextInLine.getValue());
+				}
+				unitToBeSetWaitingList = null;
+			}
+		});
+	}
+
+	private static void setUnit(final Unit unitToBeSet, final UnitName unitName) {
+		String unitNameStr = unitName.toString();
+		for (Unit u : unitsAll) {
+			if (u.name.equals(unitNameStr)) {
+				unitToBeSet.conversionMultiplier = u.conversionMultiplier;
+				unitToBeSet.description = u.description;
+				unitToBeSet.label = u.label;
+				unitToBeSet.name = u.name;
+				unitToBeSet.quantityKindName = u.getQuantityKindName();
+				return;
+			}
+		}
+	}
+
 	// //////////////////////////////////////////////////////////////////
-	// UnitsByQuantity
+	// Units
 	// //////////////////////////////////////////////////////////////////
+
 	public static void fill_UnitsByQuantity(final String quantityKind,
 			SelectionPanel unitBox, String excludedUnitName) {
-		LinkedList<Unit> units = unitsQuantity.get(quantityKind);
+		if (quantityKind == null || "".equals(quantityKind)) {
+			return;
+		}
 
-		if (units == null || units.size() == 0) {
+		if (unitsAll == null || unitsAll.size() == 0) {
 			// If no local, get and fill local from database by RPC first
-			query_UnitsByQuantity(unitBox, quantityKind, excludedUnitName);
+			query_UnitsByQuantity(unitBox, quantityKind, excludedUnitName,
+					false);
 		} else {
-			populate_UnitsByQuantity(unitBox, units, excludedUnitName);
+			populate_UnitsByQuantity(quantityKind, unitBox, excludedUnitName);
+		}
+	}
+
+	public static void fill_UnitsBySearch(final String searchQ,
+			SelectionPanel unitBox, String excludedUnitName) {
+		if (searchQ == null || "".equals(searchQ)) {
+			return;
+		}
+
+		if (unitsAll == null || unitsAll.size() == 0) {
+			// If no local, get and fill local from database by RPC first
+			if (updatedUnitQuery == null) {
+				updatedUnitQuery = null;
+				query_UnitsByQuantity(unitBox, searchQ, excludedUnitName, true);
+			} else {
+				updatedUnitQuery = searchQ;
+			}
+		} else {
+			populate_UnitsBySearch(searchQ, unitBox, excludedUnitName);
 		}
 	}
 
 	private static void query_UnitsByQuantity(final SelectionPanel unitBox,
-			final String quantityKind, final String excludedUnitName) {
-		database.getUnitsByQuantity(quantityKind,
-				new AsyncCallback<LinkedList<Unit>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-					}
+			final String searchSpec, final String excludedUnitName,
+			final boolean isSearch) {
+		database.getUnitsAll(new AsyncCallback<LinkedList<Unit>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				JSNICalls.log("getUnitsByQuantity FAILED: "
+						+ caught.getMessage());
+			}
 
-					@Override
-					public void onSuccess(LinkedList<Unit> units) {
-						unitsQuantity.put(quantityKind, units);
-						populate_UnitsByQuantity(unitBox, units,
-								excludedUnitName);
-					}
-				});
+			@Override
+			public void onSuccess(LinkedList<Unit> units) {
+				unitsAll = units;
+				if (isSearch) {
+					String searchQ = updatedUnitQuery == null ? searchSpec
+							: updatedUnitQuery;
+					updatedUnitQuery = null;
+					populate_UnitsBySearch(searchQ, unitBox, excludedUnitName);
+				} else {
+					populate_UnitsByQuantity(searchSpec, unitBox,
+							excludedUnitName);
+				}
+			}
+		});
 	}
 
-	private static void populate_UnitsByQuantity(SelectionPanel unitBox,
-			LinkedList<Unit> units, String excludedUnitName) {
+	private static void populate_UnitsByQuantity(String quantityKind,
+			SelectionPanel unitBox, String excludedUnitName) {
 		unitBox.clear();
-		for (Unit unit : units) {
-			String unitName = unit.getName().toString();
-			if (!unitName.equals(excludedUnitName)) {
-				unitBox.add(unit.getLabel() + " (" + unit.getSymbol() + ")",
-						unitName, unit);
+		for (Unit unit : unitsAll) {
+			if (unit.getQuantityKindName().equals(quantityKind)) {
+				String unitName = unit.getName().toString();
+				if (!unitName.equals(excludedUnitName)) {
+					unitBox.add(
+							unit.getLabel() + " (" + unit.getSymbol() + ")",
+							unitName, unit);
+				}
+			}
+		}
+	}
+
+	private static void populate_UnitsBySearch(String searchQ,
+			SelectionPanel unitBox, String excludedUnitName) {
+		unitBox.clear();
+		String searchLowerCase = searchQ.toLowerCase();
+		for (Unit unit : unitsAll) {
+			String unitLabel = unit.getLabel();
+			String unitSymbol = unit.getSymbol();
+			if (unitLabel.toLowerCase().contains(searchLowerCase)
+					|| unitSymbol.toLowerCase().contains(searchLowerCase)) {
+				String unitName = unit.getName().toString();
+				if (!unitName.equals(excludedUnitName)) {
+					unitBox.add(
+							unit.getLabel() + " (" + unit.getSymbol() + ")",
+							unitName, unit);
+				}
 			}
 		}
 	}
@@ -176,20 +295,7 @@ public class DataModerator {
 			qBox.getWidget(1).addStyleName(CSS.QUANTITY_KIND_PREFIX);
 			qBox.getWidget(2).addStyleName(CSS.QUANTITY_KIND_PREFIX);
 		}
-		
-		
-//		for(String qk : DataModerator.quantityKinds) {
-//			try {
-//				BaseUnit.valueOf(qk);
-//				System.out.println("Base: "+qk);
-//			} catch (IllegalArgumentException e) {
-//				try {
-//					CommonVariables varUnit = CommonVariables.valueOf(qk);
-//					System.out.println("\tVariable: "+qk);
-//				} catch (IllegalArgumentException ex) {
-//					System.out.println("---------------------------------none: "+qk);
-//				}
-//			}}
+
 	}
 
 }

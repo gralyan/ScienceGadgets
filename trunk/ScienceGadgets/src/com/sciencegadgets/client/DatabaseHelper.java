@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.googlecode.objectify.Key;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
+import com.sciencegadgets.client.entities.QuantityKind;
 import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.shared.Diagram;
@@ -19,13 +20,14 @@ import com.sciencegadgets.shared.Diagram;
 @RemoteServiceRelativePath("greet")
 public interface DatabaseHelper extends RemoteService {
 	Equation[] getAlgebraEquations() throws IllegalArgumentException;
+	LinkedList<Unit> getUnitsAll() throws IllegalArgumentException;
 	LinkedList<Unit> getUnitsByQuantity(String quantityKind)
 			throws IllegalArgumentException;
 	LinkedList<String> getQuantityKinds();
 	Equation saveEquation(String mathML, String html);
 	Equation[] getEquationsWithQuantities(ArrayList<String> quantityKinds)
 			throws IllegalArgumentException;
-	Unit getUnit(String unitName);
+	String getUnitQuantityKindName(String unitName);
 	
 	String getBlobURL();
 	void reCreateUnits();
@@ -35,5 +37,5 @@ public interface DatabaseHelper extends RemoteService {
 			Diagram diagram,
 			Equation equation, String toSolveID);
 	String saveProblem(Problem problem);
-	Problem getProblem(String problemKeyString);
+	Problem getProblem(long id);
 }

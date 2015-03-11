@@ -10,12 +10,20 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.HasTouchEndHandlers;
+import com.google.gwt.event.dom.client.HasTouchStartHandlers;
 import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.Wrapper.WrapperClickHandler;
+import com.sciencegadgets.client.algebra.Wrapper.WrapperTouchEndHandler;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeSGET;
@@ -27,6 +35,7 @@ public class EquationPanel extends AbsolutePanel {
 	private EquationLayer rootLayer;
 	private EquationLayer focusLayer;
 	public Wrapper selectedWrapper;
+	public AutoSelectWrapper autoSelectedWrapper;
 	private ArrayList<EquationNode> mergeRootNodes = new ArrayList<EquationNode>();
 	private ArrayList<EquationNode> mergeFractionNodes = new ArrayList<EquationNode>();
 	private ArrayList<EquationWrapper> mathWrappers = new ArrayList<EquationWrapper>();
@@ -86,14 +95,16 @@ public class EquationPanel extends AbsolutePanel {
 		super.onLoad();
 		rootNode = mathTree.getRoot();
 
-		modelEqLayer = new EquationLayer(null, mathTree.getDisplayClone());
+		boolean isStacked = algebraActivity.getActivityType() == ActivityType.algebrasimplifyquiz;
+		EquationHTML displayClone = mathTree.getDisplayClone(isStacked);
+		modelEqLayer = new EquationLayer(null, displayClone);
 		this.add(modelEqLayer);
 
 		if (!algebraActivity.isInEditMode()) {
 			findRootLayerMergingNodes(rootNode);
 			findFractionMergingNodes();
 		}
-		
+
 		draw(rootNode, null);
 
 		modelEqLayer.removeFromParent();
@@ -117,8 +128,13 @@ public class EquationPanel extends AbsolutePanel {
 		for (EquationLayer eqLayer : eqLayerMap.values()) {
 			eqLayer.setVisible(false);
 		}
-		
+
 		setFocus(algebraActivity.focusLayerId);
+	}
+	@Override
+	protected void onUnload() {
+		unselectCurrentSelection();
+		super.onUnload();
 	}
 
 	/**
@@ -172,10 +188,12 @@ public class EquationPanel extends AbsolutePanel {
 	private void draw(EquationNode node, EquationLayer parentLayer) {
 
 		EquationLayer eqLayer;
-		if (!algebraActivity.isInEditMode() && mergeFractionNodes.contains(node)) {
+		if (!algebraActivity.isInEditMode()
+				&& mergeFractionNodes.contains(node)) {
 			eqLayer = parentLayer;
 
-		} else if (!algebraActivity.isInEditMode() && mergeRootNodes.contains(node)) {
+		} else if (!algebraActivity.isInEditMode()
+				&& mergeRootNodes.contains(node)) {
 			eqLayer = rootLayer;
 
 		} else {
@@ -241,9 +259,17 @@ public class EquationPanel extends AbsolutePanel {
 						|| mergeFractionNodes.contains(node)) {
 					continue;
 				}
-			}else if(!node.hasWrapper) {
+			} else if (!node.hasWrapper) {
 				continue;
 			}
+
+			for (EquationNode subChil : node.getChildren()) {
+				Element autoSelectLayerNode = DOM.getElementById(subChil
+						.getId() + OF_LAYER + parentId);
+				new AutoSelectWrapper(subChil,
+						autoSelectLayerNode);
+			}
+
 			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
 					+ parentId);
 
@@ -270,13 +296,15 @@ public class EquationPanel extends AbsolutePanel {
 		EquationLayer parentLayer = focusLayer.getParentLayer();
 		if (parentLayer != null) {
 			setFocus(parentLayer);
-//			Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
+			// Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
 		}
+		unselectCurrentSelection();
 	}
 
 	void setFocus(EquationNode node) {
 		setFocus(eqLayerMap.get(node));
 	}
+
 	public EquationLayer setFocus(String layerId) {
 		if (layerId != null) {
 			for (EquationLayer eqLayer : eqLayerMap.values()) {
@@ -293,30 +321,42 @@ public class EquationPanel extends AbsolutePanel {
 
 	void setFocus(final EquationLayer newFocus) {
 		EquationLayer prevFocus = focusLayer;
-		if (selectedWrapper != null) {
-			if (selectedWrapper instanceof EditWrapper) {
-				((EditWrapper) selectedWrapper).unselect();
-			} else if (selectedWrapper instanceof AlgebaWrapper) {
-				((AlgebaWrapper) selectedWrapper).unselect();
-			}
-		}
+		unselectCurrentSelection();
 
 		newFocus.setVisible(true);
 		if (prevFocus != null) {
 			prevFocus.setVisible(false);
 		}
 
-		// newFocus.setOpacity(0);
-		// Animation fade = new LayerFade(newFocus, prevFocus);
-		// fade.run(3, Duration.currentTimeMillis() - 100);
-
 		focusLayer = newFocus;
 		algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
 				"id");
+		
+		if (autoSelectedWrapper != null) {
+			Wrapper wrapperToSelect = autoSelectedWrapper.getWrapper();
+			if (focusLayer.wrappers.contains(wrapperToSelect)) {
+				JSNICalls.log("wrapperToSelect " + wrapperToSelect);
+				if (wrapperToSelect instanceof EditWrapper) {
+					((EditWrapper) wrapperToSelect).select();
+				} else if (wrapperToSelect instanceof AlgebaWrapper) {
+					((AlgebaWrapper) wrapperToSelect).select();
+				}
+			}
+		}
 
 		if (!algebraActivity.isInEditMode()) {
 			Scheduler.get().scheduleIncremental(
 					new PrepareWrappersInLayer(newFocus.getWrappers()));
+		}
+	}
+
+	public void unselectCurrentSelection() {
+		if (selectedWrapper != null) {
+			if (selectedWrapper instanceof EditWrapper) {
+				((EditWrapper) selectedWrapper).unselect();
+			} else if (selectedWrapper instanceof AlgebaWrapper) {
+				((AlgebaWrapper) selectedWrapper).unselect();
+			}
 		}
 	}
 
@@ -341,30 +381,46 @@ public class EquationPanel extends AbsolutePanel {
 		}
 
 	}
-	
+
 	public AlgebraActivity getAlgebraActivity() {
 		return algebraActivity;
 	}
 
-//	class LayerFade extends Animation {
-//		EquationLayer newFocus, prevFocus;
-//
-//		LayerFade(EquationLayer newFocus, EquationLayer prevFocus) {
-//			this.newFocus = newFocus;
-//			this.prevFocus = prevFocus;
-//		}
-//
-//		@Override
-//		protected void onUpdate(double progress) {
-//			newFocus.setOpacity(progress);
-//			prevFocus.setOpacity(1 - progress);
-//		}
-//
-//		@Override
-//		protected void onComplete() {
-//			super.onComplete();
-//			prevFocus.setVisible(false);
-//		}
-//	}
+	class AutoSelectWrapper extends HTML implements HasClickHandlers,
+			HasTouchEndHandlers {
+		private EquationNode node;
+
+		public AutoSelectWrapper(EquationNode node, Element element) {
+			super(element);
+
+			this.node = node;
+
+			onAttach();
+
+			// zIndex eqPanel=1 wrapper=2 menu=3
+			this.getElement().getStyle().setZIndex(2);
+
+			if (Moderator.isTouch) {
+				addTouchEndHandler(new TouchEndHandler() {
+					@Override
+					public void onTouchEnd(TouchEndEvent event) {
+						EquationPanel.this.autoSelectedWrapper = AutoSelectWrapper.this;
+					}
+				});
+			} else {
+				addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						EquationPanel.this.autoSelectedWrapper = AutoSelectWrapper.this;
+					}
+				});
+			}
+
+		}
+
+		public Wrapper getWrapper() {
+			return node.getWrapper();
+		}
+	}
 
 }

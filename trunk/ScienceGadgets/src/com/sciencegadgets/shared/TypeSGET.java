@@ -8,26 +8,35 @@ import com.sciencegadgets.client.ui.CSS;
  */
 
 public enum TypeSGET {
-	Equation("sget:equation",CSS.EQUATION, ChildRequirement.EQUATION), //
-	Number("sget:num",CSS.NUMBER, ChildRequirement.TERMINAL), //
-	Variable("sget:var",CSS.VARIABLE, ChildRequirement.TERMINAL), //
-	Operation("sget:op",CSS.OPERATION, ChildRequirement.TERMINAL), //
-	Term("sget:term",CSS.TERM, ChildRequirement.SEQUENCE), //
-	Sum("sget:sum",CSS.SUM, ChildRequirement.SEQUENCE), //
-	Fraction("sget:frac",CSS.FRACTION, ChildRequirement.BINARY), //
-	Exponential("sget:exp",CSS.EXPONENTIAL, ChildRequirement.BINARY), //
-	Log("sget:log",CSS.LOG, ChildRequirement.UNARY), //
-	Trig("sget:trig",CSS.TRIG, ChildRequirement.UNARY);
+	Equation("sget:equation","e",CSS.EQUATION, ChildRequirement.EQUATION, TypeSGET.NOT_SET + "+" + TypeSGET.NOT_SET), //
+	Number("sget:num","n",CSS.NUMBER, ChildRequirement.TERMINAL,"#"), //
+	Variable("sget:var","v",CSS.VARIABLE, ChildRequirement.TERMINAL,"a"), //
+	Operation("sget:op","o",CSS.OPERATION, ChildRequirement.TERMINAL,"+-\u00B7\u00F7"), //
+	Sum("sget:sum","s",CSS.SUM, ChildRequirement.SEQUENCE, TypeSGET.NOT_SET + "+" + TypeSGET.NOT_SET), //
+	Term("sget:term","t",CSS.TERM, ChildRequirement.SEQUENCE, TypeSGET.NOT_SET + Operator.DOT.getSign() + TypeSGET.NOT_SET), //
+	Fraction("sget:frac","f",CSS.FRACTION, ChildRequirement.BINARY,
+			"<div style='border-bottom: thin solid;'>"
+			+ TypeSGET.NOT_SET + "</div><div>" + TypeSGET.NOT_SET + "</div>"), //
+	Exponential("sget:exp","x",CSS.EXPONENTIAL, ChildRequirement.BINARY,
+			TypeSGET.NOT_SET + "<sup>" + TypeSGET.NOT_SET + "</sup>"), //
+	Log("sget:log", "l",CSS.LOG, ChildRequirement.UNARY,
+			"log<sub>" + TypeSGET.NOT_SET + "</sub>(" + TypeSGET.NOT_SET + ")" ), //
+	Trig("sget:trig","r",CSS.TRIG, ChildRequirement.UNARY, "sin(" + TypeSGET.NOT_SET + ")" );
 
 	private String tag;
+	private String compressedTag;
 	private String cssClassName;
 	private ChildRequirement childRequirement;
+	private String icon;
+	public static final String NOT_SET = "\u25A1";
 	public static final String IN_PREFIX = "in-";
 
-	TypeSGET(String tag,String cssClassName, ChildRequirement childRequirement) {
+	TypeSGET(String tag,String compressedTag,String cssClassName, ChildRequirement childRequirement, String icon) {
 		this.tag = tag;
+		this.compressedTag = compressedTag;
 		this.childRequirement = childRequirement;
 		this.cssClassName = cssClassName;
+		this.icon = icon;
 	}
 
 	public String asChild() {
@@ -64,6 +73,10 @@ public enum TypeSGET {
 	public String getTag() {
 		return tag;
 	}
+	
+	public String getCompressedTag() {
+		return compressedTag;
+	}
 
 	public ChildRequirement childRequirement() {
 		return childRequirement;
@@ -79,6 +92,10 @@ public enum TypeSGET {
 		}
 		JSNICalls.error("There is no type for the tag: " + tag);
 		return null;
+	}
+	
+	public String getIcon() {
+		return icon;
 	}
 	
 	@Override

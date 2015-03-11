@@ -25,8 +25,7 @@ public class EquationGenerator {
 
 		EquationTree eTree = new EquationTree(false);
 		EquationNode var = eTree.getLeftSide().replace(TypeSGET.Variable, "a");
-		EquationNode other = eTree.getRightSide().replace(TypeSGET.Number,
-				Random.nextInt(maxMultiply) + "");
+		EquationNode other = eTree.getRightSide().replace(TypeSGET.Number, "1");
 
 		GERERATE_SIDE(var, expressionsVariableSide,//
 				mustBeWholeAnswer, //
@@ -42,7 +41,26 @@ public class EquationGenerator {
 				maxMultiply,//
 				maxFraction,//
 				maxExp);
-		
+
+		int maxOtherSeed = maxMultiply;
+		switch (other.getParentType()) {
+		case Sum:
+			maxOtherSeed = maxAdd;
+			break;
+		case Term:
+			maxOtherSeed = maxAdd;
+			break;
+		case Exponential:
+			maxOtherSeed = maxExp;
+			break;
+		case Fraction:
+			maxOtherSeed = maxFraction;
+			break;
+		default:
+			break;
+		}
+		other.setSymbol(Random.nextInt(maxOtherSeed) + "");
+
 		eTree.validateTree();
 
 		return eTree;
@@ -56,7 +74,7 @@ public class EquationGenerator {
 			int maxMultiply,//
 			int maxFraction,//
 			int maxExp) {
-		
+
 		HashSet<TypeSGET> toRemove = new HashSet<TypeSGET>();
 
 		for (Entry<TypeSGET, Integer> entry : expressions.entrySet()) {
@@ -64,10 +82,10 @@ public class EquationGenerator {
 				toRemove.add(entry.getKey());
 			}
 		}
-		for(TypeSGET type : toRemove) {
+		for (TypeSGET type : toRemove) {
 			expressions.remove(type);
 		}
-		
+
 		while (!expressions.isEmpty()) {
 			int index = Random.nextInt(expressions.size());
 			TypeSGET[] array = expressions.keySet().toArray(
@@ -77,20 +95,21 @@ public class EquationGenerator {
 			switch (type) {
 			case Sum:
 				int valueAdd = Random.nextInt(maxAdd);
-				if(!mustBePositives && Random.nextBoolean()) {
+				if (!mustBePositives && Random.nextBoolean()) {
 					valueAdd *= -1;
 				}
 				side = ADD_SUB(side, valueAdd, mustBePositives);
 				break;
 			case Term:
 				int valueMultiply = Random.nextInt(maxMultiply);
-				if(!mustBePositives && Random.nextBoolean()) {
+				if (!mustBePositives && Random.nextBoolean()) {
 					valueMultiply *= -1;
 				}
 				side = MULTIPLY(side, valueMultiply);
 				break;
 			case Fraction:
-				side = FRACTION(side, mustBeWholeAnswer, maxMultiply, maxFraction);
+				side = FRACTION(side, mustBeWholeAnswer, maxMultiply,
+						maxFraction);
 				break;
 			case Exponential:
 				side = EXP(side, maxExp);
@@ -155,8 +174,7 @@ public class EquationGenerator {
 
 	private static EquationNode ADD_SUB(EquationNode node, int value,
 			boolean mustBePositives) {
-		Operator op = !mustBePositives
-				&& Random.nextBoolean() ? Operator.MINUS
+		Operator op = !mustBePositives && Random.nextBoolean() ? Operator.MINUS
 				: Operator.PLUS;
 
 		node = node.encase(TypeSGET.Sum);
@@ -167,8 +185,7 @@ public class EquationGenerator {
 
 	private static EquationNode EXP(EquationNode node, int maxExp) {
 		node = node.encase(TypeSGET.Exponential);
-		node.append(TypeSGET.Number, Random
-				.nextInt(maxExp) + "");
+		node.append(TypeSGET.Number, Random.nextInt(maxExp) + "");
 		return node;
 	}
 

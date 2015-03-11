@@ -19,7 +19,6 @@ import com.sciencegadgets.shared.TypeSGET.Operator;
 
 public class ChangeNodeMenu extends CommunistPanel {
 
-	public static final String NOT_SET = "\u25A1";
 	private TransformationButton removeButton;
 	private CopyNodeButton copyButton;
 	private PasteNodeButton pasteButton;
@@ -28,39 +27,53 @@ public class ChangeNodeMenu extends CommunistPanel {
 	private TrigFunctionSpecification trigFuncSpec = null;
 	AlgebraActivity algebraActivity = null;
 	TransformationList<TransformationButton> changeButtons;
-	
+
 	public static FitParentHTML copiedNodeHTML = new FitParentHTML("Paste");
 	private static Element copiedNodeXML = null;
 
-	private static final Object[][] types = {//
-			{ TypeSGET.Number, "#" }, //
-			{ TypeSGET.Variable, "a" },//
-			{ TypeSGET.Sum, NOT_SET + "+" + NOT_SET },//
-			{ TypeSGET.Term, NOT_SET + Operator.DOT.getSign() + NOT_SET },//
-			{ TypeSGET.Fraction,
-					"<div style='border-bottom: thin solid;'>"//
-							+ NOT_SET + "</div><div>" + NOT_SET + "</div>" },//
-			{ TypeSGET.Exponential,
-					NOT_SET + "<sup>" + NOT_SET + "</sup>" },//
-			{ TypeSGET.Log,
-					"log<sub>" + NOT_SET + "</sub>(" + NOT_SET + ")" },//
-			{ TypeSGET.Trig, "sin(" + NOT_SET + ")" } //
-	};
+	// private static final Object[][] ExpressionTypes = {//
+	// { TypeSGET.Number, "#" }, //
+	// { TypeSGET.Variable, "a" },//
+	// { TypeSGET.Sum, TypeSGET.NOT_SET + "+" + TypeSGET.NOT_SET },//
+	// { TypeSGET.Term, TypeSGET.NOT_SET + Operator.DOT.getSign() +
+	// TypeSGET.NOT_SET },//
+	// { TypeSGET.Fraction,
+	// "<div style='border-bottom: thin solid;'>"//
+	// + TypeSGET.NOT_SET + "</div><div>" + TypeSGET.NOT_SET + "</div>" },//
+	// { TypeSGET.Exponential,
+	// TypeSGET.NOT_SET + "<sup>" + TypeSGET.NOT_SET + "</sup>" },//
+	// { TypeSGET.Log,
+	// "log<sub>" + TypeSGET.NOT_SET + "</sub>(" + TypeSGET.NOT_SET + ")" },//
+	// { TypeSGET.Trig, "sin(" + TypeSGET.NOT_SET + ")" } //
+	// };
 
 	public ChangeNodeMenu() {
 		super(true);
 		addStyleName(CSS.FILL_PARENT);
 
 		changeButtons = new TransformationList<TransformationButton>(node);
-		if(node !=null) {
-		algebraActivity = ((EquationWrapper)node.getWrapper()).getAlgebraActivity();
+		if (node != null) {
+			algebraActivity = ((EquationWrapper) node.getWrapper())
+					.getAlgebraActivity();
 		}
 
+		TypeSGET[] typesDisplayed = { 
+				TypeSGET.Number, 
+				TypeSGET.Variable,
+				TypeSGET.Sum, 
+				TypeSGET.Term,
+				TypeSGET.Fraction,
+				TypeSGET.Exponential,
+				TypeSGET.Log,
+				TypeSGET.Trig };
 		// Change buttons
-		for (Object[] type : types) {
-			TypeSGET toType = (TypeSGET) type[0];
+		for (TypeSGET type : typesDisplayed) {
+			// TypeSGET toType = (TypeSGET) type[0];
+			TypeSGET toType = type;
 			TransformationButton changeButton = new ChangeNodeButton(
-					(String) type[1], changeButtons, toType);
+					type.getIcon(), changeButtons, toType);
+			// TransformationButton changeButton = new ChangeNodeButton(
+			// (String) type[1], changeButtons, toType);
 			changeButton.addStyleName(CSS.CHANGE_NODE_BUTTON + " "
 					+ toType.toString() + " " + CSS.PARENT_WRAPPER);
 			changeButtons.add(changeButton);
@@ -69,15 +82,14 @@ public class ChangeNodeMenu extends CommunistPanel {
 		// Remove button
 		this.removeButton = new RemoveNodeButton(changeButtons);
 		changeButtons.add(removeButton);
-		
-		//Copy button
+
+		// Copy button
 		this.copyButton = new CopyNodeButton(changeButtons);
 		changeButtons.add(copyButton);
-		
-		//Paste button
+
+		// Paste button
 		this.pasteButton = new PasteNodeButton(changeButtons);
 		changeButtons.add(pasteButton);
-		
 
 		addAll(changeButtons);
 
@@ -86,12 +98,12 @@ public class ChangeNodeMenu extends CommunistPanel {
 	public void setNode(EquationNode node) {
 		this.node = node;
 
-		algebraActivity = ((EquationWrapper)node.getWrapper()).getAlgebraActivity();
+		algebraActivity = ((EquationWrapper) node.getWrapper())
+				.getAlgebraActivity();
 		changeButtons.setNode(node);
 
 		TypeSGET type = node.getType();
-		if (!TypeSGET.Number.equals(type)
-				&& !TypeSGET.Variable.equals(type)) {
+		if (!TypeSGET.Number.equals(type) && !TypeSGET.Variable.equals(type)) {
 			getWidget(0).removeFromParent();
 			getWidget(0).removeFromParent();
 			redistribute();
@@ -102,32 +114,36 @@ public class ChangeNodeMenu extends CommunistPanel {
 		pasteButton.clear();
 		pasteButton.add(copiedNodeHTML);
 	}
-	
+
 	// //////////////////////////////////////////
 	// Copy Handle
 	// /////////////////////////////////////////
 	private class CopyNodeButton extends TransformationButton {
-		
+
 		CopyNodeButton(TransformationList<TransformationButton> changeButtons) {
 			super("Copy", changeButtons);
 		}
+
 		@Override
 		public Badge getAssociatedBadge() {
 			return null;
 		}
+
 		@Override
 		public boolean meetsAutoTransform() {
 			return true;
 		}
+
 		@Override
 		public void transform() {
 			copiedNodeXML = node.getXMLClone();
-			
+
 			String html = node.getHTMLString(true, true);
 			copiedNodeHTML = new FitParentHTML(html);
 			updatePaste();
 		}
 	}
+
 	// //////////////////////////////////////////
 	// Paste Handle
 	// /////////////////////////////////////////
@@ -135,23 +151,27 @@ public class ChangeNodeMenu extends CommunistPanel {
 		PasteNodeButton(TransformationList<TransformationButton> changeButtons) {
 			super("Paste", changeButtons);
 		}
+
 		@Override
 		public Badge getAssociatedBadge() {
 			return null;
 		}
+
 		@Override
 		public boolean meetsAutoTransform() {
 			return true;
 		}
+
 		@Override
 		public void transform() {
-			Element replacementEl = (Element)copiedNodeXML.cloneNode(true);
+			Element replacementEl = (Element) copiedNodeXML.cloneNode(true);
 			EquationNode replacement = node.getTree().newNode(replacementEl);
 			node.replace(replacement);
 
 			algebraActivity.reloadEquationPanel(null, null, true);
 		}
 	}
+
 	// //////////////////////////////////////////
 	// Remove Handle
 	// /////////////////////////////////////////
@@ -162,10 +182,12 @@ public class ChangeNodeMenu extends CommunistPanel {
 			style.setColor("red");
 			style.setBackgroundColor("black");
 		}
+
 		@Override
 		public Badge getAssociatedBadge() {
 			return null;
 		}
+
 		@Override
 		public boolean meetsAutoTransform() {
 			return true;
@@ -180,8 +202,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 				if (node.getIndex() == 0) {
 					EquationNode nextOp = node.getNextSibling();
 					if (nextOp != null
-							&& TypeSGET.Operation.equals(nextOp
-									.getType())
+							&& TypeSGET.Operation.equals(nextOp.getType())
 							&& !Operator.MINUS.getSign().equals(
 									nextOp.getSymbol()))
 						nextOp.remove();
@@ -213,11 +234,11 @@ public class ChangeNodeMenu extends CommunistPanel {
 			case Equation:
 			case Trig:
 			case Log:
-				node.replace(TypeSGET.Variable, NOT_SET);
+				node.replace(TypeSGET.Variable, TypeSGET.NOT_SET);
 				break;
 			}
 			algebraActivity.reloadEquationPanel(null, null, true);
-//			Moderator.reloadEquationPanel();
+			// Moderator.reloadEquationPanel();
 		}
 	}
 
@@ -233,10 +254,12 @@ public class ChangeNodeMenu extends CommunistPanel {
 			super(html, changeButtons);
 			this.toType = toType;
 		}
+
 		@Override
 		public Badge getAssociatedBadge() {
 			return null;
 		}
+
 		@Override
 		public boolean meetsAutoTransform() {
 			return true;
@@ -251,7 +274,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			int nodeindex = node.getIndex();
 
 			TypeSGET.Operator operator = null;
-			
+
 			switch (toType) {
 			case Log:
 				if (logBaseSpec == null) {
@@ -261,8 +284,9 @@ public class ChangeNodeMenu extends CommunistPanel {
 							super.onSpecify(base);
 							EquationNode log = node.encase(TypeSGET.Log);
 							log.setAttribute(MathAttribute.LogBase, base);
-							algebraActivity.reloadEquationPanel(null, null, true);
-//							Moderator.reloadEquationPanel();
+							algebraActivity.reloadEquationPanel(null, null,
+									true);
+							// Moderator.reloadEquationPanel();
 						}
 					};
 				}
@@ -274,11 +298,11 @@ public class ChangeNodeMenu extends CommunistPanel {
 						@Override
 						protected void onSpecify(String function) {
 							super.onSpecify(function);
-							EquationNode func = node
-									.encase(TypeSGET.Trig);
+							EquationNode func = node.encase(TypeSGET.Trig);
 							func.setAttribute(MathAttribute.Function, function);
-							algebraActivity.reloadEquationPanel(null, null, true);
-//							Moderator.reloadEquationPanel();
+							algebraActivity.reloadEquationPanel(null, null,
+									true);
+							// Moderator.reloadEquationPanel();
 						}
 					};
 				}
@@ -286,11 +310,13 @@ public class ChangeNodeMenu extends CommunistPanel {
 				return;
 			case Number:
 				AlgebraActivity.NUMBER_SPEC_PROMPT(node,
-						!(isSameTypeNode && !NOT_SET.equals(node.getSymbol())), false);
+						!(isSameTypeNode && !TypeSGET.NOT_SET.equals(node
+								.getSymbol())), false);
 				return;
 			case Variable:
 				AlgebraActivity.VARIABLE_SPEC_PROMPT(node,
-						!(isSameTypeNode && !NOT_SET.equals(node.getSymbol())));
+						!(isSameTypeNode && !TypeSGET.NOT_SET.equals(node
+								.getSymbol())));
 				return;
 
 			case Sum:
@@ -303,12 +329,12 @@ public class ChangeNodeMenu extends CommunistPanel {
 				if (isSameTypeNode) {
 					// don't encase term in term just extend this term
 					node.append(TypeSGET.Operation, operator.getSign());
-					node.append(TypeSGET.Variable, NOT_SET);
+					node.append(TypeSGET.Variable, TypeSGET.NOT_SET);
 					break;
 				} else if (isSameTypeParent) {
 					// don't add sum in sum just extend parent sum
 					parent.addAfter(nodeindex, TypeSGET.Variable,
-							NOT_SET);
+							TypeSGET.NOT_SET);
 					parent.addAfter(nodeindex, TypeSGET.Operation,
 							operator.getSign());
 					break;
@@ -324,14 +350,13 @@ public class ChangeNodeMenu extends CommunistPanel {
 				EquationNode newNode = parent.addBefore(nodeindex, toType, "");
 				newNode.append(node);
 				if (operator != null) {
-					newNode.append(TypeSGET.Operation,
-							operator.getSign());
+					newNode.append(TypeSGET.Operation, operator.getSign());
 				}
-				newNode.append(TypeSGET.Variable, NOT_SET);
+				newNode.append(TypeSGET.Variable, TypeSGET.NOT_SET);
 				break;
 			}
 			algebraActivity.reloadEquationPanel(null, null, true);
-//			Moderator.reloadEquationPanel();
+			// Moderator.reloadEquationPanel();
 
 		}
 

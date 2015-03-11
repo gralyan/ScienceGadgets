@@ -11,19 +11,19 @@ import com.sciencegadgets.client.ui.LinkPrompt;
 
 public class LinkPrompt_Challenge extends LinkPrompt {
 
-	private String problemKey;
+	private String problemID;
 
-	public LinkPrompt_Challenge(String problemKey) {
+	public LinkPrompt_Challenge(String problemID) {
 		super();
 		
-		this.problemKey = problemKey;
+		this.problemID = problemID;
 	}
 
 	@Override
 	public void setMapParameters() {
 		
 		pMap = new HashMap<Parameter, String>();
-		pMap.put(Parameter.problemkey, problemKey);
+		pMap.put(Parameter.problemid, problemID);
 		pMap.put(Parameter.activity, ActivityType.problem.toString());
 
 	}

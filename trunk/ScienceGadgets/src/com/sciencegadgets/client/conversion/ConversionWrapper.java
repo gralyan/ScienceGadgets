@@ -1,10 +1,15 @@
 package com.sciencegadgets.client.conversion;
 
+import java.util.LinkedList;
+
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.conversion.ConversionActivity.UnitDisplay;
+import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.entities.Unit;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitMultiple;
@@ -13,15 +18,27 @@ import com.sciencegadgets.shared.dimensions.UnitName;
 public class ConversionWrapper extends Wrapper {
 
 	ConversionActivity conversionActivity = null;
-	private UnitDisplay unitDisplay;
+	private UnitDisplay unitDisplay = null;
+	private Unit unit = new Unit();
+	private UnitName unitName = null;
 
 	ConversionWrapper(UnitDisplay unitDisplay, AbsolutePanel panel,
 			ConversionActivity conversionAvtivity) {
-		super(unitDisplay.wrappedNode, panel, unitDisplay.wrappedNode.getHTML(false, false));
+		super(unitDisplay.wrappedNode, panel, unitDisplay.wrappedNode.getHTML(
+				false, false));
 		this.conversionActivity = conversionAvtivity;
 		this.unitDisplay = unitDisplay;
 
 		this.addStyleName(CSS.CONVERSION_WRAPPER);
+
+		UnitMultiple[] mult = node.getUnitAttribute().getUnitMultiples();
+		if (mult.length > 0) {
+			unitName = mult[0].getUnitName();
+		}else {
+			JSNICalls.error("ConversionWrapper node has incorrect attribute: "+node.getUnitAttribute());
+		}
+		
+		DataModerator.findUnit(unit, unitName);
 	}
 
 	public UnitDisplay getUnitDisplay() {
@@ -30,6 +47,17 @@ public class ConversionWrapper extends Wrapper {
 
 	public ConversionActivity getConversionActivity() {
 		return conversionActivity;
+	}
+	
+	/**
+	 * WARNING - the unit may not be set yet because it uses an async RPC to set
+	 */
+	public Unit getUnit() {
+		if(unit.getName() == null || "".equals(unit.getName())) {
+			return null;
+		}else {
+			return unit;
+		}
 	}
 
 	@Override
@@ -42,10 +70,8 @@ public class ConversionWrapper extends Wrapper {
 			ConversionActivity.selectedWrapper.unselect();
 		}
 
-		UnitMultiple[] mult = node.getUnitAttribute().getUnitMultiples();
-		if (mult.length > 0) {
-			String unitName = mult[0].getUnitName().toString();
-			conversionActivity.fillUnitSelection(unitName);
+		if(unitName != null) {
+			conversionActivity.fillUnitSelection(unitName.toString());
 		}
 
 		ConversionActivity.selectedWrapper = this;

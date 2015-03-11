@@ -1,12 +1,18 @@
 package com.sciencegadgets.client.algebra.transformations.specification;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
+import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.AlgebraActivity.TransformationPanel;
@@ -23,15 +29,19 @@ import com.sciencegadgets.shared.TypeSGET;
 public class SimplifyQuiz extends Quiz {
 
 	private static AlgebraActivity simplifyActivity;
-	TransformationList<TransformationButton> tButtons;
+	TransformationList<TransformationButton> tButtonsBasic;
+	ArrayList<TransformationProceedure> proceeduresAllPossible = new ArrayList<TransformationProceedure>();
+	private Element hostXML;
+	private static final String TRANSFORMATION_PACKAGE = "com.sciencegadgets.client.algebra.transformations.";
 
 	public SimplifyQuiz(EquationNode hostNode,
 			final TransformationList<TransformationButton> tButtons) {
 
-		this.tButtons = tButtons;
+		this.tButtonsBasic = tButtons;
 
-		// Make Tree
-		Element hostXML = hostNode.getXMLClone();
+		// ////////////////////////
+		// Make Tree of before/after
+		hostXML = hostNode.getXMLClone();
 		if (TypeSGET.Operation.equals(hostNode.getType())) {
 			Element hostParentOperation = (Element) hostNode.getParent()
 					.getXMLNode().cloneNode(false);
@@ -48,21 +58,24 @@ public class SimplifyQuiz extends Quiz {
 		EquationNode workingLeft = workingTree.newNode((Element) hostXML
 				.cloneNode(true));
 		workingLeft.hasWrapper = false;
-		EquationNode workingRight = workingTree.newNode(hostXML);
+		EquationNode workingRight = workingTree.newNode((Element) hostXML
+				.cloneNode(true));
 		workingTree.getLeftSide().replace(workingLeft);
 		workingTree.getRightSide().replace(workingRight);
 
+		// ////////////////////////
 		// Set Up Activity
 		if (simplifyActivity == null) {
-			simplifyActivity = new AlgebraActivity(workingTree, null, ActivityType.algebrasimplifyquiz);
+			simplifyActivity = new AlgebraActivity(workingTree, null,
+					ActivityType.algebrasimplifyquiz);
 		} else {
 			simplifyActivity.setEquationTree(workingTree, null);
 		}
 		simplifyActivity.reloadEquationPanel(null, null, false);
 
-		simplifyActivity.upperMidEqArea.clear();
-		TransformationPanel tButtonPanel = simplifyActivity.new TransformationPanel(false);
-		simplifyActivity.upperMidEqArea.add(tButtonPanel);
+		TransformationPanel tButtonPanel = simplifyActivity.new TransformationPanel(
+				false);
+		simplifyActivity.setDefaultUpperMidWidget(tButtonPanel);
 		tButtonPanel.add(new HelpButton(tButtonPanel));
 
 		this.add(simplifyActivity);
@@ -81,6 +94,7 @@ public class SimplifyQuiz extends Quiz {
 						onCorrect();
 						tButt.allowSkillIncrease(true);
 						tButt.transform();
+
 						// AlgebraActivity hostActivity =
 						// ((EquationWrapper)hostNode.getWrapper()).getAlgebraActivity();
 						// EquationNode replacement =
@@ -98,6 +112,13 @@ public class SimplifyQuiz extends Quiz {
 	}
 
 	@Override
+	public void appear() {
+		super.appear();
+		//TODO in case of Skipped steps
+//		findPossibleProceedures();
+	}
+
+	@Override
 	public void resize() {
 		super.resize();
 		simplifyActivity.reloadEquationPanel(null, null, false);
@@ -105,7 +126,7 @@ public class SimplifyQuiz extends Quiz {
 
 	@Override
 	public void onCorrect() {
-	super.onCorrect();
+		super.onCorrect();
 		disappear();
 
 	}
@@ -127,7 +148,7 @@ public class SimplifyQuiz extends Quiz {
 
 		@Override
 		protected void onSelect() {
-			tButtonPanel.clear();
+			// tButtonPanel.clear();
 
 			// Show only the buttons that are not already shown on the main
 			// Algebra Activity which have their requirements already met
@@ -135,7 +156,7 @@ public class SimplifyQuiz extends Quiz {
 			// HashSet<SelectionButton>();
 
 			ArrayList<String> exampleHtmls = new ArrayList<String>();
-			for (TransformationButton tButt : tButtons) {
+			for (TransformationButton tButt : tButtonsBasic) {
 				if (!tButt.meetsAutoTransform()) {
 					// tButt.isHelpButton = true;
 					// autoButtonsShown.add(tButt);
@@ -163,6 +184,115 @@ public class SimplifyQuiz extends Quiz {
 
 			// tButtonPanel.addAll(autoButtonsShown);
 
+		}
+
+	}
+
+	private void findPossibleProceedures() {
+
+		// ////////////////////////
+		// Find possible solutions
+		EquationTree previewTree = new EquationTree(true);
+		EquationNode previewLeft = previewTree.newNode((Element) hostXML
+				.cloneNode(true));
+		previewTree.getLeftSide().replace(previewLeft);
+		TransformationProceedure noProceedure = new TransformationProceedure(
+				null, previewLeft, previewLeft);
+		Moderator.isInEasyMode = true;
+		findPossibleProceeduresRecursion(noProceedure);
+		Moderator.isInEasyMode = false;
+		proceeduresAllPossible.remove(noProceedure);
+
+		AbsolutePanel p = Moderator.scienceGadgetArea;
+		for (TransformationProceedure a : proceeduresAllPossible) {
+			for (TransformationButton b : a) {
+				p.add(new Label(b.getClass().getName()));
+			}
+//			 p.add(new Label(a.getFrame().toString()));
+			p.add(new HTML(a.getFrame().getHTMLString(true, true)));
+			p.add(new HTML(a.getChange().getHTMLString(true, true)));
+			p.add(new Label("."));
+
+		}
+	}
+
+	// private EquationNode collectPossibleEquations(TransformationProceedure
+	// baseProceedure) {
+	//
+	// }
+
+	private void findPossibleProceeduresRecursion(
+			TransformationProceedure baseProceedure) {
+
+		EquationNode currentNode = baseProceedure.getChange();
+		LinkedList<EquationNode> branchNodes = currentNode.getNodesByType(null);
+		branchNodes.add(currentNode);
+
+		for (EquationNode bNode : branchNodes) {
+			TransformationList<TransformationButton> branches = TransformationList
+					.FIND_ALL_SIMPLIFY(bNode);
+			for (TransformationButton branch : branches) {
+				EquationNode preview = branch.getPreview();
+				if (preview == null) {
+					JSNICalls.log("skipped branch: "
+							+ branch.getClass().getName()
+									.replace(TRANSFORMATION_PACKAGE, ""));
+					continue;
+				}
+
+				EquationTree frameTree = new EquationTree(false);
+				EquationNode frame = frameTree.getLeftSide();
+				frame.replace(frameTree.newNode(new HTML(currentNode.toString())
+						.getElement().getFirstChildElement()));
+				EquationNode changing = frameTree.getNodeById(bNode.getId());
+				EquationNode changed=changing.replace(frameTree.newNode(new HTML(preview.toString())
+						.getElement().getFirstChildElement()));
+				if(TypeSGET.Operation.equals(bNode.getType())) {
+//					changed.getNextSibling().remove();
+//					changed.getPrevSibling().remove();
+				}
+				
+				TransformationProceedure newProceedure = new TransformationProceedure(
+						baseProceedure, frameTree.getLeftSide(), preview);
+				newProceedure.addAll(baseProceedure);
+				newProceedure.add(branch);
+				proceeduresAllPossible.add(newProceedure);
+				findPossibleProceeduresRecursion(newProceedure);
+			}
+		}
+
+	}
+
+	class TransformationProceedure extends ArrayList<TransformationButton> {
+		private static final long serialVersionUID = 1L;
+
+//		ArrayList<TransformationProceedure> childProceedures = new ArrayList<TransformationProceedure>();
+//		private TransformationProceedure parentProceedure;
+		private EquationNode frame;
+		private EquationNode change;
+
+		public TransformationProceedure(
+				TransformationProceedure parentProceedure, EquationNode frame,
+				EquationNode change) {
+			super();
+//			if (parentProceedure != null) {
+//				parentProceedure.childProceedures.add(this);
+//			}
+//			this.parentProceedure = parentProceedure;
+			this.change = change;
+			this.frame = frame;
+		}
+
+//		public TransformationProceedure getParentProceedure() {
+//			return parentProceedure;
+//		}
+
+		public EquationNode getFrame() {
+			return frame;
+		}
+
+		public EquationNode getChange() {
+			return change;
 		}
 
 	}

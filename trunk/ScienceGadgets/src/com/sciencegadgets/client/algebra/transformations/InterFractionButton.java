@@ -262,26 +262,6 @@ public class InterFractionButton extends TransformationButton {
 		
 		onTransformationEnd(dropHTML);
 
-//		switch (dropType) {
-//		case CANCEL:
-//		case REMOVE_ONE:
-//			Moderator.reloadEquationPanel(dropHTML, Skill.DROP_CANCEL);
-//			break;
-//		case DIVIDE:
-//			Moderator.reloadEquationPanel(dropHTML, Skill.DROP_DIVIDE);
-//			break;
-//		case EXPONENTIAL:
-//			Moderator
-//					.reloadEquationPanel(dropHTML, Skill.DROP_EXPONENTIAL);
-//			break;
-//		case LOG_COMBINE:
-//			Moderator.reloadEquationPanel(dropHTML,
-//					Skill.DROP_LOG);
-//			break;
-//		case TRIG_COMBINE:
-//			Moderator.reloadEquationPanel(dropHTML, Skill.DROP_TRIG);
-//			break;
-//		}
 	}
 
 	// Clean up both drag side and target side
