@@ -8,6 +8,7 @@ import com.googlecode.objectify.Key;
 import com.sciencegadgets.client.DatabaseHelperAsync;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationValidator;
 import com.sciencegadgets.client.challenge.LinkPrompt_Challenge;
@@ -19,19 +20,24 @@ import com.sciencegadgets.shared.TypeSGET;
 
 public class SaveButtonHandler implements ClickHandler {
 
+	AlgebraActivity algebraActivity;
 	private DatabaseHelperAsync dataBase = DataModerator.database;
 	private static final String RE_CREATE_UNITS = "recreate";
 
 	static ProblemSpecification problemSpec = null;
 
+	public SaveButtonHandler(AlgebraActivity algebraActivity) {
+		this.algebraActivity = algebraActivity;
+	}
+
 	@Override
 	public void onClick(ClickEvent arg0) {
 
-		final EquationTree eTree = Moderator.getCurrentEquationTree();
+		final EquationTree eTree = algebraActivity.getEquationTree();
 		final String mathXML = eTree.getEquationXMLString();
 
-		if (mathXML.contains(ChangeNodeMenu.NOT_SET)) {
-			Window.alert("All new entities (" + ChangeNodeMenu.NOT_SET
+		if (mathXML.contains(TypeSGET.NOT_SET)) {
+			Window.alert("All new entities (" + TypeSGET.NOT_SET
 					+ ") must be set or removed before saving");
 			reCreateUnitsCheck(mathXML);
 			return;

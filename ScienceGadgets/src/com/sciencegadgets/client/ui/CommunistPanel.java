@@ -16,33 +16,50 @@ public class CommunistPanel extends FlowPanel {
 	public CommunistPanel() {
 		this(true);
 	}
+
 	public CommunistPanel(boolean isHorizontal) {
 		this.isHorizontal = isHorizontal;
 	}
 
 	public void addAll(Widget[] widgets) {
 		for (Widget widget : widgets) {
-			add(widget);
+			addComrade(widget);
 		}
 		redistribute();
 	}
 
 	public void addAll(Iterable<? extends Widget> widgets) {
 		for (Widget widget : widgets) {
-			add(widget);
+			addComrade(widget);
 		}
 		redistribute();
 	}
 
+	/**
+	 * When adding iteratively, consider using the addAll methods for
+	 * performance
+	 */
 	@Override
 	public void add(Widget widget) {
-		super.add(widget);
+		addComrade(widget);
 		redistribute();
 	}
-	
+
+	private void addComrade(Widget widget) {
+		Widget container = widget;
+		if (widget instanceof FitParentHTML) {
+			container = new FlowPanel();
+			((FlowPanel)container).add(widget);
+		}
+		if (isHorizontal) {
+			container.addStyleName(CSS.LAYOUT_ROW);
+		}
+		super.add(container);
+	}
+
 	public void clear() {
 		int count = getWidgetCount();
-		for(int i=0 ; i<count ; i++) {
+		for (int i = 0; i < count; i++) {
 			getWidget(0).removeFromParent();
 		}
 	}

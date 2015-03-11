@@ -34,8 +34,8 @@ public class TrigTransformations extends
 		function = TrigFunctions.valueOf(trigNode
 				.getAttribute(MathAttribute.Function));
 
-		add(trigReciprocal_check());
 		add(trigDefinition_check());
+		add(trigReciprocal_check());
 		add(inverseTrig_check());
 	}
 

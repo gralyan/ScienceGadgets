@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -58,17 +59,32 @@ public class LinkPrompt_Equation extends LinkPrompt {
 				Window.alert("You should consider adding a variable in the equation");
 			} else {
 
-				final Button setGoalButton = new Button("Set Goal Equation",
+				final Button solveGoalButton = new Button("Solve for Goal",
 						new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent arg0) {
 								LinkPrompt_Equation.this.disappear();
-								Moderator.switchToAlgebra(algebraActivity.getEquationTree(), algebraActivity.getEquation(), ActivityType.algebrasetgoal, true);
+								Moderator.switchToAlgebra(algebraActivity.getEquationTree(), algebraActivity.getEquation(), ActivityType.algebrasolvegoal, true);
 							}
 						});
-				upperArea.add(setGoalButton);
+				solveGoalButton.setTitle("Faster and more accurate but can't use with random numbers");
+				upperArea.add(solveGoalButton);
+				
+				final Button createGoalButton = new Button("Create Goal",
+						new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent arg0) {
+						LinkPrompt_Equation.this.disappear();
+						Moderator.switchToAlgebra(algebraActivity.getEquationTree(), algebraActivity.getEquation(), ActivityType.algebracreategoal, true);
+					}
+				});
+				solveGoalButton.setTitle("Can use with random numbers but prone to error!");
+				upperArea.add(createGoalButton);
 			}
 		} else {
+			setModal(true);
+			setAutoHideEnabled(false);
+			
 			upperArea.add(new Label("Goal: "));
 			upperArea.add(algebraActivity.getEquationTree().getDisplayClone());
 			
@@ -85,8 +101,16 @@ public class LinkPrompt_Equation extends LinkPrompt {
 	@Override
 	public void appear() {
 
+		EquationTree eTree = algebraActivity.getEquationTree();
+		String mathXML = eTree.getEquationXMLString();
+		
+		if (mathXML.contains(TypeSGET.NOT_SET)) {
+			Window.alert("All new entities (" + TypeSGET.NOT_SET
+					+ ") must be set or removed before saving");
+			return;
+		}
+		
 		try {
-			EquationTree eTree = algebraActivity.getEquationTree();
 			eTree.validateTree();
 			eTree.getValidator().validateQuantityKinds(eTree);
 		} catch (IllegalStateException e) {
@@ -104,7 +128,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 	}
 
 	public void setMapParameters() {
-		String eqString = URLParameters.getParameter(Parameter.equation);
+		String eqString = algebraActivity.getEquationTree().getEquationXMLString();
 
 		pMap = new HashMap<Parameter, String>();
 		pMap.put(Parameter.activity, ActivityType.algebrasolve.toString());
@@ -127,6 +151,11 @@ public class LinkPrompt_Equation extends LinkPrompt {
 			html = initialEquation.getDisplayClone();
 		}
 		// linkDisplay.setHTML(html.getHTML());
+		
+		NodeList<Element> allEl = html.getElement().getElementsByTagName("*");
+		for(int i = 0 ; i<allEl.getLength() ; i++) {
+			allEl.getItem(i).removeAttribute("id");
+		}
 
 		Element styleLink = new HTML(
 				"<link type=\"text/css\" rel=\"stylesheet\" href=\"http://sciencegadgets.org/CSStyles/equation.css\"></link>")
@@ -139,6 +168,14 @@ public class LinkPrompt_Equation extends LinkPrompt {
 		iframeDisplay.setName("Interactive Equation");
 
 		super.updateLinks();
+		
+
+
+		JSNICalls.log("html: "+JSNICalls.elementToString(html.getElement()).replace("\"", "\\\""));
+		JSNICalls.log("xml: "+pMap.get(Parameter.equation).replace("\"", "\\\""));
+		if(pMap.get(Parameter.goal) != null) {
+			JSNICalls.log("goal: "+pMap.get(Parameter.goal).replace("\"", "\\\""));
+		}
 	}
 
 }

@@ -29,7 +29,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.JSNICalls;
-import com.sciencegadgets.client.algebra.edit.ChangeNodeMenu;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.AlgebraicTransformations;
@@ -75,9 +74,9 @@ public class EquationTree {
 
 		bindXMLtoNodes(equationXML);
 
-//		if (inEditMode) {
-			ConstantRandomizer.randomizeNumbers(this, !inEditMode);
-//		}
+		// if (inEditMode) {
+		ConstantRandomizer.randomizeNumbers(this, !inEditMode);
+		// }
 		// reloadDisplay(true);
 	}
 
@@ -99,11 +98,13 @@ public class EquationTree {
 
 		Element dummyLeft = DOM.createElement(TypeSGET.Variable.getTag());
 		dummyLeft.setInnerText("a");
-		dummyLeft.setAttribute(MathAttribute.ID.getAttributeName(), "dummyNodeLeft");
+		dummyLeft.setAttribute(MathAttribute.ID.getAttributeName(),
+				"dummyNodeLeft");
 
 		Element dummyRight = DOM.createElement(TypeSGET.Variable.getTag());
 		dummyRight.setInnerText("a");
-		dummyRight.setAttribute(MathAttribute.ID.getAttributeName(), "dummyNodeRight");
+		dummyRight.setAttribute(MathAttribute.ID.getAttributeName(),
+				"dummyNodeRight");
 
 		Element root = DOM.createElement(TypeSGET.Equation.getTag());
 		root.appendChild(dummyLeft);
@@ -162,7 +163,7 @@ public class EquationTree {
 					errorMessage));
 		}
 		String rootSymbol = root.getChildAt(1).getSymbol();
-		if (!(TypeSGET.Operator.EQUALS.getSign().equals(rootSymbol) || TypeSGET.Operator.ARROW_RIGHT
+		if (!(TypeSGET.Operator.EQUALS.getSign().equals(rootSymbol) || TypeSGET.Operator.SPACE
 				.getSign().equals(rootSymbol))) {
 			String errorMessage = "[=] isn't the root's second child, not side=side "
 					+ getEquationXMLClone().getString();
@@ -177,6 +178,10 @@ public class EquationTree {
 
 	public String getRightDisplay() {
 		return JSNICalls.elementToString(eqHTML.getRight());
+	}
+	
+	public EquationHTML getDisplayClone(boolean isStacked) {
+		return new EquationHTML(this, isStacked);
 	}
 
 	public EquationHTML getDisplayClone() {
@@ -223,7 +228,7 @@ public class EquationTree {
 			boolean hasSubscripts) {
 
 		EquationHTML equationHTML = new EquationHTML(this, hasSmallUnits,
-				hasSubscripts);
+				hasSubscripts, false);
 		equationHTML.pilot = true;
 		setDisplay(equationHTML);
 		return equationHTML;
@@ -264,8 +269,8 @@ public class EquationTree {
 		addToMaps(newNode);
 		return newNode;
 	}
-	
-	public EquationValidator getValidator(){
+
+	public EquationValidator getValidator() {
 		if (eqValidator == null) {
 			eqValidator = new EquationValidator();
 		}
@@ -408,35 +413,30 @@ public class EquationTree {
 		NodeList<Element> elements = parent.getXMLNode().getElementsByTagName(
 				tag);
 		for (int i = 0; i < elements.getLength(); i++) {
-			String id = elements.getItem(i).getAttribute(MathAttribute.ID.getAttributeName());
+			String id = elements.getItem(i).getAttribute(
+					MathAttribute.ID.getAttributeName());
 			nodes.add(idMap.get(id));
 		}
 		return nodes;
 	}
-	
+
 	public boolean isLike(EquationTree other) {
 		EquationNode thisRight = getRightSide();
 		EquationNode thisLeft = getLeftSide();
 		EquationNode otherRight = other.getRightSide();
 		EquationNode otherLeft = other.getLeftSide();
-		
-		JSNICalls.debug("thisRight: " + thisRight);
-		JSNICalls.debug("thisLeft: " + thisLeft);
-		JSNICalls.debug("otherRight: " + otherRight);
-		JSNICalls.debug("otherLeft: " + otherLeft);
-		
-		if(thisRight.isLike(otherRight) && thisLeft.isLike(otherLeft)) {
+
+		if (thisRight.isLike(otherRight) && thisLeft.isLike(otherLeft)) {
 			return true;
-		}else if(thisRight.isLike(otherLeft) && thisLeft.isLike(otherRight)) {
+		} else if (thisRight.isLike(otherLeft) && thisLeft.isLike(otherRight)) {
 			return true;
 		}
-		JSNICalls.debug("NOT ALIKES");
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
-		return super.toString() +" xmlString: "+ getEquationXMLString();
+		return super.toString() + " xmlString: " + getEquationXMLString();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -453,7 +453,8 @@ public class EquationTree {
 		 */
 		public EquationNode(Element xmlNode) {
 
-			String id = xmlNode.getAttribute(MathAttribute.ID.getAttributeName());
+			String id = xmlNode.getAttribute(MathAttribute.ID
+					.getAttributeName());
 			id = createId(id);
 			xmlNode.setAttribute(MathAttribute.ID.getAttributeName(), id);
 
@@ -477,7 +478,8 @@ public class EquationTree {
 			String tag = type.getTag();
 
 			Element newNode = DOM.createElement(tag);
-			newNode.setAttribute(MathAttribute.ID.getAttributeName(), createId(""));
+			newNode.setAttribute(MathAttribute.ID.getAttributeName(),
+					createId(""));
 
 			this.xmlNode = newNode;
 
@@ -732,6 +734,11 @@ public class EquationTree {
 			return addBefore(0, type, symbol);
 		}
 
+		/**
+		 * Gets all descendant nodes of a specified type.
+		 * @param type - use null to get all descendants
+		 * @return
+		 */
 		public LinkedList<EquationNode> getNodesByType(TypeSGET type) {
 			return EquationTree.this.getNodesByType(type, this);
 		}
@@ -745,7 +752,8 @@ public class EquationTree {
 
 				if (curNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element childElement = ((Element) curNode);
-					String childId = childElement.getAttribute(MathAttribute.ID.getAttributeName());
+					String childId = childElement.getAttribute(MathAttribute.ID
+							.getAttributeName());
 					childrenNodes.add(getNodeById(childId));
 				}
 			}
@@ -767,7 +775,8 @@ public class EquationTree {
 						+ toString();
 				throw new IllegalArgumentException(response);
 			}
-			String id = ((Element) node).getAttribute(MathAttribute.ID.getAttributeName());
+			String id = ((Element) node).getAttribute(MathAttribute.ID
+					.getAttributeName());
 			return getNodeById(id);
 		}
 
@@ -858,7 +867,8 @@ public class EquationTree {
 								+ toString());
 			}
 			Element parentElement = getXMLNode().getParentElement();
-			String parentId = parentElement.getAttribute(MathAttribute.ID.getAttributeName());
+			String parentId = parentElement.getAttribute(MathAttribute.ID
+					.getAttributeName());
 			EquationNode parentNode = getNodeById(parentId);
 			return parentNode;
 		}
@@ -875,7 +885,8 @@ public class EquationTree {
 			NodeList<Element> descendants = xmlClone.getElementsByTagName("*");
 			for (int i = 0; i < descendants.getLength(); i++) {
 				Element descendantEl = descendants.getItem(i);
-				descendantEl.removeAttribute(MathAttribute.ID.getAttributeName());
+				descendantEl.removeAttribute(MathAttribute.ID
+						.getAttributeName());
 			}
 
 			return xmlClone;
@@ -904,7 +915,7 @@ public class EquationTree {
 
 			switch (getType()) {
 			case Number:
-				if (ChangeNodeMenu.NOT_SET.equals(symbol)
+				if (TypeSGET.NOT_SET.equals(symbol)
 						|| RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 					xmlNode.setInnerText(symbol);
 					setAttribute(MathAttribute.Value, null);
@@ -924,7 +935,9 @@ public class EquationTree {
 					xmlNode.setInnerText(displayValue);
 
 					// Full value stored as attribute
-					String fullValue = value.stripTrailingZeros().toString();
+					String fullValue = "#".equals(displayValue) ? value
+							.stripTrailingZeros().toString() : displayValue;
+							
 					setAttribute(MathAttribute.Value, fullValue);
 					break;
 				}
@@ -955,10 +968,11 @@ public class EquationTree {
 
 			switch (getType()) {
 			case Number:
-				String valueAttr = getAttribute(MathAttribute.Value);
 				try {
-					return new BigDecimal(valueAttr).toString();
-				} catch (NumberFormatException e) {
+					String valueAttr = getAttribute(MathAttribute.Value);
+					BigDecimal nuberTest = new BigDecimal(valueAttr);
+					return valueAttr.toString();
+				} catch (NumberFormatException ex) {
 				}
 			case Variable:
 			case Operation:
@@ -967,8 +981,9 @@ public class EquationTree {
 				return getAttribute(MathAttribute.Function);
 			case Log:
 				return getAttribute(MathAttribute.LogBase);
+			default:
+				return "";
 			}
-			return "";
 		}
 
 		public Wrapper wrap(Wrapper wrap) {
@@ -993,7 +1008,8 @@ public class EquationTree {
 		}
 
 		public String getId() {
-			return getXMLNode().getAttribute(MathAttribute.ID.getAttributeName());
+			return getXMLNode().getAttribute(
+					MathAttribute.ID.getAttributeName());
 		}
 
 		public UnitAttribute getUnitAttribute() {
@@ -1083,7 +1099,8 @@ public class EquationTree {
 		}
 
 		public String getHTMLString(boolean hasSmallUnits, boolean hasSubscripts) {
-			return JSNICalls.elementToString(getHTMLClone(hasSmallUnits, hasSubscripts));
+			return JSNICalls.elementToString(getHTMLClone(hasSmallUnits,
+					hasSubscripts));
 		}
 
 		/**
@@ -1169,13 +1186,16 @@ public class EquationTree {
 					return true;
 				}
 			case Number:
+			case Variable:
 				if (!this.getUnitAttribute().equals(another.getUnitAttribute())
-						&& !new UnitMap(this).equals(new UnitMap(another))) {
+						&& !new UnitMap(this).isConvertableTo(new UnitMap(
+								another))) {
 					return false;
 				}
-				// fall through
-			case Variable:
-				if (getSymbol().equals(another.getSymbol())) {
+				if (getSymbol().equals(another.getSymbol())
+						|| getSymbol().equals(RandomSpecPanel.RANDOM_SYMBOL)
+						|| another.getSymbol().equals(
+								RandomSpecPanel.RANDOM_SYMBOL)) {
 					return true;
 				} else {
 					return false;

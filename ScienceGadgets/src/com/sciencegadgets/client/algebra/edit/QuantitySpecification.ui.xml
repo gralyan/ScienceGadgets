@@ -41,7 +41,7 @@
 		.established {
 	color:black;
 			height: 100%;
-			width: 24%;
+			width: 23%;
 			display: inline-block;
 			margin-right: 2%;
 			text-align: left;

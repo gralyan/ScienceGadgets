@@ -1,12 +1,19 @@
 package com.sciencegadgets.client.ui;
 
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
-public class UnitSelection extends CommunistPanel {
+public class UnitSelection extends FlowPanel {
 
 	final public SelectionPanel quantityBox = new SelectionPanel(
 			"Quantity Kind");
@@ -29,74 +36,150 @@ public class UnitSelection extends CommunistPanel {
 	 * Regular vertical unit selection with mandatory QuantityKind selection to
 	 * narrow units
 	 */
-	public UnitSelection( boolean isHorizontal) {
-		this(false, false, isHorizontal);
+	public UnitSelection() {
+		this(false, false);
 	}
 
-	public UnitSelection(boolean quantityOnly, boolean unitOnly, boolean isHorizontal) {
-		super(isHorizontal);
+	public UnitSelection(boolean quantityOnly, boolean unitOnly) {
+		super();
 		this.quantityOnly = quantityOnly;
 		this.unitOnly = unitOnly;
-		
-		if(quantityOnly && unitOnly){
+
+		if (quantityOnly && unitOnly) {
 			JSNICalls.error("Can't be quantityOnly and unitOnly");
 		}
 
 		unitBox.addStyleName(CSS.UNIT);
 		unitBox.addStyleName(CSS.LAYOUT_ROW);
 		quantityBox.addStyleName(CSS.LAYOUT_ROW);
-		
-		if (quantityOnly) {
-			this.add(quantityBox);
 
+		if (quantityOnly) {
+			quantityBox.setSize("100%", "100%");
+			this.add(quantityBox);
 		} else if (unitOnly) {
+			unitBox.setSize("100%", "100%");
 			this.add(unitBox);
-		}else {
+		} else {
+
+			final UnitSearchBox searchBox = new UnitSearchBox();
+			searchBox.setSize("100%", "20%");
+			this.add(searchBox);
+
+			quantityBox.setSize("50%", "80%");
+			unitBox.setSize("50%", "80%");
 			this.add(quantityBox);
 			this.add(unitBox);
 
 			quantityBox.addSelectionHandler(new SelectionHandler() {
 				@Override
 				public void onSelect(Cell selection) {
-					reloadUnitBox(quantityBox.getSelectedText(), null);
+					reloadUnitBox(quantityBox.getSelectedText(), null, false);
 				}
 			});
 		}
 	}
 
-	public UnitSelection(String quantityKind) {
-		super(false);
+	// public UnitSelection(String quantityKind) {
+	// super(false);
+	//
+	// this.add(quantityBox);
+	// this.add(unitBox);
+	//
+	// quantityFilled = true;
+	//
+	// // The Prefix quantity is special, should stand out
+	// quantityBox.add(UnitAttribute.PREFIX_QUANTITY_KIND,
+	// UnitAttribute.PREFIX_QUANTITY_KIND);
+	// quantityBox.getWidget(1).addStyleName(CSS.QUANTITY_KIND_PREFIX);
+	// quantityBox.add(quantityKind, quantityKind);
+	//
+	// quantityBox.addSelectionHandler(new SelectionHandler() {
+	// @Override
+	// public void onSelect(Cell selection) {
+	// reloadUnitBox(quantityBox.getSelectedText(), null, false);
+	// }
+	// });
+	// }
 
-		this.add(quantityBox);
-		this.add(unitBox);
-		
-		quantityFilled = true;
-
-		// The Prefix quantity is special, should stand out
-		quantityBox.add(UnitAttribute.PREFIX_QUANTITY_KIND, UnitAttribute.PREFIX_QUANTITY_KIND);
-		quantityBox.getWidget(1).addStyleName(CSS.QUANTITY_KIND_PREFIX);
-		quantityBox.add(quantityKind, quantityKind);
-
-		quantityBox.addSelectionHandler(new SelectionHandler() {
-			@Override
-			public void onSelect(Cell selection) {
-				reloadUnitBox(quantityBox.getSelectedText(), null);
-			}
-		});
-	}
-
-	public void reloadUnitBox(String quantityKind, String excludedUnitName) {
+	public void reloadUnitBox(String searchSpec, String excludedUnitName,
+			boolean isSearch) {
 		unitBox.clear();
-		if (quantityKind != null && !quantityKind.equals("")) {
-			DataModerator.fill_UnitsByQuantity(quantityKind, unitBox, excludedUnitName);
+		if (searchSpec == null || searchSpec.equals("")) {
+			return;
 		}
-
+		if (isSearch) {
+			DataModerator.fill_UnitsBySearch(searchSpec, unitBox,
+					excludedUnitName);
+		} else {
+			DataModerator.fill_UnitsByQuantity(searchSpec, unitBox,
+					excludedUnitName);
+		}
 	}
 
 	public boolean isQuantityOnly() {
 		return quantityOnly;
 	}
+
 	public boolean isUnitsOnly() {
 		return unitOnly;
+	}
+
+	class UnitSearchBox extends TextBox {
+		private static final String SEARCH_DEFAULT_TEXT = "Search unit";
+		private String previousSearch = "";
+
+		UnitSearchBox() {
+
+			setText(SEARCH_DEFAULT_TEXT);
+			getElement().getStyle().setColor("gray");
+
+			addFocusHandler(new FocusHandler() {
+				@Override
+				public void onFocus(FocusEvent event) {
+					if (SEARCH_DEFAULT_TEXT.equals(getText())) {
+						setText("");
+						getElement().getStyle().setColor("black");
+					}
+				}
+			});
+
+			addKeyUpHandler(new KeyUpHandler() {
+				@Override
+				public void onKeyUp(KeyUpEvent event) {
+					String searchQ = getText();
+					search(searchQ);
+				}
+			});
+
+			addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					String searchQ = event.getValue();
+					search(searchQ);
+				}
+			});
+
+		}
+
+		void search(String searchQ) {
+			if(previousSearch.equals(searchQ)) {
+				return;
+			}
+			previousSearch = searchQ;
+			quantityBox.clearSelection();
+			if ("".equals(searchQ)) {
+				unitBox.clear();
+			} else if (!SEARCH_DEFAULT_TEXT.equals(searchQ)) {
+				reloadUnitBox(searchQ, null, true);
+			}
+
+		}
+
+		@Override
+		protected void onDetach() {
+			setText(SEARCH_DEFAULT_TEXT);
+			getElement().getStyle().setColor("gray");
+			super.onDetach();
+		}
 	}
 }

@@ -34,7 +34,7 @@ public class RandomSpecPanel extends FlowPanel {
 	private Label response;
 	Button setRandonButton = new Button("Set Random");
 
-	RandomSpecPanel() {
+	public RandomSpecPanel() {
 
 		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
 		this.setWidth("100%");
@@ -63,22 +63,26 @@ public class RandomSpecPanel extends FlowPanel {
 
 		HorizontalPanel rangeSelection = new HorizontalPanel();
 		lowerBound = new DoubleBox();
+		lowerBound.setSize("50px", "30px");
 		rangeSelection.add(lowerBound);
 		rangeSelection.add(new Label("\u2264 x \u003C"));
 		upparBound = new DoubleBox();
+		upparBound.setSize("50px", "30px");
 		rangeSelection.add(upparBound);
 		mainPanel.add(rangeSelection);
 
 		Label label3 = new Label(
-				"Decimal places (0-integer, 1-tenths place...)");
+				"Decimal places");
 		label3.setStyleName(CSS.ROW_HEADER);
 		label3.getElement().getStyle().setMarginTop(5, Unit.PX);
 		mainPanel.add(label3);
 
 		decPlace = new IntegerBox();
+		decPlace.setSize("50px", "30px");
+		decPlace.setText("0");
 		mainPanel.add(decPlace);
 
-		setRandonButton.addStyleName(CSS.MEDIUM_BUTTON);
+		setRandonButton.setSize("100%", "100px");
 		mainPanel.add(setRandonButton);
 
 		response = new Label("");

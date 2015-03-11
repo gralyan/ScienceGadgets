@@ -76,4 +76,7 @@ public class Problem  implements Serializable{
 	public void setToSolveID(String toSolveID) {
 		this.toSolveID = toSolveID;
 	}
+	public Long getId() {
+		return id;
+	}
 }

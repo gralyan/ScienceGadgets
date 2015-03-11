@@ -44,6 +44,10 @@ public abstract class TransformationButton extends SelectionButton implements
 	public TransformationList<? extends TransformationButton> getTransformList() {
 		return transformList;
 	}
+	
+	public EquationNode getNode() {
+		return transformList.getNode();
+	}
 
 	/**
 	 * @return The HTML display version of the transformation
@@ -130,13 +134,13 @@ public abstract class TransformationButton extends SelectionButton implements
 
 		Badge badge = getAssociatedBadge();
 		Skill skills = badge == null ? null : badge.getSkill();
-
-		if (transformList.reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(changeComment, skills);
-		}
 		
 		if (allowSkillIncrease && skills != null) {
 			Moderator.increaseSkill(skills, 1);
+		}
+
+		if (transformList.reloadAlgebraActivity) {
+			Moderator.reloadEquationPanel(changeComment, skills);
 		}
 	}
 

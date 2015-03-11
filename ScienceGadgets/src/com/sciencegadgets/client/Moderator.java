@@ -34,7 +34,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.URLParameters.Parameter;
@@ -52,9 +51,8 @@ import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
 import com.sciencegadgets.client.equationbrowser.EquationBrowser;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.FitParentHTML;
-import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.Resizable;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class Moderator implements EntryPoint {
 
@@ -77,6 +75,8 @@ public class Moderator implements EntryPoint {
 	public static final LinkedList<Resizable> resizables = new LinkedList<Resizable>();
 	private static Student student = new Student("guest");
 	public static boolean isInEasyMode = false;
+	public static final HashMap<Skill, Integer> skillsIncreasedCollection = new HashMap<Skill, Integer>();
+	public static final LinkedList<Badge> newBadgeCollection = new LinkedList<Badge>();
 
 	// public final static Sounds SOUNDS = new Sounds();
 
@@ -112,15 +112,16 @@ public class Moderator implements EntryPoint {
 	}
 
 	public enum ActivityType {
-		browser, problem, algebrasolve, algebraedit, algebrasetgoal, algebrasimplifyquiz, conversion;
+		browser, problem, algebrasolve, algebraedit, algebrasolvegoal, algebracreategoal, algebrasimplifyquiz, conversion;
 
 		public boolean isInEditMode() {
 			switch (this) {
 			case algebraedit:
 			case algebrasimplifyquiz:
+			case algebracreategoal:
 				return true;
 			case algebrasolve:
-			case algebrasetgoal:
+			case algebrasolvegoal:
 				return false;
 			default:
 				return false;
@@ -163,10 +164,13 @@ public class Moderator implements EntryPoint {
 						activityType);
 			} else {
 				algebraActivity.setEquationTree(equationTree, equation);
+				if(ActivityType.algebrasolve == activityType) {
+					algebraActivity.reCreateAlgHistory();
+				}
 			}
-			// ActivityType type = activityType.isInEditMode() ?
-			// ActivityType.algebraedit
-			// : ActivityType.algebrasolve;
+
+			isInEasyMode = activityType == ActivityType.algebrasolvegoal;
+
 			setActivity(activityType, algebraActivity);
 			algebraActivity.reloadEquationPanel(null, null, updateHistory);
 		} catch (Exception e) {
@@ -181,19 +185,26 @@ public class Moderator implements EntryPoint {
 	public static void switchToConversion(EquationNode node,
 			Equation variableEquation) {
 
+		switchToConversion(node.getSymbol(), node.getUnitAttribute(), true);
+		conversionActivity.setNode(node);
+		conversionActivity.setVariableEquation(variableEquation);
+	}
+	
+	public static void switchToConversion(String initialValue, UnitAttribute unitAttribute, boolean allowConvertButton) {
+		
 		if (conversionActivity == null) {
 			conversionActivity = new ConversionActivity();
 			conversionActivity.getElement().setAttribute("id",
 					CSS.CONVERSION_ACTIVITY);
 		}
-		conversionActivity.load(node, variableEquation);
-
+		conversionActivity.load(initialValue, unitAttribute, allowConvertButton);
+		
 		setActivity(ActivityType.conversion, conversionActivity);
 	}
 
 	public static void switchBackToProblem() {
 		if (problemActivity == null) {
-			JSNICalls.log("No problem activity to go back to");
+			switchToBrowser();
 			return;
 		}
 		boolean isProblemSolved = problemActivity.updateSolvedEquation();
@@ -213,6 +224,12 @@ public class Moderator implements EntryPoint {
 		}
 		problemActivity.loadProblem(problem);
 		setActivity(ActivityType.problem, problemActivity);
+
+		HashMap<Parameter, String> parameterMap = new HashMap<Parameter, String>();
+		Long id = problem.getId();
+		parameterMap.put(Parameter.activity, ActivityType.problem.name());
+		parameterMap.put(Parameter.problemid, id.toString());
+		URLParameters.setParameters(parameterMap, false);
 	}
 
 	public static void switchToBrowser() {
@@ -220,6 +237,9 @@ public class Moderator implements EntryPoint {
 			equationBrowser = new EquationBrowser();
 		}
 		setActivity(ActivityType.browser, equationBrowser);
+		
+		HashMap<Parameter, String> parameterMap = new HashMap<Parameter, String>();
+		URLParameters.setParameters(parameterMap, false);
 	}
 
 	public static AlgebraActivity getCurrentAlgebraActivity() {
@@ -266,16 +286,18 @@ public class Moderator implements EntryPoint {
 				HashSet<Badge> newBadges = Moderator.getStudent()
 						.increaseSkill(skillEntry.getKey(),
 								skillEntry.getValue());
-				for (Badge newBadge : newBadges) {
-					JSNICalls.log("newBadge " + newBadge);
-					// Window.alert("New Badge!\n" + newBadge.toString());
 
-					FitParentHTML newBadgeResponse = new FitParentHTML();
-					newBadgeResponse.addStyleName(CSS.DROP_ENTER_RESPONSE);
-					newBadgeResponse.setText("New Badge! - "
-							+ newBadge.toString());
-					algebraActivity.lowerEqArea.add(newBadgeResponse);
+				Integer currentSkillLevel = skillsIncreasedCollection
+						.get(skillEntry.getKey());
+				if (currentSkillLevel == null) {
+					currentSkillLevel = 0;
 				}
+				skillsIncreasedCollection.put(skillEntry.getKey(),
+						skillEntry.getValue() + currentSkillLevel);
+				 for (Badge newBadge : newBadges) {
+				 JSNICalls.log("newBadge " + newBadge);
+				 newBadgeCollection.add(newBadge);
+				 }
 				JSNICalls.log("Skill up of " + skillEntry.getKey() + " by "
 						+ skillEntry.getValue() + "\nskills: "
 						+ Moderator.getStudent().getSkills() + "\nbadges "
@@ -398,7 +420,8 @@ public class Moderator implements EntryPoint {
 				switch (activityType) {
 				case algebraedit:
 				case algebrasolve:
-				case algebrasetgoal:
+				case algebrasolvegoal:
+				case algebracreategoal:
 					String equationString = parameterMap
 							.get(Parameter.equation);
 					Element equationXML = new HTML(equationString).getElement()
@@ -406,22 +429,25 @@ public class Moderator implements EntryPoint {
 					switchToAlgebra(equationXML, null, activityType, true);
 					break;
 				case problem:
-
-					String problemKeyString = parameterMap
-							.get(Parameter.problemkey);
-
-					DataModerator.database.getProblem(problemKeyString,
-							new AsyncCallback<Problem>() {
-								@Override
-								public void onSuccess(Problem problem) {
-									switchToProblem(problem);
-								}
-
-								@Override
-								public void onFailure(Throwable arg0) {
-									Window.alert("Challenge Not Found");
-								}
-							});
+					String idStr = parameterMap
+							.get(Parameter.problemid);
+					try {
+						long id = Long.parseLong(idStr);
+						DataModerator.database.getProblem(id,
+								new AsyncCallback<Problem>() {
+							@Override
+							public void onSuccess(Problem problem) {
+								switchToProblem(problem);
+							}
+							
+							@Override
+							public void onFailure(Throwable arg0) {
+								Window.alert("Challenge Not Found");
+							}
+						});
+					}catch (NumberFormatException e) {
+						JSNICalls.error("ID for problem must be of type 'long'");
+					}
 					break;
 
 				case browser:

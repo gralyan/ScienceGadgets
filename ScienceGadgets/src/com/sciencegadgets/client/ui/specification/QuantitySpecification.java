@@ -1,4 +1,4 @@
-package com.sciencegadgets.client.algebra.edit;
+package com.sciencegadgets.client.ui.specification;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -9,29 +9,23 @@ import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
-import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.EquationWrapper;
-import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.FitParentHTML;
-import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.SymbolDisplay;
 import com.sciencegadgets.client.ui.ToggleSlide;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.shared.MathAttribute;
-import com.sciencegadgets.shared.TrigFunctions;
+import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitHTML;
 import com.sciencegadgets.shared.dimensions.UnitMap;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
-public abstract class QuantitySpecification extends Prompt {
+public abstract class QuantitySpecification extends Composite {
 
 	interface VariableSpecUiBinder extends
 			UiBinder<FlowPanel, QuantitySpecification> {
@@ -56,27 +50,18 @@ public abstract class QuantitySpecification extends Prompt {
 	@UiField
 	FlowPanel unitPalette;
 
-	@UiField
-	SelectionPanel establishedSelection;
 
-	FlowPanel mainPanel = uiBinder.createAndBindUi(this);
-
-	protected EquationNode node;
 	private boolean isReciprocal = false;
-	protected boolean mustCheckUnits;
 
 	// Stores the unit name and associated exponent
 	protected UnitMap unitMap = new UnitMap();
 	protected UnitAttribute dataUnit = new UnitAttribute("");
 	protected FitParentHTML unitHTML = new FitParentHTML();
 
-	public QuantitySpecification(EquationNode equationNode,
-			boolean clearDisplays, boolean mustCheckUnits) {
-		super();
-		this.node = equationNode;
-		this.mustCheckUnits = mustCheckUnits;
+	public QuantitySpecification(boolean clearDisplays,
+			boolean canHaveUnits) {
+		initWidget(uiBinder.createAndBindUi(this));
 
-		add(mainPanel);
 
 		unitDisplay.add(unitHTML);
 
@@ -95,7 +80,7 @@ public abstract class QuantitySpecification extends Prompt {
 			symbolDisplay.addTouchStartHandler(new TouchStartHandler() {
 				@Override
 				public void onTouchStart(TouchStartEvent event) {
-					symbolDisplay.setText("");
+					symbolDisplay.clear();
 				}
 			});
 		} else {
@@ -113,15 +98,15 @@ public abstract class QuantitySpecification extends Prompt {
 			symbolDisplay.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					symbolDisplay.setText("");
+					symbolDisplay.clear();
 				}
 			});
 		}
 
 		unitReciprocalToggle
 				.setOptionsHtml(
-						"<div><div style=\"border-bottom: thin solid;\">unit</div><div>1</div></div>",
-						"<div><div style=\"border-bottom: thin solid;\">1</div><div>unit</div></div>",
+						"<div><div style=\"border-bottom: thin solid;\">"+TypeSGET.NOT_SET+"</div><div>1</div></div>",
+						"<div><div style=\"border-bottom: thin solid;\">1</div><div>"+TypeSGET.NOT_SET+"</div></div>",
 						!isReciprocal);
 		unitReciprocalToggle.addClickHandler(new ClickHandler() {
 			@Override
@@ -130,31 +115,18 @@ public abstract class QuantitySpecification extends Prompt {
 			}
 		});
 
-		// OK button
-		addOkHandler(new OkHandler());
-
-		reload(equationNode, clearDisplays, mustCheckUnits);
+		reload(clearDisplays, canHaveUnits);
 	}
 
-	public void reload(EquationNode mathNode, boolean clearDisplays,
-			boolean mustCheckUnits) {
-
-		this.node = mathNode;
+	public void reload(boolean clearDisplays, 
+			boolean canHaveUnits) {
 
 		dataUnit.setString("");
 		unitMap.clear();
 		unitHTML.setHTML("");
+		symbolDisplay.clear();
 
-		// Symbol Display
-		String oldSymbol = node.getSymbol();
-		if (clearDisplays) {
-			symbolDisplay.setText("");
-		} else {
-			symbolDisplay.setText(oldSymbol);
-			setUnit(new UnitMap(node));
-		}
-
-		if (canHaveUnits(node)) {
+		if (canHaveUnits) {
 			unitArea.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		} else {
 			unitArea.getElement().getStyle().setDisplay(Display.NONE);
@@ -162,7 +134,7 @@ public abstract class QuantitySpecification extends Prompt {
 
 	}
 
-	protected void setUnit(UnitMap map) {
+	public void setUnit(UnitMap map) {
 		unitMap = map;
 		dataUnit = unitMap.getUnitAttribute();
 		Element unitElement = UnitHTML.create(dataUnit, null, false);
@@ -186,57 +158,15 @@ public abstract class QuantitySpecification extends Prompt {
 		}
 	}
 
-	private boolean canHaveUnits(EquationNode mNode) {
-		switch (mNode.getParentType()) {
-		case Exponential:
-			if (mNode.getIndex() == 1) {
-				return false;
-			}
-			break;
-		case Trig:
-			String func = mNode.getParent()
-					.getAttribute(MathAttribute.Function);
-			if (func.contains(TrigFunctions.ARC)) {
-				return false;
-			}
-			// TODO only allow units of PlaneAngle for trig arguments
-			break;
-		case Log:
-			return false;
-		case Equation:
-			return true;
-		}
-		return canHaveUnits(mNode.getParent());
+	public UnitMap getUnitMap() {
+		return unitMap;
 	}
 
-	private class OkHandler implements ClickHandler {
-
-		@Override
-		public void onClick(ClickEvent event) {
-			
-			AlgebraActivity algebraActivity = ((EquationWrapper)node.getWrapper()).getAlgebraActivity();
-			
-			if(mustCheckUnits && !unitMap.isConvertableTo(node.getUnitMap())) {
-				Window.alert("Units must match:\n"+unitMap);
-				return;
-			}
-			
-			String symbol = extractSymbol();
-
-			if (symbol == null) {
-				return;
-			}
-			setNode(symbol);
-
-			node.getXMLNode().setAttribute(
-					MathAttribute.Unit.getAttributeName(), dataUnit.toString());
-
-			disappear();
-			algebraActivity.reloadEquationPanel(null, null, true);
-		}
+	public UnitAttribute getDataUnit() {
+		return dataUnit;
 	}
 
-	protected abstract void setNode(String symbol);
-
-	protected abstract String extractSymbol();
+	public SymbolDisplay getSymbolDisplay() {
+		return symbolDisplay;
+	}
 }

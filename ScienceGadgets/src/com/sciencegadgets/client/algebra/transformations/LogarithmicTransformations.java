@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.algebra.transformations;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import com.sciencegadgets.client.Moderator;
@@ -34,10 +35,12 @@ public class LogarithmicTransformations extends
 
 		argumentType = argument.getType();
 
-		add(unravelLogExp_check());
-		add(logEvaluate_check());
-		add(logChild_check());
 		add(logChangeBase_check());
+		add(unravelLogExp_check());
+		if (add(logChild_check())) {
+			return;
+		}
+		add(logEvaluate_check());
 
 	}
 
@@ -70,8 +73,9 @@ public class LogarithmicTransformations extends
 			} else if (base.equals(argument.getSymbol())) {
 				return new LogSameBaseAsArgumentButton(this);
 			}
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -83,7 +87,7 @@ public class LogarithmicTransformations extends
 		if (TypeSGET.Exponential.equals(exponential.getType())) {
 			EquationNode exponentialBase = exponential.getFirstChild();
 			if (TypeSGET.Number.equals(exponentialBase.getType())
-					&& exponentialBase.getSymbol().equals(
+					&& exponentialBase.getXMLNode().getInnerText().equals(
 							log.getAttribute(MathAttribute.LogBase))) {
 				EquationNode exponentialExp = exponential.getChildAt(1);
 				return new LogUnravelButton(log, exponentialExp, this);

@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
@@ -28,21 +29,26 @@ public class EquationHTML extends HTML {
 	public boolean autoFillParent = false;
 	private boolean hasSmallUnits = true;
 	private boolean hasSubscripts = true;
+	private boolean isStacked = false;
 	public boolean pilot = false;
 	private Element left = null;
 	private Element right = null;
 	HashMap<Element, EquationNode> displayMap = new HashMap<Element, EquationNode>();
 
 	public EquationHTML(EquationTree mTree) {
-		this(mTree, true, true);
+		this(mTree, true, true, false);
+	}
+	public EquationHTML(EquationTree mTree, boolean isStacked) {
+		this(mTree, true, true, isStacked);
 	}
 
-	public EquationHTML(EquationTree mTree, boolean hasSmallUnits,
-			boolean hasSubscripts) {
+		public EquationHTML(EquationTree mTree, boolean hasSmallUnits,
+			boolean hasSubscripts, boolean isStacked) {
 		this.mTree = mTree;
 		this.setStyleName(CSS.EQUATION);
 		this.hasSmallUnits = hasSmallUnits;
 		this.hasSubscripts = hasSubscripts;
+		this.isStacked = isStacked;
 
 		left = makeHTMLNode(mTree.getLeftSide(), this.getElement());
 		makeHTMLNode(mTree.getEquals(), this.getElement());
@@ -202,10 +208,12 @@ public class EquationHTML extends HTML {
 				} catch (NumberFormatException e) {
 					// non-numbers, characters after the first are subscripts
 					// note - constants are number nodes with character text
-					nodeHtml.setInnerText(text.substring(0, 1));
+					int substringEnd = text
+							.startsWith(Operator.MINUS.getSign()) ? 2 : 1;
+					nodeHtml.setInnerText(text.substring(0, substringEnd));
 					Element subscript = DOM.createDiv();
 					subscript.addClassName(CSS.SUBSCRIPT);
-					subscript.setInnerText(text.substring(1));
+					subscript.setInnerText(text.substring(substringEnd));
 					nodeHtml.appendChild(subscript);
 				}
 			} else {
@@ -214,6 +222,10 @@ public class EquationHTML extends HTML {
 			break;
 		case Operation:
 			String txt = mNode.getSymbol();
+			if(isStacked && TypeSGET.Operator.EQUALS.getSign().equals(txt)) {
+				txt = "";
+				nodeHtml.getStyle().setDisplay(Display.BLOCK);
+			}else {
 			if (txt.startsWith("&")) { // must insert as js code
 				for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
 					if (op.getHTML().equals(txt)) {
@@ -223,6 +235,7 @@ public class EquationHTML extends HTML {
 				}
 			}
 			nodeHtml.setInnerText(txt);
+			}
 			break;
 		}
 
@@ -355,35 +368,35 @@ public class EquationHTML extends HTML {
 		// lowestBottom = curEl.getAbsoluteBottom();
 
 		// Lift exponents of fraction bases to top
-//		if (TypeSGET.Exponential.equals(curType)) {
-//			Element base = ((Element) curEl.getChild(0));
-//			Element exp = ((Element) curEl.getChild(1));
-//			int lift = (exp.getOffsetTop() - base.getOffsetTop());
-//			exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
+		// if (TypeSGET.Exponential.equals(curType)) {
+		// Element base = ((Element) curEl.getChild(0));
+		// Element exp = ((Element) curEl.getChild(1));
+		// int lift = (exp.getOffsetTop() - base.getOffsetTop());
+		// exp.getStyle().setBottom(lift / pxPerEm, Unit.EM);
 
-			// Align inline siblings flush using padding at highest and lowest
-//		} else {
-			// for (Element child : childrenHorizontal) {
-			// Style s = child.getStyle();
-			//
-			// // Fractions with some padding don't need to be aligned
-			// if (fractionChildrenHorizontal.contains(child)) {
-			// if (!"0em".equals(s.getPaddingTop())
-			// || !"0em".equals(s.getPaddingBottom())) {
-			// continue;
-			// }
-			// }else
-			// if(child.getClassName().contains(TypeML.Operation.toString())) {
-			// continue;
-			// }
-			//
-			// int childTopPad = child.getAbsoluteTop() - highestTop;
-			// int childBottomPad = lowestBottom - child.getAbsoluteBottom();
-			//
-			// s.setPaddingTop(childTopPad / pxPerEm, Unit.EM);
-			// s.setPaddingBottom(childBottomPad / pxPerEm, Unit.EM);
-			// }
-//		}
+		// Align inline siblings flush using padding at highest and lowest
+		// } else {
+		// for (Element child : childrenHorizontal) {
+		// Style s = child.getStyle();
+		//
+		// // Fractions with some padding don't need to be aligned
+		// if (fractionChildrenHorizontal.contains(child)) {
+		// if (!"0em".equals(s.getPaddingTop())
+		// || !"0em".equals(s.getPaddingBottom())) {
+		// continue;
+		// }
+		// }else
+		// if(child.getClassName().contains(TypeML.Operation.toString())) {
+		// continue;
+		// }
+		//
+		// int childTopPad = child.getAbsoluteTop() - highestTop;
+		// int childBottomPad = lowestBottom - child.getAbsoluteBottom();
+		//
+		// s.setPaddingTop(childTopPad / pxPerEm, Unit.EM);
+		// s.setPaddingBottom(childBottomPad / pxPerEm, Unit.EM);
+		// }
+		// }
 
 	}
 

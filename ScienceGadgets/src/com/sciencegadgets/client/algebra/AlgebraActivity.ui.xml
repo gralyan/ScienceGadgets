@@ -23,16 +23,16 @@
 
 		<g:FlowPanel ui:field="upperEqArea" width="100%" height="15%">
 
-			<g:Button ui:field="optionsButton" text="Options"
-				addStyleNames='{style.row}' width="10%" height="100%"></g:Button>
+			<g:Button ui:field="backToBrowserButton" text="Main"
+				addStyleNames='{style.row}' width="10%"
+				height="100%"></g:Button>
 
 			<!-- save button in edit mode, algOut in solve mode -->
-			<g:FlowPanel ui:field="upperMidEqArea" addStyleNames='{style.row}'
-				width="80%" height="100%"></g:FlowPanel>
+			<g:SimplePanel ui:field="upperMidEqArea" addStyleNames='{style.row}'
+				width="80%" height="100%"></g:SimplePanel>
 
-			<g:FlowPanel ui:field="selectionDetails"
-				addStyleNames='{style.row} {style.selectionDetails}' width="10%"
-				height="100%"></g:FlowPanel>
+			<g:Button ui:field="optionsButton" text="Options"
+				addStyleNames='{style.row}' width="10%" height="100%"></g:Button>
 
 		</g:FlowPanel>
 

@@ -2,21 +2,19 @@ package com.sciencegadgets.client.algebra.edit;
 
 import java.math.BigDecimal;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.KeyPadNumerical;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.client.ui.UnitSelection;
+import com.sciencegadgets.client.ui.SymbolDisplay;
+import com.sciencegadgets.client.ui.specification.NumberSpecification;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
-import com.sciencegadgets.shared.dimensions.UnitMap;
 
-public class NumberSpecification extends QuantitySpecification {
+public class NumberPrompt extends QuantityPrompt{
 
 	KeyPadNumerical numPad;
 	RandomSpecPanel randSpec = new RandomSpecPanel();
@@ -24,54 +22,16 @@ public class NumberSpecification extends QuantitySpecification {
 	String randomness = "";
 	CommonConstants constantSeleced = null;
 
-	public NumberSpecification(EquationNode equationNode, boolean clearDisplays, boolean mustCheckUnits) {
+	public NumberPrompt(EquationNode equationNode, boolean clearDisplays, boolean mustCheckUnits) {
 		super(equationNode, clearDisplays, mustCheckUnits);
-
-		// Number Pad
-		numPad = new KeyPadNumerical(symbolDisplay);
-		symbolPalette.add(numPad);
-
-		// Randomness Spec
-		symbolPalette.add(randSpec);
-		randSpec.setVisible(false);
-		randSpec.addOkClickHandler((new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				randomness = randSpec.getRandomness();
-				if (randomness != null) {
-					symbolDisplay.setText(RandomSpecPanel.RANDOM_SYMBOL);
-				} else {
-					symbolDisplay.setText("");
-				}
-			}
-		}));
-
-		// Symbol Toggle - switch Number Pad and Randomness Spec
-		symbolCaseToggle.setOptions("#", "?", true);
-		symbolCaseToggle.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (symbolCaseToggle.isFistSelected()) {
-					randSpec.setVisible(true);
-					numPad.setVisible(false);
-
-				} else {
-					randSpec.setVisible(false);
-					numPad.setVisible(true);
-				}
-			}
-		});
-
-		// Unit Selection
-		UnitSelection unitBox = new UnitSelection(true);
-		unitPalette.add(unitBox);
-		unitBox.addStyleName(CSS.FILL_PARENT);
-		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
+		spec = new NumberSpecification(clearDisplays, canHaveUnits(equationNode), true);
+		reload(equationNode, clearDisplays, mustCheckUnits);
+		specPanel.add(spec);
 
 		// Fill Established Selection
 		for (CommonConstants constant : CommonConstants.values()) {
 			establishedSelection.add(
-					constant.getSymbol() + " - " + constant.getName(), null,
+					constant.getSymbol() + "-" + constant.getName(), null,
 					constant);
 		}
 
@@ -81,15 +41,16 @@ public class NumberSpecification extends QuantitySpecification {
 			public void onSelect(Cell selected) {
 				constantSeleced = ((CommonConstants) selected.getEntity());
 
-				symbolDisplay.setText(constantSeleced.getValue());
+				spec.getSymbolDisplay().setText(constantSeleced.getValue());
 
-				setUnit(constantSeleced.getUnitMap());
+				spec.setUnit(constantSeleced.getUnitMap());
 			}
 		});
 	}
-
+	
 	@Override
 	protected String extractSymbol() {
+		SymbolDisplay symbolDisplay = spec.getSymbolDisplay();
 		String inputString = null;
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbolDisplay.getText())) {
 			symbolDisplay.removeStyleName(CSS.INVALID_INPUT);
@@ -123,8 +84,8 @@ public class NumberSpecification extends QuantitySpecification {
 		}
 
 		if (constantSeleced != null
-				&& constantSeleced.getValue().equals(symbolDisplay.getText())
-				&& constantSeleced.getUnitMap().equals(unitMap)) {
+				&& constantSeleced.getValue().equals(spec.getSymbolDisplay().getText())
+				&& constantSeleced.getUnitMap().equals(spec.getUnitMap())) {
 			node.setConstant(constantSeleced);
 		}
 	}

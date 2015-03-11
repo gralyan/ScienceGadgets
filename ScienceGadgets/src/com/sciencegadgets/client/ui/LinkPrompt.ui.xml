@@ -5,11 +5,12 @@
 	.code {
 		display: inline-block;
 		width: 50%;
-		overflow: scroll;
+		overflow: auto;
 		font-family: monospace;
 		background-color: gray;
 		vertical-align: top;
 		border-bottom: medium solid black;
+		height: 100%
 	}
 	
 	.display {
@@ -17,15 +18,16 @@
 		width: 50%;
 		vertical-align: top;
 		border-bottom: medium solid black;
+		height: 100%
 	}
 	</ui:style>
 
-	<g:FlowPanel>
+	<g:FlowPanel height="100%" width="98%">
 	
-			<g:FlowPanel ui:field="upperArea">
+			<g:FlowPanel ui:field="upperArea" height="10%">
 			</g:FlowPanel>
 			
-		<g:FlowPanel>
+		<g:FlowPanel height="43%">
 			<g:FlowPanel styleName="{style.code}">
 				<g:Label ui:field="linkCode"></g:Label>
 			</g:FlowPanel>
@@ -35,7 +37,7 @@
 
 		</g:FlowPanel>
 
-		<g:FlowPanel>
+		<g:FlowPanel height="43%">
 			<g:FlowPanel styleName="{style.code}">
 				<g:Label ui:field="iframeCode"></g:Label>
 			</g:FlowPanel>

@@ -59,11 +59,6 @@ public class AlgebaWrapper extends EquationWrapper {
 		}
 	}
 
-	/**
-	 * Highlights the selected wrapper and joiner as well as all the drop
-	 * targets associated with the selected
-	 * 
-	 */
 	public void select() {
 		super.select();
 
