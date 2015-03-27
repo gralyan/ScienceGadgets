@@ -123,6 +123,7 @@ public abstract class TransformationButton extends SelectionButton implements
 
 	@Override
 	protected void onSelect() {
+		Moderator.getCurrentAlgebraActivity().getEquationPanel().unselectCurrentSelection();;
 		transform();
 	}
 

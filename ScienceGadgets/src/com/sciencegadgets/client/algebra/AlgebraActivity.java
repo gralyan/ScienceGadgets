@@ -66,7 +66,7 @@ public class AlgebraActivity extends SimplePanel {
 	@UiField
 	public FlowPanel lowerEqArea;
 
-	EquationPanel eqPanel = null;
+	private EquationPanel eqPanel = null;
 
 	public AlgebraHistory algOut = null;
 
@@ -222,6 +222,10 @@ public class AlgebraActivity extends SimplePanel {
 	public EquationTree getEquationTree() {
 		return equationTree;
 	}
+	
+	public EquationPanel getEquationPanel() {
+		return eqPanel;
+	}
 
 	public void setEquationTree(EquationTree eTree, Equation equation) {
 		this.equation = equation;
@@ -289,6 +293,7 @@ public class AlgebraActivity extends SimplePanel {
 		}
 
 		eqPanelHolder.clear();
+
 		revertUpperMidAreaToDefault();
 
 		equationTree.reloadDisplay(true, true);

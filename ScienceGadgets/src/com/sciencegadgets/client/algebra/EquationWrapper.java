@@ -21,8 +21,8 @@ public class EquationWrapper extends Wrapper {
 
 	public EquationWrapper(EquationNode node, AlgebraActivity algebraActivity,
 			Element element) {
-		super(node, algebraActivity.eqPanel, element);
-		this.eqPanel = algebraActivity.eqPanel;
+		super(node, algebraActivity.getEquationPanel(), element);
+		this.eqPanel = algebraActivity.getEquationPanel();
 		this.algebraActivity = algebraActivity;
 
 		this.addStyleName(CSS.DISPLAY_WRAPPER);
