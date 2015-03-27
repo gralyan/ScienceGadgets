@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/objectify-gwt-1.0.jar"/>
+	<classpathentry kind="lib" path="/home/john/workspace/ScienceGadgets/libs/gwt-servlet.jar" sourcepath="/home/jojo/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.5.1/gwt-2.5.1/gwt-servlet-2.5.1-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-17.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-5.0.3.jar"/>
+	<classpathentry kind="lib" path="libs/gwt-dnd-3.3.3.jar"/>
+	<classpathentry kind="lib" path="libs/gwt-dnd-3.3.3-javadoc.jar"/>
+	<classpathentry kind="lib" path="libs/gwt-voices-3.3.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="libs/gwt-voices-3.3.0.jar"/>
+	<classpathentry kind="lib" path="libs/gwt-slider-bar-1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

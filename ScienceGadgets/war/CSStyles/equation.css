@@ -1,0 +1,247 @@
+@CHARSET "UTF-8";
+
+.interactiveEquation {
+	/* 	gray out the background of the equation to make wrappers stand out */
+	color: #A0A0A0;
+	position: relative;
+	text-shadow: 0em 0em 4px #000000;
+}
+
+.displayWrapper {
+	color: black;
+	cursor: move;
+}
+.displayWrapper:not(.selectedWrapper):hover {
+	text-shadow: 0em 0em .15em #000000;
+}
+
+/*---------------parentWrapper---------------*/
+
+/* Note * There should be no spaces, auto-formatting adds space*/
+.parentWrapper>.fenced.Sum {
+	background-image: url('images/tile_sumChild.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+/* Note * There should be no spaces, auto-formatting adds space*/
+.parentWrapper.in-sum.Operation { /* add/subtract(+/-) */
+	/* 	background-image: url('images/tile_sumOp.png'); */
+	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
+	
+}
+
+/* Note * There should be no spaces, auto-formatting adds space*/
+.parentWrapper.Sum {
+	/* 	background-image: url('images/tile_sumChild.png'); */
+	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
+	background-color: gold;
+}
+
+/* Note * There should be no spaces, auto-formatting adds space*/
+.parentWrapper.in-term.Operation { /* multiply(x) */
+	/* 	background-image: url('images/tile_termOp.png'); */
+	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
+	
+}
+
+.parentWrapper.Term {
+	/* 	background-image: url('images/tile_termChild.png'); */
+	/* 	background-repeat: repeat; */
+	background-color: red;
+}
+
+.parentWrapper.Fraction {
+	background-color: orange;
+}
+
+.parentWrapper.Exponential {
+	background-color: Maroon;
+}
+
+.parentWrapper.Log {
+	background-color: SpringGreen;
+}
+
+.parentWrapper.Trig {
+	background-color: Peru; /* 	light brown */
+}
+
+.parentWrapper.Number {
+	background-color: SkyBlue;
+}
+
+.parentWrapper.Variable {
+	background-color: blue;
+}
+
+.parentWrapper.Equation { /* 	background-color: white; */
+	background-color: darkGreen;
+}
+
+/*---------------displayWrapper---------------*/
+
+.displayWrapper.in-sum.Operation { /* add/subtract(+/-) */
+	color: black;
+}
+
+.displayWrapper.Sum {
+	color: gold;
+}
+
+.displayWrapper.in-term.Operation { /* multiply(x) */
+	color: black;
+}
+
+.displayWrapper.Term {
+	color: red;
+}
+
+.displayWrapper.Fraction {
+	color: orange;
+}
+
+.displayWrapper.Exponential {
+	color: Maroon;
+}
+
+.displayWrapper.Log {
+	color: SpringGreen;
+}
+
+.displayWrapper.Trig {
+	color: Peru; /* 	light brown */
+}
+
+.displayWrapper.Number {
+	color: SkyBlue;
+}
+
+.displayWrapper.Variable {
+	color: blue;
+}
+
+.displayWrapper.Equation { /* 	background-color: white; */
+	
+}
+/*---------------EquationHTML (display)---------------*/
+.Equation {
+	font-family: math;
+	display: inline-block;
+}
+
+.Fraction {
+	vertical-align: middle;
+}
+
+.in-equation {
+	display: inline-block;
+	/* 	position: relative; */
+}
+
+.in-sum {
+	display: inline-block;
+	/* 	position: relative; */
+}
+
+.in-term {
+	display: inline-block;
+	/* 	position: relative; */
+}
+
+.in-exponential-base {
+	display: inline-block;
+}
+
+.in-exponential-exponent { /* 	font-size: 40%; */
+	display: inline-block;
+	vertical-align: super;
+	position: relative;
+}
+
+/* Note * There should be no spaces, auto-formatting adds space*/
+.in-exponential-exponent.Fraction {
+	font-size: 20%;
+}
+
+/* Note * There should be no spaces, auto-formatting adds space*/
+.in-exponential-exponent:not(.Fraction){
+	font-size: 40%;
+}
+
+.in-fraction-numerator {
+	padding-left: 0.7em;
+	padding-right: 0.7em;
+	text-decoration: none;
+	text-align: center;
+	border-bottom: 1px solid black;
+}
+
+.in-fraction-denominator {
+	padding-left: 0.7em;
+	padding-right: 0.7em;
+/* 	text-decoration: none; */
+	text-align: center;
+/* 	border-top: 1px solid black; */
+}
+
+.in-log {
+	display: inline-block;
+	/* 	position: relative; */
+	border-right: solid .05em;
+	border-left: solid .05em;
+	border-radius: 1em;
+	padding-left: 0.15em;
+	padding-right: 0.15em;
+	margin: 0.1em;
+}
+
+.in-trig {
+	display: inline-block;
+	/* 	position: relative; */
+	border-right: solid .05em;
+	border-left: solid .05em;
+	border-radius: 1em;
+	padding-left: 0.15em;
+	padding-right: 0.15em;
+	margin: 0.1em;
+}
+
+.in-log-base {
+	font-size: 40%;
+	display: inline-block;
+	vertical-align: sub;
+	/* 	position: relative; */
+}
+
+.fenced {
+	border-right: solid .05em;
+	border-left: solid .05em;
+	border-radius: 1em;
+	padding-left: 0.15em;
+	padding-right: 0.15em;
+	margin: 0.1em;
+}
+
+.functionName {
+	display: inline-block;
+	/* 	position: relative; */
+	vertical-align: middle;
+}
+.displayWrapper>.unit{
+	color:black;
+}
+.unit {
+	font-family: sans-serif;
+}
+
+.subscript {
+	vertical-align: sub;
+	display: inline-block;
+	font-size: 50%;
+}
+
+.numberValue {
+	z-index: 3;
+	overflow: hidden;
+	color: gray;
+}

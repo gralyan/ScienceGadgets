@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sget="http://www.sciencegadgets.org/Data" elementFormDefault="qualified"
+	targetNamespace="http://www.sciencegadgets.org/Data">
+
+	<xs:element name="var">
+		<xs:complexType mixed="true">
+			<xs:group minOccurs="0" maxOccurs="unbounded" ref="sget:token.content" />
+			<xs:attributeGroup ref="sget:CommonAtt" />
+			<xs:attribute name="unit" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="num">
+		<xs:complexType mixed="true">
+			<xs:group minOccurs="0" maxOccurs="unbounded" ref="sget:token.content" />
+			<xs:attributeGroup ref="sget:CommonAtt" />
+			<xs:attribute name="randomness" />
+			<xs:attribute name="value" />
+			<xs:attribute name="unit" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="op">
+		<xs:complexType mixed="true">
+			<xs:group minOccurs="0" maxOccurs="unbounded" ref="sget:token.content" />
+			<xs:attributeGroup ref="sget:CommonAtt" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="term">
+		<xs:complexType>
+			<xs:group minOccurs="0" maxOccurs="unbounded" ref="sget:MathExpression" />
+			<xs:attributeGroup ref="sget:CommonAtt" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="frac">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="sget:MathExpression" />
+				<xs:group ref="sget:MathExpression" />
+			</xs:sequence>
+			<xs:attributeGroup ref="sget:CommonAtt" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="sum">
+		<xs:complexType>
+			<xs:group minOccurs="0" maxOccurs="unbounded" ref="sget:MathExpression" />
+			<xs:attributeGroup ref="sget:CommonAtt" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="exp">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="sget:MathExpression" />
+				<xs:group ref="sget:MathExpression" />
+			</xs:sequence>
+			<xs:attributeGroup ref="sget:CommonAtt" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="log">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="sget:MathExpression" />
+			</xs:sequence>
+			<xs:attributeGroup ref="sget:CommonAtt" />
+			<xs:attribute name="base" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="trig">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="sget:MathExpression" />
+			</xs:sequence>
+			<xs:attributeGroup ref="sget:CommonAtt" />
+			<xs:attribute name="function" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:attributeGroup name="CommonAtt">
+		<xs:attribute name="id" type="xs:ID" />
+	</xs:attributeGroup>
+
+	<xs:group name="MathExpression">
+		<xs:choice>
+		</xs:choice>
+	</xs:group>
+
+	<xs:group name="token.content">
+	</xs:group>
+
+
+</xs:schema>

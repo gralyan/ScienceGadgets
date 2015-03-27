@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<equations>
+
+
+
+	<math>
+		<mrow>
+			<mi>W</mi>
+			<mo>=</mo>
+			<mrow>
+				<mrow>
+					<mi>F</mi>
+					<mrow>
+						<mi>Δ</mi>
+						<mi>r</mi>
+					</mrow>
+				</mrow>
+				<mrow>
+					<mi>cos</mi>
+					<mi>θ</mi>
+				</mrow>
+			</mrow>
+		</mrow>
+	</math>
+
+	<math>
+		<mrow>
+			<mi>W</mi>
+			<mo>=</mo>
+			<mrow>
+				<mrow>
+					<mi>F</mi>
+					<mrow>
+						<mi>a</mi>
+						<mi>r</mi>
+					</mrow>
+				</mrow>
+				<mrow>
+					<mi>cos</mi>
+					<mi>θ</mi>
+				</mrow>
+			</mrow>
+		</mrow>
+	</math>
+
+	<math>
+		<mrow>
+			<mi>W</mi>
+			<mo>=</mo>
+			<mrow>
+				<mrow>
+					<mi>F</mi>
+					<mrow>
+						<mi>Δ</mi>
+						<mi>a</mi>
+					</mrow>
+				</mrow>
+				<mrow>
+					<mi>m</mi>
+					<mi>θ</mi>
+				</mrow>
+			</mrow>
+		</mrow>
+	</math>
+
+	<math>
+		<mrow>
+			<mi>a</mi>
+			<mo>+</mo>
+			<mi>f</mi>
+		</mrow>
+		<mo>=</mo>
+		<mrow>
+			<mi>u</mi>
+			<mo>+</mo>
+			<mi>g</mi>
+		</mrow>
+	</math>
+
+
+</equations>
+
+

@@ -1,0 +1,55 @@
+<html>
+
+<head>
+
+<style>
+@font-face {
+    font-family: "MathJax_Main";
+    src: url("MathJax_Main-Regular.woff") format("woff"), url("MathJax_Main-Regular.otf") format("opentype");
+}
+
+.interactive_equation{
+	font-family:MathJax_Main;
+}
+.i{
+	display:inline-block;
+	vertical-align:middle;
+background-color: blue;
+}
+.f{	
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	text-align:center;
+}
+.f1{
+	border-bottom:thin solid;
+}
+</style>
+</head>
+
+<body>
+
+		<div style="display:inline-block; height:500px;" height="500px">2</div>
+		<div class="i">b</div></div>
+<div class="interactive_equation">
+
+	<div class="i">
+		
+	</div>
+
+	<div  class="i">=</div>
+
+	<div class="i">
+		<div class="f f1"><div class="i">a</div></div>
+		<div class="f"><div class="i">a</div>
+		<div class="i">2</div>
+		<div class="i">b</div></div>
+	</div>
+
+</div>
+<div class="in-equation Term"><div class="in-term Number">2<div style="font-size: 40%;" class="in-term unit"><div class="in-fraction-numerator"><div class="in-term"><div class="in-exponential-base">N</div><div class="in-exponential-exponent">2</div></div></div><div class="in-fraction-denominator"><div class="in-term"><div class="in-exponential-base">dyn</div><div class="in-exponential-exponent">&nbsp;</div></div><div class="in-term"><div class="in-exponential-base">D</div><div class="in-exponential-exponent">&nbsp;</div></div></div></div></div><div class="in-term Operation">·</div><div class="in-term Variable">d</div></div><div class="in-equation Operation">=</div><div class="in-equation Term"><div class="in-term Number">3<div style="font-size: 40%;" class="in-term unit"><div class="in-fraction-numerator"><div class="in-term"><div class="in-exponential-base">lbf</div><div class="in-exponential-exponent">&nbsp;</div></div></div><div class="in-fraction-denominator"><div class="in-term"><div class="in-exponential-base">D</div><div class="in-exponential-exponent">&nbsp;</div></div></div></div></div><div class="in-term Operation">·</div><div class="in-term"><div class="fenced Sum"><div class="in-sum Number">1<div style="font-size: 40%;" class="in-term unit"><div class="in-term"><div class="in-exponential-base">a</div><div class="in-exponential-exponent">&nbsp;</div></div></div></div><div class="in-sum Operation">+</div><div class="in-sum Variable">n</div></div></div></div>
+
+</body>
+
+</html>

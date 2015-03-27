@@ -1,0 +1,2512 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dim="http://data.nasa.gov/qudt/owl/dimension#"
+    xmlns:qudt="http://data.nasa.gov/qudt/owl/qudt#"
+    xmlns:nist="http://physics.nist.gov/cuu/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:qudtdbp="http://data.nasa.gov/qudt/owl/qudt-dbpedia#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:unit="http://data.nasa.gov/qudt/owl/unit#"
+    xmlns:quantity="http://data.nasa.gov/qudt/owl/quantity#"
+    xmlns:oecc="http://www.oegov.org/models/common/cc#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://data.qudt.org/qudt/owl/1.0.0/qudt-dbpedia.owl">
+  <owl:Ontology rdf:about="">
+    <oecc:attributedSource>
+      <oecc:AttributedSource rdf:about="http://www.oegov.org/models/common/cc#DBPediaAttribution">
+        <cc:attributionURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+        >http://dbpedia.org/About</cc:attributionURL>
+        <cc:attributionName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >DB Pedia</cc:attributionName>
+      </oecc:AttributedSource>
+    </oecc:attributedSource>
+    <owl:imports rdf:resource="http://data.qudt.org/qudt/owl/1.0.0/qudt.owl"/>
+    <owl:imports rdf:resource="http://www.w3.org/2004/02/skos/core"/>
+    <dc:rights rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >The QUDT Ontologies are issued under a Creative Commons Attribution Share Alike 3.0 United States License. Attribution should be made to NASA AMES Research Center and TopQuadrant, Inc.</dc:rights>
+    <dc:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >This graph contains 823 links between terms in the QUDT ontology (quantity kinds, units, and physical constants) and their corresponding close and exact matches in DBPedia. The correspondences are stated using the properties skos:closeMatch and skos:exactMatch from the Simple Knowledge Organization System (SKOS) ontology.</dc:description>
+    <dc:creator rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >James E. Masters</dc:creator>
+    <dc:contributor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Ralph Hodgson</dc:contributor>
+    <owl:imports rdf:resource="http://www.oegov.org/models/common/cc"/>
+    <dc:date rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >$Date: 2010-01-20 00:27:38 -0500 (Wed, 20 Jan 2010) $</dc:date>
+    <oecc:attributedSource rdf:resource="http://www.oegov.org/models/common/cc#NASA-ARC-Attribution"/>
+    <cc:license rdf:resource="http://www.oegov.org/models/common/cc#CreativeCommonsAttributionShareAlike3.0_UnitedStatesLicense"/>
+    <dc:contributor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Irene Polikoff</dc:contributor>
+    <owl:imports rdf:resource="http://data.qudt.org/qudt/owl/1.0.0/nist-constants.owl"/>
+    <oecc:revision rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >$Revision: 42 $</oecc:revision>
+    <oecc:attributedSource rdf:resource="http://www.oegov.org/models/common/cc#TopQuadrantAttribution"/>
+    <owl:imports rdf:resource="http://data.qudt.org/qudt/owl/1.0.0/dimension.owl"/>
+    <owl:imports rdf:resource="http://purl.org/dc/elements/1.1/"/>
+    <dc:title rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >QUDT DBpedia Ontology</dc:title>
+    <owl:imports rdf:resource="http://data.qudt.org/qudt/owl/1.0.0/quantity.owl"/>
+    <owl:imports rdf:resource="http://data.qudt.org/qudt/owl/1.0.0/unit.owl"/>
+    <dc:subject rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Quantities, Units, and Dimensions</dc:subject>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >$Id: qudt-dbpedia.n3 42 2010-01-20 05:27:38Z dmekonnen $</owl:versionInfo>
+  </owl:Ontology>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Statcoulomb">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Statcoulomb"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronMagneticMoment">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Neutron_magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckLength">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_length"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/JouleAtomicMassUnitRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SlovakKoruna">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Slovak_koruna"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NamibianDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Namibian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AbsoluteHumidity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Humidity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Pica">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pica"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVoltKilogramRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Teaspoon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Teaspoon"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#KinematicViscosity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Viscosity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Deca">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Deca"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricFlux">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electric_flux"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gray">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Grey"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#UruguayPeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Uruguayan_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#UzbekistanSom">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Uzbekistani_som"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BohrMagneton">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronChargeToMassQuotient">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass-to-charge_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricCharge">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electric_charge"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#LuminousFlux">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Luminous_flux"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#BendingMomentOrTorque">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Torque"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricQuadrupoleMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Quadrupole"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Ngultrum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bhutanese_ngultrum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Dalton">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Dalton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Inductance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Inductance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kwanza">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Angolan_kwanza"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CroatianKuna">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Croatian_kuna"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ThermodynamicsUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Category:Thermodynamics"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/WeakMixingAngle">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Weinberg_angle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HartreeEnergyInEV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Hartree"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#Enumeration">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Enumeration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#EastCaribbeanDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/East_Caribbean_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PoundForce">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pound-force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Tugrik">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mongolian_t%C3%B6gr%C3%B6g"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NorwegianKrone">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Norwegian_krone"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/RydbergConstantTimesCInHz">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Rydberg_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MagneticFluxQuantum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetic_flux_quantum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ChemistryQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Chemistry"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassUnitHartreeRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SomaliShilling">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Somali_shilling"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfForce">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonNeutronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Neutron_magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMagneticMoment">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electron_magnetic_dipole_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_magnetic_dipole_moment"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Som">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Som"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#SystemOfQuantities_SI">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/International_System_of_Units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MicroHenry">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Henry_%28unit%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BohrRadius">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bohr_radius"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassUnitKilogramRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ClassicalElectronRadius">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Classical_electron_radius"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Grain">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Cereal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BoltzmannConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Boltzmann_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#JapaneseYen">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Japanese_yen"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Breath">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Breathing"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfTime">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#AzerbaijanianManat">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Azerbaijani_manat"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Lilangeni">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Swazi_lilangeni"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MagneticFlux">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetic_flux"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#StochasticProcess">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Stochastic_process"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#AstronomicalUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Astronomical_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVoltInverseMeterRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#CoulombConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Coulomb%27s_law"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SwedishKrona">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Swedish_krona"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#InchOfMercury">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Inch_of_mercury"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SerbianDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Serbian_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kibi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Carat">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Carat"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassConstantEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronElectronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_magnetic_dipole_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SquareMeter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Square_metre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#GuyanaDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Guyanese_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElementaryChargeOverH">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Elementary_charge"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AlphaParticleMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#YuanRenminbi">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Renminbi"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVoltJouleRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#GravitationalAttraction">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gravitational_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonMass">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Proton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Power">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Power"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckTime">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_time"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NewZealandDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/New_Zealand_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Millibar">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bar_%28unit%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/StandardAtmosphere">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Standard_atmosphere"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Circulation">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Circulation_%28fluid_dynamics%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfAction">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Liter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Litre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ConventionalValueOfVonKlitzingConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Quantum_Hall_effect"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Yobi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#BiologyQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Biology"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MilliSecond">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Millisecond"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronElectronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_magnetic_dipole_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#FrequencyUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_frequency"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Exbi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedProtonMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckCurrent">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_current"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElementaryCharge">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Elementary_charge"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AngularMomentum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Angular_momentum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonMagneticMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Horsepower">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Horsepower"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CordobaOro">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Nicaraguan_c%C3%B3rdoba"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CapeVerdeEscudo">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Cape_Verdean_escudo"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Steradian">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Steradian"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SyrianPound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Syrian_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HelionMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#DataRate">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Data_rate"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonComptonWavelength">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/KelvinElectronVoltRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Frequency">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Frequency"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#RelativePermeability">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Relative_permeability"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#LuminousIntensityUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_luminous_intensity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/UnifiedAtomicMassUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NetherlandsAntillianGuilder">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Netherlands_Antillean_guilder"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#AngleUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_angle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/KelvinAtomicMassUnitRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Quad">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Quad"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AlphaParticleMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#FijiDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Fijian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Poundal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Poundal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#GibraltarPound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gibraltar_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Volt">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/RydbergConstantTimesHcInEV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Rydberg_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#HongKongDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hong_Kong_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckConstantOver2PiInEVS">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#VolumeUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_volume"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MolarHeatCapacity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Specific_heat_capacity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#DanishKrone">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Danish_krone"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BelarussianRuble">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Belarusian_ruble"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Density">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Density"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfAction">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Turbidity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Turbidity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Radian">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Radian"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CaymanIslandsDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Cayman_Islands_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#SolidAngle">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Solid_angle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#conversionMultiplier">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Conversion_of_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#LatvianLats">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Latvian_lats"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/FaradayConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Faraday_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Debye">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Debye"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PoundForcePerSquareInch">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pounds_per_square_inch"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#EnergyDensity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Energy_density"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedProtonMagneticMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MoleFraction">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mole_fraction"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfEnergyInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Acceleration">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Acceleration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SolomonIslandsDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Solomon_Islands_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ReynoldsNumber">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Reynolds_number"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_USCustomary">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/United_States_customary_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ThomsonCrossSection">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thomson_scattering"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Yocto">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Yocto-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MauritiusRupee">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mauritian_rupee"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AlphaParticleMass">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckEnergy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#DynamicPressure">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Dynamic_pressure"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PakistanRupee">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pakistani_rupee"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Candlepower">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Candlepower"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MolarVolume">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Molar_volume"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonGFactor">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#Unit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_measure"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BohrMagnetonInKPerT">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MolarMass">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Molar_mass"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/RydbergConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Rydberg_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckConstantInEVS">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#SystemOfNaturalUnits">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Category:Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Roentgen">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Roentgen"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Paanga">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tongan_pa%CA%BBanga"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BruneiDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Brunei_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMuonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Person">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Person"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#JordanianDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Jordanian_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#LiberianDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Liberian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gamma">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gamma"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AlphaParticleElectronMassRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#CapacitanceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_electrical_capacitance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ComptonWavelengthOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NuclearMagnetonInMHzPerT">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Afghani">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Afghani"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Zetta">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Zetta-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#CoefficientOfHeatTransfer">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Heat_transfer"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronGyromagneticRatioOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Phot">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Phot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CostaRicanColon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Costa_Rican_col%C3%B3n"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Hectare">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hectare"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gon"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ResistanceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_electrical_resistance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#LuminousFluxUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_luminous_flux"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_MKS">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/MKS_system_of_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/InverseOfConductanceQuantum">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Conductance_quantum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckConstantOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonMagneticMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#DoseEquivalent">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Equivalent_dose"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NuclearMagneton">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TauMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Stere">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/St%C3%A8re"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#FaradayConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Faraday_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronGyromagneticRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonGFactor">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#BoltzmannConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Boltzmann_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Nat">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Nat"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Zloty">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Polish_z%C5%82oty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassConstantEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Mebi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/QuantumOfCirculation">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Circulation_%28fluid_dynamics%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MolarGasConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gas_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Katal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Katal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AtmosphericPressure">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atmospheric_pressure"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#DegreeCelsius">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Celsius"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Coulomb">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Coulomb"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Velocity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Velocity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonMagneticMomentAnomaly">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#PlaneAngle">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Plane_angle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfElectricPotential">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#Dimension">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Dimensional_analysis"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Torr">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Torr"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Rod">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Rod"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#LinearVelocity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Velocity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SriLankaRupee">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Sri_Lankan_rupee"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#InformationCapacityOrEntropy">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Channel_capacity"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Entropy_%28information_theory%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfMomentum">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Pico">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pico"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#PotentialEnergy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Potential_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_CGS-ESU">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electrostatic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Angstrom">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/%C3%85ngstr%C3%B6m"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BermudaDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bermudian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NewTaiwanDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/New_Taiwan_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Peta">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Peta"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronComptonWavelength">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronNeutronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Neutron_magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Faraday">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Faraday_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#LibyanDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Libyan_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronToShieldedProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricalPower">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electric_power"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SamoanTala">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Samoan_tala"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/WienFrequencyDisplacementLawConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Black_body"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MagneticDipoleMoment">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Watt">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Watt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Rupiah">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Indonesian_rupiah"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#IlluminanceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_illuminance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Hartree">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hartree"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Henry">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Henry"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMass">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Momentum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Momentum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Naira">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Nigerian_naira"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#DegreeCentigrade">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Celsius"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#CountingUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_amount"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#EgyptianPound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Egyptian_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#MassPerVolumeUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_density"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonChargeToMassQuotient">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass-to-charge_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#KuwaitiDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kuwaiti_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Pataca">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pataca"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HelionMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HartreeAtomicMassUnitRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HartreeEnergy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hartree"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MachNumber">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mach_number"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#LengthUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_length"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#FinancialQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Finance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kyat">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Myanma_kyat"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Pula">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pula"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MetricTon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tonne"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedProtonGyromagneticRatioOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricDipoleMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Dipole"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#HeatCapacityAndEntropy">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Thermal_mass"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Entropy_%28classical_thermodynamics%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Poise">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Poise"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#InductanceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_electrical_inductance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ElectronVolt">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Torque">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Torque"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Polarizability">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Polarizability"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#FineStructureConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Fine-structure_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kip">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kip"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Pebi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#LuminanceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_luminance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#LinearMomentum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Momentum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HertzAtomicMassUnitRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Shake">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Shake"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Nano">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Nano"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Microgravity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Micro-g_environment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Curie">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Curie"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#InformationQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Information"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Deci">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Deci-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/WienWavelengthDisplacementLawConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Wien%27s_displacement_law"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Manat">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Manat"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronToShieldedHelionMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Resistance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Resistance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ChileanPeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Chilean_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#EnergyKinetic">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kinetic_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#GigaHertz">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hertz"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kilogram">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kilogram"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#HeatFlowRate">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Heat_transfer"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMagneticMomentAnomaly">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_magnetic_dipole_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#SpeedOfLight">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Speed_of_light"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MillimeterOfMercury">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Torr"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#NumberDensity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Number_density"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Slug">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Slug"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#AtomicNumber">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atomic_number"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Mole">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mole_%28unit%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Exa">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Exa-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckConstantOver2PiTimesCInMeVFm">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BarbadosDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Barbadian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Vatu">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Vanuatu_vatu"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonElectronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_magnetic_dipole_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Ouguiya">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mauritanian_ouguiya"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MolecularMass">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Molecular_mass"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Dyne">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Dyne"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#OpticsQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Light"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NuclearMagnetonInEVPerT">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_SI">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/International_System_of_Units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SwissFranc">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Swiss_franc"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BahamianDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bahamian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/InverseMeterAtomicMassUnitRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TauComptonWavelength">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfElectricField">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AlphaParticleProtonMassRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TauComptonWavelengthOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/JosephsonConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetic_flux_quantum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Diopter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Dioptre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVoltKelvinRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassUnitJouleRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfCharge">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronMass">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Neutron"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MolarPlanckConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVoltHartreeRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ElectricCurrentUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_electrical_current"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MagneticConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Vacuum_permeability"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SaudiRiyal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Saudi_riyal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonComptonWavelengthOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/StandardAccelerationOfGravity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Standard_gravity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Percent">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Percentage"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TauMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Foot">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Foot_%28length%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Hertz">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hertz"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ThermalDiffusivity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thermal_diffusivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Activity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Radioactive_decay"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kilocalorie">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Calorie"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#DimensionlessRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Sievert">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Sievert"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfMomentum">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ThermalEfficiency">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thermal_efficiency"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_Atomic">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#FootPerSecond">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Foot_per_second"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MagnetomotiveForce">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetomotive_force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedProtonGyromagneticRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AngularFrequency">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Angular_frequency"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Viscosity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Viscosity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#InternationalUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/International_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kilowatt">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Watt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#TanzanianShilling">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tanzanian_shilling"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SouthAfricanRand">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/South_African_rand"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Becquerel">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Becquerel"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MoldovanLeu">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Moldovan_leu"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/FermiCouplingConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Coupling_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckMass">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_mass"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#PressureOrStressUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_pressure"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Weber">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Weber"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BrazilianReal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Brazilian_real"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#LinearAcceleration">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Acceleration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#IndianRupee">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Indian_rupee"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectricConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Vacuum_permittivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NuclearMagnetonInKPerT">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronNeutronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Neutron_magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_Imperial">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Imperial_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Hryvnia">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ukrainian_hryvnia"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AlphaParticleMolarMass">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Watthour">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kilowatt_hour"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#IraqiDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Iraqi_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ComputingUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_information"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedHelionToShieldedProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Rufiyaa">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Maldivian_rufiyaa"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElementaryCharge">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Elementary_charge"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#AlgerianDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Algerian_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckMomentum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_momentum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Revolution">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Revolution"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfVelocity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ArubanGuilder">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Aruban_florin"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/InverseMeterElectronVoltRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronRmsChargeRadius">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nucleon"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NepaleseRupee">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Nepalese_rupee"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonGyromagneticRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfElectricFieldGradient">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Hour">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hour"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#InchOfWater">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Inch_of_water"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfElectricQuadrupoleMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PoundSterling">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pound_sterling"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#SystemOfUnits">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Systems_of_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Denier">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Denier"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedHelionMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HertzElectronVoltRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ColonyFormingUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Colony-forming_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Tex">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tex"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedHelionToProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TauMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#QatariRial">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Qatari_riyal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Femtometer">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Metre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Newton">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Newton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedProtonMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Tebi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#IranianRial">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Iranian_rial"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#SIBaseUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:SI_base_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Metical">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mozambican_metical"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Furlong">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Furlong"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Barn">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Barn"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AbsorbedDose">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Absorbed_dose"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#MagneticFluxUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_magnetic_flux"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonComptonWavelength">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#RussianRuble">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Russian_ruble"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#SIDerivedUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:SI_derived_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Erg">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Erg"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfMass">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gravity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gravitation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NewTurkishLira">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Turkish_lira"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronToAlphaParticleMassRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#UgandaShilling">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ugandan_shilling"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Force">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#AreaUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_area"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CubanPeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Cuban_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SudanesePound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Sudanese_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Tesla">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tesla"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Clo">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Thermal_conductivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfLength">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Bit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Lempira">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lempira"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#IdealGasConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gas_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CzechKoruna">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Czech_koruna"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Candle">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Candle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfLength">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Statvolt">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Statvolt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronMagneticMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Candela">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Candela"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfChargeDensity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Zebi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#KiloHertz">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Hertz"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricalConductivity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electrical_conductivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ComoroFranc">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Comorian_franc"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ThermalResistance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thermal_resistance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_CGS">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Centimetre_gram_second_system_of_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NanoFarad">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Farad"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#MassUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_mass"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Dobra">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Dobra"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/RydbergConstantTimesHcInJ">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Rydberg_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PicoFarad">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Farad"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/InverseFineStructureConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Fine-structure_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ConventionalValueOfJosephsonConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_flux_quantum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NorthKoreanWon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/North_Korean_won"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Decibel">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Decibel"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#RadianPerMinute">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Radian_per_second"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVolt">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AvogadroConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Avogadro_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#Quantity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Quantity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/KilogramAtomicMassUnitRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Quetzal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Quetzal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#TemperatureUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_temperature"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronGyromagneticRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ProportionalityConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Proportionality_%28mathematics%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfMagnetizability">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#BohrMagneton">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Ampere">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ampere"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#EnergyAndWorkUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ElectromotiveForceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_electrical_potential"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ThermalEnergy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thermal_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Cord">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Cord"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Denar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Macedonian_denar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfTime">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Length">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Length"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#FootPoundForce">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Foot-pound_force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Tera">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tera"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#UAEDirham">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/United_Arab_Emirates_dirham"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MolarEnergy">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#AustralianDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Australian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MalaysianRinggit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Malaysian_ringgit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Nakfa">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Nakfa"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Knot">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Knot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ThermodynamicTemperature">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Temperature"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#FootCandle">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Foot-candle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MilePerHour">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Miles_per_hour"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NewtonMeter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Newton_metre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ActivityUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_radioactivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfElectricPolarizablity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#SIUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:SI_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricFieldStrength">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electric_field"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#OmaniRial">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Omani_rial"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Giga">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Giga-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Abcoulomb">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Abcoulomb"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricFluxDensity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electric_displacement_field"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Permittivity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Permittivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CyprusPound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Cypriot_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SouthKoreanWon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/South_Korean_won"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Illuminance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Illuminance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassUnitHertzRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AmountOfSubstance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Amount_of_substance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Bar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Rad">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/RAD"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfMagneticDipoleMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Grad">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Grad"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#LuminousEnergyUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_luminous_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Femto">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Femto-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckLength">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_length"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#PlanckConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Number">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Number"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SecondTime">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Second"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SaintHelenaPound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Saint_Helena_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SeychellesRupee">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Seychellois_rupee"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/CharacteristicImpedanceOfVacuum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Impedance_of_free_space"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BelizeDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Belize_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckMassEnergyEquivalentInGeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Planck_mass"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#SignalStrength">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Signal_strength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MoXUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/X_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kilowatthour">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kilowatt_hour"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Neutron_magnetic_moment"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#SpecificEnergy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Specific_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MagneticConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Vacuum_permeability"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_magnetic_dipole_moment"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Thrust">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thrust"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#MechanicsQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mechanics"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Loti">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Loti"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectrostaticPotential">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electric_potential"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#DjiboutiFranc">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Djiboutian_franc"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#QuantityKind">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Category:Physical_quantities"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVoltAtomicMassUnitRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MoroccanDirham">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Moroccan_dirham"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/LoschmidtConstant273.15K101.325KPa">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Loschmidt_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ConvertibleMark">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bosnia_and_Herzegovina_convertible_mark"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Baht">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thai_baht"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/SpeedOfLightInVacuum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Speed_of_light"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Yard">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Yard"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Day">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Day"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/KilogramElectronVoltRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronGFactor">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Flight">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Flight"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kilo">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kilo"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#EthiopianBirr">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ethiopian_birr"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#CatalyticActivityUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_catalytic_activity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Guarani">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Guaran%C3%AD"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#TimeSquared">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Time_Squared"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BohrMagnetonInInverseMetersPerTesla">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Enthalpy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Enthalpy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronGFactor">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MalteseLira">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Maltese_lira"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Siemens">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Siemens"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassUnitInverseMeterRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Farad">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Farad"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Grade">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Grade"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SystemOfUnits_Planck">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#HeatCapacityRatio">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Heat_capacity_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfEnergy">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Euro">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Euro"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonRmsChargeRadius">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nucleon"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Mega">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mega"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MilliHenry">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Henry_%28unit%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#IcelandKrona">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Icelandic_kr%C3%B3na"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Centimeter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Centimetre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#DynamicViscosity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Viscosity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#YemeniRial">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Yemeni_rial"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kilometer">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kilometre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MolarPlanckConstantTimesC">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Heat">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Heat"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedHelionGyromagneticRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ThermalConductivity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thermal_conductivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfPermittivity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AlphaParticleMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Alpha_particle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Leone">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Sierra_Leonean_leone"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Time">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Time"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Biot">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Biot"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MalagasyAriary">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Malagasy_ariary"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricCurrent">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electric_current"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ArgentinePeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Argentine_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/JouleElectronVoltRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Acre">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Acre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BulgarianLev">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bulgarian_lev"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Riel">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Riel"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonComptonWavelengthOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ForceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kelvin">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kelvin"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfEnergy">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#LinearEnergyTransfer">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Linear_energy_transfer"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckMass">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_mass"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/FineStructureConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Fine-structure_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#KilogramForce">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kilogram-force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/VonKlitzingConstant">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Quantum_Hall_effect"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#UnifiedAtomicMassUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Lambert">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lambert"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Rem">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/REM"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MolarMassConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Molar_mass_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Unitless">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/1_%28number%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NuevoSol">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Peruvian_nuevo_sol"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Mass">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mass"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Chain">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Chain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BahrainiDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bahraini_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Lux">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lux"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ZambianKwacha">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Zambian_kwacha"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Concentration">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Concentration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Abvolt">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Abvolt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#TrinidadAndTobagoDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Trinidad_and_Tobago_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfMass">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ElectricChargeUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_electrical_charge"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Oersted">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Oersted"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PhysicalConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Physical_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#TonOfRefrigeration">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ton_of_refrigeration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfVelocity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectromotiveForce">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Electromotive_force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Luminance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Luminance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOf1stHyperpolarizablity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Dimensionless">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Dimensionless_quantity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#RadiologyQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Radiology"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Balboa">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Balboa"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NewtonianConstantOfGravitation">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gravitational_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/CuXUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/X_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#VolumetricHeatCapacity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Volumetric_heat_capacity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Abfarad">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Abfarad"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#KenyanShilling">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kenyan_shilling"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AngularAcceleration">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Angular_acceleration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AvogadroConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Avogadro_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Volume">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Volume"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#LuminousIntensity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Luminous_intensity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gibi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedHelionMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#LinearVelocityUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_velocity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NuclearMagnetonInInverseMetersPerTesla">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Exposure">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Exposure"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Forint">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hungarian_forint"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Gain">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfCurrent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Joule">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Joule"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Lumen">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lumen"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Capacitance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Capacitance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Maxwell">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Maxwell"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MicroSecond">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/1_E-6_s"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ConductanceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_electrical_conductance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassUnitElectronVoltRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#DominicanPeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Dominican_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Lek">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lek"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#LinearAccelerationUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_acceleration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfElectricDipoleMom.">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#CommunicationsQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Communication"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ConductanceQuantum">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Conductance_quantum"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Hecto">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Hecto-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#LithuanianLitas">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lithuanian_litas"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonGFactor">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronMagneticMomentToNuclearMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Nuclear_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#LightYear">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Light-year"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#GyromagneticRatio">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Barrel">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Barrel"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Launch">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Launch"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Weight">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Weight"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Area">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Area"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#MagneticFluxDensityUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_magnetic_flux_density"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#RespiratoryRate">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Respiratory_rate"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Enumeration">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Enumeration"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronGyromagneticRatioOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronToShieldedProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PoundPerHour">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pound_per_hour"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gilbert">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gilbert"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CubicMeter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Cubic_metre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#RelativePermittivity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Relative_static_permittivity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#RwandaFranc">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Rwandan_franc"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MegaHertz">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Hertz"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MicroFarad">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Farad"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#RadiologyUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_radiation_dose"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Tenge">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kazakhstani_tenge"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#AmountOfSubstanceUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_amount_of_substance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CentimeterOfWater">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Centimetre_of_water"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Pressure">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pressure"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#ThermodynamicsQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Thermodynamics"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#GuineaFranc">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Guinean_franc"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Stilb">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Stilb"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/StefanBoltzmannConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Stefan%E2%80%93Boltzmann_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#PhysicalConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Physical_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonMassInAtomicMassUnit">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#KilometerPerHour">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kilometres_per_hour"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Fermi">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Enrico_Fermi"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#FalklandIslandsPound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Falkland_Islands_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfActionInEVS">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedHelionGyromagneticRatioOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Centipoise">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Poise"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Franklin">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Franklin"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Curvature">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Curvature"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Abhenry">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Abhenry"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/QuantumOfCirculationTimes2">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Circulation_%28fluid_dynamics%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BangladeshiTaka">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bangladeshi_taka"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckTemperature">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_temperature"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#FrancCongolais">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Congolese_franc"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SingaporeDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Singapore_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Zepto">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Zepto-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#BendingMoment">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bending_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckTime">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_time"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BohrMagnetonInHzPerT">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/DeuteronGFactor">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Angle">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Angle"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#TunisianDinar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tunisian_dinar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#AtomicPhysicsQuantityKind">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atomic_physics"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronVoltHertzRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Pascal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pascal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#BurundianFranc">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Burundian_franc"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Somoni">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tajikistani_somoni"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SurinamDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Surinamese_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Milli">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Milli-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Abampere">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Abampere"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#MagneticFieldStrengthUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_magnetic_induction"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#KiloPascal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pascal_%28unit%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#HaitiGourde">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Haitian_gourde"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Meter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Metre"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Are">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Are"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ComptonWavelength">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BohrMagnetonInEVPerT">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonProtonMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Abohm">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Abohm"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Fathom">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Fathom"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BoltzmannConstantInEVPerK">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Boltzmann_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#BinaryPrefixUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Binary_prefix"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Ohm">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ohm"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Bushel">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bushel"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gauss">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gauss_%28unit%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonGyromagneticRatioOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Gyromagnetic_ratio"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Magnetization">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetization"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/PlanckConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MagneticFluxDensity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetic_field"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckDensity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_density"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Lari">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lari"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ShieldedHelionMagneticMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#EnergyInternal">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Internal_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Ban">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ban"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#CatalyticActivity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Catalysis"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Currency">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Currency"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOf2ndHyperpolarizablity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#PowerUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_power"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ColombianPeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Colombian_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#CharacteristicImpedance">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Characteristic_impedance"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Tablespoon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tablespoon"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Mach">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mach"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronComptonWavelengthOver2Pi">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Compton_wavelength"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Inch">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Inch"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckFrequency">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_angular_frequency"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Friction">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Friction"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicUnitOfMagneticFluxDensity">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#PressureOrStress">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Pressure"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Stress_%28mechanics%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#MexicanPeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Mexican_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#BendingMomentOrTorqueUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_torque"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#DynamicViscosityUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_dynamic_viscosity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#SpecificHeatCapacity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Specific_heat_capacity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HelionMassEnergyEquivalent">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Mho">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Siemens_%28unit%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Entropy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Entropy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Speed">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Speed"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#KineticEnergy">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kinetic_energy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#JamaicanDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Jamaican_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PennyWeight">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Pennyweight"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ZimbabweDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Zimbabwean_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kina">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Kina"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Tension">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Tension"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckPower">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_power"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Dalasi">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gambian_dalasi"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PhilippinePeso">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Philippine_peso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/qudt#TimeUnit">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Category:Units_of_time"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NaturalUnitOfMomentumInMeVC1">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Natural_units"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Strain">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Strain"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Permeability">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Permeability"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Micrometer">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Micrometer"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#MagneticFieldStrength">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Magnetic_field"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Stokes">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Stokes"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassConstant">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#EnergyAndWork">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Energy"/>
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Work_%28physics%29"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckPressure">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_pressure"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/HartreeElectronVoltRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Electron_volt"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#PlanckForce">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Planck_force"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Gram">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Gram"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#LebanesePound">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Lebanese_pound"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#StandardGravitationalParameter">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Standard_gravitational_parameter"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Atto">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Atto"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/NeutronMagneticMomentToBohrMagnetonRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Neutron_magnetic_moment"/>
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Bohr_magneton"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Centi">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Centi-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Yotta">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Yotta-"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#HeartRate">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Heart_rate"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BoltzmannConstantInHzPerK">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Boltzmann_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/TritonMagneticMoment">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Kroon">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Estonian_kroon"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#SpecialDrawingRights">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Special_Drawing_Rights"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#ArmenianDram">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Armenian_dram"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/MuonMassEnergyEquivalentInMeV">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Mass%E2%80%93energy_equivalence"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#Capacity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Capacity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/BoltzmannConstantInInverseMetersPerKelvin">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Boltzmann_constant"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Cedi">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Ghanaian_cedi"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#ElectricCurrentDensity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Current_density"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Micro">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Micro"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ProtonNeutronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Neutron_magnetic_moment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/ElectronDeuteronMagneticMomentRatio">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/G-factor"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#NewIsraeliShekel">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Israeli_new_sheqel"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/quantity#AngularVelocity">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Angular_velocity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#CanadianDollar">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Canadian_dollar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Byte">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Byte"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://physics.nist.gov/cuu/AtomicMassUnitKelvinRelationship">
+    <skos:closeMatch rdf:resource="http://dbpedia.org/resource/Atomic_mass_unit"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://data.nasa.gov/qudt/owl/unit#Boliviano">
+    <skos:exactMatch rdf:resource="http://dbpedia.org/resource/Bolivian_boliviano"/>
+  </rdf:Description>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->

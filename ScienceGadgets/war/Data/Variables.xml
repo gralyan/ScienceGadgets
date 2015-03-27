@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<variables>
+
+	<variable>
+		<symbol>a</symbol>
+		<name>acceleration</name>
+		<quantity>acceleration</quantity>
+	</variable>
+
+	<variable>
+		<symbol>F</symbol>
+		<name>Force</name>
+		<quantity>Force</quantity>
+	</variable>
+
+	<variable>
+		<symbol>m</symbol>
+		<name>mass</name>
+		<quantity>mass</quantity>
+	</variable>
+
+</variables>
+

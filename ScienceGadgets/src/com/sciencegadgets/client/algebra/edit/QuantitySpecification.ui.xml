@@ -1,0 +1,96 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:sg="urn:import:com.sciencegadgets.client.ui">
+
+	<ui:style>
+		.spec {
+	color: black;
+			height: 76%;
+			width: 98%;
+			display: inline-block;
+			vertical-align: top;
+			border: thin solid darkGreen;
+		}
+		
+		.display {
+			display: inline-block;
+			vertical-align: top;
+			width: 78%;
+			height: 100%;
+		}
+		
+		.specHalf {
+			display: inline-block;
+			vertical-align: top;
+			width: 35%;
+			height: 100%;
+			margin-right: 1%;
+		}
+		
+		.toggle {
+			vertical-align: top;
+			display: inline-block;
+			width: 20%;
+			height: 100%;
+		}
+		
+		.symbolPalette {
+			overflow-y: scroll;
+		}
+		
+		.established {
+	color:black;
+			height: 100%;
+			width: 23%;
+			display: inline-block;
+			margin-right: 2%;
+			text-align: left;
+			padding-left: 1em;
+		}
+	</ui:style>
+
+	<g:FlowPanel height="96%">
+
+		<!-- established quantity area -->
+		<sg:SelectionPanel addStyleNames="{style.established}"
+			ui:field="establishedSelection">
+		</sg:SelectionPanel>
+
+		<!-- symbol area -->
+		<g:FlowPanel styleName="{style.specHalf}">
+
+			<!-- symbol display -->
+			<g:FlowPanel height="20%">
+
+				<sg:SymbolDisplay ui:field="symbolDisplay"
+					addStyleNames="{style.display} numberDisplay" title="Variable Symbol"></sg:SymbolDisplay>
+				<sg:ToggleSlide ui:field="symbolCaseToggle"
+					addStyleNames="{style.toggle}"></sg:ToggleSlide>
+			</g:FlowPanel>
+
+			<!-- symbol palette -->
+			<g:FlowPanel height="80%" ui:field="symbolPalette"
+				addStyleNames="{style.spec} {style.symbolPalette}"></g:FlowPanel>
+
+		</g:FlowPanel>
+
+		<!-- unit area -->
+		<g:FlowPanel ui:field="unitArea" styleName="{style.specHalf}">
+
+			<!-- unit display -->
+			<g:FlowPanel height="20%">
+				<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display} numberDisplay"
+					title="Variable Unit"></g:FlowPanel>
+				<sg:ToggleSlide ui:field="unitReciprocalToggle"
+					addStyleNames="{style.toggle}"></sg:ToggleSlide>
+			</g:FlowPanel>
+
+			<!-- unit palette -->
+			<g:FlowPanel height="80%" ui:field="unitPalette"
+				addStyleNames="{style.spec}"></g:FlowPanel>
+
+		</g:FlowPanel>
+
+	</g:FlowPanel>
+
+</ui:UiBinder> 

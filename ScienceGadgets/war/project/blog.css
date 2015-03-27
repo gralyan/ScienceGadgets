@@ -1,0 +1,72 @@
+@CHARSET "UTF-8";
+
+body {
+	margin: 0px;
+	padding: 0px;
+	background-color: green;
+	color: white;
+}
+
+h1,h2,h3,h4,h5{
+	margin: 0px; 
+	text-shadow: 0 0 0.2em lime;
+}
+
+iframe{
+	display: block;
+	margin: auto;
+	height: 90vh;
+	width: 90vw;
+}
+
+#headerDescription{
+	margin:0px;
+}
+
+#welcomePageArea{
+/* 	background-color: wheat; */
+	padding: 0 1em 0 1em;
+}
+
+#header{        
+    padding: 2em 0 2em 0;
+    text-align: center;
+	color: white;
+	text-shadow: 0 0 0.3em lime;
+}
+#blogArea{
+	width:100%;
+}
+
+#navigationPanel{    
+	box-shadow: lightGreen 0 0 0.5em 0.3em inset;
+    border-radius: 1em 1em 1em 1em;
+/*     display: inline-block; */
+    padding: 1em 0 1em 1em;
+    vertical-align: top;
+/*     width: 25%; */
+	background-color: limeGreen;
+	margin: 0 0 1em 0;
+}
+
+#navigationPanel>a{
+	font-weight: bold;
+	margin-right: 2em;
+	text-shadow: 0 0 0.1em darkgreen;
+}
+
+#blogEntryPanel{
+	box-shadow: 0 0 .7em 0.1em lime inset;
+    border-radius: 1em 1em 1em 1em ;
+/* 	width:70%; */
+/* 	display: inline-block; */
+	vertical-align: top;
+	padding: 1em;
+	background-color: darkGreen;
+	
+}
+.problemBlock{
+	background-color: lightGreen;
+    border-radius: 1em 1em 1em 1em;
+	
+}

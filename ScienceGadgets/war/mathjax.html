@@ -1,0 +1,220 @@
+<html>
+
+<head>
+<style type="text/css">
+.MathJax_SVG_Display {
+	background: #aaffdd;
+	border-style: solid;
+	border-width: 5px;
+}
+
+.mjx-svg-mrow {
+	background: #aaffdd;
+	border-style: solid;
+	border-width: 5px;
+}
+
+.MathJax_Display {
+	border: thin solid red;
+}
+
+#theid {
+	border: thin solid red;
+}
+
+.mjx-svg-mi {
+	border: thin solid red;
+}
+
+.mrow {
+	border: thin solid red;
+}
+
+.mfrac {
+	border: thin solid red;
+}
+
+.msup {
+	border: thin solid red;
+}
+</style>
+
+<!--
+className?
+-->
+
+
+<script type="text/x-mathjax-config">
+</script>
+
+<!--remote source 
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG">
+-->
+
+<script type="text/javascript"
+	src="mathjax/MathJax.js?config=TeX-AMS-MML_SVG">
+	MathJax.Hub.Config({
+		"SVG" : {
+			addMMLclasses : true
+		}
+	});
+</script>
+
+<!-- <script type="text/x-mathjax-config"> -->
+<!--  	MathJax.Hub.Config({ -->
+<!--  		config: ["MMLorHTML.js"], -->
+<!--  		jax: ["input/MathML","output/HTML-CSS"], -->
+<!--  		extensions: ["mml2jax.js"], -->
+<!-- 		showMathMenu: false, -->
+<!-- 		showMathMenuMSIE: false, -->
+<!-- 		zoom: "None", -->
+<!-- 		imageFont:null -->
+<!--  	}); -->
+
+<!-- 	MathJax.Hub.Startup.MenuZoom = function () {}; -->
+<!-- </script> -->
+
+<!-- <script type="text/javascript" src="mathjax/MathJax.js"> -->
+<!-- // 	document.prettify = function(area) { -->
+<!-- // 		MathJax.Hub.Queue([ "Typeset", MathJax.Hub, area ]); -->
+<!-- // 	} -->
+<!-- </script> -->
+</head>
+
+
+<body>
+
+	<br />sum:
+	<math>
+	<mfenced separators="+-">
+		<mi>i</mi>
+		<mi>i</mi>
+		<mi>i</mi>
+	</mfenced>
+</math>
+
+	<br />term:
+	<math>
+	<mfenced separators="&middot &nbsp; &times;">
+		<mi>i</mi>
+		<mi>i</mi>
+		<mi>i</mi>
+		<mi>i</mi>
+	</mfenced>
+</math>
+
+	<br />fraction:
+	<math>
+	<mfrac bevelled="true"><!--exactly 2 children-->
+		<mi>i</mi>
+		<mi>i</mi>
+	</mfrac>
+</math>
+
+	<br />fraction:
+	<math>
+	<mfrac><!--exactly 2 children-->
+		<mi>numerator</mi>
+		<mi>denominator</mi>
+	</mfrac>
+</math>
+
+	<br />cancel:
+	<math>
+	<mfrac>
+		<menclose notation="updiagonalstrike">
+			<mi>i</mi>
+		</menclose>
+		<menclose notation="updiagonalstrike">
+			<mi>i</mi>
+		</menclose>
+	</mfrac>
+</math>
+
+	<br />box/circled:
+	<math>
+	<menclose notation="box circle">
+		<mi>i</mi>
+		<mi>i</mi>
+	</menclose>
+</math>
+
+	<br />chemistry:
+
+	<math> 
+     <mmultiscripts>	<!-- follow this pattern exactly --> 
+						<!-- use <none /> to leave any blank-->
+        <mi>H</mi>      <!-- base expression --> 
+        <none />        <!-- postsubscript -->
+        <mi>+</mi>      <!-- postsuperscript -->
+        <mprescripts />
+        <mi>1</mi>      <!-- presubscript -->
+        <mi>2</mi>      <!-- presuperscript -->
+     </mmultiscripts>
+</math>
+
+	<br />exponents
+
+	<math>
+	<msup><!--exactly 2 children-->
+		<mi>base</mi><!--base-->
+		<mn>exp</mn><!--exponent-->
+	</msup>
+</math>
+
+	<br />subscript
+
+	<math>
+	<msub><!--exactly 2 children-->
+		<mi>F</mi><!--base-->
+		<mi>g</mi><!--sub-->
+	</msub>
+</math>
+
+	<br />msubsup
+	<math>
+	<msubsup><!-- exactly 3 children	 -->
+		<mi>F</mi><!--base-->
+		<mi>g</mi><!--sub-->
+		<mn>2</mn><!--super-->
+	</msubsup>
+</math>
+
+	<br />sub in superscript
+	<math>
+	<msup>
+<msub>
+		<mi>F</mi><!--base-->
+		<mi>g</mi><!--sub-->
+	</msub>
+		<mn>2</mn><!--super-->
+	</msup>
+</math>
+
+	<br />root
+	<math>
+	<mroot>				<!--exactly 2 children -->
+		<mfenced open="" close="" separators="+"><!--first is the base-->
+			<mn>2</mn>
+			<mn>3</mn>
+			<mn>4</mn>
+		</mfenced>		<!--second child is radical -->
+		<mi>3</mi>
+	</mroot>
+</math>
+
+	<br>under
+	<math>
+	<munder accentunder="true">
+  		<mfenced separators="+">
+    		<mi> x </mi>
+    		<mi> y </mi>
+    		<mi> z </mi>
+  		</mfenced>
+  		<mo> &#x23DF;</mo> <!--BOTTOM CURLY BRACKET-->
+	</munder>
+</math>
+
+
+</body>
+</html>

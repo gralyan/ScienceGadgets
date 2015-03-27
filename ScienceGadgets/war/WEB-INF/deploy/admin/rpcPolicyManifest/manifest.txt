@@ -1,0 +1,3 @@
+# Module admin
+# RPC service class, partial path of RPC policy file
+com.sciencegadgets.client.DatabaseHelper, 2B9CDF122BDF573301995B56EEC13CAF.gwt.rpc
