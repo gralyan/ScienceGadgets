@@ -80,7 +80,7 @@ public class Moderator implements EntryPoint {
 
 	public static final LinkedList<Resizable> resizables = new LinkedList<Resizable>();
 	private static Student student = new Student("guest");
-	public static boolean isInEasyMode = false;
+	public static boolean isInEasyMode = true;
 	public static final HashMap<Skill, Integer> skillsIncreasedCollection = new HashMap<Skill, Integer>();
 	public static final LinkedList<Badge> newBadgeCollection = new LinkedList<Badge>();
 
@@ -175,7 +175,7 @@ public class Moderator implements EntryPoint {
 				}
 			}
 
-			isInEasyMode = activityType == ActivityType.algebrasolvegoal;
+			isInEasyMode = isInEasyMode || activityType == ActivityType.algebrasolvegoal;
 
 			setActivity(activityType, algebraActivity);
 			algebraActivity.reloadEquationPanel(null, null, updateHistory, null);
