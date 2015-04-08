@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<head>
+<title>Java Cheat Sheet in Armenian</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" href="main_styles.css">
+<link href="prettify/src/prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+
+<style>
+.false{
+background-color: red;
+}
+.true{
+background-color: green;
+}
+</style>
+
+</head>
+
+
+<body onload="prettyPrint()">
+<h1>Java ծրագրավորման Լեզվի Դաս</h1>
+
+<h2>Հիմնաբառեր (Reserved Words)</h2>
+
+<table class="src">
+<tbody><tr>
+<td>abstract</td>
+<td>assert</td>
+<td><a href="#booleanSection">boolean</a></td>
+<td>break</td>
+<td><a href="#byteSection">byte</a></td>
+<td>case</td>
+<td>catch</td>
+<td><a href="#charSection">char</a></td>
+</tr><tr>
+<td><a href="#classSection">class</a></td>
+<td>const</td>
+<td>continue</td>
+<td>default</td>
+<td>do</td>
+<td><a href="#doubleSection">double</a></td>
+<td>else</td>
+<td>enum</td>
+</tr><tr>
+<td>extends</td>
+<td><a href="#finalSection">final</a></td>
+<td>finally</td>
+<td><a href="#floatSection">float</a></td>
+<td>for</td>
+<td>goto</td>
+<td>if</td>
+<td>implements</td>
+</tr><tr>
+<td>import</td>
+<td>instanceof</td>
+<td><a href="#intSection">int</a></td>
+<td>interface</td>
+<td><a href="#longSection">long</a></td>
+<td>native</td>
+<td><a href="#newSection">new</a></td>
+<td><a href="#packageSection">package</a></td>
+</tr><tr>
+<td><a href="#privateSection">private</a></td>
+<td><a href="#protectedSection">protected</a></td>
+<td><a href="#publicSection">public</a></td>
+<td><a href="#returnSection">return</a></td>
+<td><a href="#shortSection">short</a></td>
+<td><a href="#staticSection">static</a></td>
+<td>strictfp</td><td>super</td>
+</tr><tr>
+<td>switch</td>
+<td>synchronized</td>
+<td>this</td>
+<td>throw</td>
+<td>throws</td>
+<td>transient</td>
+<td>try</td>
+<td><a href="#voidSection">void</a></td>
+</tr><tr>
+<td>volatile</td>
+<td>while</td></tr>
+</tbody></table>
+
+<h4>Բառացիներ (Literals)</h4>
+<table class="src">
+<tbody><tr><td>true</td><td>false</td><td>null</td></tr>
+</tbody></table>
+
+<br/><hr/><br/>
+<br/><hr/><br/>
+<!--
+-
+-class section
+-
+-->
+<h2 id="classSection">class</h2>
+<p>Ամեն օբյեկտը (object) ստեղծվում է մի class-ից։ class-ը նկարագրում է օբյեկտի հատկությունները (feilds) և մեթոդները (methods)։ Ասենք թե ուզում ենք ստեղծել հեծանիվներ։ Կնկարագրենք հեծանիվները, դրանք միշտ ունեն անիվ չափս, sprocketTeeth ոտնակի ռիթմ և արագություն։ Հեծանիվի մեթոդներով կարելի է հատկություններ գտնել և ռիթմ փոխել։ class-ը կարող է լինի այսպես.</p>
+
+<pre class="prettyprint">
+public class Հեծանիվ {
+
+	/*
+	* հատկություններ
+	*/
+
+	public final double անիվՉափս; //քանի մետր բոյ (diameter)
+
+	public final int sprocketTeethFront;
+
+	public final int sprocketTeethRear;
+	
+	private double ռիթմ = 0; //քանի ոտնակի պտույտ ամեն վարկյանում
+
+	private double արագություն = 0; // մետր ամեն վարկյան
+
+	/*
+	* կառուցողը (constructor) ստեղծում է օբյեկտը
+	*/
+	public Հեծանիվ(double անիվՉափս, int sprocketTeethFront, int sprocketTeethRear) {
+		this.անիվՉափս = անիվՉափս;
+		this.sprocketTeethFront = sprocketTeethFront;
+		this.sprocketTeethRear = sprocketTeethRear;
+	}
+
+	/*
+	* մեթոդներ
+	*/
+	public double բերՌիթմը(){
+		return ռիթմ;
+	}
+	public double բերԱրագությունը(){
+		return արագություն;
+	}
+	public void փոխիՌիթմը(double ռիթմ) {
+		this.ռիթմ = ռիթմ;
+		// փոխի արագություն էլ
+		արագություն = ռիթմ * metersOfDevelopment;
+	}
+	//քանի մետր կշարժվի ամեն ոտնակ պտույտից
+	private double metersOfDevelopment(){
+		// հանդերձում հարաբերակցությունը (gear ratio)
+		double հար = sprocketTeethFront / sprocketTeethRear ;
+		// անիվի շրջապատ (wheel circumfrance) = d * π
+		double անիվիՇրջապատ = անիվՉափս * Math.PI;
+		// վերադարձրու 
+		return metersOfDevelopment = անիվիՇրջապատ * հար;
+	}
+}
+</pre>
+
+<!--
+-
+-new class section
+-
+-->
+<h2 id="newSection">new</h2>
+<p>ՈՒշադրություն դարձրեկ հեծանիվի շինարարը(constructor) որ պետկ է սարքի թիվ հատկորոշել։ Ասենք թե մեր հեծանիվի սարքը պետկ է շարժի հեծանիվը 5.8 մետեր ամէն ոտնակ պտույտ։ ՈՒրիշ օբյեկտները կարողեն ստեղծվել այս հեծանիվ այսպես։ </p>
+<pre class="prettyprint">
+Հեծանիվ իմՀեծանիվս = new Հեծանիվ(5.8);
+</pre>
+<p>Հիմա ունենք նոր 5.8 սարքով հեծանիվ որ քոչվում է <em>իմՀեծանիվս</em>։ Իր ռիթմ և արագություն սկսվում էն 0 բայց կարողենք արագացնենք այսպես։</p>
+<pre class="prettyprint">
+Հեծանիվ իմՀեծանիվս = new Հեծանիվ(5.8);
+իմՀեծանիվս.փոխիՌիթմը(1.3);
+</pre>
+
+<!--
+-
+-return section
+-
+-->
+<h2 id="returnSection">return</h2>
+<p>Հեծանիվի մեթոդներ կան returnի հետ։ return հելնումա մեթոդից և վերադարձրում է օբյեկտ, նախնական(<a href="#primativesSection">primatives<a>) կամ ոչինչ։ Վերադարձրողի տեսակ գրվում է նախ մեթոդ անունի։ Մեթոդներ առանց return նշումեն <strong id="voidSection">void</strong>։ Մեթոդներ կան որ օրտագործվումեն միայն հատկություններ վերադարձնել յեպոր թաքուն (<a href="#privateSection">private<a>) էն ուրիշ classիծ։ Այսպես ուրիշ classներ կարողեն օրտագործել այս հատկություններ բայց չենկարող փողել։ Փորցենք արագություն գթնենք և օրտագործենք System.out.println() որ ցոյց տանք։</p>
+<pre class="prettyprint">
+Հեծանիվ իմՀեծանիվս = new Հեծանիվ(5.8);
+
+System.out.println(իմՀեծանիվս.ինչէԱրագությունը()); // գրվում է 0
+իմՀեծանիվս.փոխիՌիթմը(1.3);
+System.out.println(իմՀեծանիվս.ինչէԱրագությունը()); // գրվում է 7.54
+</pre>
+
+<!--
+-
+-subclass section
+-
+-->
+<h2 id="extendsSection">extends</h2>
+<p></p>
+
+<br/><hr/><br/>
+
+<!--
+-
+-access modifier section
+-
+-->
+<h3>Ով կարող է  օգտագործել և փոխել (Acess Modifiers) բաղադրիչներ?</h3>
+<p>Հեծանիվի բոլոր հատկությունները (feilds) թաքուն (<a href="#privateSection">private<a>) էն բացի ինչվոր անփոփոխ
+(<a href="#finalSection">final<a>) էն որովհետեվ չենք ուզում փոխվեն արանց մեթոդ օրտագործելու։ Ինչ քան կարողեք թաքուն պահեկ հատկությունները և օրտագործեք բերող (getter) և փոխող (setter) մետոդներ ինչպես հարմար է ։ Պետկչի թաքուն պահել անփոփոխի
+(<a href="#finalSection">final<a>) հատկությունները, դրանք կարողեն ազատ ցույց տալ (<a href="#publicSection">public<a>)։</p>
+
+<p>Մետոդներ ել նույնպես կարող լինեն թաքուն յեպվոր պետք չեն ուրիշ class-ին</p>
+
+<p>*class-ին մենակ ոչինչ կամ public կարողեն լինել</p>
+
+<div>
+<strong id="publicSection">public -</strong> ամեն օբյեկտներ<br/>
+<strong id="protectedSection">protected -</strong> subclassներ և այս packageի classեր<br/>
+<strong><em>չմասնավորեցված</em> -</strong> մենաք այս packageի classեր<br/>
+<strong id="privateSection">private -</strong> մենաք այս classը<br/>
+<div>
+<table class="src">
+<tbody>
+<tr><th></th><th>նույն classը</th><th>Package</th><th>Subclassներ</th><th>բոլոր</th></tr>
+<tr><th>public</th><td class="true">այո</td><td class="true">այո</td><td class="true">այո</td><td class="true">այո</td></tr>
+<tr><th>protected</th><td class="true">այո</td><td class="true">այո</td><td class="true">այո</td><td class="false">ոչ</td></tr>
+<tr><th><em>չմասնավորեցված</em></th><td class="true">այո</td><td class="true">այո</td><td class="false">ոչ</td><td class="false">ոչ</td></tr>
+<tr><th>private</th><td class="true">այո</td><td class="false">ոչ</td><td class="false">ոչ</td><td class="false">ոչ</td></tr>
+</tbody></table>
+<em id="packageSection">*Package - ֆայլը որ այս classի փաստաթուղթը գտնվում է</em><br/>
+<em>*Subclass - ամեն class որ <a href="#extendsSection">extends</a> անում է այս class</em><br/>
+
+<br/><br/>
+
+<h3>ՈՒրիշ Բաղադրիչներ (non-Acess Modifiers)</h3>
+<div>
+<strong id="staticSection">static -</strong> նույնն է բոլոր էս class օբյեկտների<br/>
+<strong id="finalSection">final -</strong> երբեք չի փոխում կառուցողի (constructor) հետո
+</div>
+
+<br/><hr/><br/>
+
+<!--
+-
+-primatives section
+-
+-->
+<h2 id="primativesSection">Նախնական (Primatives)</h2>
+<table class="src" style="font-size:75%;">
+<tbody><tr>
+<th></th>
+<th>Տեսակ</th>
+<th>Չափ (bits)</th>
+<th>Նվազագույն</th>
+<th>Առավելագույն</th>
+<th>Օրինակ</th>
+</tr>
+<tr title="+127 միջև -128">
+<th title="" rowspan="5">Ամբողջ թիվ</th>
+<th><code id="byteSection">byte</code></th>
+<td>8</td>
+<td>-128</td>
+<td>127</td>
+<td><code>byte b = 65;</code></td>
+</tr>
+<tr title="Ամբողջ Unicode">
+<th><code id="charSection">char</code></th>
+<td>16</td>
+<td>0</td>
+<td>2<sup>16</sup>-1</td>
+<td><code>char c = 'A';<br>
+char c = 65;</code></td>
+</tr>
+<tr title="+32,767 միջև -32,768">
+<th><code id="shortSection">short</code></th>
+<td>16</td>
+<td>-2<sup>15</sup></td>
+<td>2<sup>15</sup>-1</td>
+<td><code>short s = 65;</code></td>
+</tr>
+<tr title="+2,147,483,647 միջև -2,147,483,648">
+<th><code id="intSection">int</code></th>
+<td>32</td>
+<td>-2<sup>31</sup></td>
+<td>2<sup>31</sup>-1</td>
+<td><code>int i = 65;</code></td>
+</tr>
+<tr title="+9,223,372,036,854,775,807 միջև -9,223,372,036,854,775,808">
+<th><code id="longSection">long</code></th>
+<td>64</td>
+<td>-2<sup>63</sup></td>
+<td>2<sup>63</sup>-1</td>
+<td><code>long l = 65L;</code></td>
+</tr>
+<tr title="3.402,823,5&nbsp;E+38 միջև 1.4&nbsp;E-45">
+<th title="" rowspan="2">Կոտորակ թիվ</th>
+<th><code id="floatSection">float</code></th>
+<td>32</td>
+<td>2<sup>-149</sup></td>
+<td>(2-2<sup>-23</sup>)·2<sup>127</sup></td>
+<td><code>float f = 65f;</code></td>
+</tr>
+<tr title="1.797,693,134,862,315,7&nbsp;E+308 միջև 4.9&nbsp;E-324">
+<th><code id="doubleSection">double</code></th>
+<td>64</td>
+<td>2<sup>-1074</sup></td>
+<td>(2-2<sup>-52</sup>)·2<sup>1023</sup></td>
+<td><code>double d = 65.55;</code></td>
+</tr>
+<tr title="այո(true) կամ ոչ(false)">
+<th title="" rowspan="2">ՈՒրիշ</th>
+<th><code id="booleanSection">boolean</code></th>
+<td>1</td>
+<td>false(ոչ)</td>
+<td>true(այո)</td>
+<td><code>boolean b = true;</code></td>
+</tr>
+<tr>
+<th><code>void</code></th>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+</tr>
+</tbody></table>
+
+
+</body>
+
+
+
