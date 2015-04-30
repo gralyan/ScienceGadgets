@@ -45,6 +45,8 @@ public abstract class SelectionButton extends SimplePanel implements
 				public void onTouchEnd(TouchEndEvent event) {
 					if (isEnabled) {
 						onSelect();
+						event.preventDefault();
+						event.stopPropagation();
 					}
 				}
 			});
@@ -54,6 +56,8 @@ public abstract class SelectionButton extends SimplePanel implements
 				public void onClick(ClickEvent event) {
 					if (isEnabled) {
 						onSelect();
+						event.preventDefault();
+						event.stopPropagation();
 					}
 				}
 			});

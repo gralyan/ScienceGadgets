@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<head>
+<title>Project 1</title>
+
+<script type="text/javascript" language="javascript"
+	src="../workshopproject2/workshopproject2.nocache.js"></script>
+
+<link rel="stylesheet" type="text/css" href="setup.css">
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+<style type="text/css">
+
+body{
+	height:100vh;
+}
+
+.box{
+	width:100px;
+	height:100px;
+	border: solid thick black;
+}
+
+.boxS{
+	background-color: lightBlue;
+}
+
+.dragBox{
+	width:50px;
+	height:50px;
+	border: solid thick black;
+	font-weight:bolder;
+}
+
+.dragdrop-selected, .dragdrop-dragging, .dragdrop-proxy {
+	opacity : 1 !important;
+}
+</style>
+</head>
+
+<body onload="prettyPrint()">
+
+<h1>Project 2 - Տուփիկ Քաշել</h1>
+
+	<div id="examplePanel"></div>
+
+<hr/>
+<h2>EntryPoint - ելք</h2>
+<pre class="prettyprint">
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+
+public class Test implements EntryPoint {
+
+	public void onModuleLoad() {
+
+		RootPanel body = RootPanel.get();
+		
+		Label hi = new Label("OUT");
+		hi.addStyleName("dragBox");
+		
+		body.add(hi, 100, 100);
+		
+		PickupDragController dragC = new PickupDragController(body, true);
+		
+		dragC.makeDraggable(hi);
+		
+		FlowPanel box = new FlowPanel();
+		box.addStyleName("box");
+		body.add(box, 200, 200);
+		
+		BoxDropController dropC = new BoxDropController(box);
+		
+		dragC.registerDropController(dropC);
+		
+	}
+}
+</pre>
+
+<h2>BoxDragController - Քաշող</h2>
+<pre class="prettyprint">
+import com.allen_sauer.gwt.dnd.client.DragContext;
+import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+
+public class BoxDropController extends AbstractDropController {
+
+	boolean isDropping = false;
+
+	public BoxDropController(FlowPanel dropTarget) {
+		super(dropTarget);
+	}
+
+	@Override
+	public void onEnter(DragContext context) {
+		super.onEnter(context);
+		Label drag = ((Label) context.draggable);
+		drag.setText("IN");
+		drag.addStyleName("boxS");
+		((FlowPanel) getDropTarget()).getElement().getStyle().setBackgroundColor("yellow");
+	}
+
+	@Override
+	public void onLeave(DragContext context) {
+		super.onLeave(context);
+		if (!isDropping) {
+			Label drag = ((Label) context.draggable);
+			drag.setText("OUT");
+			drag.removeStyleName("boxS");
+			((FlowPanel) getDropTarget()).getElement().getStyle().clearBackgroundColor();
+		}
+	}
+
+	@Override
+	public void onDrop(DragContext context) {
+		super.onDrop(context);
+		isDropping = true;
+		((FlowPanel) getDropTarget()).add(context.draggable);
+		getDropTarget().getElement().getStyle().setBackgroundColor("green");
+		context.dragController.makeNotDraggable(context.draggable);
+	}
+
+}
+
+</pre>
+<h2>CSS</h2>
+<pre class="prettyprint">
+
+body{
+	height:100vh;
+}
+
+.box{
+	width:100px;
+	height:100px;
+	border: solid thick black;
+}
+
+.boxS{
+	background-color: lightBlue;
+}
+
+.dragBox{
+	width:50px;
+	height:50px;
+	border: solid thick black;
+	font-weight:bolder;
+}
+
+.dragdrop-selected, .dragdrop-dragging, .dragdrop-proxy {
+	opacity : 1 !important;
+}
+</pre>
+
+</body>
+</html>

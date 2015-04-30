@@ -1,0 +1,96 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.paddedPanel {
+		height: 96%;
+		width: 96%;
+		padding: 2%;
+	}
+	
+	.difficultyLabel {
+		display: inline-block;
+		vertical-align: top;
+		font-weight: bold;
+		width: 25%;
+		text-align: center;
+		color: black;
+	text-shadow: 0em 0em 4px #ffffff;
+	}
+	
+	.cellSubject {
+		height: 100%;
+		width: 25%;
+		display: inline-block;
+		vertical-align: top;
+		font-size: 70%;
+	}
+	
+	.cellSlider {
+		height: 100%;
+		vertical-align: top;
+		width: 75%;
+		display: inline-block;
+	}
+	
+	.rowWithSlider {
+		height: 15%;
+	}
+	
+	.generateButton {
+		padding-top: 2%;
+		height: 28%;
+		width: 100%;
+	}
+	.titleBar{
+    background: -webkit-linear-gradient(left, white , black); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, white , black); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, white, black); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, white , black); /* Standard syntax (must be last) */
+    }
+	</ui:style>
+	<g:FlowPanel>
+
+		<g:FlowPanel styleName="{style.paddedPanel}">
+			<g:FlowPanel styleName="{style.titleBar}" height="10%">
+				<g:FlowPanel styleName="{style.cellSubject}"><!-- blank -->
+				</g:FlowPanel>
+				<g:FlowPanel styleName="{style.cellSlider}">
+					<g:Label styleName="{style.difficultyLabel}" text="None"></g:Label>
+					<g:Label styleName="{style.difficultyLabel}" text="Easy"></g:Label>
+					<g:Label styleName="{style.difficultyLabel}" text="Medium"></g:Label>
+					<g:Label styleName="{style.difficultyLabel}" text="Hard"></g:Label>
+				</g:FlowPanel>
+			</g:FlowPanel>
+
+			<g:FlowPanel styleName="{style.rowWithSlider}">
+				<g:Label ui:field="subjectAdd" styleName="{style.cellSubject}">Addition</g:Label>
+				<g:FlowPanel styleName="{style.cellSlider}" ui:field="slideContainerAdd">
+				</g:FlowPanel>
+			</g:FlowPanel>
+
+			<g:FlowPanel styleName="{style.rowWithSlider}">
+				<g:Label ui:field="subjectMult" styleName="{style.cellSubject}">Multiplication</g:Label>
+				<g:FlowPanel styleName="{style.cellSlider}" ui:field="slideContainerMult">
+				</g:FlowPanel>
+			</g:FlowPanel>
+
+			<g:FlowPanel styleName="{style.rowWithSlider}">
+				<g:Label ui:field="subjectFrac" styleName="{style.cellSubject}">Fraction</g:Label>
+				<g:FlowPanel styleName="{style.cellSlider}" ui:field="slideContainerFrac">
+				</g:FlowPanel>
+			</g:FlowPanel>
+
+			<g:FlowPanel styleName="{style.rowWithSlider}">
+				<g:Label ui:field="subjectExp" styleName="{style.cellSubject}">Exponential</g:Label>
+				<g:FlowPanel styleName="{style.cellSlider}" ui:field="slideContainerExp">
+				</g:FlowPanel>
+			</g:FlowPanel>
+
+			<g:FlowPanel ui:field="generateButtonContainer"
+				styleName="{style.generateButton}">
+			</g:FlowPanel>
+		</g:FlowPanel>
+
+	</g:FlowPanel>
+</ui:UiBinder> 

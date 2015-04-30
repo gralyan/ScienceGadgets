@@ -1,0 +1,432 @@
+@CHARSET "UTF-8";
+
+body {
+	margin: 0px;
+	padding: 0px;
+	background-color: green;
+}
+
+@font-face {
+	font-family: 'math';
+	src: url('fonts/math.eot?') format('eot'), url('fonts/math.woff')
+		format('woff'), url('fonts/math.otf') format('opentype');
+}
+
+#scienceGadgetArea {
+	font-family: math;
+	background-image: url('images/chalkboard.jpeg');
+	background-color: #ADD850;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	margin: auto;
+}
+
+.textCenter {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.fillParent {
+	width: 100%;
+	height: 100%;
+}
+
+.fitParentHTML {
+	display: inline-block;
+	text-align: center;
+}
+
+/*---------------Browsers---------------*/
+#equationBrowser {
+	margin: auto;
+	height: 100%;
+}
+
+.modes {
+	margin: auto;
+	background-color: silver;
+	height: 10%;
+}
+
+.rowHeader {
+	border-bottom-color: gray;
+	border-bottom-style: solid;
+	border-bottom-width: medium;
+	background-color: #aaaaaa;
+	text-align: center;
+}
+
+.rowSubHeader {
+	border-bottom-color: silver;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	background-color: #eeeeee;
+	text-align: center;
+}
+
+#activitySelectionPanel {
+	display: inline-block;
+	width: 30%;
+	height: 80%;
+	margin: 5%;
+	text-align: center;
+	vertical-align: top;
+}
+
+#activityDetailsPanel {
+	display: inline-block;
+	width: 55%;
+	height: 80%;
+	margin: 5% 5% 5% 0;
+	vertical-align: top;
+}
+
+#algBrowserPanel {
+	height: 100%;
+	width: 100%;
+	text-align: center;
+}
+
+#eqGeneratorPanel {
+	height: 100%;
+	width: 100%;
+	background-color: white;
+	border-radius: 10px;
+	-moz-box-shadow: silver 0 0 10px 3px inset;
+	-webkit-box-shadow: silver 0 0 10px 3px inset;
+	box-shadow: silver 0 0 10px 3px inset;
+}
+
+#challengeBrowserPanel {
+	height: 100%;
+	width: 100%;
+	text-align: center;
+}
+
+#algBrowser {
+	width: 100%;
+	height: 90%;
+}
+
+.equationSolveButton {
+	margin: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color: RoyalBlue;
+}
+
+#sciBrowser {
+	margin: auto;
+	height: 100%;
+	text-align: center;
+}
+
+#sciBrowseVar {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 80%;
+}
+
+#sciBrowseEq {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 80%;
+}
+
+#sciBrowseSum {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 80%;
+}
+
+.diagramMeasure {
+	color: black;
+	background-color: white;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+/*---------------ConversionActivity---------------*/
+#conversionActivity {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+}
+
+/*---------------SelectionPanel---------------*/
+.selectionPanel {
+	overflow-y: scroll;
+	background-color: white;
+	color: black;
+	cursor: pointer;
+	height: 100%;
+}
+
+.selectionPanelCell {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.selectedCell {
+	background-color: #9999ff;
+}
+
+.quantityKindPrefix {
+	border-bottom: medium solid brown;
+	background-color: tan
+}
+
+/*---------------AlgOut---------------*/
+.algOut {
+	color: black;
+	text-align: center;
+	height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	z-index: 10;
+}
+
+.algOutRow {
+	border-top: thin solid blue;
+	background-color: white;
+}
+
+.algOutEqRow {
+	display: inline-block;
+	vertical-align: top;
+	width: 68%;
+	height: 100%;
+	border-right: thin solid red;
+}
+
+.algOutEqLeft {
+	text-align: right;
+	display: inline-block;
+	vertical-align: middle;
+	width: 45%;
+}
+
+.algOutEqEquals {
+	display: inline-block;
+	vertical-align: middle;
+	width: 10%;
+}
+
+.algOutEqRight { /* 	float: left; */
+	text-align: left;
+	display: inline-block;
+	vertical-align: middle;
+	width: 45%;
+}
+
+.algOutChangeRow {
+	color: red;
+	background-color: #FFFF99;
+}
+
+.algOutRuleRow {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	height: 100%;
+	color: red;
+	text-decoration: none;
+}
+
+/*---------------changes---------------*/
+.highlight {
+	color: red;
+}
+
+.lineThrough {
+	color: red;
+	text-decoration: line-through;
+}
+
+/*---------------wrappers---------------*/
+.selectedWrapper {
+	-moz-box-shadow: 0 0 1em #FFFFFF inset;
+	-webkit-box-shadow: 0 0 1em #FFFFFF inset;
+	box-shadow: 0 0 1em #FFFFFF inset;
+	opacity: 1;
+	text-shadow: 0em 0em .15em #000000;
+}
+
+.dragdrop-dragging {
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	text-shadow: .15em .15em .15em #000000;
+	position: relative;
+	top: -0.05em;
+	left: -0.05em;
+}
+
+.selectedDropWrapper {
+	text-shadow: .15em .15em .15em #000000;
+	position: relative;
+	top: -0.05em;
+	left: -0.05em;
+}
+
+.selectionDetails {
+	width: 100%;
+	height: 100%;
+	background-color: white;
+	text-align: center;
+}
+
+.conversionWrapper {
+	border: medium solid black;
+	background-color: lime;
+	cursor: move;
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+}
+
+.dropEnterResponse {
+	background-color: white;
+	text-align: center;
+	font-weight: bold;
+}
+
+/*---------------layout---------------*/
+.eqPanel {
+	width: 100%;
+	height: 100%;
+
+user-select: none;
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
+.eqLayer {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.layoutRow {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.bothSidesPanel {
+	display: inline-block;
+	vertical-align: top;
+	width: 20%;
+	height: 100%;
+}
+
+.simplifyPanel {
+	display: inline-block;
+	vertical-align: top;
+	width: 60%;
+	height: 100%;
+}
+
+/*---------------popups---------------*/
+.gwt-DialogBox {
+	text-align: center;
+	background-color: #E6E6FA;
+	z-index: 100;
+	border: thick solid green;
+	-moz-border-radius: 1em;
+	-webkit-border-radius: 1em;
+	border-radius: 1em;
+}
+
+.gwt-PopupPanelGlass {
+	background-color: #000;
+	opacity: 0.6;
+	filter: alpha(opacity =   30);
+}
+
+/*---------------toggle---------------*/
+.toggleSlide {
+	background-color: gray;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	height: 100%;
+}
+
+.toggleOption {
+	width: 50%;
+	height: 100%;
+	text-align: center;
+	display: inline-block;
+}
+
+.toggleOptionSelected {
+	background-color: orange;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+
+/*---------------prompts---------------*/
+.numberDisplay {
+	text-align: center;
+	background-color: lime;
+	border: thin solid darkGreen;
+	min-width: 3px;
+	min-height: 1.5em;
+	word-wrap: break-word;
+}
+
+.promptMain {
+	background-color: #ADD850;
+}
+
+.keyPadNumerical {
+	background-color: lightGray;
+	padding: 5px;
+}
+
+.doubleFontSize {
+	font-size: 200%;
+}
+
+.invalidInput {
+	/* 	red overlay without interfering with background-color */
+	-moz-box-shadow: 0px 100px 0px red inset;
+	-webkit-box-shadow: 0px 100px 0px red inset;
+	box-shadow: 0px 100px 0px red inset;
+}
+
+.okGap {
+	height: 5px;
+	border-top: thick solid green;
+}
+
+.exampleHtml {
+	font-size: 300%;
+	border-bottom: thin solid green;
+}
+
+.establishedQuantitySelection {
+	color: black;
+	height: 98%;
+	width: 23%;
+	display: inline-block;
+	margin-right: 2%;
+	text-align: left;
+	padding-left: 1em;
+}
+
+.quantityPromptSpec {
+	display: inline-block;
+	vertical-align: top;
+	width: 70%;
+	height: 98%;
+	margin-right: 1%;
+}

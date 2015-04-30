@@ -45,6 +45,7 @@ public abstract class TransformationButton extends SelectionButton implements
 	public EquationNode previewNode = null;
 	protected boolean isEvaluation = false;
 	protected boolean allowSkillIncrease = false;
+	protected boolean autoUnselect = true;
 
 	public TransformationButton(
 			TransformationList<? extends TransformationButton> context) {
@@ -142,7 +143,9 @@ public abstract class TransformationButton extends SelectionButton implements
 
 	@Override
 	protected void onSelect() {
-		Moderator.getCurrentAlgebraActivity().getEquationPanel().unselectCurrentSelection();;
+		if(autoUnselect) {
+			Moderator.getCurrentAlgebraActivity().getEquationPanel().unselectCurrentSelection();
+		}
 		transform();
 	}
 

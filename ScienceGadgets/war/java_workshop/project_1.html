@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<head>
+<title>Project 1</title>
+
+<script type="text/javascript" language="javascript"
+	src="../workshopproject1/workshopproject1.nocache.js"></script>
+
+<link rel="stylesheet" type="text/css" href="setup.css">
+<script
+	src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+
+<link rel="stylesheet" type="text/css" href="main_styles.css" />
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript"
+	src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+<style type="text/css">
+body {
+	height: 100vh;
+}
+
+.box {
+	width: 50px;
+	height: 50px;
+	border: solid thick black;
+}
+
+.boxS {
+	background-color: blue;
+}
+</style>
+
+</head>
+
+<body onload="prettyPrint()">
+
+	<h1>Project 1 - Տուփիկ Հաշվել</h1>
+
+	<div id="examplePanel"></div>
+
+	<hr />
+	<h2>EntryPoint - ելք</h2>
+	<pre class="prettyprint">
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.RootPanel;
+
+public class Project implements EntryPoint {
+
+	public void onModuleLoad() {
+
+		RootPanel body = RootPanel.get();
+		
+		Counter counter = new Counter();
+		body.add(counter, 100, 100);
+	
+		
+		for(int i=0 ; i<6 ; i++){
+			Box box = new Box(counter);
+			body.add(box, i*200, 200);
+		}
+		
+	}
+}
+</pre>
+	<h2>Counter - Հաշվիչ</h2>
+	<pre class="prettyprint">
+import com.google.gwt.user.client.ui.Label;
+
+class Counter extends Label {
+
+	private int count = 0;
+	
+	Counter(){
+		updateText();
+	}
+
+	void up(){
+		count++;
+		updateText();
+	}
+	
+	private void updateText() {
+		setText(count+"");
+	}
+	
+}
+
+</pre>
+	<h2>Box - Տուփիկ</h2>
+	<pre class="prettyprint">
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FlowPanel;
+
+class Box extends FlowPanel implements HasClickHandlers {
+
+	public static final String BOX_CSS = "box";
+	public static final String BOXS_CSS = "boxS";
+	boolean isSelected = false;
+
+	Box(final Counter counter) {
+
+		addStyleName(BOX_CSS);
+
+		addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if (!isSelected) {
+					addStyleName(BOXS_CSS);
+					counter.up();
+					isSelected = true;
+				}
+			}
+		});
+	}
+
+	@Override
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		return addDomHandler(handler, ClickEvent.getType());
+	}
+
+} 
+
+</pre>
+	<h2>CSS</h2>
+	<pre class="prettyprint">
+body{
+	height:100vh;
+}
+.box{
+	width: 100px;
+	height: 100px;
+	border: solid thick black;
+}
+
+.boxS{
+	background-color: blue;
+}
+</pre>
+
+
+</body>
+</html>

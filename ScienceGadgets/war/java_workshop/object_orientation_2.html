@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<head>
+<title>Java Basics for Tumo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+</head>
+
+<body onload="prettyPrint(); makeTranslatable();">
+<h1>Object-Orientation 2</h1>
+
+<!--
+-
+-class section
+-
+-->
+<h2 id="classSection">class</h2>
+<!--
+-
+-subclass section
+-
+-->
+<h2 id="extendsSection">extends</h2>
+<p></p>
+
+<!--
+-
+-Fields section
+-
+-->
+<h3>Fields - Հատկություններ</h3>
+
+	public final double wheelDiameter; // in meters
+	private int sprocketTeethFront; // count
+	private int sprocketTeethRear; // count
+	private double candence = 0; // pedal revolutions per second
+	private double speed = 0; // in meters per second
+
+<!--
+-
+-Constructor section
+-
+-->
+<h3 id="constructorSection">Constructors - Կառուցող</h3>
+<pre class="prettyprint translatable" id="trans1_constructor_intro">
+class Bicycle {
+
+	double wheelDiameter; // in meters
+	int sprocketTeethFront; // count
+	int sprocketTeethRear; // count
+	double candence = 0; // pedal revolutions per second
+	double speed = 0; // in meters per second
+
+	Bicycle(double wheelDiameter, int sprocketTeethFront, int sprocketTeethRear) {
+		this.wheelDiameter = wheelDiameter;
+		this.sprocketTeethFront = sprocketTeethFront;
+		this.sprocketTeethRear = sprocketTeethRear;
+	}
+}
+</pre>
+<pre class="prettyprint translatable" id="trans2_constructor_intro">
+class Հեծանիվ {
+	
+	double անիվՉափս; //քանի մետր բոյ (diameter)
+	int sprocketTeethFront;
+	int sprocketTeethRear;
+	double ռիթմ = 0; //քանի ոտնակի պտույտ ամեն վարկյանում
+	double արագություն = 0; // մետր ամեն վարկյան
+
+	Bicycle(double wheelDiameter, int sprocketTeethFront, int sprocketTeethRear) {
+		this.wheelDiameter = wheelDiameter;
+		this.sprocketTeethFront = sprocketTeethFront;
+		this.sprocketTeethRear = sprocketTeethRear;
+	}
+}
+</pre>
+
+<p>This constructor's parameters look similar to the uninitialized fields. These variables are different even though they are named similarly. In cases like this the local variable will always be used. In order to reference the field value when there is a similarly named local variable, you can use the keyword '<code>this</code>' as seen above. This constructor simply sets the unknown variables to the values specified in the parameter.</p>
+
+<!--
+-
+-Methods section
+-
+-->
+<h3>Methods - Մեթոդներ</h3>
+
+
+</body>

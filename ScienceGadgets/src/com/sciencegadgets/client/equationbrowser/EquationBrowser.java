@@ -41,7 +41,7 @@ public class EquationBrowser extends FlowPanel {
 	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Algebra Practice", ActivityType.algebrasolve);
 	GenerateSpec generatePanel = new GenerateSpec();
 	ConversionSpecification conversionSpec = new ConversionSpecification();
-	public ChallengeBrowser challengeBrowser = new ChallengeBrowser();
+//	public ChallengeBrowser challengeBrowser = new ChallengeBrowser();
 	public MakeEquationBrowser makeEquationBrowser = new MakeEquationBrowser();
 //	ScienceBrowser scienceBrowser = new ScienceBrowser(this);
 
@@ -70,10 +70,10 @@ public class EquationBrowser extends FlowPanel {
 		
 		activitySelectionPanel.add(new ActivityButton("Conversion",
 				conversionSpec));
-		
-		challengeBrowser.getElement().setId(CSS.CHALLENGE_GENERATOR_PANEL);
-		activitySelectionPanel.add(new ActivityButton("Challenges",
-				challengeBrowser));
+//		
+//		challengeBrowser.getElement().setId(CSS.CHALLENGE_GENERATOR_PANEL);
+//		activitySelectionPanel.add(new ActivityButton("Challenges",
+//				challengeBrowser));
 		
 		makeEquationBrowser.getElement().setId(CSS.CHALLENGE_GENERATOR_PANEL);
 		activitySelectionPanel.add(new ActivityButton("Make Equation",

@@ -255,6 +255,7 @@ public class BothSidesTransformations extends
 				BothSidesTransformations context, BothSidesButton joinedButton) {
 			super(html, context);
 
+			this.autoUnselect = false;
 			this.operation = operation;
 
 			if (joinedButton == null) {

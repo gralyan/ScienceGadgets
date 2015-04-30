@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<head>
+<title>Java Basics for Tumo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+</head>
+
+
+<body onload="prettyPrint(); makeTranslatable();">
+<h1>Object-Orientation 1</h1>
+<!--
+-
+-class section
+-
+-->
+<h2 id="classSection">class</h2>
+<p class="translatable" title="Ամեն օբյեկտը (object) ստեղծվում է մի class-ից։ class-ը նկարագրում է օբյեկտի հատկությունները (fields) և մեթոդները (methods)։ Ասենք թե ուզում ենք ստեղծել հեծանիվներ։ Կնկարագրենք հեծանիվները, դրանք միշտ ունեն անիվ չափս, sprocketTeeth ոտնակի ռիթմ և արագություն։ Հեծանիվի մեթոդներով կարելի է հատկություններ գտնել և ռիթմ փոխել։ class-ը կարող է լինի այսպես.">Java is an object-oriented language. This means everything is done using individual entities we call objects. Every object is made from a template called a <code>class</code>. A <code>class</code> may specify the information the objects can store (feilds), how the objects will be created (constructor), and the functions available to the objects (methods).</p>
+
+<img src='images/class_and_objects.svg' onerror="this.src='images/class_and_objects.png'" />
+
+<!--
+-
+-Fields section
+-
+-->
+<h3>Fields - Հատկություններ</h3>
+<img src='images/anatomy_field.svg' onerror="this.src='images/anatomy_field.png'" />
+<p>Let's say we want to make simple bicycles. First we need to make a <code>class</code> describing basic bicycles. We may want to store information such as the wheel diameter, tooth count of the front and rear gears, cadence (pedal revolutions per second) and speed. We can do this by storing this information in variables we call fields.</p>
+<p>Specifying a field always includes the type as well as a reference name for the information. The type of information can be a <code>class</code> or one of the simple types called <a href='#primativesSection'>primatives<a>. For now we'll just use floating-point numbers (<a href="#doubleSection"><code>double</code></a>). The reference names can be used to find and change the field values.</p>
+
+<pre class="prettyprint translatable" id="trans1_field_intro">
+class Bicycle {
+
+	// Feilds - store information
+	
+	double wheelCircumfrance; // in meters
+	double gearRatio;	  // front/rear
+	double candence = 0;	  // pedal rhythm - revolutions per second
+	double speed = 0;	  // in meters per second
+}
+</pre>
+<pre class="prettyprint translatable" id="trans2_field_intro">
+</pre>
+
+<p>The words <code>wheelCircumfrance, gearRatio, candence</code> and <code>speed</code> can be used to reference their field values. Notice that some of the fields were initialized because their values are known. In this case bicycles will start with both a candence and speed of 0.</p>
+
+<!--
+-
+-Constructor section
+-
+-->
+<h3 id="constructorSection">Constructors - Կառուցող</h3>
+<img class="wide" src='images/anatomy_constructor.svg' onerror="this.src='images/anatomy_constructor.png'" />
+<p>You may have noticed that some of the fields weren't initiaized. It is the constructor's job to set up the objects by asking for variables called parameters. In this case the constructor's parameters can be the wheel diameter and sprocket counts.</p>
+<pre class="prettyprint translatable" id="trans1_constructor_intro">
+class Bicycle {
+
+	// Feilds - store information
+	
+	double wheelCircumfrance; // in meters
+	double gearRatio;	  // front/rear
+	double candence = 0;	  // pedal rhythm - revolutions per second
+	double speed = 0;	  // in meters per second
+
+	// Constructor - how to create objects
+
+	Bicycle(double wheelDiameter, int gearTeethFront, int gearTeethRear) {
+		wheelCircumfrance = Math.PI * wheelDiameter; // Math.PI == π
+		gearRatio = gearTeethFront / gearTeethRear;
+	}
+}
+</pre>
+<pre class="prettyprint translatable" id="trans2_constructor_intro">
+</pre>
+
+<img src='images/Bike_wheel_gears.svg' onerror="this.src='images/Bike_wheel_gears.png'" />
+<p>*Note - the names used here are simplified for the purposes of this lesson. You can learn more about bicycle gearing <a href='http://en.wikipedia.org/wiki/Bicycle_gearing'>here.<a></p>
+<!--
+-
+-Methods section
+-
+-->
+<h3>Methods - Մեթոդներ</h3>
+<img class='wide' src='images/anatomy_method.svg' onerror="this.src='images/anatomy_method.png'" />
+<p>So far have a way to construct bicycles and store their information. Now we need methods to define what they can do and how other objects can interact with them. We will probable want to change our candence (or pedaling rhythm), update the speed and get the speed.</p>
+
+<pre class="prettyprint translatable" id="trans1_methods_intro">
+class Bicycle {
+
+	// Feilds - store information
+	
+	double wheelCircumfrance; // in meters
+	double gearRatio;	  // front/rear
+	double candence = 0;	  // pedal rhythm - revolutions per second
+	double speed = 0;	  // in meters per second
+
+	// Constructor - how to create objects
+
+	Bicycle(double wheelDiameter, int gearTeethFront, int gearTeethRear) {
+		wheelCircumfrance = Math.PI * wheelDiameter; // Math.PI == π
+		gearRatio = gearTeethFront / gearTeethRear;
+	}
+
+	// Methods - interact with objects
+
+	void setCandence(double candence){
+		this.candence = candence;
+		updateSpeed();
+	}
+	void updateSpeed(){
+		speed = candence * gearRatio * wheelCircumfrance;
+	}
+	double getSpeed(){
+		return speed;
+	}
+}
+</pre>
+<pre class="prettyprint translatable" id="trans2_methods_intro">
+</pre>
+<p>Notice that methods look very similar to constructors. One difference is that methods have a reference name that can be used to call the method. Methods may have any return type while constructors have the same type as the <code>class</code>.
+<br/><br/>
+Some of the bicycle's methods have something to <code>return</code>. <code>return</code> breaks out of the method and returns either an object, primative or nothing. The type of the returning value must be declared before the method name. If there is no return value, <code id="voidSection">void</code> must be declared.</p>
+
+
+<h2 id="newSection">Using the object</h2>
+<p class="translatable" id="trans1_new_object_use_intro">Now that we have a basic bicycle <code>class</code>, let's see how it can be used by other classes. To create a new bicycle object, use the constructor with the appropriate parameters. Let's make a bicycle with a wheel height of 0.665 meters and a gear ratio of 39/14</p>
+<p class="translatable" id="trans2_new_object_use_intro">ՈՒշադրություն դարձրեկ հեծանիվի շինարարը(constructor) որ պետկ է սարքի թիվ հատկորոշել։ Ասենք թե մեր հեծանիվի սարքը պետկ է շարժի հեծանիվը 5.8 մետեր ամէն ոտնակ պտույտ։ ՈՒրիշ օբյեկտները կարողեն ստեղծվել այս հեծանիվ այսպես։ </p>
+
+<pre class="prettyprint translatable" id="trans1_new_object_use">
+Bicycle myBicycle = new Bicycle(0.665, 39, 14);
+</pre>
+<pre class="prettyprint translatable" id="trans2_new_object_use">
+Հեծանիվ իմՀեծանիվս = new Հեծանիվ(0.665, 39, 14);
+</pre>
+
+<p>This creates a new bicycle called <code>myBicycle</code> which currently has a candence and speed of 0. In order to start riding it, we can change the candence as such:</p>
+
+<pre class="prettyprint translatable" id="trans1_change_candence">
+Bicycle myBicycle = new Bicycle(0.665, 39, 14);
+myBicycle.setCandence(1.3);
+</pre>
+<pre class="prettyprint translatable" id="trans2_change_candence">
+Հեծանիվ իմՀեծանիվս = new Հեծանիվ(0.665, 39, 14);
+իմՀեծանիվս.փոխիՌիթմը(1.3);
+</pre>
+<p>In order to check the speed, we can use the <code>getSpeed()</code> method which return the <code>speed</code> field. One common way Java programmers visualize such information is with the <code>System.out.println()</code> method which prints to a console for you to see.</p>
+
+<pre class="prettyprint translatable" id="trans1_check_speed">
+Bicycle myBicycle = new Bicycle(0.665, 39, 14);
+
+System.out.println("before: " + myBicycle.getSpeed());
+myBicycle.setCandence(1.3);
+System.out.println("after: " + myBicycle.getSpeed());
+</pre>
+<pre class="prettyprint translatable" id="trans2_check_speed">
+Հեծանիվ իմՀեծանիվս = new Հեծանիվ(5.8);
+
+System.out.println(իմՀեծանիվս.ինչէԱրագությունը());
+իմՀեծանիվս.փոխիՌիթմը(1.3);
+System.out.println(իմՀեծանիվս.ինչէԱրագությունը());
+</pre>
+
+<p>The above code would display the following on your console.</p>
+
+<pre class="prettyprint">
+before: 0
+after: 7.565740508
+</pre>
+
+<br/><br/>
+</body>
+
+

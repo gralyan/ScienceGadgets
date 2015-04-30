@@ -94,11 +94,11 @@ public class Student implements Serializable {
 			boolean isNewBadge = badges.add(earnedBadge);
 			if (isNewBadge) {
 				newBadges.add(earnedBadge);
-				if (Moderator.equationBrowser != null
-						&& Moderator.equationBrowser.challengeBrowser != null) {
-					Moderator.equationBrowser.challengeBrowser
-							.addProblemsForNewBadge(earnedBadge);
-				}
+//				if (Moderator.equationBrowser != null
+//						&& Moderator.equationBrowser.challengeBrowser != null) {
+//					Moderator.equationBrowser.challengeBrowser
+//							.addProblemsForNewBadge(earnedBadge);
+//				}
 			}
 		}
 

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="500"
+   height="150"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="while.svg"
+   inkscape:export-filename="/home/john/Desktop/Link to java_tutorial_armenian/images/syntax_anatomy/switch.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient6139">
+      <stop
+         id="stop6141"
+         offset="0"
+         style="stop-color:#ff00ff;stop-opacity:1;" />
+      <stop
+         style="stop-color:#0000ff;stop-opacity:1;"
+         offset="0.29360962"
+         id="stop6157" />
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0.55881649"
+         id="stop6155" />
+      <stop
+         style="stop-color:#ffff00;stop-opacity:1;"
+         offset="0.77517164"
+         id="stop6153" />
+      <stop
+         style="stop-color:#ff7c00;stop-opacity:1;"
+         offset="0.89251858"
+         id="stop6151" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="1"
+         id="stop6149" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4141">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop4143" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="1"
+         id="stop4145" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         id="path4263"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path5297"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send"
+       style="overflow:visible">
+      <path
+         id="path5309"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6139"
+       id="linearGradient4147"
+       x1="122.23438"
+       y1="867.35132"
+       x2="268.9039"
+       y2="938.88293"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.78628958,0,0,1.0397338,226.65655,-192.28455)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4141-1"
+       id="linearGradient4147-4"
+       x1="200.49387"
+       y1="889.16327"
+       x2="207.37096"
+       y2="903.44653"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient4141-1">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop4143-1" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="1"
+         id="stop4145-0" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4141-2"
+       id="linearGradient4147-0"
+       x1="200.49387"
+       y1="889.16327"
+       x2="207.37096"
+       y2="903.44653"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.84688995,0,0,1.0397338,31.585864,-140.33949)" />
+    <linearGradient
+       id="linearGradient4141-2">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop4143-8" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="1"
+         id="stop4145-1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4141-2"
+       id="linearGradient6709"
+       x1="311.96661"
+       y1="892.08929"
+       x2="316.67789"
+       y2="903.31586"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-4.6875,38.28125)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.28"
+     inkscape:cx="253.58066"
+     inkscape:cy="83.620703"
+     inkscape:document-units="px"
+     inkscape:current-layer="text10447"
+     showgrid="false"
+     inkscape:window-width="1319"
+     inkscape:window-height="744"
+     inkscape:window-x="47"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-902.36218)">
+    <g
+       style="font-size:17.53719902px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="text10447">
+      <rect
+         style="fill:url(#linearGradient6709);fill-opacity:1;stroke:#7f7f7f;stroke-width:1.22715175;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="rect6699"
+         width="222.05573"
+         height="51.839104"
+         x="192.43541"
+         y="911.63251" />
+      <rect
+         style="fill:#d45500;fill-opacity:1;stroke:none"
+         id="rect6701"
+         width="127.05825"
+         height="53.033009"
+         x="32.755005"
+         y="911.07684" />
+      <text
+         xml:space="preserve"
+         style="font-size:48px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         x="32.877541"
+         y="953.64148"
+         id="text6685"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan6687"
+           x="32.877541"
+           y="953.64148">while (condition){</tspan><tspan
+           sodipodi:role="line"
+           x="32.877541"
+           y="985.73248"
+           id="tspan6689"
+           style="font-size:20px;fill:#808080">          // do stuff as long as condition is <tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan6721">true</tspan></tspan><tspan
+           sodipodi:role="line"
+           x="32.877541"
+           y="1038.6415"
+           id="tspan6691">}</tspan></text>
+    </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot10535"
+       style="font-size:16px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><flowRegion
+         id="flowRegion10537"><rect
+           id="rect10539"
+           width="177.30673"
+           height="17.955112"
+           x="64.339149"
+           y="90.773064" /></flowRegion><flowPara
+         id="flowPara10541" /></flowRoot>  </g>
+</svg>
