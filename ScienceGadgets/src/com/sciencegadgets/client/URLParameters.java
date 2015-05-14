@@ -36,6 +36,7 @@ public class URLParameters {
 	public static final String TRUE = "true";
 	public static final String False = "false";
 	public static final String USER_ADMIN = "admin";
+	public static final String RANDOM_PROVIDED_DELIMITER = "_";
 
 	public enum Parameter {
 		//Always available
@@ -47,7 +48,9 @@ public class URLParameters {
 		//Only when activity==algebrasolve
 		goal,
 		//Only when activity==conversion
-		conversionvalue, unitattribute;
+		conversionvalue, unitattribute,
+		//Only activity==algebraedit and up until HistoryChange of activity==algebrasolve
+		randomprovided;
 	}
 
 	public static String getParameter(Parameter parameter) {

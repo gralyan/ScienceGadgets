@@ -44,6 +44,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.ConstantRandomizer;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
@@ -438,12 +439,14 @@ public class Moderator implements EntryPoint {
 				ActivityType activityType = ActivityType
 						.valueOf(activityParameter);
 				switch (activityType) {
-				case algebraedit:
 				case algebrasolve:
+					ConstantRandomizer.insertRandomProvided(parameterMap);
+					// fall through
+				case algebraedit:
 				case algebrasolvegoal:
 				case algebracreategoal:
 					String equationString = parameterMap
-							.get(Parameter.equation);
+					.get(Parameter.equation);
 					Element equationXML = new HTML(equationString).getElement()
 							.getFirstChildElement();
 					switchToAlgebra(equationXML, null, activityType, true);

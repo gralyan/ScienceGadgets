@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+<title>Java Basics for Tumo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+</style>
+
+</head>
+
+
+<body onload="prettyPrint(); makeTranslatable();">
+<h1>Control Decisions</h1>
+
+<h2><code>if else</code></h2>
+<p>Sometimes we need to make the decision whether or not to run code based on some condition. This is when the <code>if</code> fuctionality is used.</p>
+
+<img src='images/syntax_anatomy/if.svg' onerror="this.src='images/syntax_anatomy/if.png'" />
+
+<pre class="prettyprint largeFont">
+if (tired){
+	goToSleep();
+}
+</pre>
+
+<img src='images/syntax_anatomy/if_else.svg' onerror="this.src='images/syntax_anatomy/if_else.png'" />
+
+<pre class="prettyprint largeFont">
+if (tired){
+	goToSleep();
+}else{
+	goOutAndPlay();
+}
+</pre>
+
+<img src='images/syntax_anatomy/if_elseif_else.svg' onerror="this.src='images/syntax_anatomy/if_elseif_else.png'" />
+
+<pre class="prettyprint largeFont">
+if (tired){
+	goToSleep();
+}else if(haveWork){
+	doWork();
+}else{
+	goOutAndPlay();
+}
+</pre>
+
+<p>You can have as many <code>else if</code> decisions as you would like. Only the first true condition will be used, no other condition will be considered. You may also nest other conditional decisions.</p>
+
+<h2><code>switch</code></h2>
+<p>Sometimes there are many possibilities depending on one condition. In this case we could use <code>switch</code>.</p>
+
+<img src='images/syntax_anatomy/switch.svg' onerror="this.src='images/syntax_anatomy/switch.png'" />
+
+<pre class="prettyprint largeFont">
+switch (itemToPlayWith){
+	case soccerBall :
+		playSoccer(); 
+		break;
+	case multiGameBoard : // don't break, fall through
+	case chessBoard :
+		playChess();
+		break;
+	default :
+		playHideAndGoSeek();
+      }
+</pre>
+
+<p><code>switch</code> is similar to <code>else if</code> except for a few differences.</p>
+<ul><li>Switch focuses on one condition</li>
+<li>Switch allows multiple cases to run the same code when <code>break</code> isn't used</li>
+<li>Switch is faster but can't consider everything as a condition</li><ul>
+
+</body>

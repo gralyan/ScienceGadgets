@@ -26,6 +26,10 @@ import java.util.LinkedList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.ui.HTML;
+import com.sciencegadgets.client.JSNICalls;
+import com.sciencegadgets.client.URLParameters;
+import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
@@ -49,66 +53,133 @@ public class ConstantRandomizer {
 	 */
 	public static void randomizeNumbers(EquationTree mTree, boolean randomize) {
 
-		LinkedList<EquationNode> numbers = mTree.getNodesByType(TypeSGET.Number);
+		LinkedList<EquationNode> numbers = mTree
+				.getNodesByType(TypeSGET.Number);
 
 		for (EquationNode num : numbers) {
 			String varRandomness = num.getAttribute(MathAttribute.Randomness);
 
-			if (varRandomness.contains(RandomSpecPanel.DELIMITER)) {
-				
+			if (varRandomness.contains(RandomSpecPanel.RANDOMNESS_DELIMITER)) {
+
 				if (randomize) {
-					if(RandomSpecPanel.RANDOM_SYMBOL.equals(num.getSymbol())) {
+					if (RandomSpecPanel.RANDOM_SYMBOL.equals(num.getSymbol())) {
 						BigDecimal randonNumber = getRandomNumber(varRandomness);
 						num.setSymbol(randonNumber.toPlainString());
-					}else {
+					} else {
 						num.setAttribute(MathAttribute.Randomness, null);
 					}
 				} else {
 					num.setSymbol(RandomSpecPanel.RANDOM_SYMBOL);
 				}
 			}
-		} 
+		}
 	}
-	
-	public static HashMap<String, String> randomizeNumbers(Element xml, boolean randomize) {
-		
+
+	public static HashMap<String, String> randomizeNumbers(Element xml,
+			boolean randomize) {
+
 		HashMap<String, String> randomMap = new HashMap<String, String>();
-		
-		NodeList<Element> numbers = xml.getElementsByTagName(TypeSGET.Number.getTag());
-		NodeList<Element> variable = xml.getElementsByTagName(TypeSGET.Variable.getTag());
-		
-		for (int i=0 ; i<variable.getLength() ; i++) {
+
+		NodeList<Element> numbers = xml.getElementsByTagName(TypeSGET.Number
+				.getTag());
+		NodeList<Element> variable = xml.getElementsByTagName(TypeSGET.Variable
+				.getTag());
+
+		for (int i = 0; i < variable.getLength(); i++) {
 			Element var = variable.getItem(i);
 			randomMap.put(var.getAttribute("id"), var.getInnerText());
-			
+
 		}
-		for (int i=0 ; i<numbers.getLength() ; i++) {
+		for (int i = 0; i < numbers.getLength(); i++) {
 			Element num = numbers.getItem(i);
-			
-			String randomness = num.getAttribute(MathAttribute.Randomness.getAttributeName());
-			
-			if (randomness.contains(RandomSpecPanel.DELIMITER)) {
-				
+
+			String randomness = num.getAttribute(MathAttribute.Randomness
+					.getAttributeName());
+
+			if (randomness.contains(RandomSpecPanel.RANDOMNESS_DELIMITER)) {
+
 				if (randomize) {
-					if(RandomSpecPanel.RANDOM_SYMBOL.equals(num.getInnerText())) {
+					if (RandomSpecPanel.RANDOM_SYMBOL
+							.equals(num.getInnerText())) {
 						BigDecimal randonNumber = getRandomNumber(randomness);
-						randomMap.put(num.getAttribute("id"), randonNumber.toPlainString());
+						randomMap.put(num.getAttribute("id"),
+								randonNumber.toPlainString());
 						num.setInnerText(randonNumber.toPlainString());
-					}else {
-						num.setAttribute(MathAttribute.Randomness.getAttributeName(), null);
+					} else {
+						num.setAttribute(
+								MathAttribute.Randomness.getAttributeName(),
+								null);
 					}
 				} else {
 					num.setInnerText(RandomSpecPanel.RANDOM_SYMBOL);
 				}
 			}
-		} 
+		}
 		return randomMap;
+	}
+
+	public static HashMap<Parameter, String> insertRandomProvided(
+			HashMap<Parameter, String> parameterMap) {
+
+		String randomProvidedString = parameterMap
+				.get(Parameter.randomprovided);
+		String[] randomProvidedArray = randomProvidedString
+				.split(URLParameters.RANDOM_PROVIDED_DELIMITER);
+
+		String equationString = parameterMap.get(Parameter.equation);
+		Element equationXML = new HTML(equationString).getElement()
+				.getFirstChildElement();
+
+		NodeList<Element> numberNodes = equationXML
+				.getElementsByTagName(TypeSGET.Number.getTag());
+		LinkedList<Element> nodesExpectingProvidedNumber = new LinkedList<Element>();
+
+		for (int i = 0; i < numberNodes.getLength(); i++) {
+			Element num = numberNodes.getItem(i);
+			String randomness = num.getAttribute(MathAttribute.Randomness
+					.getAttributeName());
+			if (randomness.contains(RandomSpecPanel.RANDOM_PROVIDED)) {
+				nodesExpectingProvidedNumber.add(num);
+			}
+		}
+
+		if (randomProvidedArray.length == nodesExpectingProvidedNumber.size()) {
+
+			for (int i = 0; i < nodesExpectingProvidedNumber.size(); i++) {
+				Element expecting = nodesExpectingProvidedNumber.get(i);
+				String provided = randomProvidedArray[i];
+				expecting.setInnerText(provided);
+				
+				expecting.removeAttribute(MathAttribute.Randomness
+					.getAttributeName());
+			}
+			
+			parameterMap.remove(Parameter.randomprovided);
+			parameterMap.put(Parameter.equation, JSNICalls.elementToString(equationXML));
+
+		} else {
+			String nodeAvailableList = "";
+			for (Element nodeAvailable : nodesExpectingProvidedNumber) {
+				nodeAvailableList = nodeAvailableList + "\n"
+						+ JSNICalls.elementToString(nodeAvailable);
+			}
+			JSNICalls
+					.error("Random numbers provided don't match the spots available:\n"
+							+ randomProvidedArray.length
+							+ " provided: "
+							+ randomProvidedString
+							+ "\n"
+							+ nodesExpectingProvidedNumber.size()
+							+ " available: " + nodeAvailableList);
+		}
+		return parameterMap;
 	}
 
 	private static BigDecimal getRandomNumber(String varRandomness) {
 
 		// negative_lowerBound_upperBound_decimal place
-		String[] specs = varRandomness.split(RandomSpecPanel.DELIMITER);
+		String[] specs = varRandomness
+				.split(RandomSpecPanel.RANDOMNESS_DELIMITER);
 		try {
 			String negativity = specs[0];
 			double lowerBound = Double.parseDouble(specs[1]);

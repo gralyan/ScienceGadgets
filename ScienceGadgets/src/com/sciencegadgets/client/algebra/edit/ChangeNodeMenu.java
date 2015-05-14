@@ -219,6 +219,13 @@ public class ChangeNodeMenu extends CommunistPanel {
 			switch (parent.getType()) {
 			case Term:
 			case Sum:
+				
+//				if(parent != null && parent.getFirstChild() != null) {
+//					nodeidToAutoSelect = parent.getFirstChild().getId();
+//				}else if(!TypeSGET.Equation.equals(parent.getParentType())){
+//					nodeidToAutoSelect = parent.getParent().getId();
+//				}
+
 				if (node.getIndex() == 0) {
 					EquationNode nextOp = node.getNextSibling();
 					if (nextOp != null
@@ -233,13 +240,6 @@ public class ChangeNodeMenu extends CommunistPanel {
 				}
 				node.remove();
 				parent.decase();
-				
-				if(parent != null && parent.getFirstChild() != null) {
-					JSNICalls.error(parent.toString());
-					nodeidToAutoSelect = parent.getFirstChild().getId();
-				}else if(!TypeSGET.Equation.equals(parent.getParentType())){
-					nodeidToAutoSelect = parent.getParent().getId();
-				}
 				break;
 			case Exponential:
 			case Fraction:

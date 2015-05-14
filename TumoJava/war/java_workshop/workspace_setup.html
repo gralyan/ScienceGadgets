@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<head>
+<title>Workspace Setup</title>
+
+<link rel="stylesheet" type="text/css" href="setup.css">
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+
+<body onload="prettyPrint()">
+
+<h1>Workspace Setup</h1>
+
+<hr/>
+<h2>JDK - Java Development Kit</h2>
+<p>Look up "jdk" and select "Java SE Development Kit 8"</p>
+<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">JDK Download</a>
+<p>Check the agreement button and select the appropriate download for your operating system</p>
+<img src="images/setup/7.jpg"></img>
+<p>Open your downloads folder and run the JDK. Follow the instruction to install the JDK</p>
+<img src="images/setup/8.jpg"></img>
+
+<hr/>
+<h2>Eclipse</h2>
+
+<p>Find whether you're using a 32-bit or 64-bit operating system. This can usually be found in the "Properties" description of your computer</p>
+<img src="images/setup/1.jpg"></img>
+<p>The System Properties should show either 32-bit or 64-bit but if neither is present, it may be 32</p>
+<img src="images/setup/2.jpg"></img>
+<p>Look up "Eclipse Download" select "Eclipse IDE for Java Developers" </p>
+<a href="http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/lunasr2">Eclipse Download</a>
+<br/><br/>
+<p>Select your operating system</p>
+<img src="images/setup/4.jpg"></img>
+<p>Click the green button to start downloading Eclipse</p>
+<img src="images/setup/5.jpg"></img>
+<p>Right click the downloaded zip and extract the contents. The zip can be thrown away</p>
+<img src="images/setup/9.jpg"></img>
+<p>The extracted folder will contain "eclipse.exe" which opens Eclipse. You may want to create a short-cut on your desktop</p>
+<img src="images/setup/10.jpg"></img>
+
+<hr/>
+<h2>GWT - Google Web Toolkit</h2>
+<p>Open Eclipse and go to Help -> Install New Software...</p>
+<img src="images/setup/11.jpg"></img>
+<p>Specify Work with: <strong>https://dl.google.com/eclipse/plugin/4.4</strong></p>
+<p>Check "Google Plugin for Eclipse (required)"</p>
+<p>Follow the instructions. Don't forget to accept the agreement</p>
+<img src="images/setup/12.jpg"></img>
+
+<hr/>
+<h2>GWT 2.7 - Google Web Toolkit</h2>
+<a href="http://www.gwtproject.org/download.html">GWT 2.7 SDK Download</a>
+<p>Look up and download the newest GWT SDK. This can also be done in the same way we downloaded the GWT plugin in Eclipse, but this may give you an older version</p>
+<img src="images/setup/13.jpg"></img>
+<p>Extract the zipped file just like before</p>
+<img src="images/setup/14.jpg"></img>
+<p>In Eclipse, got to Window -> Preferences -> Google -> Web Toolkit -> Add -> Browse. Find your GWT 2.7 SDK</p>
+<img src="images/setup/16.jpg"></img>
+
+<hr/>
+<a href="project_setup.html">Setup your Project</a>
+<hr/>
+<h2>GWT-DND - Drag and Drop library</h2>
+<a href="https://github.com/fredsa/gwt-dnd/wiki/GettingStarted">GWT DND Download</a>
+<p>Download the newest gwt-dnd Jar</p>
+<img src="images/setup/17.jpg"></img>
+<p>Add the following line to your *.gwt.xml</p>
+<pre class="prettyprint">
+	&lt;inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/&gt;
+</pre>
+<img src="images/setup/18.jpg"></img>
+<p>Right-click your project -> Build Path -> Configure Build Path... -> Add External Jars. Find the gwt-dnd Jar your downloaded.</p>
+<img src="images/setup/19.jpg"></img>
+</body>
+</html>

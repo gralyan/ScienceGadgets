@@ -1,174 +1,174 @@
 @CHARSET "UTF-8";
 
-.interactiveEquation {
+.sg-interactiveEquation {
 	/* 	gray out the background of the equation to make wrappers stand out */
 	color: #A0A0A0;
 	position: relative;
 	text-shadow: 0em 0em 4px #000000;
 }
 
-.displayWrapper {
+.sg-displayWrapper {
 	color: black;
 	cursor: move;
 }
-.displayWrapper:not(.selectedWrapper):hover {
+.sg-displayWrapper:not(.sg-selectedWrapper):hover {
 	text-shadow: 0em 0em .15em #000000;
 }
 
 /*---------------parentWrapper---------------*/
 
 /* Note * There should be no spaces, auto-formatting adds space*/
-.parentWrapper>.fenced.Sum {
+.sg-parentWrapper>.sg-fenced.sg-Sum {
 	background-image: url('images/tile_sumChild.png');
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 }
 /* Note * There should be no spaces, auto-formatting adds space*/
-.parentWrapper.in-sum.Operation { /* add/subtract(+/-) */
+.sg-parentWrapper.sg-in-sum.sg-Operation { /* add/subtract(+/-) */
 	/* 	background-image: url('images/tile_sumOp.png'); */
 	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
 	
 }
 
 /* Note * There should be no spaces, auto-formatting adds space*/
-.parentWrapper.Sum {
+.sg-parentWrapper.sg-Sum {
 	/* 	background-image: url('images/tile_sumChild.png'); */
 	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
 	background-color: gold;
 }
 
 /* Note * There should be no spaces, auto-formatting adds space*/
-.parentWrapper.in-term.Operation { /* multiply(x) */
+.sg-parentWrapper.sg-in-term.sg-Operation { /* multiply(x) */
 	/* 	background-image: url('images/tile_termOp.png'); */
 	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
 	
 }
 
-.parentWrapper.Term {
+.sg-parentWrapper.sg-Term {
 	/* 	background-image: url('images/tile_termChild.png'); */
 	/* 	background-repeat: repeat; */
 	background-color: red;
 }
 
-.parentWrapper.Fraction {
+.sg-parentWrapper.sg-Fraction {
 	background-color: orange;
 }
 
-.parentWrapper.Exponential {
+.sg-parentWrapper.sg-Exponential {
 	background-color: Maroon;
 }
 
-.parentWrapper.Log {
+.sg-parentWrapper.sg-Log {
 	background-color: SpringGreen;
 }
 
-.parentWrapper.Trig {
+.sg-parentWrapper.sg-Trig {
 	background-color: Peru; /* 	light brown */
 }
 
-.parentWrapper.Number {
+.sg-parentWrapper.sg-Number {
 	background-color: SkyBlue;
 }
 
-.parentWrapper.Variable {
+.sg-parentWrapper.sg-Variable {
 	background-color: blue;
 }
 
-.parentWrapper.Equation { /* 	background-color: white; */
+.sg-parentWrapper.sg-Equation { /* 	background-color: white; */
 	background-color: darkGreen;
 }
 
 /*---------------displayWrapper---------------*/
 
-.displayWrapper.in-sum.Operation { /* add/subtract(+/-) */
+.sg-displayWrapper.sg-in-sum.sg-Operation { /* add/subtract(+/-) */
 	color: black;
 }
 
-.displayWrapper.Sum {
+.sg-displayWrapper.sg-Sum {
 	color: gold;
 }
 
-.displayWrapper.in-term.Operation { /* multiply(x) */
+.sg-displayWrapper.sg-in-term.sg-Operation { /* multiply(x) */
 	color: black;
 }
 
-.displayWrapper.Term {
+.sg-displayWrapper.sg-Term {
 	color: red;
 }
 
-.displayWrapper.Fraction {
+.sg-displayWrapper.sg-Fraction {
 	color: orange;
 }
 
-.displayWrapper.Exponential {
+.sg-displayWrapper.sg-Exponential {
 	color: Maroon;
 }
 
-.displayWrapper.Log {
+.sg-displayWrapper.sg-Log {
 	color: SpringGreen;
 }
 
-.displayWrapper.Trig {
+.sg-displayWrapper.sg-Trig {
 	color: Peru; /* 	light brown */
 }
 
-.displayWrapper.Number {
+.sg-displayWrapper.sg-Number {
 	color: SkyBlue;
 }
 
-.displayWrapper.Variable {
+.sg-displayWrapper.sg-Variable {
 	color: blue;
 }
 
-.displayWrapper.Equation { /* 	background-color: white; */
+.sg-displayWrapper.sg-Equation { /* 	background-color: white; */
 	
 }
 /*---------------EquationHTML (display)---------------*/
-.Equation {
+.sg-Equation {
 	font-family: math;
 	display: inline-block;
 }
 
-.Fraction {
+.sg-Fraction {
 	vertical-align: middle;
 }
 
-.in-equation {
+.sg-in-equation {
 	display: inline-block;
 	/* 	position: relative; */
 }
 
-.in-sum {
+.sg-in-sum {
 	display: inline-block;
 	/* 	position: relative; */
 }
 
-.in-term {
+.sg-in-term {
 	display: inline-block;
 	/* 	position: relative; */
 }
 
-.in-exponential-base {
+.sg-in-exponential-base {
 	display: inline-block;
 }
 
-.in-exponential-exponent { /* 	font-size: 40%; */
+.sg-in-exponential-exponent { /* 	font-size: 40%; */
 	display: inline-block;
 	vertical-align: super;
 	position: relative;
 }
 
 /* Note * There should be no spaces, auto-formatting adds space*/
-.in-exponential-exponent.Fraction {
+.sg-in-exponential-exponent.sg-Fraction {
 	font-size: 20%;
 }
 
 /* Note * There should be no spaces, auto-formatting adds space*/
-.in-exponential-exponent:not(.Fraction){
+.sg-in-exponential-exponent:not(.sg-Fraction){
 	font-size: 40%;
 }
 
-.in-fraction-numerator {
+.sg-in-fraction-numerator {
 	padding-left: 0.7em;
 	padding-right: 0.7em;
 	text-decoration: none;
@@ -176,7 +176,7 @@
 	border-bottom: 1px solid black;
 }
 
-.in-fraction-denominator {
+.sg-in-fraction-denominator {
 	padding-left: 0.7em;
 	padding-right: 0.7em;
 /* 	text-decoration: none; */
@@ -184,36 +184,36 @@
 /* 	border-top: 1px solid black; */
 }
 
-.in-log {
+.sg-in-log {
 	display: inline-block;
 	/* 	position: relative; */
-	border-right: solid .05em;
-	border-left: solid .05em;
+	border-right: solid 0.05em;
+	border-left: solid 0.05em;
 	border-radius: 1em;
 	padding-left: 0.15em;
 	padding-right: 0.15em;
 	margin: 0.1em;
 }
 
-.in-trig {
+.sg-in-trig {
 	display: inline-block;
 	/* 	position: relative; */
-	border-right: solid .05em;
-	border-left: solid .05em;
+	border-right: solid 0.05em;
+	border-left: solid 0.05em;
 	border-radius: 1em;
 	padding-left: 0.15em;
 	padding-right: 0.15em;
 	margin: 0.1em;
 }
 
-.in-log-base {
+.sg-in-log-base {
 	font-size: 40%;
 	display: inline-block;
 	vertical-align: sub;
 	/* 	position: relative; */
 }
 
-.fenced {
+.sg-fenced {
 	border-right: solid .05em;
 	border-left: solid .05em;
 	border-radius: 1em;
@@ -222,25 +222,25 @@
 	margin: 0.1em;
 }
 
-.functionName {
+.sg-functionName {
 	display: inline-block;
 	/* 	position: relative; */
 	vertical-align: middle;
 }
-.displayWrapper>.unit{
+.sg-displayWrapper>.sg-unit{
 	color:black;
 }
-.unit {
+.sg-unit {
 	font-family: sans-serif;
 }
 
-.subscript {
+.sg-subscript {
 	vertical-align: sub;
 	display: inline-block;
 	font-size: 50%;
 }
 
-.numberValue {
+.sg-numberValue {
 	z-index: 3;
 	overflow: hidden;
 	color: gray;

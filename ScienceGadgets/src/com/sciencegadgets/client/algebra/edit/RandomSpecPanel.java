@@ -20,6 +20,7 @@
 package com.sciencegadgets.client.algebra.edit;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -29,19 +30,21 @@ import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sciencegadgets.client.ui.CSS;
 
-public class RandomSpecPanel extends FlowPanel {
+public abstract class RandomSpecPanel extends FlowPanel {
 
 	RandomSpecPanel randSpec = this;
 
 	public static final String ALWAYS = "A";
 	public static final String SOMETIMES = "S";
 	public static final String NEVER = "N";
-	
+
 	public static final String RANDOM_SYMBOL = "?";
-	public static final String DELIMITER = "_";
+	public static final String RANDOMNESS_DELIMITER = "_";
+	public static final String RANDOM_PROVIDED = "provided";
 
 	private RadioButton neverNeg;
 	private RadioButton sometimesNeg;
@@ -53,18 +56,63 @@ public class RandomSpecPanel extends FlowPanel {
 	private Label response;
 	Button setRandonButton = new Button("Set Random");
 
+	private final VerticalPanel autoRandomPanel = new VerticalPanel();
+	private final FlowPanel providedRandomPanel = new FlowPanel();
+	private final ScrollPanel scrollPanel = new ScrollPanel();
+	private final ToggleButton autoOrProvidedToggle = new ToggleButton("Provide",
+			"Auto");
+
 	public RandomSpecPanel() {
 
 		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
 		this.setWidth("100%");
 		this.setHeight("100%");
-		
-		VerticalPanel mainPanel = new VerticalPanel();
-		ScrollPanel scrollPanel = new ScrollPanel(mainPanel);
+
+		makeAutoRandomPanel();
+		makeProvidedRandomPanel();
+
+		autoOrProvidedToggle.addStyleName(CSS.TRANSFORMATION_BUTTON);
+		autoOrProvidedToggle.getElement().getStyle().setMargin(10, Unit.PX);
+		autoOrProvidedToggle.getElement().getStyle().setBackgroundColor("silver");;
+		autoOrProvidedToggle.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (autoOrProvidedToggle.getValue()) {
+					scrollPanel.remove(autoRandomPanel);
+					scrollPanel.add(providedRandomPanel);
+					onSetRandom();
+				} else {
+					scrollPanel.remove(providedRandomPanel);
+					scrollPanel.add(autoRandomPanel);
+				}
+			}
+		});
+
+		scrollPanel.add(autoRandomPanel);
+
+		this.add(autoOrProvidedToggle);
+		this.add(scrollPanel);
+
+	}
+
+	private void makeProvidedRandomPanel() {
+		providedRandomPanel.setSize("100%", "100%");
+
+		providedRandomPanel
+				.add(new Label(
+						"The random number should be provided programmatically. "
+						+ "This allows the linking website to retain and use the "
+						+ "numbers it generated. For example, a website can provide "
+						+ "a question with random numbers and expect the appropriate "
+						+ "answer after the equation has been solved"));
+
+	}
+
+	private void makeAutoRandomPanel() {
 
 		Label label1 = new Label("Negativity");
 		label1.setStyleName(CSS.ROW_HEADER);
-		mainPanel.add(label1);
+		autoRandomPanel.add(label1);
 
 		neverNeg = new RadioButton("neg", "Never");
 		sometimesNeg = new RadioButton("neg", "Sometimes");
@@ -73,12 +121,12 @@ public class RandomSpecPanel extends FlowPanel {
 		negativeSelection.add(neverNeg);
 		negativeSelection.add(sometimesNeg);
 		negativeSelection.add(alwaysNeg);
-		mainPanel.add(negativeSelection);
+		autoRandomPanel.add(negativeSelection);
 
 		Label label2 = new Label("Range");
 		label2.setStyleName(CSS.ROW_HEADER);
 		label2.getElement().getStyle().setMarginTop(5, Unit.PX);
-		mainPanel.add(label2);
+		autoRandomPanel.add(label2);
 
 		HorizontalPanel rangeSelection = new HorizontalPanel();
 		lowerBound = new DoubleBox();
@@ -88,64 +136,71 @@ public class RandomSpecPanel extends FlowPanel {
 		upparBound = new DoubleBox();
 		upparBound.setSize("50px", "30px");
 		rangeSelection.add(upparBound);
-		mainPanel.add(rangeSelection);
+		autoRandomPanel.add(rangeSelection);
 
-		Label label3 = new Label(
-				"Decimal places");
+		Label label3 = new Label("Decimal places");
 		label3.setStyleName(CSS.ROW_HEADER);
 		label3.getElement().getStyle().setMarginTop(5, Unit.PX);
-		mainPanel.add(label3);
+		autoRandomPanel.add(label3);
 
 		decPlace = new IntegerBox();
 		decPlace.setSize("50px", "30px");
 		decPlace.setText("0");
-		mainPanel.add(decPlace);
+		autoRandomPanel.add(decPlace);
 
 		setRandonButton.setSize("100%", "100px");
-		mainPanel.add(setRandonButton);
+		autoRandomPanel.add(setRandonButton);
+		
+		setRandonButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onSetRandom();
+			}
+		});
 
 		response = new Label("");
 		response.getElement().getStyle().setColor("red");
-		mainPanel.add(response);
-
-		this.add(scrollPanel);
+		autoRandomPanel.add(response);
 
 	}
 	
-	public void addOkClickHandler(ClickHandler handler) {
-		setRandonButton.addClickHandler(handler);
-	}
+	protected abstract void onSetRandom();
 
 	public String getRandomness() {
+		
+		if(autoOrProvidedToggle.getValue()) {
+			return RANDOM_PROVIDED;
+		}
 
-			String neg = null;
-			if (alwaysNeg.getValue()) {
-				neg = ALWAYS;
-			} else if (sometimesNeg.getValue()) {
-				neg = SOMETIMES;
-			} else if (neverNeg.getValue()) {
-				neg = NEVER;
-			}
+		String neg = null;
+		if (alwaysNeg.getValue()) {
+			neg = ALWAYS;
+		} else if (sometimesNeg.getValue()) {
+			neg = SOMETIMES;
+		} else if (neverNeg.getValue()) {
+			neg = NEVER;
+		}
 
-			Double upperB = upparBound.getValue();
-			Double lowerB = lowerBound.getValue();
+		Double upperB = upparBound.getValue();
+		Double lowerB = lowerBound.getValue();
 
-			Integer decP = decPlace.getValue();
-			
-			//Only proceed if all the input was valid
-			if (neg == null || upperB == null || lowerB == null || decP == null) {
-				response.setText("All the fields must be filled");
-				return null;
-			} else if (upperB < lowerB) {
-				response.setText("The upper bound must be greater than the lower bound");
-				return null;
-			} else if (upperB < 0 || lowerB < 0) {
-				response.setText("The bounds shouldn't be negative");
-				return null;
-			} else {
-				response.setText("");
-				return neg + DELIMITER + lowerB + DELIMITER + upperB + DELIMITER + decP;
-			}
+		Integer decP = decPlace.getValue();
+
+		// Only proceed if all the input was valid
+		if (neg == null || upperB == null || lowerB == null || decP == null) {
+			response.setText("All the fields must be filled");
+			return null;
+		} else if (upperB < lowerB) {
+			response.setText("The upper bound must be greater than the lower bound");
+			return null;
+		} else if (upperB < 0 || lowerB < 0) {
+			response.setText("The bounds shouldn't be negative");
+			return null;
+		} else {
+			response.setText("");
+			return neg + RANDOMNESS_DELIMITER + lowerB + RANDOMNESS_DELIMITER
+					+ upperB + RANDOMNESS_DELIMITER + decP;
+		}
 
 	}
 

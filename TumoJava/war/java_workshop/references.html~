@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<head>
+<title>Java Basics for Tumo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+</head>
+
+<body onload="prettyPrint(); makeTranslatable();">
+<h1>References</h1>
+
+<!--
+-
+-Reserved Words section
+-
+-->
+
+<h2>Reserved Words - Հիմնաբառեր</h2>
+
+<table class="src">
+<tbody><tr>
+<td>abstract</td>
+<td>assert</td>
+<td><a href="#booleanSection">boolean</a></td>
+<td>break</td>
+<td><a href="#byteSection">byte</a></td>
+<td>case</td>
+<td>catch</td>
+<td><a href="#charSection">char</a></td>
+</tr><tr>
+<td><a href="#classSection">class</a></td>
+<td>const</td>
+<td>continue</td>
+<td>default</td>
+<td>do</td>
+<td><a href="#doubleSection">double</a></td>
+<td>else</td>
+<td>enum</td>
+</tr><tr>
+<td>extends</td>
+<td><a href="#finalSection">final</a></td>
+<td>finally</td>
+<td><a href="#floatSection">float</a></td>
+<td>for</td>
+<td>goto</td>
+<td>if</td>
+<td>implements</td>
+</tr><tr>
+<td>import</td>
+<td>instanceof</td>
+<td><a href="#intSection">int</a></td>
+<td>interface</td>
+<td><a href="#longSection">long</a></td>
+<td>native</td>
+<td><a href="#newSection">new</a></td>
+<td><a href="#packageSection">package</a></td>
+</tr><tr>
+<td><a href="#privateSection">private</a></td>
+<td><a href="#protectedSection">protected</a></td>
+<td><a href="#publicSection">public</a></td>
+<td><a href="#returnSection">return</a></td>
+<td><a href="#shortSection">short</a></td>
+<td><a href="#staticSection">static</a></td>
+<td>strictfp</td><td>super</td>
+</tr><tr>
+<td>switch</td>
+<td>synchronized</td>
+<td><a href="#constructorSection">this</a></td>
+<td>throw</td>
+<td>throws</td>
+<td>transient</td>
+<td>try</td>
+<td><a href="#voidSection">void</a></td>
+</tr><tr>
+<td>volatile</td>
+<td>while</td></tr>
+</tbody></table>
+
+<h4>Բառացիներ ֊ Literals</h4>
+<table class="src">
+<tbody><tr><td>true</td><td>false</td><td>null</td></tr>
+</tbody></table>
+
+<!--
+-
+-primatives section
+-
+-->
+<h2 id="primativesSection">Primatives - Նախնական</h2>
+<table class="src" style="font-size:75%;">
+<tbody><tr>
+<th></th>
+<th>Տեսակ</th>
+<th>Չափ (bits)</th>
+<th>Նվազագույն</th>
+<th>Առավելագույն</th>
+<th>Օրինակ</th>
+</tr>
+<tr title="+127 միջև -128">
+<th title="" rowspan="5">Ամբողջ թիվ</th>
+<th><code id="byteSection">byte</code></th>
+<td>8</td>
+<td>-128</td>
+<td>127</td>
+<td><code>byte b = 65;</code></td>
+</tr>
+<tr title="Ամբողջ Unicode">
+<th><code id="charSection">char</code></th>
+<td>16</td>
+<td>0</td>
+<td>2<sup>16</sup>-1</td>
+<td><code>char c = 'A';<br>
+char c = 65;</code></td>
+</tr>
+<tr title="+32,767 միջև -32,768">
+<th><code id="shortSection">short</code></th>
+<td>16</td>
+<td>-2<sup>15</sup></td>
+<td>2<sup>15</sup>-1</td>
+<td><code>short s = 65;</code></td>
+</tr>
+<tr title="+2,147,483,647 միջև -2,147,483,648">
+<th><code id="intSection">int</code></th>
+<td>32</td>
+<td>-2<sup>31</sup></td>
+<td>2<sup>31</sup>-1</td>
+<td><code>int i = 65;</code></td>
+</tr>
+<tr title="+9,223,372,036,854,775,807 միջև -9,223,372,036,854,775,808">
+<th><code id="longSection">long</code></th>
+<td>64</td>
+<td>-2<sup>63</sup></td>
+<td>2<sup>63</sup>-1</td>
+<td><code>long l = 65L;</code></td>
+</tr>
+<tr title="3.402,823,5&nbsp;E+38 միջև 1.4&nbsp;E-45">
+<th title="" rowspan="2">Կոտորակ թիվ</th>
+<th><code id="floatSection">float</code></th>
+<td>32</td>
+<td>2<sup>-149</sup></td>
+<td>(2-2<sup>-23</sup>)·2<sup>127</sup></td>
+<td><code>float f = 65f;</code></td>
+</tr>
+<tr title="1.797,693,134,862,315,7&nbsp;E+308 միջև 4.9&nbsp;E-324">
+<th><code id="doubleSection">double</code></th>
+<td>64</td>
+<td>2<sup>-1074</sup></td>
+<td>(2-2<sup>-52</sup>)·2<sup>1023</sup></td>
+<td><code>double d = 65.55;</code></td>
+</tr>
+<tr title="այո(true) կամ ոչ(false)">
+<th title="" rowspan="2">ՈՒրիշ</th>
+<th><code id="booleanSection">boolean</code></th>
+<td>1</td>
+<td>false(ոչ)</td>
+<td>true(այո)</td>
+<td><code>boolean b = true;</code></td>
+</tr>
+<tr>
+<th><code>void</code></th>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+</tr>
+</tbody></table>
+
+
+<!--
+-
+-access modifier section
+-
+-->
+<h2>Acess Modifiers - Ով կարող է  օգտագործել և փոխել</h2>
+<p class="translatable" title="sdf">Հեծանիվի բոլոր հատկությունները (feilds) թաքուն (<a href='#privateSection'>private<a>) էն բացի ինչվոր անփոփոխ
+(<a href='#finalSection'>final<a>) էն որովհետեվ չենք ուզում փոխվեն արանց մեթոդ օրտագործելու։ Ինչ քան կարողեք թաքուն պահեկ հատկությունները և օրտագործեք բերող (getter) և փոխող (setter) մետոդներ ինչպես հարմար է ։ Պետկչի թաքուն պահել անփոփոխի
+(<a href='#finalSection'>final<a>) հատկությունները, դրանք կարողեն ազատ ցույց տալ (<a href='#publicSection'>public<a>)։</p>
+
+<p>Մետոդներ ել նույնպես կարող լինեն թաքուն յեպվոր պետք չեն ուրիշ class-ին</p>
+
+<p>class-ին մենակ ոչինչ կամ public կարողեն լինել</p>
+
+<div>
+<strong id="publicSection">public -</strong> ամեն օբյեկտներ<br/>
+<strong id="protectedSection">protected -</strong> subclassներ և այս packageի classեր<br/>
+<strong><em>չմասնավորեցված</em> -</strong> մենաք այս packageի classեր<br/>
+<strong id="privateSection">private -</strong> մենաք այս classը<br/>
+<div>
+<table class="src">
+<tbody>
+<tr><th></th><th>նույն classը</th><th>Package</th><th>Subclassներ</th><th>բոլոր</th></tr>
+<tr><th>public</th><td class="true">այո</td><td class="true">այո</td><td class="true">այո</td><td class="true">այո</td></tr>
+<tr><th>protected</th><td class="true">այո</td><td class="true">այո</td><td class="true">այո</td><td class="false">ոչ</td></tr>
+<tr><th><em>չմասնավորեցված</em></th><td class="true">այո</td><td class="true">այո</td><td class="false">ոչ</td><td class="false">ոչ</td></tr>
+<tr><th>private</th><td class="true">այո</td><td class="false">ոչ</td><td class="false">ոչ</td><td class="false">ոչ</td></tr>
+</tbody></table>
+<em id="packageSection">*Package - ֆայլը որ այս classի փաստաթուղթը գտնվում է</em><br/>
+<em>*Subclass - ամեն class որ <a href="#extendsSection">extends</a> անում է այս class</em><br/>
+
+<br/>
+
+<h2>non-Acess Modifiers - ՈՒրիշ Բաղադրիչներ</h2>
+<div>
+<strong id="staticSection">static -</strong> նույնն է բոլոր էս class օբյեկտների<br/>
+<strong id="finalSection">final -</strong> երբեք չի փոխում կառուցողի (constructor) հետո<br/>
+<strong id="finalSection">abstract -</strong> makes a class abstract
+</div>

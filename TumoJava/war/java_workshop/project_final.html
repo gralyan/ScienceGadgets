@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<head>
+<title>Final Project Example</title>
+
+<script type="text/javascript" language="javascript"
+	src="../workshopprojectfinal/workshopprojectfinal.nocache.js"></script>
+
+<link rel="stylesheet" type="text/css" href="setup.css">
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+<style type="text/css">
+
+#examplePanel{
+	height: 50vh;	
+	width: 50vw;	
+	max-width: 75vh;
+	max-height: 33.4vw;
+	margin: auto;
+	background-image: url('images/final_project_example_play.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	border: solid thin gray;
+	position: relative;
+}
+
+
+</style>
+</head>
+
+<body onload="prettyPrint()">
+
+<h1>Final Project Example - Վերչի պրոյեկտ օրինակ</h1>
+
+	<a href="final_projects/example/archery45.html"><div id="examplePanel"></div></a>
+
+<hr/>
+<h2>Մուտք</h2>
+<pre class="prettyprint">
+package //քո package-ի անունը
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Touch;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.dom.client.TouchCancelEvent;
+import com.google.gwt.event.dom.client.TouchCancelHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
+import com.google.gwt.event.dom.client.TouchMoveEvent;
+import com.google.gwt.event.dom.client.TouchMoveHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+
+public class Archery45 implements EntryPoint {
+
+	RootPanel mainPanel = RootPanel.get("mainPanel");
+	Arrow arrow = new Arrow();
+	int shotsFired = 0;
+
+	@Override
+	public void onModuleLoad() {
+		
+		// Add touch panel
+		
+		TouchPanel touchPanel = new TouchPanel();
+		touchPanel.setSize("95vmin", "95vmin");
+		mainPanel.add(touchPanel);
+
+		// Add arrow
+		arrow.addStyleName("arrow");
+		mainPanel.add(arrow);
+
+		int distanceValue = (int) (Math.random() * 200 + 1000);
+		double distanceValueShort = distanceValue / 100.0;
+		Label distanceLabel = new Label(distanceValueShort + "m");
+		distanceLabel.addStyleName("positionInfo");
+		distanceLabel.getElement().getStyle().setLeft(60, Unit.PCT);
+		distanceLabel.getElement().getStyle().setTop(73, Unit.PCT);
+		mainPanel.add(distanceLabel);
+
+		int heightValue = (int) (Math.random() * 200 + 500);
+		double heightValueShort = heightValue / 100d;
+		Label heightLabel = new Label(heightValueShort + "m");
+		heightLabel.addStyleName("positionInfo");
+		heightLabel.getElement().getStyle().setLeft(89, Unit.PCT);
+		heightLabel.getElement().getStyle().setTop(55, Unit.PCT);
+		mainPanel.add(heightLabel);
+
+		// Add pull handlers
+
+		touchPanel.addMouseDownHandler(new MouseDownHandler() {
+			@Override
+			public void onMouseDown(MouseDownEvent event) {
+				event.preventDefault();
+				arrow.initializePull(event.getX(), event.getY());
+			}
+		});
+		touchPanel.addMouseMoveHandler(new MouseMoveHandler() {
+			@Override
+			public void onMouseMove(MouseMoveEvent event) {
+				arrow.updatePull(event.getX(), event.getY());
+			}
+		});
+		touchPanel.addMouseUpHandler(new MouseUpHandler() {
+			@Override
+			public void onMouseUp(MouseUpEvent event) {
+				shotFire(event.getX(), event.getY());
+			}
+		});
+		touchPanel.addMouseOutHandler(new MouseOutHandler() {
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				arrow.reload();
+			}
+		});
+		touchPanel.addTouchStartHandler(new TouchStartHandler() {
+			@Override
+			public void onTouchStart(TouchStartEvent event) {
+				event.preventDefault();
+				Touch touch = event.getTouches().get(0);
+				arrow.initializePull(touch.getClientX(), touch.getClientY());
+			}
+		});
+		touchPanel.addTouchMoveHandler(new TouchMoveHandler() {
+			@Override
+			public void onTouchMove(TouchMoveEvent event) {
+				event.preventDefault();
+				Touch touch = event.getTouches().get(0);
+				arrow.updatePull(touch.getClientX(), touch.getClientY());
+			}
+		});
+		touchPanel.addTouchEndHandler(new TouchEndHandler() {
+			@Override
+			public void onTouchEnd(TouchEndEvent event) {
+				Touch touch = event.getTouches().get(0);
+				shotFire(touch.getClientX(), touch.getClientY());
+			}
+
+		});
+		touchPanel.addTouchCancelHandler(new TouchCancelHandler() {
+			@Override
+			public void onTouchCancel(TouchCancelEvent event) {
+				arrow.reload();
+			}
+		});
+	}
+
+	private Label Label() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private FlowPanel FlowPanel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private void shotFire(int x, int y) {
+		shotsFired++;
+		if (shotsFired == 3) {
+			addHelpButton();
+		}
+		arrow.fire(x, y);
+	}
+
+	private void addHelpButton() {
+		Button help = new Button("help", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+}
+</pre>
+
+<h2>TouchPanel - Սխմել Լսող</h2>
+<pre class="prettyprint">
+package //քո package-ի անունը
+
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.event.dom.client.HasAllMouseHandlers;
+import com.google.gwt.event.dom.client.HasAllTouchHandlers;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.event.dom.client.TouchCancelEvent;
+import com.google.gwt.event.dom.client.TouchCancelHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
+import com.google.gwt.event.dom.client.TouchMoveEvent;
+import com.google.gwt.event.dom.client.TouchMoveHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FlowPanel;
+
+public class TouchPanel extends FlowPanel implements HasAllMouseHandlers,
+		HasAllTouchHandlers {
+
+	public TouchPanel() {
+		getElement().getStyle().setPosition(Position.ABSOLUTE);
+	}
+
+	@Override
+	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
+		return addDomHandler(handler, MouseDownEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
+		return addDomHandler(handler, MouseUpEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+		return addDomHandler(handler, MouseOutEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		return addDomHandler(handler, MouseOverEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
+		return addDomHandler(handler, MouseMoveEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addMouseWheelHandler(MouseWheelHandler handler) {
+		return addDomHandler(handler, MouseWheelEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addTouchStartHandler(TouchStartHandler handler) {
+		return addDomHandler(handler, TouchStartEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addTouchMoveHandler(TouchMoveHandler handler) {
+		return addDomHandler(handler, TouchMoveEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addTouchEndHandler(TouchEndHandler handler) {
+		return addDomHandler(handler, TouchEndEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addTouchCancelHandler(TouchCancelHandler handler) {
+		return addDomHandler(handler, TouchCancelEvent.getType());
+	}
+}
+
+</pre>
+
+<h2>Arrow - Նետ</h2>
+<pre class="prettyprint">
+package //քո package-ի անունը
+package com.archery.client;
+
+import com.google.gwt.animation.client.Animation;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+
+public class Arrow extends FlowPanel {
+
+	// Arrow position constraints in %
+	private int leftStart = 12;
+	private int topStart = 69;
+	private int leftMaxPull = -4;
+	private int topMaxPull = 6;
+
+	// Used as the max pull size
+	double arrowHeightPixels;
+
+	Style arrowStyle = getElement().getStyle();
+
+	// Should only be used when isPulling is true
+	int clickedX;
+	int clickedY;
+
+	boolean isPulling = false;
+	private ShootAnimation shootAnimation = new ShootAnimation();
+	private double pullRatio;
+	private double leftPulled;
+	private double topPulled;
+
+	public Arrow() {
+		reload();
+	}
+
+	void initializePull(int x, int y) {
+		reload();
+		isPulling = true;
+		clickedX = x;
+		clickedY = y;
+
+		// Check each time pull initiated for current size
+		arrowHeightPixels = getOffsetHeight();
+	}
+
+	void updatePull(int x, int y) {
+		if (!isPulling) {
+			return;
+		}
+
+		int pullX = clickedX - x;
+		int pullY = clickedY - y;
+		int pull = pullX > pullY ? pullX : pullY;
+
+		pullRatio = pull / arrowHeightPixels;
+
+		leftPulled = leftStart + pullRatio * leftMaxPull;
+		topPulled = topStart + pullRatio * topMaxPull;
+		arrowStyle.setLeft(leftPulled, Unit.PCT);
+		arrowStyle.setTop(topPulled, Unit.PCT);
+		
+	}
+
+	void fire(int x, int y) {
+		updatePull(x, y);
+		isPulling = false;
+
+		shootAnimation.run(1000);
+	}
+
+	void reload() {
+		shootAnimation.cancel();
+		
+		arrowStyle.setLeft(leftStart, Unit.PCT);
+		arrowStyle.setTop(topStart, Unit.PCT);
+		arrowStyle.setProperty("transform", "rotate(0deg)");
+		isPulling = false;
+		
+	}
+
+	class ShootAnimation extends Animation {
+
+		private double velocityX;
+		private double velocityY0;
+		private double acceleration = 100;
+		private double time = 0;
+		double y = topPulled;
+		double x = leftPulled;
+
+		@Override
+		protected void onStart() {
+			super.onStart();
+			
+			if(pullRatio > 1.75 && pullRatio < 1.97){
+				pullRatio = 1.75;
+			}
+			
+			pullRatio*=.5;
+			velocityX = pullRatio * (100 - leftPulled);
+			velocityY0 = -1.5 * pullRatio * topStart;
+		}
+
+		@Override
+		protected void onUpdate(double progress) {
+
+			time = progress * pullRatio*2;
+			
+			y = topPulled + 
+					time * velocityY0 + 
+					0.5 * acceleration* time * time;
+			x = leftPulled + velocityX * time;
+
+			arrowStyle.setLeft(x, Unit.PCT);
+			arrowStyle.setTop(y, Unit.PCT);
+			arrowStyle.setProperty("transform", "rotate(" + progress * 90
+					+ "deg)");
+
+		}
+
+		@Override
+		protected void onComplete() {
+			super.onComplete();
+			reload();
+		}
+
+	}
+	
+
+
+}
+
+</pre>
+
+<h2>CSS</h2>
+<pre class="prettyprint">
+body{
+	overflow: hidden;
+}
+#mainPanel{
+	height: 95vh;	
+	width: 95vw;	
+	max-width: 150vh;
+	max-height: 66.7vw;
+	margin: auto;
+	background-image: url('images/FinalProjectDiagram.svg');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	border: solid thin gray;
+	position: relative;
+}
+
+.arrow{
+	background-image: url('images/arrow.svg');
+	position: relative;
+	width: 10%;
+	height: 15%;
+	pointer-events: none;
+	background-size: 100% 100%;
+	
+}
+
+.positionInfo{
+	background-color: white;
+	border: solid medium black;
+	font-size: 3vmin;
+	display: inline-block;
+	padding: 0.2em;
+	position: absolute;
+}
+
+</pre>
+
+<h2>HTML</h2>
+<pre class="prettyprint">
+...
+	&lt;div id="mainPanel"&gt;&lt;/div&gt;
+&lt;/body&gt;
+...
+</pre>
+
+<h2>Images</h2>
+<img src="final_projects/example/FinalProjectDiagram.svg"></img>
+<img src="final_projects/example/arrow.svg"></img>
+<img src="final_projects/example/hint.svg"></img>
+
+<br/>
+</body>
+</html>

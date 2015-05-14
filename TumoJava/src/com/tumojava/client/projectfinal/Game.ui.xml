@@ -1,0 +1,66 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:t="urn:import:com.tumojava.client.ui">
+	<ui:style>
+	.topArea {
+		height: 10vh;
+		font-size: 5vh;
+	}
+	
+	.backButton {
+		display: inline-block;
+		vertical-align: top;
+		height: 100%;
+		width: 20%;
+	}
+	
+	.title {
+		display: inline-block;
+		vertical-align: top;
+		height: 100%;
+		width: 80%;
+		text-align: center;
+	}
+	
+	.descriptionArea {
+		background-color: lavender;
+		display: inline-block;
+		vertical-align: top;
+		height: 100%;
+		width: 50%;
+	}
+	
+	.equationArea {
+		display: inline-block;
+		vertical-align: top;
+		height: 100%;
+		width: 50%;
+	}
+	
+	.interactiveArea {
+		height: 70vw;
+		max-height: 70vh;
+		width: 100vh;
+		max-width: 100vw;
+		background-repeat: no-repeat;
+		background-size:100% 100%;
+		margin: auto;
+	}
+	</ui:style>
+
+	<g:FlowPanel height="100vh">
+		<g:FlowPanel styleName="{style.topArea}">
+			<g:Button styleName="{style.backButton}" ui:field="backButton"
+				text="Main" />
+			<g:Label styleName="{style.title}" ui:field="title"></g:Label>
+			<g:FlowPanel styleName="{style.backButton}" ui:field="refreshButtonArea"></g:FlowPanel>
+		</g:FlowPanel>
+		<g:FlowPanel height="20vh">
+			<g:Label styleName="{style.descriptionArea}" ui:field="descriptionArea"></g:Label>
+			<g:HTML styleName="{style.equationArea}" ui:field="equationArea"></g:HTML>
+		</g:FlowPanel>
+		<t:InteractivePanel styleName="{style.interactiveArea}"
+			ui:field="interactiveArea"></t:InteractivePanel>
+	</g:FlowPanel>
+</ui:UiBinder> 

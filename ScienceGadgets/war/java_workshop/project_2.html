@@ -54,15 +54,17 @@ body{
 	<div id="examplePanel"></div>
 
 <hr/>
-<h2>EntryPoint - ելք</h2>
+<h2>Մուտք</h2>
 <pre class="prettyprint">
+package //քո package-ի անունը
+
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-public class Test implements EntryPoint {
+public class ՄուտքիԱնուն implements EntryPoint {
 
 	public void onModuleLoad() {
 
@@ -89,8 +91,10 @@ public class Test implements EntryPoint {
 }
 </pre>
 
-<h2>BoxDragController - Քաշող</h2>
+<h2>BoxDropController - Քաշող</h2>
 <pre class="prettyprint">
+package //քո package-ի անունը
+
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -165,5 +169,6 @@ body{
 }
 </pre>
 
+<br/>
 </body>
 </html>

@@ -65,8 +65,12 @@ public class SymbolDisplay extends HTML {
 			} catch (NumberFormatException e) {
 				// non-numbers, characters after the first are subscripts
 				// note - constants are number nodes with character text
-				int substringEnd = text.startsWith(Operator.MINUS.getSign()) ? 2
-						: 1;
+				boolean startsMinus = text
+						.startsWith(Operator.MINUS.getSign());
+				boolean startsDelta = text
+						.startsWith("\u0394");
+				
+				int substringEnd = startsMinus || startsDelta ? 2 : 1;
 				setHTML(text.substring(0, substringEnd));
 				Element subscript = DOM.createDiv();
 				subscript.addClassName(CSS.SUBSCRIPT);

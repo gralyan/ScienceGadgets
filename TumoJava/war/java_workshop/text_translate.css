@@ -1,0 +1,7 @@
+[id^="trans2"] {
+    display:none;
+}
+
+.translatable{
+	cursor: pointer;
+}

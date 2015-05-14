@@ -36,9 +36,7 @@ import com.sciencegadgets.shared.dimensions.CommonConstants;
 public class NumberPrompt extends QuantityPrompt{
 
 	KeyPadNumerical numPad;
-	RandomSpecPanel randSpec = new RandomSpecPanel();
 
-	String randomness = "";
 	CommonConstants constantSeleced = null;
 
 	public NumberPrompt(EquationNode equationNode, boolean clearDisplays, boolean mustCheckUnits) {
@@ -96,7 +94,7 @@ public class NumberPrompt extends QuantityPrompt{
 
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 			node.getXMLNode().setAttribute(
-					MathAttribute.Randomness.getAttributeName(), randomness);
+					MathAttribute.Randomness.getAttributeName(), ((NumberSpecification)spec).getRandomness());
 		} else {
 			node.getXMLNode().removeAttribute(
 					MathAttribute.Randomness.getAttributeName());

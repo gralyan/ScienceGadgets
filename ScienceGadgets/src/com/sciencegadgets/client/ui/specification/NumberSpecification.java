@@ -30,12 +30,13 @@ import com.sciencegadgets.shared.dimensions.CommonConstants;
 public class NumberSpecification extends QuantitySpecification {
 
 	KeyPadNumerical numPad;
-	RandomSpecPanel randSpec = new RandomSpecPanel();
+	RandomSpecPanel randSpec;
 
 	String randomness = "";
 	CommonConstants constantSeleced = null;
 
-	public NumberSpecification(boolean clearDisplays, boolean canHaveUnits, boolean allowRandomSpec) {
+	public NumberSpecification(boolean clearDisplays, boolean canHaveUnits,
+			boolean allowRandomSpec) {
 		super(clearDisplays, canHaveUnits);
 
 		// Number Pad
@@ -43,11 +44,10 @@ public class NumberSpecification extends QuantitySpecification {
 		symbolPalette.add(numPad);
 
 		// Randomness Spec
-		symbolPalette.add(randSpec);
-		randSpec.setVisible(false);
-		randSpec.addOkClickHandler((new ClickHandler() {
+		randSpec = new RandomSpecPanel() {
+
 			@Override
-			public void onClick(ClickEvent event) {
+			protected void onSetRandom() {
 				randomness = randSpec.getRandomness();
 				if (randomness != null) {
 					symbolDisplay.setText(RandomSpecPanel.RANDOM_SYMBOL);
@@ -55,25 +55,27 @@ public class NumberSpecification extends QuantitySpecification {
 					symbolDisplay.clear();
 				}
 			}
-		}));
+		};
+		symbolPalette.add(randSpec);
+		randSpec.setVisible(false);
 
 		// Symbol Toggle - switch Number Pad and Randomness Spec
-		if(allowRandomSpec) {
-		symbolCaseToggle.setOptions("#", "?", true);
-		symbolCaseToggle.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (symbolCaseToggle.isFistSelected()) {
-					randSpec.setVisible(true);
-					numPad.setVisible(false);
+		if (allowRandomSpec) {
+			symbolCaseToggle.setOptions("#", "?", true);
+			symbolCaseToggle.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					if (symbolCaseToggle.isFistSelected()) {
+						randSpec.setVisible(true);
+						numPad.setVisible(false);
 
-				} else {
-					randSpec.setVisible(false);
-					numPad.setVisible(true);
+					} else {
+						randSpec.setVisible(false);
+						numPad.setVisible(true);
+					}
 				}
-			}
-		});
-		}else {
+			});
+		} else {
 			symbolCaseToggle.removeFromParent();
 			symbolDisplay.setWidth("100%");
 		}
@@ -85,4 +87,7 @@ public class NumberSpecification extends QuantitySpecification {
 		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
 	}
 
+	public String getRandomness() {
+		return randomness;
+	}
 }

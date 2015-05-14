@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<head>
+<title>Java Basics for Tumo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+</head>
+
+<body onload="prettyPrint(); makeTranslatable();">
+<h1>Object-Orientation 3</h1>
+
+<!--
+-
+-class section
+-
+-->
+<h2 id="classSection">class</h2>
+<!--
+-
+-subclass section
+-
+-->
+<h2 id="extendsSection">extends</h2>
+<p></p>
+
+<!--
+-
+-Fields section
+-
+-->
+<h3>Fields - Հատկություններ</h3>
+
+<!--
+-
+-Constructor section
+-
+-->
+<h3 id="constructorSection">Constructors - Կառուցող</h3>
+
+<!--
+-
+-Methods section
+-
+-->
+<h3>Methods - Մեթոդներ</h3>
+
+
+<pre class="prettyprint translatable" id="trans1_constructor_intro">
+class Bicycle {
+
+	public final double wheelCircumfrance;	// in meters
+	protected double gearRatio;	// front/rear
+	protected double candence = 0;	// pedal rhythm - revolutions per second
+	protected double speed = 0;	// in meters per second
+
+	Bicycle(double wheelDiameter, int gearTeethFront, int gearTeethRear) {
+		// circumfrance = π * diameter
+		wheelCircumfrance = Math.PI * wheelDiameter;
+		gearRatio = gearTeethFront / gearTeethRear;
+	}
+
+	public double getSpeed(){
+		return speed;
+	}
+
+	public void setCandence(double candence){
+		this.candence = candence;
+		updateSpeed();
+	}
+	
+	protected updateSpeed(){
+		speed = candence * gearRatio * wheelCircumfrance;
+	}
+}
+class RoadBike extends Bicycle{
+
+	protected final int[] gearTeethFront; 
+	protected final int[] gearTeethRear;
+
+	RoadBike(double wheelDiameter, int[] gearTeethFront, int[] gearTeethRear){
+		super(wheelDiameter, gearTeethFront[0], gearTeethRear[0]);
+
+		this.gearTeethFront = gearTeethFront;
+		this.gearTeethRear = gearTeethRear;
+	}
+
+	public void setGears(int gearFront, int gearRear) throws ArrayIndexOutOfBoundsException {
+		
+		int teethFront = gearTeethFront[gearFront];
+		int teethRear = gearTeethRear[gearRear];
+
+		gearRatio = teethFront / teethRear;
+
+		updateSpeed();
+	}
+}
+</pre>
+
+
+
+<pre class="prettyprint">
+public class Հեծանիվ {
+
+	/*
+	* հատկություններ
+	*/
+
+	public final double անիվՉափս; //քանի մետր բոյ (diameter)
+
+	public final int sprocketTeethFront;
+
+	public final int sprocketTeethRear;
+	
+	private double ռիթմ = 0; //քանի ոտնակի պտույտ ամեն վարկյանում
+
+	private double արագություն = 0; // մետր ամեն վարկյան
+
+	/*
+	* կառուցողը (constructor) ստեղծում է օբյեկտը
+	*/
+	public Հեծանիվ(double անիվՉափս, int sprocketTeethFront, int sprocketTeethRear) {
+		this.անիվՉափս = անիվՉափս;
+		this.sprocketTeethFront = sprocketTeethFront;
+		this.sprocketTeethRear = sprocketTeethRear;
+	}
+
+	/*
+	* մեթոդներ
+	*/
+	public double բերՌիթմը(){
+		return ռիթմ;
+	}
+	public double բերԱրագությունը(){
+		return արագություն;
+	}
+	public void փոխիՌիթմը(double ռիթմ) {
+		this.ռիթմ = ռիթմ;
+		// փոխի արագություն էլ
+		արագություն = ռիթմ * metersOfDevelopment;
+	}
+	//քանի մետր կշարժվի ամեն ոտնակ պտույտից
+	private double metersOfDevelopment(){
+		// հանդերձում հարաբերակցությունը (gear ratio)
+		double հար = sprocketTeethFront / sprocketTeethRear ;
+		// անիվի շրջապատ (wheel circumfrance) = d * π
+		double անիվիՇրջապատ = անիվՉափս * Math.PI;
+		// վերադարձրու 
+		return metersOfDevelopment = անիվիՇրջապատ * հար;
+	}
+}
+</pre>
+
+</body>

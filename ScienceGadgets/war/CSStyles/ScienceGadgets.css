@@ -12,7 +12,15 @@ body {
 		format('woff'), url('fonts/math.otf') format('opentype');
 }
 
-#scienceGadgetArea {
+#sg-scienceGadgetArea {
+/* 	don't allow accidentally select stuff */
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
 	font-family: math;
 	background-image: url('images/chalkboard.jpeg');
 	background-color: #ADD850;
@@ -21,34 +29,34 @@ body {
 	margin: auto;
 }
 
-.textCenter {
+.sg-textCenter {
 	text-align: center;
 	vertical-align: middle;
 }
 
-.fillParent {
+.sg-fillParent {
 	width: 100%;
 	height: 100%;
 }
 
-.fitParentHTML {
+.sg-fitParentHTML {
 	display: inline-block;
 	text-align: center;
 }
 
 /*---------------Browsers---------------*/
-#equationBrowser {
+#sg-equationBrowser {
 	margin: auto;
 	height: 100%;
 }
 
-.modes {
+.sg-modes {
 	margin: auto;
 	background-color: silver;
 	height: 10%;
 }
 
-.rowHeader {
+.sg-rowHeader {
 	border-bottom-color: gray;
 	border-bottom-style: solid;
 	border-bottom-width: medium;
@@ -56,7 +64,7 @@ body {
 	text-align: center;
 }
 
-.rowSubHeader {
+.sg-rowSubHeader {
 	border-bottom-color: silver;
 	border-bottom-style: solid;
 	border-bottom-width: thin;
@@ -64,7 +72,7 @@ body {
 	text-align: center;
 }
 
-#activitySelectionPanel {
+#sg-activitySelectionPanel {
 	display: inline-block;
 	width: 30%;
 	height: 80%;
@@ -73,7 +81,7 @@ body {
 	vertical-align: top;
 }
 
-#activityDetailsPanel {
+#sg-activityDetailsPanel {
 	display: inline-block;
 	width: 55%;
 	height: 80%;
@@ -81,13 +89,13 @@ body {
 	vertical-align: top;
 }
 
-#algBrowserPanel {
+#sg-algBrowserPanel {
 	height: 100%;
 	width: 100%;
 	text-align: center;
 }
 
-#eqGeneratorPanel {
+#sg-eqGeneratorPanel {
 	height: 100%;
 	width: 100%;
 	background-color: white;
@@ -97,66 +105,66 @@ body {
 	box-shadow: silver 0 0 10px 3px inset;
 }
 
-#challengeBrowserPanel {
+#sg-challengeBrowserPanel {
 	height: 100%;
 	width: 100%;
 	text-align: center;
 }
 
-#algBrowser {
+#sg-algBrowser {
 	width: 100%;
 	height: 90%;
 }
 
-.equationSolveButton {
+.sg-equationSolveButton {
 	margin: 10px;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	background-color: RoyalBlue;
 }
 
-#sciBrowser {
+#sg-sciBrowser {
 	margin: auto;
 	height: 100%;
 	text-align: center;
 }
 
-#sciBrowseVar {
+#sg-sciBrowseVar {
 	display: inline-block;
 	vertical-align: top;
 	width: 30%;
 	height: 80%;
 }
 
-#sciBrowseEq {
+#sg-sciBrowseEq {
 	display: inline-block;
 	vertical-align: top;
 	width: 30%;
 	height: 80%;
 }
 
-#sciBrowseSum {
+#sg-sciBrowseSum {
 	display: inline-block;
 	vertical-align: top;
 	width: 30%;
 	height: 80%;
 }
 
-.diagramMeasure {
+.sg-diagramMeasure {
 	color: black;
 	background-color: white;
 	padding-left: 2px;
 	padding-right: 2px;
 }
 /*---------------ConversionActivity---------------*/
-#conversionActivity {
+#sg-conversionActivity {
 	width: 100%;
 	height: 100%;
 	text-align: center;
 }
 
 /*---------------SelectionPanel---------------*/
-.selectionPanel {
+.sg-selectionPanel {
 	overflow-y: scroll;
 	background-color: white;
 	color: black;
@@ -164,22 +172,22 @@ body {
 	height: 100%;
 }
 
-.selectionPanelCell {
+.sg-selectionPanelCell {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
 
-.selectedCell {
+.sg-selectedCell {
 	background-color: #9999ff;
 }
 
-.quantityKindPrefix {
+.sg-quantityKindPrefix {
 	border-bottom: medium solid brown;
 	background-color: tan
 }
 
 /*---------------AlgOut---------------*/
-.algOut {
+.sg-algOut {
 	color: black;
 	text-align: center;
 	height: 100%;
@@ -189,12 +197,12 @@ body {
 	z-index: 10;
 }
 
-.algOutRow {
+.sg-algOutRow {
 	border-top: thin solid blue;
 	background-color: white;
 }
 
-.algOutEqRow {
+.sg-algOutEqRow {
 	display: inline-block;
 	vertical-align: top;
 	width: 68%;
@@ -202,32 +210,32 @@ body {
 	border-right: thin solid red;
 }
 
-.algOutEqLeft {
+.sg-algOutEqLeft {
 	text-align: right;
 	display: inline-block;
 	vertical-align: middle;
 	width: 45%;
 }
 
-.algOutEqEquals {
+.sg-algOutEqEquals {
 	display: inline-block;
 	vertical-align: middle;
 	width: 10%;
 }
 
-.algOutEqRight { /* 	float: left; */
+.sg-algOutEqRight { /* 	float: left; */
 	text-align: left;
 	display: inline-block;
 	vertical-align: middle;
 	width: 45%;
 }
 
-.algOutChangeRow {
+.sg-algOutChangeRow {
 	color: red;
 	background-color: #FFFF99;
 }
 
-.algOutRuleRow {
+.sg-algOutRuleRow {
 	display: inline-block;
 	vertical-align: top;
 	width: 30%;
@@ -237,17 +245,17 @@ body {
 }
 
 /*---------------changes---------------*/
-.highlight {
+.sg-highlight {
 	color: red;
 }
 
-.lineThrough {
+.sg-lineThrough {
 	color: red;
 	text-decoration: line-through;
 }
 
 /*---------------wrappers---------------*/
-.selectedWrapper {
+.sg-selectedWrapper {
 	-moz-box-shadow: 0 0 1em #FFFFFF inset;
 	-webkit-box-shadow: 0 0 1em #FFFFFF inset;
 	box-shadow: 0 0 1em #FFFFFF inset;
@@ -255,7 +263,7 @@ body {
 	text-shadow: 0em 0em .15em #000000;
 }
 
-.dragdrop-dragging {
+.sg-dragdrop-dragging {
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
 	box-shadow: none;
@@ -265,21 +273,21 @@ body {
 	left: -0.05em;
 }
 
-.selectedDropWrapper {
+.sg-selectedDropWrapper {
 	text-shadow: .15em .15em .15em #000000;
 	position: relative;
 	top: -0.05em;
 	left: -0.05em;
 }
 
-.selectionDetails {
+.sg-selectionDetails {
 	width: 100%;
 	height: 100%;
 	background-color: white;
 	text-align: center;
 }
 
-.conversionWrapper {
+.sg-conversionWrapper {
 	border: medium solid black;
 	background-color: lime;
 	cursor: move;
@@ -287,14 +295,14 @@ body {
 	padding-right: 0.3em;
 }
 
-.dropEnterResponse {
+.sg-dropEnterResponse {
 	background-color: white;
 	text-align: center;
 	font-weight: bold;
 }
 
 /*---------------layout---------------*/
-.eqPanel {
+.sg-eqPanel {
 	width: 100%;
 	height: 100%;
 
@@ -306,26 +314,26 @@ body {
 	user-select: none;
 }
 
-.eqLayer {
+.sg-eqLayer {
 	width: 100%;
 	height: 100%;
 	text-align: center;
 	padding-top: 10px;
 }
 
-.layoutRow {
+.sg-layoutRow {
 	display: inline-block;
 	vertical-align: top;
 }
 
-.bothSidesPanel {
+.sg-bothSidesPanel {
 	display: inline-block;
 	vertical-align: top;
 	width: 20%;
 	height: 100%;
 }
 
-.simplifyPanel {
+.sg-simplifyPanel {
 	display: inline-block;
 	vertical-align: top;
 	width: 60%;
@@ -340,7 +348,9 @@ body {
 	border: thick solid green;
 	-moz-border-radius: 1em;
 	-webkit-border-radius: 1em;
-	border-radius: 1em;
+/* 	border-radius: 1em; */
+    box-shadow: 0 0 30px 15px black;
+	
 }
 
 .gwt-PopupPanelGlass {
@@ -350,7 +360,7 @@ body {
 }
 
 /*---------------toggle---------------*/
-.toggleSlide {
+.sg-toggleSlide {
 	background-color: gray;
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
@@ -358,14 +368,14 @@ body {
 	height: 100%;
 }
 
-.toggleOption {
+.sg-toggleOption {
 	width: 50%;
 	height: 100%;
 	text-align: center;
 	display: inline-block;
 }
 
-.toggleOptionSelected {
+.sg-toggleOptionSelected {
 	background-color: orange;
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
@@ -373,7 +383,7 @@ body {
 }
 
 /*---------------prompts---------------*/
-.numberDisplay {
+.sg-numberDisplay {
 	text-align: center;
 	background-color: lime;
 	border: thin solid darkGreen;
@@ -382,37 +392,38 @@ body {
 	word-wrap: break-word;
 }
 
-.promptMain {
+.sg-promptMain {
 	background-color: #ADD850;
 }
 
-.keyPadNumerical {
+.sg-keyPadNumerical {
 	background-color: lightGray;
 	padding: 5px;
+	height: 100%;
 }
 
-.doubleFontSize {
+.sg-doubleFontSize {
 	font-size: 200%;
 }
 
-.invalidInput {
+.sg-invalidInput {
 	/* 	red overlay without interfering with background-color */
 	-moz-box-shadow: 0px 100px 0px red inset;
 	-webkit-box-shadow: 0px 100px 0px red inset;
 	box-shadow: 0px 100px 0px red inset;
 }
 
-.okGap {
+.sg-okGap {
 	height: 5px;
 	border-top: thick solid green;
 }
 
-.exampleHtml {
+.sg-exampleHtml {
 	font-size: 300%;
 	border-bottom: thin solid green;
 }
 
-.establishedQuantitySelection {
+.sg-establishedQuantitySelection {
 	color: black;
 	height: 98%;
 	width: 23%;
@@ -422,7 +433,7 @@ body {
 	padding-left: 1em;
 }
 
-.quantityPromptSpec {
+.sg-quantityPromptSpec {
 	display: inline-block;
 	vertical-align: top;
 	width: 70%;

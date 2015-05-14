@@ -361,7 +361,8 @@ public class AlgebraActivity extends SimplePanel {
 			URLParameters.setParameters(parameterMap, false);
 		}
 		
-		eqPanel.zoomToAndSelect(nodeIdToSelect);
+		//TODO Check each case
+//		eqPanel.zoomToAndSelect(nodeIdToSelect);
 	}
 
 	public void clearTransformLists() {

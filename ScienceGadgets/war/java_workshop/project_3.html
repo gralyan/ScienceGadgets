@@ -64,15 +64,17 @@ body {
 	</div>
 
 	<hr />
-	<h2>EntryPoint - ելք</h2>
+	<h2>Մուտք</h2>
 	<pre class="prettyprint">
+package //քո package-ի անունը
+	
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
-public class Project3 implements EntryPoint {
+public class ՄուտքիԱնուն implements EntryPoint {
 
 	public static final String CENTERED_CSS = "centered";
 	public static final String UPPER_AREA_ID = "upperArea";
@@ -118,6 +120,8 @@ public class Project3 implements EntryPoint {
 	<hr />
 	<h2>AnswerInputBox - Պատասխան</h2>
 	<pre class="prettyprint">
+package //քո package-ի անունը
+	
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -196,6 +200,8 @@ public abstract class AnswerInputBox extends Composite {
 	<hr />
 	<h2>Boxes - Տուփիկներ</h2>
 	<pre class="prettyprint">
+package //քո package-ի անունը
+	
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -305,4 +311,14 @@ body {
 	background-color: lavender;
 }
 </pre>
+	<hr />
+	<h2>HTML</h2>
+<pre class="prettyprint">
+...
+
+	&lt;div id="upperArea"&gt;&lt;/div&gt;
+	&lt;div id="lowerArea"&gt;&lt;/div&gt;
+&lt;/body&gt;
+</pre>
+<br/>
 </body>

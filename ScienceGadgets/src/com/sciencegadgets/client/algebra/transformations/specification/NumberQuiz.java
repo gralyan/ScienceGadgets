@@ -93,5 +93,9 @@ public abstract class NumberQuiz extends Quiz {
 			}
 		});
 	}
-	
+	@Override
+	public void appear() {
+		super.appear();
+		keyPad.setFocus(true);
+	}
 }

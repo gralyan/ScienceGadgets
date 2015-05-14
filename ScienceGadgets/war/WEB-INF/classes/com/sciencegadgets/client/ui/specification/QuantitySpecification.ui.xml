@@ -50,7 +50,7 @@
 			<g:FlowPanel height="20%">
 
 				<sg:SymbolDisplay ui:field="symbolDisplay"
-					addStyleNames="{style.display} numberDisplay" title="Variable Symbol"></sg:SymbolDisplay>
+					addStyleNames="{style.display} sg-numberDisplay" title="Variable Symbol"></sg:SymbolDisplay>
 				<sg:ToggleSlide ui:field="symbolCaseToggle"
 					addStyleNames="{style.toggle}"></sg:ToggleSlide>
 			</g:FlowPanel>
@@ -66,7 +66,7 @@
 
 			<!-- unit display -->
 			<g:FlowPanel height="20%">
-				<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display} numberDisplay"
+				<g:FlowPanel ui:field="unitDisplay" addStyleNames="{style.display} sg-numberDisplay"
 					title="Variable Unit"></g:FlowPanel>
 				<sg:ToggleSlide ui:field="unitReciprocalToggle"
 					addStyleNames="{style.toggle}"></sg:ToggleSlide>

@@ -1,0 +1,55 @@
+@CHARSET "UTF-8";
+
+body{
+	height:100vh;
+}
+
+.mg-title{
+	height: 10vh;
+	text-align: center;
+	padding: 5vh;
+	text-shadow: 0 0 5px white;
+	background-color: blue;
+	font-size: 10vh;
+}
+
+.mg-fillParent{
+	height:100%;
+	width:100%;
+}
+
+.mg-gameIcon{
+}
+
+.mg-gameIconLevel:HOVER {
+	font-weight: bold;
+}
+.mg-gameIconLevel:ACTIVE {
+	text-shadow: 0 0 0.1em #000000;
+}
+
+.mg-gameIconLevel{
+	border: solid medium gray;
+	width: 20vw;
+	background-color: silver;
+	
+}
+
+.mg-box{
+	vertical-align: middle;
+	display: inline-block; background-color : blue;
+	-webkit-box-shadow: inset 0 0 0 3px black;
+	-moz-box-shadow: inset 0 0 0 3px black;
+	box-shadow: inset 0 0 0 3px rgba(0, 0, 0, black);
+}
+.mg-boxSelectedPositive{
+	
+}
+.mg-boxSelectedNegative{
+	
+}
+.mg-operation{
+	display: inline-block;
+	vertical-align: center;
+	width: 5%;
+}

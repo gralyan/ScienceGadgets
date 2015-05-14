@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<head>
+<title>Java Basics for Tumo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+</style>
+
+</head>
+
+
+<body onload="prettyPrint(); makeTranslatable();">
+<h1>Operators</h1>
+
+<h3>Arithmetic</h3>
+<table class="src">
+<tbody>
+<tr>
+<th>Operator</th><th>Description</th><th colspan='2' style="width:20%;">Examples</th><th style="width:50%;">Notes</th>
+</tr>
+<tr>
+<th>+</th><td>Addition</td><td>10 + 3</td><td>13</td>
+</tr>
+<tr>
+<th>-</th><td>Subtraction</td><td>10 - 3</td><td>7</td>
+</tr>
+<tr>
+<th>*</th><td>Multiplication</td><td>10 * 3</td><td>30</td>
+</tr>
+<tr>
+<th>/</th><td>Division</td><td>10 / 3</td><td>3</td><td>Dividing intigers gives an integer. Dividing 10.0 / 3.0 gives 3.333...</td>
+</tr>
+<tr>
+<th>%</th><td>Modulus (remainder)</td><td>10 % 3</td><td>1</td><td>Because 10÷3 is (3 remainder 1) or (3 and 1/3)</td>
+</tr>
+<tr>
+<th>++</th><td>Increment by 1</td><td>++10</td><td>11</td><td>10++ can also be used but is incremented after</td>
+</tr>
+<tr>
+<th>--</th><td>Decrement by 1</td><td>--10</td><td>9</td><td>10-- can also be used but is decremented after</td>
+</tr>
+</tbody></table>
+
+<br/>
+
+<h3>Assignment</h3>
+<table class="src">
+<tbody>
+<tr>
+<th>Operator</th><th>Description</th><th colspan='2' style="width:60%;">Examples</th>
+</tr>
+<tr>
+<th colspan='2'></th><th>initially a = 10</th><th>now a is</th>
+</tr>
+<tr>
+<th>=</th><td>Assign</td><td>a = 3</td><td>3</td>
+</tr>
+<tr>
+<th>+=</th><td>Add by</td><td>a += 3</td><td>13</td>
+</tr>
+<tr>
+<th>-=</th><td>Subtract by</td><td>a -= 3</td><td>7</td>
+</tr>
+<tr>
+<th>*=</th><td>Multiply by</td><td>a *= 3</td><td>30</td>
+</tr>
+<tr>
+<th>/=</th><td>Divide by</td><td>a /= 3</td><td>3</td>
+</tr>
+<tr>
+<th>%=</th><td>Modulus by</td><td>a %= 3</td><td>1</td>
+</tr>
+</tbody></table>
+
+<br/>
+
+<h3>Comparison</h3>
+
+<br/>
+
+<table class="src">
+<tbody>
+<tr><td class='true' style="font-family:ariel;">ճիշտ</td><td class='false' style="font-family:ariel;">սխալ</td></td></tr>
+<tr><td class='true'>true</td><td class='false'>false</td></td></tr>
+</tbody></table>
+
+<br/>
+
+<table class="src">
+<tbody><tr>
+<th>Operator</th><th>Description</th><th colspan="4" style="width:50%;">Examples</th>
+</tr>
+<tr>
+<th>==</th><td>equal</td><td class='false'>0 <b>==</b> 1</td><td class='true'>1 <b>==</b> 1</td><td class='false'>2 <b>==</b> 1</td>
+</tr>
+<tr>
+<th>!=</th><td>not equal</td><td class='true'>0 <b>!=</b> 1</td><td class='false'>1 <b>!=</b> 1</td><td class='true'>2 <b>!=</b> 1</td>
+</tr>
+</tr>
+<td colspan='5'></td>
+<tr>
+<tr>
+<th>&gt;</th><td>grater than</td><td class='false'>0 <b>&gt;&nbsp;</b> 1</td><td class='false'>1 <b>&gt;&nbsp;</b> 1</td><td class='true'>2 <b>&gt;&nbsp;</b> 1</td>
+</tr>
+<tr>
+<th>&lt;</th><td>less than</td><td class='true'>0 <b>&lt;&nbsp;</b> 1</td><td class='false'>1 <b>&lt;&nbsp;</b> 1</td><td class='false'>2 <b>&lt;&nbsp;</b> 1</td>
+</tr>
+</tr>
+<td colspan='5'></td>
+<tr>
+<tr>
+<th>&gt;=</th><td>greater or equal to</td><td class='false'>0 <b>&gt;=</b> 1</td><td class='true'>1 <b>&gt;=</b> 1</td><td class='true'>2 <b>&gt;=</b> 1</td>
+</tr>
+<tr>
+<th>&lt;=</th><td>less than or equal to</td><td class='true'>0 <b>&lt;=</b> 1</td><td class='true'>1 <b>&lt;=</b> 1</td><td class='false'>2 <b>&lt;=</b> 1</td>
+</tr>
+</tbody></table>
+
+<br/>
+
+<h3>Logic</h3>
+
+<table class="src">
+<tbody>
+<tr>
+<th style="width:10%;">Operator</th><th style="width:10%;">Description</th><th colspan="4">Examples</th>
+</tr>
+<tr>
+<th>&&</th><td>and</td><td class='true'>true <b>&&</b> true</td><td class='false'>true <b>&&</b> false</td><td class='false'>false <b>&&</b> true</td><td class='false'>false <b>&&</b> false</td>
+</tr>
+<tr>
+<th>||</th><td>or</td><td class='true'>true <b>||</b> true</td><td class='true'>true <b>||</b> false</td><td class='true'>false <b>||</b> true</td><td class='false'>false <b>||</b> false</td>
+</tr>
+<tr><td colspan='6'></td></tr>
+<tr>
+<th>!</th><td>not</td><td class='false'><b>!</b> true</td><td class='true'><b>!</b> false</td>
+</tr>
+</tbody></table>
+
+<br/>
+
+<h3>Conditional <code>?:</code></h3>
+<p>A quick way to assign a value to a variable based on a condition is with the ?: operator. Here is the form:</p>
+
+<img class='wide' src='images/syntax_anatomy/conditional_operator.svg' onerror="this.src='images/syntax_anatomy/conditional_operator.png'" />
+<p>Here is and example:</p>
+
+
+<pre class="prettyprint largeFont">Game gameToPlay = doWeHaveEnergy ? futbol : chess;</pre>
+
+<h3>Instance <code>instanceof</code></h3>
+<p>To check if an object is an instance of a certain class, use <code>instanceof</code>. Here is the form:</p>
+<img class='wide' src='images/syntax_anatomy/instanceof.svg' onerror="this.src='images/syntax_anatomy/instanceof.png'" />
+<pre class="prettyprint largeFont">boolean isChessASport = chess instanceof Sport;</pre>
+
+</body>

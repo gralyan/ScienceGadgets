@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+<title>Java Basics for Tumo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="main_styles.css"/>
+<link rel="stylesheet" type="text/css" href="prettify/src/prettify.css" />
+<link rel="stylesheet" type="text/css" href="text_translate.css" />
+<script type="text/javascript" src="prettify/src/prettify_armenian_capable.js"></script>
+<script type="text/javascript" src="text_translate.js"></script>
+
+</style>
+
+</head>
+
+
+<body onload="prettyPrint(); makeTranslatable();">
+<h1>Control Loops</h1>
+<p>Sometimes you may need to do a certain task many times. Loops allow you to control iterative tasks.</p>
+<h2><code>for</code></h2>
+<img class='wide' src='images/syntax_anatomy/for.svg' onerror="this.src='images/syntax_anatomy/for.png'" />
+<p>Use the <code>for</code> loop to do something a certain number of times. This loop allows you to loop using a variable you make (usually <code>i, j</code> or <code>k</code>). You do this in the following steps:</p>
+<ul>
+<li>Create and initialize the variable to count with</li>
+<li>Set a condition to continue looping</li>
+<li>Update the variable at each loop</li></ul>
+<p>This may seem like a lot but it's almost always like this:
+</p>
+
+<pre class="prettyprint">
+// Read an entire book
+for (int i = 0 ; i < pagesInBook ; i++){
+	readPage(i);
+}
+</pre>
+
+<h2>enhanced <code>for</code></h2>
+<img class='wide' src='images/syntax_anatomy/for_enhanced.svg' onerror="this.src='images/syntax_anatomy/for_enhanced.png'" />
+<p>Use the enhanced <code>for</code> loop as a convenient way to go through each entry in collection.</p>
+<pre class="prettyprint">
+// Shooting arrows
+for (Arrow currentArrow : allArrows){
+	shoot(currentArrow);
+}
+</pre>
+
+<h2><code>while</code></h2>
+<img src='images/syntax_anatomy/while.svg' onerror="this.src='images/syntax_anatomy/while.png'" />
+<p>Use the <code>while</code> loop to keep looping as long as the condition is met.<br/> <strong>*Be careful</strong> as it it very common to accidentally create an infinite loop with no end.</p>
+<pre class="prettyprint">
+// Pass out a deck of cards
+while (deckContainsCards){
+	passOutAnotherCard();
+}
+</pre>
+
+<h2><code>do while</code></h2>
+<img src='images/syntax_anatomy/do_while.svg' onerror="this.src='images/syntax_anatomy/do_while.png'" />
+<p>Use the <code>do while</code> loop much like the <code>while</code> loop. The only difference is this loop is always done at least once.<br/> <strong>*Be careful</strong> as it it very common to accidentally create an infinite loop with no end.</p>
+<pre class="prettyprint">
+// Stuffing a pillow
+do{
+	addStuffing();
+}while (notEnoughStuffing);
+</pre>
+
+</body>

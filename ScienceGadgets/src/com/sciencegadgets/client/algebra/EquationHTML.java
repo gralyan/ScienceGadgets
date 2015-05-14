@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -227,8 +228,18 @@ public class EquationHTML extends HTML {
 				} catch (NumberFormatException e) {
 					// non-numbers, characters after the first are subscripts
 					// note - constants are number nodes with character text
-					int substringEnd = text
-							.startsWith(Operator.MINUS.getSign()) ? 2 : 1;
+					
+					// The following shouldn't count as the large character before subscripts
+					boolean startsMinus = text
+							.startsWith(Operator.MINUS.getSign());
+					boolean startsDelta = text
+							.startsWith("\u0394");
+					boolean startsSqrt = text
+							.startsWith("\u221A");
+					
+					
+					int substringEnd = startsMinus || startsDelta || startsSqrt ? 2 : 1;
+					
 					nodeHtml.setInnerText(text.substring(0, substringEnd));
 					Element subscript = DOM.createDiv();
 					subscript.addClassName(CSS.SUBSCRIPT);

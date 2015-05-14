@@ -21,16 +21,22 @@ package com.sciencegadgets.client.ui;
 
 import java.util.HashSet;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasKeyPressHandlers;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 
-public class KeyPadNumerical extends FlowPanel {
+public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, Focusable {
 
 	HashSet<NumberButton> buttons = new HashSet<NumberButton>();
 	SymbolDisplay symbolDisplay;
@@ -43,6 +49,7 @@ public class KeyPadNumerical extends FlowPanel {
 	public KeyPadNumerical(SymbolDisplay symbolDisplay, Boolean includeNumbers,
 			Boolean includeNegative, Boolean includeOtherSymbols) {
 		super();
+		addKeyHandler();
 		symbolDisplay.setKeyPad(this);
 		initialize(symbolDisplay, includeNumbers, includeNegative,
 				includeOtherSymbols);
@@ -55,12 +62,25 @@ public class KeyPadNumerical extends FlowPanel {
 	public KeyPadNumerical(Boolean includeNumbers, Boolean includeNegative,
 			Boolean includeOtherSymbols) {
 		super();
+		addKeyHandler();
 		initialize(new SymbolDisplay(this), includeNumbers, includeNegative,
 				includeOtherSymbols);
 	}
 
 	public KeyPadNumerical() {
 		this(true, true, true);
+	}
+	
+	private void addKeyHandler() {
+		this.addKeyPressHandler(new KeyPressHandler() {
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				int charCode = event.getUnicodeCharCode();
+				if(48<=charCode && charCode<=57) {
+					numberSelect(event.getCharCode()+"");
+				}
+			}
+		});
 	}
 
 	private void initialize(SymbolDisplay symbolDisplay,
@@ -133,7 +153,7 @@ public class KeyPadNumerical extends FlowPanel {
 			});
 		}
 
-		//reload to reset keys enabled
+		// reload to reset keys enabled
 		symbolDisplay.setText(symbolDisplay.getText());
 	}
 
@@ -154,19 +174,52 @@ public class KeyPadNumerical extends FlowPanel {
 	}
 
 	protected void numberSelect(Button button) {
+		numberSelect(button.getText());
+	}
+
+	protected void numberSelect(String number) {
 
 		String oldText = symbolDisplay.getText();
 		String newText = "";
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(oldText)) {
-			newText = button.getText();
+			newText = number;
 		} else {
-			newText = oldText + button.getText();
+			newText = oldText + number;
 		}
 		symbolDisplay.setText(newText);
 	}
 
 	public SymbolDisplay getSymbolDisplay() {
 		return symbolDisplay;
+	}
+
+	@Override
+	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
+		return addDomHandler(handler, KeyPressEvent.getType());
+	}
+
+	@Override
+	public int getTabIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -1,18 +1,18 @@
 @CHARSET "UTF-8";
 
 /* general buttons */
-.smallestButton {
+.sg-smallestButton {
 	height: 50px;
 	width: 50px;
 }
 
-.mediumButton {
+.sg-mediumButton {
 	height: 70px;
 	width: 70px;
 }
 
 /* transformation buttons */
-.transformationButton {
+.sg-transformationButton {
 	color: black;
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
@@ -23,19 +23,19 @@
 	box-shadow: #000000 0 0 1px 1px;
 }
 
-.transformationButton:disabled {
+.sg-transformationButton:disabled {
 	color: gray;
 	font-weight: lighter;
 }
 
-.transformationButton:hover {
+.sg-transformationButton:hover {
 	-moz-box-shadow: #000000 0 0 2px 2px;
 	-webkit-box-shadow: #000000 0 0 2px 2px;
 	box-shadow: #000000 0 0 2px 2px;
 	text-shadow: 1px 3px 4px #000000;
 }
 
-.transformationButton:active {
+.sg-transformationButton:active {
 	-moz-box-shadow: #000000 0 0 3px 3px;
 	-webkit-box-shadow: #000000 0 0 3px 3px;
 	box-shadow: #000000 0 0 3px 3px;
@@ -44,28 +44,28 @@
 	top: 1px;
 }
 
-.bothSidesButton {
+.sg-bothSidesButton {
 	background-color: white;
 }
 
-.bothSidesButtonSelected {
+.sg-bothSidesButtonSelected {
 	background-color: black;
 	color: white;
 }
 
 /* edit buttons */
-.saveEquationButton {
+.sg-saveEquationButton {
 	width: 50%;
 	height: 100%;
 	display: inline-block;
 	vertical-align: top;
 }
 
-.changeNodeButton {
+.sg-changeNodeButton {
 	vertical-align: top;
 }
 
-.tab {
+.sg-tab {
 	background-image: url('images/tab.png');
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
@@ -73,35 +73,35 @@
 }
 
 /* problem prompt */
-.insertVarDescription {
+.sg-insertVarDescription {
 	background-color: gray;
 	color: white;
 	border: 2px solid black;
 }
 
-.insertVarImage {
+.sg-insertVarImage {
 	background-color: white;
 	color: black;
 	border: 2px solid silver;
 }
 
-.insertVarImageActive {
+.sg-insertVarImageActive {
 	background-color: silver;
 	color: black;
 }
 
-.insertVarSolve {
+.sg-insertVarSolve {
 	background-color: gray;
 	color: white;
 	border: 2px solid black;
 }
 
-.insertVarSolveActive {
+.sg-insertVarSolveActive {
 	background-color: silver;
 	color: black;
 }
 
-#generateButton{
+#sg-generateButton{
 	width: 100%;
 	height: 100%;
 	font-weight: bold;
@@ -115,7 +115,7 @@
 	text-shadow: 0px 0px 7px white;
 	border: none;
 }
-.activitySelectionButton{
+.sg-activitySelectionButton{
 	background-color: #aaf;
   background-image: -webkit-linear-gradient(top, white, #aaf);
   background-image: -moz-linear-gradient(top, white, #aaf);
@@ -123,12 +123,12 @@
   background-image: -o-linear-gradient(top, white, #aaf);
   background-image: linear-gradient(to bottom, white, #aaf);
 }
-.activitySelectionButtonSelected{
+.sg-activitySelectionButtonSelected{
 	background-color: lightGray;
 	color: gray;
 	font-weight: lighter;
 }
-.makeEqButton{
+.sg-makeEqButton{
 	border-top: solid black Thick;
 	background-color: #aaf;
 	-moz-box-shadow: gray 0 0 10px 3px inset;

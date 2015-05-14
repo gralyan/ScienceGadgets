@@ -1,0 +1,25 @@
+img{
+	border: solid thick black;
+	margin: 0 auto 2em auto;
+	display:inline-bock;
+}
+body{
+	background-color: Lavender;
+	width: 90%;
+	margin:auto;
+}
+p{
+	margin: 0 auto 2em auto;
+	display:bock;
+	
+}
+a{
+	font-size: 5em;
+	font-weight: bolder;
+}
+strong{
+    font-size: 4em;
+}
+pre{
+	background-color: white;
+}

@@ -48,7 +48,8 @@ public enum TypeSGET {
 	private ChildRequirement childRequirement;
 	private String icon;
 	public static final String NOT_SET = "\u25A1";
-	public static final String IN_PREFIX = "in-";
+	public static final String NAMESPACE_PREFIX = "sg-";
+	public static final String CHILD_PREFIX = "in-";
 
 	TypeSGET(String tag,String compressedTag,String cssClassName, ChildRequirement childRequirement, String icon) {
 		this.tag = tag;
@@ -57,9 +58,11 @@ public enum TypeSGET {
 		this.cssClassName = cssClassName;
 		this.icon = icon;
 	}
-
+	/**
+	 * Children of the type are given an altered version of the style name. The pre
+	 */
 	public String asChild() {
-		return (IN_PREFIX + toString().toLowerCase());
+		return (NAMESPACE_PREFIX+CHILD_PREFIX + toString().toLowerCase().replace(NAMESPACE_PREFIX, ""));
 	}
 
 	public String asChild(boolean isFirstChild) {
@@ -75,20 +78,17 @@ public enum TypeSGET {
 			seconChild = "-exponent";
 			break;
 		}
-		String qualifier = seconChild;
-		if (isFirstChild) {
-			qualifier = firstChild;
-		}
-		return (IN_PREFIX + toString().toLowerCase() + qualifier);
+		String qualifier = isFirstChild ? firstChild : seconChild;
+		return (asChild() + qualifier);
 	}
 
 	public String asLogBase() {
 		if (this.equals(Log)) {
-			return (IN_PREFIX + toString().toLowerCase() + "-base");
+			return (asChild() + "-base");
 		}
 		return "";
 	}
-
+	
 	public String getTag() {
 		return tag;
 	}

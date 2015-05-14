@@ -5,20 +5,21 @@
 	.code {
 		display: inline-block;
 		width: 50%;
-		overflow: auto;
+		overflow: none;
 		font-family: monospace;
 		background-color: gray;
 		vertical-align: top;
-		border-bottom: medium solid black;
-		height: 100%
+		height: 97%
 	}
 	
 	.display {
 		display: inline-block;
 		width: 50%;
 		vertical-align: top;
-		border-bottom: medium solid black;
 		height: 100%
+	}
+	.topPanel{
+		border-bottom: solid thick darkGreen;
 	}
 	</ui:style>
 
@@ -27,19 +28,19 @@
 			<g:FlowPanel ui:field="upperArea" height="10%">
 			</g:FlowPanel>
 			
-		<g:FlowPanel height="43%">
+		<g:FlowPanel height="40%" styleName="{style.topPanel}">
 			<g:FlowPanel styleName="{style.code}">
-				<g:Label ui:field="linkCode"></g:Label>
+				<g:TextArea width="100%" height="100%" ui:field="linkCode"></g:TextArea>
 			</g:FlowPanel>
 			<g:FlowPanel styleName="{style.display}">
 				<g:Anchor ui:field="linkDisplay"></g:Anchor>
 			</g:FlowPanel>
 
 		</g:FlowPanel>
-
+		
 		<g:FlowPanel height="43%">
 			<g:FlowPanel styleName="{style.code}">
-				<g:Label ui:field="iframeCode"></g:Label>
+				<g:TextArea width="100%" height="100%" ui:field="iframeCode"></g:TextArea>
 			</g:FlowPanel>
 			<g:FlowPanel styleName="{style.display}" ui:field="iFrameContainer">
 			</g:FlowPanel>
