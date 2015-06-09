@@ -57,7 +57,7 @@ public class EquationTree {
 	private HashMap<Element, String> idUnitHTMLMap = new HashMap<Element, String>();
 	private Element equationXML;
 	private EquationHTML eqHTML;
-	private boolean inEditMode;
+	private final boolean inEditMode;
 	private EquationValidator eqValidator;
 
 	public static final HashSet<String> IDS_USED = new HashSet<String>();
@@ -74,15 +74,15 @@ public class EquationTree {
 	 * @throws TopNodesNotFoundException
 	 */
 	public EquationTree(Element equationXML, boolean inEditMode) {
+		this(equationXML, inEditMode, true);
+	}
+	public EquationTree(Element equationXML, boolean inEditMode, boolean isValidated) {
 		this.equationXML = equationXML;
 		this.inEditMode = inEditMode;
 
-		bindXMLtoNodes(equationXML);
+		bindXMLtoNodes(equationXML, isValidated);
 
-		// if (inEditMode) {
 		ConstantRandomizer.randomizeNumbers(this, !inEditMode);
-		// }
-		// reloadDisplay(true);
 	}
 
 	public EquationTree(TypeSGET leftType, String leftSymbol,
@@ -184,7 +184,7 @@ public class EquationTree {
 	public String getRightDisplay() {
 		return JSNICalls.elementToString(eqHTML.getRight());
 	}
-	
+
 	public EquationHTML getDisplayClone(boolean isStacked) {
 		return new EquationHTML(this, isStacked);
 	}
@@ -243,6 +243,10 @@ public class EquationTree {
 		return wrappers;
 	}
 
+	public boolean containsId(String id) {
+		return idMap.get(id) != null;
+	}
+
 	public EquationNode getNodeById(String id) throws NoSuchElementException {
 
 		EquationNode node = idMap.get(id);
@@ -275,21 +279,18 @@ public class EquationTree {
 		return newNode;
 	}
 
-	public EquationValidator getValidator() {
-		if (eqValidator == null) {
-			eqValidator = new EquationValidator();
-		}
-		return eqValidator;
-	}
-
 	public void validateTree() throws IllegalStateException {
+		validateTree(!inEditMode);
+	}
+	
+	public void validateTree(boolean isQuantityValidated) throws IllegalStateException {
 		if (eqValidator == null) {
 			eqValidator = new EquationValidator();
 		}
 		for (EquationNode node : idMap.values()) {
 			eqValidator.validateEquationNode(node);
 		}
-		if (!inEditMode) {
+		if (isQuantityValidated) {
 			eqValidator.validateQuantityKinds(this);
 		}
 		validateMaps();
@@ -627,7 +628,7 @@ public class EquationTree {
 								+ toString());
 				break;
 			}
-			
+
 			return true;
 		}
 
@@ -744,7 +745,9 @@ public class EquationTree {
 
 		/**
 		 * Gets all descendant nodes of a specified type.
-		 * @param type - use null to get all descendants
+		 * 
+		 * @param type
+		 *            - use null to get all descendants
 		 * @return
 		 */
 		public LinkedList<EquationNode> getNodesByType(TypeSGET type) {
@@ -932,8 +935,8 @@ public class EquationTree {
 
 					// Rounded display value stored as inner text
 					String displayValue;
-					if (value.compareTo(new BigDecimal("1000")) < 0
-							&& value.remainder(new BigDecimal(".01"))
+					if (value.compareTo(new BigDecimal("100000")) < 0
+							&& value.remainder(new BigDecimal(".001"))
 									.compareTo(new BigDecimal(0)) == 0) {
 						displayValue = value.stripTrailingZeros()
 								.toPlainString();
@@ -945,7 +948,7 @@ public class EquationTree {
 					// Full value stored as attribute
 					String fullValue = "#".equals(displayValue) ? value
 							.stripTrailingZeros().toString() : displayValue;
-							
+
 					setAttribute(MathAttribute.Value, fullValue);
 					break;
 				}
@@ -1231,23 +1234,25 @@ public class EquationTree {
 
 	}
 
-	private void bindXMLtoNodes(Node equationXMLNode) {
+	private void bindXMLtoNodes(Node equationXMLNode, boolean isValidated) {
 		Element rootNode = (Element) equationXMLNode;
 
 		// root = newNode(rootNode);
 		root = bindXMLtoNodeRecursive(rootNode);
 
-		try {
-			validateTree();
-		} catch (IllegalStateException e) {
-			String message = e.getMessage();
-			if (message == null) {
-				Window.alert("Oops, an error occured, please refresh the page");
-			} else {
-				Window.alert(message);
+		if (isValidated) {
+			try {
+				validateTree();
+			} catch (IllegalStateException e) {
+				String message = e.getMessage();
+				if (message == null) {
+					Window.alert("Oops, an error occured, please refresh the page");
+				} else {
+					Window.alert(message);
+				}
+				JSNICalls.error(e.getCause().toString());
+				return;
 			}
-			JSNICalls.error(e.getCause().toString());
-			return;
 		}
 	}
 

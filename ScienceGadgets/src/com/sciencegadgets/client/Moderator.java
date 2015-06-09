@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -272,26 +273,26 @@ public class Moderator implements EntryPoint {
 	}
 
 	public static void reloadEquationPanel() {
-		reloadEquationPanel(null);
+		reloadEquationPanel(null, null);
 	}
 
-	public static void reloadEquationPanel(String changeComment) {
-		reloadEquationPanel(changeComment, (HashMap<Skill, Integer>) null);
+	public static void reloadEquationPanel(String changeComment, String nodeIdToSelect) {
+		reloadEquationPanel(changeComment, (HashMap<Skill, Integer>) null, nodeIdToSelect);
 	}
 
-	public static void reloadEquationPanel(String changeComment, Skill skill) {
+	public static void reloadEquationPanel(String changeComment, Skill skill, String nodeIdToSelect) {
 		if (skill == null) {
-			reloadEquationPanel(changeComment);
+			reloadEquationPanel(changeComment, nodeIdToSelect);
 		} else {
 			HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
 			skills.put(skill, 1);
-			reloadEquationPanel(changeComment, skills);
+			reloadEquationPanel(changeComment, skills, nodeIdToSelect);
 		}
 	}
 
 	public static void reloadEquationPanel(String changeComment,
-			HashMap<Skill, Integer> skills) {
-		algebraActivity.reloadEquationPanel(changeComment, skills, true);
+			HashMap<Skill, Integer> skills, String nodeIdToSelect) {
+		algebraActivity.reloadEquationPanel(changeComment, skills, true, nodeIdToSelect);
 	}
 
 	public static void increaseSkill(Skill skill, int increase) {
@@ -424,7 +425,7 @@ public class Moderator implements EntryPoint {
 
 			HashMap<Parameter, String> parameterMap = URLParameters
 					.getParameterMap();
-
+			
 			String easyParameter = parameterMap.get(Parameter.easy);
 			if (URLParameters.TRUE.equalsIgnoreCase(easyParameter)) {
 				isInEasyMode = true;
@@ -440,7 +441,8 @@ public class Moderator implements EntryPoint {
 						.valueOf(activityParameter);
 				switch (activityType) {
 				case algebrasolve:
-					ConstantRandomizer.insertRandomProvided(parameterMap);
+					//TODO
+					parameterMap = ConstantRandomizer.insertRandomProvided(parameterMap);
 					// fall through
 				case algebraedit:
 				case algebrasolvegoal:

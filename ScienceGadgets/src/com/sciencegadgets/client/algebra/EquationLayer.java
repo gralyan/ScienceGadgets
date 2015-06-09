@@ -21,8 +21,10 @@ package com.sciencegadgets.client.algebra;
 
 import java.util.LinkedList;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -36,6 +38,7 @@ public class EquationLayer extends SimplePanel {
 	EquationNode mathNode;
 	EquationHTML eqHTML;
 	private String layerId;
+	private Element focusElement;
 
 	public EquationLayer(EquationNode mathNode, EquationHTML eqHTML) {
 		super();
@@ -43,11 +46,11 @@ public class EquationLayer extends SimplePanel {
 		this.eqHTML = eqHTML;
 
 		if(mathNode != null) {
-		layerId=mathNode.getId();
-		eqHTML.getElement().setAttribute("id", EquationPanel.EQ_OF_LAYER + layerId);
-		replaceChildsId(eqHTML.getElement());
-		addStyleName(CSS.EQ_LAYER);
-		eqHTML.autoFillParent = true;
+			layerId=mathNode.getId();
+			eqHTML.getElement().setAttribute("id", EquationPanel.EQ_OF_LAYER + layerId);
+			replaceChildsId(eqHTML.getElement());
+			addStyleName(CSS.EQ_LAYER);
+			eqHTML.autoFillParent = true;
 		}else {
 			eqHTML.pilot = true;
 		}
@@ -57,6 +60,7 @@ public class EquationLayer extends SimplePanel {
 	protected void onLoad() {
 		super.onLoad();
 		this.add(eqHTML);
+//		addFocusElement();
 	}
 
 	public void setOpacity(double opacity) {
@@ -78,7 +82,25 @@ public class EquationLayer extends SimplePanel {
 	
 	public void addWrapper(Wrapper wrap) {
 		wrappers.add(wrap);
+		wrap.setLayer(this);
 	}
+
+//	public void addFocusElement() {
+//		if(wrappers.isEmpty()) {
+//			return;
+//		}
+//		
+//		this.focusElement = wrappers.get(0).getElement().getParentElement();
+//		if(focusElement != null && isAttached()) {
+//			eqHTML.setFocus(focusElement);
+//			int left = focusElement.getAbsoluteLeft()-20;
+//			getElement().getStyle().setLeft(-1*left, Unit.PX);
+//		}else {
+//			GWT.log("isAttached() "+isAttached());
+//			GWT.log("focusElement "+focusElement);
+//		}
+//			
+//	}
 	
 	public AbsolutePanel getContextMenuPanel(){
 		return ContextMenuPanel;
@@ -125,4 +147,5 @@ public class EquationLayer extends SimplePanel {
 	public EquationLayer clone(EquationNode node) {
 		return new EquationLayer(node, eqHTML.clone());
 	}
+
 }

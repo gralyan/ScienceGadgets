@@ -227,7 +227,7 @@ class FactorButton extends AddTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Factor " + getHTML());
+		onTransformationEnd("Factor " + getHTML(), sum);
 	}
 
 	private void factorOut(EquationNode toFactor, EquationNode inSide) {

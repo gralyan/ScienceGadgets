@@ -59,15 +59,16 @@ public class EquationBrowser extends FlowPanel {
 		this.add(activityDetailsPanel);
 
 		// Add buttons
-		algebraBrowser.getElement().setId(CSS.ALG_BROWSER_PANEL);
-		ActivityButton defaultButton = new ActivityButton("Algebra Practice",
-				algebraBrowser);
-		activitySelectionPanel.add(defaultButton);
-
 		generatePanel.getElement().setId(CSS.EQ_GENERATOR_PANEL);
-		activitySelectionPanel.add(new ActivityButton("Algebra Generator",
-				generatePanel));
 		
+		ActivityButton defaultButton = new ActivityButton("Algebra Generator",
+				generatePanel);
+		activitySelectionPanel.add(defaultButton);
+		
+		algebraBrowser.getElement().setId(CSS.ALG_BROWSER_PANEL);
+		activitySelectionPanel.add(new ActivityButton("Algebra Practice",
+				algebraBrowser));
+
 		activitySelectionPanel.add(new ActivityButton("Conversion",
 				conversionSpec));
 //		

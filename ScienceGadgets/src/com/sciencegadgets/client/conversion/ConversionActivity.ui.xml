@@ -2,35 +2,29 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		.dimensionalAnalysisArea {
-			background-color: silver;
-		}
-		
-		.layoutRow {
-			display: inline-block;
-			vertical-align: top;
-		}
+	.dimensionalAnalysisArea {
+		background-color: silver;
+	}
+	
+	.layoutRow {
+		display: inline-block;
+		vertical-align: top;
+	}
+	
+	.valueDisplay {
+		background-color: white;
+	}
+	
+	.mid {
+		background-color: lavender;
+	}
 	</ui:style>
 
 	<g:FlowPanel height="100%">
 
-		<g:FlowPanel addStyleNames="{style.layoutRow}" width="75%" height="100%">
-
-			<g:FlowPanel ui:field="dimensionalAnalysisArea" height="30%"
-				styleName="{style.dimensionalAnalysisArea}"></g:FlowPanel>
-
-			<g:FlowPanel ui:field="workArea" height="70%">
-
-				<g:Button ui:field="convertButton" text="Convert"
-					addStyleNames="{style.layoutRow}" width="20%" height="100%"></g:Button>
-
-				<g:AbsolutePanel ui:field="wrapperArea" width="80%"
-					height="100%" addStyleNames="{style.layoutRow}"></g:AbsolutePanel>
-
-			</g:FlowPanel>
-		</g:FlowPanel>
-
-		<g:FlowPanel addStyleNames="{style.layoutRow}" width="25%" height="100%">
+		<!-- left part -->
+		<g:FlowPanel addStyleNames="{style.layoutRow}" width="25%"
+			height="100%">
 
 			<g:FlowPanel ui:field="unitSelectionArea" height="80%">
 			</g:FlowPanel>
@@ -39,6 +33,27 @@
 			</g:FlowPanel>
 
 		</g:FlowPanel>
+
+		<!-- right part -->
+		<g:FlowPanel addStyleNames="{style.layoutRow}" width="75%"
+			height="100%">
+
+			<g:FlowPanel ui:field="dimensionalAnalysisArea" height="30%"
+				styleName="{style.dimensionalAnalysisArea}"></g:FlowPanel>
+
+			<g:FlowPanel height="10%" addStyleNames="{style.mid}">
+				<g:Label ui:field="valueDisplay" addStyleNames="{style.layoutRow}"
+					width="80%" height="100%">
+				</g:Label>
+				<g:Button ui:field="convertButton" text="Convert"
+					addStyleNames="{style.layoutRow}" width="20%" height="100%"></g:Button>
+			</g:FlowPanel>
+
+			<g:AbsolutePanel ui:field="wrapperArea" width="80%"
+				height="60%"></g:AbsolutePanel>
+
+		</g:FlowPanel>
+
 
 
 	</g:FlowPanel>

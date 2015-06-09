@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import com.google.gwt.animation.client.Animation;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Element;
@@ -141,7 +142,7 @@ public class EquationPanel extends AbsolutePanel {
 			// new InterFractionTransformations(wrap.getNode());
 			// }
 		}
-
+		
 		for (EquationWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
 		}
@@ -151,6 +152,7 @@ public class EquationPanel extends AbsolutePanel {
 
 		setFocus(algebraActivity.focusLayerId);
 	}
+
 	@Override
 	protected void onUnload() {
 		unselectCurrentSelection();
@@ -283,11 +285,29 @@ public class EquationPanel extends AbsolutePanel {
 				continue;
 			}
 
-			for (EquationNode subChil : node.getChildren()) {
-				Element autoSelectLayerNode = DOM.getElementById(subChil
+			// Collect selectable children for autoselect
+			LinkedList<EquationNode> selectableChildren = node.getChildren();
+			if (TypeSGET.Fraction.equals(node.getType())
+					&& selectableChildren.size() == 2) {
+				EquationNode numerator = selectableChildren.get(0);
+				EquationNode denominator = selectableChildren.get(1);
+				if (TypeSGET.Term.equals(numerator.getType())) {
+					for (EquationNode fracTermChild : numerator.getChildren()) {
+						selectableChildren.add(fracTermChild);
+					}
+					selectableChildren.remove(numerator);
+				}
+				if (TypeSGET.Term.equals(denominator.getType())) {
+					for (EquationNode fracTermChild : denominator.getChildren()) {
+						selectableChildren.add(fracTermChild);
+					}
+					selectableChildren.remove(denominator);
+				}
+			}
+			for (EquationNode subChild : selectableChildren) {
+				Element autoSelectLayerNode = DOM.getElementById(subChild
 						.getId() + OF_LAYER + parentId);
-				new AutoSelectWrapper(subChil,
-						autoSelectLayerNode);
+				new AutoSelectWrapper(subChild, autoSelectLayerNode);
 			}
 
 			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
@@ -313,12 +333,34 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	void setFocusOut() {
+		Wrapper prevSelection = unselectCurrentSelection();
+		Wrapper autoSelect = null;
+
 		EquationLayer parentLayer = focusLayer.getParentLayer();
-		if (parentLayer != null) {
-			setFocus(parentLayer);
-			// Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
+		if (parentLayer == null) {
+			return;
 		}
-		unselectCurrentSelection();
+
+		setFocus(parentLayer);
+		// Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
+
+		if (prevSelection == null) {
+			autoSelect = parentLayer.getWrappers().get(0);
+		} else {
+			autoSelect = prevSelection.getParentWrapper();
+			if (autoSelect == null
+					|| !parentLayer.getWrappers().contains(autoSelect)) {
+				try {
+					autoSelect = prevSelection.getNode().getParent()
+							.getParent().getWrapper();
+				} catch (Exception e) {
+				}
+			}
+		}
+		if (autoSelect != null
+				&& parentLayer.getWrappers().contains(autoSelect)) {
+			autoSelect.select();
+		}
 	}
 
 	void setFocus(EquationNode node) {
@@ -343,20 +385,19 @@ public class EquationPanel extends AbsolutePanel {
 		EquationLayer prevFocus = focusLayer;
 		unselectCurrentSelection();
 
-		newFocus.setVisible(true);
 		if (prevFocus != null) {
 			prevFocus.setVisible(false);
 		}
+		newFocus.setVisible(true);
 
 		focusLayer = newFocus;
-		//TODO
-//		algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
-//				"id");
-		
+		// TODO
+		// algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
+		// "id");
+
 		if (autoSelectedWrapper != null) {
 			Wrapper wrapperToSelect = autoSelectedWrapper.getWrapper();
 			if (focusLayer.wrappers.contains(wrapperToSelect)) {
-				JSNICalls.log("wrapperToSelect " + wrapperToSelect);
 				if (wrapperToSelect instanceof EditWrapper) {
 					((EditWrapper) wrapperToSelect).select();
 				} else if (wrapperToSelect instanceof AlgebaWrapper) {
@@ -371,7 +412,8 @@ public class EquationPanel extends AbsolutePanel {
 		}
 	}
 
-	public void unselectCurrentSelection() {
+	public Wrapper unselectCurrentSelection() {
+		Wrapper prevSelected = selectedWrapper;
 		if (selectedWrapper != null) {
 			if (selectedWrapper instanceof EditWrapper) {
 				((EditWrapper) selectedWrapper).unselect();
@@ -379,6 +421,7 @@ public class EquationPanel extends AbsolutePanel {
 				((AlgebaWrapper) selectedWrapper).unselect();
 			}
 		}
+		return prevSelected;
 	}
 
 	private class PrepareWrappersInLayer implements RepeatingCommand {
@@ -436,7 +479,6 @@ public class EquationPanel extends AbsolutePanel {
 					}
 				});
 			}
-
 		}
 
 		public Wrapper getWrapper() {
@@ -445,16 +487,31 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	public void zoomToAndSelect(String nodeIdToSelect) {
-		if(nodeIdToSelect == null || "".equals(nodeIdToSelect)) {
+
+		if (nodeIdToSelect == null) {
+			return;
+		} else if ("".equals(nodeIdToSelect)
+				|| !equationTree.containsId(nodeIdToSelect)) {
+			JSNICalls.warn("Can't get nodeToSelect: " + nodeIdToSelect);
 			return;
 		}
-		try {
-			EquationNode nodeToSelect = equationTree.getNodeById(nodeIdToSelect);
-			setFocus(nodeToSelect.getParent());
-			nodeToSelect.getWrapper().select();
-		}catch(NoSuchElementException e) {
+
+		EquationNode nodeToSelect = equationTree.getNodeById(nodeIdToSelect);
+		Wrapper wrap = nodeToSelect.getWrapper();
+
+		if (wrap == null) {
+			JSNICalls.warn("Can't zoomToAndSelect wrapper: \n" + wrap);
 			return;
 		}
+
+		EquationLayer eqLayer = wrap.getLayer();
+		if (eqLayer == null) {
+			JSNICalls.warn("Can't zoomToAndSelect layer: \n" + eqLayer);
+			return;
+		}
+
+		setFocus(eqLayer);
+		wrap.select();
 	}
 
 }

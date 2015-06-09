@@ -22,6 +22,7 @@ package com.sciencegadgets.client.algebra;
 import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
@@ -77,8 +78,13 @@ public class EquationWrapper extends Wrapper {
 		switch (type) {
 		case Number:
 			String fullValue = node.getAttribute(MathAttribute.Value);
+			if("".equals(fullValue)) {
+				fullValue = node.getAttribute(MathAttribute.Randomness);
+			}
 			FitParentHTML valueHTML = new FitParentHTML(fullValue);
 			detailsList.add(valueHTML);
+			valueHTML.getElement().getStyle().setWidth(100, Unit.PCT);
+			valueHTML.getElement().getStyle().setProperty("overflowWrap", "break-word");
 
 			UnitAttribute unit = node.getUnitAttribute();
 			if (!"".equals(unit)) {

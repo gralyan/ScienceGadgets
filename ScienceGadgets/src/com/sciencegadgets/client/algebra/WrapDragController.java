@@ -91,11 +91,14 @@ public class WrapDragController extends PickupDragController {
 
 	@Override
 	protected Widget newDragProxy(DragContext context) {
-		Element selectedElement = context.draggable.getElement();
+		Widget drag = context.draggable;
+		Element selectedElement = drag.getElement();
 		Node dragEl = selectedElement.cloneNode(true);
 		double pxPerEm = EquationHTML.getPxPerEm(selectedElement);
 
 		proxy = new SimplePanel();
+		proxy.getElement().getStyle().setWidth(drag.getOffsetWidth(), Unit.PX);
+		proxy.getElement().getStyle().setHeight(drag.getOffsetHeight(), Unit.PX);
 		proxy.addStyleName(DragClientBundle.INSTANCE.css().movablePanel());
 		proxy.getElement().getStyle().setFontSize(pxPerEm, Unit.PX);
 		proxy.getElement().appendChild(dragEl);

@@ -42,6 +42,12 @@ class GenerateEquationHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		boolean mustBeWholeAnswer = true;
 		boolean mustBePositives = true;
+		
+		int minAdd = 0;
+		int minMultiply = 0;
+		int minFraction = 0;
+		int minExp = 0;
+
 		int maxAdd = 10;
 		int maxMultiply = 10;
 		int maxFraction = 4;
@@ -66,11 +72,13 @@ class GenerateEquationHandler implements ClickHandler {
 			break;
 		case MEDIUM:
 			mustBePositives = false;
+			minAdd = 10;
 			maxAdd = 100;
 			sumsOS = 2;
 			sumsVS = 1;
 			break;
 		case HARD:
+			minAdd = 100;
 			maxAdd = 1000;
 			sumsOS = 2;
 			sumsVS = 2;
@@ -84,11 +92,13 @@ class GenerateEquationHandler implements ClickHandler {
 			termsOS = 1;
 			break;
 		case MEDIUM:
+			minMultiply = 2;
 			maxMultiply = 10;
 			termsOS = 2;
 			termsVS = 1;
 			break;
 		case HARD:
+			minMultiply = 5;
 			maxMultiply = 20;
 			termsOS = 2;
 			termsVS = 2;
@@ -106,6 +116,7 @@ class GenerateEquationHandler implements ClickHandler {
 			fracsOS = 2;
 			break;
 		case HARD:
+			minFraction = 2;
 			maxFraction = 10;
 			fracsOS = 2;
 			fracsVS = 1;
@@ -119,13 +130,15 @@ class GenerateEquationHandler implements ClickHandler {
 			expsOS = 1;
 			break;
 		case MEDIUM:
+			minExp = 1;
 			maxExp = 2;
 			expsOS = 2;
 			break;
 		case HARD:
-			maxExp = 2;
+			minExp = 2;
+			maxExp = 3;
 			expsOS = 2;
-			expsVS = 1;
+//			expsVS = 1;
 			break;
 		}
 		//Any subject set to easy defaults to all positives
@@ -157,9 +170,16 @@ class GenerateEquationHandler implements ClickHandler {
 
 		EquationTree eTree = EquationGenerator.GENERATE(
 				expressionsVariableSide, expressionsOtherSide,
-				mustBeWholeAnswer, mustBePositives, maxAdd, maxMultiply,
-				maxFraction, maxExp);
+				mustBeWholeAnswer, mustBePositives, 
+				minAdd, minMultiply,
+				minFraction, minExp,
+				maxAdd, maxMultiply,
+				maxFraction, maxExp
+				);
+		
 		Moderator.switchToAlgebra(eTree, null, ActivityType.algebrasolve, true);
+		
+
 		// SolverUniVariable.SOLVE(eTree);
 		// Moderator.reloadEquationPanel(null, null);
 

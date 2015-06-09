@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.ui.ToggleSlide;
@@ -129,19 +130,27 @@ class EditSolveClickHandler implements ClickHandler {
 	}
 	@Override
 	public void onClick(ClickEvent event) {
-		String equation = algebraActivity.getEquationTree().getRoot().toString();
-		if (equation.contains(TypeSGET.NOT_SET)) {
+		OptionsHandler.optionsPopup.hide();
+		
+		ActivityType activityType = algebraActivity.getActivityType() == ActivityType.algebraedit ? ActivityType.algebrasolve : ActivityType.algebraedit;
+		EquationTree equationTree = algebraActivity.getEquationTree();
+		String equationStr = equationTree.getRoot().toString();
+		if (equationStr.contains(TypeSGET.NOT_SET)) {
 			Window.alert("All new entities (" + TypeSGET.NOT_SET
 					+ ") must be set or removed before solving");
 			return;
 		}
+		try {
+			equationTree.validateTree(true);
+		} catch (IllegalStateException e) {
+			Window.alert("Units must match");
+			return;
+		}
 
-		OptionsHandler.optionsPopup.hide();
 		if (algebraActivity.getEquationPanel() != null) {
 			algebraActivity.getEquationPanel().unselectCurrentSelection();
 		}
-		ActivityType activityType = algebraActivity.getActivityType() == ActivityType.algebraedit ? ActivityType.algebrasolve : ActivityType.algebraedit;
-		Moderator.switchToAlgebra(Moderator.getCurrentEquationTree().getEquationXMLClone(), true, activityType, true);
+		Moderator.switchToAlgebra(equationTree.getEquationXMLClone(), true, activityType, true);
 	}
 
 }

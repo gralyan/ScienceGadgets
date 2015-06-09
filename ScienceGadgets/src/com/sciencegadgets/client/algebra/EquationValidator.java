@@ -106,7 +106,7 @@ public class EquationValidator {
 						new BigDecimal(node.getAttribute(MathAttribute.Value));
 					} catch (NumberFormatException ex) {
 						String errorMessage = "The number node must have a valid number: "
-								+ toString();
+								+ node.getAttribute(MathAttribute.Value);
 						throw new IllegalStateException(errorMessage,
 								new Throwable(errorMessage));
 					}

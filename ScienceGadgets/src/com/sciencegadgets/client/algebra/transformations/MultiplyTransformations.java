@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
+import com.google.gwt.core.client.GWT;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -283,7 +284,7 @@ abstract class MultiplyTransformButton extends TransformationButton {
 	MultiplyTransformButton(MultiplyTransformations context, String html) {
 		super(context);
 //		super(html, context);
-		addStyleName(CSS.TERM + " " + CSS.PARENT_WRAPPER);
+		addStyleName(CSS.TERM);
 
 		this.left = context.left;
 		this.right = context.right;
@@ -347,7 +348,7 @@ class MultiplyZeroButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd(otherSymbol + " " + operation.toString() + " 0 = 0");
+		onTransformationEnd(otherSymbol + " " + operation.toString() + " 0 = 0", other);
 	}
 
 	@Override
@@ -387,7 +388,7 @@ class MultiplyOneButton extends MultiplyTransformButton {
 		parent.decase();
 
 		onTransformationEnd(otherSymbol + " " + operation.toString() + " 1 = "
-				+ otherSymbol);
+				+ otherSymbol, other);
 	}
 
 	@Override
@@ -429,7 +430,7 @@ class MultiplyNegOneButton extends MultiplyTransformButton {
 		parent.decase();
 
 		onTransformationEnd(otherSymbol + " " + operation.toString()
-				+ " -1 = -" + otherSymbol);
+				+ " -1 = -" + otherSymbol, other);
 	}
 
 	@Override
@@ -544,7 +545,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 		operation.remove();
 
 		parent.decase();
-
+		
 		onTransformationEnd(leftValue.stripTrailingZeros()
 				.toEngineeringString()
 				+ " "
@@ -552,7 +553,7 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 				+ " "
 				+ rightValue.stripTrailingZeros().toEngineeringString()
 				+ " = "
-				+ totalValue.stripTrailingZeros().toEngineeringString());
+				+ totalValue.stripTrailingZeros().toEngineeringString(), right);
 	}
 
 	@Override
@@ -603,7 +604,7 @@ class MultiplyDistributionButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Distribute");
+		onTransformationEnd("Distribute", sum);
 	}
 
 	@Override
@@ -640,7 +641,7 @@ class MultiplyCombineExponentsButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Combine Exponents");
+		onTransformationEnd("Combine Exponents", right);
 	}
 
 	@Override
@@ -711,7 +712,7 @@ class MultiplyCombineBasesButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Combine Bases");
+		onTransformationEnd("Combine Bases", rightExponential);
 	}
 
 	@Override
@@ -758,7 +759,7 @@ class MultiplyWithFractionButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Multiply with Fraction");
+		onTransformationEnd("Multiply with Fraction", fraction);
 	}
 
 	@Override
@@ -797,7 +798,7 @@ class MultiplyFractionsButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Multiply Fractions");
+		onTransformationEnd("Multiply Fractions", right);
 	}
 
 	@Override
@@ -835,7 +836,7 @@ class MultiplyLogRuleButton extends MultiplyTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Log Power Rule");
+		onTransformationEnd("Log Power Rule", other);
 	}
 
 	@Override

@@ -22,12 +22,14 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
+import com.google.gwt.core.shared.GWT;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.InterFractionTransformations.DropType;
 import com.sciencegadgets.client.algebra.transformations.specification.NumberQuiz;
 import com.sciencegadgets.client.entities.users.Badge;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeSGET;
@@ -40,15 +42,19 @@ public class InterFractionButton extends TransformationButton {
 	private EquationNode target;
 	private String dropHTML = "";
 	private DropType dropType;
+	private EquationNode zoomTo;
 
 	public InterFractionButton(InterFractionTransformations context,
 			EquationNode drag, EquationNode target, DropType dropType) {
 		super(context);
+		addStyleName(CSS.FRACTION);
+		
 
 		this.drag = drag;
 		this.target = target;
 		this.dropType = dropType;
-
+		zoomTo = target;
+		
 		dropHTML = initDropHTML();
 		setHTML(dropHTML);
 
@@ -112,10 +118,11 @@ public class InterFractionButton extends TransformationButton {
 
 		if (TypeSGET.Fraction.equals(drag.getParentType())
 				&& TypeSGET.Fraction.equals(target.getParentType())) {
-			target.getParent().replace(TypeSGET.Number, "1");
+			EquationNode one = target.getParent().replace(TypeSGET.Number, "1");
+			zoomTo = one;
 			complete(false);
 		} else {
-			cleanSide(target);
+			zoomTo = cleanSide(target);
 			complete(true);
 		}
 	}
@@ -126,20 +133,22 @@ public class InterFractionButton extends TransformationButton {
 	 */
 	private void dividePrompt() {
 		try {
-			if (Moderator.meetsRequirements(Badge.DROP_CANCEL, Badge.FACTOR_NUMBERS)
-					&& FractionTransformations.SIMPLIFY_FRACTION(drag, target,
-							true)) {
-				complete(false);
-				return;
-			}
+			// if (Moderator.meetsRequirements(Badge.DROP_CANCEL,
+			// Badge.FACTOR_NUMBERS)
+			// //TODO simplify method not complete
+			// //&& FractionTransformations.SIMPLIFY_FRACTION(drag, target,true)
+			// ) {
+			// complete(false);
+			// return;
+			// }
 
 			BigDecimal targetNumber = new BigDecimal(target.getSymbol());
 			BigDecimal dragNumber = new BigDecimal(drag.getSymbol());
 			final BigDecimal total = targetNumber.divide(dragNumber,
 					MathContext.DECIMAL128);
 
-			boolean meetsRequirements = Moderator.meetsRequirements(Badge
-					.DIVIDE_NUMBERS);
+			boolean meetsRequirements = Moderator
+					.meetsRequirements(Badge.DIVIDE_NUMBERS);
 
 			if (meetsRequirements) {
 				divide(total);
@@ -158,7 +167,8 @@ public class InterFractionButton extends TransformationButton {
 					public void onCorrect() {
 						super.onCorrect();
 						divide(total);
-						Moderator.getStudent().increaseSkill(Skill.DIVIDE_NUMBERS, 1);
+						Moderator.getStudent().increaseSkill(
+								Skill.DIVIDE_NUMBERS, 1);
 					}
 				};
 				prompt.appear();
@@ -181,6 +191,7 @@ public class InterFractionButton extends TransformationButton {
 
 		setDropHTMLTotal(totalString);
 
+		zoomTo = division;
 		complete(true);
 	}
 
@@ -249,8 +260,8 @@ public class InterFractionButton extends TransformationButton {
 	private void exponentialDrop() {
 		EquationNode dragExp = drag.getChildAt(1);
 		EquationNode targetExp = target.getChildAt(1);
-		if (//Moderator.meetsRequirement(Badge.EXP_DROP_ARITHMETIC)&& 
-				TypeSGET.Number.equals(dragExp.getType())
+		if (// Moderator.meetsRequirement(Badge.EXP_DROP_ARITHMETIC)&&
+		TypeSGET.Number.equals(dragExp.getType())
 				&& TypeSGET.Number.equals(targetExp.getType())) {
 			BigDecimal dragValue = new BigDecimal(dragExp.getSymbol());
 			BigDecimal targetValue = new BigDecimal(targetExp.getSymbol());
@@ -278,21 +289,27 @@ public class InterFractionButton extends TransformationButton {
 
 		drag.lineThrough();
 		target.highlight();
-		
-		onTransformationEnd(dropHTML);
+
+		onTransformationEnd(dropHTML, zoomTo);
 
 	}
 
-	// Clean up both drag side and target side
-	private void cleanSide(EquationNode side) {
+	/**
+	 * Clean up both drag side and target side
+	 * 
+	 * @param side
+	 * @return appropriate node to zoom to
+	 */
+	public static EquationNode cleanSide(EquationNode side) {
 
 		EquationNode sideParent = side.getParent();
+		EquationNode sideGrandParent = sideParent.getParent();
 		if (TypeSGET.Fraction.equals(sideParent.getType())) {
 			if (side.getIndex() == 0) {// numerator
-				side.replace(TypeSGET.Number, "1");
+				return side.replace(TypeSGET.Number, "1");
 			} else {// denominator
 				EquationNode frac = side.getParent();
-				frac.replace(frac.getChildAt(0));
+				return frac.replace(frac.getChildAt(0));
 			}
 		} else {
 			EquationNode sideOp = null;
@@ -304,8 +321,10 @@ public class InterFractionButton extends TransformationButton {
 			if (sideOp != null && TypeSGET.Operation.equals(sideOp.getType())) {
 				sideOp.remove();
 			}
+
 			side.remove();
 			sideParent.decase();
+			return sideGrandParent;
 		}
 	}
 
@@ -328,6 +347,7 @@ public class InterFractionButton extends TransformationButton {
 		}
 		return null;
 	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;

@@ -19,21 +19,16 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra.transformations;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasTouchEndHandlers;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTML;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.FitParentHTML;
-import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
@@ -111,7 +106,7 @@ public abstract class TransformationButton extends SelectionButton implements
 		}
 
 		EquationTree previewTree = new EquationTree(
-				transformList.beforeAfterTree.getEquationXMLClone(), false);
+				transformList.beforeAfterTree.getEquationXMLClone(), false, false);
 		previewTree.getRightSide().replace(previewTree.getLeftSide().clone());
 		EquationNode previewContextNode = previewTree.getRightSide();
 		if (TypeSGET.Sum.equals(previewContextNode.getType())
@@ -144,7 +139,13 @@ public abstract class TransformationButton extends SelectionButton implements
 	@Override
 	protected void onSelect() {
 		if(autoUnselect) {
-			Moderator.getCurrentAlgebraActivity().getEquationPanel().unselectCurrentSelection();
+				AlgebraActivity algActivity = Moderator.getCurrentAlgebraActivity();
+				if(algActivity != null) {
+					EquationPanel eqPanel = algActivity.getEquationPanel();
+					if(eqPanel != null) {
+						eqPanel.unselectCurrentSelection();
+					}
+				}
 		}
 		transform();
 	}
@@ -153,7 +154,7 @@ public abstract class TransformationButton extends SelectionButton implements
 		allowSkillIncrease = allow;
 	}
 
-	protected void onTransformationEnd(String changeComment) {
+	protected void onTransformationEnd(String changeComment, EquationNode nodeToSelect) {
 
 		Badge badge = getAssociatedBadge();
 		Skill skills = badge == null ? null : badge.getSkill();
@@ -163,7 +164,7 @@ public abstract class TransformationButton extends SelectionButton implements
 		}
 
 		if (transformList.reloadAlgebraActivity) {
-			Moderator.reloadEquationPanel(changeComment, skills);
+			Moderator.reloadEquationPanel(changeComment, skills, nodeToSelect.getId());
 		}
 	}
 

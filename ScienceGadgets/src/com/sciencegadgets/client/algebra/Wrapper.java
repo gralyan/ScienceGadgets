@@ -48,6 +48,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	protected AbsolutePanel parentPanel;
 	protected WrapDragController dragController = null;
 	public boolean moved = false;
+	private EquationLayer equationLayer;
 
 	public Wrapper(EquationNode node, final AbsolutePanel parentPanel,
 			Element element) {
@@ -85,6 +86,14 @@ public class Wrapper extends HTML implements HasClickHandlers,
 
 	public Wrapper getParentWrapper() {
 		return node.getParent().getWrapper();
+	}
+	
+	public void setLayer(EquationLayer equationLayer) {
+		this.equationLayer = equationLayer;
+	}
+	
+	public EquationLayer getLayer() {
+		return equationLayer;
 	}
 
 	public void select() {

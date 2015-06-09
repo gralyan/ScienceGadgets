@@ -22,10 +22,10 @@
 		.specHalf {
 			display: inline-block;
 			vertical-align: top;
-			width: 48%;
+			width: 50%;
 			height: 100%;
-			margin-right: 1%;
 			text-align: center;
+			background-color: lightGray;
 		}
 		
 		.toggle {
@@ -36,7 +36,7 @@
 		}
 		
 		.symbolPalette {
-			overflow-y: scroll;
+			overflow-y: auto;
 		}
 		
 	</ui:style>
@@ -62,7 +62,7 @@
 		</g:FlowPanel>
 
 		<!-- unit area -->
-		<g:FlowPanel ui:field="unitArea" styleName="{style.specHalf}">
+		<g:FlowPanel ui:field="unitArea" addStyleNames="{style.specHalf}">
 
 			<!-- unit display -->
 			<g:FlowPanel height="20%">

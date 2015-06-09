@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.entities.users.Badge;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
@@ -83,6 +84,7 @@ abstract class NumberTransformationButton extends TransformationButton {
 
 	NumberTransformationButton(String html, final NumberTransformations context) {
 		super(html, context);
+		addStyleName(CSS.NUMBER);
 
 		this.numberNode = context.numberNode;
 	}
@@ -158,14 +160,14 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 
 			EquationNode parent = numberNode.encase(TypeSGET.Term);
 			int index = numberNode.getIndex();
-			parent.addBefore(index, TypeSGET.Operation, Operator
+			EquationNode op = parent.addBefore(index, TypeSGET.Operation, Operator
 					.getMultiply().getSign());
 			parent.addBefore(index, TypeSGET.Number, factor + "");
 
 			numberNode.setSymbol(factored + "");
 
 			onTransformationEnd(original + " = " + factor + " "
-					+ Operator.getMultiply().getSign() + " " + factored);
+					+ Operator.getMultiply().getSign() + " " + factored, op);
 
 			prompt.disappear();
 		}

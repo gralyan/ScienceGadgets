@@ -73,6 +73,7 @@ abstract class VariableTransformationButton extends TransformationButton {
 
 	VariableTransformationButton(String html, VariableTransformations context) {
 		super(html, context);
+		addStyleName(CSS.VARIABLE);
 		this.variableNode = context.variableNode;
 	}
 }

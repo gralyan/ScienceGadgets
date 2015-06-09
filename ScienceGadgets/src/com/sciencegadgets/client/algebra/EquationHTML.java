@@ -55,14 +55,17 @@ public class EquationHTML extends HTML {
 	private Element right = null;
 	HashMap<Element, EquationNode> displayMap = new HashMap<Element, EquationNode>();
 
+	private Element focusElement;
+
 	public EquationHTML(EquationTree mTree) {
 		this(mTree, true, true, false);
 	}
+
 	public EquationHTML(EquationTree mTree, boolean isStacked) {
 		this(mTree, true, true, isStacked);
 	}
 
-		public EquationHTML(EquationTree mTree, boolean hasSmallUnits,
+	public EquationHTML(EquationTree mTree, boolean hasSmallUnits,
 			boolean hasSubscripts, boolean isStacked) {
 		this.mTree = mTree;
 		this.setStyleName(CSS.EQUATION);
@@ -99,7 +102,6 @@ public class EquationHTML extends HTML {
 			resizeEquation();
 		}
 	}
-
 	public EquationHTML clone() {
 		return new EquationHTML(this.getHTML());
 	}
@@ -228,18 +230,15 @@ public class EquationHTML extends HTML {
 				} catch (NumberFormatException e) {
 					// non-numbers, characters after the first are subscripts
 					// note - constants are number nodes with character text
-					
-					// The following shouldn't count as the large character before subscripts
-					boolean startsMinus = text
-							.startsWith(Operator.MINUS.getSign());
-					boolean startsDelta = text
-							.startsWith("\u0394");
-					boolean startsSqrt = text
-							.startsWith("\u221A");
-					
-					
+
+					// The following shouldn't count as the large character
+					// before subscripts
+					boolean startsMinus = text.startsWith(Operator.MINUS.getSign());
+					boolean startsDelta = text.startsWith("\u0394");
+					boolean startsSqrt = text.startsWith("\u221A");
+
 					int substringEnd = startsMinus || startsDelta || startsSqrt ? 2 : 1;
-					
+
 					nodeHtml.setInnerText(text.substring(0, substringEnd));
 					Element subscript = DOM.createDiv();
 					subscript.addClassName(CSS.SUBSCRIPT);
@@ -252,19 +251,19 @@ public class EquationHTML extends HTML {
 			break;
 		case Operation:
 			String txt = mNode.getSymbol();
-			if(isStacked && TypeSGET.Operator.EQUALS.getSign().equals(txt)) {
+			if (isStacked && TypeSGET.Operator.EQUALS.getSign().equals(txt)) {
 				txt = "";
 				nodeHtml.getStyle().setDisplay(Display.BLOCK);
-			}else {
-			if (txt.startsWith("&")) { // must insert as js code
-				for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
-					if (op.getHTML().equals(txt)) {
-						txt = op.getSign();
-						break;
+			} else {
+				if (txt.startsWith("&")) { // must insert as js code
+					for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
+						if (op.getHTML().equals(txt)) {
+							txt = op.getSign();
+							break;
+						}
 					}
 				}
-			}
-			nodeHtml.setInnerText(txt);
+				nodeHtml.setInnerText(txt);
 			}
 			break;
 		}
@@ -289,14 +288,35 @@ public class EquationHTML extends HTML {
 		return nodeHtml;
 	}
 
+	public void setFocus(Element focusElement) {
+		this.focusElement = focusElement;
+	}
 	/**
 	 * Resizes the equation to fill the panel
 	 */
 	private void resizeEquation() {
+		
+//		Element focusEl = this.getElement();
+//		
+//		Element eqEl = this.getElement();
+//		if(eqEl != null) {
+//			String focusId = eqEl.getAttribute("id").replace(EquationPanel.EQ_OF_LAYER, "");
+//			if(!focusId.equals("")) {
+//				Element layerParentNode = DOM.getElementById(focusId + EquationPanel.OF_LAYER
+//						+ focusId);
+//				if(layerParentNode != null) {
+//					focusEl  = layerParentNode;
+//				}
+//			}
+//		}
+////		if(focusElement != null) {
+////			focusEl = focusElement;
+////		}
+		
 		double widthRatio = (double) this.getParent().getOffsetWidth()
-				/ this.getOffsetWidth();
+				/ getOffsetWidth();
 		double heightRatio = (double) this.getParent().getOffsetHeight()
-				/ this.getOffsetHeight();
+				/ getOffsetHeight();
 
 		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
 				: widthRatio;
@@ -461,5 +481,6 @@ public class EquationHTML extends HTML {
 			break;
 		}
 	}
+
 
 }

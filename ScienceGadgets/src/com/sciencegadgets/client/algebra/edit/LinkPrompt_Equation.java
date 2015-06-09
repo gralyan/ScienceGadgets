@@ -143,8 +143,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 		}
 
 		try {
-			eTree.validateTree();
-			eTree.getValidator().validateQuantityKinds(eTree);
+			eTree.validateTree(true);
 		} catch (IllegalStateException e) {
 			String message = e.getMessage();
 			if (message == null) {

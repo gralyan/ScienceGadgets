@@ -130,7 +130,7 @@ abstract class LogTransformButton extends TransformationButton {
 
 	LogTransformButton(LogarithmicTransformations context, String html) {
 		super(context);
-		addStyleName(CSS.LOG + " " + CSS.PARENT_WRAPPER);
+		addStyleName(CSS.LOG);
 
 		this.log = context.log;
 		this.argument = context.argument;
@@ -187,10 +187,10 @@ class LogEvaluateButton extends LogTransformButton {
 			}
 		}
 
-		log.replace(TypeSGET.Number, total + "");
+		EquationNode evaluated = log.replace(TypeSGET.Number, total + "");
 
 		onTransformationEnd("log<sub>" + base + "</sub>(" + argValue + ") = "
-				+ total);
+				+ total, evaluated);
 	}
 
 	@Override
@@ -236,7 +236,7 @@ class LogChangeBaseButton extends LogTransformButton {
 						denom.append(TypeSGET.Number, base);
 						denom.setAttribute(MathAttribute.LogBase, newBase);
 
-						onTransformationEnd("log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)");
+						onTransformationEnd("log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)", log);
 					}
 				};
 			}
@@ -285,7 +285,7 @@ class LogProductButton extends LogTransformButton {
 
 		log.remove();
 
-		onTransformationEnd("log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)");
+		onTransformationEnd("log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)", sum);
 	}
 
 	@Override
@@ -328,7 +328,7 @@ class LogQuotientButton extends LogTransformButton {
 
 		log.remove();
 
-		onTransformationEnd("log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)");
+		onTransformationEnd("log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)", sum);
 	}
 
 	@Override
@@ -364,7 +364,7 @@ class LogPowerButton extends LogTransformButton {
 
 		argument.replace(argument.getFirstChild());
 
-		onTransformationEnd("log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)");
+		onTransformationEnd("log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)", term);
 	}
 
 	@Override
@@ -389,9 +389,9 @@ class LogOneButton extends LogTransformButton {
 
 	@Override
 	public void transform() {
-		log.replace(TypeSGET.Number, "0");
+		EquationNode evaluated = log.replace(TypeSGET.Number, "0");
 
-		onTransformationEnd("log<sub>b</sub>(1) = 0");
+		onTransformationEnd("log<sub>b</sub>(1) = 0", evaluated);
 	}
 
 	@Override
@@ -416,9 +416,9 @@ class LogSameBaseAsArgumentButton extends LogTransformButton {
 
 	@Override
 	public void transform() {
-		log.replace(TypeSGET.Number, "1");
+		EquationNode evaluated = log.replace(TypeSGET.Number, "1");
 
-		onTransformationEnd("log<sub>b</sub>(b) = 1");
+		onTransformationEnd("log<sub>b</sub>(b) = 1", evaluated);
 	}
 
 	@Override
@@ -453,6 +453,6 @@ class LogUnravelButton extends LogTransformButton {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
-		onTransformationEnd(changeComment);
+		onTransformationEnd(changeComment, replacement);
 	}
 }

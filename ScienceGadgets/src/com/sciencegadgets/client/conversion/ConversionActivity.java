@@ -35,6 +35,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
@@ -82,6 +83,8 @@ public class ConversionActivity extends AbsolutePanel {
 	AbsolutePanel wrapperArea;
 	@UiField
 	Button convertButton;
+	@UiField
+	Label valueDisplay;
 
 	static final UnitSelection unitSelection = new UnitSelection(false, true);
 	static final SelectionPanel derivedUnitsSelection = new SelectionPanel(
@@ -139,16 +142,17 @@ public class ConversionActivity extends AbsolutePanel {
 		totalNode = mTree.getLeftSide().append(TypeSGET.Number,
 				initialValue);
 		mTree.getRightSide().append(totalNode.clone());
+		valueDisplay.setText(initialValue);
 
 		UnitMultiple[] bases = unitAttribute.getUnitMultiples();
 
-		EquationNode fracRight = mTree.newNode(TypeSGET.Fraction, "");
-		EquationNode numerRight = fracRight.append(TypeSGET.Term, "");
-		EquationNode denomRight = fracRight.append(TypeSGET.Term, "");
+		EquationNode fracHistory = mTree.newNode(TypeSGET.Fraction, "");
+		EquationNode numerHistory = fracHistory.append(TypeSGET.Term, "");
+		EquationNode denomHistory = fracHistory.append(TypeSGET.Term, "");
 
-		EquationNode fracLeft = wrapperFraction = fracRight.clone();
-		EquationNode numerLeft = fracLeft.getChildAt(0);
-		EquationNode denomLeft = fracLeft.getChildAt(1);
+		EquationNode fracWorking = wrapperFraction = fracHistory.clone();
+		EquationNode numerWorking = fracWorking.getChildAt(0);
+		EquationNode denomWorking = fracWorking.getChildAt(1);
 
 		for (UnitMultiple base : bases) {
 			boolean negExp = base.toString().contains("-");
@@ -168,27 +172,25 @@ public class ConversionActivity extends AbsolutePanel {
 			EquationNode unitNodeClone = unitNode.clone();
 
 			if (negExp) {
-				denomLeft.append(unitNodeClone);
-				denomRight.append(unitNode);
+				denomWorking.append(unitNodeClone);
+				denomHistory.append(unitNode);
 			} else {
-				numerLeft.append(unitNodeClone);
-				numerRight.append(unitNode);
+				numerWorking.append(unitNodeClone);
+				numerHistory.append(unitNode);
 			}
 			unitDisplays.add(new UnitDisplay(unitNodeClone, unitNode, false,
 					!negExp));
 		}
 
-		EquationNode[] numAndDens = { denomLeft, denomRight, numerLeft,
-				numerRight };
+		EquationNode[] numAndDens = { numerHistory ,denomHistory, numerWorking,denomWorking};
 		for (EquationNode numOrDen : numAndDens) {
 			if (numOrDen.getChildCount() == 0) {
 				numOrDen.append(TypeSGET.Number, "1");
-
 			}
 		}
 
-		mTree.getRightSide().append(fracRight);
-		mTree.getLeftSide().append(fracLeft);
+		mTree.getRightSide().append(fracHistory);
+		mTree.getLeftSide().append(fracWorking);
 	}
 
 	@Override
@@ -408,6 +410,7 @@ public class ConversionActivity extends AbsolutePanel {
 					MathContext.DECIMAL128);
 		}
 		totalNode.setSymbol(total.stripTrailingZeros().toEngineeringString());
+		valueDisplay.setText(total.stripTrailingZeros().toPlainString());
 
 		selectedWrapper.getUnitDisplay().isCanceled = true;
 		selectedWrapper.unselect();

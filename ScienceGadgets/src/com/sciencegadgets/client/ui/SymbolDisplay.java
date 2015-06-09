@@ -49,13 +49,15 @@ public class SymbolDisplay extends HTML {
 		boolean isBlank = "".equals(text);
 
 		if (keyPad != null) {
+
+			boolean isCapableOfExp = !isBlank
+					&& !text.contains(KeyPadNumerical.E)
+					&& !text.endsWith(KeyPadNumerical.PERIOD);
+			boolean isCapableOfPeriod = !text.contains(KeyPadNumerical.PERIOD);
+
 			keyPad.negButton.setEnabled(isBlank);
-			keyPad.periodButton.setEnabled(!text.contains(keyPad.periodButton
-					.getHTML()));
-			keyPad.eButton.setEnabled(!isBlank
-					&& !text.contains(keyPad.eButton.getHTML()));
-			keyPad.expButton.setEnabled(!isBlank
-					&& !text.contains(keyPad.expButton.getHTML()));
+			keyPad.periodButton.setEnabled(isCapableOfPeriod);
+			keyPad.eButton.setEnabled(isCapableOfExp);
 		}
 
 		if (!isBlank) {
@@ -65,11 +67,9 @@ public class SymbolDisplay extends HTML {
 			} catch (NumberFormatException e) {
 				// non-numbers, characters after the first are subscripts
 				// note - constants are number nodes with character text
-				boolean startsMinus = text
-						.startsWith(Operator.MINUS.getSign());
-				boolean startsDelta = text
-						.startsWith("\u0394");
-				
+				boolean startsMinus = text.startsWith(Operator.MINUS.getSign());
+				boolean startsDelta = text.startsWith("\u0394");
+
 				int substringEnd = startsMinus || startsDelta ? 2 : 1;
 				setHTML(text.substring(0, substringEnd));
 				Element subscript = DOM.createDiv();
@@ -87,7 +87,7 @@ public class SymbolDisplay extends HTML {
 	void setKeyPad(KeyPadNumerical keyPad) {
 		this.keyPad = keyPad;
 	}
-	
+
 	public void clear() {
 		setText("");
 	}

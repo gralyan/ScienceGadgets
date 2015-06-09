@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.History;
 import com.sciencegadgets.client.URLParameters.Parameter;
+import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
@@ -133,6 +134,10 @@ public class URLParameters {
 	}
 
 	public static String decompressEquationXML(String equationXML) {
+		
+		// Random ? mark
+		equationXML = equationXML.replace("%3F", RandomSpecPanel.RANDOM_SYMBOL);
+		
 		// Add xmlns
 		equationXML = equationXML.replace(TypeSGET.Equation.getTag(),
 				TypeSGET.Equation.getTag() + " "

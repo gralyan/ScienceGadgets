@@ -285,7 +285,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			this.toType = toType;
 			
 			addStyleName(CSS.CHANGE_NODE_BUTTON + " "
-					+ toType.toString() + " " + CSS.PARENT_WRAPPER);
+					+ toType.toString());
 		}
 		
 		private void toDummy(){

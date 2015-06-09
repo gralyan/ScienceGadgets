@@ -37,6 +37,11 @@ public class EquationGenerator {
 			LinkedHashMap<TypeSGET, Integer> expressionsOtherSide,//
 			boolean mustBeWholeAnswer, //
 			boolean mustBePositives, //
+			int minAdd,//
+			int minMultiply,//
+			int minFraction,//
+			int minExp,//
+
 			int maxAdd,//
 			int maxMultiply,//
 			int maxFraction,//
@@ -49,6 +54,10 @@ public class EquationGenerator {
 		GERERATE_SIDE(var, expressionsVariableSide,//
 				mustBeWholeAnswer, //
 				mustBePositives, //
+				minAdd,//
+				minMultiply,//
+				minFraction,//
+				minExp,//
 				maxAdd,//
 				maxMultiply,//
 				maxFraction,//
@@ -56,6 +65,10 @@ public class EquationGenerator {
 		GERERATE_SIDE(other, expressionsOtherSide,//
 				mustBeWholeAnswer, //
 				mustBePositives, //
+				minAdd,//
+				minMultiply,//
+				minFraction,//
+				minExp,//
 				maxAdd,//
 				maxMultiply,//
 				maxFraction,//
@@ -89,6 +102,10 @@ public class EquationGenerator {
 			LinkedHashMap<TypeSGET, Integer> expressions,//
 			boolean mustBeWholeAnswer, //
 			boolean mustBePositives, //
+			int minAdd,//
+			int minMultiply,//
+			int minFraction,//
+			int minExp,//
 			int maxAdd,//
 			int maxMultiply,//
 			int maxFraction,//
@@ -113,25 +130,25 @@ public class EquationGenerator {
 
 			switch (type) {
 			case Sum:
-				int valueAdd = Random.nextInt(maxAdd);
+				int valueAdd = Random.nextInt(maxAdd-minAdd)+minAdd;
 				if (!mustBePositives && Random.nextBoolean()) {
 					valueAdd *= -1;
 				}
 				side = ADD_SUB(side, valueAdd, mustBePositives);
 				break;
 			case Term:
-				int valueMultiply = Random.nextInt(maxMultiply);
+				int valueMultiply = Random.nextInt(maxMultiply-minMultiply)+minMultiply;
 				if (!mustBePositives && Random.nextBoolean()) {
 					valueMultiply *= -1;
 				}
 				side = MULTIPLY(side, valueMultiply);
 				break;
 			case Fraction:
-				side = FRACTION(side, mustBeWholeAnswer, maxMultiply,
+				side = FRACTION(side, mustBeWholeAnswer, maxMultiply, minFraction,
 						maxFraction);
 				break;
 			case Exponential:
-				side = EXP(side, maxExp);
+				side = EXP(side, minExp, maxExp);
 				break;
 			case Trig:
 				side = TRIG(side);
@@ -164,10 +181,10 @@ public class EquationGenerator {
 	}
 
 	private static EquationNode FRACTION(EquationNode node,
-			boolean mustBeWholeAnswer, int maxMultiply, int maxFraction) {
+			boolean mustBeWholeAnswer, int maxMultiply,int minFraction, int maxFraction) {
 
-		int smaller = Random.nextInt(maxMultiply) + 1;
-		int bigger = smaller * maxFraction;
+		int smaller = Random.nextInt(maxMultiply) + 1+minFraction;
+		int bigger = smaller * Random.nextInt(maxFraction)+2;
 
 		int numeratorValue, denominatorValue;
 		if (!mustBeWholeAnswer && Random.nextBoolean()) {
@@ -202,9 +219,9 @@ public class EquationGenerator {
 		return node;
 	}
 
-	private static EquationNode EXP(EquationNode node, int maxExp) {
+	private static EquationNode EXP(EquationNode node, int minExp, int maxExp) {
 		node = node.encase(TypeSGET.Exponential);
-		node.append(TypeSGET.Number, Random.nextInt(maxExp) + "");
+		node.append(TypeSGET.Number, Random.nextInt(maxExp-minExp)+minExp + "");
 		return node;
 	}
 

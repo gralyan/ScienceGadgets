@@ -40,11 +40,14 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 
 	HashSet<NumberButton> buttons = new HashSet<NumberButton>();
 	SymbolDisplay symbolDisplay;
+	
+	public static final String NEG = "-";
+	public static final String PERIOD = ".";
+	public static final String E = "E";
 
-	NumberButton negButton = new NumberButton("-");
-	NumberButton periodButton = new NumberButton(".");
-	NumberButton eButton = new NumberButton("E");
-	NumberButton expButton = new NumberButton("^");
+	NumberButton negButton = new NumberButton(NEG);
+	NumberButton periodButton = new NumberButton(PERIOD);
+	NumberButton eButton = new NumberButton(E);
 
 	public KeyPadNumerical(SymbolDisplay symbolDisplay, Boolean includeNumbers,
 			Boolean includeNegative, Boolean includeOtherSymbols) {
@@ -114,10 +117,6 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 			eButton.setTitle("x10^");
 			buttons.add(eButton);
 			this.add(eButton);
-
-			expButton.setTitle("exponent");
-			buttons.add(expButton);
-			this.add(expButton);
 		}
 
 		if (Moderator.isTouch) {

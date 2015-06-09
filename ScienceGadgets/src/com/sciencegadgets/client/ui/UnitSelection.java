@@ -81,7 +81,7 @@ public class UnitSelection extends FlowPanel {
 		} else {
 
 			final UnitSearchBox searchBox = new UnitSearchBox();
-			searchBox.setSize("100%", "20%");
+			searchBox.addStyleName(CSS.UNIT_SEARCH);
 			this.add(searchBox);
 
 			quantityBox.setSize("50%", "80%");

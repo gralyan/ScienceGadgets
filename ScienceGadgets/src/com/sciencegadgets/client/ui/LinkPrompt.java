@@ -113,7 +113,7 @@ public abstract class LinkPrompt extends Prompt {
 				.replace("&amp;", "&"));
 
 		iframeDisplay.setSrc(url);
-		iframeCode.setText(JSNICalls.elementToString(iframeDisplay));
+		iframeCode.setText(JSNICalls.elementToString(iframeDisplay).replace("&amp;", "&"));
 
 		iframeDisplay.getStyle().setWidth(100, Unit.PCT);
 		iframeDisplay.getStyle().setHeight(100, Unit.PCT);

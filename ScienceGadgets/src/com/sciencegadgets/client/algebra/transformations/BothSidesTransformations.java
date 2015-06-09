@@ -453,7 +453,7 @@ public class BothSidesTransformations extends
 				topParent.append(node.clone());
 			}
 
-			onTransformationEnd(changeComment);
+			onTransformationEnd(changeComment, node);
 		}
 
 	}
@@ -533,7 +533,7 @@ public class BothSidesTransformations extends
 				}
 			}
 
-			onTransformationEnd(changeComment);
+			onTransformationEnd(changeComment, node);
 		}
 	}
 
@@ -603,7 +603,7 @@ public class BothSidesTransformations extends
 				sameSideTarget.append(node.clone());
 			}
 
-			onTransformationEnd(changeComment);
+			onTransformationEnd(changeComment, node);
 		}
 	}
 
@@ -669,7 +669,7 @@ public class BothSidesTransformations extends
 				frac.append(node.clone());
 			}
 
-			onTransformationEnd(changeComment);
+			onTransformationEnd(changeComment, node);
 		}
 	}
 
@@ -707,7 +707,7 @@ public class BothSidesTransformations extends
 				fromExp.addFirst(TypeSGET.Number, base);
 			}
 
-			onTransformationEnd(changeComment);
+			onTransformationEnd(changeComment, node);
 		}
 	}
 
@@ -742,7 +742,7 @@ public class BothSidesTransformations extends
 				fromLog.setAttribute(MathAttribute.LogBase, node.getSymbol());
 			}
 
-			onTransformationEnd(changeComment);
+			onTransformationEnd(changeComment, node);
 		}
 	}
 
@@ -780,7 +780,7 @@ public class BothSidesTransformations extends
 				fromTrig.setAttribute(MathAttribute.Function, toFunction);
 			}
 
-			onTransformationEnd(changeComment);
+			onTransformationEnd(changeComment, node);
 		}
 	}
 }

@@ -123,6 +123,9 @@ public class ConstantRandomizer {
 
 		String randomProvidedString = parameterMap
 				.get(Parameter.randomprovided);
+		if(randomProvidedString == null || "".equals(randomProvidedString)) {
+			return parameterMap;
+		}
 		String[] randomProvidedArray = randomProvidedString
 				.split(URLParameters.RANDOM_PROVIDED_DELIMITER);
 
@@ -207,5 +210,5 @@ public class ConstantRandomizer {
 			return new BigDecimal((Math.random() * 10) + 1);
 		}
 	}
-
+	
 }

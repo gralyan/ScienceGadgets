@@ -128,7 +128,7 @@ public class AdditionTransformations extends
 		try {
 			new BigDecimal(left.getSymbol());
 			new BigDecimal(right.getSymbol());
-		}catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			return null;
 		}
 		return new AddNumbersButton(this);
@@ -204,7 +204,7 @@ abstract class AddTransformButton extends TransformationButton {
 
 	AddTransformButton(AdditionTransformations context) {
 		super(context);
-		addStyleName(CSS.SUM + " " + CSS.PARENT_WRAPPER);
+		addStyleName(CSS.SUM);
 
 		this.isMinus = context.isMinus;
 		this.isMinusBeforeLeft = context.isMinusBeforeLeft;
@@ -265,8 +265,9 @@ class AddZeroButton extends AddTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd(other.getHTMLString(true, true) + " + 0 = "
-				+ other.getHTMLString(true, true));
+		onTransformationEnd(
+				other.getHTMLString(true, true) + " + 0 = "
+						+ other.getHTMLString(true, true), other);
 	}
 
 	@Override
@@ -303,7 +304,9 @@ class AddNumbersButton extends AddTransformButton {
 	public void transform() {
 
 		if (!left.getUnitAttribute().equals(right.getUnitAttribute())) {
-			Window.alert("You can only add quantities with similar units.\nPlease convert first.");
+			if (reloadAlgebraActivity == true) {
+				Window.alert("You can only add quantities with similar units.\nPlease convert first.");
+			}
 			return;
 		}
 
@@ -322,7 +325,7 @@ class AddNumbersButton extends AddTransformButton {
 		} else if (totalAbs <= 100) {
 			nMagSkill = Skill.ADD_NUMBERS_100;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_100;
-		}else {
+		} else {
 			nMagSkill = Skill.ADD_NUMBERS_LARGE;
 			numberMagnitudeBadge = Badge.ADD_NUMBERS_LARGE;
 		}
@@ -432,7 +435,7 @@ class AddNumbersButton extends AddTransformButton {
 				+ " "
 				+ rightValue.stripTrailingZeros().toEngineeringString()
 				+ " = "
-				+ totalValue.stripTrailingZeros().toEngineeringString());
+				+ totalValue.stripTrailingZeros().toEngineeringString(), right);
 	}
 
 	@Override
@@ -496,7 +499,7 @@ class AddSimilarButton extends AddTransformButton {
 		operation.remove();
 		parent.decase();
 
-		onTransformationEnd("Add similar");
+		onTransformationEnd("Add similar", right);
 	}
 
 	@Override
@@ -584,7 +587,7 @@ class ToCommonDenominatorButton extends AddTransformButton {
 			rightDenTerm.append(commonLeft);
 		}
 
-		onTransformationEnd("Common Denominator");
+		onTransformationEnd("Common Denominator", operation);
 	}
 
 	@Override
@@ -626,7 +629,7 @@ class AddFractionsButton extends AddTransformButton {
 		left.remove();
 		parent.decase();
 
-		onTransformationEnd("Add Fractions");
+		onTransformationEnd("Add Fractions", right);
 	}
 
 	@Override
@@ -671,7 +674,7 @@ class AddLogsButton extends AddTransformButton {
 
 		parent.decase();
 
-		onTransformationEnd("Combine Log");
+		onTransformationEnd("Combine Log", newLogChild);
 
 	}
 

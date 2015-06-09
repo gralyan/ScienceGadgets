@@ -109,7 +109,7 @@ class TrigTransformButton extends TransformationButton {
 
 	TrigTransformButton(TrigTransformations context) {
 		super(context);
-		addStyleName(CSS.TRIG + " " + CSS.PARENT_WRAPPER);
+		addStyleName(CSS.TRIG);
 
 		this.trig = context.trig;
 		this.argument = context.argument;
@@ -177,7 +177,7 @@ class TrigDefineButton extends TrigTransformButton {
 		}
 		otherTrig.append(argument.clone());
 
-		onTransformationEnd(getHTML());
+		onTransformationEnd(getHTML(), otherTrig);
 	}
 
 	@Override
@@ -225,7 +225,7 @@ class TrigReciprocalButton extends TrigTransformButton {
 
 		trig.setAttribute(MathAttribute.Function, reciprocalFunction.toString());
 
-		onTransformationEnd(getHTML());
+		onTransformationEnd(getHTML(), trig);
 	}
 
 	@Override
@@ -262,6 +262,6 @@ class TrigUnravelButton extends TrigTransformButton {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
-		onTransformationEnd(changeComment);
+		onTransformationEnd(changeComment, replacement);
 	}
 }

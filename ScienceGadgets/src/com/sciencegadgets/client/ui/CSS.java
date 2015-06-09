@@ -86,6 +86,7 @@ public static final String SCI_BROWSER_SUM = "sg-sciBrowseSum";
 public static final String DIAGRAM_MEASURE = "sg-diagramMeasure";
 public static final String ACTIVITY_SELECTION_PANEL = "sg-activitySelectionPanel";
 public static final String ACTIVITY_DETAILS_PANEL = "sg-activityDetailsPanel";
+public static final String CONVERSION_SPECIFICATION = "sg-conversionSpec";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "sg-conversionActivity";
 /*---------------SelectionPanel---------------*/
@@ -131,6 +132,7 @@ public static final String OK_GAP = "sg-okGap";
 public static final String EXAMPLE_HTML = "sg-exampleHtml";
 public static final String ESTABLISHED_QUANTITY_SELECTION = "sg-establishedQuantitySelection";
 public static final String QUANTITY_PROMPT_SPEC = "sg-quantityPromptSpec";
+public static final String UNIT_SEARCH = "sg-unitSearch";
 
 
 //////////////////////////////////////////////

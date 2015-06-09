@@ -30,12 +30,16 @@ public class ConversionSpecification extends FlowPanel {
 	SelectionButton convertButton = new SelectionButton("Convert") {
 		@Override
 		protected void onSelect() {
-			Moderator.switchToConversion(conversionSpec.getSymbolDisplay().getText(), conversionSpec.getUnitMap().getUnitAttribute(), false);
+			String toConvertValue = conversionSpec.getSymbolDisplay().getText();
+			if(!"".equals(toConvertValue)) {
+				Moderator.switchToConversion(toConvertValue, conversionSpec.getUnitMap().getUnitAttribute(), false);
+			}
 		}
 	};
 
 	ConversionSpecification() {
 		setSize("100%", "100%");
+		addStyleName(CSS.CONVERSION_SPECIFICATION);
 		conversionSpec.setHeight("80%");
 		convertButton.setHeight("20%");
 		convertButton.addStyleName(CSS.MAKE_EQ_BUTTON);

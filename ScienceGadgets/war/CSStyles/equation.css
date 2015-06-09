@@ -18,63 +18,43 @@
 /*---------------parentWrapper---------------*/
 
 /* Note * There should be no spaces, auto-formatting adds space*/
-.sg-parentWrapper>.sg-fenced.sg-Sum {
-	background-image: url('images/tile_sumChild.png');
-	background-repeat: no-repeat;
-	background-size: 100% 100%;
-}
-/* Note * There should be no spaces, auto-formatting adds space*/
-.sg-parentWrapper.sg-in-sum.sg-Operation { /* add/subtract(+/-) */
-	/* 	background-image: url('images/tile_sumOp.png'); */
-	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
-	
-}
-
-/* Note * There should be no spaces, auto-formatting adds space*/
-.sg-parentWrapper.sg-Sum {
+.sg-parentWrapper.sg-Sum,.sg-transformationButton.sg-Sum {
 	/* 	background-image: url('images/tile_sumChild.png'); */
 	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
 	background-color: gold;
 }
 
-/* Note * There should be no spaces, auto-formatting adds space*/
-.sg-parentWrapper.sg-in-term.sg-Operation { /* multiply(x) */
-	/* 	background-image: url('images/tile_termOp.png'); */
-	/* 	background-repeat: no-repeat; */ /* 	background-size: 100% 100%; */
-	
-}
-
-.sg-parentWrapper.sg-Term {
+.sg-parentWrapper.sg-Term,.sg-transformationButton.sg-Term {
 	/* 	background-image: url('images/tile_termChild.png'); */
 	/* 	background-repeat: repeat; */
 	background-color: red;
 }
 
-.sg-parentWrapper.sg-Fraction {
-	background-color: orange;
+.sg-parentWrapper.sg-Fraction,.sg-transformationButton.sg-Fraction {
+	background-color: darkOrange;
 }
 
-.sg-parentWrapper.sg-Exponential {
-	background-color: Maroon;
+.sg-parentWrapper.sg-Exponential,.sg-transformationButton.sg-Exponential {
+	background-color: Magenta;
 }
 
-.sg-parentWrapper.sg-Log {
+.sg-parentWrapper.sg-Log,.sg-transformationButton.sg-Log {
 	background-color: SpringGreen;
 }
 
-.sg-parentWrapper.sg-Trig {
-	background-color: Peru; /* 	light brown */
+.sg-parentWrapper.sg-Trig,.sg-transformationButton.sg-Trig {
+	background-color: tan;
 }
 
-.sg-parentWrapper.sg-Number {
+.sg-parentWrapper.sg-Number,.sg-transformationButton.sg-Number {
 	background-color: SkyBlue;
 }
 
-.sg-parentWrapper.sg-Variable {
+.sg-parentWrapper.sg-Variable,.sg-transformationButton.sg-Variable {
 	background-color: blue;
 }
 
-.sg-parentWrapper.sg-Equation { /* 	background-color: white; */
+.sg-parentWrapper.sg-Equation,.sg-transformationButton.sg-Equation {
 	background-color: darkGreen;
 }
 
@@ -85,7 +65,7 @@
 }
 
 .sg-displayWrapper.sg-Sum {
-	color: gold;
+	color: #CCAC00;/*gold*/
 }
 
 .sg-displayWrapper.sg-in-term.sg-Operation { /* multiply(x) */
@@ -93,31 +73,31 @@
 }
 
 .sg-displayWrapper.sg-Term {
-	color: red;
+	color: #CC0000;/*red*/
 }
 
 .sg-displayWrapper.sg-Fraction {
-	color: orange;
+	color: #CC7000;/*orange*/
 }
 
 .sg-displayWrapper.sg-Exponential {
-	color: Maroon;
+	color: #990099;/*Magenta*/
 }
 
 .sg-displayWrapper.sg-Log {
-	color: SpringGreen;
+	color: green;/*springGreen*/
 }
 
 .sg-displayWrapper.sg-Trig {
-	color: Peru; /* 	light brown */
+	color: peru; /* tan */
 }
 
 .sg-displayWrapper.sg-Number {
-	color: SkyBlue;
+	color: RoyalBlue ; /*skyBlue*/
 }
 
 .sg-displayWrapper.sg-Variable {
-	color: blue;
+	color: darkBlue; /*blue*/
 }
 
 .sg-displayWrapper.sg-Equation { /* 	background-color: white; */

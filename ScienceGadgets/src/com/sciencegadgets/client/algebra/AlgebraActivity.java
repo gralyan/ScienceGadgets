@@ -146,14 +146,14 @@ public class AlgebraActivity extends SimplePanel {
 					});
 			createLinkButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
 
-			Button saveEquationButton = new Button("Create Challenge",
-					new SaveButtonHandler(AlgebraActivity.this));
-			saveEquationButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
+//			Button saveEquationButton = new Button("Create Challenge",
+//					new SaveButtonHandler(AlgebraActivity.this));
+//			saveEquationButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
 
 			FlowPanel upMidHolder = new FlowPanel();
 			upMidHolder.setStyleName(CSS.FILL_PARENT);
 			upMidHolder.add(createLinkButton);
-			upMidHolder.add(saveEquationButton);
+//			upMidHolder.add(saveEquationButton);
 			setDefaultUpperMidWidget(upMidHolder);
 
 			break;
@@ -268,10 +268,6 @@ public class AlgebraActivity extends SimplePanel {
 		setDefaultUpperMidWidget(algOut);
 	}
 
-	public void reloadEquationPanel(String changeComment,
-			HashMap<Skill, Integer> skillsIncrease, boolean updateParameters) {
-		reloadEquationPanel(changeComment, skillsIncrease, updateParameters, null);
-	}
 	/**
 	 * Updates the equation in all places when a change is made
 	 * 
@@ -361,8 +357,7 @@ public class AlgebraActivity extends SimplePanel {
 			URLParameters.setParameters(parameterMap, false);
 		}
 		
-		//TODO Check each case
-//		eqPanel.zoomToAndSelect(nodeIdToSelect);
+		eqPanel.zoomToAndSelect(nodeIdToSelect);
 	}
 
 	public void clearTransformLists() {

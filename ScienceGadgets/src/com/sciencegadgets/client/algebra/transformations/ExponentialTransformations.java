@@ -171,7 +171,7 @@ abstract class ExponentialTransformButton extends TransformationButton {
 
 	ExponentialTransformButton(ExponentialTransformations context, String html) {
 		super(context);
-		addStyleName(CSS.EXPONENTIAL + " " + CSS.PARENT_WRAPPER);
+		addStyleName(CSS.EXPONENTIAL);
 
 		this.exponential = context.exponential;
 		this.base = context.base;
@@ -228,7 +228,7 @@ class ZeroOrOneBaseButton extends ExponentialTransformButton {
 	public void transform() {
 		exponential.replace(base);
 
-		onTransformationEnd(getHTML(baseValue));
+		onTransformationEnd(getHTML(baseValue), base);
 	}
 
 	@Override
@@ -315,7 +315,7 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 				+ " ^ "
 				+ expValue
 				+ " = "
-				+ totalValue.stripTrailingZeros().toEngineeringString());
+				+ totalValue.stripTrailingZeros().toEngineeringString(),evaluated);
 	}
 
 	@Override
@@ -386,7 +386,7 @@ class ExponentialExpandButton extends ExponentialTransformButton {
 			}
 		}
 
-		onTransformationEnd("Expand");
+		onTransformationEnd("Expand", base);
 	}
 
 	@Override
@@ -421,7 +421,7 @@ class ExponentialExponentiateButton extends ExponentialTransformButton {
 
 		base.replace(innerBase);
 
-		onTransformationEnd("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>");
+		onTransformationEnd("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>", innerBase);
 	}
 
 	@Override
@@ -457,7 +457,7 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 		}
 		exponential.replace(base);
 
-		onTransformationEnd("(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>");
+		onTransformationEnd("(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>", base);
 	}
 
 	@Override
@@ -499,7 +499,7 @@ class ExponentialFlipButton extends ExponentialTransformButton {
 			exponent.setSymbol(expSymbol.replace(Operator.MINUS.getSign(), ""));
 		}
 
-		onTransformationEnd("x<sup>-b</sup> = (1/x)<sup>b</sup>");
+		onTransformationEnd("x<sup>-b</sup> = (1/x)<sup>b</sup>", base);
 	}
 
 	@Override
@@ -534,6 +534,6 @@ class ExponentialUnravelButton extends ExponentialTransformButton {
 		String changeComment = toReplace.getHTMLString(true, true) + " = "
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
-		onTransformationEnd(changeComment);
+		onTransformationEnd(changeComment, replacement);
 	}
 }

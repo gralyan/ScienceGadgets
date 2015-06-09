@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.entities.users.Badge;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
 
@@ -49,7 +50,9 @@ public class FractionTransformations extends
 		this.denominatorType = denominator.getType();
 
 		add(denominatorFlip_check());
-		add(simplifyFraction_check());
+		
+		//TODO 
+//		add(simplifyFraction_check());
 
 	}
 
@@ -69,12 +72,12 @@ public class FractionTransformations extends
 		}
 	}
 
-	public static boolean SIMPLIFY_FRACTION(EquationNode numerator,
-			EquationNode denominator, boolean execute)
+	public static boolean SIMPLIFY_FRACTION(EquationNode drag,
+			EquationNode target, boolean execute)
 			throws ArithmeticException, NumberFormatException {
-		Integer numValue = Integer.parseInt(new BigDecimal(numerator
+		Integer numValue = Integer.parseInt(new BigDecimal(drag
 				.getSymbol()).toPlainString());
-		Integer denValue = Integer.parseInt(new BigDecimal(denominator
+		Integer denValue = Integer.parseInt(new BigDecimal(target
 				.getSymbol()).toPlainString());
 
 		// Whole Division
@@ -83,8 +86,10 @@ public class FractionTransformations extends
 			if (execute) {
 				int division = numValue > denValue ? numValue / denValue
 						: denValue / numValue;
-				EquationNode fraction = numerator.getParent();
-				fraction.replace(TypeSGET.Number, division + "");
+				
+				//TODO combine with InterBractionButton
+				target.replace(TypeSGET.Number, division + "");
+				InterFractionButton.cleanSide(drag);
 			}
 			return true;
 		}
@@ -115,8 +120,8 @@ public class FractionTransformations extends
 			numNewValue /= match;
 			denNewValue /= match;
 		}
-		numerator.setSymbol(numNewValue.toString());
-		denominator.setSymbol(denNewValue.toString());
+		drag.setSymbol(numNewValue.toString());
+		target.setSymbol(denNewValue.toString());
 
 		return true;
 	}
@@ -136,6 +141,7 @@ abstract class FractionTransformButton extends TransformationButton {
 
 	public FractionTransformButton(String html, FractionTransformations context) {
 		super(html, context);
+		addStyleName(CSS.FRACTION);
 		this.fraction = context.fraction;
 		this.numerator = context.numerator;
 		this.denominator = context.denominator;
@@ -170,7 +176,7 @@ class SimplifyFractionButton extends FractionTransformButton {
 		denominator.highlight();
 
 		if (reloadAlgebraActivity) {
-			onTransformationEnd("Simplify Fraction");
+			onTransformationEnd("Simplify Fraction", fraction);
 		}
 	}
 
@@ -260,6 +266,6 @@ class DenominatorFlipButton extends FractionTransformButton {
 		
 		fraction.remove();
 
-		onTransformationEnd("Multiply by Resiprocal");
+		onTransformationEnd("Multiply by Resiprocal", denominator);
 	}
 }
