@@ -45,10 +45,9 @@ public class EditWrapper extends EquationWrapper {
 			}else {
 				addClickHandler(new OperationClickHandler());
 			}
+			changeNodeMenu = null;
 		}else{
 			changeNodeMenu.setNode(node);
-//			eqPanel.getAlgebraActivity().lowerEqArea.add(changeNodeMenu);
-//			changeNodeMenu.setVisible(false);
 		}
 	}
 
@@ -68,7 +67,6 @@ public class EditWrapper extends EquationWrapper {
 			if (changeNodeMenu != null) {
 				changeNodeMenu.updatePaste();
 				eqPanel.getAlgebraActivity().lowerEqArea.add(changeNodeMenu);
-//				changeNodeMenu.setVisible(true);
 			}
 		}
 	}
@@ -76,7 +74,6 @@ public class EditWrapper extends EquationWrapper {
 	public void unselect() {
 
 		if (changeNodeMenu != null) {
-//		changeNodeMenu.setVisible(false);
 		changeNodeMenu.removeFromParent();
 		}
 		
@@ -103,7 +100,6 @@ public class EditWrapper extends EquationWrapper {
 			break;
 		}
 		getAlgebraActivity().reloadEquationPanel(null, null, true, node.getId());
-//		 Moderator.reloadEquationPanel();
 	}
 	private class OperationTouchHandler implements TouchStartHandler{
 		@Override

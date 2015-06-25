@@ -110,13 +110,13 @@ public abstract class QuantityPrompt extends Prompt {
 			AlgebraActivity algebraActivity = ((EquationWrapper) node
 					.getWrapper()).getAlgebraActivity();
 
+			String symbol = extractSymbol();
+
 			if (mustCheckUnits
-					&& !spec.getUnitMap().isConvertableTo(node.getUnitMap())) {
+					&& !spec.getUnitMap().isConvertableTo(node.getUnitMap()) && !"0".equals(symbol)) {
 				Window.alert("Units must match:\n" + spec.getUnitMap());
 				return;
 			}
-
-			String symbol = extractSymbol();
 
 			if (symbol == null) {
 				return;

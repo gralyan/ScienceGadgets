@@ -21,7 +21,6 @@ package com.sciencegadgets.client.ui;
 
 import java.util.HashSet;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
@@ -32,28 +31,27 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Focusable;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 
-public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, Focusable {
+public class KeyPadNumerical extends FlowPanel{
 
 	HashSet<NumberButton> buttons = new HashSet<NumberButton>();
 	SymbolDisplay symbolDisplay;
-	
+
 	public static final String NEG = "-";
 	public static final String PERIOD = ".";
 	public static final String E = "E";
+	public static final String CLEAR = "clear";
 
 	NumberButton negButton = new NumberButton(NEG);
 	NumberButton periodButton = new NumberButton(PERIOD);
 	NumberButton eButton = new NumberButton(E);
+	NumberButton clearButton = new NumberButton(CLEAR);
 
 	public KeyPadNumerical(SymbolDisplay symbolDisplay, Boolean includeNumbers,
 			Boolean includeNegative, Boolean includeOtherSymbols) {
 		super();
-		addKeyHandler();
-		symbolDisplay.setKeyPad(this);
 		initialize(symbolDisplay, includeNumbers, includeNegative,
 				includeOtherSymbols);
 	}
@@ -65,7 +63,6 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 	public KeyPadNumerical(Boolean includeNumbers, Boolean includeNegative,
 			Boolean includeOtherSymbols) {
 		super();
-		addKeyHandler();
 		initialize(new SymbolDisplay(this), includeNumbers, includeNegative,
 				includeOtherSymbols);
 	}
@@ -73,22 +70,11 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 	public KeyPadNumerical() {
 		this(true, true, true);
 	}
-	
-	private void addKeyHandler() {
-		this.addKeyPressHandler(new KeyPressHandler() {
-			@Override
-			public void onKeyPress(KeyPressEvent event) {
-				int charCode = event.getUnicodeCharCode();
-				if(48<=charCode && charCode<=57) {
-					numberSelect(event.getCharCode()+"");
-				}
-			}
-		});
-	}
 
 	private void initialize(SymbolDisplay symbolDisplay,
 			Boolean includeNumbers, Boolean includeNegative,
 			Boolean includeOtherSymbols) {
+		symbolDisplay.setKeyPad(this);
 		addStyleName(CSS.KEY_PAD_NUMERICAL);
 
 		this.symbolDisplay = symbolDisplay;
@@ -118,6 +104,10 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 			buttons.add(eButton);
 			this.add(eButton);
 		}
+
+		clearButton.setTitle("clear");
+		buttons.add(clearButton);
+		this.add(clearButton);
 
 		if (Moderator.isTouch) {
 			// Clear Display on Touch - clear
@@ -158,13 +148,13 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 
 	public void addNumberClickHandler(ClickHandler handler) {
 		for (NumberButton b : buttons) {
-			b.addClickHandler(handler);
+				b.addClickHandler(handler);
 		}
 	}
 
 	public void addNumberTouchHandler(TouchStartHandler handler) {
 		for (NumberButton b : buttons) {
-			b.addTouchStartHandler(handler);
+				b.addTouchStartHandler(handler);
 		}
 	}
 
@@ -173,7 +163,11 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 	}
 
 	protected void numberSelect(Button button) {
-		numberSelect(button.getText());
+		if(button == clearButton ) {
+			symbolDisplay.setText("");
+		}else {
+			numberSelect(button.getText());
+		}
 	}
 
 	protected void numberSelect(String number) {
@@ -190,35 +184,6 @@ public class KeyPadNumerical extends FlowPanel implements HasKeyPressHandlers, F
 
 	public SymbolDisplay getSymbolDisplay() {
 		return symbolDisplay;
-	}
-
-	@Override
-	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
-		return addDomHandler(handler, KeyPressEvent.getType());
-	}
-
-	@Override
-	public int getTabIndex() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setAccessKey(char key) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setFocus(boolean focused) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setTabIndex(int index) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

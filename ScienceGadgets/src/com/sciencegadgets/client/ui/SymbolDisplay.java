@@ -58,6 +58,7 @@ public class SymbolDisplay extends HTML {
 			keyPad.negButton.setEnabled(isBlank);
 			keyPad.periodButton.setEnabled(isCapableOfPeriod);
 			keyPad.eButton.setEnabled(isCapableOfExp);
+			keyPad.clearButton.setEnabled(!isBlank);
 		}
 
 		if (!isBlank) {

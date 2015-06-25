@@ -121,17 +121,15 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 		TypeSGET type = node.getType();
 		if (!TypeSGET.Number.equals(type) && !TypeSGET.Variable.equals(type)) {
-//			getWidget(0).removeFromParent();
-//			getWidget(0).removeFromParent();
 			((ChangeNodeButton)getWidget(0)).toDummy();
 			((ChangeNodeButton)getWidget(1)).toDummy();
-			redistribute();
 		}
 	}
 
 	public void updatePaste() {
 		pasteButton.clear();
 		pasteButton.add(copiedNodeHTML);
+		pasteButton.getElement().getStyle().setColor("black");
 	}
 
 	// //////////////////////////////////////////
@@ -161,6 +159,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 			copiedNodeHTML = new FitParentHTML(html);
 			updatePaste();
 		}
+		@Override
+		protected void onTransformationEnd(String changeComment,
+				EquationNode nodeToSelect) {
+		}
 	}
 
 	// //////////////////////////////////////////
@@ -169,6 +171,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 	private class PasteNodeButton extends TransformationButton {
 		PasteNodeButton(TransformationList<TransformationButton> changeButtons) {
 			super("Paste", changeButtons);
+			getElement().getStyle().setColor("darkGray");
 		}
 
 		@Override

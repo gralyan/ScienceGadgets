@@ -51,8 +51,7 @@ public class BothSidesTransformations extends
 	boolean isSide = false;
 
 	public static final String UP_ARROW = "\u2191";
-	public static final String UP_ARROW_HTML_START = "<div style=\"display:inline-block;vertical-align:middle;\">"
-			+ UP_ARROW;
+	public static final String UP_ARROW_HTML_START ="<div style=\"display:inline-block;vertical-align:middle;\">";//+ UP_ARROW;
 	public static final String UP_ARROW_HTML_END = "</div>";
 
 	private static final String PLUS = TypeSGET.Operator.PLUS.getSign();
@@ -173,35 +172,40 @@ public class BothSidesTransformations extends
 		String html;
 		BothSidesButton button = null;
 		Badge badge = null;
+		
+		String reference = UP_ARROW;
+		if(TypeSGET.ChildRequirement.TERMINAL.equals(node.getType().childRequirement())) {
+			reference = node.getHTMLString(true, true);
+		}
 
 		switch (operation) {
 		case ADD:
 			badge = Badge.BOTH_SIDES_ADD;
 			html = UP_ARROW_HTML_START + PLUS + UP_ARROW_HTML_END
-					+ node.getHTMLString(true, true);
+					+ reference;
 			button = new AddOrSubBothButton(operation, html, this, joinedButton);
 			break;
 		case SUBTRACT:
 			badge = Badge.BOTH_SIDES_SUBTRACT;
 			html = UP_ARROW_HTML_START + MINUS + UP_ARROW_HTML_END
-					+ node.getHTMLString(true, true);
+					+ reference;
 			button = new AddOrSubBothButton(operation, html, this, joinedButton);
 			break;
 		case MULTIPLY:
 			badge = Badge.BOTH_SIDES_MULTIPLY;
 			html = UP_ARROW_HTML_START + MULTIPLY + UP_ARROW_HTML_END
-					+ node.getHTMLString(true, true);
+					+ reference;
 			button = new MultiplyBothButton(operation, html, this, joinedButton);
 			break;
 		case DIVIDE:
 			badge = Badge.BOTH_SIDES_DIVIDE;
 			html = UP_ARROW_HTML_START + DIVIDE + UP_ARROW_HTML_END
-					+ node.getHTMLString(true, true);
+					+ reference;
 			button = new DivideBothButton(operation, html, this, joinedButton);
 			break;
 		case INVERSE_EXPONENT:
 			badge = Badge.BOTH_SIDES_INVERSE_EXPONENT;
-			html = UP_ARROW + "<sup>1/" + node.getHTMLString(true, true)
+			html = UP_ARROW + "<sup>1/" + reference
 					+ "</sup>";
 			button = new RootBothButton(operation, html, this, joinedButton);
 			break;
@@ -214,7 +218,7 @@ public class BothSidesTransformations extends
 			break;
 		case LOG:
 			badge = Badge.BOTH_SIDES_LOG;
-			html = "log<sub>" + node.getHTMLString(true, true) + "</sub>"
+			html = "log<sub>" + reference + "</sub>"
 					+ UP_ARROW;
 			button = new LogBothButton(operation, html, this, joinedButton);
 			break;

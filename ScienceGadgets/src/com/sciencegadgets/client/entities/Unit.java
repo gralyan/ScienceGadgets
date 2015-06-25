@@ -45,13 +45,20 @@ public class Unit implements Serializable, IsSerializable{
 
 	public Unit() {
 	}
-	public Unit(String name, Key<QuantityKind> quantityKind,String label,String description,String conversionMultiplier) {
+	public Unit(String name, String quantityKindName,String label,String description,String conversionMultiplier) {
 		this.name=name;
-		this.quantityKind=quantityKind;
+		this.quantityKindName=quantityKindName;
 		this.label=label;
 		this.description=description;
 		this.conversionMultiplier=conversionMultiplier;
 	}
+//	public Unit(String name, Key<QuantityKind> quantityKind,String label,String description,String conversionMultiplier) {
+//		this.name=name;
+////		this.quantityKind=quantityKind;
+//		this.label=label;
+//		this.description=description;
+//		this.conversionMultiplier=conversionMultiplier;
+//	}
 
 	public String getLabel() {
 		return label;
@@ -61,15 +68,15 @@ public class Unit implements Serializable, IsSerializable{
 		return new UnitName(name);
 	}
 
-	public Key<QuantityKind> getQuantityKindKey() {
-		return quantityKind;
-	}
+//	public Key<QuantityKind> getQuantityKindKey() {
+//		return quantityKind;
+//	}
 	public String getQuantityKindName() {
-		if(quantityKind != null) {
-			return quantityKind.getName();
-		}else {
+//		if(quantityKind != null) {
+//			return quantityKind.getName();
+//		}else {
 			return quantityKindName;
-		}
+//		}
 	}
 
 	public String getDescription() {
@@ -85,8 +92,8 @@ public class Unit implements Serializable, IsSerializable{
 	}
 	
 	public void removeQuantityKindKey() {
-		quantityKindName = quantityKind.getName();
-		quantityKind = null;
+//		quantityKindName = quantityKind.getName();
+//		quantityKind = null;
 	}
 
 }

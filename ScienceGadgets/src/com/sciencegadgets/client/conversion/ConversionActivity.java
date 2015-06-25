@@ -278,22 +278,27 @@ public class ConversionActivity extends AbsolutePanel {
 
 	void fillUnitSelection(final String unitName) {
 
-		DataModerator.database.getUnitQuantityKindName(unitName, new AsyncCallback<String>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				JSNICalls.error("getUnit Failed: "+caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(String qkName) {
-//				selectedUnit = result;
-//				String quantityKind = selectedUnit.getQuantityKindName();
-//				String excludedUnitName = selectedUnit.getName().toString();
-
-//				unitSelection.reloadUnitBox(quantityKind, excludedUnitName);
-				unitSelection.reloadUnitBox(qkName, unitName, false);
-			}
-		});
+//		DataModerator.database.getUnitQuantityKindName(unitName, new AsyncCallback<String>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				JSNICalls.error("getUnit Failed: "+caught.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(String qkName) {
+////				selectedUnit = result;
+////				String quantityKind = selectedUnit.getQuantityKindName();
+////				String excludedUnitName = selectedUnit.getName().toString();
+//
+////				unitSelection.reloadUnitBox(quantityKind, excludedUnitName);
+//				unitSelection.reloadUnitBox(qkName, unitName, false);
+//			}
+//		});
+		
+		String qkName = DataModerator.getQuantityKindByUnitName(unitName);
+		if(qkName != null) {
+			unitSelection.reloadUnitBox(qkName, unitName, false);
+		}
 
 		derivedUnitsSelection.clear();
 
@@ -332,8 +337,8 @@ public class ConversionActivity extends AbsolutePanel {
 				selectedUnit.getName() + UnitAttribute.EXP_DELIMITER + 1);
 		UnitMap fromMap = new UnitMap(fromUnitAttribute);
 		String fromMultiplier = selectedUnit.getConversionMultiplier();
-		toMap = toMap.getExponential(expAbs);
-		fromMap = fromMap.getExponential(expAbs);
+		toMap = toMap.getExponential(expAbs,1);
+		fromMap = fromMap.getExponential(expAbs,1);
 
 		boolean isSelectNum = selectedWrapper.getUnitDisplay().inNumerator;
 		UnitMap newUnitMap = isSelectNum ? toMap.getDivision(fromMap) : fromMap
@@ -445,7 +450,7 @@ public class ConversionActivity extends AbsolutePanel {
 			if (selectedEntity instanceof CommonDerivedUnits) {
 				CommonDerivedUnits deriveUnit = (CommonDerivedUnits) selectedEntity;
 				convert(deriveUnit.getDerivedMap(),
-						deriveUnit.getConversionMultiplier());
+						"1"/*deriveUnit.getConversionMultiplier()*/);
 			} else if (selectedEntity instanceof Unit) {
 				Unit toUnit = (Unit) selectedEntity;
 				convert(new UnitMap(new UnitAttribute(toUnit.getName()

@@ -187,6 +187,7 @@ public class EquationValidator {
 			for (EquationNode child : node.getChildren()) {
 				if (TypeSGET.Operation.equals(child.getType())
 						|| "0".equals(child.getAttribute(MathAttribute.Value))) {
+					sumMap = new UnitMap(true);
 					continue;
 				}
 				UnitMap childMap = getQuantityKind(child);
@@ -242,14 +243,33 @@ public class EquationValidator {
 				try {
 					Integer expValue = Integer.parseInt(exp
 							.getAttribute(MathAttribute.Value));
-					baseMap = baseMap.getExponential(expValue);
+					baseMap = baseMap.getExponential(expValue, 1);
 					return baseMap;
 				} catch (NumberFormatException e) {
 					throw new IllegalStateException(
-							"Bases of exponentials can only have units if the exponent is a constant integer",
+							"Exponent should be number",
 							new Throwable(
 									"The base of a non-integer exponential has units: \n"
 											+ baseMap + "\nof node: " + node));
+				}
+			} else if(TypeSGET.Fraction.equals(exp.getType())){
+				EquationNode expNum = exp.getChildAt(0);
+				EquationNode expDen = exp.getChildAt(1);
+				if(TypeSGET.Number.equals(expNum.getType()) && TypeSGET.Number.equals(expDen.getType())) {
+					try {
+						Integer expNumValue = Integer.parseInt(expNum
+								.getAttribute(MathAttribute.Value));
+						Integer expDenValue = Integer.parseInt(expDen
+								.getAttribute(MathAttribute.Value));
+						baseMap = baseMap.getExponential(expNumValue, expDenValue);
+						return baseMap;
+					} catch (NumberFormatException e) {
+						throw new IllegalStateException(
+								"Exponent parts should me number",
+								new Throwable(
+										"The base of a non-integer exponential has units: \n"
+												+ baseMap + "\nof node: " + node));
+					}
 				}
 			} else {
 				throw new IllegalStateException(

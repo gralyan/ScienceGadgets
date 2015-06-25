@@ -42,6 +42,7 @@ public static final String TRIG = "sg-Trig";
 public static final String LOG = "sg-Log";
 
 /*---------------EquationHTML (display)---------------*/
+public static final String EXPRESSION = "sg-Expression";
 public static final String IN_EQUATION = "sg-in-equation";
 public static final String IN_SUM = "sg-in-sum";
 public static final String IN_TERM = "sg-in-term";
@@ -70,6 +71,7 @@ public static final String TEXT_CENTER = "sg-textCenter";
 public static final String FILL_PARENT = "sg-fillParent";
 public static final String FIT_PARENT_HTML = "sg-fitParentHTML";
 /*---------------Browsers---------------*/
+public static final String MAIN_TITLE = "sg-mainTitle";
 public static final String EQUATION_BROWSER = "sg-equationBrowser";
 public static final String MODES = "sg-modes";
 public static final String ROW_HEADER = "sg-rowHeader";
@@ -158,6 +160,7 @@ public static final String GENERATE_BUTTON = "sg-generateButton";
 public static final String ACTIVITY_SELECTION_BUTTON = "sg-activitySelectionButton";
 public static final String ACTIVITY_SELECTION_BUTTON_SELECTED = "sg-activitySelectionButtonSelected";
 public static final String MAKE_EQ_BUTTON = "sg-makeEqButton";
+public static final String CREATE_GOAL_BUTTON = "sg-createGoalButton";
 
 
 }

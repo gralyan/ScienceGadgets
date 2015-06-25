@@ -21,6 +21,7 @@ package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.TouchEndEvent;
@@ -32,12 +33,15 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.HighlightHandler;
 
 public class AlgebraHistory extends FlowPanel {
 
@@ -105,8 +109,18 @@ public class AlgebraHistory extends FlowPanel {
 		}
 	}
 	
-	public void solvedUpdate(EquationTree mathTree) {
-		add(new AlgebraHistoryRow(mathTree.getDisplay()));
+	public void solvedUpdate(EquationTree mathTree, String evaluation) {
+		AlgebraHistoryRow lastRow = new AlgebraHistoryRow(mathTree.getDisplay());
+		lastRow.eqSide.getElement().getStyle().setFontSize(300, Unit.PCT);
+		lastRow.ruleSide.removeFromParent();
+		add(lastRow);
+		
+		TextArea evaluatedBox = new TextArea();
+		JSNICalls.log("ev "+evaluation);
+//		evaluatedBox.addStyleName(CSS.ALG_OUT_RULE_ROW);
+//		evaluatedBox.addFocusHandler(new HighlightHandler(evaluatedBox));
+		lastRow.add(evaluatedBox);
+		evaluatedBox.setText(evaluation);
 	}
 
 	void scrollToBottom() {

@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -96,7 +98,6 @@ public class AlgebraActivity extends SimplePanel {
 	public SimplifyQuiz simplifyQuiz = null;
 	private SimplifyPromptButton simplifyPromptButton = new SimplifyPromptButton();
 
-	public String focusLayerId = null;
 	public boolean inProgramaticTransformMode = false;
 	public static VariablePrompt varSpec;
 	public static NumberPrompt numSpec;
@@ -146,14 +147,14 @@ public class AlgebraActivity extends SimplePanel {
 					});
 			createLinkButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
 
-//			Button saveEquationButton = new Button("Create Challenge",
-//					new SaveButtonHandler(AlgebraActivity.this));
-//			saveEquationButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
+			// Button saveEquationButton = new Button("Create Challenge",
+			// new SaveButtonHandler(AlgebraActivity.this));
+			// saveEquationButton.setStyleName(CSS.SAVE_EQUATION_BUTTON);
 
 			FlowPanel upMidHolder = new FlowPanel();
 			upMidHolder.setStyleName(CSS.FILL_PARENT);
 			upMidHolder.add(createLinkButton);
-//			upMidHolder.add(saveEquationButton);
+			// upMidHolder.add(saveEquationButton);
 			setDefaultUpperMidWidget(upMidHolder);
 
 			break;
@@ -172,7 +173,7 @@ public class AlgebraActivity extends SimplePanel {
 			activateBackButton(false);
 
 			CreateLinkWithGoalButton createLinkWithGoalButton = new CreateLinkWithGoalButton(
-					"Create Link with this Goal", eTree);
+					"Create Link with Goal", eTree);
 			setDefaultUpperMidWidget(createLinkWithGoalButton);
 			break;
 		case algebrasimplifyquiz:
@@ -210,21 +211,21 @@ public class AlgebraActivity extends SimplePanel {
 			});
 		}
 	}
-	
+
 	public void revertUpperMidAreaToDefault() {
-		if(defaultUpperMidWidget != upperMidEqArea.getWidget()) {
+		if (defaultUpperMidWidget != upperMidEqArea.getWidget()) {
 			upperMidEqArea.clear();
-			if(defaultUpperMidWidget != null) {
+			if (defaultUpperMidWidget != null) {
 				upperMidEqArea.add(defaultUpperMidWidget);
 			}
 		}
-		if(defaultUpperMidWidget instanceof AlgebraHistory) {
-			((AlgebraHistory)defaultUpperMidWidget).scrollToBottom();
+		if (defaultUpperMidWidget instanceof AlgebraHistory) {
+			((AlgebraHistory) defaultUpperMidWidget).scrollToBottom();
 		}
 	}
-	
+
 	public void setDefaultUpperMidWidget(Widget widget) {
-		if(widget != null) {
+		if (widget != null) {
 			defaultUpperMidWidget = widget;
 			revertUpperMidAreaToDefault();
 		}
@@ -241,7 +242,7 @@ public class AlgebraActivity extends SimplePanel {
 	public EquationTree getEquationTree() {
 		return equationTree;
 	}
-	
+
 	public EquationPanel getEquationPanel() {
 		return eqPanel;
 	}
@@ -275,7 +276,8 @@ public class AlgebraActivity extends SimplePanel {
 	 *            - use null for simple reload, specify change to add to AlgOut
 	 */
 	public void reloadEquationPanel(String changeComment,
-			HashMap<Skill, Integer> skillsIncrease, boolean updateParameters, String nodeIdToSelect) {
+			HashMap<Skill, Integer> skillsIncrease, boolean updateParameters,
+			final String nodeIdToSelect) {
 
 		if (activityType == ActivityType.algebrasolve && changeComment != null
 				&& skillsIncrease != null && !skillsIncrease.isEmpty()) {
@@ -312,8 +314,10 @@ public class AlgebraActivity extends SimplePanel {
 		revertUpperMidAreaToDefault();
 
 		equationTree.reloadDisplay(true, true);
+		if (eqPanel != null && eqPanel.isAttached()) {
+			eqPanel.removeFromParent();
+		}
 		eqPanel = new EquationPanel(this);
-
 		eqPanelHolder.add(eqPanel);
 
 		if (activityType == ActivityType.algebrasolve) {
@@ -330,11 +334,13 @@ public class AlgebraActivity extends SimplePanel {
 			TypeSGET leftType = equationTree.getLeftSide().getType();
 			// Check if evaluated
 			if ((TypeSGET.Variable.equals(leftType) && TypeSGET.Number
-					.equals(rightType))
-					|| (TypeSGET.Variable.equals(rightType) && TypeSGET.Number
-							.equals(leftType))) {
+					.equals(rightType))) {
 				SolvedPrompt solvedPrompt = new SolvedPrompt();
-				solvedPrompt.solved(this);
+				solvedPrompt.solved(this, equationTree.getRightSide().getSymbol());
+			} else if ((TypeSGET.Variable.equals(rightType) && TypeSGET.Number
+					.equals(leftType))) {
+				SolvedPrompt solvedPrompt = new SolvedPrompt();
+				solvedPrompt.solved(this, equationTree.getLeftSide().getSymbol());
 			} else if (goalTree != null && equationTree.isLike(goalTree)) {
 				// Check if equation matches goal
 				SolvedPrompt solvedPrompt = new SolvedPrompt();
@@ -356,8 +362,14 @@ public class AlgebraActivity extends SimplePanel {
 			}
 			URLParameters.setParameters(parameterMap, false);
 		}
-		
-		eqPanel.zoomToAndSelect(nodeIdToSelect);
+
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+			@Override
+			public void execute() {
+				eqPanel.zoomToAndSelect(nodeIdToSelect);
+			}
+		});
 	}
 
 	public void clearTransformLists() {

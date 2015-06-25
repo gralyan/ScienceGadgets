@@ -22,8 +22,6 @@ package com.sciencegadgets.client.ui;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
@@ -31,8 +29,6 @@ import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
@@ -41,6 +37,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
+import com.sciencegadgets.shared.TypeSGET;
 
 public abstract class LinkPrompt extends Prompt {
 
@@ -83,8 +80,8 @@ public abstract class LinkPrompt extends Prompt {
 			}
 		});
 
-		linkCode.addFocusHandler(new CodeClickHandler(linkCode));
-		iframeCode.addFocusHandler(new CodeClickHandler(iframeCode));
+		linkCode.addFocusHandler(new HighlightHandler(linkCode));
+		iframeCode.addFocusHandler(new HighlightHandler(iframeCode));
 	}
 
 	@Override
@@ -109,46 +106,17 @@ public abstract class LinkPrompt extends Prompt {
 				+ URLParameters.makeTolken(pMap, true);
 		linkDisplay.setHref(url);
 
-		linkCode.setText(JSNICalls.elementToString(linkDisplay.getElement())
-				.replace("&amp;", "&"));
+		linkCode.setText(JSNICalls
+				.elementToString(linkDisplay.getElement())
+				.replace("&amp;", "&")
+				.replace(TypeSGET.Operator.DOT.getSign(),
+						TypeSGET.Operator.DOT.getHTML()));
 
 		iframeDisplay.setSrc(url);
-		iframeCode.setText(JSNICalls.elementToString(iframeDisplay).replace("&amp;", "&"));
+		iframeCode.setText(JSNICalls.elementToString(iframeDisplay).replace(
+				"&amp;", "&"));
 
 		iframeDisplay.getStyle().setWidth(100, Unit.PCT);
 		iframeDisplay.getStyle().setHeight(100, Unit.PCT);
 	}
-
-	class CodeClickHandler implements FocusHandler {
-		final TextArea code;
-
-		public CodeClickHandler(TextArea code) {
-			this.code = code;
-		}
-
-		@Override
-		public void onFocus(FocusEvent event) {
-			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-				@Override
-				public void execute() {
-					code.selectAll();
-				}
-			});
-		}
-
-	}
 }
-// private native void markText(Element elem) /*-{
-// if ($doc.selection && $doc.selection.createRange) {
-// var range = $doc.selection.createRange();
-// range.moveToElementText(elem);
-// range.select();
-// } else if ($doc.createRange && $wnd.getSelection) {
-// var range = $doc.createRange();
-// range.selectNode(elem);
-// var selection = $wnd.getSelection();
-// selection.removeAllRanges();
-// selection.addRange(range);
-// }
-// }-*/;

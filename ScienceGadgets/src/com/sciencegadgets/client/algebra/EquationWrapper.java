@@ -24,20 +24,20 @@ import java.util.LinkedList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.TypeSGET.Operator;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitHTML;
 
 public class EquationWrapper extends Wrapper {
 	protected EquationPanel eqPanel;
 	protected AlgebraActivity algebraActivity;
-//	protected Label value;
-//	private Style valueStyle;
 
 	public EquationWrapper(EquationNode node, AlgebraActivity algebraActivity,
 			Element element) {
@@ -47,17 +47,6 @@ public class EquationWrapper extends Wrapper {
 
 		this.addStyleName(CSS.DISPLAY_WRAPPER);
 
-//		String valueStr = node.getAttribute(MathAttribute.Value);
-//		if (!"".equals(valueStr)
-//				&& !valueStr.equals(node.getXMLNode().getInnerText())) {
-//			value = new Label(valueStr);
-//			valueStyle = value.getElement().getStyle();
-//			value.addStyleName(CSS.NUMBER_VALUE);
-//			valueStyle.setWidth(this.getOffsetWidth(), Unit.PX);
-//			eqPanel.add(value,
-//					this.getAbsoluteLeft() - eqPanel.getAbsoluteLeft(),
-//					this.getAbsoluteTop() - eqPanel.getAbsoluteTop());
-//		}
 	}
 
 	public EquationPanel getEqPanel() {
@@ -72,19 +61,21 @@ public class EquationWrapper extends Wrapper {
 		LinkedList<Widget> detailsList = new LinkedList<Widget>();
 
 		TypeSGET type = node.getType();
+		TypeSGET operationType = null;
 		FitParentHTML typeLabel = new FitParentHTML(type.name());
 		detailsList.add(typeLabel);
 
 		switch (type) {
 		case Number:
 			String fullValue = node.getAttribute(MathAttribute.Value);
-			if("".equals(fullValue)) {
+			if ("".equals(fullValue)) {
 				fullValue = node.getAttribute(MathAttribute.Randomness);
 			}
 			FitParentHTML valueHTML = new FitParentHTML(fullValue);
 			detailsList.add(valueHTML);
 			valueHTML.getElement().getStyle().setWidth(100, Unit.PCT);
-			valueHTML.getElement().getStyle().setProperty("overflowWrap", "break-word");
+			valueHTML.getElement().getStyle()
+					.setProperty("overflowWrap", "break-word");
 
 			UnitAttribute unit = node.getUnitAttribute();
 			if (!"".equals(unit)) {
@@ -102,6 +93,22 @@ public class EquationWrapper extends Wrapper {
 				detailsList.add(qKindHTML);
 			}
 			break;
+		case Operation:
+			Operator op = node.getOperation();
+			if (TypeSGET.Operator.PLUS.equals(op)) {
+				operationType = TypeSGET.Sum;
+				typeLabel.setHTML("Add");
+			} else if (TypeSGET.Operator.MINUS.equals(op)) {
+				operationType = TypeSGET.Sum;
+				typeLabel.setHTML("Subtract");
+			} else if (TypeSGET.Operator.DOT.equals(op)
+					|| TypeSGET.Operator.CROSS.equals(op)
+					|| TypeSGET.Operator.SPACE.equals(op)) {
+				operationType = TypeSGET.Term;
+				typeLabel.setHTML("Multiply");
+			} else {
+				JSNICalls.error("Incorrest opperation");
+			}
 		default:
 			break;
 		}
@@ -116,6 +123,9 @@ public class EquationWrapper extends Wrapper {
 		if (typeParent != null) {
 			typeParent.addStyleName(type.toString());
 			typeParent.addStyleName(CSS.PARENT_WRAPPER);
+			if (operationType != null) {
+				typeParent.addStyleName(operationType.toString());
+			}
 		}
 	}
 
@@ -142,12 +152,6 @@ public class EquationWrapper extends Wrapper {
 			super.select();
 
 			fillSelectionDetails();
-
-//			if (valueStyle != null) {
-//				valueStyle.clearWidth();
-//				valueStyle.setBackgroundColor("white");
-//			}
-
 			eqPanel.selectedWrapper = this;
 		}
 	}
@@ -157,12 +161,6 @@ public class EquationWrapper extends Wrapper {
 		super.unselect();
 
 		eqPanel.selectedWrapper = null;
-
-//		if (valueStyle != null) {
-//			valueStyle.setWidth(this.getOffsetWidth(), Unit.PX);
-//			valueStyle.clearBackgroundColor();
-//		}
-
 		algebraActivity.revertUpperMidAreaToDefault();
 	}
 }

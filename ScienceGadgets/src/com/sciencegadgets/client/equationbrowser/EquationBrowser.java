@@ -20,18 +20,14 @@
 package com.sciencegadgets.client.equationbrowser;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
-import com.sciencegadgets.client.algebra.EquationTree;
-import com.sciencegadgets.client.algebra.edit.NumberPrompt;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.SelectionButton;
-import com.sciencegadgets.client.ui.specification.NumberSpecification;
-import com.sciencegadgets.shared.TypeSGET;
 
 public class EquationBrowser extends FlowPanel {
 
@@ -51,6 +47,11 @@ public class EquationBrowser extends FlowPanel {
 
 		// Set up browsers
 		this.getElement().setId(CSS.EQUATION_BROWSER);
+		
+//		Anchor title = new Anchor("ScienceGadgets", "/project/index.html");
+		Label title = new Label("ScienceGadgets");
+		title.addStyleName(CSS.MAIN_TITLE);
+		this.add(title);
 
 		activitySelectionPanel.getElement().setId(CSS.ACTIVITY_SELECTION_PANEL);
 		this.add(activitySelectionPanel);

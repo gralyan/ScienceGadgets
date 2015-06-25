@@ -29,9 +29,14 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 
 	private static final long serialVersionUID = 6852786194775839979L;
+	private boolean evaluatesToZero = false; 
 
 	public UnitMap() {
 		super();
+	}
+	public UnitMap(boolean evaluatesToZero) {
+		super();
+		this.evaluatesToZero = evaluatesToZero;
 	}
 
 	public UnitMap(EquationNode mNode) {
@@ -46,6 +51,10 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 						Integer.parseInt(unitMultiple.getUnitExponent()));
 			}
 		}
+	}
+	
+	public boolean evaluatesToZero() {
+		return evaluatesToZero;
 	}
 
 	public UnitMap getQuantityKindMap() {
@@ -163,12 +172,22 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 	 *            - Integer exponent of this exponential base
 	 * @return The resulting UnitMap
 	 */
-	public UnitMap getExponential(Integer exponent) {
+	public UnitMap getExponential(Integer exponentNumerator,
+			Integer exponentDenominator) {
 		UnitMap exponentiatedMap = new UnitMap();
 
 		for (Entry<UnitName, Integer> baseEntry : this.entrySet()) {
-			exponentiatedMap.put(baseEntry.getKey(), baseEntry.getValue()
-					* exponent);
+			Integer prev = baseEntry.getValue();
+			if ((prev * exponentNumerator) % exponentDenominator != 0) {
+				JSNICalls
+						.error("Unit's are not appropriate for this root:\nprev: "
+								+ prev
+								+ "\nexpNumerator: "
+								+ exponentNumerator
+								+ "\nexpDenominator: " + exponentDenominator);
+			}
+			exponentiatedMap.put(baseEntry.getKey(), (prev * exponentNumerator)
+					/ exponentDenominator);
 		}
 		return exponentiatedMap;
 	}
@@ -194,6 +213,11 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 	 * @param otherMap
 	 */
 	public boolean isConvertableTo(UnitMap otherMap) {
+		
+		if(evaluatesToZero() || otherMap.evaluatesToZero()) {
+			return true;
+		}
+		
 		UnitMap qkMap = getBaseQKMap();
 		UnitMap qkMapOther = otherMap.getBaseQKMap();
 		if (qkMap.size() != qkMapOther.size()) {
@@ -237,7 +261,7 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 			try {
 				CommonVariables varUnit = CommonVariables.valueOf(quantityKind);
 				UnitMap varQKMap = varUnit.getBaseUnitMap();
-				varQKMap = varQKMap.getExponential(entryMultiple);
+				varQKMap = varQKMap.getExponential(entryMultiple, 1);
 				baseQKMap = baseQKMap.getMultiple(varQKMap);
 			} catch (IllegalArgumentException ex) {
 				JSNICalls.error("No base units found for: " + quantityKind);

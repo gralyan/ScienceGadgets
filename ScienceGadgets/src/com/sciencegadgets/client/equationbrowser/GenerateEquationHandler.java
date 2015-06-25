@@ -177,6 +177,7 @@ class GenerateEquationHandler implements ClickHandler {
 				maxFraction, maxExp
 				);
 		
+		Moderator.isInEasyMode = true;
 		Moderator.switchToAlgebra(eTree, null, ActivityType.algebrasolve, true);
 		
 

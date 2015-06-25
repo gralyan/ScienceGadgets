@@ -46,7 +46,7 @@ public class EquationHTML extends HTML {
 	private static final String FENCED = CSS.FENCED;
 
 	EquationTree mTree;
-	public boolean autoFillParent = false;
+	public boolean autoFillParent = true;
 	private boolean hasSmallUnits = true;
 	private boolean hasSubscripts = true;
 	private boolean isStacked = false;
@@ -78,10 +78,15 @@ public class EquationHTML extends HTML {
 		right = makeHTMLNode(mTree.getRightSide(), this.getElement());
 
 	}
-
+	
 	private EquationHTML(String html) {
 		super(html);
 		this.setStyleName(CSS.EQUATION);
+	}
+
+	public EquationHTML(Element element) {
+		super(JSNICalls.elementToString(element));
+		this.setStyleName(CSS.EXPRESSION);
 	}
 
 	public Element getLeft() {
@@ -255,14 +260,14 @@ public class EquationHTML extends HTML {
 				txt = "";
 				nodeHtml.getStyle().setDisplay(Display.BLOCK);
 			} else {
-				if (txt.startsWith("&")) { // must insert as js code
-					for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
-						if (op.getHTML().equals(txt)) {
-							txt = op.getSign();
-							break;
-						}
-					}
-				}
+//				if (txt.startsWith("&")) { // must insert as js code
+//					for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
+//						if (op.getHTML().equals(txt)) {
+//							txt = op.getSign();
+//							break;
+//						}
+//					}
+//				}
 				nodeHtml.setInnerText(txt);
 			}
 			break;
@@ -296,27 +301,11 @@ public class EquationHTML extends HTML {
 	 */
 	private void resizeEquation() {
 		
-//		Element focusEl = this.getElement();
-//		
-//		Element eqEl = this.getElement();
-//		if(eqEl != null) {
-//			String focusId = eqEl.getAttribute("id").replace(EquationPanel.EQ_OF_LAYER, "");
-//			if(!focusId.equals("")) {
-//				Element layerParentNode = DOM.getElementById(focusId + EquationPanel.OF_LAYER
-//						+ focusId);
-//				if(layerParentNode != null) {
-//					focusEl  = layerParentNode;
-//				}
-//			}
-//		}
-////		if(focusElement != null) {
-////			focusEl = focusElement;
-////		}
-		
 		double widthRatio = (double) this.getParent().getOffsetWidth()
 				/ getOffsetWidth();
 		double heightRatio = (double) this.getParent().getOffsetHeight()
 				/ getOffsetHeight();
+		
 
 		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
 				: widthRatio;

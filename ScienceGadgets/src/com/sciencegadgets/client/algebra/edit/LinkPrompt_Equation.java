@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -36,10 +37,10 @@ import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.ConstantRandomizer;
 import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.LinkPrompt;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
@@ -80,7 +81,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 				Window.alert("You should consider adding a variable in the equation");
 			} else {
 
-				final Button solveGoalButton = new Button("Solve for Goal",
+				final Button solveGoalButton = new Button("Solve Goal",
 						new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent arg0) {
@@ -93,9 +94,10 @@ public class LinkPrompt_Equation extends LinkPrompt {
 						});
 				solveGoalButton
 						.setTitle("Faster and more accurate but can't use with random numbers");
+				solveGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
 				upperArea.add(solveGoalButton);
 
-				final Button createGoalButton = new Button("Create Goal",
+				final Button createGoalButton = new Button("Edit Goal",
 						new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent arg0) {
@@ -106,8 +108,9 @@ public class LinkPrompt_Equation extends LinkPrompt {
 										ActivityType.algebracreategoal, true);
 							}
 						});
-				solveGoalButton
+				createGoalButton
 						.setTitle("Can use with random numbers but prone to error!");
+				createGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
 				upperArea.add(createGoalButton);
 			}
 		} else {
@@ -207,7 +210,8 @@ public class LinkPrompt_Equation extends LinkPrompt {
 
 		NodeList<Element> allEl = html.getElement().getElementsByTagName("*");
 		for (int i = 0; i < allEl.getLength(); i++) {
-			allEl.getItem(i).removeAttribute("id");
+			Element el = allEl.getItem(i);
+			el.removeAttribute("id");
 		}
 
 		Element styleLink = new HTML(
@@ -222,15 +226,15 @@ public class LinkPrompt_Equation extends LinkPrompt {
 
 		super.updateLinks();
 
-		JSNICalls.log("html: "
-				+ JSNICalls.elementToString(html.getElement()).replace("\"",
-						"\\\""));
-		JSNICalls.log("xml: "
-				+ pMap.get(Parameter.equation).replace("\"", "\\\""));
-		if (pMap.get(Parameter.goal) != null) {
-			JSNICalls.log("goal: "
-					+ pMap.get(Parameter.goal).replace("\"", "\\\""));
-		}
+//		JSNICalls.log("html: "
+//				+ JSNICalls.elementToString(html.getElement()).replace("\"",
+//						"\\\""));
+//		JSNICalls.log("xml: "
+//				+ pMap.get(Parameter.equation).replace("\"", "\\\""));
+//		if (pMap.get(Parameter.goal) != null) {
+//			JSNICalls.log("goal: "
+//					+ pMap.get(Parameter.goal).replace("\"", "\\\""));
+//		}
 	}
 
 }

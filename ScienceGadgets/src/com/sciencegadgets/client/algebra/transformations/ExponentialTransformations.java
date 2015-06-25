@@ -80,19 +80,43 @@ public class ExponentialTransformations extends
 	}
 
 	ExponentialEvaluateButton exponentialEvaluate_check() {
-		if (TypeSGET.Number.equals(baseType)
-				&& TypeSGET.Number.equals(exponentType)) {
-			// 0 and 1 are taken care of in the expand transformation
-			String expValue = exponent.getSymbol();
-			if ("0".equals(expValue) || "1".equals(expValue)) {
-				return null;
+		if (TypeSGET.Number.equals(baseType)) {
+			// Exponent is number
+			if (TypeSGET.Number.equals(exponentType)) {
+
+				// 0 and 1 are taken care of in the expand transformation
+				String expValue = exponent.getSymbol();
+				if ("0".equals(expValue) || "1".equals(expValue)) {
+					return null;
+				}
+				try {
+					new BigDecimal(base.getSymbol());
+					int exp = Integer.parseInt(expValue);
+					return new ExponentialEvaluateButton(this,
+							(int) exp, 1);
+				} catch (NumberFormatException e) {
+					return null;
+				}
 			}
-			try {
+			// Exponent is fraction of numbers
+			if (TypeSGET.Fraction.equals(exponentType)) {
 				new BigDecimal(base.getSymbol());
-				int exp = Integer.parseInt(expValue);
-				return new ExponentialEvaluateButton(this, (int) exp);
-			} catch (NumberFormatException e) {
-				return null;
+				EquationNode expNum = exponent.getChildAt(0);
+				EquationNode expDen = exponent.getChildAt(1);
+				if (TypeSGET.Number.equals(expNum.getType())
+						&& TypeSGET.Number.equals(expDen.getType())) {
+
+					try {
+						int expNumValue = Integer.parseInt(expNum
+								.getAttribute(MathAttribute.Value));
+						int expDenValue = Integer.parseInt(expDen
+								.getAttribute(MathAttribute.Value));
+						return new ExponentialEvaluateButton(this,
+								(int) expNumValue, (int) expDenValue);
+					} catch (NumberFormatException e) {
+						return null;
+					}
+				}
 			}
 		}
 		return null;
@@ -243,13 +267,15 @@ class ZeroOrOneBaseButton extends ExponentialTransformButton {
  * ex: 2<sup>3</sup> = 8
  */
 class ExponentialEvaluateButton extends ExponentialTransformButton {
-	private int exp;
+	private int expNumValue;
+	private int expDenValue;
 
 	public ExponentialEvaluateButton(ExponentialTransformations context,
-			final int exp) {
+			final int expNumValue, final int expDenValue) {
 		super(context, "Evaluate Exponential");
 		this.isEvaluation = true;
-		this.exp = exp;
+		this.expNumValue = expNumValue;
+		this.expDenValue = expDenValue;
 	}
 
 	@Override
@@ -265,16 +291,19 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 	@Override
 	public void transform() {
 		final BigDecimal baseValue = new BigDecimal(base.getSymbol());
-		final BigDecimal totalValue = baseValue
-				.pow(exp, MathContext.DECIMAL128);
+		final BigDecimal totalValue = expDenValue == 1 ? baseValue.pow(
+				expNumValue, MathContext.DECIMAL128) : new BigDecimal(Math.pow(
+				baseValue.doubleValue(), ((double) expNumValue) / expDenValue));
 
-		final UnitMap totalUnitMap = new UnitMap(base).getExponential(exp);
+		final UnitMap totalUnitMap = new UnitMap(base).getExponential(
+				expNumValue, expDenValue);
 
 		boolean meetsRequirements = Moderator
 				.meetsRequirements(Badge.EXPONENTIATE_NUMBERS);
 
 		if (meetsRequirements) {
-			evaluateExponential(baseValue, exp, totalValue, totalUnitMap);
+			evaluateExponential(baseValue, expNumValue, expDenValue,
+					totalValue, totalUnitMap);
 
 		} else if (!reloadAlgebraActivity) {
 			// base.replace(TypeSGET.Variable, "#");
@@ -292,8 +321,8 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 				@Override
 				public void onCorrect() {
 					super.onCorrect();
-					evaluateExponential(baseValue, exp, totalValue,
-							totalUnitMap);
+					evaluateExponential(baseValue, expNumValue, expDenValue,
+							totalValue, totalUnitMap);
 					Moderator.getStudent().increaseSkill(
 							Skill.EXPONENTIATE_NUMBERS, 1);
 				}
@@ -302,20 +331,24 @@ class ExponentialEvaluateButton extends ExponentialTransformButton {
 		}
 	}
 
-	private void evaluateExponential(BigDecimal baseValue, int expValue,
-			BigDecimal totalValue, UnitMap newUnitMap) {
+	private void evaluateExponential(BigDecimal baseValue, int expNumValue,
+			int expDenValue, BigDecimal totalValue, UnitMap newUnitMap) {
 
 		EquationNode evaluated = exponential.replace(TypeSGET.Number,
 				totalValue.stripTrailingZeros().toEngineeringString());
 		String newUnit = newUnitMap.getUnitAttribute().toString();
 		evaluated.setAttribute(MathAttribute.Unit, newUnit);
 
+		String expStr = expDenValue == 1 ? expNumValue + "" : expNumValue + "/"
+				+ expDenValue;
+
 		onTransformationEnd(baseValue.stripTrailingZeros()
 				.toEngineeringString()
 				+ " ^ "
-				+ expValue
+				+ expStr
 				+ " = "
-				+ totalValue.stripTrailingZeros().toEngineeringString(),evaluated);
+				+ totalValue.stripTrailingZeros().toEngineeringString(),
+				evaluated);
 	}
 
 	@Override
@@ -421,7 +454,9 @@ class ExponentialExponentiateButton extends ExponentialTransformButton {
 
 		base.replace(innerBase);
 
-		onTransformationEnd("(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>", innerBase);
+		onTransformationEnd(
+				"(x<sup>a</sup>)<sup>b</sup> = x<sup>a &middot; b</sup>",
+				innerBase);
 	}
 
 	@Override
@@ -457,7 +492,8 @@ class ExponentialPropagateButton extends ExponentialTransformButton {
 		}
 		exponential.replace(base);
 
-		onTransformationEnd("(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>", base);
+		onTransformationEnd("(x*y)<sup>a</sup> = x<sup>a</sup>*y<sup>a</sup>",
+				base);
 	}
 
 	@Override

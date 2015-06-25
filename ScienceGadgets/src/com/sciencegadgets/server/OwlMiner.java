@@ -72,9 +72,10 @@ public class OwlMiner {
 				unitKeys.add(ukey);
 			}
 		}
-		ObjectifyService.ofy().delete().keys(unitKeys).now();
-		ObjectifyService.ofy().delete().type(QuantityKind.class)
-				.ids(qKindsNames).now();
+		//TODO
+//		ObjectifyService.ofy().delete().keys(unitKeys).now();
+//		ObjectifyService.ofy().delete().type(QuantityKind.class)
+//				.ids(qKindsNames).now();
 		
 		// ///////////////////////////////
 		// Mine owl for QuatityKinds
@@ -459,9 +460,12 @@ public class OwlMiner {
 			// + multiplier);
 
 			Key<QuantityKind> qKindKey = Key.create(QuantityKind.class, qKind);
-			Unit unit = new Unit(qKind + "_" + symbolFixed, qKindKey, label,
-					extractProperty(node, "qudt:description"), multiplier);
-			ObjectifyService.ofy().save().entity(unit);
+//			Unit unit = new Unit(qKind + "_" + symbolFixed, qKindKey, label,
+//					extractProperty(node, "qudt:description"), multiplier);
+			//TODO
+//			ObjectifyService.ofy().save().entity(unit);
+			
+			System.out.println(qKind+"_"+i+ "(\""+qKind + "_" + symbolFixed+"\", \""+qKind+"\", \""+label+"\", \""+extractProperty(node, "qudt:description")+"\", \""+multiplier+"\"),");
 
 			// mark quantity kind as used as a parent
 			String oldDim = map.get(qKind);
@@ -472,13 +476,15 @@ public class OwlMiner {
 		for (String quantity : map.keySet()) {
 			// If used as parent, save quantity kind
 			if (map.get(quantity).contains("_")) {
-				ObjectifyService
-						.ofy()
-						.save()
-						.entity(new QuantityKind(quantity, map.get(quantity)
-								.replace("_", ","))).now();
+				//TODO
+//				ObjectifyService
+//						.ofy()
+//						.save()
+//						.entity(new QuantityKind(quantity, map.get(quantity)
+//								.replace("_", ","))).now();
 
-				// System.out.println(quantity);
+//				 System.out.println(quantity+"( \""+map.get(quantity)
+//							.replace("_", ",")+"\"),");
 			}
 		}
 	}

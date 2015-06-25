@@ -33,7 +33,9 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.UnitSelection;
+import com.sciencegadgets.shared.dimensions.QuantityKindEnum;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitEnum;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class DataModerator {
@@ -64,6 +66,15 @@ public class DataModerator {
 	 */
 	private static LinkedList<String> quantityKinds = null;
 
+	private static void loadUnits() {
+		unitsAll = new LinkedList<Unit>();
+		for (UnitEnum unit : UnitEnum.values()) {
+			unitsAll.add(new Unit(unit.getUnitName(), unit
+					.getQuantityKindName(), unit.getLabel(), unit
+					.getDescription(), unit.getConversionMultiplier()));
+		}
+	}
+	
 	/**
 	 * Uses the unit name to query for the Unit.
 	 * 
@@ -85,23 +96,32 @@ public class DataModerator {
 
 		unitToBeSetWaitingList = new HashMap<Unit, UnitName>();
 
-		database.getUnitsAll(new AsyncCallback<LinkedList<Unit>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				JSNICalls.error("Could not find units");
-			}
+		loadUnits();
 
-			@Override
-			public void onSuccess(LinkedList<Unit> result) {
-				unitsAll = result;
-				setUnit(unitToBeSet, unitName);
-				for (Entry<Unit, UnitName> nextInLine : unitToBeSetWaitingList
-						.entrySet()) {
-					setUnit(nextInLine.getKey(), nextInLine.getValue());
-				}
-				unitToBeSetWaitingList = null;
-			}
-		});
+		setUnit(unitToBeSet, unitName);
+		for (Entry<Unit, UnitName> nextInLine : unitToBeSetWaitingList
+				.entrySet()) {
+			setUnit(nextInLine.getKey(), nextInLine.getValue());
+		}
+		unitToBeSetWaitingList = null;
+
+		// database.getUnitsAll(new AsyncCallback<LinkedList<Unit>>() {
+		// @Override
+		// public void onFailure(Throwable caught) {
+		// JSNICalls.error("Could not find units");
+		// }
+		//
+		// @Override
+		// public void onSuccess(LinkedList<Unit> result) {
+		// unitsAll = result;
+		// setUnit(unitToBeSet, unitName);
+		// for (Entry<Unit, UnitName> nextInLine : unitToBeSetWaitingList
+		// .entrySet()) {
+		// setUnit(nextInLine.getKey(), nextInLine.getValue());
+		// }
+		// unitToBeSetWaitingList = null;
+		// }
+		// });
 	}
 
 	private static void setUnit(final Unit unitToBeSet, final UnitName unitName) {
@@ -159,16 +179,19 @@ public class DataModerator {
 	private static void query_UnitsByQuantity(final SelectionPanel unitBox,
 			final String searchSpec, final String excludedUnitName,
 			final boolean isSearch) {
-		database.getUnitsAll(new AsyncCallback<LinkedList<Unit>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				JSNICalls.log("getUnitsByQuantity FAILED: "
-						+ caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(LinkedList<Unit> units) {
-				unitsAll = units;
+		
+		loadUnits();
+		
+//		database.getUnitsAll(new AsyncCallback<LinkedList<Unit>>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				JSNICalls.log("getUnitsByQuantity FAILED: "
+//						+ caught.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(LinkedList<Unit> units) {
+//				unitsAll = units;
 				if (isSearch) {
 					String searchQ = updatedUnitQuery == null ? searchSpec
 							: updatedUnitQuery;
@@ -178,8 +201,8 @@ public class DataModerator {
 					populate_UnitsByQuantity(searchSpec, unitBox,
 							excludedUnitName);
 				}
-			}
-		});
+//			}
+//		});
 	}
 
 	private static void populate_UnitsByQuantity(String quantityKind,
@@ -189,9 +212,9 @@ public class DataModerator {
 			if (unit.getQuantityKindName().equals(quantityKind)) {
 				String unitName = unit.getName().toString();
 				if (!unitName.equals(excludedUnitName)) {
-					unitBox.add(
-							unit.getLabel() + " (<span class=\'"+CSS.UNIT+"\'>" + unit.getSymbol() + "</span>)",
-							unitName, unit);
+					unitBox.add(unit.getLabel() + " (<span class=\'" + CSS.UNIT
+							+ "\'>" + unit.getSymbol() + "</span>)", unitName,
+							unit);
 				}
 			}
 		}
@@ -208,9 +231,9 @@ public class DataModerator {
 					|| unitSymbol.toLowerCase().contains(searchLowerCase)) {
 				String unitName = unit.getName().toString();
 				if (!unitName.equals(excludedUnitName)) {
-					unitBox.add(
-							unit.getLabel() + " (<span class=\'"+CSS.UNIT+"\'>" + unit.getSymbol() + "</span>)",
-							unitName, unit);
+					unitBox.add(unit.getLabel() + " (<span class=\'" + CSS.UNIT
+							+ "\'>" + unit.getSymbol() + "</span>)", unitName,
+							unit);
 				}
 			}
 		}
@@ -276,27 +299,49 @@ public class DataModerator {
 	}
 
 	private static void query_Quantities(final UnitSelection unitSelection) {
-		database.getQuantityKinds(new AsyncCallback<LinkedList<String>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
 
-			@Override
-			public void onSuccess(LinkedList<String> qKinds) {
+		LinkedList<String> qKinds = new LinkedList<String>();
 
-				// Prefix should be first
-				qKinds.remove(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
-				qKinds.addFirst(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
-				qKinds.remove(UnitAttribute.PREFIX_QUANTITY_KIND);
-				qKinds.addFirst(UnitAttribute.PREFIX_QUANTITY_KIND);
+		for (QuantityKindEnum qk : QuantityKindEnum.values()) {
+			qKinds.add(qk.toString());
+		}
 
-				quantityKinds = qKinds;
-				populate_Quantities(unitSelection);
-				for (UnitSelection quantityBoxes : toPopulate) {
-					populate_Quantities(quantityBoxes);
-				}
-			}
-		});
+		// Prefix should be first
+		qKinds.remove(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
+		qKinds.addFirst(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
+		qKinds.remove(UnitAttribute.PREFIX_QUANTITY_KIND);
+		qKinds.addFirst(UnitAttribute.PREFIX_QUANTITY_KIND);
+
+		quantityKinds = qKinds;
+		populate_Quantities(unitSelection);
+		for (UnitSelection quantityBoxes : toPopulate) {
+			populate_Quantities(quantityBoxes);
+		}
+
+		// TODO clean up
+		// Migrated from queried data to static enum
+
+		// database.getQuantityKinds(new AsyncCallback<LinkedList<String>>() {
+		// @Override
+		// public void onFailure(Throwable caught) {
+		// }
+		//
+		// @Override
+		// public void onSuccess(LinkedList<String> qKinds) {
+		//
+		// // Prefix should be first
+		// qKinds.remove(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
+		// qKinds.addFirst(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
+		// qKinds.remove(UnitAttribute.PREFIX_QUANTITY_KIND);
+		// qKinds.addFirst(UnitAttribute.PREFIX_QUANTITY_KIND);
+		//
+		// quantityKinds = qKinds;
+		// populate_Quantities(unitSelection);
+		// for (UnitSelection quantityBoxes : toPopulate) {
+		// populate_Quantities(quantityBoxes);
+		// }
+		// }
+		// });
 	}
 
 	private static void populate_Quantities(UnitSelection unitSelection) {
@@ -315,6 +360,21 @@ public class DataModerator {
 			qBox.getWidget(2).addStyleName(CSS.QUANTITY_KIND_PREFIX);
 		}
 
+	}
+	
+	public static String getQuantityKindByUnitName(String unitName) {
+		if(unitName == null || "".equals(unitName.toString())) {
+			return null;
+		}
+		if(unitsAll == null || unitsAll.isEmpty()) {
+			loadUnits();
+		}
+		for(Unit unit : unitsAll) {
+			if(unitName.equals(unit.getName().toString())) {
+				return unit.getQuantityKindName();
+			}
+		}
+		return null;
 	}
 
 }

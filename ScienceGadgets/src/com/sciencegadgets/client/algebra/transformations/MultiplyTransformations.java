@@ -538,6 +538,9 @@ class MultiplyNumbersButton extends MultiplyTransformButton {
 
 		// Combine Units
 		UnitMap combinedmap = new UnitMap(left).getMultiple(new UnitMap(right));
+		if(totalValue.compareTo(new BigDecimal("0")) == 0) {
+			combinedmap = new UnitMap(true);
+		}
 		UnitAttribute combinedUnit = combinedmap.getUnitAttribute();
 		right.setAttribute(MathAttribute.Unit, combinedUnit.toString());
 

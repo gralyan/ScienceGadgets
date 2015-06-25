@@ -58,7 +58,9 @@ public class SaveButtonHandler implements ClickHandler {
 		if (mathXML.contains(TypeSGET.NOT_SET)) {
 			Window.alert("All new entities (" + TypeSGET.NOT_SET
 					+ ") must be set or removed before saving");
+			JSNICalls.log("1");
 			reCreateUnitsCheck(mathXML);
+			JSNICalls.log("2");
 			return;
 		}
 		if (!mathXML.contains("<" + TypeSGET.Variable.getTag())) {

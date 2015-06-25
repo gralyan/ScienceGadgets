@@ -22,10 +22,7 @@ package com.sciencegadgets.client.algebra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
-import com.google.gwt.animation.client.Animation;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Element;
@@ -33,7 +30,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasTouchEndHandlers;
-import com.google.gwt.event.dom.client.HasTouchStartHandlers;
 import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.user.client.DOM;
@@ -43,8 +39,6 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.Wrapper.WrapperClickHandler;
-import com.sciencegadgets.client.algebra.Wrapper.WrapperTouchEndHandler;
 import com.sciencegadgets.client.algebra.edit.EditWrapper;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.TypeSGET;
@@ -90,7 +84,7 @@ public class EquationPanel extends AbsolutePanel {
 						event.stopPropagation();
 						OptionsHandler.optionsPopup.hide();
 					} else {
-						setFocusOut();
+							setFocusOut();
 					}
 				}
 			}, TouchEndEvent.getType());
@@ -142,7 +136,7 @@ public class EquationPanel extends AbsolutePanel {
 			// new InterFractionTransformations(wrap.getNode());
 			// }
 		}
-		
+
 		for (EquationWrapper wrap : mathWrappers) {
 			wrap.addAssociativeDragDrop();
 		}
@@ -150,7 +144,8 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayer.setVisible(false);
 		}
 
-		setFocus(algebraActivity.focusLayerId);
+//		setFocus(algebraActivity.focusLayerId);
+		setFocus("");
 	}
 
 	@Override
@@ -219,14 +214,7 @@ public class EquationPanel extends AbsolutePanel {
 			eqLayer = rootLayer;
 
 		} else {
-			// eqLayer = new EquationLayer(node);
-			eqLayer = modelEqLayer.clone(node);
-
-			// AbsolutePanel menuPanel = eqLayer.getContextMenuPanel();
-			// menuPanel.getElement().setAttribute("id",
-			// "menuLayer-" + node.getId());
-			// menuPanel.addStyleName(CSS.FILL_PARENT);
-			// this.add(menuPanel, 0, 0);
+			eqLayer = modelEqLayer.clone(node, algebraActivity.isInEditMode());
 
 			eqLayer.setParentLayer(parentLayer);
 			eqLayerMap.put(node, eqLayer);
@@ -253,8 +241,9 @@ public class EquationPanel extends AbsolutePanel {
 			EquationLayer eqLayer) {
 
 		LinkedList<EquationNode> childNodes = parentNode.getChildren();
+
 		if (parentNode.equals(equationTree.getRoot())) {
-			childNodes.remove(1);
+			childNodes.remove(1);// "=" sign
 		}
 
 		if (mergeRootNodes.contains(parentNode)) {
@@ -263,15 +252,20 @@ public class EquationPanel extends AbsolutePanel {
 			parentNode = parentNode.getParent();
 		}
 
+		// Decorate parent expression of layer
 		String parentId = parentNode.getId();
 
-		Element layerParentNode = DOM.getElementById(parentId + OF_LAYER
-				+ parentId);
+		Element layerParentNode = DOM.getElementById(EQ_OF_LAYER + parentId);
+		if(algebraActivity.isInEditMode() && !TypeSGET.Equation.equals(parentNode.getType())) {
+			layerParentNode = DOM.getElementById(parentId+OF_LAYER + parentId);
+		}
 		if (layerParentNode != null) {
-			layerParentNode.addClassName(CSS.PARENT_WRAPPER);
-		} else if (TypeSGET.Equation.equals(parentNode.getType())) {
-			Element layerEqNode = DOM.getElementById(EQ_OF_LAYER + parentId);
-			layerEqNode.addClassName(CSS.PARENT_WRAPPER);
+			String typeName = parentNode.getType().toString();
+			layerParentNode.addClassName(typeName);
+//			layerParentNode.addClassName(CSS.PARENT_WRAPPER);
+		} else {
+			JSNICalls.error("Can't find parent expression"
+					+ " while placing wrappers " + parentNode);
 		}
 
 		for (EquationNode node : childNodes) {
@@ -287,7 +281,7 @@ public class EquationPanel extends AbsolutePanel {
 
 			// Collect selectable children for autoselect
 			LinkedList<EquationNode> selectableChildren = node.getChildren();
-			if (TypeSGET.Fraction.equals(node.getType())
+			if (!algebraActivity.isInEditMode()&&TypeSGET.Fraction.equals(node.getType())
 					&& selectableChildren.size() == 2) {
 				EquationNode numerator = selectableChildren.get(0);
 				EquationNode denominator = selectableChildren.get(1);
@@ -304,12 +298,14 @@ public class EquationPanel extends AbsolutePanel {
 					selectableChildren.remove(denominator);
 				}
 			}
+			// Wrap selectable children for autoselect
 			for (EquationNode subChild : selectableChildren) {
 				Element autoSelectLayerNode = DOM.getElementById(subChild
 						.getId() + OF_LAYER + parentId);
-				new AutoSelectWrapper(subChild, autoSelectLayerNode);
+				new AutoSelectWrapper(this, subChild, autoSelectLayerNode);
 			}
 
+			// Wrap children expressions of layer
 			Element layerNode = DOM.getElementById(node.getId() + OF_LAYER
 					+ parentId);
 
@@ -368,7 +364,7 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	public EquationLayer setFocus(String layerId) {
-		if (layerId != null) {
+		if (layerId != null && !"".equals(layerId)) {
 			for (EquationLayer eqLayer : eqLayerMap.values()) {
 				if (layerId.equals(eqLayer.getElement().getAttribute("id"))) {
 					setFocus(eqLayer);
@@ -391,9 +387,6 @@ public class EquationPanel extends AbsolutePanel {
 		newFocus.setVisible(true);
 
 		focusLayer = newFocus;
-		// TODO
-		// algebraActivity.focusLayerId = focusLayer.getElement().getAttribute(
-		// "id");
 
 		if (autoSelectedWrapper != null) {
 			Wrapper wrapperToSelect = autoSelectedWrapper.getWrapper();
@@ -453,41 +446,40 @@ public class EquationPanel extends AbsolutePanel {
 	class AutoSelectWrapper extends HTML implements HasClickHandlers,
 			HasTouchEndHandlers {
 		private EquationNode node;
-
-		public AutoSelectWrapper(EquationNode node, Element element) {
+		
+		public AutoSelectWrapper(final EquationPanel eqPanel,
+				final EquationNode node, Element element) {
 			super(element);
-
 			this.node = node;
-
 			onAttach();
 
 			// zIndex eqPanel=1 wrapper=2 menu=3
 			this.getElement().getStyle().setZIndex(2);
 
-			if (Moderator.isTouch) {
-				addTouchEndHandler(new TouchEndHandler() {
-					@Override
-					public void onTouchEnd(TouchEndEvent event) {
-						EquationPanel.this.autoSelectedWrapper = AutoSelectWrapper.this;
-					}
-				});
-			} else {
-				addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						EquationPanel.this.autoSelectedWrapper = AutoSelectWrapper.this;
-					}
-				});
-			}
+				if (Moderator.isTouch) {
+					addTouchEndHandler(new TouchEndHandler() {
+						@Override
+						public void onTouchEnd(TouchEndEvent event) {
+							eqPanel.autoSelectedWrapper = AutoSelectWrapper.this;
+						}
+					});
+				} else {
+					addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							eqPanel.autoSelectedWrapper = AutoSelectWrapper.this;
+						}
+					});
+				}
 		}
 
 		public Wrapper getWrapper() {
 			return node.getWrapper();
 		}
 	}
-
+	
 	public void zoomToAndSelect(String nodeIdToSelect) {
-
+		
 		if (nodeIdToSelect == null) {
 			return;
 		} else if ("".equals(nodeIdToSelect)
@@ -496,7 +488,12 @@ public class EquationPanel extends AbsolutePanel {
 			return;
 		}
 
-		EquationNode nodeToSelect = equationTree.getNodeById(nodeIdToSelect);
+		zoomToAndSelect(equationTree.getNodeById(nodeIdToSelect));
+		
+	}
+	
+	public void zoomToAndSelect(EquationNode nodeToSelect) {
+		
 		Wrapper wrap = nodeToSelect.getWrapper();
 
 		if (wrap == null) {
@@ -510,8 +507,12 @@ public class EquationPanel extends AbsolutePanel {
 			return;
 		}
 
-		setFocus(eqLayer);
-		wrap.select();
+		if(getChildren().contains(eqLayer)) {
+			setFocus(eqLayer);
+			wrap.select();
+		}else {
+			JSNICalls.warn("Layer to zoom to is not in panel, can't autoselect: \n" + eqLayer);
+		}
 	}
-
+	
 }
