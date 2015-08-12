@@ -311,7 +311,8 @@ public class AlgebraActivity extends SimplePanel {
 
 		eqPanelHolder.clear();
 
-		revertUpperMidAreaToDefault();
+		//TODO
+//		revertUpperMidAreaToDefault();
 
 		equationTree.reloadDisplay(true, true);
 		if (eqPanel != null && eqPanel.isAttached()) {

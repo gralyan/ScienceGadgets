@@ -41,10 +41,11 @@ public class UnitHTML {
 
 	public static final String UNIT_CLASSNAME = CSS.UNIT;
 	public static final String UNIT_NODE_DELIMITER = "-unitNode-";
-	private static final double UNIT_SIZE_SMALL = 40;// %
+	private static final double UNIT_SIZE_FRAC = 20;// %
+	private static final double UNIT_SIZE_NONFRAC = 40;// %
 
 	public static Element create(EquationNode mathNode) {
-		return create(mathNode.getUnitAttribute());
+		return create(mathNode.getUnitAttribute(), true);
 	}
 
 	public static Element create(EquationNode mathNode,
@@ -53,8 +54,8 @@ public class UnitHTML {
 				hasSmallUnits);
 	}
 
-	public static Element create(UnitAttribute dataUnit) {
-		return create(dataUnit, null);
+	public static Element create(UnitAttribute dataUnit, boolean hasSmallUnits) {
+		return create(dataUnit, null, hasSmallUnits);
 	}
 
 	public static Element create(UnitAttribute dataUnit,
@@ -117,7 +118,7 @@ public class UnitHTML {
 			frac.appendChild(denominator);
 			frac.addClassName(UNIT_CLASSNAME);
 			if (hasSmallUnits) {
-				frac.getStyle().setFontSize(UNIT_SIZE_SMALL, Unit.PCT);
+				frac.getStyle().setFontSize(UNIT_SIZE_FRAC, Unit.PCT);
 			}
 
 			if (numerator.getChildCount() == 0) {
@@ -130,7 +131,7 @@ public class UnitHTML {
 			numerator.addClassName(TypeSGET.Term.asChild());
 			numerator.addClassName(UNIT_CLASSNAME);
 			if (hasSmallUnits) {
-				numerator.getStyle().setFontSize(UNIT_SIZE_SMALL, Unit.PCT);
+				numerator.getStyle().setFontSize(UNIT_SIZE_NONFRAC, Unit.PCT);
 			}
 			return numerator;
 		}

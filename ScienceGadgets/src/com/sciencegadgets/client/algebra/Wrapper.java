@@ -62,7 +62,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		node.wrap(this);
 
 		// zIndex eqPanel=1 wrapper=2 menu=3
-		this.getElement().getStyle().setZIndex(2);
+//		this.getElement().getStyle().setZIndex(2);
 
 		if (Moderator.isTouch) {
 			addTouchEndHandler(new WrapperTouchEndHandler());

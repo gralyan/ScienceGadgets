@@ -19,9 +19,11 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
@@ -62,7 +64,7 @@ public class EquationWrapper extends Wrapper {
 
 		TypeSGET type = node.getType();
 		TypeSGET operationType = null;
-		FitParentHTML typeLabel = new FitParentHTML(type.name());
+		FitParentHTML typeLabel = new FitParentHTML(type.getIcon());
 		detailsList.add(typeLabel);
 
 		switch (type) {
@@ -70,26 +72,34 @@ public class EquationWrapper extends Wrapper {
 			String fullValue = node.getAttribute(MathAttribute.Value);
 			if ("".equals(fullValue)) {
 				fullValue = node.getAttribute(MathAttribute.Randomness);
-			}
-			FitParentHTML valueHTML = new FitParentHTML(fullValue);
-			detailsList.add(valueHTML);
-			valueHTML.getElement().getStyle().setWidth(100, Unit.PCT);
-			valueHTML.getElement().getStyle()
+			}else if("#".equals(node.getSymbol())) {
+				try {
+					new BigDecimal(fullValue);
+					FitParentHTML valueHTML = new FitParentHTML(fullValue);
+					detailsList.add(valueHTML);
+					Style style = valueHTML.getElement().getStyle();
+					style.setColor("white");
+					style.setProperty("maxWidth",100, Unit.PCT);
+					style
 					.setProperty("overflowWrap", "break-word");
-
-			UnitAttribute unit = node.getUnitAttribute();
-			if (!"".equals(unit)) {
-				FitParentHTML unitHTML = new FitParentHTML();
-				unitHTML.getElement().appendChild(UnitHTML.create(unit));
-				detailsList.add(unitHTML);
+				} catch (NumberFormatException e) {
+				}
 			}
+
+			// UNITS included in equation
+//			UnitAttribute unit = node.getUnitAttribute();
+//			if (!"".equals(unit.toString())) {
+//				FitParentHTML unitHTML = new FitParentHTML();
+//				unitHTML.getElement().appendChild(UnitHTML.create(unit, false));
+//				detailsList.add(unitHTML);
+//			}
 
 			break;
 		case Variable:
 			UnitAttribute qKind = node.getUnitAttribute();
-			if (!"".equals(qKind)) {
+			if (!"".equals(qKind.toString())) {
 				FitParentHTML qKindHTML = new FitParentHTML();
-				qKindHTML.getElement().appendChild(UnitHTML.create(qKind));
+				qKindHTML.getElement().appendChild(UnitHTML.create(qKind, false));
 				detailsList.add(qKindHTML);
 			}
 			break;
@@ -97,15 +107,15 @@ public class EquationWrapper extends Wrapper {
 			Operator op = node.getOperation();
 			if (TypeSGET.Operator.PLUS.equals(op)) {
 				operationType = TypeSGET.Sum;
-				typeLabel.setHTML("Add");
+				typeLabel.setHTML(Operator.PLUS.getSign());
 			} else if (TypeSGET.Operator.MINUS.equals(op)) {
 				operationType = TypeSGET.Sum;
-				typeLabel.setHTML("Subtract");
+				typeLabel.setHTML(Operator.MINUS.getSign());
 			} else if (TypeSGET.Operator.DOT.equals(op)
 					|| TypeSGET.Operator.CROSS.equals(op)
 					|| TypeSGET.Operator.SPACE.equals(op)) {
 				operationType = TypeSGET.Term;
-				typeLabel.setHTML("Multiply");
+				typeLabel.setHTML(Operator.CROSS.getSign());
 			} else {
 				JSNICalls.error("Incorrest opperation");
 			}
@@ -138,8 +148,8 @@ public class EquationWrapper extends Wrapper {
 			if (node.hasChildElements()
 					&& (dragController == null || !dragController.isDragging())) {
 				// Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
-				unselect();
 				eqPanel.setFocus(node);
+				unselect();
 			}
 
 		} else {

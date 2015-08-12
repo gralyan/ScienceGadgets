@@ -115,9 +115,9 @@ public class AlgebraHistory extends FlowPanel {
 		lastRow.ruleSide.removeFromParent();
 		add(lastRow);
 		
-		TextArea evaluatedBox = new TextArea();
+		Label evaluatedBox = new Label();
 		JSNICalls.log("ev "+evaluation);
-//		evaluatedBox.addStyleName(CSS.ALG_OUT_RULE_ROW);
+		evaluatedBox.addStyleName(CSS.ALG_OUT_RULE_ROW);
 //		evaluatedBox.addFocusHandler(new HighlightHandler(evaluatedBox));
 		lastRow.add(evaluatedBox);
 		evaluatedBox.setText(evaluation);

@@ -129,7 +129,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 	public void updatePaste() {
 		pasteButton.clear();
 		pasteButton.add(copiedNodeHTML);
-		pasteButton.getElement().getStyle().setColor("black");
+//		pasteButton.getElement().getStyle().setColor("white");
 	}
 
 	// //////////////////////////////////////////

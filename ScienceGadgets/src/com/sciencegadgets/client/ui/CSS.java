@@ -54,6 +54,8 @@ public static final String IN_LOG = "sg-in-log";
 public static final String IN_TRIG = "sg-in-trig";
 public static final String IN_LOG_BASE = "sg-in-log-base";
 
+public static final String PLUS = "sg-plus";
+public static final String MINUS = "sg-minus";
 public static final String FENCED = "sg-fenced";
 public static final String FUNCTION_NAME = "sg-functionName";
 public static final String UNIT = "sg-unit";

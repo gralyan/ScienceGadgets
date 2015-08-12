@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.JSNICalls;
@@ -34,16 +35,16 @@ import com.sciencegadgets.shared.TypeSGET;
 
 public class EquationLayer extends SimplePanel {
 
-	LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
-	EquationLayer parentLayer;
-	AbsolutePanel ContextMenuPanel = new AbsolutePanel();
-	EquationNode mathNode;
-	EquationHTML eqHTML;
-	private String layerId;
+	private EquationLayer parentLayer;
+	private AbsolutePanel ContextMenuPanel = new AbsolutePanel();
+	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
+	private EquationNode eqNode;
+	private EquationHTML eqHTML;
+	public final String layerId;
 
 	public EquationLayer(EquationNode mathNode, EquationHTML eqHTML) {
 		super();
-		this.mathNode = mathNode;
+		this.eqNode = mathNode;
 		this.eqHTML = eqHTML;
 
 		if (mathNode != null) {
@@ -54,6 +55,7 @@ public class EquationLayer extends SimplePanel {
 			addStyleName(CSS.EQ_LAYER);
 			eqHTML.autoFillParent = true;
 		} else {
+			layerId = "pilot";
 			eqHTML.pilot = true;
 		}
 	}
@@ -62,14 +64,15 @@ public class EquationLayer extends SimplePanel {
 	protected void onLoad() {
 		super.onLoad();
 		this.add(eqHTML);
-		
-		int heightPercent = 100 * eqHTML.getOffsetHeight() / getParent().getOffsetHeight();
-		getElement().getStyle().setTop((100-heightPercent)/2, Unit.PCT);
-	}
 
-	public void setOpacity(double opacity) {
-		getElement().getStyle().setOpacity(opacity);
-		ContextMenuPanel.getElement().getStyle().setOpacity(opacity);
+//		int heightPercent = 100 * eqHTML.getOffsetHeight()
+//				/ getParent().getOffsetHeight();
+		// getElement().getStyle().setTop((100-heightPercent)/2, Unit.PCT);
+		eqHTML.getElement()
+				.getStyle()
+				.setTop(((getParent().getOffsetHeight() - eqHTML
+						.getOffsetHeight())) / 2,
+						Unit.PX);
 	}
 
 	void setParentLayer(EquationLayer parentLayer) {
@@ -80,8 +83,16 @@ public class EquationLayer extends SimplePanel {
 		return parentLayer;
 	}
 
+	public EquationHTML getEqHTML() {
+		return eqHTML;
+	}
+
 	public LinkedList<Wrapper> getWrappers() {
 		return wrappers;
+	}
+
+	public EquationNode getEquationNode() {
+		return eqNode;
 	}
 
 	public void addWrapper(Wrapper wrap) {
@@ -95,7 +106,12 @@ public class EquationLayer extends SimplePanel {
 
 	@Override
 	public void setVisible(boolean visible) {
-		super.setVisible(visible);
+		if (visible) {
+			getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		} else {
+			getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		}
+		// super.setVisible(visible);
 		ContextMenuPanel.setVisible(visible);
 	}
 
@@ -145,5 +161,4 @@ public class EquationLayer extends SimplePanel {
 						+ node);
 		return null;
 	}
-
 }

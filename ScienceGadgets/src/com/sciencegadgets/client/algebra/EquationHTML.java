@@ -78,7 +78,7 @@ public class EquationHTML extends HTML {
 		right = makeHTMLNode(mTree.getRightSide(), this.getElement());
 
 	}
-	
+
 	private EquationHTML(String html) {
 		super(html);
 		this.setStyleName(CSS.EQUATION);
@@ -107,6 +107,7 @@ public class EquationHTML extends HTML {
 			resizeEquation();
 		}
 	}
+
 	public EquationHTML clone() {
 		return new EquationHTML(this.getHTML());
 	}
@@ -150,11 +151,21 @@ public class EquationHTML extends HTML {
 						+ mNode.getParent());
 			}
 			break;
+		case Sum:
+			if(TypeSGET.Operation.equals(type)) {
+				String txt = mNode.getSymbol();
+				if(TypeSGET.Operator.PLUS.getSign().equals(txt)) {
+					container.addClassName(CSS.PLUS);
+				}else if(TypeSGET.Operator.MINUS.getSign().equals(txt)) {
+					container.addClassName(CSS.MINUS);
+				}else {
+					JSNICalls.error("Operator in sum is neither + nor - in:\n"+mNode.toString());
+				}
+			}
 		case Log:
 		case Trig:
 		case Equation:
 		case Term:
-		case Sum:
 			container.addClassName(parentType.asChild());
 			break;
 		}
@@ -176,6 +187,7 @@ public class EquationHTML extends HTML {
 
 		}
 
+		// Add function css class names
 		switch (type) {
 		case Log:
 			functionName = "log";
@@ -238,11 +250,13 @@ public class EquationHTML extends HTML {
 
 					// The following shouldn't count as the large character
 					// before subscripts
-					boolean startsMinus = text.startsWith(Operator.MINUS.getSign());
+					boolean startsMinus = text.startsWith(Operator.MINUS
+							.getSign());
 					boolean startsDelta = text.startsWith("\u0394");
 					boolean startsSqrt = text.startsWith("\u221A");
 
-					int substringEnd = startsMinus || startsDelta || startsSqrt ? 2 : 1;
+					int substringEnd = startsMinus || startsDelta || startsSqrt ? 2
+							: 1;
 
 					nodeHtml.setInnerText(text.substring(0, substringEnd));
 					Element subscript = DOM.createDiv();
@@ -256,20 +270,15 @@ public class EquationHTML extends HTML {
 			break;
 		case Operation:
 			String txt = mNode.getSymbol();
-			if (isStacked && TypeSGET.Operator.EQUALS.getSign().equals(txt)) {
-				txt = "";
-				nodeHtml.getStyle().setDisplay(Display.BLOCK);
-			} else {
-//				if (txt.startsWith("&")) { // must insert as js code
-//					for (TypeSGET.Operator op : TypeSGET.Operator.values()) {
-//						if (op.getHTML().equals(txt)) {
-//							txt = op.getSign();
-//							break;
-//						}
-//					}
-//				}
-				nodeHtml.setInnerText(txt);
+
+			if (TypeSGET.Operator.EQUALS.getSign().equals(txt)) {
+				if (isStacked) {
+					nodeHtml.getStyle().setDisplay(Display.BLOCK);
+					break;
+				}
 			}
+
+			nodeHtml.setInnerText(txt);
 			break;
 		}
 
@@ -296,21 +305,25 @@ public class EquationHTML extends HTML {
 	public void setFocus(Element focusElement) {
 		this.focusElement = focusElement;
 	}
+
 	/**
 	 * Resizes the equation to fill the panel
 	 */
-	private void resizeEquation() {
-		
+	public void resizeEquation() {
+
+		this.getElement().getStyle().clearFontSize();
+
 		double widthRatio = (double) this.getParent().getOffsetWidth()
 				/ getOffsetWidth();
 		double heightRatio = (double) this.getParent().getOffsetHeight()
 				/ getOffsetHeight();
-		
 
 		double smallerRatio = (widthRatio > heightRatio) ? heightRatio
 				: widthRatio;
 		// *90 for looser fit, *100 for percent
-		double fontPercent = smallerRatio * 90;
+		// double fontPercent = smallerRatio * 90;
+
+		double fontPercent = smallerRatio * 100;
 
 		this.getElement().getStyle().setFontSize((fontPercent), Unit.PCT);
 	}
@@ -470,6 +483,5 @@ public class EquationHTML extends HTML {
 			break;
 		}
 	}
-
 
 }

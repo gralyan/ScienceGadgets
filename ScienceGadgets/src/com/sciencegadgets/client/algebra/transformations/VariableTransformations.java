@@ -48,7 +48,8 @@ public class VariableTransformations extends
 
 		this.variableNode = variableNode;
 
-		isolatedVariable_check();
+		//TODO substitution
+//		isolatedVariable_check();
 		plugIn_check();
 	}
 

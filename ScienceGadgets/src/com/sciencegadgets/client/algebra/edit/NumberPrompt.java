@@ -66,6 +66,13 @@ public class NumberPrompt extends QuantityPrompt{
 	}
 	
 	@Override
+	public void reload(EquationNode mathNode, boolean clearDisplays,
+			boolean mustCheckUnits) {
+		
+		super.reload(mathNode, clearDisplays, mustCheckUnits);
+	}
+	
+	@Override
 	protected String extractSymbol() {
 		SymbolDisplay symbolDisplay = spec.getSymbolDisplay();
 		String inputString = null;
