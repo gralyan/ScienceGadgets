@@ -28,14 +28,14 @@ import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class MakeEquationBrowser extends FlowPanel {
-	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Template Equations", ActivityType.algebraedit);
+	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Template Equations", ActivityType.editequation);
 	SelectionButton blankEqButton = new SelectionButton("Blank Equation") {
 		@Override
 		protected void onSelect() {
 			EquationTree blankEq = new EquationTree(TypeSGET.Variable,
 					TypeSGET.NOT_SET, TypeSGET.Variable, TypeSGET.NOT_SET, true);
 			Moderator.switchToAlgebra(blankEq, null,
-					Moderator.ActivityType.algebraedit, true);
+					Moderator.ActivityType.editequation, true);
 		}
 	};
 

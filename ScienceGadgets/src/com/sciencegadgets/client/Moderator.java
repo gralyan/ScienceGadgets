@@ -120,16 +120,16 @@ public class Moderator implements EntryPoint {
 	}
 
 	public enum ActivityType {
-		browser, problem, algebrasolve, algebraedit, algebrasolvegoal, algebracreategoal, algebrasimplifyquiz, conversion;
+		browser, problem, interactiveequation, editequation, editsolvegoal, editcreategoal, simplifyquiz, conversion;
 
 		public boolean isInEditMode() {
 			switch (this) {
-			case algebraedit:
-			case algebrasimplifyquiz:
-			case algebracreategoal:
+			case editequation:
+			case simplifyquiz:
+			case editcreategoal:
 				return true;
-			case algebrasolve:
-			case algebrasolvegoal:
+			case interactiveequation:
+			case editsolvegoal:
 				return false;
 			default:
 				return false;
@@ -172,12 +172,12 @@ public class Moderator implements EntryPoint {
 						activityType);
 			} else {
 				algebraActivity.setEquationTree(equationTree, equation);
-				if (ActivityType.algebrasolve == activityType) {
+				if (ActivityType.interactiveequation == activityType) {
 					algebraActivity.reCreateAlgHistory();
 				}
 			}
 
-			isInEasyMode = isInEasyMode || activityType == ActivityType.algebrasolvegoal;
+			isInEasyMode = isInEasyMode || activityType == ActivityType.editsolvegoal;
 
 			setActivity(activityType, algebraActivity);
 			algebraActivity.reloadEquationPanel(null, null, updateHistory, null);
@@ -334,8 +334,8 @@ public class Moderator implements EntryPoint {
 			public void run() {
 				fitWindow();
 				switch (currentActivityType) {
-				case algebraedit:
-				case algebrasolve:
+				case editequation:
+				case interactiveequation:
 					reloadEquationPanel();
 					break;
 				case conversion:
@@ -440,13 +440,13 @@ public class Moderator implements EntryPoint {
 				ActivityType activityType = ActivityType
 						.valueOf(activityParameter);
 				switch (activityType) {
-				case algebrasolve:
+				case interactiveequation:
 					//TODO
 					parameterMap = ConstantRandomizer.insertRandomProvided(parameterMap);
 					// fall through
-				case algebraedit:
-				case algebrasolvegoal:
-				case algebracreategoal:
+				case editequation:
+				case editsolvegoal:
+				case editcreategoal:
 					String equationString = parameterMap
 					.get(Parameter.equation);
 					Element equationXML = new HTML(equationString).getElement()

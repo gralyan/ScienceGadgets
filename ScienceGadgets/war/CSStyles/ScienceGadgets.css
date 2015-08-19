@@ -67,10 +67,8 @@ body {
 }
 
 .sg-rowHeader {
-	border-bottom-color: gray;
-	border-bottom-style: solid;
-	border-bottom-width: medium;
-	background-color: #aaaaaa;
+	border-bottom: solid 3px #aaaaaa;
+	background-color: lightGray;
 	text-align: center;
 }
 
@@ -199,8 +197,7 @@ body {
 }
 
 .sg-quantityKindPrefix {
-	border-bottom: medium solid brown;
-	background-color: tan
+	background-color: lavender;
 }
 
 /*---------------AlgOut---------------*/
@@ -285,12 +282,18 @@ body {
 	user-select: none;
 	background-color: #202020;
 	box-shadow:0 0 10px black inset;
+	
+	/* 	gray out the background of the equation to make wrappers stand out */
+	color: #A0A0A0;
+	font-weight: lighter;
+	position: relative;
+	text-shadow: 0em 0em 4px #000000;
 }
 
 .sg-eqLayer {
-	height: 100%;
-	width: 100%;
-/* 	margin: 5%; */
+	height: 90%;
+	width: 90%;
+	margin: 5%;
 /* 	text-align: center; */
 /* 	padding-top: 10px; */
 	white-space: nowrap;
@@ -320,7 +323,7 @@ body {
 	text-align: center;
 	background-color: #E6E6FA;
 	z-index: 100;
-	border: thick solid green;
+	border: thick solid transparent;
 	-moz-border-radius: 1em;
 	-webkit-border-radius: 1em;
  	border-radius: 1em;
@@ -357,22 +360,52 @@ body {
 	border-radius: 6px;
 }
 
+/*---------------cursors---------------*/
+
+.sg-eqPanel{
+    cursor: default;
+}
+.sg-displayWrapper{
+    cursor: default;
+}
+.sg-displayWrapper.dragdrop-draggable{
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+.dragdrop-selected, .dragdrop-dragging, .dragdrop-proxy {
+	opacity: 1;
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
+
+.sg-canZoomOut {
+    cursor: url(images/cursor_out.png) 16 16,crosshair;
+}
+
+.sg-selectedWrapper:not(.sg-Operation):not(.sg-Number):not(sg-Variable){
+    cursor: url(images/cursor_in.png) 16 16,crosshair;
+}
+
 /*---------------prompts---------------*/
 .sg-numberDisplay {
 	text-align: center;
-	background-color: lime;
-	border: thin solid darkGreen;
+	background-color: white;
+	border: thin solid #aaaaaa;
 	min-width: 3px;
 	min-height: 1.5em;
 	word-wrap: break-word;
 }
 
 .sg-promptMain {
-	background-color: #ADD850;
+	background-color: silver;
 }
 
 .sg-keyPadNumerical {
-	background-color: lightGray;
+/* 	background-color: lightGray; */
 	padding: 5px;
 }
 
@@ -389,7 +422,6 @@ body {
 
 .sg-okGap {
 	height: 5px;
-	border-top: thick solid green;
 }
 
 .sg-exampleHtml {
@@ -405,6 +437,7 @@ body {
 	margin-right: 2%;
 	text-align: left;
 	padding-left: 1em;
+	border: solid 1px #aaa;
 }
 
 .sg-quantityPromptSpec {

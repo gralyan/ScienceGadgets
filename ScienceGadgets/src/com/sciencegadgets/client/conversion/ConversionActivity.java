@@ -484,7 +484,7 @@ public class ConversionActivity extends AbsolutePanel {
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
 			if (variableEquation == null) {
 				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(), true,
-						ActivityType.algebrasolve, true);
+						ActivityType.interactiveequation, true);
 				AlgebraActivity aActivity = Moderator
 						.getCurrentAlgebraActivity();
 				aActivity.algOut.updateAlgebraHistory("Conversion",

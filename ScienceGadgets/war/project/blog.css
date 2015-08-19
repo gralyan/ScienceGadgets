@@ -51,7 +51,7 @@ iframe{
 
 #navigationPanel>a{
 	font-weight: bold;
-	margin-right: 2em;
+	margin-right: 1em;
 	text-shadow: 0 0 0.1em darkgreen;
 }
 
@@ -68,5 +68,6 @@ iframe{
 .problemBlock{
 	background-color: lightGreen;
     border-radius: 1em 1em 1em 1em;
+    padding: 1em;
 	
 }

@@ -119,7 +119,7 @@ public class AlgebraActivity extends SimplePanel {
 		this.activityType = activityType;
 
 		switch (activityType) {
-		case algebrasolve:
+		case interactiveequation:
 			activateOptionsButton(true);
 			activateBackButton(true);
 
@@ -133,7 +133,7 @@ public class AlgebraActivity extends SimplePanel {
 					true));
 			transformMain.addStyleName(CSS.FILL_PARENT);
 			break;
-		case algebraedit:
+		case editequation:
 			activateOptionsButton(true);
 			activateBackButton(true);
 
@@ -158,7 +158,7 @@ public class AlgebraActivity extends SimplePanel {
 			setDefaultUpperMidWidget(upMidHolder);
 
 			break;
-		case algebrasolvegoal:
+		case editsolvegoal:
 
 			transformMain
 					.add(bothSidesPanelLeft = new TransformationPanel(true));
@@ -168,7 +168,7 @@ public class AlgebraActivity extends SimplePanel {
 					true));
 			transformMain.addStyleName(CSS.FILL_PARENT);
 			// fall through
-		case algebracreategoal:
+		case editcreategoal:
 			activateOptionsButton(false);
 			activateBackButton(false);
 
@@ -176,7 +176,7 @@ public class AlgebraActivity extends SimplePanel {
 					"Create Link with Goal", eTree);
 			setDefaultUpperMidWidget(createLinkWithGoalButton);
 			break;
-		case algebrasimplifyquiz:
+		case simplifyquiz:
 			activateOptionsButton(false);
 			activateBackButton(false);
 			break;
@@ -279,7 +279,7 @@ public class AlgebraActivity extends SimplePanel {
 			HashMap<Skill, Integer> skillsIncrease, boolean updateParameters,
 			final String nodeIdToSelect) {
 
-		if (activityType == ActivityType.algebrasolve && changeComment != null
+		if (activityType == ActivityType.interactiveequation && changeComment != null
 				&& skillsIncrease != null && !skillsIncrease.isEmpty()) {
 			algOut.updateAlgebraHistory(changeComment, (Skill) skillsIncrease
 					.keySet().toArray()[0], equationTree);
@@ -287,7 +287,7 @@ public class AlgebraActivity extends SimplePanel {
 
 		if (inProgramaticTransformMode) {
 			return;
-		} else if (activityType == ActivityType.algebrasimplifyquiz) {
+		} else if (activityType == ActivityType.simplifyquiz) {
 			// equationTree.getEquals().setSymbol(
 			// TypeSGET.Operator.ARROW_RIGHT.getSign());
 			// equationTree.getEquals().setSymbol(
@@ -321,7 +321,7 @@ public class AlgebraActivity extends SimplePanel {
 		eqPanel = new EquationPanel(this);
 		eqPanelHolder.add(eqPanel);
 
-		if (activityType == ActivityType.algebrasolve) {
+		if (activityType == ActivityType.interactiveequation) {
 			lowerEqArea.clear();
 			algOut.scrollToBottom();
 
@@ -352,7 +352,7 @@ public class AlgebraActivity extends SimplePanel {
 		}
 
 		if (updateParameters
-				&& (activityType == ActivityType.algebrasolve || activityType == ActivityType.algebraedit)) {
+				&& (activityType == ActivityType.interactiveequation || activityType == ActivityType.editequation)) {
 			HashMap<Parameter, String> parameterMap = new HashMap<Parameter, String>();
 			parameterMap.put(Parameter.equation,
 					equationTree.getEquationXMLString());

@@ -132,7 +132,7 @@ class EditSolveClickHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		OptionsHandler.optionsPopup.hide();
 		
-		ActivityType activityType = algebraActivity.getActivityType() == ActivityType.algebraedit ? ActivityType.algebrasolve : ActivityType.algebraedit;
+		ActivityType activityType = algebraActivity.getActivityType() == ActivityType.editequation ? ActivityType.interactiveequation : ActivityType.editequation;
 		EquationTree equationTree = algebraActivity.getEquationTree();
 		String equationStr = equationTree.getRoot().toString();
 		if (equationStr.contains(TypeSGET.NOT_SET)) {

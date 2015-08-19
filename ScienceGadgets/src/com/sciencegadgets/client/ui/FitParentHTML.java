@@ -22,6 +22,7 @@ package com.sciencegadgets.client.ui;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.Moderator;
@@ -74,8 +75,10 @@ public class FitParentHTML extends HTML implements Resizable {
 	@Override
 	public void resize() {
 		Element htmlElement = this.getElement();
+		Style htmlStyle = htmlElement.getStyle();
 
-		htmlElement.getStyle().clearFontSize();
+		htmlStyle.clearPadding();;
+		htmlStyle.clearFontSize();
 		
 		if(this.getParent() == null) {
 		}
@@ -93,6 +96,13 @@ public class FitParentHTML extends HTML implements Resizable {
 		// *percentOfParent for looser fit, *100 for percent
 		double fontPercent = smallerRatio * percentOfParent;
 
-		htmlElement.getStyle().setFontSize((fontPercent), Unit.PCT);
+		htmlStyle.setFontSize((fontPercent), Unit.PCT);
+		
+		// Center vertically
+		if(widthRatio < heightRatio) {
+			double extraBottom = (double) parentElement.getOffsetHeight()
+			- (double) htmlElement.getOffsetHeight();
+			htmlStyle.setPaddingTop(extraBottom / 2, Unit.PX);
+		}
 	}
 }

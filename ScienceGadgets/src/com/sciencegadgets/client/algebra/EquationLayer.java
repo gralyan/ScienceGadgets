@@ -28,6 +28,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
@@ -36,11 +37,11 @@ import com.sciencegadgets.shared.TypeSGET;
 public class EquationLayer extends SimplePanel {
 
 	private EquationLayer parentLayer;
-	private AbsolutePanel ContextMenuPanel = new AbsolutePanel();
 	private LinkedList<Wrapper> wrappers = new LinkedList<Wrapper>();
 	private EquationNode eqNode;
 	private EquationHTML eqHTML;
 	public final String layerId;
+	private boolean isExpression;
 
 	public EquationLayer(EquationNode mathNode, EquationHTML eqHTML) {
 		super();
@@ -52,8 +53,9 @@ public class EquationLayer extends SimplePanel {
 			eqHTML.getElement().setAttribute("id",
 					EquationPanel.EQ_OF_LAYER + layerId);
 			replaceChildsId(eqHTML.getElement());
-			addStyleName(CSS.EQ_LAYER);
 			eqHTML.autoFillParent = true;
+			addStyleName(CSS.EQ_LAYER);
+			isExpression = eqHTML.getElement().getClassName().contains(CSS.EXPRESSION);
 		} else {
 			layerId = "pilot";
 			eqHTML.pilot = true;
@@ -65,12 +67,9 @@ public class EquationLayer extends SimplePanel {
 		super.onLoad();
 		this.add(eqHTML);
 
-//		int heightPercent = 100 * eqHTML.getOffsetHeight()
-//				/ getParent().getOffsetHeight();
-		// getElement().getStyle().setTop((100-heightPercent)/2, Unit.PCT);
 		eqHTML.getElement()
 				.getStyle()
-				.setTop(((getParent().getOffsetHeight() - eqHTML
+				.setTop(((getOffsetHeight() - eqHTML
 						.getOffsetHeight())) / 2,
 						Unit.PX);
 	}
@@ -100,19 +99,32 @@ public class EquationLayer extends SimplePanel {
 		wrap.setLayer(this);
 	}
 
-	public AbsolutePanel getContextMenuPanel() {
-		return ContextMenuPanel;
+	public Wrapper getWapperForLayer(EquationLayer eLayer) {
+		if(eLayer == null || eLayer.layerId == null || "".equals(eLayer.layerId)) {
+			return null;
+		}
+		for(Wrapper w : wrappers) {
+			if(w.getNode() != null && eLayer.layerId.equals(w.getNode().getId())) {
+				return w;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
-		if (visible) {
-			getElement().getStyle().setVisibility(Visibility.VISIBLE);
-		} else {
-			getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		Visibility visibility = visible ? Visibility.VISIBLE
+				: Visibility.HIDDEN;
+		getElement().getStyle().setVisibility(visibility);
+		
+		if(visible) {
+			Widget eqPanel = getParent();
+			if(isExpression) {
+				eqPanel.addStyleName(CSS.CAN_ZOOM_OUT);
+			}else {
+				eqPanel.removeStyleName(CSS.CAN_ZOOM_OUT);
+			}
 		}
-		// super.setVisible(visible);
-		ContextMenuPanel.setVisible(visible);
 	}
 
 	/**

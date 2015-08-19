@@ -66,7 +66,7 @@ class ProblemSelectHandler implements SelectionHandler {
 		if(problem.getGoalXML() != null && !"".equals(problem.getGoalXML())) {
 			URLParameters.addParameter(Parameter.goal, problem.getGoalXML(), false);
 		}
-		if(activityOfIntention == ActivityType.algebrasolve) {
+		if(activityOfIntention == ActivityType.interactiveequation) {
 			Moderator.isInEasyMode = false;
 		}
 		Moderator.switchToAlgebra(equationEl, null, activityOfIntention, true);

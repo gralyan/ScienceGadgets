@@ -3,13 +3,14 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:sg="urn:import:com.sciencegadgets.client.ui">
 
 	<ui:style>
-		.spec {
-	color: black;
-			height: 76%;
+		.palatte {
+			color: black;
+			margin-top: 2%;
+			height: 79%;
 			width: 98%;
 			display: inline-block;
 			vertical-align: top;
-			border: thin solid darkGreen;
+ 			border: solid 1px #aaa;
 		}
 		
 		.display {
@@ -25,7 +26,7 @@
 			width: 50%;
 			height: 100%;
 			text-align: center;
-			background-color: lightGray;
+	 		background-color: lightGray;
 		}
 		
 		.toggle {
@@ -37,6 +38,7 @@
 		
 		.symbolPalette {
 			overflow-y: auto;
+			background-color: #aaa;
 		}
 		
 	</ui:style>
@@ -56,8 +58,8 @@
 			</g:FlowPanel>
 
 			<!-- symbol palette -->
-			<g:FlowPanel height="80%" ui:field="symbolPalette"
-				addStyleNames="{style.spec} {style.symbolPalette}"></g:FlowPanel>
+			<g:FlowPanel ui:field="symbolPalette"
+				addStyleNames="{style.palatte} {style.symbolPalette}"></g:FlowPanel>
 
 		</g:FlowPanel>
 
@@ -73,8 +75,8 @@
 			</g:FlowPanel>
 
 			<!-- unit palette -->
-			<g:FlowPanel height="80%" ui:field="unitPalette"
-				addStyleNames="{style.spec}"></g:FlowPanel>
+			<g:FlowPanel ui:field="unitPalette"
+				addStyleNames="{style.palatte}"></g:FlowPanel>
 
 		</g:FlowPanel>
 

@@ -26,10 +26,10 @@
 	-webkit-border-radius: 15px;
 	border-radius: 15px;
 	text-align: center;
-	-moz-box-shadow: black 0 0 1em 0.2em inset, black 0 0 1em 0.4em inset;
-	-webkit-box-shadow: black 0 0 1em 0.2em inset, black 0 0 1em 0.4em inset;
-	box-shadow: black 0 0 1em 0.2em inset, black 0 0 1em 0.4em inset;
 	background-color: rgba(0,0,0, 0.4);
+	-moz-box-shadow: gray 0 0 2px 2px inset;
+	-webkit-box-shadow: gray 0 0 2px 2px inset;
+	box-shadow: gray 0 0 2px 2px inset;
 }
 
 .sg-transformationButton:disabled{
@@ -38,22 +38,20 @@
 }
 
 .sg-transformationButton:hover{
-/* 	-moz-box-shadow: #000000 0 0 2px 2px; */
-/* 	-webkit-box-shadow: #000000 0 0 2px 2px; */
-/* 	box-shadow: #000000 0 0 2px 2px; */
-	text-shadow: 3px 3px 8px #000000;
+	-moz-box-shadow: white 0 0 2px 2px inset;
+	-webkit-box-shadow: white 0 0 2px 2px inset;
+	box-shadow: white 0 0 2px 2px inset;
 }
 
 .sg-transformationButton:active{
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
 	box-shadow: none;
-	text-shadow: 2px 3px 8px #000000;
 	position: relative;
 	top: 1px;
 }
 
-.sg-bothSidesButton.sg-transformationButton {
+.sg-bothSidesButton {
 	background-color: white;
 	color: black;
 }
@@ -157,4 +155,7 @@
 .sg-createGoalButton{
 	height: 100%;
 	width: 30%;
+}
+.sg-okPromptButton{
+	margin: 7px
 }

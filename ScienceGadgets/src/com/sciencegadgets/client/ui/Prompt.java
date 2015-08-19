@@ -57,9 +57,7 @@ public class Prompt extends DialogBox implements Resizable {
 		FlowPanel mainPanel = new FlowPanel();
 		mainPanel.add(flowPanel);
 		if (hasOkButton) {
-			FlowPanel gap = new FlowPanel();
-			gap.addStyleName(CSS.OK_GAP);
-			mainPanel.add(gap);
+			okButton.addStyleName(CSS.OK_PROMPT_BUTTON);
 			mainPanel.add(okButton);
 		}
 		super.add(mainPanel);

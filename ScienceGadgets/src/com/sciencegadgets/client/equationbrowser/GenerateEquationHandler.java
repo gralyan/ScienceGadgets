@@ -178,7 +178,7 @@ class GenerateEquationHandler implements ClickHandler {
 				);
 		
 		Moderator.isInEasyMode = true;
-		Moderator.switchToAlgebra(eTree, null, ActivityType.algebrasolve, true);
+		Moderator.switchToAlgebra(eTree, null, ActivityType.interactiveequation, true);
 		
 
 		// SolverUniVariable.SOLVE(eTree);

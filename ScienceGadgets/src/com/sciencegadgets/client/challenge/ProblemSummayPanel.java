@@ -117,7 +117,7 @@ public class ProblemSummayPanel extends Composite {
 			} else {
 				Element mathml = new HTML(equationXMLStr).getElement()
 						.getFirstChildElement();
-				Moderator.switchToAlgebra(mathml, equation, ActivityType.algebrasolve, true);
+				Moderator.switchToAlgebra(mathml, equation, ActivityType.interactiveequation, true);
 			}
 		}
 

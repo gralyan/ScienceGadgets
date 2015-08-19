@@ -27,6 +27,7 @@ public class CSS {
 	
 public static final String INTERACTIVE_EQUATION = "sg-interactiveEquation";
 public static final String DISPLAY_WRAPPER = "sg-displayWrapper";
+public static final String EDIT_MODE = "sg-editMode";
 public static final String PARENT_WRAPPER = "sg-parentWrapper";
 
 /*---------------Wrappers---------------*/
@@ -49,6 +50,7 @@ public static final String IN_TERM = "sg-in-term";
 public static final String IN_EXPONENTIAL_BASE = "sg-in-exponential-base";
 public static final String IN_EXPONENTIAL_EXPONENT = "sg-in-exponential-exponent";
 public static final String IN_FRACTION_NUMERATOR = "sg-in-fraction-numerator";
+public static final String FRACTION_LINE = "sg-fraction-line";
 public static final String IN_FRACTION_DENOMINATOR = "sg-in-fraction-denominator";
 public static final String IN_LOG = "sg-in-log";
 public static final String IN_TRIG = "sg-in-trig";
@@ -118,6 +120,7 @@ public static final String CONVERSION_WRAPPER = "sg-conversionWrapper";
 public static final String DROP_ENTER_RESPONSE = "sg-dropEnterResponse";
 public static final String EQ_PANEL = "sg-eqPanel";
 public static final String EQ_LAYER = "sg-eqLayer";
+public static final String CAN_ZOOM_OUT = "sg-canZoomOut";
 public static final String LAYOUT_ROW = "sg-layoutRow";
 /*---------------popups---------------*/
 //public static final String DIALOG_BOX = "gwt-DialogBox";
@@ -132,7 +135,6 @@ public static final String PROMPT_MAIN = "sg-promptMain";
 public static final String KEY_PAD_NUMERICAL = "sg-keyPadNumerical";
 public static final String DOUBLE_FONT_SIZE = "sg-doubleFontSize";
 public static final String INVALID_INPUT = "sg-invalidInput";
-public static final String OK_GAP = "sg-okGap";
 public static final String EXAMPLE_HTML = "sg-exampleHtml";
 public static final String ESTABLISHED_QUANTITY_SELECTION = "sg-establishedQuantitySelection";
 public static final String QUANTITY_PROMPT_SPEC = "sg-quantityPromptSpec";
@@ -163,6 +165,6 @@ public static final String ACTIVITY_SELECTION_BUTTON = "sg-activitySelectionButt
 public static final String ACTIVITY_SELECTION_BUTTON_SELECTED = "sg-activitySelectionButtonSelected";
 public static final String MAKE_EQ_BUTTON = "sg-makeEqButton";
 public static final String CREATE_GOAL_BUTTON = "sg-createGoalButton";
-
+public static final String OK_PROMPT_BUTTON = "sg-okPromptButton";
 
 }

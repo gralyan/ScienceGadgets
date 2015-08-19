@@ -321,7 +321,7 @@ public class BothSidesTransformations extends
 					}
 					// Go white to gray (225 tp 128 in hexadecimal)
 					String colorProgress = Integer
-							.toHexString(225 - (int) (progress * 128));
+							.toHexString(225 - (int) (progress * 200));
 					style.setBackgroundColor("#" + colorProgress
 							+ colorProgress + colorProgress);
 				}

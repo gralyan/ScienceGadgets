@@ -86,7 +86,7 @@ public class SimplifyQuiz extends Quiz {
 		// Set Up Activity
 		if (simplifyActivity == null) {
 			simplifyActivity = new AlgebraActivity(workingTree, null,
-					ActivityType.algebrasimplifyquiz);
+					ActivityType.simplifyquiz);
 		} else {
 			simplifyActivity.setEquationTree(workingTree, null);
 		}

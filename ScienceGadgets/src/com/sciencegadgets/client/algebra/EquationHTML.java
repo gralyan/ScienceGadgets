@@ -169,6 +169,13 @@ public class EquationHTML extends HTML {
 			container.addClassName(parentType.asChild());
 			break;
 		}
+		
+		// Add line to fraction
+		if(TypeSGET.Fraction.equals(parentType) && isSecondChild) {
+			Element horizontal = DOM.createDiv();
+			horizontal.addClassName(CSS.FRACTION_LINE);
+			displayParentEl.appendChild(horizontal);
+		}
 
 		// Add parentheses (fence) to certain elements
 		switch (parentType) {
@@ -184,7 +191,6 @@ public class EquationHTML extends HTML {
 				nodeHtml = fence(nodeHtml, container);
 			}
 			break;
-
 		}
 
 		// Add function css class names
@@ -391,7 +397,7 @@ public class EquationHTML extends HTML {
 
 			int numHeight = ((Element) fractionChild.getChild(0))
 					.getClientHeight();
-			int denHeight = ((Element) fractionChild.getChild(1))
+			int denHeight = ((Element) fractionChild.getChild(2))
 					.getClientHeight();
 
 			Style s = fractionChild.getStyle();

@@ -89,7 +89,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 								Moderator.switchToAlgebra(
 										algebraActivity.getEquationTree(),
 										algebraActivity.getEquation(),
-										ActivityType.algebrasolvegoal, true);
+										ActivityType.editsolvegoal, true);
 							}
 						});
 				solveGoalButton
@@ -105,7 +105,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 								Moderator.switchToAlgebra(
 										algebraActivity.getEquationTree(),
 										algebraActivity.getEquation(),
-										ActivityType.algebracreategoal, true);
+										ActivityType.editcreategoal, true);
 							}
 						});
 				createGoalButton
@@ -126,7 +126,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 					Moderator.switchToAlgebra(
 							algebraActivity.getEquationTree(),
 							algebraActivity.getEquation(),
-							ActivityType.algebraedit, true);
+							ActivityType.editequation, true);
 				}
 			});
 		}
@@ -172,7 +172,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 			pMap.put(Parameter.randomprovided, randProvided);
 		}
 
-		pMap.put(Parameter.activity, ActivityType.algebrasolve.toString());
+		pMap.put(Parameter.activity, ActivityType.interactiveequation.toString());
 
 		if (initialEquation == null) {
 			pMap.put(Parameter.equation, eqString);

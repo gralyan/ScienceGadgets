@@ -156,7 +156,7 @@ public class EquationWrapper extends Wrapper {
 			// If there is another selection, unselect it, select new
 
 			if (eqPanel.selectedWrapper != null) {
-				eqPanel.selectedWrapper.unselect();
+				((EquationWrapper)eqPanel.selectedWrapper).unselect();
 			}
 
 			super.select();

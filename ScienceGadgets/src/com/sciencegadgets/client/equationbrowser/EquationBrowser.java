@@ -34,7 +34,7 @@ public class EquationBrowser extends FlowPanel {
 	CommunistPanel activitySelectionPanel = new CommunistPanel(false);
 	SimplePanel activityDetailsPanel = new SimplePanel();
 	
-	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Algebra Practice", ActivityType.algebrasolve);
+	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Algebra Practice", ActivityType.interactiveequation);
 	GenerateSpec generatePanel = new GenerateSpec();
 	ConversionSpecification conversionSpec = new ConversionSpecification();
 //	public ChallengeBrowser challengeBrowser = new ChallengeBrowser();
