@@ -159,10 +159,10 @@
 }
 
 .sg-editMode .sg-parentWrapper{
-	background-color: black;
-	-moz-box-shadow: 0 0 0.3em 0.3em black;
-	-webkit-box-shadow: 0 0 0.3em 0.3em black;
-	box-shadow: 0 0 0.3em 0.3em black;
+	background-color: #101010;
+	-moz-box-shadow: 0 0 0.3em 0.3em #101010;
+	-webkit-box-shadow: 0 0 0.3em 0.3em #101010;
+	box-shadow: 0 0 0.3em 0.3em #101010;
 }
 
 .sg-editMode .sg-displayWrapper:not(.sg-Operation){
@@ -174,7 +174,7 @@
 }
 
 /* .sg-eqPanel:not(.sg-editMode)  */
-.sg-eqPanel .sg-displayWrapper.sg-selectedWrapper {
+.sg-eqPanel .sg-displayWrapper.sg-selectedWrapper{
 	background-color: rgb(100,100,100);
 	-moz-box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
 	-webkit-box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
@@ -183,7 +183,8 @@
 	position: relative;
 }
 
-.sg-eqPanel:not(.sg-editMode) .sg-displayWrapper:not(.sg-Operation) {
+/* .sg-eqPanel:not(.sg-editMode)  */
+.sg-displayWrapper:not(.sg-Operation) {
 	-moz-border-radius: 1em;
 	-webkit-border-radius: 1em;
  	border-radius: 1em;

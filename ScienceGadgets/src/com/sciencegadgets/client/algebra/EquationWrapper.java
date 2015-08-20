@@ -22,6 +22,7 @@ package com.sciencegadgets.client.algebra;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
@@ -149,7 +150,7 @@ public class EquationWrapper extends Wrapper {
 					&& (dragController == null || !dragController.isDragging())) {
 				// Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
 				eqPanel.setFocus(node);
-				unselect();
+//				unselect();
 			}
 
 		} else {

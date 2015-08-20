@@ -481,11 +481,9 @@ public class EquationTree {
 		 */
 		public EquationNode(TypeSGET type, String symbol) {
 
-			String tag = type.getTag();
-
-			Element newNode = DOM.createElement(tag);
+			Element newNode = DOM.createElement(type.getTag());
 			newNode.setAttribute(MathAttribute.ID.getAttributeName(),
-					createId(""));
+					createId(null));
 
 			this.xmlNode = newNode;
 
@@ -981,8 +979,8 @@ public class EquationTree {
 			case Number:
 				try {
 					String valueAttr = getAttribute(MathAttribute.Value);
-					BigDecimal nuberTest = new BigDecimal(valueAttr);
-					return valueAttr.toString();
+					new BigDecimal(valueAttr); //Number test
+					return valueAttr;
 				} catch (NumberFormatException ex) {
 				}
 			case Variable:

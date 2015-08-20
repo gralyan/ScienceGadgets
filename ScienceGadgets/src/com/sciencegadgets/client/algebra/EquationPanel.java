@@ -23,26 +23,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import com.google.gwt.animation.client.Animation;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.HasTouchEndHandlers;
 import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
-import com.google.gwt.event.dom.client.TouchStartEvent;
-import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
@@ -57,7 +46,7 @@ public class EquationPanel extends AbsolutePanel {
 	private EquationTree equationTree;
 	private EquationLayer rootLayer;
 	private EquationLayer focusLayer;
-	public Wrapper selectedWrapper;
+	Wrapper selectedWrapper;
 	public AutoSelectWrapper autoSelectedWrapper;
 	private ArrayList<EquationNode> mergeRootNodes = new ArrayList<EquationNode>();
 	private ArrayList<EquationNode> mergeFractionNodes = new ArrayList<EquationNode>();
@@ -83,8 +72,8 @@ public class EquationPanel extends AbsolutePanel {
 		setStyleName(CSS.EQ_PANEL);
 		// zIndex eqPanel=1 wrapper=2 menu=3
 		this.getElement().getStyle().setZIndex(1);
-		
-		if(algebraActivity.isInEditMode()) {
+
+		if (algebraActivity.isInEditMode()) {
 			addStyleName(CSS.EDIT_MODE);
 		}
 
@@ -166,6 +155,14 @@ public class EquationPanel extends AbsolutePanel {
 	protected void onUnload() {
 		unselectCurrentSelection();
 		super.onUnload();
+	}
+
+	public Wrapper getSelectedWrapper() {
+		return selectedWrapper;
+	}
+
+	public AlgebraActivity getAlgebraActivity() {
+		return algebraActivity;
 	}
 
 	/**
@@ -344,29 +341,23 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	void setFocusOut() {
-//		Wrapper prevSelection = unselectCurrentSelection();
+		// Wrapper prevSelection = unselectCurrentSelection();
 		Wrapper autoSelect = null;
 
 		EquationLayer parentLayer = focusLayer.getParentLayer();
 		if (parentLayer == null) {
 			return;
 		}
-		
+
 		autoSelect = parentLayer.getWapperForLayer(focusLayer);
 
-		setFocus(parentLayer);
 		// Moderator.SOUNDS.WRAPPER_ZOOM_OUT.play();
 
 		if (autoSelect != null
 				&& parentLayer.getWrappers().contains(autoSelect)) {
 			autoSelect.select();
-
-//			if (autoSelect instanceof EditWrapper) {
-//				((EditWrapper) autoSelect).select();
-//			} else if (autoSelect instanceof AlgebaWrapper) {
-//				((AlgebaWrapper) autoSelect).select();
-//			}
 		}
+		setFocus(parentLayer);
 	}
 
 	void setFocus(EquationNode node) {
@@ -389,9 +380,10 @@ public class EquationPanel extends AbsolutePanel {
 
 	void setFocus(final EquationLayer newFocus) {
 		EquationLayer prevFocus = focusLayer;
-		Wrapper prevSelection = unselectCurrentSelection();
+		Wrapper prevSelection = selectedWrapper;
 
-		if (!algebraActivity.isInEditMode() && newFocus != null && prevFocus != null) {
+		if (!algebraActivity.isInEditMode() && newFocus != null
+				&& prevFocus != null) {
 			if (zoomAnimation.isRunning()) {
 				zoomAnimation.cancel();
 			}
@@ -405,8 +397,10 @@ public class EquationPanel extends AbsolutePanel {
 			} else if (newFocus.equals(prevFocus.getParentLayer())) {
 				Element prevEl = DOM.getElementById(prevFocus.layerId
 						+ OF_LAYER + newFocus.layerId);
-				int dx = prevEl.getAbsoluteLeft() - prevFocus.getEqHTML().getAbsoluteLeft();
-				int dy = prevEl.getAbsoluteTop() - prevFocus.getEqHTML().getAbsoluteTop();
+				int dx = prevEl.getAbsoluteLeft()
+						- prevFocus.getEqHTML().getAbsoluteLeft();
+				int dy = prevEl.getAbsoluteTop()
+						- prevFocus.getEqHTML().getAbsoluteTop();
 				zoomAnimation.setSpecs(newFocus, prevFocus, dx, dy, false);
 				zoomAnimation.run(500);
 			}
@@ -419,18 +413,16 @@ public class EquationPanel extends AbsolutePanel {
 
 		focusLayer = newFocus;
 
+		if (selectedWrapper != null
+				&& !newFocus.getWrappers().contains(selectedWrapper)) {
+			selectedWrapper.unselect();
+		}
+
 		if (autoSelectedWrapper != null) {
 			Wrapper wrapperToSelect = autoSelectedWrapper.getWrapper();
 			autoSelectedWrapper = null;
 			if (focusLayer.getWrappers().contains(wrapperToSelect)) {
-				// TODO
-//				wrapperToSelect.select();
-				
-//				if (wrapperToSelect instanceof EditWrapper) {
-//					((EditWrapper) wrapperToSelect).select();
-//				} else if (wrapperToSelect instanceof AlgebaWrapper) {
-//					((AlgebaWrapper) wrapperToSelect).select();
-//				}
+				wrapperToSelect.select();
 			}
 		}
 
@@ -444,11 +436,6 @@ public class EquationPanel extends AbsolutePanel {
 		Wrapper prevSelected = selectedWrapper;
 		if (selectedWrapper != null) {
 			selectedWrapper.unselect();
-//			if (selectedWrapper instanceof EditWrapper) {
-//				((EditWrapper) selectedWrapper).unselect();
-//			} else if (selectedWrapper instanceof AlgebaWrapper) {
-//				((AlgebaWrapper) selectedWrapper).unselect();
-//			}
 		}
 		return prevSelected;
 	}
@@ -475,45 +462,6 @@ public class EquationPanel extends AbsolutePanel {
 
 	}
 
-	public AlgebraActivity getAlgebraActivity() {
-		return algebraActivity;
-	}
-
-	class AutoSelectWrapper extends HTML implements HasClickHandlers,
-			HasTouchEndHandlers {
-		private EquationNode node;
-
-		public AutoSelectWrapper(final EquationPanel eqPanel,
-				final EquationNode node, Element element) {
-			super(element);
-			this.node = node;
-			onAttach();
-
-			// zIndex eqPanel=1 wrapper=2 menu=3
-			this.getElement().getStyle().setZIndex(2);
-
-			 if (Moderator.isTouch) {
-			 addTouchStartHandler(new TouchStartHandler() {
-			 @Override
-			 public void onTouchStart(TouchStartEvent event) {
-			 eqPanel.autoSelectedWrapper = AutoSelectWrapper.this;
-			 }
-			 });
-			 } else {
-			 addClickHandler(new ClickHandler() {
-			 @Override
-			 public void onClick(ClickEvent event) {
-			 eqPanel.autoSelectedWrapper = AutoSelectWrapper.this;
-			 }
-			 });
-			 }
-		}
-
-		public Wrapper getWrapper() {
-			return node.getWrapper();
-		}
-	}
-
 	public void zoomToAndSelect(String nodeIdToSelect) {
 
 		if (nodeIdToSelect == null) {
@@ -529,20 +477,16 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	public void zoomToAndSelect(EquationNode nodeToSelect) {
-
 		Wrapper wrap = nodeToSelect.getWrapper();
-
 		if (wrap == null) {
 			JSNICalls.warn("Can't zoomToAndSelect wrapper: \n" + wrap);
 			return;
 		}
-
 		EquationLayer eqLayer = wrap.getLayer();
 		if (eqLayer == null) {
 			JSNICalls.warn("Can't zoomToAndSelect layer: \n" + eqLayer);
 			return;
 		}
-
 		if (getChildren().contains(eqLayer)) {
 			setFocus(eqLayer);
 			wrap.select();
@@ -552,100 +496,4 @@ public class EquationPanel extends AbsolutePanel {
 							+ eqLayer);
 		}
 	}
-
-}
-
-/**
- * Animation for zooming into and out of sub-expressions within an equation.
- * Only the sub-expression (child) is animated, the parent only changes in
- * visibility during the animation.
- *
- */
-class ZoomAnimation extends Animation {
-
-	EquationLayer parent;
-	EquationLayer child;
-	double parentSize;
-	double childSize;
-	Style childStyle;
-	int childX;
-	int childY;
-	int dx;
-	int dy;
-	boolean isZoomIn;
-	LinkedList<Style> opStyles = new LinkedList<Style>();
-
-	public void setSpecs(EquationLayer parent, EquationLayer child, int dx,
-			int dy, boolean isZoomIn) {
-		this.parent = parent;
-		this.child = child;
-		this.dx = dx;
-		this.dy = dy;
-		this.isZoomIn = isZoomIn;
-
-		EquationHTML childHTML = child.getEqHTML();
-		this.childX = childHTML.getAbsoluteLeft() - child.getAbsoluteLeft();
-		this.childY = childHTML.getAbsoluteTop() - child.getAbsoluteTop();
-		this.childStyle = childHTML.getElement().getStyle();
-
-		String parentSizeString = parent.getEqHTML().getElement().getStyle()
-				.getFontSize().replace("%", "");
-		String childSizeString = childStyle.getFontSize().replace("%", "");
-		try {
-			parentSize = Double.parseDouble(parentSizeString);
-			childSize = Double.parseDouble(childSizeString);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		for (Wrapper wrap : child.getWrappers()) {
-			if (TypeSGET.Operation.equals(wrap.getNode().getType())) {
-				opStyles.add(wrap.getElement().getStyle());
-			}
-		}
-
-		if (isZoomIn) {
-			parent.setVisible(false);
-			child.setVisible(true);
-		}
-	}
-
-	@Override
-	protected void onUpdate(double progress) {
-		double prog = isZoomIn ? 1 - progress : progress;
-		double progInv = 1 - prog;
-
-		double newSize = ((parentSize - childSize) * prog) + childSize;
-		childStyle.setFontSize(newSize, Unit.PCT);
-
-		childStyle.setLeft(childX + (prog * dx), Unit.PX);
-		childStyle.setTop(childY + (prog * dy), Unit.PX);
-
-		for (Style opStyle : opStyles) {
-			opStyle.setProperty("padding", "0 " + progInv + "em 0 " + progInv
-					+ "em");
-		}
-	}
-
-	@Override
-	protected void onComplete() {
-		super.onComplete();
-
-		childStyle.setFontSize(childSize, Unit.PCT);
-
-		childStyle.setLeft(childX, Unit.PX);
-		childStyle.setTop(childY, Unit.PX);
-
-		for (Style opStyle : opStyles) {
-			opStyle.clearPadding();
-		}
-
-		if (!isZoomIn) {
-			parent.setVisible(true);
-			child.setVisible(false);
-		}
-
-	}
-
 }

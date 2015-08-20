@@ -61,13 +61,15 @@ public class EditWrapper extends EquationWrapper {
 	}
 
 	public void select() {
+		if(!TypeSGET.Operation.equals(node.getType())) {
 		super.select();
 
-		if (this.equals(eqPanel.selectedWrapper)) {
+		if (this.equals(eqPanel.getSelectedWrapper())) {
 			if (changeNodeMenu != null) {
 				changeNodeMenu.updatePaste();
 				eqPanel.getAlgebraActivity().lowerEqArea.add(changeNodeMenu);
 			}
+		}
 		}
 	}
 
@@ -86,20 +88,21 @@ public class EditWrapper extends EquationWrapper {
 			return;
 		}
 		switch (operation) {
-		case CROSS:
-			node.setSymbol(TypeSGET.Operator.DOT.getSign());
-			break;
-		case DOT:
-			node.setSymbol(TypeSGET.Operator.CROSS.getSign());
-			break;
+//		case CROSS:
+//			node.setSymbol(TypeSGET.Operator.DOT.getSign());
+//			break;
+//		case DOT:
+//			node.setSymbol(TypeSGET.Operator.CROSS.getSign());
+//			break;
 		case MINUS:
 			node.setSymbol(TypeSGET.Operator.PLUS.getSign());
+			getAlgebraActivity().reloadEquationPanel(null, null, true, node.getId());
 			break;
 		case PLUS:
 			node.setSymbol(TypeSGET.Operator.MINUS.getSign());
+			getAlgebraActivity().reloadEquationPanel(null, null, true, node.getId());
 			break;
 		}
-		getAlgebraActivity().reloadEquationPanel(null, null, true, node.getId());
 	}
 	private class OperationTouchHandler implements TouchStartHandler{
 		@Override

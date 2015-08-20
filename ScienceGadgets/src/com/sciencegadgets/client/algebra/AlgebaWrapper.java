@@ -28,6 +28,8 @@ import com.sciencegadgets.client.algebra.transformations.BothSidesTransformation
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.shared.TypeSGET;
 
 /**
  * This Widget is used to wrap elementary tags so mouse handlers can be attached
@@ -66,6 +68,11 @@ public class AlgebaWrapper extends EquationWrapper {
 
 	public void select() {
 		super.select();
+		
+		if(TypeSGET.Operation.equals(node.getType())) {
+			getNextSiblingWrapper().addStyleName(CSS.SELECTED_WRAPPER);
+			getPrevSiblingWrapper().addStyleName(CSS.SELECTED_WRAPPER);
+		}
 
 		if (this.equals(eqPanel.selectedWrapper)) {
 			attachButtons();
@@ -77,6 +84,11 @@ public class AlgebaWrapper extends EquationWrapper {
 
 	public void unselect() {
 		super.unselect();
+
+		if(TypeSGET.Operation.equals(node.getType())) {
+			getNextSiblingWrapper().removeStyleName(CSS.SELECTED_WRAPPER);
+			getPrevSiblingWrapper().removeStyleName(CSS.SELECTED_WRAPPER);
+		}
 
 		if (bothSidesTransformations != null) {
 			for (BothSidesButton button : bothSidesTransformations) {
