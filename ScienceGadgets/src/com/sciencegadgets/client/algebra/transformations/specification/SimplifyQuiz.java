@@ -34,9 +34,10 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.AlgebraActivity.TransformationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.TransformationPanel;
+import com.sciencegadgets.client.algebra.TransformationPanel.TransformationSubPanel;
 import com.sciencegadgets.client.algebra.transformations.TransformationButton;
 import com.sciencegadgets.client.algebra.transformations.TransformationList;
 import com.sciencegadgets.client.ui.CSS;
@@ -92,8 +93,7 @@ public class SimplifyQuiz extends Quiz {
 		}
 		simplifyActivity.reloadEquationPanel(null, null, false, null);
 
-		TransformationPanel tButtonPanel = simplifyActivity.new TransformationPanel(
-				false);
+		TransformationSubPanel tButtonPanel = new TransformationPanel(simplifyActivity).new TransformationSubPanel();
 		simplifyActivity.setDefaultUpperMidWidget(tButtonPanel);
 		tButtonPanel.add(new HelpButton(tButtonPanel));
 
@@ -157,9 +157,9 @@ public class SimplifyQuiz extends Quiz {
 	}
 
 	class HelpButton extends SelectionButton {
-		TransformationPanel tButtonPanel;
+		TransformationSubPanel tButtonPanel;
 
-		HelpButton(TransformationPanel tButtonPanel) {
+		HelpButton(TransformationSubPanel tButtonPanel) {
 			this.tButtonPanel = tButtonPanel;
 			addStyleName(CSS.LAYOUT_ROW);
 			setHTML("Hints");

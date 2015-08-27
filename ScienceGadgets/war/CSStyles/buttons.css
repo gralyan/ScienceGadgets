@@ -159,3 +159,27 @@
 .sg-okPromptButton{
 	margin: 7px
 }
+
+.sg-equationSelection{
+	width: 90%;
+	height: 70px;
+	margin: 10px 5% 0 5%;
+	
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	background-color: lavender;
+}
+.sg-insertEquationOption{
+	width: 90%;
+	height: 70px;
+	margin: 10px 5% 0 5%;
+	
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	background-color: silver;
+}
+.sg-insertEquationOption:ACTIVE{
+	background-color: gray;
+}

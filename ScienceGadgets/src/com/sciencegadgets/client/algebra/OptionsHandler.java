@@ -26,67 +26,79 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
+import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.ToggleSlide;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class OptionsHandler implements ClickHandler {
 
 	public static OptionsPopup optionsPopup;
-	OptionsPanel optionsPanel = new OptionsPanel();
+	FlowPanel optionsPanel = new FlowPanel();
 	AlgebraActivity algebraActivity;
-	private ToggleSlide editSolveOption;
-	private ToggleSlide easyHardOption;
 	private Button optionsButton;
 
 	public OptionsHandler(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
 		optionsButton = algebraActivity.optionsButton;
 		optionsPopup = new OptionsPopup(optionsButton);
-		
+
 		optionsPopup.clear();
 
-//		optionsPopup.setPopupPosition(mainPanel.getAbsoluteLeft(),
-//				mainPanel.getAbsoluteTop() + optionsButtonHeight);
 		optionsPopup.getElement().getStyle().setZIndex(10);
 
 		optionsPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 		optionsPopup.add(optionsPanel);
-		
+
 		optionsPopup.hide();
 		optionsPopup.setAutoHideEnabled(true);
-	    }
+	}
 
 	@Override
 	public void onClick(ClickEvent event) {
-			
+
 		optionsPanel.clear();
-		
-		if (!algebraActivity.isInEditMode()) {
-			easyHardOption = new ToggleSlide("Easy", "Hard", Moderator.isInEasyMode, new EasyHardClickHandler());
-			optionsPanel.add(easyHardOption);
+
+		// Show Edit/Solve and Easy/Hard options when clicked with SHIFT key
+		if (event.isShiftKeyDown()) {
+			if (!algebraActivity.isInEditMode()) {
+				ToggleSlide easyHardOption = new ToggleSlide("Easy", "Hard",
+						Moderator.isInEasyMode, new EasyHardClickHandler());
+				easyHardOption.setHeight("70px");
+				optionsPanel.add(easyHardOption);
+			}
+			ToggleSlide editSolveOption = new ToggleSlide("Edit", "Solve",
+					algebraActivity.isInEditMode(), new EditSolveClickHandler(
+							algebraActivity));
+			editSolveOption.setHeight("70px");
+			optionsPanel.add(editSolveOption);
 		}
-		
-		editSolveOption = new ToggleSlide("Edit", "Solve", algebraActivity.isInEditMode(), new EditSolveClickHandler(algebraActivity));
-		optionsPanel.add(editSolveOption);
-		
+
+		for (EquationTree eqTree : algebraActivity.getSystem().getList()) {
+			EquationButton eqButton  = new EquationButton(algebraActivity, eqTree);
+			optionsPanel.add(eqButton);
+		}
+
+		if (algebraActivity.isInEditMode()) {
+			InsertEquationButton insEqButton = new InsertEquationButton(
+					algebraActivity);
+			optionsPanel.add(insEqButton);
+		}
 		optionsPopup.showRelativeTo(optionsButton);
 	}
 
-	public void enableEditSolve(boolean enable) {
-		editSolveOption.enable(enable);
-	}
 }
 
-class OptionsPopup extends PopupPanel{
+class OptionsPopup extends PopupPanel {
 	Button optionsButton;
-	
-	OptionsPopup(Button optionsButton){
+
+	OptionsPopup(Button optionsButton) {
 		this.optionsButton = optionsButton;
 		this.getElement().getStyle().setBackgroundColor("white");
 	}
@@ -95,21 +107,50 @@ class OptionsPopup extends PopupPanel{
 	public void show() {
 		AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
 		int optionsButtonHeight = optionsButton.getOffsetHeight();
-		
-		this.setPixelSize(mainPanel.getOffsetWidth() / 4,
+
+		this.setPixelSize(mainPanel.getOffsetWidth() / 2,
 				mainPanel.getOffsetHeight() - optionsButtonHeight);
-		
+
 		super.show();
 	}
 }
 
-class OptionsPanel extends FlowPanel{
-	@Override
-	public void add(Widget w) {
-		w.setSize("100%", "15%");
-		super.add(w);
+//
+// Option Handlers
+//
+
+class EquationButton extends Button{
+	public EquationButton(final AlgebraActivity algebraActivity,
+			final EquationTree eqTree) {
+		super(JSNICalls.elementToString(eqTree.reloadDisplay(false, true).getElement()));
+
+		addStyleName(CSS.EQUATION_SELECTION);
+		addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				OptionsHandler.optionsPopup.hide();
+				algebraActivity.getSystem().moveToWorkingTree(eqTree);
+				Moderator.reloadEquationPanel();
+			}
+		});
 	}
-	
+}
+
+class InsertEquationButton extends Button {
+
+	public InsertEquationButton(final AlgebraActivity algebraActivity) {
+		super("New Equation");
+		addStyleName(CSS.INSERT_EQUATION_OPTION);
+		addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				OptionsHandler.optionsPopup.hide();
+				algebraActivity.getSystem().newWorkingTree();
+				Moderator.reloadEquationPanel();
+			}
+		});
+	}
+
 }
 
 class EasyHardClickHandler implements ClickHandler {
@@ -125,14 +166,17 @@ class EasyHardClickHandler implements ClickHandler {
 
 class EditSolveClickHandler implements ClickHandler {
 	AlgebraActivity algebraActivity;
-	EditSolveClickHandler(AlgebraActivity algebraActivity){
+
+	EditSolveClickHandler(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
 	}
+
 	@Override
 	public void onClick(ClickEvent event) {
 		OptionsHandler.optionsPopup.hide();
-		
-		ActivityType activityType = algebraActivity.getActivityType() == ActivityType.editequation ? ActivityType.interactiveequation : ActivityType.editequation;
+
+		ActivityType activityType = algebraActivity.getActivityType() == ActivityType.editequation ? ActivityType.interactiveequation
+				: ActivityType.editequation;
 		EquationTree equationTree = algebraActivity.getEquationTree();
 		String equationStr = equationTree.getRoot().toString();
 		if (equationStr.contains(TypeSGET.NOT_SET)) {
@@ -150,7 +194,8 @@ class EditSolveClickHandler implements ClickHandler {
 		if (algebraActivity.getEquationPanel() != null) {
 			algebraActivity.getEquationPanel().unselectCurrentSelection();
 		}
-		Moderator.switchToAlgebra(equationTree.getEquationXMLClone(), true, activityType, true);
+		Moderator.switchToAlgebra(equationTree.getEquationXMLClone(), true,
+				activityType, true);
 	}
 
 }

@@ -22,8 +22,12 @@ package com.sciencegadgets.client.algebra;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -55,7 +59,8 @@ public class EquationLayer extends SimplePanel {
 			replaceChildsId(eqHTML.getElement());
 			eqHTML.autoFillParent = true;
 			addStyleName(CSS.EQ_LAYER);
-			isExpression = eqHTML.getElement().getClassName().contains(CSS.EXPRESSION);
+			isExpression = eqHTML.getElement().getClassName()
+					.contains(CSS.EXPRESSION);
 		} else {
 			layerId = "pilot";
 			eqHTML.pilot = true;
@@ -65,13 +70,27 @@ public class EquationLayer extends SimplePanel {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
+		
 		this.add(eqHTML);
 
-		eqHTML.getElement()
-				.getStyle()
-				.setTop(((getOffsetHeight() - eqHTML
-						.getOffsetHeight())) / 2,
-						Unit.PX);
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+			
+		Style style = eqHTML.getElement().getStyle();
+		GWT.log("");
+		GWT.log(""+getOffsetHeight());
+		GWT.log(""+eqHTML.getOffsetHeight());
+		GWT.log(""+getOffsetWidth());
+		GWT.log(""+eqHTML.getOffsetWidth());
+		
+		style.setTop(((getOffsetHeight() - eqHTML.getOffsetHeight())) / 2, Unit.PX);
+		style.setLeft(((getOffsetWidth() - eqHTML.getOffsetWidth())) / 2,Unit.PX);
+		
+			}
+		});
 	}
 
 	void setParentLayer(EquationLayer parentLayer) {
@@ -100,11 +119,13 @@ public class EquationLayer extends SimplePanel {
 	}
 
 	public Wrapper getWapperForLayer(EquationLayer eLayer) {
-		if(eLayer == null || eLayer.layerId == null || "".equals(eLayer.layerId)) {
+		if (eLayer == null || eLayer.layerId == null
+				|| "".equals(eLayer.layerId)) {
 			return null;
 		}
-		for(Wrapper w : wrappers) {
-			if(w.getNode() != null && eLayer.layerId.equals(w.getNode().getId())) {
+		for (Wrapper w : wrappers) {
+			if (w.getNode() != null
+					&& eLayer.layerId.equals(w.getNode().getId())) {
 				return w;
 			}
 		}
@@ -116,12 +137,12 @@ public class EquationLayer extends SimplePanel {
 		Visibility visibility = visible ? Visibility.VISIBLE
 				: Visibility.HIDDEN;
 		getElement().getStyle().setVisibility(visibility);
-		
-		if(visible) {
+
+		if (visible) {
 			Widget eqPanel = getParent();
-			if(isExpression) {
+			if (isExpression) {
 				eqPanel.addStyleName(CSS.CAN_ZOOM_OUT);
-			}else {
+			} else {
 				eqPanel.removeStyleName(CSS.CAN_ZOOM_OUT);
 			}
 		}

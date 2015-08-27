@@ -20,7 +20,6 @@
 package com.sciencegadgets.client.algebra;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -46,19 +45,11 @@ import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.LinkPrompt_Equation;
 import com.sciencegadgets.client.algebra.edit.NumberPrompt;
-import com.sciencegadgets.client.algebra.edit.SaveButtonHandler;
 import com.sciencegadgets.client.algebra.edit.VariablePrompt;
-import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
-import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
 import com.sciencegadgets.client.algebra.transformations.Skill;
-import com.sciencegadgets.client.algebra.transformations.TransformationButton;
-import com.sciencegadgets.client.algebra.transformations.TransformationList;
-import com.sciencegadgets.client.algebra.transformations.specification.SimplifyQuiz;
 import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.CommunistPanel;
-import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.client.ui.SolvedPrompt;
 import com.sciencegadgets.shared.TypeSGET;
 
@@ -91,12 +82,7 @@ public class AlgebraActivity extends SimplePanel {
 
 	public AlgebraHistory algOut = null;
 
-	private FlowPanel transformMain = new FlowPanel();
-	private TransformationPanel bothSidesPanelLeft = null;;
-	private TransformationPanel simplifyButtonsPanel = null;
-	private TransformationPanel bothSidesPanelRight = null;
-	public SimplifyQuiz simplifyQuiz = null;
-	private SimplifyPromptButton simplifyPromptButton = new SimplifyPromptButton();
+	private TransformationPanel transformPanel = null;;
 
 	public boolean inProgramaticTransformMode = false;
 	public static VariablePrompt varSpec;
@@ -105,8 +91,8 @@ public class AlgebraActivity extends SimplePanel {
 	public Widget defaultUpperMidWidget = null;
 
 	private Equation equation = null;
-	private EquationTree equationTree = null;
 	private EquationTree goalTree = null;
+	private SystemOfEquations systemOfEquations = null;
 
 	public AlgebraActivity(EquationTree eTree, Equation equation,
 			ActivityType activityType) {
@@ -118,23 +104,29 @@ public class AlgebraActivity extends SimplePanel {
 		this.equation = equation;
 		this.activityType = activityType;
 
+		activateOptionsButton(activityType);
+		
+		systemOfEquations = new SystemOfEquations(eTree);
+		String sysOfEq = URLParameters.getParameter(Parameter.system);
+		if (sysOfEq != null && !"".equals(sysOfEq)) {
+			systemOfEquations.adoptURLParam(sysOfEq);
+		}
+		
+		String goal = URLParameters.getParameter(Parameter.goal);
+		if (goal != null && !"".equals(goal)) {
+			Element goalEl = new HTML(goal).getElement().getFirstChildElement();
+			goalTree = new EquationTree(goalEl, false);
+		}
+
 		switch (activityType) {
 		case interactiveequation:
-			activateOptionsButton(true);
 			activateBackButton(true);
 
 			reCreateAlgHistory();
 
-			transformMain
-					.add(bothSidesPanelLeft = new TransformationPanel(true));
-			transformMain.add(simplifyButtonsPanel = new TransformationPanel(
-					false));
-			transformMain.add(bothSidesPanelRight = new TransformationPanel(
-					true));
-			transformMain.addStyleName(CSS.FILL_PARENT);
+			transformPanel = new TransformationPanel(this);
 			break;
 		case editequation:
-			activateOptionsButton(true);
 			activateBackButton(true);
 
 			Button createLinkButton = new Button("Create Link",
@@ -160,16 +152,10 @@ public class AlgebraActivity extends SimplePanel {
 			break;
 		case editsolvegoal:
 
-			transformMain
-					.add(bothSidesPanelLeft = new TransformationPanel(true));
-			transformMain.add(simplifyButtonsPanel = new TransformationPanel(
-					false));
-			transformMain.add(bothSidesPanelRight = new TransformationPanel(
-					true));
-			transformMain.addStyleName(CSS.FILL_PARENT);
+			transformPanel=new TransformationPanel(this);
+
 			// fall through
 		case editcreategoal:
-			activateOptionsButton(false);
 			activateBackButton(false);
 
 			CreateLinkWithGoalButton createLinkWithGoalButton = new CreateLinkWithGoalButton(
@@ -177,26 +163,23 @@ public class AlgebraActivity extends SimplePanel {
 			setDefaultUpperMidWidget(createLinkWithGoalButton);
 			break;
 		case simplifyquiz:
-			activateOptionsButton(false);
 			activateBackButton(false);
 			break;
 		default:
 			break;
 		}
-
-		this.equationTree = eTree;
-
-		String goal = URLParameters.getParameter(Parameter.goal);
-		if (goal != null && !"".equals(goal)) {
-			Element goalEl = new HTML(goal).getElement().getFirstChildElement();
-			goalTree = new EquationTree(goalEl, false);
-		}
 	}
 
-	private void activateOptionsButton(boolean activate) {
-		optionsButton.setVisible(activate);
-		if (activate) {
+	private void activateOptionsButton(ActivityType activityType) {
+		switch (activityType) {
+		case interactiveequation:
+		case editequation:
+			optionsButton.setVisible(true);
 			optionsButton.addClickHandler(new OptionsHandler(this));
+			break;
+		default:
+			optionsButton.setVisible(false);
+			break;
 		}
 	}
 
@@ -236,11 +219,11 @@ public class AlgebraActivity extends SimplePanel {
 	}
 
 	public void updateEquation() {
-		equation.reCreate(equationTree);
+		equation.reCreate(getEquationTree());
 	}
 
 	public EquationTree getEquationTree() {
-		return equationTree;
+		return systemOfEquations.getWorkingTree();
 	}
 
 	public EquationPanel getEquationPanel() {
@@ -249,11 +232,15 @@ public class AlgebraActivity extends SimplePanel {
 
 	public void setEquationTree(EquationTree eTree, Equation equation) {
 		this.equation = equation;
-		equationTree = eTree;
+		systemOfEquations.setWorkingTree(eTree);
 	}
 
 	public EquationTree getGoalTree() {
 		return goalTree;
+	}
+
+	public SystemOfEquations getSystem() {
+		return systemOfEquations;
 	}
 
 	public boolean isInEditMode() {
@@ -262,6 +249,10 @@ public class AlgebraActivity extends SimplePanel {
 
 	public ActivityType getActivityType() {
 		return activityType;
+	}
+	
+	public TransformationPanel gettTransformationPanel() {
+		return transformPanel;
 	}
 
 	public void reCreateAlgHistory() {
@@ -278,9 +269,12 @@ public class AlgebraActivity extends SimplePanel {
 	public void reloadEquationPanel(String changeComment,
 			HashMap<Skill, Integer> skillsIncrease, boolean updateParameters,
 			final String nodeIdToSelect) {
+		
+		EquationTree equationTree = getEquationTree();
 
-		if (activityType == ActivityType.interactiveequation && changeComment != null
-				&& skillsIncrease != null && !skillsIncrease.isEmpty()) {
+		if (activityType == ActivityType.interactiveequation
+				&& changeComment != null && skillsIncrease != null
+				&& !skillsIncrease.isEmpty()) {
 			algOut.updateAlgebraHistory(changeComment, (Skill) skillsIncrease
 					.keySet().toArray()[0], equationTree);
 		}
@@ -292,9 +286,9 @@ public class AlgebraActivity extends SimplePanel {
 			// TypeSGET.Operator.ARROW_RIGHT.getSign());
 			// equationTree.getEquals().setSymbol(
 			// TypeSGET.Operator.SPACE.getSign());
-		} else if (simplifyQuiz != null) {
-			simplifyQuiz.disappear();
-			simplifyQuiz = null;
+		} else if (transformPanel != null && transformPanel.simplifyQuiz != null) {
+			transformPanel.simplifyQuiz.disappear();
+			transformPanel.simplifyQuiz = null;
 		}
 		try {
 			equationTree.validateTree();
@@ -311,8 +305,8 @@ public class AlgebraActivity extends SimplePanel {
 
 		eqPanelHolder.clear();
 
-		//TODO
-//		revertUpperMidAreaToDefault();
+		// TODO
+		// revertUpperMidAreaToDefault();
 
 		equationTree.reloadDisplay(true, true);
 		if (eqPanel != null && eqPanel.isAttached()) {
@@ -337,11 +331,13 @@ public class AlgebraActivity extends SimplePanel {
 			if ((TypeSGET.Variable.equals(leftType) && TypeSGET.Number
 					.equals(rightType))) {
 				SolvedPrompt solvedPrompt = new SolvedPrompt();
-				solvedPrompt.solved(this, equationTree.getRightSide().getSymbol());
+				solvedPrompt.solved(this, equationTree.getRightSide()
+						.getSymbol());
 			} else if ((TypeSGET.Variable.equals(rightType) && TypeSGET.Number
 					.equals(leftType))) {
 				SolvedPrompt solvedPrompt = new SolvedPrompt();
-				solvedPrompt.solved(this, equationTree.getLeftSide().getSymbol());
+				solvedPrompt.solved(this, equationTree.getLeftSide()
+						.getSymbol());
 			} else if (goalTree != null && equationTree.isLike(goalTree)) {
 				// Check if equation matches goal
 				SolvedPrompt solvedPrompt = new SolvedPrompt();
@@ -361,6 +357,11 @@ public class AlgebraActivity extends SimplePanel {
 				parameterMap.put(Parameter.goal,
 						goalTree.getEquationXMLString());
 			}
+			if (systemOfEquations.hasMultipleEquations()) {
+				parameterMap.put(Parameter.system,
+						systemOfEquations.getURLParam());
+			}
+
 			URLParameters.setParameters(parameterMap, false);
 		}
 
@@ -371,45 +372,6 @@ public class AlgebraActivity extends SimplePanel {
 				eqPanel.zoomToAndSelect(nodeIdToSelect);
 			}
 		});
-	}
-
-	public void clearTransformLists() {
-		bothSidesPanelLeft.clear();
-		bothSidesPanelRight.clear();
-		simplifyButtonsPanel.clear();
-		lowerEqArea.clear();
-	}
-
-	public void fillTransformLists(
-			TransformationList<TransformationButton> transSimplify,
-			BothSidesTransformations transBothSides) {
-
-		clearTransformLists();
-
-		// Both Sides Buttons
-		bothSidesPanelLeft.addAll(transBothSides);
-
-		for (int i = transBothSides.size(); i > 0; i--) {
-			BothSidesButton button = transBothSides.get(i - 1);
-			bothSidesPanelRight.add(button.getJoinedButton());
-		}
-
-		// Simplify Buttons
-		LinkedList<SelectionButton> buttonsShown = new LinkedList<SelectionButton>();
-
-		for (TransformationButton tButt : transSimplify) {
-			if (tButt.meetsAutoTransform()) {
-				buttonsShown.add(tButt);
-			}
-		}
-		if (transSimplify.size() > buttonsShown.size()) {
-			simplifyPromptButton.setTransformationList(transSimplify);
-			buttonsShown.add(simplifyPromptButton);
-		}
-
-		simplifyButtonsPanel.addAll(buttonsShown);
-
-		lowerEqArea.add(transformMain);
 	}
 
 	public static void NUMBER_SPEC_PROMPT(EquationNode equationNode,
@@ -442,49 +404,6 @@ public class AlgebraActivity extends SimplePanel {
 		super.onDetach();
 	}
 
-	public class TransformationPanel extends CommunistPanel {
-
-		public TransformationPanel(boolean isBothSidesPanel) {
-			super(true);
-			addStyleName(CSS.FILL_PARENT);
-
-			if (isBothSidesPanel) {
-				addStyleName(CSS.BOTH_SIDES_PANEL);
-			} else {
-				addStyleName(CSS.SIMPLIFY_PANEL);
-			}
-		}
-
-		@Override
-		protected void onAttach() {
-			super.onAttach();
-			for (Widget child : getChildren()) {
-				((SelectionButton) child).resize();
-			}
-		}
-	}
-
-	class SimplifyPromptButton extends SelectionButton {
-
-		TransformationList<TransformationButton> transSimplify;
-
-		SimplifyPromptButton() {
-			setHTML("Simplify");
-			addStyleName(CSS.TRANSFORMATION_BUTTON + " " + CSS.LAYOUT_ROW);
-		}
-
-		@Override
-		protected void onSelect() {
-			simplifyQuiz = new SimplifyQuiz(eqPanel.selectedWrapper.node,
-					transSimplify);
-			simplifyQuiz.appear();
-		}
-
-		public void setTransformationList(
-				TransformationList<TransformationButton> transSimplify) {
-			this.transSimplify = transSimplify;
-		}
-	}
 
 	class CreateLinkWithGoalButton extends Button {
 

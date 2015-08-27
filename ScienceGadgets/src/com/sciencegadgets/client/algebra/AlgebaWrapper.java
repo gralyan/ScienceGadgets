@@ -77,7 +77,7 @@ public class AlgebaWrapper extends EquationWrapper {
 		if (this.equals(eqPanel.selectedWrapper)) {
 			attachButtons();
 			
-			eqPanel.getAlgebraActivity().fillTransformLists(
+			eqPanel.getAlgebraActivity().gettTransformationPanel().fillTransformLists(
 					simplifyTransformations, bothSidesTransformations);
 		}
 	}
@@ -97,7 +97,7 @@ public class AlgebaWrapper extends EquationWrapper {
 			}
 		}
 
-		eqPanel.getAlgebraActivity().clearTransformLists();
+		eqPanel.getAlgebraActivity().gettTransformationPanel().clearTransformLists();
 	}
 
 }

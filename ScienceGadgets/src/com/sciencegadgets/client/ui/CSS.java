@@ -141,6 +141,7 @@ public static final String QUANTITY_PROMPT_SPEC = "sg-quantityPromptSpec";
 public static final String UNIT_SEARCH = "sg-unitSearch";
 
 
+
 //////////////////////////////////////////////
 //buttons.css
 //////////////////////////////////////////////
@@ -166,5 +167,7 @@ public static final String ACTIVITY_SELECTION_BUTTON_SELECTED = "sg-activitySele
 public static final String MAKE_EQ_BUTTON = "sg-makeEqButton";
 public static final String CREATE_GOAL_BUTTON = "sg-createGoalButton";
 public static final String OK_PROMPT_BUTTON = "sg-okPromptButton";
+public static final String INSERT_EQUATION_OPTION = "sg-insertEquationOption";
+public static final String EQUATION_SELECTION = "sg-equationSelection";
 
 }

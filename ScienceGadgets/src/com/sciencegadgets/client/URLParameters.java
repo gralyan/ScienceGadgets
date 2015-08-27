@@ -22,9 +22,13 @@ package com.sciencegadgets.client;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.HTML;
 import com.sciencegadgets.client.URLParameters.Parameter;
+import com.sciencegadgets.client.algebra.EquationTree;
+import com.sciencegadgets.client.algebra.SystemOfEquations;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
@@ -38,12 +42,14 @@ public class URLParameters {
 	public static final String False = "false";
 	public static final String USER_ADMIN = "admin";
 	public static final String RANDOM_PROVIDED_DELIMITER = "_";
+	public static final String SYSTEM_OF_EQUATIONS_DELIMITER = "soe";
 
 	public enum Parameter {
 		//Always available
 		activity, easy, user,
 		//Only when activity==algebrasolve, algebraedit, algebrasolvegoal, algebracreategoal
 		equation, 
+		system,
 		//Only when activity==problem
 		problemid, 
 		//Only when activity==algebrasolve
@@ -54,11 +60,18 @@ public class URLParameters {
 		randomprovided;
 	}
 
+	/**
+	 * @param parameter - type of parameter 
+	 * @return url parameter value, decompressed if necessary
+	 */
 	public static String getParameter(Parameter parameter) {
 		HashMap<Parameter, String> map = getParameterMap();
 		return map.get(parameter);
 	}
 
+	/**
+	 * @return url parameter map, decompressed if necessary
+	 */
 	public static HashMap<Parameter, String> getParameterMap() {
 		final String historyToken = History.getToken();
 		HashMap<Parameter, String> paramMap = new HashMap<Parameter, String>();
@@ -69,10 +82,13 @@ public class URLParameters {
 					Parameter parameter = Parameter.valueOf(kv[0]);
 					if (kv.length > 1) {
 						String value = kv[1];
-						// String value = URL.decodePathSegment(kv[1]);
-						if (Parameter.equation.equals(parameter)
-								|| Parameter.goal.equals(parameter)) {
-							value = decompressEquationXML(value);
+						switch (parameter) {
+						case equation:
+						case goal:
+						case system:
+						value = decompressEquationXML(value);
+							break;
+						default:
 						}
 						paramMap.put(parameter, value);
 					} else {
@@ -99,6 +115,9 @@ public class URLParameters {
 		History.newItem(historyToken, issueEvent);
 	}
 
+	/**
+	 * Creates url tolken, compressing when necessary
+	 */
 	public static String makeTolken(HashMap<Parameter, String> parameterMap,
 			boolean encode) {
 		String historyToken = "";
@@ -112,9 +131,13 @@ public class URLParameters {
 			}
 
 			// compress equations
-			if (Parameter.equation.equals(param)
-					|| Parameter.goal.equals(param)) {
+			switch (param) {
+			case equation:
+			case goal:
+			case system:
 				value = compressEquationXML(value);
+				break;
+			default:
 			}
 
 			// concat tolken
@@ -133,6 +156,10 @@ public class URLParameters {
 
 	}
 
+	//
+	// Equation
+	//
+	
 	public static String decompressEquationXML(String equationXML) {
 		
 		// Random ? mark

@@ -148,11 +148,17 @@
 
 /*---------------wrappers---------------*/
 
-/* .sg-displayWrapper:not(.sg-selectedWrapper):not(.sg-Operation):hover { */
-/* 	text-shadow: 0em 0em 0.1em #000000,0em 0em 0.6em #FFFFFF; */
-/* } */
+.sg-displayWrapper:not(.sg-Operation) {
+	-moz-border-radius: 0.1em;
+	-webkit-border-radius: 0.1em;
+ 	border-radius: 0.1em;
+
+	z-index: 2;
+}
+
 .sg-eqPanel .sg-displayWrapper:not(.sg-selectedWrapper):hover {
 	background-color: rgba(100,100,100,0.3);
+	
 	-moz-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.3);
 	-webkit-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.3);
 	box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.3);
@@ -160,9 +166,9 @@
 
 .sg-editMode .sg-parentWrapper{
 	background-color: #101010;
-	-moz-box-shadow: 0 0 0.3em 0.3em #101010;
-	-webkit-box-shadow: 0 0 0.3em 0.3em #101010;
-	box-shadow: 0 0 0.3em 0.3em #101010;
+	-moz-box-shadow: 0 0 0.1em 0.1em #101010;
+	-webkit-box-shadow: 0 0 0.1em 0.1em #101010;
+	box-shadow: 0 0 0.1em 0.1em #101010;
 }
 
 .sg-editMode .sg-displayWrapper:not(.sg-Operation){
@@ -173,23 +179,21 @@
 	box-shadow: 0 0 0.1em 0.1em #202020;
 }
 
-/* .sg-eqPanel:not(.sg-editMode)  */
-.sg-eqPanel .sg-displayWrapper.sg-selectedWrapper{
+.sg-selectedWrapper:not(.sg-Operation){
 	background-color: rgb(100,100,100);
+
 	-moz-box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
 	-webkit-box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
 	box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
 	
 	position: relative;
 }
+.sg-selectedWrapper.sg-Operation{
+	background-color: rgba(100,100,100,0.5);
 
-/* .sg-eqPanel:not(.sg-editMode)  */
-.sg-displayWrapper:not(.sg-Operation) {
-	-moz-border-radius: 1em;
-	-webkit-border-radius: 1em;
- 	border-radius: 1em;
-
-	z-index: 2;
+	-moz-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.5);
+	-webkit-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.5);
+	box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.5);
 }
 
 .sg-dragdrop-dragging {
