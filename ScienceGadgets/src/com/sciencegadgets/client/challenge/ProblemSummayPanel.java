@@ -113,11 +113,13 @@ public class ProblemSummayPanel extends Composite {
 				EquationNode node = (new EquationTree(new HTML(equationXMLStr)
 						.getElement().getFirstChildElement(), false))
 						.getRightSide();
-				Moderator.switchToConversion(node, equation);
+				Moderator.switchToConversion(node//, equation
+						);
 			} else {
 				Element mathml = new HTML(equationXMLStr).getElement()
 						.getFirstChildElement();
-				Moderator.switchToAlgebra(mathml, equation, ActivityType.interactiveequation, true);
+				Moderator.switchToAlgebra(mathml, //equation,
+						ActivityType.interactiveequation, true);
 			}
 		}
 

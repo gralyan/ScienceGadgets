@@ -127,10 +127,6 @@ public class ConversionActivity extends AbsolutePanel {
 		this.node = node;
 	}
 
-	public void setVariableEquation(Equation variableEquation) {
-		this.variableEquation = variableEquation;
-	}
-
 	public void load(String initialValue, UnitAttribute unitAttribute, boolean allowConvertButton) {
 		unitDisplays.clear();
 //		selectedUnit = null;
@@ -483,7 +479,7 @@ public class ConversionActivity extends AbsolutePanel {
 			node.setSymbol(totalNode.getSymbol());
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
 			if (variableEquation == null) {
-				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(), true,
+				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(),
 						ActivityType.interactiveequation, true);
 				AlgebraActivity aActivity = Moderator
 						.getCurrentAlgebraActivity();

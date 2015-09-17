@@ -42,7 +42,7 @@ class GenerateEquationHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		boolean mustBeWholeAnswer = true;
 		boolean mustBePositives = true;
-		
+
 		int minAdd = 0;
 		int minMultiply = 0;
 		int minFraction = 0;
@@ -138,17 +138,17 @@ class GenerateEquationHandler implements ClickHandler {
 			minExp = 2;
 			maxExp = 3;
 			expsOS = 2;
-//			expsVS = 1;
+			// expsVS = 1;
 			break;
 		}
-		//Any subject set to easy defaults to all positives
+		// Any subject set to easy defaults to all positives
 		if (Difficulty.EASY.equals(difficultyAdd)
 				|| Difficulty.EASY.equals(difficultyMult)
 				|| Difficulty.EASY.equals(difficultyFrac)
 				|| Difficulty.EASY.equals(difficultyExp)) {
 			mustBePositives = true;
 		}
-		//Any subject set to hard overrides mustBePositive
+		// Any subject set to hard overrides mustBePositive
 		if (Difficulty.HARD.equals(difficultyAdd)
 				|| Difficulty.HARD.equals(difficultyMult)
 				|| Difficulty.HARD.equals(difficultyFrac)
@@ -170,16 +170,12 @@ class GenerateEquationHandler implements ClickHandler {
 
 		EquationTree eTree = EquationGenerator.GENERATE(
 				expressionsVariableSide, expressionsOtherSide,
-				mustBeWholeAnswer, mustBePositives, 
-				minAdd, minMultiply,
-				minFraction, minExp,
-				maxAdd, maxMultiply,
-				maxFraction, maxExp
-				);
-		
+				mustBeWholeAnswer, mustBePositives, minAdd, minMultiply,
+				minFraction, minExp, maxAdd, maxMultiply, maxFraction, maxExp);
+
 		Moderator.isInEasyMode = true;
-		Moderator.switchToAlgebra(eTree, null, ActivityType.interactiveequation, true);
-		
+		Moderator
+				.switchToAlgebra(eTree, ActivityType.interactiveequation, true);
 
 		// SolverUniVariable.SOLVE(eTree);
 		// Moderator.reloadEquationPanel(null, null);

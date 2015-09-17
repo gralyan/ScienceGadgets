@@ -53,9 +53,7 @@ public class EquationHTML extends HTML {
 	public boolean pilot = false;
 	private Element left = null;
 	private Element right = null;
-	HashMap<Element, EquationNode> displayMap = new HashMap<Element, EquationNode>();
-
-	private Element focusElement;
+	public final HashMap<Element, EquationNode> displayMap = new HashMap<Element, EquationNode>();
 
 	public EquationHTML(EquationTree mTree) {
 		this(mTree, true, true, false);
@@ -306,10 +304,6 @@ public class EquationHTML extends HTML {
 			nodeHtml.addClassName(FENCED);
 		}
 		return nodeHtml;
-	}
-
-	public void setFocus(Element focusElement) {
-		this.focusElement = focusElement;
 	}
 
 	/**

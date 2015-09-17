@@ -101,9 +101,6 @@ public class SolvedPrompt extends Prompt {
 			Moderator.skillsIncreasedCollection.clear();
 		}
 
-		if (algebraActivity.getEquation() != null) {
-			algebraActivity.updateEquation();
-		}
 		appear();
 	}
 }

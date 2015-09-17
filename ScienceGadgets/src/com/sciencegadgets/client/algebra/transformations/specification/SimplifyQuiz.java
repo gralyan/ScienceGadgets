@@ -86,10 +86,11 @@ public class SimplifyQuiz extends Quiz {
 		// ////////////////////////
 		// Set Up Activity
 		if (simplifyActivity == null) {
-			simplifyActivity = new AlgebraActivity(workingTree, null,
+			simplifyActivity = new AlgebraActivity(workingTree,// null,
 					ActivityType.simplifyquiz);
 		} else {
-			simplifyActivity.setEquationTree(workingTree, null);
+			simplifyActivity.setEquationTree(workingTree//, null
+					);
 		}
 		simplifyActivity.reloadEquationPanel(null, null, false, null);
 

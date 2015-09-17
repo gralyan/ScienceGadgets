@@ -47,7 +47,6 @@ import com.sciencegadgets.client.algebra.edit.LinkPrompt_Equation;
 import com.sciencegadgets.client.algebra.edit.NumberPrompt;
 import com.sciencegadgets.client.algebra.edit.VariablePrompt;
 import com.sciencegadgets.client.algebra.transformations.Skill;
-import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SolvedPrompt;
@@ -70,7 +69,7 @@ public class AlgebraActivity extends SimplePanel {
 	@UiField
 	SimplePanel upperMidEqArea;
 	@UiField
-	Button backToBrowserButton;
+	FlowPanel detailsArea;
 
 	@UiField
 	SimplePanel eqPanelHolder;
@@ -90,28 +89,26 @@ public class AlgebraActivity extends SimplePanel {
 	private ActivityType activityType = null;
 	public Widget defaultUpperMidWidget = null;
 
-	private Equation equation = null;
+	// private Equation equation = null;
 	private EquationTree goalTree = null;
 	private SystemOfEquations systemOfEquations = null;
 
-	public AlgebraActivity(EquationTree eTree, Equation equation,
-			ActivityType activityType) {
+	public AlgebraActivity(EquationTree eTree, ActivityType activityType) {
 		add(mainPanel);
 
 		this.addStyleName(CSS.FILL_PARENT);
 		mainPanel.addStyleName(CSS.FILL_PARENT);
 
-		this.equation = equation;
 		this.activityType = activityType;
 
 		activateOptionsButton(activityType);
-		
+
 		systemOfEquations = new SystemOfEquations(eTree);
 		String sysOfEq = URLParameters.getParameter(Parameter.system);
 		if (sysOfEq != null && !"".equals(sysOfEq)) {
 			systemOfEquations.adoptURLParam(sysOfEq);
 		}
-		
+
 		String goal = URLParameters.getParameter(Parameter.goal);
 		if (goal != null && !"".equals(goal)) {
 			Element goalEl = new HTML(goal).getElement().getFirstChildElement();
@@ -152,7 +149,7 @@ public class AlgebraActivity extends SimplePanel {
 			break;
 		case editsolvegoal:
 
-			transformPanel=new TransformationPanel(this);
+			transformPanel = new TransformationPanel(this);
 
 			// fall through
 		case editcreategoal:
@@ -184,12 +181,14 @@ public class AlgebraActivity extends SimplePanel {
 	}
 
 	private void activateBackButton(boolean activate) {
-		backToBrowserButton.setVisible(activate);
+//		backToBrowserButton.setVisible(activate);
 		if (activate) {
-			backToBrowserButton.addClickHandler(new ClickHandler() {
+			optionsButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					Moderator.switchToBrowser();
+					if (event.isControlKeyDown()) {
+						Moderator.switchToBrowser();
+					}
 				}
 			});
 		}
@@ -203,7 +202,7 @@ public class AlgebraActivity extends SimplePanel {
 			}
 		}
 		if (defaultUpperMidWidget instanceof AlgebraHistory) {
-			((AlgebraHistory) defaultUpperMidWidget).scrollToBottom();
+			((AlgebraHistory) defaultUpperMidWidget).setHeightToLastRow();;
 		}
 	}
 
@@ -214,25 +213,16 @@ public class AlgebraActivity extends SimplePanel {
 		}
 	}
 
-	public Equation getEquation() {
-		return equation;
-	}
-
-	public void updateEquation() {
-		equation.reCreate(getEquationTree());
-	}
-
 	public EquationTree getEquationTree() {
-		return systemOfEquations.getWorkingTree();
+		return systemOfEquations.getCurrentTree();
 	}
 
 	public EquationPanel getEquationPanel() {
 		return eqPanel;
 	}
 
-	public void setEquationTree(EquationTree eTree, Equation equation) {
-		this.equation = equation;
-		systemOfEquations.setWorkingTree(eTree);
+	public void setEquationTree(EquationTree eTree) {
+		systemOfEquations.setCurrentTree(eTree);
 	}
 
 	public EquationTree getGoalTree() {
@@ -250,7 +240,7 @@ public class AlgebraActivity extends SimplePanel {
 	public ActivityType getActivityType() {
 		return activityType;
 	}
-	
+
 	public TransformationPanel gettTransformationPanel() {
 		return transformPanel;
 	}
@@ -269,7 +259,7 @@ public class AlgebraActivity extends SimplePanel {
 	public void reloadEquationPanel(String changeComment,
 			HashMap<Skill, Integer> skillsIncrease, boolean updateParameters,
 			final String nodeIdToSelect) {
-		
+
 		EquationTree equationTree = getEquationTree();
 
 		if (activityType == ActivityType.interactiveequation
@@ -286,7 +276,8 @@ public class AlgebraActivity extends SimplePanel {
 			// TypeSGET.Operator.ARROW_RIGHT.getSign());
 			// equationTree.getEquals().setSymbol(
 			// TypeSGET.Operator.SPACE.getSign());
-		} else if (transformPanel != null && transformPanel.simplifyQuiz != null) {
+		} else if (transformPanel != null
+				&& transformPanel.simplifyQuiz != null) {
 			transformPanel.simplifyQuiz.disappear();
 			transformPanel.simplifyQuiz = null;
 		}
@@ -363,6 +354,7 @@ public class AlgebraActivity extends SimplePanel {
 			}
 
 			URLParameters.setParameters(parameterMap, false);
+
 		}
 
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
@@ -403,7 +395,6 @@ public class AlgebraActivity extends SimplePanel {
 		eqPanelHolder.clear();
 		super.onDetach();
 	}
-
 
 	class CreateLinkWithGoalButton extends Button {
 

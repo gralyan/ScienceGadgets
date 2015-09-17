@@ -116,6 +116,7 @@ public static final String LINE_THROUGH = "sg-lineThrough";
 public static final String SELECTED_WRAPPER = "sg-selectedWrapper";
 public static final String SELECTED_DROP_WRAPPER = "sg-selectedDropWrapper";
 public static final String SELECTION_DETAILS = "sg-selectionDetails";
+public static final String SELECTION_DETAILS_Value = "sg-selectionDetailValue";
 public static final String CONVERSION_WRAPPER = "sg-conversionWrapper";
 public static final String DROP_ENTER_RESPONSE = "sg-dropEnterResponse";
 public static final String EQ_PANEL = "sg-eqPanel";
@@ -125,6 +126,7 @@ public static final String LAYOUT_ROW = "sg-layoutRow";
 /*---------------popups---------------*/
 //public static final String DIALOG_BOX = "gwt-DialogBox";
 //public static final String POPUP_PANEL_GLASS = "gwt-PopupPanelGlass";
+public static final String OPTIONS_POPUP = "sg-optionsPopup";
 /*---------------toggle---------------*/
 public static final String TOGGLE_SLIDE = "sg-toggleSlide";
 public static final String TOGGLE_OPTION = "sg-toggleOption";
@@ -139,6 +141,8 @@ public static final String EXAMPLE_HTML = "sg-exampleHtml";
 public static final String ESTABLISHED_QUANTITY_SELECTION = "sg-establishedQuantitySelection";
 public static final String QUANTITY_PROMPT_SPEC = "sg-quantityPromptSpec";
 public static final String UNIT_SEARCH = "sg-unitSearch";
+public static final String SUBSTITUTION_CELL = "sg-substitutionCell";
+public static final String LINK_PROMPT_CODE_DEFAULT = "sg-linkPromptCodeDefault";
 
 
 

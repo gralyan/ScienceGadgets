@@ -26,9 +26,9 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.algebra.Wrapper;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
@@ -179,4 +179,5 @@ public abstract class TransformationButton extends SelectionButton implements
 	public String getExampleHTML() {
 		return "";
 	}
+	
 }

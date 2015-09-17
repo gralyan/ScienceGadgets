@@ -70,25 +70,24 @@ public class EquationLayer extends SimplePanel {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		
-		this.add(eqHTML);
+	
+		eqHTML.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		add(eqHTML);
+		final Style style = eqHTML.getElement().getStyle();
 
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			
+
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-			
-		Style style = eqHTML.getElement().getStyle();
-		GWT.log("");
-		GWT.log(""+getOffsetHeight());
-		GWT.log(""+eqHTML.getOffsetHeight());
-		GWT.log(""+getOffsetWidth());
-		GWT.log(""+eqHTML.getOffsetWidth());
-		
-		style.setTop(((getOffsetHeight() - eqHTML.getOffsetHeight())) / 2, Unit.PX);
-		style.setLeft(((getOffsetWidth() - eqHTML.getOffsetWidth())) / 2,Unit.PX);
-		
+				
+				style.setTop(
+						((getOffsetHeight() - eqHTML.getOffsetHeight())) / 2,
+						Unit.PX);
+				style.setLeft(
+						((getOffsetWidth() - eqHTML.getOffsetWidth())) / 2,
+						Unit.PX);
+
+				eqHTML.getElement().getStyle().clearVisibility();
 			}
 		});
 	}

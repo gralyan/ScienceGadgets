@@ -69,6 +69,7 @@ class ProblemSelectHandler implements SelectionHandler {
 		if(activityOfIntention == ActivityType.interactiveequation) {
 			Moderator.isInEasyMode = false;
 		}
-		Moderator.switchToAlgebra(equationEl, null, activityOfIntention, true);
+		Moderator.switchToAlgebra(equationEl,// null,
+				activityOfIntention, true);
 	}
 }

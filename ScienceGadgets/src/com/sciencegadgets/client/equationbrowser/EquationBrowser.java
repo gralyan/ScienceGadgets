@@ -19,6 +19,8 @@
  *******************************************************************************/
 package com.sciencegadgets.client.equationbrowser;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -58,19 +60,21 @@ public class EquationBrowser extends FlowPanel {
 
 		activityDetailsPanel.getElement().setId(CSS.ACTIVITY_DETAILS_PANEL);
 		this.add(activityDetailsPanel);
+		
+		ArrayList<ActivityButton> activityButtons = new ArrayList<EquationBrowser.ActivityButton>();
 
 		// Add buttons
 		generatePanel.getElement().setId(CSS.EQ_GENERATOR_PANEL);
 		
 		ActivityButton defaultButton = new ActivityButton("Algebra Generator",
 				generatePanel);
-		activitySelectionPanel.add(defaultButton);
+		activityButtons.add(defaultButton);
 		
 		algebraBrowser.getElement().setId(CSS.ALG_BROWSER_PANEL);
-		activitySelectionPanel.add(new ActivityButton("Algebra Practice",
+		activityButtons.add(new ActivityButton("Algebra Practice",
 				algebraBrowser));
 
-		activitySelectionPanel.add(new ActivityButton("Conversion",
+		activityButtons.add(new ActivityButton("Conversion",
 				conversionSpec));
 //		
 //		challengeBrowser.getElement().setId(CSS.CHALLENGE_GENERATOR_PANEL);
@@ -78,8 +82,10 @@ public class EquationBrowser extends FlowPanel {
 //				challengeBrowser));
 		
 		makeEquationBrowser.getElement().setId(CSS.CHALLENGE_GENERATOR_PANEL);
-		activitySelectionPanel.add(new ActivityButton("Make Equation",
+		activityButtons.add(new ActivityButton("Make Equation",
 				makeEquationBrowser));
+		
+		activitySelectionPanel.addAll(activityButtons);
 		
 		// Add initial detail
 		defaultButton.onSelect();
@@ -90,7 +96,8 @@ public class EquationBrowser extends FlowPanel {
 		Widget activityDetails;
 
 		ActivityButton(String title, Widget activityDetails) {
-			this.add(new FitParentHTML(title));
+			super(title);
+//			this.add(new FitParentHTML(title));
 			this.activityDetails = activityDetails;
 			addStyleName(CSS.ACTIVITY_SELECTION_BUTTON);
 		}

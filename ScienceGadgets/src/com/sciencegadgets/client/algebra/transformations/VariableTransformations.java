@@ -19,44 +19,58 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra.transformations;
 
+import java.util.Map.Entry;
+
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
+import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.EquationHTML;
+import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
-import com.sciencegadgets.client.entities.DataModerator;
+import com.sciencegadgets.client.algebra.EquationWrapper;
+import com.sciencegadgets.client.algebra.SystemOfEquations;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.SelectionPanel;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
-import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
+import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class VariableTransformations extends
 		TransformationList<VariableTransformationButton> {
 	private static final long serialVersionUID = -7278266823179858612L;
+	
 	EquationNode variableNode;
+	SystemOfEquations systemOfEq;
 
 	public VariableTransformations(EquationNode variableNode) {
 		super(variableNode);
 
 		this.variableNode = variableNode;
 
-		//TODO substitution
-//		isolatedVariable_check();
+		try {
+			systemOfEq = ((EquationWrapper) variableNode.getWrapper())
+					.getAlgebraActivity().getSystem();
+		} catch (NullPointerException e) {
+			systemOfEq = Moderator.getCurrentAlgebraActivity().getSystem();
+			JSNICalls
+					.error("Can't get system of equations from node in SubstituteOutButton");
+		}
+
+		isolatedVariable_check();
 		plugIn_check();
 	}
 
 	private void isolatedVariable_check() {
 		if (TypeSGET.Equation.equals(variableNode.getParentType())) {
 			// add(new EvaluatePromptButton(this));
-			add(new SubstituteButton(this));
+			add(new SubstituteOutButton(this));
 		}
 	}
 
@@ -84,118 +98,104 @@ abstract class VariableTransformationButton extends TransformationButton {
  * the same quantity kind
  * 
  */
-class SubstituteButton extends VariableTransformationButton {
-	SubstituteButton(VariableTransformations context) {
+class SubstituteOutButton extends VariableTransformationButton {
+	SystemOfEquations systemOfEq;
+
+	SubstituteOutButton(VariableTransformations context) {
 		super("Substitute", context);
+		systemOfEq = context.systemOfEq;
 	}
+
 	@Override
 	public Badge getAssociatedBadge() {
 		return null;
 	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
 
 	@Override
-	public
-	void transform() {
-		String quantityKind = variableNode.getUnitAttribute()
-				.getUnitMultiples()[0].getUnitName().getQuantityKind();
-		if (quantityKind == null || quantityKind.equals("")) {
-			Window.alert("No similar other equations with similar variables available");
-			return;
+	public void transform() {
+		final Prompt dialog = new Prompt(false);
+		EquationHTML title = variableNode.getTree().getDisplayClone();
+		title.autoFillParent = false;
+		dialog.add(title);
+
+		// UnitAttribute unit = variableNode.getUnitAttribute();
+		// if (unit == null || unit.toString().equals("")) {
+		// dialog.add(new Label(
+		// "Variable must have units"));
+		// return;
+		// }
+
+		SelectionPanel eqSelect = new SelectionPanel("Substitute");
+		UnitMap substituteUnitMap = variableNode.getUnitMap();
+		for (EquationTree eqTree : systemOfEq.getNonCurrentList()) {
+			for (EquationNode eqNode : eqTree.getNodes()) {
+				if (TypeSGET.Variable.equals(eqNode.getType())
+						&& eqNode.getUnitMap().isConvertableTo(
+								substituteUnitMap)) {
+					EquationHTML disp = eqTree.getDisplayClone();
+					disp.addStyleName(CSS.SUBSTITUTION_CELL);
+					a: for (Entry<Element, EquationNode> entry : disp.displayMap
+							.entrySet()) {
+						if (eqNode.equals(entry.getValue())) {
+							entry.getKey().addClassName(CSS.HIGHLIGHT);
+							break a;
+						}
+					}
+					eqSelect.add(disp.toString(), null, eqNode);
+				}
+			}
 		}
-		final DialogBox dialog = new DialogBox(true, true);
-		SelectionPanel eqSelect = new SelectionPanel(CSS.EQUATION);
-		dialog.add(eqSelect);
-		DataModerator.fill_EquationsByQuantities(quantityKind, eqSelect);
-		eqSelect.addSelectionHandler(new SelectionHandler() {
-			@Override
-			public void onSelect(Cell selected) {
+		if (eqSelect.getCells().isEmpty()) {
+			dialog.add(new Label(
+					"No equations with similar variables available"));
+		} else {
+			eqSelect.addSelectionHandler(new SelectionHandler() {
+				@Override
+				public void onSelect(Cell selected) {
 
-				EquationNode eqNode = variableNode.getParent();
+					EquationNode subInto = (EquationNode) selected.getEntity();
 
-				Element substitute = null;
-				if (variableNode.isLeftSide()) {
-					substitute = variableNode.getTree().getRightSide()
-							.getXMLNode();
-				} else if (variableNode.isRightSide()) {
-					substitute = variableNode.getTree().getLeftSide()
-							.getXMLNode();
-				} else {
-					JSNICalls.error("Could not find the element to substitute"
-							+ " in: \n" + eqNode);
+					substitute(variableNode, subInto);
+
 					dialog.removeFromParent();
 					dialog.hide();
-					return;
 				}
-
-				String subIntoEqStr = selected.getValue();
-				Element subIntoEqEl = new HTML(subIntoEqStr).getElement()
-						.getFirstChildElement();
-
-				substitute(variableNode, subIntoEqEl, substitute);
-
-				dialog.removeFromParent();
-				dialog.hide();
-			}
-		});
+			});
+		}
+		dialog.add(eqSelect);
 		dialog.setGlassEnabled(true);
 		dialog.setAnimationEnabled(true);
 		dialog.center();
 	}
 
-	private void substitute(final EquationNode isolatedVar,
-			Element subIntoEqEl, Element substitute) {
+	private void substitute(EquationNode isolatedVar, EquationNode subInto) {
 
-		// Find the variable to substutute
-		NodeList<Element> possibleSubs = subIntoEqEl
-				.getElementsByTagName(TypeSGET.Variable.getTag());
-		findSub: for (int j = 0; j < possibleSubs.getLength(); j++) {
-			Element possibleSub = possibleSubs.getItem(j);
-			if (!isolatedVar.getUnitAttribute().equals(
-					possibleSub.getAttribute(MathAttribute.Unit
-							.getAttributeName()))) {
-				continue findSub;
-			}
-			Element subParent = possibleSub.getParentElement();
-			String plugTag = substitute.getTagName();
-			if (plugTag.equals(subParent.getTagName())
-					&& (plugTag.equals(TypeSGET.Sum.getTag()) || plugTag
-							.equals(TypeSGET.Term.getTag()))) {
-				Node subPrev = possibleSub.getPreviousSibling();
-				if (subPrev != null && subPrev.getNodeName().equals("mo")
-						&& "-".equals(((Element) subPrev).getInnerText())) {
-					// if a sum is plugged into a variable preceded by minus
-					((Element) subPrev).setInnerText("+");
-					Element negativeSubstitute = new HTML(
-							"<mrow><mn>-1</mn><mo>\u00B7</mo><mfenced><substitute></substitute></mfenced></mrow>")
-							.getElement().getFirstChildElement();
-					subParent.replaceChild(negativeSubstitute, possibleSub);
-					possibleSub = subParent.getElementsByTagName("substitute")
-							.getItem(0);
-					subParent = possibleSub.getParentElement();
-				}
-				NodeList<Node> substituteChildren = substitute.getChildNodes();
-				// Must save count because it will change during the
-				// loop
-				int childCount = substituteChildren.getLength();
-				for (int k = 0; k < childCount; k++) {
-					subParent.insertBefore(substituteChildren.getItem(0),
-							possibleSub);
-				}
-				possibleSub.removeFromParent();
-			} else {
-				subParent.replaceChild(substitute, possibleSub);
-			}
-			
-			Window.alert("Not working, see VariableTransformations");
-			//TODO Equation
-//			Moderator.switchToAlgebra(subIntoEqEl, false, true);
-			break;
-
+		EquationNode substitute = null;
+		if (variableNode.isLeftSide()) {
+			substitute = variableNode.getTree().getRightSide();
+		} else if (variableNode.isRightSide()) {
+			substitute = variableNode.getTree().getLeftSide();
+		} else {
+			JSNICalls.error("Could not find the element to substitute"
+					+ " in: \n" + variableNode.getParent());
+			return;
 		}
+
+		EquationTree newTree = subInto.getTree();
+		systemOfEq.moveToWorkingTree(newTree);
+		systemOfEq.add(new EquationTree(newTree.getEquationXMLClone(), false));
+
+		EquationNode newNode = newTree.newNode(substitute.getXMLClone());
+		subInto.replace(newNode);
+
+		Moderator.switchToAlgebra(newTree, ActivityType.interactiveequation,
+				true);
+
 	}
 }
 
@@ -208,18 +208,19 @@ class PlugInButton extends VariableTransformationButton {
 	PlugInButton(VariableTransformations context) {
 		super("Plug In", context);
 	}
+
 	@Override
 	public Badge getAssociatedBadge() {
 		return null;
 	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
 	}
 
 	@Override
-	public
-	void transform() {
+	public void transform() {
 		AlgebraActivity.NUMBER_SPEC_PROMPT(variableNode, true, true);
 	}
 }

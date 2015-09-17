@@ -341,11 +341,12 @@ public class EquationPanel extends AbsolutePanel {
 	}
 
 	void setFocusOut() {
-		// Wrapper prevSelection = unselectCurrentSelection();
 		Wrapper autoSelect = null;
 
 		EquationLayer parentLayer = focusLayer.getParentLayer();
 		if (parentLayer == null) {
+			unselectCurrentSelection();
+			algebraActivity.revertUpperMidAreaToDefault();
 			return;
 		}
 

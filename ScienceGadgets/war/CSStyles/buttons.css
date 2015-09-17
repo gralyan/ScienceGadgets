@@ -21,29 +21,29 @@
 
 /* transformation buttons */
 .sg-transformationButton {
-	color: white;
+	cursor: default;
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
 	border-radius: 15px;
 	text-align: center;
-	background-color: rgba(0,0,0, 0.4);
-	-moz-box-shadow: gray 0 0 2px 2px inset;
-	-webkit-box-shadow: gray 0 0 2px 2px inset;
-	box-shadow: gray 0 0 2px 2px inset;
+	background-color: rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: gray 0 0 5px 0 inset;
+	-webkit-box-shadow: gray 0 0 5px 0 inset;
+	box-shadow: gray 0 0 5px 0 inset;
 }
 
-.sg-transformationButton:disabled{
+.sg-transformationButton:disabled {
 	color: gray;
 	font-weight: lighter;
 }
 
-.sg-transformationButton:hover{
+.sg-transformationButton:hover {
 	-moz-box-shadow: white 0 0 2px 2px inset;
 	-webkit-box-shadow: white 0 0 2px 2px inset;
 	box-shadow: white 0 0 2px 2px inset;
 }
 
-.sg-transformationButton:active{
+.sg-transformationButton:active {
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
 	box-shadow: none;
@@ -51,9 +51,15 @@
 	top: 1px;
 }
 
-.sg-bothSidesButton {
+.sg-bothSidesButton.sg-transformationButton {
 	background-color: white;
 	color: black;
+}
+
+.sg-bothSidesButton.sg-transformationButton:hover {
+	-moz-box-shadow: #505050 0 0 3px 3px inset;
+	-webkit-box-shadow: #505050 0 0 3px 3px inset;
+	box-shadow: #505050 0 0 3px 3px inset;
 }
 
 .sg-bothSidesButtonSelected {
@@ -115,7 +121,7 @@
 	color: black;
 }
 
-#sg-generateButton{
+#sg-generateButton {
 	width: 100%;
 	height: 100%;
 	font-weight: bold;
@@ -129,57 +135,56 @@
 	text-shadow: 0px 0px 7px white;
 	border: none;
 }
-.sg-activitySelectionButton{
-	background-color: #aaf;
-  background-image: -webkit-linear-gradient(top, white, #aaf);
-  background-image: -moz-linear-gradient(top, white, #aaf);
-  background-image: -ms-linear-gradient(top, white, #aaf);
-  background-image: -o-linear-gradient(top, white, #aaf);
-  background-image: linear-gradient(to bottom, white, #aaf);
+
+.sg-activitySelectionButton {
+	
 }
-.sg-activitySelectionButtonSelected{
+
+.sg-activitySelectionButtonSelected {
 	background-color: lightGray;
-	color: gray;
 	font-weight: lighter;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
 }
-.sg-makeEqButton{
+
+.sg-makeEqButton {
 	border-top: solid black Thick;
 	background-color: #aaf;
 	-moz-box-shadow: gray 0 0 10px 3px inset;
 	-webkit-box-shadow: gray 0 0 10px 3px inset;
 	box-shadow: gray 0 0 10px 3px inset;
 }
-.sg-createGoalButton{
+
+.sg-createGoalButton {
 	height: 100%;
 	width: 30%;
 }
-.sg-okPromptButton{
+
+.sg-okPromptButton {
 	margin: 7px
 }
 
-.sg-equationSelection{
+.sg-equationSelection {
 	width: 90%;
 	height: 70px;
 	margin: 10px 5% 0 5%;
-	
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	background-color: lavender;
 }
-.sg-insertEquationOption{
+
+.sg-insertEquationOption {
 	width: 90%;
 	height: 70px;
 	margin: 10px 5% 0 5%;
-	
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	background-color: silver;
 }
-.sg-insertEquationOption:ACTIVE{
+
+.sg-insertEquationOption:ACTIVE {
 	background-color: gray;
 }

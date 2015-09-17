@@ -36,6 +36,8 @@ import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class URLParameters {
 
+	public static final String URL_TOP = "http://sciencegadgets.org";
+
 	public static final String PARAMETER_DELIMETER = "&";
 	public static final String PARAMETER_VALUE_DELIMETER = "=";
 	public static final String TRUE = "true";
@@ -46,7 +48,7 @@ public class URLParameters {
 
 	public enum Parameter {
 		//Always available
-		activity, easy, user,
+		activity, easy, user, themecolor,
 		//Only when activity==algebrasolve, algebraedit, algebrasolvegoal, algebracreategoal
 		equation, 
 		system,
@@ -111,6 +113,7 @@ public class URLParameters {
 
 	public static void setParameters(HashMap<Parameter, String> parameterMap,
 			boolean issueEvent) {
+		parameterMap.put(Parameter.themecolor, getParameter(Parameter.themecolor));
 		String historyToken = makeTolken(parameterMap, false);
 		History.newItem(historyToken, issueEvent);
 	}

@@ -26,6 +26,11 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
@@ -65,7 +70,8 @@ public class EquationWrapper extends Wrapper {
 
 		TypeSGET type = node.getType();
 		TypeSGET operationType = null;
-		FitParentHTML typeLabel = new FitParentHTML(type.getIcon());
+		// FitParentHTML typeLabel = new FitParentHTML(type.getIcon());
+		HTML typeLabel = new HTML(type.getIcon());
 		detailsList.add(typeLabel);
 
 		switch (type) {
@@ -73,34 +79,47 @@ public class EquationWrapper extends Wrapper {
 			String fullValue = node.getAttribute(MathAttribute.Value);
 			if ("".equals(fullValue)) {
 				fullValue = node.getAttribute(MathAttribute.Randomness);
-			}else if("#".equals(node.getSymbol())) {
+			} else {
 				try {
-					new BigDecimal(fullValue);
-					FitParentHTML valueHTML = new FitParentHTML(fullValue);
-					detailsList.add(valueHTML);
-					Style style = valueHTML.getElement().getStyle();
-					style.setColor("white");
-					style.setProperty("maxWidth",100, Unit.PCT);
-					style
-					.setProperty("overflowWrap", "break-word");
+					new BigDecimal(node.getXMLNode().getInnerText());
+					break;
 				} catch (NumberFormatException e) {
+					try {
+						new BigDecimal(fullValue);
+						// FitParentHTML valueHTML = new
+						// FitParentHTML(fullValue);
+						final TextBox valueHTML = new TextBox();
+						valueHTML.setText(fullValue);
+						valueHTML.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								valueHTML.selectAll();
+							}
+						});
+						valueHTML.addStyleName(CSS.SELECTION_DETAILS_Value);
+						detailsList.add(valueHTML);
+					} catch (NumberFormatException ex) {
+					}
 				}
 			}
 
 			// UNITS included in equation
-//			UnitAttribute unit = node.getUnitAttribute();
-//			if (!"".equals(unit.toString())) {
-//				FitParentHTML unitHTML = new FitParentHTML();
-//				unitHTML.getElement().appendChild(UnitHTML.create(unit, false));
-//				detailsList.add(unitHTML);
-//			}
+
+			// UnitAttribute unit = node.getUnitAttribute();
+			// if (!"".equals(unit.toString())) {
+			// FitParentHTML unitHTML = new FitParentHTML();
+			// unitHTML.getElement().appendChild(UnitHTML.create(unit, false));
+			// detailsList.add(unitHTML);
+			// }
 
 			break;
 		case Variable:
 			UnitAttribute qKind = node.getUnitAttribute();
 			if (!"".equals(qKind.toString())) {
-				FitParentHTML qKindHTML = new FitParentHTML();
-				qKindHTML.getElement().appendChild(UnitHTML.create(qKind, false));
+				// FitParentHTML qKindHTML = new FitParentHTML();
+				HTML qKindHTML = new HTML();
+				qKindHTML.getElement().appendChild(
+						UnitHTML.create(qKind, false));
 				detailsList.add(qKindHTML);
 			}
 			break;
@@ -124,11 +143,13 @@ public class EquationWrapper extends Wrapper {
 			break;
 		}
 
-		CommunistPanel detailsPanel = new CommunistPanel();
+		FlowPanel detailsPanel = new FlowPanel();
 		detailsPanel.addStyleName(CSS.SELECTION_DETAILS);
-		algebraActivity.upperMidEqArea.clear();
-		algebraActivity.upperMidEqArea.add(detailsPanel);
-		detailsPanel.addAll(detailsList);
+		for (Widget s : detailsList) {
+			detailsPanel.add(s);
+		}
+		algebraActivity.detailsArea.clear();
+		algebraActivity.detailsArea.add(detailsPanel);
 
 		Widget typeParent = typeLabel.getParent();
 		if (typeParent != null) {
@@ -150,14 +171,14 @@ public class EquationWrapper extends Wrapper {
 					&& (dragController == null || !dragController.isDragging())) {
 				// Moderator.SOUNDS.WRAPPER_ZOOM_IN.play();
 				eqPanel.setFocus(node);
-//				unselect();
+				// unselect();
 			}
 
 		} else {
 			// If there is another selection, unselect it, select new
 
 			if (eqPanel.selectedWrapper != null) {
-				((EquationWrapper)eqPanel.selectedWrapper).unselect();
+				((EquationWrapper) eqPanel.selectedWrapper).unselect();
 			}
 
 			super.select();
@@ -172,6 +193,7 @@ public class EquationWrapper extends Wrapper {
 		super.unselect();
 
 		eqPanel.selectedWrapper = null;
-		algebraActivity.revertUpperMidAreaToDefault();
+
+		algebraActivity.detailsArea.clear();
 	}
 }

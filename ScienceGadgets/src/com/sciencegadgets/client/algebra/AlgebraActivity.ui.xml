@@ -13,25 +13,16 @@
 	}
 	
 	.back {
-		background-image: url('CSStyles/images/star.png');
-		background-size: 40% auto;
-		background-color: lavender;
-		background-position: center;
-		background-repeat: no-repeat;
-		border-radius: 10px;
-	}
-	
-	.back:active {
-		background-color: gray;
+		
 	}
 	
 	.options {
-		background-image: url('CSStyles/images/gear.png');
-		background-size: 40% auto;
-		background-color: lavender;
-		background-position: center;
-		background-repeat: no-repeat;
+		background-color: rgba(0, 0, 0, 0.2);
 		border-radius: 10px;
+		border: none;
+		font-size: 300%;
+		text-shadow: 0 0 3px white;
+		color: inherit;
 	}
 	
 	.options:active {
@@ -39,27 +30,29 @@
 	}
 	
 	.lowerEqArea {
-<!-- 		background-image: url('CSStyles/images/wood_shelf.jpg'); -->
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		color: black;
 	}
 	
+	.mid {
+		margin: 0 2%;
+	}
 	</ui:style>
 
 	<g:AbsolutePanel width="100%" height="100%">
 
 		<g:FlowPanel ui:field="upperEqArea" width="100%" height="15%">
 
-			<g:Button ui:field="backToBrowserButton" addStyleNames="{style.row} {style.back}"
-				width="10%" height="100%"></g:Button>
+			<g:FlowPanel ui:field="detailsArea" addStyleNames="{style.row} {style.back}"
+				width="10%" height="100%"></g:FlowPanel>
 
 			<!-- save button in edit mode, algOut in solve mode -->
-			<g:SimplePanel ui:field="upperMidEqArea" addStyleNames='{style.row}'
-				width="80%" height="100%"></g:SimplePanel>
+			<g:SimplePanel ui:field="upperMidEqArea" addStyleNames='{style.row} {style.mid}'
+				width="76%" height="100%"></g:SimplePanel>
 
 			<g:Button ui:field="optionsButton" addStyleNames='{style.row} {style.options}'
-				width="10%" height="100%"></g:Button>
+				text="=" width="10%" height="100%"></g:Button>
 
 		</g:FlowPanel>
 
@@ -68,8 +61,7 @@
 		<g:SimplePanel ui:field="eqPanelHolder" width="100%"
 			height="70%"></g:SimplePanel>
 
-		<g:FlowPanel ui:field="lowerEqArea" addStyleNames='{style.lowerEqArea}'
-			width="100%" height="15%">
+		<g:FlowPanel ui:field="lowerEqArea" width="100%" height="15%">
 		</g:FlowPanel>
 
 	</g:AbsolutePanel>

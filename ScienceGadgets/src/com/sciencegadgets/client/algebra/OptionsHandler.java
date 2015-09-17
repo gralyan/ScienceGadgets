@@ -47,13 +47,11 @@ public class OptionsHandler implements ClickHandler {
 	public OptionsHandler(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
 		optionsButton = algebraActivity.optionsButton;
-		optionsPopup = new OptionsPopup(optionsButton);
 
+		optionsPopup = new OptionsPopup(optionsButton);
+		optionsPopup.addStyleName(CSS.OPTIONS_POPUP);
 		optionsPopup.clear();
 
-		optionsPopup.getElement().getStyle().setZIndex(10);
-
-		optionsPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 		optionsPopup.add(optionsPanel);
 
 		optionsPopup.hide();
@@ -80,7 +78,7 @@ public class OptionsHandler implements ClickHandler {
 			optionsPanel.add(editSolveOption);
 		}
 
-		for (EquationTree eqTree : algebraActivity.getSystem().getList()) {
+		for (EquationTree eqTree : algebraActivity.getSystem().getNonCurrentList()) {
 			EquationButton eqButton  = new EquationButton(algebraActivity, eqTree);
 			optionsPanel.add(eqButton);
 		}
@@ -145,7 +143,7 @@ class InsertEquationButton extends Button {
 			@Override
 			public void onClick(ClickEvent event) {
 				OptionsHandler.optionsPopup.hide();
-				algebraActivity.getSystem().newWorkingTree();
+				algebraActivity.getSystem().newCurrentTree();
 				Moderator.reloadEquationPanel();
 			}
 		});
@@ -194,7 +192,7 @@ class EditSolveClickHandler implements ClickHandler {
 		if (algebraActivity.getEquationPanel() != null) {
 			algebraActivity.getEquationPanel().unselectCurrentSelection();
 		}
-		Moderator.switchToAlgebra(equationTree.getEquationXMLClone(), true,
+		Moderator.switchToAlgebra(equationTree.getEquationXMLClone(),// true,
 				activityType, true);
 	}
 

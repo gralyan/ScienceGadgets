@@ -34,7 +34,7 @@ public class MakeEquationBrowser extends FlowPanel {
 		protected void onSelect() {
 			EquationTree blankEq = new EquationTree(TypeSGET.Variable,
 					TypeSGET.NOT_SET, TypeSGET.Variable, TypeSGET.NOT_SET, true);
-			Moderator.switchToAlgebra(blankEq, null,
+			Moderator.switchToAlgebra(blankEq,
 					Moderator.ActivityType.editequation, true);
 		}
 	};

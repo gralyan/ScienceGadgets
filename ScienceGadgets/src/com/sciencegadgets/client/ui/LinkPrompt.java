@@ -19,21 +19,37 @@
  *******************************************************************************/
 package com.sciencegadgets.client.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueListBox;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
@@ -50,6 +66,8 @@ public abstract class LinkPrompt extends Prompt {
 	@UiField
 	protected FlowPanel upperArea;
 	@UiField
+	protected TextArea urlCode;
+	@UiField
 	protected TextArea linkCode;
 	@UiField
 	protected Anchor linkDisplay;
@@ -58,10 +76,33 @@ public abstract class LinkPrompt extends Prompt {
 	@UiField
 	FlowPanel iFrameContainer;
 
+	@UiField
+	protected Label colorLabel;
+	@UiField
+	protected TextBox colorTextBox;
+	@UiField
+	protected FlowPanel colorInputArea;
+	@UiField
+	protected Label widthLabel;
+	@UiField
+	protected TextBox widthTextBox;
+	@UiField
+	protected ValueListBox<String> widthUnits;
+	@UiField
+	protected Label heightLabel;
+	@UiField
+	protected TextBox heightTextBox;
+	@UiField
+	protected ValueListBox<String> heightUnits;
+
 	protected IFrameElement iframeDisplay = Document.get()
 			.createIFrameElement();
 
 	protected HashMap<Parameter, String> pMap;
+
+	private HighlightHandler urlHandler;
+	private HighlightHandler linkHandler;
+	private HighlightHandler iframeHandler;
 
 	public LinkPrompt() {
 		add(uiBinder.createAndBindUi(this));
@@ -80,8 +121,84 @@ public abstract class LinkPrompt extends Prompt {
 			}
 		});
 
-		linkCode.addFocusHandler(new HighlightHandler(linkCode));
-		iframeCode.addFocusHandler(new HighlightHandler(iframeCode));
+		urlHandler = new HighlightHandler(urlCode);
+		linkHandler = new HighlightHandler(linkCode);
+		iframeHandler = new HighlightHandler(iframeCode);
+		urlCode.addFocusHandler(urlHandler);
+		linkCode.addFocusHandler(linkHandler);
+		iframeCode.addFocusHandler(iframeHandler);
+
+		Unit[] units = Unit.values();
+		ArrayList<String> unitStrings = new ArrayList<String>();
+		for (Unit u : units) {
+			unitStrings.add(u.toString());
+		}
+		widthUnits.setAcceptableValues(unitStrings);
+		heightUnits.setAcceptableValues(unitStrings);
+
+		SpecChangeHandler specChange = new SpecChangeHandler();
+		KeyUpToSpecChange keyUp = new KeyUpToSpecChange();
+		widthTextBox.addValueChangeHandler(specChange);
+		widthUnits.addValueChangeHandler(specChange);
+		heightTextBox.addValueChangeHandler(specChange);
+		heightUnits.addValueChangeHandler(specChange);
+		widthTextBox.addKeyUpHandler(keyUp);
+		heightTextBox.addKeyUpHandler(keyUp);
+
+		colorTextBox.addFocusHandler(new FocusHandler() {
+			@Override
+			public void onFocus(FocusEvent event) {
+				setColor(colorTextBox.getValue());
+			}
+		});
+		colorTextBox.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				setColor(colorTextBox.getValue());
+			}
+		});
+		colorTextBox.getElement().setId("colorTextBox");
+		Element colorInput = DOM.createElement("input");
+		colorInput.setAttribute("type", "color");
+		colorInput.setAttribute("value", "#ff0000");
+		colorInput.setAttribute("id", "colorInputElement");
+		colorInput
+				.setAttribute(
+						"onchange",
+						"colorTextBox.value=colorInputElement.value.replace('#', ''); colorTextBox.focus()");
+		Style colorInputStyle = colorInput.getStyle();
+		colorInputStyle.setProperty("border", "none");
+		colorInputStyle.setPadding(0, Unit.PX);
+		colorInputStyle.setWidth(100, Unit.PCT);
+		colorInputArea.getElement().appendChild(colorInput);
+
+	}
+
+	public void setColor(String hexColor) {
+		Style labelStyle = colorLabel.getElement().getStyle();
+		if (hexColor == null || hexColor.length() != 6) {
+			labelStyle.clearColor();
+			labelStyle.clearFontWeight();
+			pMap.remove(Parameter.themecolor);
+			updateLinks();
+			return;
+		}
+		try {
+			Integer.valueOf(hexColor.substring(0, 2), 16);
+			Integer.valueOf(hexColor.substring(2, 4), 16);
+			Integer.valueOf(hexColor.substring(4, 6), 16);
+		} catch (NumberFormatException e) {
+			labelStyle.setColor("red");
+			labelStyle.setFontWeight(FontWeight.BOLD);
+			return;
+		}
+
+		labelStyle.clearColor();
+		labelStyle.setFontWeight(FontWeight.BOLD);
+
+		pMap.put(Parameter.themecolor, hexColor);
+		GWT.log(hexColor);
+		updateLinks();
 	}
 
 	@Override
@@ -102,21 +219,93 @@ public abstract class LinkPrompt extends Prompt {
 
 	protected void updateLinks() {
 
-		String url = "http://sciencegadgets.org/#"
+		String url = URLParameters.URL_TOP + "/#"
 				+ URLParameters.makeTolken(pMap, true);
+
+		urlHandler.revert(url);
+
 		linkDisplay.setHref(url);
 
-		linkCode.setText(JSNICalls
+		linkHandler.revert(JSNICalls
 				.elementToString(linkDisplay.getElement())
 				.replace("&amp;", "&")
 				.replace(TypeSGET.Operator.DOT.getSign(),
 						TypeSGET.Operator.DOT.getHTML()));
 
 		iframeDisplay.setSrc(url);
-		iframeCode.setText(JSNICalls.elementToString(iframeDisplay).replace(
-				"&amp;", "&"));
+		updateIframeCode();
 
 		iframeDisplay.getStyle().setWidth(100, Unit.PCT);
 		iframeDisplay.getStyle().setHeight(100, Unit.PCT);
+	}
+
+	void updateIframeCode() {
+
+		if (isValidSpec(widthLabel, widthTextBox, widthUnits)) {
+			double value = Double.parseDouble(widthTextBox.getValue());
+			String unit = widthUnits.getValue();
+			iframeDisplay.getStyle().setWidth(value, Unit.valueOf(unit));
+		} else {
+			iframeDisplay.getStyle().setWidth(100, Unit.PCT);
+		}
+		if (isValidSpec(heightLabel, heightTextBox, heightUnits)) {
+			double value = Double.parseDouble(heightTextBox.getValue());
+			String unit = heightUnits.getValue();
+			iframeDisplay.getStyle().setHeight(value, Unit.valueOf(unit));
+		} else {
+			iframeDisplay.getStyle().setHeight(100, Unit.PCT);
+		}
+		String iframeCode = JSNICalls.elementToString(iframeDisplay).replace(
+				"&amp;", "&");
+		iframeHandler.revert(iframeCode);
+	}
+
+	boolean isValidSpec(Label label, TextBox textBox,
+			ValueListBox<String> listBox) {
+		Style labelStyle = label.getElement().getStyle();
+
+		if ("".equals(textBox.getValue()) && listBox.getValue() == null) {
+			labelStyle.clearColor();
+			labelStyle.clearFontWeight();
+			return false;
+		}
+
+		boolean isValid;
+		try {
+			Double value = Double.parseDouble(textBox.getValue());
+			if (value > 0 && listBox.getValue() != null) {
+				isValid = true;
+			} else {
+				isValid = false;
+			}
+		} catch (NumberFormatException e) {
+			isValid = false;
+		}
+
+		if (isValid) {
+			labelStyle.clearColor();
+			labelStyle.setFontWeight(FontWeight.BOLD);
+		} else {
+			labelStyle.setColor("red");
+			labelStyle.setFontWeight(FontWeight.BOLD);
+		}
+		return isValid;
+	}
+
+	class SpecChangeHandler implements ValueChangeHandler<String> {
+
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			updateIframeCode();
+		}
+	}
+
+	class KeyUpToSpecChange implements KeyUpHandler {
+
+		@Override
+		public void onKeyUp(KeyUpEvent event) {
+			updateIframeCode();
+		}
+
 	}
 }

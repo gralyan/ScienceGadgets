@@ -19,41 +19,32 @@
  *******************************************************************************/
 package com.sciencegadgets.client;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
-import com.sciencegadgets.client.algebra.ConstantRandomizer;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.edit.RandomSpecPanel;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.challenge.ProblemDetails;
 import com.sciencegadgets.client.conversion.ConversionActivity;
-import com.sciencegadgets.client.entities.DataModerator;
-import com.sciencegadgets.client.entities.Equation;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
@@ -69,8 +60,6 @@ public class Moderator implements EntryPoint {
 	public static RandomSpecPanel randomSpec = null;
 	public static final AbsolutePanel scienceGadgetArea = RootPanel
 			.get(CSS.SCIENCE_GADGET_AREA);
-	// private static final AbsolutePanel welcomePageArea = RootPanel
-	// .get(CSS.WELCOME_PAGE_AREA);
 	private HandlerRegistration detectTouchReg;
 	public static boolean isTouch = false;
 
@@ -101,18 +90,6 @@ public class Moderator implements EntryPoint {
 		detectTouch();
 
 		History.fireCurrentHistoryState();
-		//
-		// // Blobs
-		// // scienceGadgetArea.add(new UploadButton());
-		//
-		// // try {
-		// // TestBot_Addition.deployTestBot();
-		// // } catch (TopNodesNotFoundException e) {
-		// // e.printStackTrace();
-		// // } catch (Exception e) {
-		// // e.printStackTrace();
-		// // }
-
 	}
 
 	public static Student getStudent() {
@@ -148,30 +125,24 @@ public class Moderator implements EntryPoint {
 	}
 
 	public static void switchToAlgebra(Element equationXML,
-			boolean sameEquation, ActivityType activityType,
-			boolean updateHistory) {
-		Equation eq = sameEquation && algebraActivity != null ? algebraActivity
-				.getEquation() : null;
-		switchToAlgebra(equationXML, eq, activityType, updateHistory);
-	}
-
-	public static void switchToAlgebra(Element equationXML, Equation equation,
 			ActivityType activityType, boolean updateHistory) {
 		EquationTree eTree = new EquationTree(equationXML,
 				activityType.isInEditMode());
-		switchToAlgebra(eTree, equation, activityType, updateHistory);
+		switchToAlgebra(eTree, 
+				activityType, updateHistory);
 	}
 
 	public static void switchToAlgebra(EquationTree equationTree,
-			Equation equation, ActivityType activityType, boolean updateHistory) {
+			ActivityType activityType, boolean updateHistory) {
 		try {
 
 			if (algebraActivity == null
 					|| algebraActivity.getActivityType() != activityType) {
-				algebraActivity = new AlgebraActivity(equationTree, equation,
+				algebraActivity = new AlgebraActivity(equationTree,
 						activityType);
 			} else {
-				algebraActivity.setEquationTree(equationTree, equation);
+				algebraActivity.setEquationTree(equationTree
+						);
 				if (ActivityType.interactiveequation == activityType) {
 					algebraActivity.reCreateAlgHistory();
 				}
@@ -190,12 +161,11 @@ public class Moderator implements EntryPoint {
 		}
 	}
 
-	public static void switchToConversion(EquationNode node,
-			Equation variableEquation) {
+	public static void switchToConversion(EquationNode node//,
+			) {
 
 		switchToConversion(node.getSymbol(), node.getUnitAttribute(), true);
 		conversionActivity.setNode(node);
-		conversionActivity.setVariableEquation(variableEquation);
 	}
 
 	public static void switchToConversion(String initialValue,
@@ -380,7 +350,6 @@ public class Moderator implements EntryPoint {
 					+ ", badges:" + badges);
 			return false;
 		} else if (isInEasyMode) {
-			JSNICalls.warn("isInEasyMode " + isInEasyMode);
 			return true;
 		} else {
 			JSNICalls.warn("has: " + student.getBadges() + ", needs: " + badges
@@ -414,99 +383,6 @@ public class Moderator implements EntryPoint {
 	void removeDetectTouch() {
 		if (detectTouchReg != null) {
 			detectTouchReg.removeHandler();
-		}
-	}
-
-	class HistoryChange implements ValueChangeHandler<String> {
-
-		@Override
-		public void onValueChange(ValueChangeEvent<String> event) {
-			// String token = event.getValue();
-
-			HashMap<Parameter, String> parameterMap = URLParameters
-					.getParameterMap();
-			
-			String easyParameter = parameterMap.get(Parameter.easy);
-			if (URLParameters.TRUE.equalsIgnoreCase(easyParameter)) {
-				isInEasyMode = true;
-			}
-
-			String activityParameter = parameterMap.get(Parameter.activity);
-
-			// welcomePageArea.setVisible(false);
-			// scienceGadgetArea.setVisible(true);
-
-			try {
-				ActivityType activityType = ActivityType
-						.valueOf(activityParameter);
-				switch (activityType) {
-				case interactiveequation:
-					//TODO
-					parameterMap = ConstantRandomizer.insertRandomProvided(parameterMap);
-					// fall through
-				case editequation:
-				case editsolvegoal:
-				case editcreategoal:
-					String equationString = parameterMap
-					.get(Parameter.equation);
-					Element equationXML = new HTML(equationString).getElement()
-							.getFirstChildElement();
-					switchToAlgebra(equationXML, null, activityType, true);
-					break;
-				case problem:
-					String idStr = parameterMap.get(Parameter.problemid);
-					try {
-						long id = Long.parseLong(idStr);
-						DataModerator.database.getProblem(id,
-								new AsyncCallback<Problem>() {
-									@Override
-									public void onSuccess(Problem problem) {
-										switchToProblem(problem);
-									}
-
-									@Override
-									public void onFailure(Throwable arg0) {
-										Window.alert("Challenge Not Found");
-									}
-								});
-					} catch (NumberFormatException e) {
-						JSNICalls
-								.error("ID for problem must be of type 'long'");
-					}
-					break;
-				case conversion:
-					String initialValue = parameterMap
-							.get(Parameter.conversionvalue);
-					try{
-						new BigDecimal(initialValue);
-					}catch (NumberFormatException e) {
-						break;
-					}
-					UnitAttribute unitAttribute = new UnitAttribute(
-							parameterMap.get(Parameter.unitattribute));
-					switchToConversion(initialValue, unitAttribute, false, false);
-					break;
-				case browser:
-					switchToBrowser();
-				default:
-					throw new IllegalArgumentException();
-				}
-
-			} catch (NullPointerException | IllegalArgumentException e) {
-				switchToBrowser();
-				// HashMap<Parameter, String> pMap = new HashMap<Parameter,
-				// String>();
-				// pMap.put(Parameter.activity,
-				// ActivityType.browser.toString());
-				// URLParameters.setParameters(pMap, false);
-
-				// Window.Location.replace("/blog/index.html");
-
-				// scienceGadgetArea.setVisible(false);
-				// welcomePageArea.setVisible(true);
-
-				// currentActivityType = ActivityType.blog;
-			}
 		}
 	}
 }

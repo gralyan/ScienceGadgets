@@ -31,13 +31,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.Moderator;
 
 public abstract class SelectionButton extends SimplePanel implements
-		HasClickHandlers, HasTouchEndHandlers {
+		HasClickHandlers, HasTouchEndHandlers, HasFitParentHTML {
 
-	FitParentHTML buttonHTML;
+	private FitParentHTML buttonHTML = new FitParentHTML();
 	boolean isEnabled = true;
 
 	protected SelectionButton() {
 		addStyleName(CSS.TRANSFORMATION_BUTTON);
+		add(buttonHTML);
 
 		if (Moderator.isTouch) {
 			addTouchEndHandler(new TouchEndHandler() {
@@ -87,22 +88,13 @@ public abstract class SelectionButton extends SimplePanel implements
 	}
 
 	public void setHTML(String html) {
-		clear();
-		if (buttonHTML == null) {
-			buttonHTML = new FitParentHTML(html);
-		} else {
-			buttonHTML.setHTML(html);
-		}
+//		clear();
+		buttonHTML.setHTML(html);
 		buttonHTML.percentOfParent = 85;
-		add(buttonHTML);
 	}
 
 	public String getHTML() {
-		if (buttonHTML == null) {
-			return null;
-		} else {
-			return buttonHTML.getHTML();
-		}
+		return buttonHTML.getHTML();
 	}
 
 	public void setEnabled(boolean enable) {
@@ -117,4 +109,8 @@ public abstract class SelectionButton extends SimplePanel implements
 		}
 	}
 
+	@Override
+	public FitParentHTML getFitParentHTML() {
+		return buttonHTML;
+	}
 }

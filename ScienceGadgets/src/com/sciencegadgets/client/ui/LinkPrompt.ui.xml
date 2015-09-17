@@ -2,52 +2,120 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:com.google.gwt.dom.client">
 	<ui:style>
+	.main{
+		height: 100%;
+		width: 96%;
+		margin: 0 2%;
+	}
 	.code {
 		display: inline-block;
 		width: 50%;
-		overflow: none;
-		font-family: monospace;
-		background-color: gray;
+		padding: 0;
+		margin: 0;
 		vertical-align: top;
-		height: 93%
+		border: none;
+		position: relative;
 	}
 	
 	.display {
 		display: inline-block;
-		width: 50%;
 		vertical-align: top;
-		height: 100%
-	}
-	.heading{
-		background-color: lavender;
-		padding-top: 1%;
-		font-weight: bold;
+		width: 49%;
+		height: 100%;
+		margin-left: 1%;
+		overflow: hidden;
 	}
 	
+	.spec {
+		width: 100%;
+		position: absolute;
+		bottom: 0px;
+		background-color: gray;
+	}
+	
+	.specRow {
+		margin: 1% 0;
+		text-align: left;
+	}
+	
+	.specPart {
+		display: inline-block;
+		vertical-align: top;
+		margin: 0 1%;
+		width: 30%;
+	}
+	
+	.heading {
+		padding: 1% 0;
+		margin: 2% 0 1% 0;
+		font-weight: bold;
+		border-top: solid 1px gray;
+		text-align: left;
+	}
+	.colorLabel{
+		display: inline-block;
+		vertical-align: top;
+	}
+	.hashTagLabel{
+		display: inline-block;
+		vertical-align: top;
+		float: right;	
+	}
+	
+	input[type=text]{
+		padding-left: 3px;
+	}
 	</ui:style>
 
-	<g:FlowPanel height="100%" width="98%">
+	<g:FlowPanel styleName="{style.main}">
 
 		<g:FlowPanel ui:field="upperArea" height="10%">
 		</g:FlowPanel>
-	
-		<g:Label styleName="{style.heading}" height="10%" text="Link"></g:Label>
 
-		<g:FlowPanel height="20%">
-			<g:FlowPanel styleName="{style.code}">
-				<g:TextArea width="100%" height="100%" ui:field="linkCode"></g:TextArea>
-			</g:FlowPanel>
+		<g:Label styleName="{style.heading}" text="URL"></g:Label>
+
+		<g:FlowPanel>
+			<g:TextArea width="100%" ui:field="urlCode" styleName="{style.code}"></g:TextArea>
+		</g:FlowPanel>
+
+		<g:Label styleName="{style.heading}" text="Link"></g:Label>
+
+		<g:FlowPanel>
+			<!-- <g:FlowPanel styleName="{style.code}"> -->
+			<g:TextArea ui:field="linkCode" styleName="{style.code}"></g:TextArea>
+			<!-- </g:FlowPanel> -->
 			<g:FlowPanel styleName="{style.display}">
 				<g:Anchor ui:field="linkDisplay"></g:Anchor>
 			</g:FlowPanel>
 
 		</g:FlowPanel>
-	
-		<g:Label styleName="{style.heading}" height="10%" text="Embedded iFrame"></g:Label>
 
-		<g:FlowPanel height="43%">
-			<g:FlowPanel styleName="{style.code}">
-				<g:TextArea width="100%" height="100%" ui:field="iframeCode"></g:TextArea>
+		<g:Label styleName="{style.heading}" text="Embedded iFrame"></g:Label>
+
+		<g:FlowPanel height="40%">
+			<g:FlowPanel height="100%" styleName="{style.code}">
+				<g:TextArea width="100%" ui:field="iframeCode"></g:TextArea>
+				<g:FlowPanel styleName="{style.spec}">
+					<g:FlowPanel styleName="{style.specRow}">
+						<g:FlowPanel styleName="{style.specPart}">
+							<g:Label ui:field="colorLabel" text="Color: " styleName="{style.colorLabel}"></g:Label>
+							<g:Label text="#" styleName="{style.hashTagLabel}"></g:Label>
+						</g:FlowPanel>
+						<g:TextBox ui:field="colorTextBox" text="000000"
+							title="Hexadecimal color" styleName="{style.specPart}"></g:TextBox>
+						<g:FlowPanel ui:field="colorInputArea" styleName="{style.specPart}"></g:FlowPanel>
+					</g:FlowPanel>
+					<g:FlowPanel styleName="{style.specRow}">
+						<g:Label ui:field="widthLabel" text="Width: " styleName="{style.specPart}"></g:Label>
+						<g:TextBox ui:field="widthTextBox" styleName="{style.specPart}"></g:TextBox>
+						<g:ValueListBox ui:field="widthUnits" styleName="{style.specPart}"></g:ValueListBox>
+					</g:FlowPanel>
+					<g:FlowPanel styleName="{style.specRow}">
+						<g:Label ui:field="heightLabel" text="Height: " styleName="{style.specPart}"></g:Label>
+						<g:TextBox ui:field="heightTextBox" styleName="{style.specPart}"></g:TextBox>
+						<g:ValueListBox ui:field="heightUnits" styleName="{style.specPart}"></g:ValueListBox>
+					</g:FlowPanel>
+				</g:FlowPanel>
 			</g:FlowPanel>
 			<g:FlowPanel styleName="{style.display}" ui:field="iFrameContainer">
 			</g:FlowPanel>

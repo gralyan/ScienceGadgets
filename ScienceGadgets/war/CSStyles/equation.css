@@ -1,8 +1,8 @@
 @CHARSET "UTF-8";
 
-.sg-displayWrapper {
-	color: white;
-}
+/* .sg-displayWrapper  done programmatically in ColorPallete*/
+
+
 .sg-eqPanel .sg-Operation {
 	font-family: Serif;	
 }
@@ -57,143 +57,126 @@
 /*---------------displayWrapper---------------*/
 
 .sg-displayWrapper.sg-Operation {
+	padding: 0 0.8em;
+}
+.sg-eqPanel .sg-in-equation.sg-Operation{
 	padding: 0 1em;
 }
-.sg-in-equation.sg-Operation{
-	padding: 0 1em;
-}
-.sg-eqPanel:not(.sg-editMode) .sg-in-equation.sg-Operation { /* equals sign (=) */
-	color: rgba(0,0,0,0);
-	text-shadow: none;
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-image: url('images/crystal_equals.png');
+/* .sg-eqPanel:not(.sg-editMode) .sg-in-equation.sg-Operation { equals sign (=) */
+/* 	color: rgba(0,0,0,0); */
+/* 	text-shadow: none; */
+/* 	background-size: contain; */
+/* 	background-repeat: no-repeat; */
+/* 	background-position: center; */
+/* /* 	background-image: url('images/crystal_equals.png'); */ */
 	
-	opacity: 0.2;
-}
+/* 	opacity: 0.7; */
+/* } */
 
-.sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-Operation {
-	color: rgba(0,0,0,0);
-	text-shadow: none;
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
-}
+/* .sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-Operation { */
+/* 	color: rgba(0,0,0,0); */
+/* 	text-shadow: none; */
+/* 	background-size: contain; */
+/* 	background-repeat: no-repeat; */
+/* 	background-position: center; */
+/* } */
 
-.sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-in-term.sg-Operation { /*multiply(x)*/
-	background-image: url('images/crystal_multiply.png');
-}
-.sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-in-sum.sg-Operation.sg-plus { /*add(+)*/
-	background-image: url('images/crystal_add.png');
-}
-.sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-in-sum.sg-Operation.sg-minus { /*subtract(-)*/
-	background-image: url('images/crystal_subtract.png');
-}
+/* .sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-in-term.sg-Operation { multiply(x) */
+/* 	background-image: url('images/crystal_multiply.png'); */
+/* } */
+/* .sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-in-sum.sg-Operation.sg-plus { add(+) */
+/* 	background-image: url('images/crystal_add.png'); */
+/* } */
+/* .sg-eqPanel:not(.sg-editMode) .sg-displayWrapper.sg-in-sum.sg-Operation.sg-minus { subtract(-) */
+/* 	background-image: url('images/crystal_subtract.png'); */
+/* } */
 
 .sg-parentWrapper.sg-Sum,
 .sg-transformationButton.sg-Sum,
 .sg-displayWrapper.sg-Sum {
 /* 	color: #D0D000; */
-	color: white;
 }
 .sg-parentWrapper.sg-Term,
 .sg-transformationButton.sg-Term,
 .sg-displayWrapper.sg-Term {
 /* 	color: #E05050; */
-	color: white;
 }
 .sg-parentWrapper.sg-Fraction,
 .sg-transformationButton.sg-Fraction,
 .sg-displayWrapper.sg-Fraction {
 /* 	color: orange; */
-	color: white;
 }
 .sg-parentWrapper.sg-Exponential,
 .sg-transformationButton.sg-Exponential,
 .sg-displayWrapper.sg-Exponential {
 /* 	color: magenta; */
-	color: white;
 }
 .sg-parentWrapper.sg-Log,
 .sg-transformationButton.sg-Log,
 .sg-displayWrapper.sg-Log {
 /* 	color: springGreen; */
-	color: white;
 }
 .sg-parentWrapper.sg-Trig,
 .sg-transformationButton.sg-Trig,
 .sg-displayWrapper.sg-Trig {
 /* 	color: tan; */
-	color: white;
 }
 .sg-parentWrapper.sg-Number,
 .sg-transformationButton.sg-Number,
 .sg-displayWrapper.sg-Number {
 /* 	color: skyBlue; */
-	color: white;
 }
 .sg-parentWrapper.sg-Variable,
 .sg-transformationButton.sg-Variable,
 .sg-displayWrapper.sg-Variable {
 /* 	color: blue; */
-	color: white;
 }
 .sg-parentWrapper.sg-Equation,
 .sg-transformationButton.sg-Equation,
 .sg-displayWrapper.sg-Equation {
-	color: white;
 }
 
 
 /*---------------wrappers---------------*/
 
-.sg-displayWrapper:not(.sg-Operation) {
-	-moz-border-radius: 0.1em;
-	-webkit-border-radius: 0.1em;
- 	border-radius: 0.1em;
-
-	z-index: 2;
-}
-
-.sg-eqPanel .sg-displayWrapper:not(.sg-selectedWrapper):hover {
-	background-color: rgba(100,100,100,0.3);
-	
-	-moz-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.3);
-	-webkit-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.3);
-	box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.3);
-}
-
-.sg-editMode .sg-parentWrapper{
-	background-color: #101010;
-	-moz-box-shadow: 0 0 0.1em 0.1em #101010;
-	-webkit-box-shadow: 0 0 0.1em 0.1em #101010;
-	box-shadow: 0 0 0.1em 0.1em #101010;
+.sg-displayWrapper:not(.sg-Operation), .sg-editMode .sg-parentWrapper, .sg-fenced {
+	-moz-border-radius: 0.6em;
+	-webkit-border-radius: 0.6em;
+ 	border-radius: 0.6em;
+ 	padding: 5px;
+/* 	z-index: 2; */
 }
 
 .sg-editMode .sg-displayWrapper:not(.sg-Operation){
 	margin: 5px;
-	background-color: #202020;
-	-moz-box-shadow: 0 0 0.1em 0.1em #202020;
-	-webkit-box-shadow: 0 0 0.1em 0.1em #202020;
-	box-shadow: 0 0 0.1em 0.1em #202020;
 }
 
+.sg-editMode .sg-parentWrapper:not(.sg-Equation),
 .sg-selectedWrapper:not(.sg-Operation){
-	background-color: rgb(100,100,100);
+	-moz-box-shadow: 0 0 10px 0 black;
+	-webkit-box-shadow: 0 0 10px 0 black;
+	box-shadow: 0 0 10px 0 black;
+}
+ 
+/* hover */
+.sg-eqPanel .sg-displayWrapper:not(.sg-selectedWrapper):hover {
+	background-color: rgba(255,255,255,0.3);
+}
 
-	-moz-box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
-	-webkit-box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
-	box-shadow: 0 0 0.3em 0.3em rgb(100,100,100);
-	
+/* parent */
+.sg-editMode .sg-parentWrapper:not(.sg-Equation){
+	background-color: rgba(255,255,255,0.2);
+}
+
+/* select */
+.sg-selectedWrapper:not(.sg-Operation){
+	background-color: rgba(255,255,255, 0.5);
 	position: relative;
 }
-.sg-selectedWrapper.sg-Operation{
-	background-color: rgba(100,100,100,0.5);
 
-	-moz-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.5);
-	-webkit-box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.5);
-	box-shadow: 0 0 0.3em 0.3em rgba(100,100,100,0.5);
+/* select op */
+.sg-selectedWrapper.sg-Operation{
+	background-color: rgba(255,255,255,0.3);
 }
 
 .sg-dragdrop-dragging {
@@ -208,33 +191,44 @@
 }
 
 .sg-selectedDropWrapper {
-	text-shadow: .15em .15em .15em #000000;
-	
-	-moz-box-shadow: .15em .15em .15em #000000;
-	-webkit-box-shadow: .15em .15em .15em #000000;
-	box-shadow: .15em .15em .15em #000000;
+	-moz-box-shadow: 10px 10px 10px #000000;
+	-webkit-box-shadow: 10px 10px 10px #000000;
+	box-shadow: 10px 10px 10px #000000;
 	position: relative;
-	top: -0.05em;
-	left: -0.05em;
+	top: -10px;
+	left: -10px;
+	
+	background-color: rgba(255,255,255,0.3);
+	
+	z-index: 201;
 }
 
 .sg-selectionDetails {
-	width: 100%;
-	height: 100%;
-/* 	background-color: white; */
-	text-align: center;
+	width: 90%;
+	height: 90%;
+	margin: 5%;
+	overflow: hidden;
+	word-break: break-all;
+}
+
+.sg-selectionDetailValue{
+	background-color: transparent;
+	color: inherit;
+	border: none;
+	max-width: 100%;
+	overflow-wrap: break-word; 
 }
 
 .sg-conversionWrapper {
 	border: medium solid black;
-	background-color: lime;
+	background-color: #333333;
 	cursor: move;
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 }
 
 .sg-dropEnterResponse {
-	background-color: white;
+	background-color: rgba(0,0,0,0.7);
 	text-align: center;
 	font-weight: bold;
 }
@@ -345,12 +339,12 @@
 .sg-fenced {
 	border-right: solid .08em;
 	border-left: solid .08em;
-	padding-left: 0.15em;
-	padding-right: 0.15em;
+/* 	padding-left: 0.15em; */
+/* 	padding-right: 0.15em; */
 	margin: 0.1em;
-	-moz-border-radius: 1em;
-	-webkit-border-radius: 1em;
- 	border-radius: 1em;
+/* 	-moz-border-radius: 1em; */
+/* 	-webkit-border-radius: 1em; */
+/*  	border-radius: 1em; */
 }
 
 .sg-functionName {

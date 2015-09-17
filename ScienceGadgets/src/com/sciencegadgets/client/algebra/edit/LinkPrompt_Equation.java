@@ -40,6 +40,7 @@ import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationHTML;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.SystemOfEquations;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.LinkPrompt;
 import com.sciencegadgets.shared.MathAttribute;
@@ -88,7 +89,6 @@ public class LinkPrompt_Equation extends LinkPrompt {
 								LinkPrompt_Equation.this.disappear();
 								Moderator.switchToAlgebra(
 										algebraActivity.getEquationTree(),
-										algebraActivity.getEquation(),
 										ActivityType.editsolvegoal, true);
 							}
 						});
@@ -104,7 +104,6 @@ public class LinkPrompt_Equation extends LinkPrompt {
 								LinkPrompt_Equation.this.disappear();
 								Moderator.switchToAlgebra(
 										algebraActivity.getEquationTree(),
-										algebraActivity.getEquation(),
 										ActivityType.editcreategoal, true);
 							}
 						});
@@ -125,7 +124,6 @@ public class LinkPrompt_Equation extends LinkPrompt {
 				public void onClick(ClickEvent arg0) {
 					Moderator.switchToAlgebra(
 							algebraActivity.getEquationTree(),
-							algebraActivity.getEquation(),
 							ActivityType.editequation, true);
 				}
 			});
@@ -167,20 +165,29 @@ public class LinkPrompt_Equation extends LinkPrompt {
 
 		pMap = new HashMap<Parameter, String>();
 
+		// Random provided
 		String randProvided = createRandomProvidedParameter(eTree);
 		if (randProvided != null && !"".equals(randProvided)) {
 			pMap.put(Parameter.randomprovided, randProvided);
 		}
 
+		// Activity
 		pMap.put(Parameter.activity, ActivityType.interactiveequation.toString());
 
+		// Equation
 		if (initialEquation == null) {
 			pMap.put(Parameter.equation, eqString);
 		} else {
 			pMap.put(Parameter.equation, initialEquation.getEquationXMLString());
 			pMap.put(Parameter.goal, eqString);
-
 		}
+		
+		// System of Equations
+		SystemOfEquations system = algebraActivity.getSystem();
+		if(system != null && system.hasMultipleEquations()) {
+			pMap.put(Parameter.system, system.getURLParam());
+		}
+		
 	}
 
 	private String createRandomProvidedParameter(EquationTree eTree) {
@@ -215,14 +222,14 @@ public class LinkPrompt_Equation extends LinkPrompt {
 		}
 
 		Element styleLink = new HTML(
-				"<link type=\"text/css\" rel=\"stylesheet\" href=\"http://sciencegadgets.org/CSStyles/equation.css\"></link>")
+				"<link type=\"text/css\" rel=\"stylesheet\" href=\""+URLParameters.URL_TOP+"/CSStyles/equation.css\"></link>")
 				.getElement();
 		styleLink.appendChild(html.getElement());
 		Element linkEl = linkDisplay.getElement();
 		linkEl.removeAllChildren();
 		linkEl.appendChild(styleLink);
 
-		iframeDisplay.setName("Interactive Equation");
+		iframeDisplay.setName("InteractiveEquation");
 
 		super.updateLinks();
 

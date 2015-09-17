@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.URLParameters;
@@ -41,25 +41,18 @@ import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.HighlightHandler;
 
 public class AlgebraHistory extends FlowPanel {
 
-	private AlgebraActivity algebraActivity;
-
 	boolean expanded = false;
-	public String origionalHeightStr;
 	public boolean scrolled = false;
 	private FlowPanel firstRow = new FlowPanel();
 	boolean wasTouchMoved = false;
 	public boolean isSolved = false;
+	private AlgebraHistory that = this;
 
 	public AlgebraHistory(AlgebraActivity algebraActivity) {
-		this.algebraActivity = algebraActivity;
 		addStyleName(CSS.ALG_OUT);
-
-		origionalHeightStr = algebraActivity.upperEqArea.getElement()
-				.getStyle().getHeight();
 
 		if (Moderator.isTouch) {
 			this.addDomHandler(new AlgOutTouchMove(), TouchMoveEvent.getType());
@@ -68,38 +61,38 @@ public class AlgebraHistory extends FlowPanel {
 			this.addDomHandler(new AlgOutClickHandler(), ClickEvent.getType());
 		}
 
-		Label firstRowEq;
 		String goalStr = URLParameters.getParameter(Parameter.goal);
 		if (goalStr != null && !"".equals(goalStr)) {
-			firstRowEq = new HTML("Simplify to: " + goalStr);
-		} else {
-			firstRowEq = new Label("Solve");
+			Label firstRowEq = new HTML("Simplify to: " + goalStr);
+
+			firstRowEq.addStyleName(CSS.ALG_OUT_EQ_ROW);
+			firstRow.add(firstRowEq);
+
+			Label firstRowRule = new Label();
+			firstRowRule.addStyleName(CSS.ALG_OUT_RULE_ROW);
+			firstRow.add(firstRowRule);
+
+			firstRow.addStyleName(CSS.ALG_OUT_ROW);
+
+			add(firstRow);
 		}
-		firstRowEq.addStyleName(CSS.ALG_OUT_EQ_ROW);
-		firstRow.add(firstRowEq);
-
-		Label firstRowRule = new Label();
-		firstRowRule.addStyleName(CSS.ALG_OUT_RULE_ROW);
-		firstRow.add(firstRowRule);
-
-		firstRow.addStyleName(CSS.ALG_OUT_ROW);
-
-		add(firstRow);
 	}
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		if (isSolved) {
-			firstRow.getElement().getStyle().clearHeight();
-		} else {
-			firstRow.setHeight(getOffsetHeight() + "px");
-		}
+//		if (isSolved) {
+//			firstRow.getElement().getStyle().clearHeight();
+//		} else {
+//			firstRow.setHeight(getOffsetHeight() + "px");
+//		}
+		
+		setHeightToLastRow();
 	}
 
 	public void updateAlgebraHistory(String changeComment, Skill rule,
 			EquationTree mathTree) {
-		
+
 		changeComment = changeComment.replace("lineThrough", "");
 
 		add(new AlgebraHistoryRow(changeComment, rule, mathTree));
@@ -108,19 +101,31 @@ public class AlgebraHistory extends FlowPanel {
 			add(new AlgebraHistoryRow(changeComment));
 		}
 	}
-	
+
 	public void solvedUpdate(EquationTree mathTree, String evaluation) {
 		AlgebraHistoryRow lastRow = new AlgebraHistoryRow(mathTree.getDisplay());
 		lastRow.eqSide.getElement().getStyle().setFontSize(300, Unit.PCT);
 		lastRow.ruleSide.removeFromParent();
 		add(lastRow);
-		
+
 		Label evaluatedBox = new Label();
-		JSNICalls.log("ev "+evaluation);
+		JSNICalls.log("ev " + evaluation);
 		evaluatedBox.addStyleName(CSS.ALG_OUT_RULE_ROW);
-//		evaluatedBox.addFocusHandler(new HighlightHandler(evaluatedBox));
+		// evaluatedBox.addFocusHandler(new HighlightHandler(evaluatedBox));
 		lastRow.add(evaluatedBox);
 		evaluatedBox.setText(evaluation);
+	}
+	
+	void setHeightToLastRow() {
+		int rows = getWidgetCount(); 
+		if(rows > 0) {
+			Widget lastRow = getWidget(rows - 1);
+			if(lastRow != null) {
+				setHeight(lastRow.getOffsetHeight()+"px");
+			}
+		}
+		
+		scrollToBottom();
 	}
 
 	void scrollToBottom() {
@@ -129,7 +134,7 @@ public class AlgebraHistory extends FlowPanel {
 						getElement().getScrollHeight()
 								- getElement().getClientHeight());
 	}
-
+	
 	class AlgebraHistoryRow extends FlowPanel {
 		private FlowPanel eqSide = new FlowPanel();
 		private Anchor ruleSide = new Anchor();
@@ -185,7 +190,7 @@ public class AlgebraHistory extends FlowPanel {
 
 	class AlgOutSlide extends Animation {
 
-		private FlowPanel alg = algebraActivity.upperEqArea;;
+		private FlowPanel alg = that;
 		int heightDiff = 0;
 		private int direction;
 		private int startingHeight;
@@ -204,14 +209,10 @@ public class AlgebraHistory extends FlowPanel {
 			int diff = maxHeight - startingHeight;
 
 			if (expanded) {
-
 				direction = -1;
-
 			} else if (diff < 3) {
-				// don't do anything if there is nothing hidden to expand
 				return;
-			} else {// not expanded but should be
-
+			} else {
 				heightDiff = diff;
 				direction = 1;
 			}
@@ -228,13 +229,11 @@ public class AlgebraHistory extends FlowPanel {
 		protected void onComplete() {
 			super.onComplete();
 			if (expanded) {
-				alg.setHeight(origionalHeightStr);
 				expanded = false;
-				scrollToBottom();
+				setHeightToLastRow();
 			} else {
 				alg.setHeight(maxHeight + "px");
 				expanded = true;
-				scrollToBottom();
 			}
 		}
 	}

@@ -19,6 +19,8 @@
  *******************************************************************************/
 package com.sciencegadgets.client.ui;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -31,6 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class CommunistPanel extends FlowPanel {
 
 	boolean isHorizontal = false;
+	ArrayList<Double> sizes = new ArrayList<Double>(); 
 
 	public CommunistPanel() {
 		this(true);
@@ -55,8 +58,8 @@ public class CommunistPanel extends FlowPanel {
 	}
 
 	/**
-	 * When adding iteratively, consider using the addAll methods for
-	 * performance
+	 * When adding iteratively, consider using the an addAll method, especially
+	 * when adding a FitParentHTML
 	 */
 	@Override
 	public void add(Widget widget) {
@@ -66,9 +69,14 @@ public class CommunistPanel extends FlowPanel {
 
 	private void addComrade(Widget widget) {
 		Widget container = widget;
-		if (widget instanceof FitParentHTML) {
-			container = new FlowPanel();
-			((FlowPanel)container).add(widget);
+		if(widget instanceof FitParentHTML) {
+			FitParentHTML w = (FitParentHTML) widget;
+			container = new HasFitParentHTML.FitParentContainer(w);
+			w.setPanel(this);
+		}else if (widget instanceof HasFitParentHTML) {
+			HasFitParentHTML w = (HasFitParentHTML) widget;
+			FitParentHTML fit = w.getFitParentHTML();
+			fit.setPanel(this);
 		}
 		if (isHorizontal) {
 			container.addStyleName(CSS.LAYOUT_ROW);
@@ -85,16 +93,18 @@ public class CommunistPanel extends FlowPanel {
 
 	protected void redistribute() {
 		int count = this.getWidgetCount();
-		if (count > 0) {
-			int portion = 100 / count;
-			for (int i = 0; i < count; i++) {
-				if (isHorizontal) {
-					getWidget(i).setWidth(portion + "%");
-					getWidget(i).setHeight("100%");
-				} else {
-					getWidget(i).setHeight(portion + "%");
-					getWidget(i).setWidth("100%");
-				}
+		if (count <= 0) {
+			return;
+		}
+		int portion = 100 / count;
+		for (int i = 0; i < count; i++) {
+			Widget member = getWidget(i);
+			if (isHorizontal) {
+				member.setWidth(portion + "%");
+				member.setHeight("100%");
+			} else {
+				member.setHeight(portion + "%");
+				member.setWidth("100%");
 			}
 		}
 	}
