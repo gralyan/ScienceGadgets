@@ -5,19 +5,21 @@
 	<ui:style>
 		.palatte {
 			color: black;
-			margin-top: 2%;
-			height: 79%;
+			margin-top: 5px;
+  			height: 78%;
 			width: 98%;
 			display: inline-block;
 			vertical-align: top;
- 			border: solid 1px #aaa;
+			border: none;
 		}
 		
 		.display {
 			display: inline-block;
 			vertical-align: top;
-			width: 78%;
+			width: 77%;
 			height: 100%;
+			border: none;
+			margin-right: 1%;
 		}
 		
 		.specHalf {
@@ -26,7 +28,6 @@
 			width: 50%;
 			height: 100%;
 			text-align: center;
-	 		background-color: lightGray;
 		}
 		
 		.toggle {
@@ -39,6 +40,9 @@
 		.symbolPalette {
 			overflow-y: auto;
 			background-color: #aaa;
+				-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+ 	border-radius: 5px;
 		}
 		
 	</ui:style>

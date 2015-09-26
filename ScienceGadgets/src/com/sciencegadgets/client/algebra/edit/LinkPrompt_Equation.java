@@ -48,21 +48,6 @@ import com.sciencegadgets.shared.TypeSGET;
 
 public class LinkPrompt_Equation extends LinkPrompt {
 
-	// final ToggleSlide easyToggle = new ToggleSlide("Normal", "Easy", true,
-	// new ClickHandler() {
-	// @Override
-	// public void onClick(ClickEvent event) {
-	// ToggleSlide toggle = (ToggleSlide) event.getSource();
-	// if (toggle.isFistSelected()) {
-	// pMap.put(Parameter.easy, URLParameters.TRUE);
-	// } else {
-	// pMap.remove(Parameter.easy);
-	// }
-	//
-	// updateLinks();
-	// }
-	// });
-
 	EquationHTML html;
 	AlgebraActivity algebraActivity;
 	private EquationTree initialEquation;
@@ -95,6 +80,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 				solveGoalButton
 						.setTitle("Faster and more accurate but can't use with random numbers");
 				solveGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
+				solveGoalButton.addStyleName(CSS.BORDER_RADIUS_SMALL);
 				upperArea.add(solveGoalButton);
 
 				final Button createGoalButton = new Button("Edit Goal",
@@ -110,6 +96,7 @@ public class LinkPrompt_Equation extends LinkPrompt {
 				createGoalButton
 						.setTitle("Can use with random numbers but prone to error!");
 				createGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
+				createGoalButton.addStyleName(CSS.BORDER_RADIUS_SMALL);
 				upperArea.add(createGoalButton);
 			}
 		} else {
@@ -233,15 +220,6 @@ public class LinkPrompt_Equation extends LinkPrompt {
 
 		super.updateLinks();
 
-//		JSNICalls.log("html: "
-//				+ JSNICalls.elementToString(html.getElement()).replace("\"",
-//						"\\\""));
-//		JSNICalls.log("xml: "
-//				+ pMap.get(Parameter.equation).replace("\"", "\\\""));
-//		if (pMap.get(Parameter.goal) != null) {
-//			JSNICalls.log("goal: "
-//					+ pMap.get(Parameter.goal).replace("\"", "\\\""));
-//		}
 	}
 
 }

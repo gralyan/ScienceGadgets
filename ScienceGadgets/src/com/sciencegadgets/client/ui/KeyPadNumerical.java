@@ -80,16 +80,13 @@ public class KeyPadNumerical extends FlowPanel{
 		this.symbolDisplay = symbolDisplay;
 		this.symbolDisplay.addStyleName(CSS.NUMBER_DISPLAY);
 
-		if (includeNumbers) {
-			for (int i = 0; i < 10; i++) {
-				NumberButton b = new NumberButton(i + "");
-				buttons.add(b);
-				this.add(b);
-			}
-		}
-		// separate numbers from special characters with a div
-		this.add(new FlowPanel());
+		//CLEAR
+		clearButton.setTitle("clear");
+		buttons.add(clearButton);
+		this.add(clearButton);
+		
 
+		//SPECIAL SYMBOLS
 		if (includeNegative) {
 			negButton.setTitle("negative");
 			buttons.add(negButton);
@@ -105,9 +102,19 @@ public class KeyPadNumerical extends FlowPanel{
 			this.add(eButton);
 		}
 
-		clearButton.setTitle("clear");
-		buttons.add(clearButton);
-		this.add(clearButton);
+		// separate numbers from special characters
+		FlowPanel gap = new FlowPanel();
+		gap.setSize("100%", "5px");
+		this.add(gap);
+		
+		//NUMBERS
+		if (includeNumbers) {
+			for (int i = 0; i < 10; i++) {
+				NumberButton b = new NumberButton(i + "");
+				buttons.add(b);
+				this.add(b);
+			}
+		}
 
 		if (Moderator.isTouch) {
 			// Clear Display on Touch - clear

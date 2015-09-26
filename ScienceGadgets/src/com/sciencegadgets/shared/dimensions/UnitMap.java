@@ -253,7 +253,7 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 			String quantityKind = entryQK.toString();
 			int entryMultiple = entry.getValue();
 
-			if (UnitAttribute.PREFIX_QUANTITY_KIND.equals(quantityKind)) {
+			if (QuantityKindEnum.Prefix.toString().equals(quantityKind)) {
 				prefixes.add(entryQK);
 				continue a;
 			}

@@ -64,7 +64,7 @@ public class DataModerator {
 	/**
 	 * Holds all every QuantityKind once it has been queried for
 	 */
-	private static LinkedList<String> quantityKinds = null;
+	private static LinkedList<QuantityKindEnum> quantityKinds = null;
 
 	private static void loadUnits() {
 		unitsAll = new LinkedList<Unit>();
@@ -300,17 +300,17 @@ public class DataModerator {
 
 	private static void query_Quantities(final UnitSelection unitSelection) {
 
-		LinkedList<String> qKinds = new LinkedList<String>();
+		LinkedList<QuantityKindEnum> qKinds = new LinkedList<QuantityKindEnum>();
 
 		for (QuantityKindEnum qk : QuantityKindEnum.values()) {
-			qKinds.add(qk.toString());
+			qKinds.add(qk);
 		}
 
 		// Prefix should be first
-		qKinds.remove(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
-		qKinds.addFirst(UnitAttribute.PREFIXBINARY_QUANTITY_KIND);
-		qKinds.remove(UnitAttribute.PREFIX_QUANTITY_KIND);
-		qKinds.addFirst(UnitAttribute.PREFIX_QUANTITY_KIND);
+		qKinds.remove(QuantityKindEnum.PrefixBinary);
+		qKinds.addFirst(QuantityKindEnum.PrefixBinary);
+		qKinds.remove(QuantityKindEnum.Prefix);
+		qKinds.addFirst(QuantityKindEnum.Prefix);
 
 		quantityKinds = qKinds;
 		populate_Quantities(unitSelection);
@@ -347,8 +347,8 @@ public class DataModerator {
 	private static void populate_Quantities(UnitSelection unitSelection) {
 		SelectionPanel qBox = unitSelection.quantityBox;
 		qBox.clear();
-		for (String quantityKind : quantityKinds) {
-			qBox.add(quantityKind, quantityKind);
+		for (QuantityKindEnum quantityKind : quantityKinds) {
+			qBox.add(quantityKind.getFormattedName(), quantityKind.toString());
 		}
 
 		// The Prefix quantity is special, should stand out
@@ -356,8 +356,8 @@ public class DataModerator {
 			qBox.getWidget(1).removeFromParent();
 			qBox.getWidget(1).removeFromParent();
 		} else {
-			qBox.getWidget(1).addStyleName(CSS.QUANTITY_KIND_PREFIX);
-			qBox.getWidget(2).addStyleName(CSS.QUANTITY_KIND_PREFIX);
+			qBox.getWidget(1).addStyleName(CSS.HIGHLIGHTED_CELL);
+			qBox.getWidget(2).addStyleName(CSS.HIGHLIGHTED_CELL);
 		}
 
 	}

@@ -289,13 +289,13 @@
 }
 
 .sg-fraction-line{
-	border-bottom: 1px solid white;
+/* 	border-bottom: 1px solid white; */
 	z-index: 3;
 }
 
-.sg-parentWrapper > .sg-Fraction > .sg-fraction-line{
-	border-bottom: 5px solid white;
-}
+/* .sg-parentWrapper > .sg-Fraction > .sg-fraction-line{ */
+/* 	border-bottom: 5px solid white; */
+/* } */
 
 .sg-in-fraction-denominator {
 	margin-left: 0.7em;

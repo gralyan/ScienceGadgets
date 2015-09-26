@@ -19,15 +19,22 @@
  *******************************************************************************/
 package com.sciencegadgets.client.ui;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.OutlineStyle;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.Moderator;
 
@@ -41,12 +48,14 @@ import com.sciencegadgets.client.Moderator;
  * Launch with {@link Prompt#appear()}<br/>
  * Remove with {@link Prompt#disappear()}<br/>
  */
-public class Prompt extends DialogBox implements Resizable {
+public class Prompt extends DialogBox implements Resizable, HasKeyUpHandlers {
 
 	private static final double HEIGHT_FRACTION = 0.7;
 	private static final double WIDTH_FRACTION = 0.8;
 	protected final FlowPanel flowPanel = new FlowPanel();
 	final Button okButton = new Button("OK");
+	protected boolean okClickedOnEnterPressed = true;
+	private FocusPanel focusPanel = new FocusPanel();
 
 	public Prompt() {
 		this(true);
@@ -60,25 +69,26 @@ public class Prompt extends DialogBox implements Resizable {
 			okButton.addStyleName(CSS.OK_PROMPT_BUTTON);
 			mainPanel.add(okButton);
 		}
-		super.add(mainPanel);
+		focusPanel.add(mainPanel);
+		super.add(focusPanel);
 
 		setGlassEnabled(true);
 		setAnimationEnabled(false);
 
+		focusPanel.getElement().getStyle().setOutlineStyle(OutlineStyle.NONE);
 		flowPanel.getElement().getStyle().setOverflowY(Overflow.AUTO);
 
-		// getElement().getStyle().setBackgroundColor("#ADD850");
 		addStyleName(CSS.PROMPT_MAIN);
 		okButton.addStyleName(CSS.SMALLEST_BUTTON);
 
-		addDomHandler(new KeyDownHandler() {
+		addKeyUpHandler(new KeyUpHandler() {
 			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+			public void onKeyUp(KeyUpEvent event) {
+				if (okClickedOnEnterPressed && event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					okButton.click();
 				}
 			}
-		}, KeyDownEvent.getType());
+		});
 
 	}
 
@@ -107,6 +117,7 @@ public class Prompt extends DialogBox implements Resizable {
 		resize();
 		super.center();
 		Moderator.resizables.add(this);
+		focusPanel.setFocus(true);
 	}
 
 	@Override
@@ -126,4 +137,8 @@ public class Prompt extends DialogBox implements Resizable {
 				(int) (Window.getClientHeight() * HEIGHT_FRACTION));
 	}
 
+	@Override
+	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+		return focusPanel.addKeyUpHandler(handler);
+	}
 }

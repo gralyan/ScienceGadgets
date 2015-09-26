@@ -12,18 +12,17 @@ body {
 }
 
 #sg-scienceGadgetArea {
-/* 	don't allow accidentally select stuff */
+	/* 	don't allow accidentally select stuff */
 	-webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 	font-family: math;
-/* 	background-image: url('images/chalkboard.jpeg'); */
+	/* 	background-image: url('images/chalkboard.jpeg'); */
 	background-color: #101010;
-/* 	box-shadow:0 0 30px black inset; */
+	/* 	box-shadow:0 0 30px black inset; */
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 	margin: auto;
@@ -44,17 +43,23 @@ body {
 	text-align: center;
 }
 
+.sg-borderRadiusSmall {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
 /*---------------Browsers---------------*/
-.sg-mainTitle{
-	height:12%;
+.sg-mainTitle {
+	height: 12%;
 	font-size: 8vmin;
 	text-decoration: none;
 	text-shadow: 0 0 0.2em lime;
 	color: white;
 	display: block;
 	text-align: center;
-	
 }
+
 #sg-equationBrowser {
 	margin: auto;
 	height: 100%;
@@ -109,7 +114,7 @@ body {
 	background-color: white;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
- 	border-radius: 10px;
+	border-radius: 10px;
 	-moz-box-shadow: silver 0 0 10px 3px inset;
 	-webkit-box-shadow: silver 0 0 10px 3px inset;
 	box-shadow: silver 0 0 10px 3px inset;
@@ -166,7 +171,8 @@ body {
 	padding-left: 2px;
 	padding-right: 2px;
 }
-.sg-conversionSpec{
+
+.sg-conversionSpec {
 	width: 100%;
 	height: 100%;
 	background-color: lightGray;
@@ -184,20 +190,38 @@ body {
 	background-color: white;
 	color: black;
 	cursor: pointer;
-	height: 100%;
+		-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+ 	border-radius: 5px;
 }
 
 .sg-selectionPanelCell {
-	padding-top: 10px;
-	padding-bottom: 10px;
+	padding: 10px 0 10px 5px;
 }
 
 .sg-selectedCell {
-	background-color: #9999ff;
+	font-weight: bold;
 }
 
-.sg-quantityKindPrefix {
+.sg-highlightedCell {
 	background-color: lavender;
+}
+
+.sg-searchBox {
+	width: 100%;
+	height: 20%;
+	padding: 0;
+	border: none;
+	text-align: center;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.sg-unitSelection {
+	margin-top: 5px;
+	height: calc(80% - 5px);
+	width: 50%;
 }
 
 /*---------------AlgOut---------------*/
@@ -209,11 +233,12 @@ body {
 	overflow-x: hidden;
 	z-index: 10;
 	text-shadow: none;
+	position: relative;
 }
 
 .sg-algOutRow {
 	border-top: 1px solid gray;
-	background-color: rgba(255,255,255,0.8);
+	background-color: rgba(255, 255, 255, 0.8);
 }
 
 .sg-algOutEqRow {
@@ -268,21 +293,18 @@ body {
 	text-decoration: line-through;
 }
 
-
 /*---------------layout---------------*/
 .sg-eqPanel {
 	width: 100%;
 	height: 100%;
-
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-/* 	background-color: #202020; */
-/* 	box-shadow:0 0 10px black inset; */
-/* 	color: #A0A0A0; */
+	/* 	background-color: #202020; */
+	/* 	box-shadow:0 0 10px black inset; */ /* 	color: #A0A0A0; */
 	font-weight: lighter;
 	position: relative;
 }
@@ -291,8 +313,7 @@ body {
 	height: 100%;
 	width: 90%;
 	margin: 0 5%;
-/* 	text-align: center; */
-/* 	padding-top: 10px; */
+	/* 	text-align: center; */ /* 	padding-top: 10px; */
 	white-space: nowrap;
 }
 
@@ -323,9 +344,7 @@ body {
 	border: thick solid transparent;
 	-moz-border-radius: 1em;
 	-webkit-border-radius: 1em;
- 	border-radius: 1em;
-    box-shadow: 0 0 30px 15px black;
-	
+	border-radius: 1em;
 }
 
 .gwt-PopupPanelGlass {
@@ -334,7 +353,7 @@ body {
 	filter: alpha(opacity =   30);
 }
 
-.sg-optionsPopup{
+.sg-optionsPopup {
 	z-index: 10;
 	overflow-y: scroll;
 	-moz-box-shadow: black 0 0 20px 2px;
@@ -365,43 +384,51 @@ body {
 }
 
 /*---------------cursors---------------*/
+.sg-eqPanel {
+	cursor: default;
+	/* 	-moz-box-shadow: 0 4px 3px 0 rgba(100,100,100,0.2) inset; */
+/* 	-webkit-box-shadow: 0 4px 3px 0 rgba(100,100,100,0.2) inset; */
+/* 	box-shadow: 0 4px 3px 0 rgba(100,100,100,0.2) inset; */
+}
 
-.sg-eqPanel{
-    cursor: default;
+.sg-displayWrapper {
+	cursor: default;
 }
-.sg-displayWrapper{
-    cursor: default;
-}
-.sg-displayWrapper.dragdrop-draggable{
-    cursor: move;
-    cursor: grab;
-    cursor: -moz-grab;
-    cursor: -webkit-grab;
+
+.sg-displayWrapper.dragdrop-draggable {
+	cursor: move;
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
 }
 
 .dragdrop-selected, .dragdrop-dragging, .dragdrop-proxy {
 	opacity: 1;
-    cursor: grabbing;
-    cursor: -moz-grabbing;
-    cursor: -webkit-grabbing;
+	cursor: grabbing;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
 }
 
 .sg-canZoomOut {
-    cursor: url(images/cursor_out.png) 16 16,crosshair;
+	cursor: url(images/cursor_out.png) 16 16, crosshair;
 }
 
-.sg-selectedWrapper:not(.sg-Operation):not(.sg-Number):not(sg-Variable){
-    cursor: url(images/cursor_in.png) 16 16,crosshair;
+.sg-selectedWrapper:not (.sg-Operation ):not (.sg-Number ):not(sg-Variable)
+	{
+	cursor: url(images/cursor_in.png) 16 16, crosshair;
 }
 
 /*---------------prompts---------------*/
 .sg-numberDisplay {
 	text-align: center;
-	background-color: white;
-	border: thin solid #aaaaaa;
+	background-color: #ddf;
+	/* 	border: thin solid #aaaaaa; */
 	min-width: 3px;
 	min-height: 1.5em;
 	word-wrap: break-word;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .sg-promptMain {
@@ -409,7 +436,6 @@ body {
 }
 
 .sg-keyPadNumerical {
-/* 	background-color: lightGray; */
 	padding: 5px;
 }
 
@@ -433,40 +459,46 @@ body {
 	border-bottom: thin solid green;
 }
 
-.sg-establishedQuantitySelection {
-	color: black;
-	height: 98%;
+.sg-establishedQuantityArea {
+	height: 100%;
 	width: 23%;
 	display: inline-block;
 	margin-right: 2%;
 	text-align: left;
-	padding-left: 1em;
-	border: solid 1px #aaa;
+	border: none;
+	vertical-align: top;
+}
+
+.sg-establishedQuantitySelection {
+	color: black;
+	margin-top: 5px;
+	height: 78%;
+	width: 100%;
+	overflow-y: scroll;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .sg-quantityPromptSpec {
 	display: inline-block;
-	vertical-align: top;
 	width: 70%;
-	height: 98%;
+	height: 100%;
 	margin-right: 1%;
-}
-.sg-unitSearch{
-	width: 100%;
-	height: 20%;
-	padding: 0;
 	border: none;
+	vertical-align: top;
 }
-.sg-substitutionCell{
+
+.sg-substitutionCell {
 	font-size: 200%;
 	margin-top: 10px;
 }
 
-.sg-linkPromptCodeDefault{
+.sg-linkPromptCodeDefault {
 	background-color: white;
- 	border: none;
- 	cursor: pointer;
- 	padding: 0;
- 	margin: 0;
- 	overflow-x: hidden;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	margin: 0;
+	overflow-x: hidden;
 }

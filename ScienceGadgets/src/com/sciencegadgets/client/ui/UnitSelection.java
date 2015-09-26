@@ -19,6 +19,7 @@
  *******************************************************************************/
 package com.sciencegadgets.client.ui;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -30,13 +31,14 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
+import com.sciencegadgets.client.ui.SelectionPanel.SearchBox;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
 
 public class UnitSelection extends FlowPanel {
 
 	final public SelectionPanel quantityBox = new SelectionPanel(
 			"Quantity Kind");
-	final public SelectionPanel unitBox = new SelectionPanel("Unit");
+	final public UnitSelectionPanel unitBox = new UnitSelectionPanel();
 	boolean quantityOnly = false;
 	boolean quantityFilled = false;
 	boolean unitOnly = false;
@@ -80,12 +82,13 @@ public class UnitSelection extends FlowPanel {
 			this.add(unitBox);
 		} else {
 
-			final UnitSearchBox searchBox = new UnitSearchBox();
-			searchBox.addStyleName(CSS.UNIT_SEARCH);
+			final SearchBox searchBox = unitBox.makeSearchBox();
+			searchBox.setBrowser(quantityBox);
+			searchBox.addStyleName(CSS.SEARCH_BOX);
 			this.add(searchBox);
 
-			quantityBox.setSize("50%", "80%");
-			unitBox.setSize("50%", "80%");
+			quantityBox.addStyleName(CSS.UNIT_SELECTION);
+			unitBox.addStyleName(CSS.UNIT_SELECTION);
 			this.add(quantityBox);
 			this.add(unitBox);
 
@@ -143,62 +146,19 @@ public class UnitSelection extends FlowPanel {
 		return unitOnly;
 	}
 
-	class UnitSearchBox extends TextBox {
-		private static final String SEARCH_DEFAULT_TEXT = "Search unit";
-		private String previousSearch = "";
-
-		UnitSearchBox() {
-
-			setText(SEARCH_DEFAULT_TEXT);
-			getElement().getStyle().setColor("gray");
-
-			addFocusHandler(new FocusHandler() {
-				@Override
-				public void onFocus(FocusEvent event) {
-					if (SEARCH_DEFAULT_TEXT.equals(getText())) {
-						setText("");
-						getElement().getStyle().setColor("black");
-					}
-				}
-			});
-
-			addKeyUpHandler(new KeyUpHandler() {
-				@Override
-				public void onKeyUp(KeyUpEvent event) {
-					String searchQ = getText();
-					search(searchQ);
-				}
-			});
-
-			addValueChangeHandler(new ValueChangeHandler<String>() {
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					String searchQ = event.getValue();
-					search(searchQ);
-				}
-			});
-
-		}
-
-		void search(String searchQ) {
-			if(previousSearch.equals(searchQ)) {
-				return;
-			}
-			previousSearch = searchQ;
-			quantityBox.clearSelection();
-			if ("".equals(searchQ)) {
-				unitBox.clear();
-			} else if (!SEARCH_DEFAULT_TEXT.equals(searchQ)) {
-				reloadUnitBox(searchQ, null, true);
-			}
-
+	public class UnitSelectionPanel extends SelectionPanel{
+		
+		public UnitSelectionPanel() {
+			super("Unit");
 		}
 
 		@Override
-		protected void onDetach() {
-			setText(SEARCH_DEFAULT_TEXT);
-			getElement().getStyle().setColor("gray");
-			super.onDetach();
+		public void search(String searchQ) {
+			if("".equals(searchQ)) {
+				unitBox.clear();
+			}else {
+				reloadUnitBox(searchQ, null, true);
+			}
 		}
 	}
 }

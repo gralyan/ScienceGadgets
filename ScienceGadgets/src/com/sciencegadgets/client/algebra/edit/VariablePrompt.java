@@ -53,10 +53,8 @@ public class VariablePrompt extends QuantityPrompt {
 			public void onSelect(Cell selected) {
 				CommonVariables establishedVariable = ((CommonVariables) selected
 						.getEntity());
-
 				spec.getSymbolDisplay()
 						.setText(establishedVariable.getSymbol());
-
 				spec.setUnit(new UnitMap(establishedVariable.getUnitAttribute()));
 			}
 		});

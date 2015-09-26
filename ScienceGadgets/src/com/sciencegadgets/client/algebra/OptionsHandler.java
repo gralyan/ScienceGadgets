@@ -48,6 +48,8 @@ public class OptionsHandler implements ClickHandler {
 		this.algebraActivity = algebraActivity;
 		optionsButton = algebraActivity.optionsButton;
 
+		optionsPanel.getElement().getStyle().setOverflowY(Overflow.AUTO);
+		
 		optionsPopup = new OptionsPopup(optionsButton);
 		optionsPopup.addStyleName(CSS.OPTIONS_POPUP);
 		optionsPopup.clear();
@@ -108,6 +110,8 @@ class OptionsPopup extends PopupPanel {
 
 		this.setPixelSize(mainPanel.getOffsetWidth() / 2,
 				mainPanel.getOffsetHeight() - optionsButtonHeight);
+		
+		getElement().getStyle().setOverflowY(Overflow.AUTO);
 
 		super.show();
 	}

@@ -34,7 +34,7 @@ public abstract class SelectionButton extends SimplePanel implements
 		HasClickHandlers, HasTouchEndHandlers, HasFitParentHTML {
 
 	private FitParentHTML buttonHTML = new FitParentHTML();
-	boolean isEnabled = true;
+	private boolean isEnabled = true;
 
 	protected SelectionButton() {
 		addStyleName(CSS.TRANSFORMATION_BUTTON);
@@ -101,12 +101,14 @@ public abstract class SelectionButton extends SimplePanel implements
 		this.isEnabled = enable;
 		Style style = getElement().getStyle();
 		if (enable) {
-			addStyleName(CSS.TRANSFORMATION_BUTTON);
-			style.clearColor();
+			style.clearOpacity();
 		} else {
-			removeStyleName(CSS.TRANSFORMATION_BUTTON);
-			style.setColor("gray");
+			style.setOpacity(0.2);
 		}
+	}
+	
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override

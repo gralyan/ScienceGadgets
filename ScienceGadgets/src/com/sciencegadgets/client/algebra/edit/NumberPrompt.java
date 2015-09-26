@@ -57,9 +57,7 @@ public class NumberPrompt extends QuantityPrompt{
 			@Override
 			public void onSelect(Cell selected) {
 				constantSeleced = ((CommonConstants) selected.getEntity());
-
 				spec.getSymbolDisplay().setText(constantSeleced.getValue());
-
 				spec.setUnit(constantSeleced.getUnitMap());
 			}
 		});

@@ -81,12 +81,12 @@ public class AlgebraHistory extends FlowPanel {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-//		if (isSolved) {
-//			firstRow.getElement().getStyle().clearHeight();
-//		} else {
-//			firstRow.setHeight(getOffsetHeight() + "px");
-//		}
-		
+		// if (isSolved) {
+		// firstRow.getElement().getStyle().clearHeight();
+		// } else {
+		// firstRow.setHeight(getOffsetHeight() + "px");
+		// }
+
 		setHeightToLastRow();
 	}
 
@@ -100,6 +100,7 @@ public class AlgebraHistory extends FlowPanel {
 		if (changeComment.contains(BothSidesTransformations.UP_ARROW)) {
 			add(new AlgebraHistoryRow(changeComment));
 		}
+		setHeightToLastRow();
 	}
 
 	public void solvedUpdate(EquationTree mathTree, String evaluation) {
@@ -115,16 +116,30 @@ public class AlgebraHistory extends FlowPanel {
 		lastRow.add(evaluatedBox);
 		evaluatedBox.setText(evaluation);
 	}
-	
+
 	void setHeightToLastRow() {
-		int rows = getWidgetCount(); 
-		if(rows > 0) {
+		expanded = false;
+
+		int rows = getWidgetCount();
+		if (rows > 0) {
 			Widget lastRow = getWidget(rows - 1);
-			if(lastRow != null) {
-				setHeight(lastRow.getOffsetHeight()+"px");
+			if (lastRow != null) {
+				int height = lastRow.getOffsetHeight();
+				if (lastRow instanceof AlgebraHistoryRow
+						&& ((AlgebraHistoryRow) lastRow).isChangeRow) {
+					Widget secondToLastRow = getWidget(rows - 2);
+					if (secondToLastRow != null) {
+						height += secondToLastRow.getOffsetHeight();
+					}
+				}
+				if(getParent() != null) {
+					int maxHeight = getParent().getOffsetHeight();
+					height = Math.min(maxHeight, height);
+				}
+				setHeight(height + "px");
 			}
 		}
-		
+
 		scrollToBottom();
 	}
 
@@ -134,15 +149,18 @@ public class AlgebraHistory extends FlowPanel {
 						getElement().getScrollHeight()
 								- getElement().getClientHeight());
 	}
-	
+
 	class AlgebraHistoryRow extends FlowPanel {
 		private FlowPanel eqSide = new FlowPanel();
 		private Anchor ruleSide = new Anchor();
+		boolean isChangeRow = false;
 
 		// Change row
 		AlgebraHistoryRow(String changeComment) {
 			this(new HTML("<div>" + changeComment + "</div><div></div><div>"
 					+ changeComment + "</div>"));
+
+			isChangeRow = true;
 
 			addStyleName(CSS.ALG_OUT_CHANGE_ROW);
 

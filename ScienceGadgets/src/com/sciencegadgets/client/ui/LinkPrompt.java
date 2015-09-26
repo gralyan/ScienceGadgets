@@ -114,6 +114,7 @@ public abstract class LinkPrompt extends Prompt {
 
 		iFrameContainer.getElement().appendChild(iframeDisplay);
 
+		okClickedOnEnterPressed = false;
 		addOkHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -157,10 +158,17 @@ public abstract class LinkPrompt extends Prompt {
 				setColor(colorTextBox.getValue());
 			}
 		});
+
+		String initialColor = URLParameters.getParameter(Parameter.themecolor);
+		initialColor = initialColor == null || "".equals(initialColor) ? "000000"
+				: initialColor;
+		colorTextBox.setText(initialColor);
+		setColor(initialColor);
+		
 		colorTextBox.getElement().setId("colorTextBox");
 		Element colorInput = DOM.createElement("input");
 		colorInput.setAttribute("type", "color");
-		colorInput.setAttribute("value", "#ff0000");
+		colorInput.setAttribute("value", initialColor);
 		colorInput.setAttribute("id", "colorInputElement");
 		colorInput
 				.setAttribute(
@@ -177,8 +185,13 @@ public abstract class LinkPrompt extends Prompt {
 	public void setColor(String hexColor) {
 		Style labelStyle = colorLabel.getElement().getStyle();
 		if (hexColor == null || hexColor.length() != 6) {
-			labelStyle.clearColor();
-			labelStyle.clearFontWeight();
+			if ("".equals(hexColor)) {
+				labelStyle.clearColor();
+				labelStyle.clearFontWeight();
+			} else {
+				labelStyle.setColor("red");
+				labelStyle.setFontWeight(FontWeight.BOLD);
+			}
 			pMap.remove(Parameter.themecolor);
 			updateLinks();
 			return;
@@ -196,8 +209,12 @@ public abstract class LinkPrompt extends Prompt {
 		labelStyle.clearColor();
 		labelStyle.setFontWeight(FontWeight.BOLD);
 
+		HashMap<Parameter, String> algActivityMap = URLParameters
+				.getParameterMap();
+		algActivityMap.put(Parameter.themecolor, hexColor);
+		URLParameters.setParameters(algActivityMap, false);
+
 		pMap.put(Parameter.themecolor, hexColor);
-		GWT.log(hexColor);
 		updateLinks();
 	}
 
@@ -235,25 +252,25 @@ public abstract class LinkPrompt extends Prompt {
 		iframeDisplay.setSrc(url);
 		updateIframeCode();
 
-		iframeDisplay.getStyle().setWidth(100, Unit.PCT);
-		iframeDisplay.getStyle().setHeight(100, Unit.PCT);
 	}
 
 	void updateIframeCode() {
 
+		Style iframeStyle = iframeDisplay.getStyle();
+
 		if (isValidSpec(widthLabel, widthTextBox, widthUnits)) {
 			double value = Double.parseDouble(widthTextBox.getValue());
 			String unit = widthUnits.getValue();
-			iframeDisplay.getStyle().setWidth(value, Unit.valueOf(unit));
+			iframeStyle.setWidth(value, Unit.valueOf(unit));
 		} else {
-			iframeDisplay.getStyle().setWidth(100, Unit.PCT);
+			iframeStyle.setWidth(100, Unit.PCT);
 		}
 		if (isValidSpec(heightLabel, heightTextBox, heightUnits)) {
 			double value = Double.parseDouble(heightTextBox.getValue());
 			String unit = heightUnits.getValue();
-			iframeDisplay.getStyle().setHeight(value, Unit.valueOf(unit));
+			iframeStyle.setHeight(value, Unit.valueOf(unit));
 		} else {
-			iframeDisplay.getStyle().setHeight(100, Unit.PCT);
+			iframeStyle.setHeight(100, Unit.PCT);
 		}
 		String iframeCode = JSNICalls.elementToString(iframeDisplay).replace(
 				"&amp;", "&");
@@ -293,19 +310,15 @@ public abstract class LinkPrompt extends Prompt {
 	}
 
 	class SpecChangeHandler implements ValueChangeHandler<String> {
-
 		@Override
 		public void onValueChange(ValueChangeEvent<String> event) {
 			updateIframeCode();
 		}
 	}
-
 	class KeyUpToSpecChange implements KeyUpHandler {
-
 		@Override
 		public void onKeyUp(KeyUpEvent event) {
 			updateIframeCode();
 		}
-
 	}
 }

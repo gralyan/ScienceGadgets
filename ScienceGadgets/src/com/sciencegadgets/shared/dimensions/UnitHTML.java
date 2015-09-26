@@ -111,10 +111,13 @@ public class UnitHTML {
 
 		if (denominator.getChildCount() > 0) {
 			Element frac = DOM.createDiv();
+			Element fracLine = DOM.createDiv();
 			frac.addClassName(TypeSGET.Term.asChild());
+			fracLine.addClassName(CSS.FRACTION_LINE);
 			numerator.addClassName(TypeSGET.Fraction.asChild(true));
 			denominator.addClassName(TypeSGET.Fraction.asChild(false));
 			frac.appendChild(numerator);
+			frac.appendChild(fracLine);
 			frac.appendChild(denominator);
 			frac.addClassName(UNIT_CLASSNAME);
 			if (hasSmallUnits) {

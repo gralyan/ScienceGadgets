@@ -20,9 +20,9 @@
 		background-color: rgba(0, 0, 0, 0.2);
 		border-radius: 10px;
 		border: none;
-		font-size: 300%;
 		text-shadow: 0 0 3px white;
 		color: inherit;
+		font-weight: bold;
 	}
 	
 	.options:active {

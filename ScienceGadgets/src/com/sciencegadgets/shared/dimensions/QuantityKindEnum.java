@@ -57,4 +57,19 @@ public enum QuantityKindEnum {
 		return dimension;
 	}
 
+	public String getFormattedName() {
+		String preFormatted = toString();
+		String formatted = ""+preFormatted.charAt(0);
+		
+		String space = "";
+		for(int i = 1 ; i<preFormatted.length() ; i++) {
+			char cur = preFormatted.charAt(i);
+			space = Character.isUpperCase(cur) ?" ":"";
+			formatted = formatted +space+ cur;
+			
+		}
+		
+		return formatted;
+	}
+
 }

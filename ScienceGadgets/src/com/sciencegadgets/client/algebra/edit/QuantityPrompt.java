@@ -19,9 +19,14 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra.edit;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
@@ -30,6 +35,8 @@ import com.sciencegadgets.client.algebra.EquationWrapper;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Prompt;
 import com.sciencegadgets.client.ui.SelectionPanel;
+import com.sciencegadgets.client.ui.SelectionPanel.Cell;
+import com.sciencegadgets.client.ui.SelectionPanel.SearchBox;
 import com.sciencegadgets.client.ui.specification.QuantitySpecification;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
@@ -43,18 +50,28 @@ public abstract class QuantityPrompt extends Prompt {
 	protected boolean mustCheckUnits;
 	protected QuantitySpecification spec;
 
-	protected SelectionPanel establishedSelection = new SelectionPanel();
+	protected SelectionPanel establishedSelection = new SelectionPanel(
+			"Established");
+	final SearchBox estSearch = establishedSelection.makeSearchBox();
 	protected FlowPanel specPanel = new FlowPanel();
-	
+	HandlerRegistration keyUp;
+
 	public QuantityPrompt(EquationNode equationNode, boolean clearDisplays,
 			boolean mustCheckUnits) {
 		super();
 		this.node = equationNode;
 		this.mustCheckUnits = mustCheckUnits;
 
+		// Established Area
+		FlowPanel est = new FlowPanel();
+		est.addStyleName(CSS.ESTABLISHED_QUANTITY_AREA);
+		estSearch.addStyleName(CSS.SEARCH_BOX);
 		establishedSelection.addStyleName(CSS.ESTABLISHED_QUANTITY_SELECTION);
+		est.add(estSearch);
+		est.add(establishedSelection);
+		add(est);
+
 		specPanel.addStyleName(CSS.QUANTITY_PROMPT_SPEC);
-		add(establishedSelection);
 		add(specPanel);
 
 		// OK button
@@ -76,6 +93,26 @@ public abstract class QuantityPrompt extends Prompt {
 			spec.setUnit(new UnitMap(node));
 		}
 
+		spec.getSymbolDisplay().removeStyleName(CSS.INVALID_INPUT);
+
+		establishedSelection.search("");
+		
+		keyUp = addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				estSearch.setFocus(true);
+				char keyChar = (char) event.getNativeKeyCode();
+				if (Character.isUpperCase(keyChar)) {
+					String searchQ = ""+Character.toLowerCase(keyChar);
+					estSearch.setText(searchQ);
+					estSearch.search(searchQ);
+				}
+				if (keyUp != null) {
+					keyUp.removeHandler();
+					keyUp = null;
+				}
+			}
+		});
 	}
 
 	protected boolean canHaveUnits(EquationNode mNode) {
@@ -113,7 +150,8 @@ public abstract class QuantityPrompt extends Prompt {
 			String symbol = extractSymbol();
 
 			if (mustCheckUnits
-					&& !spec.getUnitMap().isConvertableTo(node.getUnitMap()) && !"0".equals(symbol)) {
+					&& !spec.getUnitMap().isConvertableTo(node.getUnitMap())
+					&& !"0".equals(symbol)) {
 				Window.alert("Units must match:\n" + spec.getUnitMap());
 				return;
 			}

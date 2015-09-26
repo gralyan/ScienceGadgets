@@ -2,11 +2,12 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:com.google.gwt.dom.client">
 	<ui:style>
-	.main{
+	.main {
 		height: 100%;
 		width: 96%;
 		margin: 0 2%;
 	}
+	
 	.code {
 		display: inline-block;
 		width: 50%;
@@ -24,6 +25,9 @@
 		height: 100%;
 		margin-left: 1%;
 		overflow: hidden;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
 	}
 	
 	.spec {
@@ -31,6 +35,9 @@
 		position: absolute;
 		bottom: 0px;
 		background-color: gray;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
 	}
 	
 	.specRow {
@@ -52,17 +59,19 @@
 		border-top: solid 1px gray;
 		text-align: left;
 	}
-	.colorLabel{
+	
+	.colorLabel {
 		display: inline-block;
 		vertical-align: top;
-	}
-	.hashTagLabel{
-		display: inline-block;
-		vertical-align: top;
-		float: right;	
 	}
 	
-	input[type=text]{
+	.hashTagLabel {
+		display: inline-block;
+		vertical-align: top;
+		float: right;
+	}
+	
+	input[type=text] {
 		padding-left: 3px;
 	}
 	</ui:style>

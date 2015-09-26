@@ -19,6 +19,8 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra.transformations;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.google.gwt.dom.client.Element;
@@ -45,7 +47,7 @@ import com.sciencegadgets.shared.dimensions.UnitMap;
 public class VariableTransformations extends
 		TransformationList<VariableTransformationButton> {
 	private static final long serialVersionUID = -7278266823179858612L;
-	
+
 	EquationNode variableNode;
 	SystemOfEquations systemOfEq;
 
@@ -120,6 +122,7 @@ class SubstituteOutButton extends VariableTransformationButton {
 	public void transform() {
 		final Prompt dialog = new Prompt(false);
 		EquationHTML title = variableNode.getTree().getDisplayClone();
+		title.getElement().getStyle().setFontSize(200, Unit.PCT);
 		title.autoFillParent = false;
 		dialog.add(title);
 
@@ -132,24 +135,44 @@ class SubstituteOutButton extends VariableTransformationButton {
 
 		SelectionPanel eqSelect = new SelectionPanel("Substitute");
 		UnitMap substituteUnitMap = variableNode.getUnitMap();
+		String varSymbol = variableNode.getSymbol();
+
+		// Collect possible substitution sets (set of variables similar in
+		// symbol and unit to substitution variable)
+		HashMap<EquationTree, ArrayList<EquationNode>> substituteSets = new HashMap<EquationTree, ArrayList<EquationNode>>();
 		for (EquationTree eqTree : systemOfEq.getNonCurrentList()) {
 			for (EquationNode eqNode : eqTree.getNodes()) {
 				if (TypeSGET.Variable.equals(eqNode.getType())
+						&& eqNode.getSymbol().equals(varSymbol)
 						&& eqNode.getUnitMap().isConvertableTo(
 								substituteUnitMap)) {
-					EquationHTML disp = eqTree.getDisplayClone();
-					disp.addStyleName(CSS.SUBSTITUTION_CELL);
-					a: for (Entry<Element, EquationNode> entry : disp.displayMap
-							.entrySet()) {
-						if (eqNode.equals(entry.getValue())) {
-							entry.getKey().addClassName(CSS.HIGHLIGHT);
-							break a;
-						}
+					ArrayList<EquationNode> set = substituteSets.get(eqTree);
+					if (set == null) {
+						set = new ArrayList<EquationNode>();
+						substituteSets.put(eqTree, set);
 					}
-					eqSelect.add(disp.toString(), null, eqNode);
+					set.add(eqNode);
 				}
 			}
 		}
+
+		for (Entry<EquationTree, ArrayList<EquationNode>> possible : substituteSets
+				.entrySet()) {
+			ArrayList<EquationNode> set = possible.getValue();
+			EquationHTML disp = possible.getKey().getDisplayClone();
+			disp.addStyleName(CSS.SUBSTITUTION_CELL);
+			for (EquationNode eqNode : set) {
+				a: for (Entry<Element, EquationNode> entry : disp.displayMap
+						.entrySet()) {
+					if (eqNode.equals(entry.getValue())) {
+						entry.getKey().addClassName(CSS.HIGHLIGHT);
+						break a;
+					}
+				}
+			}
+			eqSelect.add(disp.toString(), null, set);
+		}
+
 		if (eqSelect.getCells().isEmpty()) {
 			dialog.add(new Label(
 					"No equations with similar variables available"));
@@ -158,7 +181,9 @@ class SubstituteOutButton extends VariableTransformationButton {
 				@Override
 				public void onSelect(Cell selected) {
 
-					EquationNode subInto = (EquationNode) selected.getEntity();
+					@SuppressWarnings("unchecked")
+					ArrayList<EquationNode> subInto = (ArrayList<EquationNode>) selected
+							.getEntity();
 
 					substitute(variableNode, subInto);
 
@@ -173,7 +198,8 @@ class SubstituteOutButton extends VariableTransformationButton {
 		dialog.center();
 	}
 
-	private void substitute(EquationNode isolatedVar, EquationNode subInto) {
+	private void substitute(EquationNode isolatedVar,
+			ArrayList<EquationNode> subIntoList) {
 
 		EquationNode substitute = null;
 		if (variableNode.isLeftSide()) {
@@ -186,12 +212,14 @@ class SubstituteOutButton extends VariableTransformationButton {
 			return;
 		}
 
-		EquationTree newTree = subInto.getTree();
+		EquationTree newTree = subIntoList.get(0).getTree();
 		systemOfEq.moveToWorkingTree(newTree);
 		systemOfEq.add(new EquationTree(newTree.getEquationXMLClone(), false));
 
-		EquationNode newNode = newTree.newNode(substitute.getXMLClone());
-		subInto.replace(newNode);
+		for (EquationNode subIntoNode : subIntoList) {
+			EquationNode newNode = newTree.newNode(substitute.getXMLClone());
+			subIntoNode.replace(newNode);
+		}
 
 		Moderator.switchToAlgebra(newTree, ActivityType.interactiveequation,
 				true);

@@ -16,6 +16,7 @@ public class HighlightHandler implements FocusHandler {
 	public HighlightHandler(TextArea codeArea) {
 		this.codeArea = codeArea;
 		codeArea.addStyleName(CSS.LINK_PROMPT_CODE_DEFAULT);
+		codeArea.addStyleName(CSS.BORDER_RADIUS_SMALL);
 	}
 
 	@Override

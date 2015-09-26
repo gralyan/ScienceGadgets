@@ -19,7 +19,6 @@
  *******************************************************************************/
 package com.sciencegadgets.client.ui;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
@@ -64,16 +63,13 @@ public class FitParentHTML extends HTML implements Resizable, HasFitParentHTML {
 
 	@Override
 	protected void onLoad() {
+		getElement().getStyle().setVisibility(Visibility.HIDDEN);
 		super.onLoad();
-		GWT.log("1");
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			@Override
 			public void execute() {
-				GWT.log("2");
-				Style style = getElement().getStyle();
-				style.setVisibility(Visibility.HIDDEN);
 				resize();
-				style.clearVisibility();
+				getElement().getStyle().clearVisibility();
 			}
 		});
 		Moderator.resizables.add(this);
@@ -89,11 +85,9 @@ public class FitParentHTML extends HTML implements Resizable, HasFitParentHTML {
 	public void resize() {
 		
 		if(this.getParent() == null) {
-			GWT.log("-----------");
 			return;
 		}
 		if (commPanel == null) {
-			GWT.log("//////////");
 			resizeThis(getFontPercent());
 			return;
 		}
@@ -106,16 +100,12 @@ public class FitParentHTML extends HTML implements Resizable, HasFitParentHTML {
 				smallest = Math.min(size, smallest);
 			}
 			int count = commPanel.getWidgetCount();
-			GWT.log("count "+count);
 			for (int i = 0; i < count; i++) {
 				Widget member = commPanel.getWidget(i);
-				GWT.log("0 ");
 				if (member instanceof HasFitParentHTML) {
 					FitParentHTML fit = ((HasFitParentHTML) member)
 							.getFitParentHTML();
-					GWT.log("00 ");
 					if (fit != null) {
-						GWT.log("000 ");
 						fit.resizeThis(smallest);
 					}
 

@@ -26,8 +26,6 @@ public class UnitAttribute {
 	public static final String EXP_DELIMITER = "^";
 	public static final String EXP_DELIMITER_REGEX = "\\^";
 	public static final String NAME_DELIMITER = "_";
-	public static final String PREFIX_QUANTITY_KIND = "Prefix";
-	public static final String PREFIXBINARY_QUANTITY_KIND = "PrefixBinary";
 
 	public static final String ANGLE = "Angle";
 	public static final String ANGLE_ATTRIBUTE = "Angle^1";

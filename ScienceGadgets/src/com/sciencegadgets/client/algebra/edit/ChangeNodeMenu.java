@@ -21,6 +21,7 @@ package com.sciencegadgets.client.algebra.edit;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
@@ -49,7 +50,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 	AlgebraActivity algebraActivity = null;
 	TransformationList<TransformationButton> changeButtons;
 
-	public static FitParentHTML copiedNodeHTML = new FitParentHTML("Paste");
+	public static String copiedNodeHTML = "Paste";
 	private static Element copiedNodeXML = null;
 
 	// private static final Object[][] ExpressionTypes = {//
@@ -121,14 +122,15 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 		TypeSGET type = node.getType();
 		if (!TypeSGET.Number.equals(type) && !TypeSGET.Variable.equals(type)) {
-			((ChangeNodeButton)getWidget(0)).toDummy();
-			((ChangeNodeButton)getWidget(1)).toDummy();
+			((ChangeNodeButton)getWidget(0)).setEnabled(false);
+			((ChangeNodeButton)getWidget(1)).setEnabled(false);
 		}
 	}
 
 	public void updatePaste() {
-		pasteButton.clear();
-		pasteButton.add(copiedNodeHTML);
+		pasteButton.setHTML(copiedNodeHTML);
+//		pasteButton.clear();
+//		pasteButton.add(copiedNodeHTML);
 //		pasteButton.getElement().getStyle().setColor("white");
 	}
 
@@ -156,7 +158,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			copiedNodeXML = node.getXMLClone();
 
 			String html = node.getHTMLString(true, true);
-			copiedNodeHTML = new FitParentHTML(html);
+			copiedNodeHTML = html;
 			updatePaste();
 		}
 		@Override
@@ -279,7 +281,6 @@ public class ChangeNodeMenu extends CommunistPanel {
 	// /////////////////////////////////////////
 	class ChangeNodeButton extends TransformationButton {
 		TypeSGET toType;
-		private boolean isDummy = false;
 
 		ChangeNodeButton(String html,
 				TransformationList<TransformationButton> changeButtons,
@@ -291,12 +292,6 @@ public class ChangeNodeMenu extends CommunistPanel {
 					+ toType.toString());
 		}
 		
-		private void toDummy(){
-			this.isDummy = true;
-			setHTML("");
-			getElement().getStyle().setOpacity(0.5);
-		}
-
 		@Override
 		public Badge getAssociatedBadge() {
 			return null;
@@ -309,7 +304,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 
 		@Override
 		public void transform() {
-			if(isDummy) {
+			if(!isEnabled()) {
 				return;
 			}
 

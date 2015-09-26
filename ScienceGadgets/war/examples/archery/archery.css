@@ -1,0 +1,139 @@
+body {
+	overflow: hidden;
+	height: 100vh;
+	width: 100vw;
+	max-width: 150vh;
+	max-height: 66.7vw;
+	margin: auto;
+}
+
+#mainPanel {
+	height:100%;
+	width:100%;
+	background-image: url('FinalProjectDiagram.svg');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	border: solid thin gray;
+	position: relative;
+}
+
+iframe{
+	outline: none;
+}
+
+.arrow {
+	background-image: url('arrow.svg');
+	position: absolute;
+	width: 10%;
+	height: 15%;
+	pointer-events: none;
+	background-size: 100% 100%;
+}
+
+.positionInfo {
+	background-color: white;
+	border: solid medium black;
+	font-size: 3vmin;
+	display: inline-block;
+	padding: 0.2em;
+	position: absolute;
+	z-index: 1;
+}
+
+.life {
+	transform: rotate(-45deg);
+	position: absolute;
+	top: 83%;
+}
+
+.input {
+	position: absolute;
+	left: 30%;
+	top: 85%;
+	width: 40%;
+	height: 10%;
+	font-size: 3vmin;
+}
+
+.lastArrowAlert {
+	position: absolute;
+	width: 30%;
+	height: 20%;
+	left: 30%;
+	top: 65%;
+	z-index: 1;
+}
+
+
+.input .gwt-HTML{
+	margin: 0 5px;
+	font-family: sans-serif;
+}
+.input input{
+	border: none;
+}
+button{
+	border: none;
+	text-align: center;
+	background-color: lavender;
+	border-radius: 0.5em;
+	outline: none;
+}
+
+.hint{
+	background-size: 100% 100%; 
+}
+.hintArea{
+	z-index: 2;
+	box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	background-color: #A0C4FF;
+	position: absolute;
+	width: 85%;
+	height: 65%;
+	left: 2%;
+	top: 2%;
+}
+
+.helpButtonArea {
+	position: absolute;
+	width: 15%;
+	height: 10%;
+	left: 62%;
+	top: 85%;
+}
+.helpButton{
+	z-index: 3;
+	box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	font-size: 150%;
+}
+.helpButton:HOVER{
+	background-color: lightGray;
+}
+.helpButton:ACTIVE{
+	background-color: silver;
+}
+.nextButtonArea{
+	position: absolute;
+	width: 15%;
+	height: 10%;
+	left: 71%;
+	top: 56%;
+}
+
+.pom {
+	position: absolute;
+	width: 8%;
+	height: 13%;
+	left: 91%;
+	top: 33%;
+	z-index: 10;
+}
+
+.grid{
+	position: absolute;
+	background-image: url('grid.svg');
+	width: 100%;
+	height: 100%;
+	background-size: 100% 100%;
+	z-index: 0;
+}

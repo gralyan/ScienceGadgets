@@ -74,6 +74,7 @@ public static final String BLOG_AREA = "sg-blogArea";
 public static final String TEXT_CENTER = "sg-textCenter";
 public static final String FILL_PARENT = "sg-fillParent";
 public static final String FIT_PARENT_HTML = "sg-fitParentHTML";
+public static final String BORDER_RADIUS_SMALL = "sg-borderRadiusSmall";
 /*---------------Browsers---------------*/
 public static final String MAIN_TITLE = "sg-mainTitle";
 public static final String EQUATION_BROWSER = "sg-equationBrowser";
@@ -99,7 +100,9 @@ public static final String CONVERSION_ACTIVITY = "sg-conversionActivity";
 public static final String SELECTION_PANEL = "sg-selectionPanel";
 public static final String SELECTION_PANEL_CELL = "sg-selectionPanelCell";
 public static final String SELECTED_CELL = "sg-selectedCell";
-public static final String QUANTITY_KIND_PREFIX = "sg-quantityKindPrefix";
+public static final String HIGHLIGHTED_CELL = "sg-highlightedCell";
+public static final String SEARCH_BOX = "sg-searchBox";
+public static final String UNIT_SELECTION = "sg-unitSelection";
 /*---------------AlgOut---------------*/
 public static final String ALG_OUT = "sg-algOut";
 public static final String ALG_OUT_ROW = "sg-algOutRow";
@@ -138,9 +141,9 @@ public static final String KEY_PAD_NUMERICAL = "sg-keyPadNumerical";
 public static final String DOUBLE_FONT_SIZE = "sg-doubleFontSize";
 public static final String INVALID_INPUT = "sg-invalidInput";
 public static final String EXAMPLE_HTML = "sg-exampleHtml";
+public static final String ESTABLISHED_QUANTITY_AREA = "sg-establishedQuantityArea";
 public static final String ESTABLISHED_QUANTITY_SELECTION = "sg-establishedQuantitySelection";
 public static final String QUANTITY_PROMPT_SPEC = "sg-quantityPromptSpec";
-public static final String UNIT_SEARCH = "sg-unitSearch";
 public static final String SUBSTITUTION_CELL = "sg-substitutionCell";
 public static final String LINK_PROMPT_CODE_DEFAULT = "sg-linkPromptCodeDefault";
 
