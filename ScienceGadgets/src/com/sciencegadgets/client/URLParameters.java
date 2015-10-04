@@ -48,7 +48,7 @@ public class URLParameters {
 
 	public enum Parameter {
 		//Always available
-		activity, easy, user, themecolor,
+		activity, easy, user, color,
 		//Only when activity==algebrasolve, algebraedit, algebrasolvegoal, algebracreategoal
 		equation, 
 		system,
@@ -113,7 +113,7 @@ public class URLParameters {
 
 	public static void setParameters(HashMap<Parameter, String> parameterMap,
 			boolean issueEvent) {
-		parameterMap.put(Parameter.themecolor, getParameter(Parameter.themecolor));
+		parameterMap.put(Parameter.color, getParameter(Parameter.color));
 		String historyToken = makeTolken(parameterMap, false);
 		History.newItem(historyToken, issueEvent);
 	}

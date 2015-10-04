@@ -16,7 +16,9 @@ public class ColorPalette {
 
 			if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
 
-				boolean isLightBackground = (r + g + b) / 3 > 127;
+				double brightness = (0.299*r + 0.587*g + 0.114*b) / 255.0;
+				
+				boolean isLightBackground = brightness > 0.5;
 				String tintContrast = isLightBackground ? "black" : "white";
 				String tintSimilar = isLightBackground ? "white" : "black";
 

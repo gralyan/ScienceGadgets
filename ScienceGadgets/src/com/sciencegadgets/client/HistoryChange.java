@@ -33,7 +33,7 @@ class HistoryChange implements ValueChangeHandler<String> {
 
 		String activityParameter = parameterMap.get(Parameter.activity);
 		
-		String palette = parameterMap.get(Parameter.themecolor);
+		String palette = parameterMap.get(Parameter.color);
 		ColorPalette.SET_PALETTE(palette);
 
 		// welcomePageArea.setVisible(false);

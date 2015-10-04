@@ -32,6 +32,7 @@ import com.sciencegadgets.client.ui.specification.NumberSpecification;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class NumberPrompt extends QuantityPrompt{
 
@@ -110,6 +111,10 @@ public class NumberPrompt extends QuantityPrompt{
 				&& constantSeleced.getUnitMap().equals(spec.getUnitMap())) {
 			node.setConstant(constantSeleced);
 		}
+	}
+	
+	public void limitUnits(UnitAttribute unit) {
+		((NumberSpecification) spec).limitUnits(unit);
 	}
 
 }

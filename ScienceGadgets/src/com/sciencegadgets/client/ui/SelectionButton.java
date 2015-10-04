@@ -101,9 +101,9 @@ public abstract class SelectionButton extends SimplePanel implements
 		this.isEnabled = enable;
 		Style style = getElement().getStyle();
 		if (enable) {
-			style.clearOpacity();
+			style.clearColor();
 		} else {
-			style.setOpacity(0.2);
+			style.setColor("gray");
 		}
 	}
 	

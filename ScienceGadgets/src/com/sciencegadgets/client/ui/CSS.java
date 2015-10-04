@@ -69,6 +69,8 @@ public static final String NUMBER_VALUE = "sg-numberValue";
 //////////////////////////////////////////////
 
 public static final String SCIENCE_GADGET_AREA = "sg-scienceGadgetArea";
+public static final String MATH_FONT = "sg-mathFont";
+public static final String NOT_MATH = "sg-notMath";
 public static final String WELCOME_PAGE_AREA = "sg-welcomePageArea";
 public static final String BLOG_AREA = "sg-blogArea";
 public static final String TEXT_CENTER = "sg-textCenter";
@@ -78,12 +80,12 @@ public static final String BORDER_RADIUS_SMALL = "sg-borderRadiusSmall";
 /*---------------Browsers---------------*/
 public static final String MAIN_TITLE = "sg-mainTitle";
 public static final String EQUATION_BROWSER = "sg-equationBrowser";
+public static final String VIDEO_PANEL = "sg-videoPanel";
 public static final String MODES = "sg-modes";
 public static final String ROW_HEADER = "sg-rowHeader";
 public static final String ROW_SUB_HEADER = "sg-rowSubHeader";
 public static final String ALG_BROWSER = "sg-algBrowser";
-public static final String ALG_BROWSER_PANEL = "sg-algBrowserPanel";
-public static final String EQ_GENERATOR_PANEL = "sg-eqGeneratorPanel";
+public static final String RANDOM_EQUATION_PANEL = "sg-randomEquationPanel";
 public static final String CHALLENGE_GENERATOR_PANEL = "sg-challengeBrowserPanel";
 public static final String EQUATION_SOLVE_BUTTON = "sg-equationSolveButton";
 public static final String SCI_BROWSER = "sg-sciBrowser";
@@ -168,7 +170,6 @@ public static final String INSERT_VAR_IMAGE = "sg-insertVarImage";
 public static final String INSERT_VAR_IMAGE_ACTIVE = "sg-insertVarImageActive";
 public static final String INSERT_VAR_SOLVE = "sg-insertVarSolve";
 public static final String INSERT_VAR_SOLVE_ACTIVE = "sg-insertVarSolveActive";
-public static final String GENERATE_BUTTON = "sg-generateButton";
 public static final String ACTIVITY_SELECTION_BUTTON = "sg-activitySelectionButton";
 public static final String ACTIVITY_SELECTION_BUTTON_SELECTED = "sg-activitySelectionButtonSelected";
 public static final String MAKE_EQ_BUTTON = "sg-makeEqButton";
@@ -176,5 +177,8 @@ public static final String CREATE_GOAL_BUTTON = "sg-createGoalButton";
 public static final String OK_PROMPT_BUTTON = "sg-okPromptButton";
 public static final String INSERT_EQUATION_OPTION = "sg-insertEquationOption";
 public static final String EQUATION_SELECTION = "sg-equationSelection";
+public static final String ARCHIVED = "sg-archived";
+public static final String VAR_SPEC_INS = "sg-variableSpecInsertButton";
+public static final String OPTIONS_BUTTON = "sg-optionsButton";
 
 }

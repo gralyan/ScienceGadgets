@@ -21,16 +21,21 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Label;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationHTML;
+import com.sciencegadgets.client.algebra.EquationPanel;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.EquationWrapper;
@@ -102,6 +107,7 @@ abstract class VariableTransformationButton extends TransformationButton {
  */
 class SubstituteOutButton extends VariableTransformationButton {
 	SystemOfEquations systemOfEq;
+	static HighlightSubstitutionAnimation subAnimation = new HighlightSubstitutionAnimation();
 
 	SubstituteOutButton(VariableTransformations context) {
 		super("Substitute", context);
@@ -124,6 +130,10 @@ class SubstituteOutButton extends VariableTransformationButton {
 		EquationHTML title = variableNode.getTree().getDisplayClone();
 		title.getElement().getStyle().setFontSize(200, Unit.PCT);
 		title.autoFillParent = false;
+		Element varEl = title.getHTMLElement(variableNode);
+		if (varEl != null) {
+			varEl.addClassName(CSS.HIGHLIGHT);
+		}
 		dialog.add(title);
 
 		// UnitAttribute unit = variableNode.getUnitAttribute();
@@ -133,14 +143,15 @@ class SubstituteOutButton extends VariableTransformationButton {
 		// return;
 		// }
 
-		SelectionPanel eqSelect = new SelectionPanel("Substitute");
+		SelectionPanel eqSelect = new SelectionPanel("Substitute Into");
 		UnitMap substituteUnitMap = variableNode.getUnitMap();
 		String varSymbol = variableNode.getSymbol();
 
 		// Collect possible substitution sets (set of variables similar in
 		// symbol and unit to substitution variable)
 		HashMap<EquationTree, ArrayList<EquationNode>> substituteSets = new HashMap<EquationTree, ArrayList<EquationNode>>();
-		for (EquationTree eqTree : systemOfEq.getNonCurrentList()) {
+		for (EquationTree eqTree : systemOfEq.getNonWorkingTrees().keySet()) {
+
 			for (EquationNode eqNode : eqTree.getNodes()) {
 				if (TypeSGET.Variable.equals(eqNode.getType())
 						&& eqNode.getSymbol().equals(varSymbol)
@@ -162,15 +173,15 @@ class SubstituteOutButton extends VariableTransformationButton {
 			EquationHTML disp = possible.getKey().getDisplayClone();
 			disp.addStyleName(CSS.SUBSTITUTION_CELL);
 			for (EquationNode eqNode : set) {
-				a: for (Entry<Element, EquationNode> entry : disp.displayMap
-						.entrySet()) {
-					if (eqNode.equals(entry.getValue())) {
-						entry.getKey().addClassName(CSS.HIGHLIGHT);
-						break a;
-					}
+				Element el = disp.getHTMLElement(eqNode);
+				if (el != null) {
+					el.addClassName(CSS.HIGHLIGHT);
 				}
 			}
-			eqSelect.add(disp.toString(), null, set);
+			Cell cell = eqSelect.add(disp.toString(), null, set);
+			if (systemOfEq.getInfo(possible.getKey()).isArchived()) {
+				cell.addStyleName(CSS.ARCHIVED);
+			}
 		}
 
 		if (eqSelect.getCells().isEmpty()) {
@@ -214,17 +225,52 @@ class SubstituteOutButton extends VariableTransformationButton {
 
 		EquationTree newTree = subIntoList.get(0).getTree();
 		systemOfEq.moveToWorkingTree(newTree);
-		systemOfEq.add(new EquationTree(newTree.getEquationXMLClone(), false));
+		systemOfEq.archive(new EquationTree(newTree.getEquationXMLClone(), false));
 
+		LinkedList<EquationNode> subs = new LinkedList<EquationNode>();
+		for (EquationNode subIntoNode : subIntoList) {
+			subIntoNode.highlight();
+		}
 		for (EquationNode subIntoNode : subIntoList) {
 			EquationNode newNode = newTree.newNode(substitute.getXMLClone());
+			subs.add(newNode);
+			subs.addAll(newNode.getChildren());
 			subIntoNode.replace(newNode);
 		}
+		
 
-		Moderator.switchToAlgebra(newTree, ActivityType.interactiveequation,
-				true);
+//		Moderator.switchToAlgebra(newTree, ActivityType.interactiveequation,
+//				true);
+		String comment = JSNICalls.elementToString(isolatedVar.getTree().getDisplay().getElement());
+		Moderator.reloadEquationPanel(comment, Skill.SUBSTITUTION, null);
 
+		subAnimation.init(newTree.getRoot().getId(), subs);
+		subAnimation.run(2000);
 	}
+}
+
+class HighlightSubstitutionAnimation extends Animation {
+	LinkedList<Style> subStyles = new LinkedList<Style>();
+
+	void init(String rootID, LinkedList<EquationNode> subs) {
+		subStyles.clear();
+		for (EquationNode eNode : subs) {
+			Element el = DOM.getElementById(eNode.getId()
+					+ EquationPanel.OF_LAYER + rootID);
+			if (el != null) {
+				subStyles.add(el.getStyle());
+			}
+		}
+	}
+
+	@Override
+	protected void onUpdate(double progress) {
+		double inverseProgress = 1-progress;
+		for(Style style : subStyles) {
+			style.setBackgroundColor("rgba(0,255,0,"+inverseProgress+")");
+		}
+	}
+
 }
 
 /**
@@ -249,6 +295,6 @@ class PlugInButton extends VariableTransformationButton {
 
 	@Override
 	public void transform() {
-		AlgebraActivity.NUMBER_SPEC_PROMPT(variableNode, true, true);
+		AlgebraActivity.NUMBER_SPEC_PROMPT(variableNode, true, true, true);
 	}
 }

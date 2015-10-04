@@ -44,7 +44,7 @@ public class VariablePrompt extends QuantityPrompt {
 
 		// Established Selection
 		for (CommonVariables var : CommonVariables.values()) {
-			establishedSelection.add(var.getSymbol() + "-" + var.toString(),
+			establishedSelection.add("<span class=\""+CSS.MATH_FONT+"\">"+var.getSymbol()+"</span>" + "-" + var.toString(),
 					null, var);
 		}
 		// Handle Established Selection

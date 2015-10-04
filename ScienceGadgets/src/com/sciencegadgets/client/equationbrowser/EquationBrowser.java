@@ -37,7 +37,8 @@ public class EquationBrowser extends FlowPanel {
 	SimplePanel activityDetailsPanel = new SimplePanel();
 	
 	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Algebra Practice", ActivityType.interactiveequation);
-	GenerateSpec generatePanel = new GenerateSpec();
+	VideoPanel videoPanel = new VideoPanel();
+	RandomEquationPanel generatePanel = new RandomEquationPanel();
 	ConversionSpecification conversionSpec = new ConversionSpecification();
 //	public ChallengeBrowser challengeBrowser = new ChallengeBrowser();
 	public MakeEquationBrowser makeEquationBrowser = new MakeEquationBrowser();
@@ -64,32 +65,24 @@ public class EquationBrowser extends FlowPanel {
 		ArrayList<ActivityButton> activityButtons = new ArrayList<EquationBrowser.ActivityButton>();
 
 		// Add buttons
-		generatePanel.getElement().setId(CSS.EQ_GENERATOR_PANEL);
 		
-		ActivityButton defaultButton = new ActivityButton("Algebra Generator",
-				generatePanel);
+		ActivityButton defaultButton = new ActivityButton("Introduction",
+				videoPanel);
 		activityButtons.add(defaultButton);
 		
-		algebraBrowser.getElement().setId(CSS.ALG_BROWSER_PANEL);
-		activityButtons.add(new ActivityButton("Algebra Practice",
-				algebraBrowser));
-
-		activityButtons.add(new ActivityButton("Conversion",
-				conversionSpec));
-//		
-//		challengeBrowser.getElement().setId(CSS.CHALLENGE_GENERATOR_PANEL);
-//		activitySelectionPanel.add(new ActivityButton("Challenges",
-//				challengeBrowser));
-		
-		makeEquationBrowser.getElement().setId(CSS.CHALLENGE_GENERATOR_PANEL);
 		activityButtons.add(new ActivityButton("Make Equation",
 				makeEquationBrowser));
+		
+		activityButtons.add(new ActivityButton("Random Equation",
+				generatePanel));
+		
+		activityButtons.add(new ActivityButton("Conversion",
+				conversionSpec));
 		
 		activitySelectionPanel.addAll(activityButtons);
 		
 		// Add initial detail
 		defaultButton.onSelect();
-		;
 	}
 
 	class ActivityButton extends SelectionButton {

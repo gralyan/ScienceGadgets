@@ -29,13 +29,13 @@ import com.sciencegadgets.client.ui.CSS;
 public enum TypeSGET {
 	Equation("sget:equation","e",CSS.EQUATION, ChildRequirement.EQUATION, TypeSGET.NOT_SET + "+" + TypeSGET.NOT_SET), //
 	Number("sget:num","n",CSS.NUMBER, ChildRequirement.TERMINAL,"#"), //
-	Variable("sget:var","v",CSS.VARIABLE, ChildRequirement.TERMINAL,"a"), //
+	Variable("sget:var","v",CSS.VARIABLE, ChildRequirement.TERMINAL,"<span class=\""+CSS.MATH_FONT+"\">a</span>"), //
 	Operation("sget:op","o",CSS.OPERATION, ChildRequirement.TERMINAL,"+-\u00B7\u00F7"), //
 	Sum("sget:sum","s",CSS.SUM, ChildRequirement.SEQUENCE, TypeSGET.NOT_SET + "+" + TypeSGET.NOT_SET), //
 	Term("sget:term","t",CSS.TERM, ChildRequirement.SEQUENCE, TypeSGET.NOT_SET + Operator.DOT.getSign() + TypeSGET.NOT_SET), //
 	Fraction("sget:frac","f",CSS.FRACTION, ChildRequirement.BINARY,
-			"<div style='border-bottom: thin solid;'>"
-			+ TypeSGET.NOT_SET + "</div><div>" + TypeSGET.NOT_SET + "</div>"), //
+			"<div style='border-bottom: thin solid; text-align: center;'>"
+			+ TypeSGET.NOT_SET + "</div><div style='text-align: center;'>" + TypeSGET.NOT_SET + "</div>"), //
 	Exponential("sget:exp","x",CSS.EXPONENTIAL, ChildRequirement.BINARY,
 			TypeSGET.NOT_SET + "<sup>" + TypeSGET.NOT_SET + "</sup>"), //
 	Log("sget:log", "l",CSS.LOG, ChildRequirement.UNARY,

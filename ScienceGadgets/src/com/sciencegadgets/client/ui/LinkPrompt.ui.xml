@@ -53,8 +53,7 @@
 	}
 	
 	.heading {
-		padding: 1% 0;
-		margin: 2% 0 1% 0;
+		margin: 1% 0 1% 0;
 		font-weight: bold;
 		border-top: solid 1px gray;
 		text-align: left;

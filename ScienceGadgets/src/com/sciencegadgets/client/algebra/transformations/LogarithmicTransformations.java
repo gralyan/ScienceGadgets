@@ -106,8 +106,8 @@ public class LogarithmicTransformations extends
 		if (TypeSGET.Exponential.equals(exponential.getType())) {
 			EquationNode exponentialBase = exponential.getFirstChild();
 			if (TypeSGET.Number.equals(exponentialBase.getType())
-					&& exponentialBase.getXMLNode().getInnerText().equals(
-							log.getAttribute(MathAttribute.LogBase))) {
+					&& exponentialBase.getXMLNode().getInnerText()
+							.equals(log.getAttribute(MathAttribute.LogBase))) {
 				EquationNode exponentialExp = exponential.getChildAt(1);
 				return new LogUnravelButton(log, exponentialExp, this);
 			}
@@ -138,7 +138,15 @@ abstract class LogTransformButton extends TransformationButton {
 
 		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
 
-		log.highlight();
+	}
+
+	@Override
+	protected void onTransformationEnd(String changeComment,
+			EquationNode nodeToSelect) {
+		if (reloadAlgebraActivity) {
+			log.highlight();
+		}
+		super.onTransformationEnd(changeComment, nodeToSelect);
 	}
 
 	@Override
@@ -236,7 +244,9 @@ class LogChangeBaseButton extends LogTransformButton {
 						denom.append(TypeSGET.Number, base);
 						denom.setAttribute(MathAttribute.LogBase, newBase);
 
-						onTransformationEnd("log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)", log);
+						onTransformationEnd(
+								"log<sub>b</sub>(x) = log<sub>c</sub>(x) / log<sub>c</sub>(b)",
+								log);
 					}
 				};
 			}
@@ -285,7 +295,9 @@ class LogProductButton extends LogTransformButton {
 
 		log.remove();
 
-		onTransformationEnd("log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)", sum);
+		onTransformationEnd(
+				"log<sub>b</sub>(x y) = log<sub>b</sub>(x) + log<sub>b</sub>(y)",
+				sum);
 	}
 
 	@Override
@@ -328,7 +340,9 @@ class LogQuotientButton extends LogTransformButton {
 
 		log.remove();
 
-		onTransformationEnd("log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)", sum);
+		onTransformationEnd(
+				"log<sub>b</sub>(x/y) = log<sub>b</sub>(x) - log<sub>b</sub>(y)",
+				sum);
 	}
 
 	@Override
@@ -364,7 +378,8 @@ class LogPowerButton extends LogTransformButton {
 
 		argument.replace(argument.getFirstChild());
 
-		onTransformationEnd("log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)", term);
+		onTransformationEnd(
+				"log<sub>b</sub>(x<sup>y</sup>) = y log<sub>b</sub>(x)", term);
 	}
 
 	@Override

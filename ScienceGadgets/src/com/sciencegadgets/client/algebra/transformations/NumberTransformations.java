@@ -156,8 +156,10 @@ class FactorNumberPromptButton extends NumberTransformationButton {
 			String original = numberNode.getSymbol();
 			int factored = Integer.parseInt(original) / factor;
 
+			if(context.reloadAlgebraActivity) {
 			numberNode.highlight();
-
+			}
+			
 			EquationNode parent = numberNode.encase(TypeSGET.Term);
 			int index = numberNode.getIndex();
 			EquationNode op = parent.addBefore(index, TypeSGET.Operation, Operator

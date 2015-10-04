@@ -162,15 +162,15 @@ public abstract class QuantityPrompt extends Prompt {
 			setNode(symbol);
 
 			// TODO allow selection of angle unit for trig arguments
-			if (TypeSGET.Trig.equals(node.getParentType())) {
-				node.getXMLNode().setAttribute(
-						MathAttribute.Unit.getAttributeName(),
-						UnitAttribute.ANGLE_ATTRIBUTE);
-			} else {
+//			if (TypeSGET.Trig.equals(node.getParentType())) {
+//				node.getXMLNode().setAttribute(
+//						MathAttribute.Unit.getAttributeName(),
+//						UnitAttribute.ANGLE_ATTRIBUTE);
+//			} else {
 				node.getXMLNode().setAttribute(
 						MathAttribute.Unit.getAttributeName(),
 						spec.getDataUnit().toString());
-			}
+//			}
 
 			disappear();
 			algebraActivity.reloadEquationPanel(null, null, true, node.getId());

@@ -20,6 +20,7 @@
 package com.sciencegadgets.client.algebra.transformations;
 
 import com.google.gwt.animation.client.Animation;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
@@ -175,7 +176,10 @@ public class BothSidesTransformations extends
 		
 		String reference = UP_ARROW;
 		if(TypeSGET.ChildRequirement.TERMINAL.equals(node.getType().childRequirement())) {
-			reference = node.getHTMLString(true, true);
+			Element referenceEl = node.getHTMLClone(true,
+					true);
+			referenceEl.addClassName(CSS.MATH_FONT);
+			reference = JSNICalls.elementToString(referenceEl);
 		}
 
 		switch (operation) {
@@ -377,7 +381,10 @@ public class BothSidesTransformations extends
 			if (joinedButton.isSelected()) {
 				joinedButton.deselect();
 				changeComment = this.getHTML();
-				node.lineThrough();
+
+				if(reloadAlgebraActivity) {
+					node.lineThrough();
+				}
 				execute();
 			} else {
 				this.select();

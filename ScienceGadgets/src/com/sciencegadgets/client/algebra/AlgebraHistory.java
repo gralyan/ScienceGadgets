@@ -19,8 +19,17 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import org.apache.james.mime4j.io.MaxLineLimitException;
+
 import com.google.gwt.animation.client.Animation;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -30,10 +39,14 @@ import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.WidgetCollection;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.URLParameters;
@@ -46,12 +59,11 @@ public class AlgebraHistory extends FlowPanel {
 
 	boolean expanded = false;
 	public boolean scrolled = false;
-	private FlowPanel firstRow = new FlowPanel();
 	boolean wasTouchMoved = false;
 	public boolean isSolved = false;
 	private AlgebraHistory that = this;
 
-	public AlgebraHistory(AlgebraActivity algebraActivity) {
+	public AlgebraHistory() {
 		addStyleName(CSS.ALG_OUT);
 
 		if (Moderator.isTouch) {
@@ -65,6 +77,7 @@ public class AlgebraHistory extends FlowPanel {
 		if (goalStr != null && !"".equals(goalStr)) {
 			Label firstRowEq = new HTML("Simplify to: " + goalStr);
 
+			FlowPanel firstRow = new FlowPanel();
 			firstRowEq.addStyleName(CSS.ALG_OUT_EQ_ROW);
 			firstRow.add(firstRowEq);
 
@@ -87,20 +100,20 @@ public class AlgebraHistory extends FlowPanel {
 		// firstRow.setHeight(getOffsetHeight() + "px");
 		// }
 
-		setHeightToLastRow();
+		reset();
 	}
 
-	public void updateAlgebraHistory(String changeComment, Skill rule,
+	public void updateAlgebraHistory(String changeComment, Skill skill,
 			EquationTree mathTree) {
 
 		changeComment = changeComment.replace("lineThrough", "");
 
-		add(new AlgebraHistoryRow(changeComment, rule, mathTree));
+		add(new AlgebraHistoryRow(changeComment, skill, mathTree));
 
 		if (changeComment.contains(BothSidesTransformations.UP_ARROW)) {
 			add(new AlgebraHistoryRow(changeComment));
 		}
-		setHeightToLastRow();
+		reset();
 	}
 
 	public void solvedUpdate(EquationTree mathTree, String evaluation) {
@@ -117,26 +130,47 @@ public class AlgebraHistory extends FlowPanel {
 		evaluatedBox.setText(evaluation);
 	}
 
-	void setHeightToLastRow() {
+	void reset() {
 		expanded = false;
 
-		int rows = getWidgetCount();
-		if (rows > 0) {
-			Widget lastRow = getWidget(rows - 1);
-			if (lastRow != null) {
-				int height = lastRow.getOffsetHeight();
-				if (lastRow instanceof AlgebraHistoryRow
-						&& ((AlgebraHistoryRow) lastRow).isChangeRow) {
-					Widget secondToLastRow = getWidget(rows - 2);
-					if (secondToLastRow != null) {
-						height += secondToLastRow.getOffsetHeight();
-					}
-				}
-				if(getParent() != null) {
-					int maxHeight = getParent().getOffsetHeight();
-					height = Math.min(maxHeight, height);
-				}
-				setHeight(height + "px");
+		setHeight("100%");
+
+		// Minimize overflow by fitting equation into row
+		LinkedList<AlgebraHistoryRow> rows = getRows();
+		if (isAttached() && !rows.isEmpty()) {
+			AlgebraHistoryRow lastRow = rows.getLast();
+			
+			int leftWidthMin = 0, rightWidthMin = 0;
+			for (AlgebraHistoryRow row : rows) {
+				leftWidthMin = Math.max(leftWidthMin,
+						row.leftCaseContent.getOffsetWidth());
+				rightWidthMin = Math.max(rightWidthMin,
+						row.rightCaseContent.getOffsetWidth());
+			}
+			double maxWidth = lastRow.leftCase.getParentElement()
+					.getOffsetWidth() * 0.9;
+			double combinedWidthMin = leftWidthMin + rightWidthMin;
+			double leftWidth = lastRow.leftCaseContent.getOffsetWidth();
+			double rightWidth = lastRow.rightCaseContent.getOffsetWidth();
+			if(combinedWidthMin < maxWidth) {// all rows fit
+				// Weigh to center
+				double exess = maxWidth - leftWidthMin - rightWidthMin;
+				leftWidth = leftWidthMin + (exess/2);
+				rightWidth = rightWidthMin + (exess/2);
+			}else if(leftWidthMin <= rightWidthMin) {
+				rightWidth = maxWidth - leftWidth;
+			}else if(leftWidthMin > rightWidthMin) {
+				leftWidth = maxWidth - rightWidth;
+			}
+
+			double combinedWidth = leftWidth + rightWidth;
+			for (AlgebraHistoryRow row : rows) {
+				Style leftStyle = row.leftCase.getStyle();
+				Style rightStyle = row.rightCase.getStyle();
+				leftStyle
+						.setWidth((leftWidth / (combinedWidth)) * 90, Unit.PCT);
+				rightStyle.setWidth((rightWidth / (combinedWidth)) * 90,
+						Unit.PCT);
 			}
 		}
 
@@ -150,10 +184,24 @@ public class AlgebraHistory extends FlowPanel {
 								- getElement().getClientHeight());
 	}
 
+	LinkedList<AlgebraHistoryRow> getRows() {
+		LinkedList<AlgebraHistoryRow> rows = new LinkedList<AlgebraHistoryRow>();
+		for (Widget row : getChildren()) {
+			if (row instanceof AlgebraHistoryRow && !((AlgebraHistoryRow) row).isChangeRow) {
+				rows.add((AlgebraHistoryRow) row);
+			}
+		}
+		return rows;
+	}
+
 	class AlgebraHistoryRow extends FlowPanel {
 		private FlowPanel eqSide = new FlowPanel();
 		private Anchor ruleSide = new Anchor();
 		boolean isChangeRow = false;
+		Element rightCase;
+		Element leftCase;
+		Element rightCaseContent;
+		Element leftCaseContent;
 
 		// Change row
 		AlgebraHistoryRow(String changeComment) {
@@ -190,10 +238,12 @@ public class AlgebraHistory extends FlowPanel {
 			Element rootEl = root.getElement();
 			rootEl.addClassName(CSS.FILL_PARENT);
 
-			Element rightCase = DOM.createDiv();
-			Element leftCase = DOM.createDiv();
-			rightCase.appendChild(rootEl.getChild(2));
-			leftCase.appendChild(rootEl.getChild(0));
+			rightCase = DOM.createDiv();
+			leftCase = DOM.createDiv();
+			rightCaseContent = (Element) rootEl.getChild(2);
+			leftCaseContent = (Element) rootEl.getChild(0);
+			rightCase.appendChild(rightCaseContent);
+			leftCase.appendChild(leftCaseContent);
 			rootEl.appendChild(rightCase);
 			rootEl.insertFirst(leftCase);
 			(leftCase).addClassName(CSS.ALG_OUT_EQ_LEFT);
@@ -204,11 +254,12 @@ public class AlgebraHistory extends FlowPanel {
 			add(ruleSide);
 
 		}
+
 	}
 
 	class AlgOutSlide extends Animation {
 
-		private FlowPanel alg = that;
+		private AlgebraHistory alg = that;
 		int heightDiff = 0;
 		private int direction;
 		private int startingHeight;
@@ -248,7 +299,7 @@ public class AlgebraHistory extends FlowPanel {
 			super.onComplete();
 			if (expanded) {
 				expanded = false;
-				setHeightToLastRow();
+				reset();
 			} else {
 				alg.setHeight(maxHeight + "px");
 				expanded = true;
@@ -286,4 +337,5 @@ public class AlgebraHistory extends FlowPanel {
 		}
 
 	}
+
 }

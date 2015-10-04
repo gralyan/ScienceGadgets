@@ -19,14 +19,24 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra.edit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -99,6 +109,51 @@ public class LinkPrompt_Equation extends LinkPrompt {
 				createGoalButton.addStyleName(CSS.BORDER_RADIUS_SMALL);
 				upperArea.add(createGoalButton);
 			}
+
+			Unit[] units = Unit.values();
+			ArrayList<String> unitStrings = new ArrayList<String>();
+			for (Unit u : units) {
+				unitStrings.add(u.toString());
+			}
+			widthUnits.setAcceptableValues(unitStrings);
+			heightUnits.setAcceptableValues(unitStrings);
+
+			SpecChangeHandler specChange = new SpecChangeHandler();
+			KeyUpToSpecChange keyUp = new KeyUpToSpecChange();
+			widthTextBox.addValueChangeHandler(specChange);
+			widthUnits.addValueChangeHandler(specChange);
+			heightTextBox.addValueChangeHandler(specChange);
+			heightUnits.addValueChangeHandler(specChange);
+			widthTextBox.addKeyUpHandler(keyUp);
+			heightTextBox.addKeyUpHandler(keyUp);
+
+			colorTextBox.addFocusHandler(new FocusHandler() {
+				@Override
+				public void onFocus(FocusEvent event) {
+					setColor(colorTextBox.getValue());
+				}
+			});
+			colorTextBox.addKeyUpHandler(new KeyUpHandler() {
+				@Override
+				public void onKeyUp(KeyUpEvent event) {
+					setColor(colorTextBox.getValue());
+				}
+			});
+
+			colorTextBox.getElement().setId("colorTextBox");
+			Element colorInput = DOM.createElement("input");
+			colorInput.setAttribute("type", "color");
+			colorInput.setAttribute("value", initialColor);
+			colorInput.setAttribute("id", "colorInputElement");
+			colorInput
+					.setAttribute(
+							"onchange",
+							"colorTextBox.value=colorInputElement.value.replace('#', ''); colorTextBox.focus()");
+			Style colorInputStyle = colorInput.getStyle();
+			colorInputStyle.setProperty("border", "none");
+			colorInputStyle.setPadding(0, Unit.PX);
+			colorInputStyle.setWidth(100, Unit.PCT);
+			colorInputArea.getElement().appendChild(colorInput);
 		} else {
 			setModal(true);
 			setAutoHideEnabled(false);
@@ -142,15 +197,21 @@ public class LinkPrompt_Equation extends LinkPrompt {
 			JSNICalls.log(e.getCause().toString());
 			return;
 		}
+		
+		if (initialColor == null || "".equals(initialColor)) {
+			initialColor = "000000";
+		}
+		colorTextBox.setText(initialColor);
+		setColor(initialColor);
 
 		super.appear();
 	}
 
-	public void setMapParameters() {
+	public HashMap<Parameter, String> setMapParameters() {
 		EquationTree eTree = algebraActivity.getEquationTree();
 		String eqString = eTree.getEquationXMLString();
 
-		pMap = new HashMap<Parameter, String>();
+		HashMap<Parameter, String> pMap = new HashMap<Parameter, String>();
 
 		// Random provided
 		String randProvided = createRandomProvidedParameter(eTree);
@@ -159,7 +220,8 @@ public class LinkPrompt_Equation extends LinkPrompt {
 		}
 
 		// Activity
-		pMap.put(Parameter.activity, ActivityType.interactiveequation.toString());
+		pMap.put(Parameter.activity,
+				ActivityType.interactiveequation.toString());
 
 		// Equation
 		if (initialEquation == null) {
@@ -168,30 +230,32 @@ public class LinkPrompt_Equation extends LinkPrompt {
 			pMap.put(Parameter.equation, initialEquation.getEquationXMLString());
 			pMap.put(Parameter.goal, eqString);
 		}
-		
+
 		// System of Equations
 		SystemOfEquations system = algebraActivity.getSystem();
-		if(system != null && system.hasMultipleEquations()) {
+		if (system != null && system.hasMultipleEquations()) {
 			pMap.put(Parameter.system, system.getURLParam());
 		}
-		
+
+		return pMap;
 	}
 
 	private String createRandomProvidedParameter(EquationTree eTree) {
 		String param = "";
-		LinkedList<EquationNode> numbers = eTree.getNodesByType(TypeSGET.Number);
-		
-		for(EquationNode num : numbers) {
+		LinkedList<EquationNode> numbers = eTree
+				.getNodesByType(TypeSGET.Number);
+
+		for (EquationNode num : numbers) {
 			String numRand = num.getAttribute(MathAttribute.Randomness);
-			if(RandomSpecPanel.RANDOM_PROVIDED.equals(numRand)){
-				param = param +URLParameters.RANDOM_PROVIDED_DELIMITER+"0";
+			if (RandomSpecPanel.RANDOM_PROVIDED.equals(numRand)) {
+				param = param + URLParameters.RANDOM_PROVIDED_DELIMITER + "0";
 			}
 		}
-		
+
 		return param.replaceFirst(URLParameters.RANDOM_PROVIDED_DELIMITER, "");
 	}
 
-	protected void updateLinks() {
+	protected void updateLinks(HashMap<Parameter, String> pMap) {
 
 		// Replaces link text with equation HTML
 
@@ -209,17 +273,33 @@ public class LinkPrompt_Equation extends LinkPrompt {
 		}
 
 		Element styleLink = new HTML(
-				"<link type=\"text/css\" rel=\"stylesheet\" href=\""+URLParameters.URL_TOP+"/CSStyles/equation.css\"></link>")
-				.getElement();
+				"<link type=\"text/css\" rel=\"stylesheet\" href=\""
+						+ URLParameters.URL_TOP
+						+ "/CSStyles/equation.css\"></link>").getElement();
 		styleLink.appendChild(html.getElement());
 		Element linkEl = linkDisplay.getElement();
 		linkEl.removeAllChildren();
 		linkEl.appendChild(styleLink);
 
 		iframeDisplay.setName("InteractiveEquation");
+		iframeDisplay.setFrameBorder(0);
 
-		super.updateLinks();
+		super.updateLinks(pMap);
 
+	}
+
+	class SpecChangeHandler implements ValueChangeHandler<String> {
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			updateIframeCode();
+		}
+	}
+
+	class KeyUpToSpecChange implements KeyUpHandler {
+		@Override
+		public void onKeyUp(KeyUpEvent event) {
+			updateIframeCode();
+		}
 	}
 
 }

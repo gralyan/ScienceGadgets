@@ -131,6 +131,7 @@ public enum Skill {
 			"<div xmlns=\"http://www.w3.org/1999/xhtml\" class=\"sg-Equation\"><div id=\"ML71\" class=\"sg-in-equation Exponential\"><div id=\"ML74\" class=\"sg-in-exponential-base Number\">10<div class=\"sg-in-term unit\" style=\"font-size: 40%;\"></div></div><div id=\"ML73\" class=\"sg-in-exponential-exponent Log\"><div class=\"sg-fenced\"><div class=\"sg-functionName\">log</div><div class=\"sg-in-log-base\">10</div><div id=\"ML75\" class=\"sg-in-log Variable\">a</div></div></div></div><div id=\"ML2\" class=\"sg-in-equation Operation\">=</div><div id=\"ML76\" class=\"sg-in-equation Variable\">a</div></div>"), //
 	//
 
+	SUBSTITUTION("Substitution"), //
 	CONVERSION("Unit Conversion"), //
 	COMMUNATIVE_PROPERTY(
 			"Communative Property",//

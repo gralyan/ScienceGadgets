@@ -39,12 +39,13 @@ public class LinkPrompt_Challenge extends LinkPrompt {
 	}
 
 	@Override
-	public void setMapParameters() {
+	public HashMap<Parameter, String> setMapParameters() {
 		
-		pMap = new HashMap<Parameter, String>();
+		HashMap<Parameter, String> pMap = new HashMap<Parameter, String>();
 		pMap.put(Parameter.problemid, problemID);
 		pMap.put(Parameter.activity, ActivityType.problem.toString());
 
+		return pMap;
 	}
 
 }

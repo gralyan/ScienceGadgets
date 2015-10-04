@@ -479,11 +479,11 @@ public class ConversionActivity extends AbsolutePanel {
 			node.setSymbol(totalNode.getSymbol());
 			node.setAttribute(MathAttribute.Unit, unitAttribute);
 			if (variableEquation == null) {
-				Moderator.switchToAlgebra(node.getTree().getEquationXMLClone(),
+				Moderator.switchToAlgebra(node.getTree(),
 						ActivityType.interactiveequation, true);
 				AlgebraActivity aActivity = Moderator
 						.getCurrentAlgebraActivity();
-				aActivity.algOut.updateAlgebraHistory("Conversion",
+				aActivity.getAlgebraHistory().updateAlgebraHistory("Conversion",
 						Skill.CONVERSION, aActivity.getEquationTree());
 			} else {
 				variableEquation.reCreate(node.getTree());

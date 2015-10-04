@@ -26,7 +26,7 @@ public enum UnitEnum {
 	Angle_610("Angle_arcSec", "Angle", "Arc Second", "null", "4.84813681E-6"),
 	Time_664("Time_s", "Time", "Second", "null", "1"),
 	Length_684("Length_in", "Length", "Inch", "null", "0.0254"),
-	Angle_694("Angle_deg", "Angle", "Degree Angle", "null", "0.0174532925"),
+	Angle_694("Angle_°", "Angle", "Degree Angle", "null", "0.0174532925"),
 	Mass_797("Mass_lb", "Mass", "Pound Mass", "A pound of mass, based on the international standard definition of the pound as exactly 0.45359237 kg.", "0.45359237"),
 	Length_818("Length_ch", "Length", "Chain", "null", "20.1168"),
 	Angle_911("Angle_arcMin", "Angle", "Arc Minute", "null", "0.000290888209"),

@@ -19,6 +19,7 @@
  *******************************************************************************/
 package com.sciencegadgets.shared.dimensions;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
@@ -48,23 +49,21 @@ public class UnitHTML {
 		return create(mathNode.getUnitAttribute(), true);
 	}
 
-	public static Element create(EquationNode mathNode,
-			String nodeId, boolean hasSmallUnits) {
-		return create(mathNode.getUnitAttribute(), nodeId,
-				hasSmallUnits);
+	public static Element create(EquationNode mathNode, String nodeId,
+			boolean hasSmallUnits) {
+		return create(mathNode.getUnitAttribute(), nodeId, hasSmallUnits);
 	}
 
 	public static Element create(UnitAttribute dataUnit, boolean hasSmallUnits) {
 		return create(dataUnit, null, hasSmallUnits);
 	}
 
-	public static Element create(UnitAttribute dataUnit,
-			String nodeId) {
+	public static Element create(UnitAttribute dataUnit, String nodeId) {
 		return create(dataUnit, nodeId, true);
 	}
 
-	public static Element create(UnitAttribute dataUnit,
-			String nodeId, boolean hasSmallUnits) {
+	public static Element create(UnitAttribute dataUnit, String nodeId,
+			boolean hasSmallUnits) {
 
 		Element numerator = DOM.createDiv();
 		Element denominator = DOM.createDiv();
@@ -83,19 +82,28 @@ public class UnitHTML {
 			if ("".equals(symbol)) {
 				symbol = name.toString();
 			}
-			
+
 			Element unitDiv = DOM.createDiv();
 			unitDiv.setAttribute("id", symbol + UNIT_NODE_DELIMITER + nodeId);
 			unitDiv.addClassName(TypeSGET.Term.asChild());
 
+			Element side;
 			if (exponent.startsWith("-")) {// Negative
 				exponent = exponent.replace("-", "");
-				denominator.appendChild(unitDiv);
+				side = denominator;
 			} else {
-				numerator.appendChild(unitDiv);
+				side = numerator;
 			}
+			side.appendChild(unitDiv);
 			if ("1".equals(exponent)) {
 				exponent = TypeSGET.Operator.SPACE.getSign();
+			}
+
+			if (!side.getFirstChild().equals(unitDiv)) {
+				Element dotDiv = DOM.createDiv();
+				dotDiv.addClassName(TypeSGET.Term.asChild(true));
+				dotDiv.setInnerText(TypeSGET.Operator.DOT.getSign());
+				side.insertBefore(dotDiv, unitDiv);
 			}
 
 			Element symbolDiv = DOM.createDiv();
@@ -133,7 +141,7 @@ public class UnitHTML {
 		} else {
 			numerator.addClassName(TypeSGET.Term.asChild());
 			numerator.addClassName(UNIT_CLASSNAME);
-			if (hasSmallUnits) {
+			if (hasSmallUnits && !"Angle_°^1".equals(dataUnit.toString())) {
 				numerator.getStyle().setFontSize(UNIT_SIZE_NONFRAC, Unit.PCT);
 			}
 			return numerator;

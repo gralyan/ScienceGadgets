@@ -63,7 +63,7 @@ public class GenerateSpec extends Composite {
 	@UiField
 	Label subjectExp;
 	
-	private Button generateButton;
+	private GenerateRandomEquationButton generateButton;
 	SlideBarDifficulty slideAdd;
 	SlideBarDifficulty slideMult;
 	SlideBarDifficulty slideFrac;
@@ -76,6 +76,8 @@ public class GenerateSpec extends Composite {
 
 	public GenerateSpec() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		addStyleName(CSS.RANDOM_EQUATION_PANEL + " "+CSS.BORDER_RADIUS_SMALL);
 
 		slideAdd = new SlideBarDifficulty(subjectAdd);
 		slideMult = new SlideBarDifficulty(subjectMult);
@@ -90,10 +92,8 @@ public class GenerateSpec extends Composite {
 		slideContainerFrac.add(slideFrac);
 		slideContainerExp.add(slideExp);
 
-		generateButton = new Button("Generate",
-				new GenerateEquationHandler(this));
-		generateButton.getElement().setId(CSS.GENERATE_BUTTON);
-		generateButtonContainer.add(generateButton);
+		generateButton = new GenerateRandomEquationButton(this);
+//		generateButtonContainer.add(generateButton);
 		generateButton.setEnabled(false);
 	}
 	
@@ -160,5 +160,16 @@ public class GenerateSpec extends Composite {
 			}
 		}
 	}
+	public GenerateRandomEquationButton getButton() {
+		return generateButton;
+	}
+}
 
+class RandomEquationPanel extends FlowPanel{
+	public RandomEquationPanel() {
+		addStyleName(CSS.FILL_PARENT);
+		GenerateSpec generateSpec = new GenerateSpec();
+		add(generateSpec);
+		add(generateSpec.getButton());
+	}
 }

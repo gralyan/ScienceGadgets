@@ -53,6 +53,7 @@ public abstract class TransformationButton extends SelectionButton implements
 	public TransformationButton(String html,
 			TransformationList<? extends TransformationButton> context) {
 		this(context);
+		addStyleName(CSS.NOT_MATH);
 		setHTML(html);
 	}
 
@@ -159,11 +160,11 @@ public abstract class TransformationButton extends SelectionButton implements
 		Badge badge = getAssociatedBadge();
 		Skill skills = badge == null ? null : badge.getSkill();
 		
-		if (allowSkillIncrease && skills != null) {
-			Moderator.increaseSkill(skills, 1);
-		}
 
 		if (transformList.reloadAlgebraActivity) {
+			if (allowSkillIncrease && skills != null) {
+				Moderator.increaseSkill(skills, 1);
+			}
 			Moderator.reloadEquationPanel(changeComment, skills, nodeToSelect.getId());
 		}
 	}

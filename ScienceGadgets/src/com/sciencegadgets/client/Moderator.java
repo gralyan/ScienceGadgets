@@ -128,8 +128,7 @@ public class Moderator implements EntryPoint {
 			ActivityType activityType, boolean updateHistory) {
 		EquationTree eTree = new EquationTree(equationXML,
 				activityType.isInEditMode());
-		switchToAlgebra(eTree, 
-				activityType, updateHistory);
+		switchToAlgebra(eTree, activityType, updateHistory);
 	}
 
 	public static void switchToAlgebra(EquationTree equationTree,
@@ -141,17 +140,18 @@ public class Moderator implements EntryPoint {
 				algebraActivity = new AlgebraActivity(equationTree,
 						activityType);
 			} else {
-				algebraActivity.setEquationTree(equationTree
-						);
+				algebraActivity.setEquationTree(equationTree);
 				if (ActivityType.interactiveequation == activityType) {
 					algebraActivity.reCreateAlgHistory();
 				}
 			}
 
-			isInEasyMode = isInEasyMode || activityType == ActivityType.editsolvegoal;
+			isInEasyMode = isInEasyMode
+					|| activityType == ActivityType.editsolvegoal;
 
 			setActivity(activityType, algebraActivity);
-			algebraActivity.reloadEquationPanel(null, null, updateHistory, null);
+			algebraActivity
+					.reloadEquationPanel(null, null, updateHistory, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JSNICalls.error(e.toString());
@@ -161,8 +161,8 @@ public class Moderator implements EntryPoint {
 		}
 	}
 
-	public static void switchToConversion(EquationNode node//,
-			) {
+	public static void switchToConversion(EquationNode node// ,
+	) {
 
 		switchToConversion(node.getSymbol(), node.getUnitAttribute(), true);
 		conversionActivity.setNode(node);
@@ -170,10 +170,13 @@ public class Moderator implements EntryPoint {
 
 	public static void switchToConversion(String initialValue,
 			UnitAttribute unitAttribute, boolean allowConvertButton) {
-		switchToConversion(initialValue, unitAttribute, allowConvertButton, true);
+		switchToConversion(initialValue, unitAttribute, allowConvertButton,
+				true);
 	}
+
 	public static void switchToConversion(String initialValue,
-			UnitAttribute unitAttribute, boolean allowConvertButton, boolean updateParameters) {
+			UnitAttribute unitAttribute, boolean allowConvertButton,
+			boolean updateParameters) {
 
 		if (conversionActivity == null) {
 			conversionActivity = new ConversionActivity();
@@ -185,12 +188,13 @@ public class Moderator implements EntryPoint {
 
 		setActivity(ActivityType.conversion, conversionActivity);
 
-		if(updateParameters) {
-		HashMap<Parameter, String> parameterMap = new HashMap<Parameter, String>();
-		parameterMap.put(Parameter.activity, ActivityType.conversion.name());
-		parameterMap.put(Parameter.conversionvalue, initialValue);
-		parameterMap.put(Parameter.unitattribute, unitAttribute.toString());
-		URLParameters.setParameters(parameterMap, false);
+		if (updateParameters) {
+			HashMap<Parameter, String> parameterMap = new HashMap<Parameter, String>();
+			parameterMap
+					.put(Parameter.activity, ActivityType.conversion.name());
+			parameterMap.put(Parameter.conversionvalue, initialValue);
+			parameterMap.put(Parameter.unitattribute, unitAttribute.toString());
+			URLParameters.setParameters(parameterMap, false);
 		}
 	}
 
@@ -246,11 +250,14 @@ public class Moderator implements EntryPoint {
 		reloadEquationPanel(null, null);
 	}
 
-	public static void reloadEquationPanel(String changeComment, String nodeIdToSelect) {
-		reloadEquationPanel(changeComment, (HashMap<Skill, Integer>) null, nodeIdToSelect);
+	public static void reloadEquationPanel(String changeComment,
+			String nodeIdToSelect) {
+		reloadEquationPanel(changeComment, (HashMap<Skill, Integer>) null,
+				nodeIdToSelect);
 	}
 
-	public static void reloadEquationPanel(String changeComment, Skill skill, String nodeIdToSelect) {
+	public static void reloadEquationPanel(String changeComment, Skill skill,
+			String nodeIdToSelect) {
 		if (skill == null) {
 			reloadEquationPanel(changeComment, nodeIdToSelect);
 		} else {
@@ -262,7 +269,8 @@ public class Moderator implements EntryPoint {
 
 	public static void reloadEquationPanel(String changeComment,
 			HashMap<Skill, Integer> skills, String nodeIdToSelect) {
-		algebraActivity.reloadEquationPanel(changeComment, skills, true, nodeIdToSelect);
+		algebraActivity.reloadEquationPanel(changeComment, skills, true,
+				nodeIdToSelect);
 	}
 
 	public static void increaseSkill(Skill skill, int increase) {

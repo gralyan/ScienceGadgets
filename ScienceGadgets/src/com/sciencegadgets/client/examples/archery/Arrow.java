@@ -197,8 +197,8 @@ public class Arrow extends FlowPanel {
 			 if (shotsFired++ == 2) {
 				 ArcheryGame.addHelpButton();
 			 }
-			 // Don't run super
-			 if(shotsFired < 3) {
+
+			 if(shotsFired < 4) {
 				 reload();
 			 }
 		}

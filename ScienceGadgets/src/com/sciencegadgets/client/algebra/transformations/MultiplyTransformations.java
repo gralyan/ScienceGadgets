@@ -293,9 +293,17 @@ abstract class MultiplyTransformButton extends TransformationButton {
 
 		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
 
-		left.highlight();
-		operation.highlight();
-		right.highlight();
+	}
+	
+	@Override
+	protected void onTransformationEnd(String changeComment,
+			EquationNode nodeToSelect) {
+		if(reloadAlgebraActivity) {
+			left.highlight();
+			operation.highlight();
+			right.highlight();
+		}
+		super.onTransformationEnd(changeComment, nodeToSelect);
 	}
 
 	@Override

@@ -172,9 +172,10 @@ class SimplifyFractionButton extends FractionTransformButton {
 	public void transform() {
 		FractionTransformations.SIMPLIFY_FRACTION(numerator, denominator, true);
 
-		numerator.highlight();
-		denominator.highlight();
-
+		if(reloadAlgebraActivity) {
+			numerator.highlight();
+			denominator.highlight();
+		}
 		if (reloadAlgebraActivity) {
 			onTransformationEnd("Simplify Fraction", fraction);
 		}
@@ -202,8 +203,10 @@ class DenominatorFlipButton extends FractionTransformButton {
 	@Override
 	public void transform() {
 
-		denominator.highlight();
-
+		if(reloadAlgebraActivity) {
+			denominator.highlight();
+		}
+		
 		// The easy mode is only useful if the numerator or denominator are fractions
 		if (Moderator.meetsRequirement(Badge.DENIMINATOR_FLIP_MULTIPLY) && (TypeSGET.Fraction.equals(denominatorType) || TypeSGET.Fraction.equals(numeratorType))) {
 			

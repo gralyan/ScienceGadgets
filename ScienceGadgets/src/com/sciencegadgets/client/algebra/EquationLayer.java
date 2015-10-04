@@ -183,10 +183,9 @@ public class EquationLayer extends SimplePanel {
 		if (toCloneEntireEquation || TypeSGET.Equation.equals(node.getType())) {
 			return new EquationLayer(node, eqHTML.clone());
 		}
-		for (Entry<Element, EquationNode> entry : eqHTML.displayMap.entrySet()) {
-			if (node == entry.getValue()) {
-				return new EquationLayer(node, new EquationHTML(entry.getKey()));
-			}
+		Element el = eqHTML.getHTMLElement(node);
+		if(el != null) {
+			return new EquationLayer(node, new EquationHTML(el));
 		}
 		JSNICalls
 				.error("Can't find element for node during EquationLayer clone\nnode: "

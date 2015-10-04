@@ -26,6 +26,7 @@ import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.KeyPadNumerical;
 import com.sciencegadgets.client.ui.UnitSelection;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class NumberSpecification extends QuantitySpecification {
 
@@ -34,6 +35,7 @@ public class NumberSpecification extends QuantitySpecification {
 
 	String randomness = "";
 	CommonConstants constantSeleced = null;
+	private UnitSelection unitSelection;
 
 	public NumberSpecification(boolean clearDisplays, boolean canHaveUnits,
 			boolean allowRandomSpec) {
@@ -81,13 +83,17 @@ public class NumberSpecification extends QuantitySpecification {
 		}
 
 		// Unit Selection
-		UnitSelection unitBox = new UnitSelection();
-		unitPalette.add(unitBox);
-		unitBox.addStyleName(CSS.FILL_PARENT);
-		unitBox.unitBox.addSelectionHandler(new UnitSelectionHandler());
+		unitSelection = new UnitSelection();
+		unitPalette.add(unitSelection);
+		unitSelection.addStyleName(CSS.FILL_PARENT);
+		unitSelection.unitBox.addSelectionHandler(new UnitSelectionHandler());
 	}
 
 	public String getRandomness() {
 		return randomness;
+	}
+	
+	public void limitUnits(UnitAttribute unit) {
+		unitSelection.limitUnits(unit);
 	}
 }

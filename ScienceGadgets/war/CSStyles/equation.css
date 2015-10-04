@@ -221,7 +221,7 @@
 
 .sg-conversionWrapper {
 	border: medium solid black;
-	background-color: #333333;
+	background-color: rgba(255,255,255,0.7);
 	cursor: move;
 	padding-left: 0.3em;
 	padding-right: 0.3em;
@@ -234,8 +234,12 @@
 }
 
 /*---------------EquationHTML (display)---------------*/
-.sg-Equation,.sg-Expression {
+
+.sg-Number, .sg-Operation, .sg-Variable:not(.sg-notMath){
 	font-family: math;
+}
+
+.sg-Equation,.sg-Expression {
 	display: inline-block;
 }
 
@@ -357,6 +361,7 @@
 }
 .sg-unit {
 	font-family: sans-serif;
+	font-weight: bold;
 }
 
 .sg-subscript {

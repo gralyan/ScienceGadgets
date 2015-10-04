@@ -18,7 +18,9 @@ body {
 }
 
 iframe{
-	outline: none;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
 }
 
 .arrow {
@@ -76,8 +78,10 @@ button{
 	border: none;
 	text-align: center;
 	background-color: lavender;
-	border-radius: 0.5em;
 	outline: none;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
 }
 
 .hint{
@@ -85,13 +89,16 @@ button{
 }
 .hintArea{
 	z-index: 2;
-	box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	box-shadow: 0 0 20px 0 black;
 	background-color: #A0C4FF;
 	position: absolute;
 	width: 85%;
 	height: 65%;
 	left: 2%;
 	top: 2%;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
 }
 
 .helpButtonArea {
@@ -103,10 +110,10 @@ button{
 }
 .helpButton{
 	z-index: 3;
-	box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
 	font-size: 150%;
 }
 .helpButton:HOVER{
+	box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
 	background-color: lightGray;
 }
 .helpButton:ACTIVE{
@@ -116,8 +123,8 @@ button{
 	position: absolute;
 	width: 15%;
 	height: 10%;
-	left: 71%;
-	top: 56%;
+	left: 72%;
+	top: 57%;
 }
 
 .pom {

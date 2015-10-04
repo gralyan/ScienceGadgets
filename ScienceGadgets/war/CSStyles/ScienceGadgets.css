@@ -19,13 +19,15 @@ body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	font-family: math;
 	/* 	background-image: url('images/chalkboard.jpeg'); */
 	background-color: #101010;
-	/* 	box-shadow:0 0 30px black inset; */
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 	margin: auto;
+}
+
+.sg-mathFont{
+	font-family: math;
 }
 
 .sg-textCenter {
@@ -54,7 +56,7 @@ body {
 	height: 12%;
 	font-size: 8vmin;
 	text-decoration: none;
-	text-shadow: 0 0 0.2em lime;
+/* 	text-shadow: 0 0 0.2em lime; */
 	color: white;
 	display: block;
 	text-align: center;
@@ -102,28 +104,16 @@ body {
 	vertical-align: top;
 }
 
-#sg-algBrowserPanel {
-	height: 100%;
+.sg-videoPanel{
 	width: 100%;
-	text-align: center;
+	height: 100%;
+	background-color: gray;
 }
 
-#sg-eqGeneratorPanel {
-	height: 100%;
+.sg-randomEquationPanel {
+	height: 80%;
 	width: 100%;
 	background-color: white;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
-	-moz-box-shadow: silver 0 0 10px 3px inset;
-	-webkit-box-shadow: silver 0 0 10px 3px inset;
-	box-shadow: silver 0 0 10px 3px inset;
-}
-
-#sg-challengeBrowserPanel {
-	height: 100%;
-	width: 100%;
-	text-align: center;
 }
 
 #sg-algBrowser {
@@ -175,17 +165,19 @@ body {
 .sg-conversionSpec {
 	width: 100%;
 	height: 100%;
-	background-color: lightGray;
+/* 	background-color: lightGray; */
 }
 /*---------------ConversionActivity---------------*/
 #sg-conversionActivity {
 	width: 100%;
 	height: 100%;
 	text-align: center;
+	color: black;
 }
 
 /*---------------SelectionPanel---------------*/
 .sg-selectionPanel {
+	font-size: 90%;
 	overflow-y: auto;
 	background-color: white;
 	color: black;
@@ -230,6 +222,7 @@ body {
 	text-align: center;
 	height: 100%;
 	width: 100%;
+	margin: 0;
 	overflow-x: hidden;
 	z-index: 10;
 	text-shadow: none;
@@ -245,8 +238,10 @@ body {
 	display: inline-block;
 	vertical-align: top;
 	width: 68%;
-	height: 100%;
 	border-right: 1px solid silver;
+	white-space: nowrap;
+	overflow-x: auto;
+	overflow-y:  
 }
 
 .sg-algOutEqLeft {
@@ -270,27 +265,37 @@ body {
 }
 
 .sg-algOutChangeRow {
-	color: red;
-	background-color: #FFFF99;
+	background-color: silver;
+	font-weight: bold;
 }
 
 .sg-algOutRuleRow {
 	display: inline-block;
 	vertical-align: top;
 	width: 30%;
-	height: 100%;
-	color: red;
+	color: blue;
 	text-decoration: none;
 }
 
 /*---------------changes---------------*/
 .sg-highlight {
-	color: red;
+	color: black;
+	background-color: lime;
+	padding: 3px;	
+	margin: 3px;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	border-radius: 0.5em;
+	
 }
 
 .sg-lineThrough {
 	color: red;
-	text-decoration: line-through;
+/* 	text-decoration: line-through; */
+	background: url(images/lineThrough.png);
+	background-size: auto 100%; 
+	background-position: center;
+	background-repeat: no-repeat;
 }
 
 /*---------------layout---------------*/
@@ -358,11 +363,12 @@ body {
 	overflow-y: scroll;
 	-moz-box-shadow: black 0 0 20px 2px;
 	-webkit-box-shadow: black 0 0 20px 2px;
-	box-shadow: black 0 10px 20px 2px;
+	box-shadow: black 0 0 20px 2px;
 }
 /*---------------toggle---------------*/
 .sg-toggleSlide {
 	background-color: gray;
+	color: black;
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
@@ -422,6 +428,7 @@ body {
 .sg-numberDisplay {
 	text-align: center;
 	background-color: #ddf;
+	color: black;
 	/* 	border: thin solid #aaaaaa; */
 	min-width: 3px;
 	min-height: 1.5em;

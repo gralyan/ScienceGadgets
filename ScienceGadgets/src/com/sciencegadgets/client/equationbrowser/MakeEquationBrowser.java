@@ -19,6 +19,7 @@
  *******************************************************************************/
 package com.sciencegadgets.client.equationbrowser;
 
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
@@ -42,7 +43,7 @@ public class MakeEquationBrowser extends FlowPanel {
 	MakeEquationBrowser() {
 		setSize("100%", "100%");
 		algebraBrowser.setHeight("80%");
-		blankEqButton.setHeight("20%");
+		algebraBrowser.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		blankEqButton.addStyleName(CSS.MAKE_EQ_BUTTON);
 
 		add(algebraBrowser);

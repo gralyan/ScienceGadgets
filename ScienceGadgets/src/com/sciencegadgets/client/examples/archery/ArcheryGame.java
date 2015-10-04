@@ -58,7 +58,7 @@ public class ArcheryGame implements EntryPoint {
 
 		int distanceValueCenti = (int) (Math.random() * 2000 + 1000);
 		double distanceValue = distanceValueCenti / 100.0;
-		distanceLabel = new Label(distanceValue + "m");
+		distanceLabel = new Label("Δx="+distanceValue + "m");
 		distanceLabel.addStyleName("positionInfo");
 		distanceLabel.getElement().getStyle().setLeft(80, Unit.PCT);
 		distanceLabel.getElement().getStyle().setTop(73, Unit.PCT);
@@ -67,13 +67,13 @@ public class ArcheryGame implements EntryPoint {
 		int heightValueCenti = (int) (distanceValue
 				* (Math.random() * 0.40 + 0.20) * 100);
 		double heightValue = heightValueCenti / 100.0;
-		heightLabel = new Label(heightValue + "m");
+		heightLabel = new Label("Δy="+heightValue + "m");
 		heightLabel.addStyleName("positionInfo");
-		heightLabel.getElement().getStyle().setLeft(89, Unit.PCT);
+		heightLabel.getElement().getStyle().setLeft(88, Unit.PCT);
 		heightLabel.getElement().getStyle().setTop(55, Unit.PCT);
 		
 		int angleValue = (int)(Math.random()*20+30);
-		angleLabel = new Label(angleValue+"\u00B0");
+		angleLabel = new Label("θ="+angleValue+"\u00B0");
 		angleLabel.addStyleName("positionInfo");
 		angleLabel.getElement().getStyle().setLeft(23, Unit.PCT);
 		angleLabel.getElement().getStyle().setTop(70, Unit.PCT);
@@ -196,7 +196,7 @@ public class ArcheryGame implements EntryPoint {
 					break;
 				case 3:
 					hint.removeFromParent();
-					HTML iframe = new HTML("<iframe name=\"InteractiveEquation\" src=\"http://localhost:8888/ScienceGadgets.html#activity=interactiveequation&themecolor=A0C4FF&system=%3Ce%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evox%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evo%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cr%20%20f%E2%89%88%22cos%22%3E%3Cv%20%20u%E2%89%88%22Angle%5E1%22%3E%CE%B8%5Bv%5D%5Br%5D%5Bt%5D%5Be%5Dsoe%3Ce%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evoy%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evo%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cr%20%20f%E2%89%88%22sin%22%3E%3Cv%20%20u%E2%89%88%22Angle%5E1%22%3E%CE%B8%5Bv%5D%5Br%5D%5Bt%5D%5Be%5Dsoe%3Ce%3E%3Cv%20%20u%E2%89%88%22Length%5E1%22%3E%CE%94x%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evox%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cv%20%20u%E2%89%88%22Time%5E1%22%3Et%5Bv%5D%5Bt%5D%5Be%5D&equation=%3Ce%3E%3Cv%20%20u%E2%89%88%22Length%5E1%22%3E%CE%94y%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Cs%3E%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evoy%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cv%20%20u%E2%89%88%22Time%5E1%22%3Et%5Bv%5D%5Bt%5D%3Co%3E%E2%9E%95%5Bo%5D%3Ct%3E%3Cf%3E%3Cn%20%20v%E2%89%88%221%22%3E1%5Bn%5D%3Cn%20%20v%E2%89%88%222%22%3E2%5Bn%5D%5Bf%5D%3Co%3E%C2%B7%5Bo%5D%3Cn%20%20v%E2%89%88%229.80665%22%20u%E2%89%88%22Length_m%5E1*Time_s%5E-2%22%3Egn%5Bn%5D%3Co%3E%C2%B7%5Bo%5D%3Cx%3E%3Cv%20%20u%E2%89%88%22Time%5E1%22%3Et%5Bv%5D%3Cn%20%20v%E2%89%88%222%22%3E2%5Bn%5D%5Bx%5D%5Bt%5D%5Bs%5D%5Be%5D\" style=\"width: 100%; height: 100%;\"></iframe>");
+					HTML iframe = new HTML("<iframe name=\"InteractiveEquation\" frameborder=\"0\" src=\"http://localhost:8888/ScienceGadgets.html#activity=interactiveequation&color=A0C4FF&system=%3Ce%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evox%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evo%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cr%20%20f%E2%89%88%22cos%22%3E%3Cv%20%20u%E2%89%88%22Angle%5E1%22%3E%CE%B8%5Bv%5D%5Br%5D%5Bt%5D%5Be%5Dsoe%3Ce%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evoy%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evo%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cr%20%20f%E2%89%88%22sin%22%3E%3Cv%20%20u%E2%89%88%22Angle%5E1%22%3E%CE%B8%5Bv%5D%5Br%5D%5Bt%5D%5Be%5Dsoe%3Ce%3E%3Cv%20%20u%E2%89%88%22Length%5E1%22%3E%CE%94x%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evox%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cv%20%20u%E2%89%88%22Time%5E1%22%3Et%5Bv%5D%5Bt%5D%5Be%5D&equation=%3Ce%3E%3Cv%20%20u%E2%89%88%22Length%5E1%22%3E%CE%94y%5Bv%5D%3Co%3E%E2%89%88%5Bo%5D%3Cs%3E%3Ct%3E%3Cv%20%20u%E2%89%88%22Velocity%5E1%22%3Evoy%5Bv%5D%3Co%3E%C2%B7%5Bo%5D%3Cv%20%20u%E2%89%88%22Time%5E1%22%3Et%5Bv%5D%5Bt%5D%3Co%3E%E2%9E%95%5Bo%5D%3Ct%3E%3Cf%3E%3Cn%20%20v%E2%89%88%221%22%3E1%5Bn%5D%3Cn%20%20v%E2%89%88%222%22%3E2%5Bn%5D%5Bf%5D%3Co%3E%C2%B7%5Bo%5D%3Cn%20%20v%E2%89%88%229.80665%22%20u%E2%89%88%22Length_m%5E1*Time_s%5E-2%22%3Egn%5Bn%5D%3Co%3E%C2%B7%5Bo%5D%3Cx%3E%3Cv%20%20u%E2%89%88%22Time%5E1%22%3Et%5Bv%5D%3Cn%20%20v%E2%89%88%222%22%3E2%5Bn%5D%5Bx%5D%5Bt%5D%5Bs%5D%5Be%5D\" style=\"width: 100%; height: 100%;\"></iframe>");
 					iframe.addStyleName("hintArea");
 					mainPanel.add(iframe);
 

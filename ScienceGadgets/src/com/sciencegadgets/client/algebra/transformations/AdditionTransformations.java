@@ -254,9 +254,11 @@ class AddZeroButton extends AddTransformButton {
 
 	@Override
 	public void transform() {
-		operation.highlight();
-		zero.highlight();
-
+		if(reloadAlgebraActivity) {
+			operation.highlight();
+			zero.highlight();
+		}
+		
 		if (isMinus && other.getIndex() > zero.getIndex()) {
 			AlgebraicTransformations.propagateNegative(other);
 		}
@@ -415,10 +417,12 @@ class AddNumbersButton extends AddTransformButton {
 	private void addNumbers(EquationNode left, EquationNode right,
 			BigDecimal totalValue, BigDecimal leftValue, BigDecimal rightValue) {
 
-		right.highlight();
-		operation.highlight();
-		left.highlight();
-
+		if(reloadAlgebraActivity) {
+			right.highlight();
+			operation.highlight();
+			left.highlight();
+		}
+		
 		right.setSymbol(totalValue.stripTrailingZeros().toEngineeringString());
 
 		if (isMinusBeforeLeft) {
@@ -465,10 +469,12 @@ class AddSimilarButton extends AddTransformButton {
 	@Override
 	public void transform() {
 
-		right.highlight();
-		operation.highlight();
-		left.highlight();
-
+		if(reloadAlgebraActivity) {
+			right.highlight();
+			operation.highlight();
+			left.highlight();
+		}
+		
 		if (!isMinus && !isMinusBeforeLeft) {
 			EquationNode casing = right.encase(TypeSGET.Term);
 			casing.addFirst(TypeSGET.Operation, Operator.getMultiply()
@@ -544,8 +550,10 @@ class ToCommonDenominatorButton extends AddTransformButton {
 	public void transform() {
 
 		if (nonFrac != null && fraction != null) {// One Fraction
-			nonFrac.highlight();
 
+			if(reloadAlgebraActivity) {
+				nonFrac.highlight();
+			}
 			EquationNode commonDenominator = fraction.getChildAt(1);
 
 			EquationNode nonFracTerm = nonFrac.encase(TypeSGET.Term);
@@ -558,9 +566,11 @@ class ToCommonDenominatorButton extends AddTransformButton {
 			nonFracFraction.append(commonDenominator.clone());
 
 		} else {// Both left and right are fractions
-			left.highlight();
-			right.highlight();
 
+			if(reloadAlgebraActivity) {
+				left.highlight();
+				right.highlight();
+			}
 			EquationNode commonLeft = left.getChildAt(1).clone();
 			EquationNode commonRight = right.getChildAt(1).clone();
 
@@ -613,10 +623,12 @@ class AddFractionsButton extends AddTransformButton {
 	@Override
 	public void transform() {
 
-		right.highlight();
-		operation.highlight();
-		left.highlight();
-
+		if(reloadAlgebraActivity) {
+			right.highlight();
+			operation.highlight();
+			left.highlight();
+		}
+		
 		if (isMinusBeforeLeft) {
 			minusBeforeLeft.setSymbol(Operator.PLUS.getSign());
 			AlgebraicTransformations.propagateNegative(left);
@@ -655,9 +667,12 @@ class AddLogsButton extends AddTransformButton {
 
 	@Override
 	public void transform() {
-		left.highlight();
-		right.highlight();
 
+		if(reloadAlgebraActivity) {
+			left.highlight();
+			right.highlight();
+		}
+		
 		EquationNode newLogChild;
 		EquationNode leftChild = left.getFirstChild();
 		if (isMinus) {

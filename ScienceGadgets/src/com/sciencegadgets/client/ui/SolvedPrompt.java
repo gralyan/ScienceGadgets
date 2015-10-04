@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
+import com.sciencegadgets.client.algebra.AlgebraHistory;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.transformations.Skill;
 import com.sciencegadgets.client.entities.users.Badge;
@@ -71,10 +72,11 @@ public class SolvedPrompt extends Prompt {
 	public void solved(AlgebraActivity algebraActivity, String evaluation) {
 		// Moderator.SOUNDS.RESPONSE_SUCCESS.play();
 		historyContainer.clear();
-		algebraActivity.algOut.solvedUpdate(algebraActivity.getEquationTree(), evaluation);
-		algebraActivity.algOut.isSolved = true;
+		AlgebraHistory algOut = algebraActivity.getAlgebraHistory();
+		algOut.solvedUpdate(algebraActivity.getEquationTree(), evaluation);
+		algOut.isSolved = true;
 		historyContainer.getElement().appendChild(
-				algebraActivity.algOut.getElement().cloneNode(true));
+				algOut.getElement().cloneNode(true));
 
 		skillContainer.clear();
 

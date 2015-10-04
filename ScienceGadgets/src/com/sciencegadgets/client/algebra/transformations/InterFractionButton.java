@@ -43,13 +43,14 @@ public class InterFractionButton extends TransformationButton {
 	private String dropHTML = "";
 	private DropType dropType;
 	private EquationNode zoomTo;
+	protected Boolean reloadAlgebraActivity;
 
 	public InterFractionButton(InterFractionTransformations context,
 			EquationNode drag, EquationNode target, DropType dropType) {
 		super(context);
 		addStyleName(CSS.FRACTION);
 		
-
+		reloadAlgebraActivity = context.reloadAlgebraActivity;
 		this.drag = drag;
 		this.target = target;
 		this.dropType = dropType;
@@ -114,8 +115,10 @@ public class InterFractionButton extends TransformationButton {
 	 */
 	private void cancelDrop() {
 
-		target.lineThrough();
-
+		if(reloadAlgebraActivity) {
+			target.lineThrough();
+		}
+		
 		if (TypeSGET.Fraction.equals(drag.getParentType())
 				&& TypeSGET.Fraction.equals(target.getParentType())) {
 			EquationNode one = target.getParent().replace(TypeSGET.Number, "1");
@@ -287,9 +290,10 @@ public class InterFractionButton extends TransformationButton {
 			cleanSide(drag);
 		}
 
-		drag.lineThrough();
-		target.highlight();
-
+		if(reloadAlgebraActivity) {
+			drag.lineThrough();
+			target.highlight();
+		}
 		onTransformationEnd(dropHTML, zoomTo);
 
 	}

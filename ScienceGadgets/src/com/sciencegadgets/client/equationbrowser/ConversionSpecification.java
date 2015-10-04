@@ -41,7 +41,6 @@ public class ConversionSpecification extends FlowPanel {
 		setSize("100%", "100%");
 		addStyleName(CSS.CONVERSION_SPECIFICATION);
 		conversionSpec.setHeight("80%");
-		convertButton.setHeight("20%");
 		convertButton.addStyleName(CSS.MAKE_EQ_BUTTON);
 
 		add(conversionSpec);

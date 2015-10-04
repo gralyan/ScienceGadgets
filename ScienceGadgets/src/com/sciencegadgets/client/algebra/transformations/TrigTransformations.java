@@ -118,9 +118,17 @@ class TrigTransformButton extends TransformationButton {
 
 		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
 
-		trig.highlight();
 	}
 
+	@Override
+	protected void onTransformationEnd(String changeComment,
+			EquationNode nodeToSelect) {
+		if(reloadAlgebraActivity) {
+			trig.highlight();
+		}
+		super.onTransformationEnd(changeComment, nodeToSelect);
+	}
+	
 	@Override
 	TransformationButton getPreviewButton(EquationNode trig) {
 		previewContext = new TrigTransformations(trig);

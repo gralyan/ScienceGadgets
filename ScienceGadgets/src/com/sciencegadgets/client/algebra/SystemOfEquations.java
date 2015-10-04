@@ -1,5 +1,6 @@
 package com.sciencegadgets.client.algebra;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Element;
@@ -8,37 +9,41 @@ import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class SystemOfEquations {
+	
+	private EquationTree workingTree;
+	private HashMap<EquationTree, SystemEquationInfo> system = new HashMap<EquationTree, SystemEquationInfo>();
+//	private EquationTree currentTree = null;
+//	private LinkedList<EquationTree> nonWorkingTrees = new LinkedList<EquationTree>();
+//	private LinkedList<EquationTree> archivedTrees = new LinkedList<EquationTree>();
 
-	private EquationTree currentTree = null;
-	private LinkedList<EquationTree> nonCurrentlist = new LinkedList<EquationTree>();
-
-	public SystemOfEquations(EquationTree currentTree) {
-		this.currentTree = currentTree;
+	public SystemOfEquations(EquationTree workingTree) {
+		this.workingTree = workingTree;
+		system.put(workingTree, new SystemEquationInfo(false));
 	}
 	
-	public LinkedList<EquationTree> getNonCurrentList() {
-		return nonCurrentlist;
+	public EquationTree getWorkingTree() {
+		return workingTree;
 	}
 	
-	public EquationTree getCurrentTree() {
-		return currentTree;
+	public HashMap<EquationTree, SystemEquationInfo> getNonWorkingTrees() {
+		HashMap<EquationTree, SystemEquationInfo> nonWorking = new HashMap<EquationTree, SystemEquationInfo>(system);
+		nonWorking.remove(workingTree);
+		return nonWorking;
 	}
 	
-	void setCurrentTree(EquationTree eqTree) {
-		currentTree = eqTree;
+	void setWorkingTree(EquationTree eTree) {
+		workingTree = eTree;
 	}
 	
-	void newCurrentTree() {
-		nonCurrentlist.add(currentTree);
-		currentTree = new EquationTree(TypeSGET.Variable,
+	void newWorkingTree() {
+		workingTree = new EquationTree(TypeSGET.Variable,
 				TypeSGET.NOT_SET, TypeSGET.Variable, TypeSGET.NOT_SET, true);
+		system.put(workingTree, new SystemEquationInfo(false));
 	}
 	
 	public Boolean moveToWorkingTree(EquationTree eqTree) {
-		if(nonCurrentlist.contains(eqTree)) {
-			nonCurrentlist.add(currentTree);
-			currentTree = eqTree;
-			nonCurrentlist.remove(eqTree);
+		if(system.containsKey(eqTree)) {
+			workingTree = eqTree;
 			return true;
 		}
 		return false;
@@ -49,8 +54,8 @@ public class SystemOfEquations {
 				.split(URLParameters.SYSTEM_OF_EQUATIONS_DELIMITER);
 		for (String eqStr : sysArray) {
 			Element eqXML = new HTML(eqStr).getElement().getFirstChildElement();
-			EquationTree eqTree = new EquationTree(eqXML, currentTree.isInEditMode());
-			nonCurrentlist.add(eqTree);
+			EquationTree eqTree = new EquationTree(eqXML, workingTree.isInEditMode());
+			system.put(eqTree, new SystemEquationInfo(false));
 		}
 	}
 	
@@ -58,23 +63,37 @@ public class SystemOfEquations {
 	
 		String URLParam = "";
 			String del = URLParameters.SYSTEM_OF_EQUATIONS_DELIMITER;
-			for(EquationTree eqTree : nonCurrentlist) {
+			for(EquationTree eqTree : getNonWorkingTrees().keySet()) {
 				URLParam = URLParam + del + eqTree.getEquationXMLString();
 			}
 			URLParam = URLParam.substring(del.length());
 		return URLParam;
 	}
-
-	public void add(EquationTree eqTree){
-		nonCurrentlist.add(eqTree);
-	}
 	
-	public void remove(EquationTree eqTree) {
-		nonCurrentlist.remove(eqTree);
+	public SystemEquationInfo getInfo(EquationTree eTree) {
+		return system.get(eTree);
 	}
 	
 	public Boolean hasMultipleEquations() {
-		return !nonCurrentlist.isEmpty();
+		return system.size() > 1;
+	}
+	
+	public void archive(EquationTree eTree) {
+		SystemEquationInfo sysEqInfo = new SystemEquationInfo(true);
+		system.put(eTree, sysEqInfo);
 	}
 
+	public class SystemEquationInfo{
+		private boolean isArchived = false;
+		AlgebraHistory history;
+		public SystemEquationInfo(Boolean isArchived) {
+			this.isArchived = isArchived;
+		}
+		public void setHistory(AlgebraHistory history){
+			this.history = history;
+		}
+		public Boolean isArchived() {
+			return isArchived;
+		}
+	}
 }

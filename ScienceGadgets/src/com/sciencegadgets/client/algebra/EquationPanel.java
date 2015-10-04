@@ -389,12 +389,19 @@ public class EquationPanel extends AbsolutePanel {
 				zoomAnimation.cancel();
 			}
 			if (prevFocus.equals(newFocus.getParentLayer())) {
-				int dx = prevSelection.getAbsoluteLeft()
-						- newFocus.getEqHTML().getAbsoluteLeft();
-				int dy = prevSelection.getAbsoluteTop()
-						- newFocus.getEqHTML().getAbsoluteTop();
-				zoomAnimation.setSpecs(prevFocus, newFocus, dx, dy, true);
-				zoomAnimation.run(500);
+				if (prevSelection == null) {
+					if (prevFocus != null) {
+						prevFocus.setVisible(false);
+					}
+					newFocus.setVisible(true);
+				} else {
+					int dx = prevSelection.getAbsoluteLeft()
+							- newFocus.getEqHTML().getAbsoluteLeft();
+					int dy = prevSelection.getAbsoluteTop()
+							- newFocus.getEqHTML().getAbsoluteTop();
+					zoomAnimation.setSpecs(prevFocus, newFocus, dx, dy, true);
+					zoomAnimation.run(500);
+				}
 			} else if (newFocus.equals(prevFocus.getParentLayer())) {
 				Element prevEl = DOM.getElementById(prevFocus.layerId
 						+ OF_LAYER + newFocus.layerId);

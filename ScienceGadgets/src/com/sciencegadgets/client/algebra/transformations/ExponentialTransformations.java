@@ -203,7 +203,15 @@ abstract class ExponentialTransformButton extends TransformationButton {
 
 		this.reloadAlgebraActivity = context.reloadAlgebraActivity;
 
-		exponential.highlight();
+	}
+
+	@Override
+	protected void onTransformationEnd(String changeComment,
+			EquationNode nodeToSelect) {
+		if (reloadAlgebraActivity) {
+			exponential.highlight();
+		}
+		super.onTransformationEnd(changeComment, nodeToSelect);
 	}
 
 	@Override

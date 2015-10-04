@@ -19,6 +19,9 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra;
 
+import java.util.Map.Entry;
+
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -33,6 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
+import com.sciencegadgets.client.algebra.SystemOfEquations.SystemEquationInfo;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.ToggleSlide;
 import com.sciencegadgets.shared.TypeSGET;
@@ -49,7 +53,7 @@ public class OptionsHandler implements ClickHandler {
 		optionsButton = algebraActivity.optionsButton;
 
 		optionsPanel.getElement().getStyle().setOverflowY(Overflow.AUTO);
-		
+
 		optionsPopup = new OptionsPopup(optionsButton);
 		optionsPopup.addStyleName(CSS.OPTIONS_POPUP);
 		optionsPopup.clear();
@@ -80,8 +84,12 @@ public class OptionsHandler implements ClickHandler {
 			optionsPanel.add(editSolveOption);
 		}
 
-		for (EquationTree eqTree : algebraActivity.getSystem().getNonCurrentList()) {
-			EquationButton eqButton  = new EquationButton(algebraActivity, eqTree);
+		SystemOfEquations system = algebraActivity.getSystem();
+		for (EquationTree eTree : system.getNonWorkingTrees().keySet()) {
+			EquationButton eqButton = new EquationButton(algebraActivity, eTree);
+			if (system.getInfo(eTree).isArchived()) {
+				eqButton.addStyleName(CSS.ARCHIVED);
+			}
 			optionsPanel.add(eqButton);
 		}
 
@@ -90,30 +98,48 @@ public class OptionsHandler implements ClickHandler {
 					algebraActivity);
 			optionsPanel.add(insEqButton);
 		}
-		optionsPopup.showRelativeTo(optionsButton);
+		// optionsPopup.showRelativeTo(optionsButton);
+		optionsPopup.show();
 	}
 
 }
 
 class OptionsPopup extends PopupPanel {
-	Button optionsButton;
+	SlideAnimation slideAnimation;
 
-	OptionsPopup(Button optionsButton) {
-		this.optionsButton = optionsButton;
-		this.getElement().getStyle().setBackgroundColor("white");
+	OptionsPopup(final Button optionsButton) {
+		this.getElement().getStyle().setBackgroundColor("gray");
+		this.getElement().getStyle().setOverflowY(Overflow.AUTO);
+		slideAnimation = new SlideAnimation(this);
 	}
 
 	@Override
 	public void show() {
-		AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
-		int optionsButtonHeight = optionsButton.getOffsetHeight();
-
-		this.setPixelSize(mainPanel.getOffsetWidth() / 2,
-				mainPanel.getOffsetHeight() - optionsButtonHeight);
-		
-		getElement().getStyle().setOverflowY(Overflow.AUTO);
-
+		slideAnimation.init();
 		super.show();
+		slideAnimation.run(500);
+	}
+}
+
+class SlideAnimation extends Animation {
+	OptionsPopup pop;
+	int startWidth;
+	int endWidth;
+
+	public SlideAnimation(OptionsPopup pop) {
+		this.pop = pop;
+	}
+
+	void init() {
+		AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
+		startWidth = 0; //optionsButton.getOffsetWidth();
+		endWidth = (int) (mainPanel.getOffsetWidth() * 0.7);
+		pop.setPixelSize(startWidth, mainPanel.getOffsetHeight());
+	}
+
+	@Override
+	protected void onUpdate(double progress) {
+		 pop.setWidth(startWidth + (progress*(endWidth-startWidth))+"px");
 	}
 }
 
@@ -121,10 +147,11 @@ class OptionsPopup extends PopupPanel {
 // Option Handlers
 //
 
-class EquationButton extends Button{
+class EquationButton extends Button {
 	public EquationButton(final AlgebraActivity algebraActivity,
 			final EquationTree eqTree) {
-		super(JSNICalls.elementToString(eqTree.reloadDisplay(false, true).getElement()));
+		super(JSNICalls.elementToString(eqTree.reloadDisplay(true, true)
+				.getElement()));
 
 		addStyleName(CSS.EQUATION_SELECTION);
 		addClickHandler(new ClickHandler() {
@@ -147,7 +174,7 @@ class InsertEquationButton extends Button {
 			@Override
 			public void onClick(ClickEvent event) {
 				OptionsHandler.optionsPopup.hide();
-				algebraActivity.getSystem().newCurrentTree();
+				algebraActivity.getSystem().newWorkingTree();
 				Moderator.reloadEquationPanel();
 			}
 		});

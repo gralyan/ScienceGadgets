@@ -21,25 +21,28 @@ package com.sciencegadgets.client.equationbrowser;
 
 import java.util.LinkedHashMap;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
 import com.sciencegadgets.client.algebra.EquationGenerator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.equationbrowser.GenerateSpec.Difficulty;
+import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.shared.TypeSGET;
 
-class GenerateEquationHandler implements ClickHandler {
+class GenerateRandomEquationButton extends SelectionButton {
 
 	GenerateSpec generateSpec;
 
-	public GenerateEquationHandler(GenerateSpec generateSpec) {
+	public GenerateRandomEquationButton(GenerateSpec generateSpec) {
 		this.generateSpec = generateSpec;
+		addStyleName(CSS.MAKE_EQ_BUTTON);
+		setHTML("Generate");
 	}
 
 	@Override
-	public void onClick(ClickEvent event) {
+	protected void onSelect() {
+
 		boolean mustBeWholeAnswer = true;
 		boolean mustBePositives = true;
 
@@ -181,4 +184,5 @@ class GenerateEquationHandler implements ClickHandler {
 		// Moderator.reloadEquationPanel(null, null);
 
 	}
+
 }

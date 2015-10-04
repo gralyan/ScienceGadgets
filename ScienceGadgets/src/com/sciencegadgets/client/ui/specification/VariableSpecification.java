@@ -46,6 +46,7 @@ public class VariableSpecification extends QuantitySpecification {
 		// Symbol Selection
 		symbolPalette
 				.add(new KeyPadNumerical(symbolDisplay, false, true, false));
+		symbolDisplay.addStyleName(CSS.MATH_FONT);
 
 		symbolPalette.add(new Label("Latin"));
 		for (char i = 0; i < 26; i++) {
@@ -98,7 +99,7 @@ public class VariableSpecification extends QuantitySpecification {
 			} else {
 				addClickHandler(symbolClick);
 			}
-			addStyleName(CSS.SMALLEST_BUTTON);
+			addStyleName(CSS.VAR_SPEC_INS+" "+ CSS.SMALLEST_BUTTON);
 		}
 	}
 

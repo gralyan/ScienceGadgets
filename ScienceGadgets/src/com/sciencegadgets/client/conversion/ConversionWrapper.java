@@ -48,7 +48,7 @@ public class ConversionWrapper extends Wrapper {
 		this.conversionActivity = conversionAvtivity;
 		this.unitDisplay = unitDisplay;
 
-		this.addStyleName(CSS.CONVERSION_WRAPPER);
+		this.addStyleName(CSS.CONVERSION_WRAPPER+" "+CSS.NOT_MATH);
 
 		UnitMultiple[] mult = node.getUnitAttribute().getUnitMultiples();
 		if (mult.length > 0) {

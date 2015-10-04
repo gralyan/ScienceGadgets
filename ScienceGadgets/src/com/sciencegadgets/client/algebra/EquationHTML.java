@@ -22,6 +22,7 @@ package com.sciencegadgets.client.algebra;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -53,7 +54,7 @@ public class EquationHTML extends HTML {
 	public boolean pilot = false;
 	private Element left = null;
 	private Element right = null;
-	public final HashMap<Element, EquationNode> displayMap = new HashMap<Element, EquationNode>();
+	private final HashMap<Element, EquationNode> displayMap = new HashMap<Element, EquationNode>();
 
 	public EquationHTML(EquationTree mTree) {
 		this(mTree, true, true, false);
@@ -483,5 +484,17 @@ public class EquationHTML extends HTML {
 			break;
 		}
 	}
+	
+	public Element getHTMLElement(EquationNode eNode) {
+		for (Entry<Element, EquationNode> entry : displayMap.entrySet()) {
+			if (eNode == entry.getValue()) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
 
+	public EquationNode getEquationNode(Element element) {
+		return displayMap.get(element);
+	}
 }

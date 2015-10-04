@@ -20,6 +20,8 @@
 package com.sciencegadgets.client.ui;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -33,12 +35,15 @@ import com.sciencegadgets.client.entities.DataModerator;
 import com.sciencegadgets.client.ui.SelectionPanel.Cell;
 import com.sciencegadgets.client.ui.SelectionPanel.SearchBox;
 import com.sciencegadgets.client.ui.SelectionPanel.SelectionHandler;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitName;
 
 public class UnitSelection extends FlowPanel {
 
 	final public SelectionPanel quantityBox = new SelectionPanel(
 			"Quantity Kind");
 	final public UnitSelectionPanel unitBox = new UnitSelectionPanel();
+	SearchBox searchBox;
 	boolean quantityOnly = false;
 	boolean quantityFilled = false;
 	boolean unitOnly = false;
@@ -70,7 +75,7 @@ public class UnitSelection extends FlowPanel {
 			JSNICalls.error("Can't be quantityOnly and unitOnly");
 		}
 
-//		unitBox.addStyleName(CSS.UNIT);
+		// unitBox.addStyleName(CSS.UNIT);
 		unitBox.addStyleName(CSS.LAYOUT_ROW);
 		quantityBox.addStyleName(CSS.LAYOUT_ROW);
 
@@ -82,7 +87,7 @@ public class UnitSelection extends FlowPanel {
 			this.add(unitBox);
 		} else {
 
-			final SearchBox searchBox = unitBox.makeSearchBox();
+			searchBox = unitBox.makeSearchBox();
 			searchBox.setBrowser(quantityBox);
 			searchBox.addStyleName(CSS.SEARCH_BOX);
 			this.add(searchBox);
@@ -95,10 +100,32 @@ public class UnitSelection extends FlowPanel {
 			quantityBox.addSelectionHandler(new SelectionHandler() {
 				@Override
 				public void onSelect(Cell selection) {
-					reloadUnitBox(quantityBox.getSelectedText(), null, false);
+					reloadUnitBox(quantityBox.getSelectedValue(), null, false);
 				}
 			});
 		}
+	}
+
+	public void limitUnits(UnitAttribute unit) {
+
+		// TODO only works for variables with a single unit
+		if (unit != null && unit.getUnitMultiples().length == 1) {
+			searchBox.getElement().getStyle().setDisplay(Display.NONE);
+			quantityBox.getElement().getStyle().setDisplay(Display.NONE);
+			unitBox.getElement().getStyle().setWidth(100, Unit.PCT);
+			unitBox.getElement().getStyle().setHeight(100, Unit.PCT);
+			unitBox.getElement().getStyle().setMarginTop(0, Unit.PX);
+			String qKind = unit.getUnitMultiples()[0].getUnitName()
+					.getQuantityKind();
+			reloadUnitBox(qKind, null, false);
+		} else {
+			searchBox.getElement().getStyle().clearDisplay();
+			quantityBox.getElement().getStyle().clearDisplay();
+			unitBox.getElement().getStyle().clearWidth();
+			unitBox.getElement().getStyle().clearHeight();
+			unitBox.getElement().getStyle().clearMarginTop();
+		}
+
 	}
 
 	// public UnitSelection(String quantityKind) {
@@ -146,17 +173,17 @@ public class UnitSelection extends FlowPanel {
 		return unitOnly;
 	}
 
-	public class UnitSelectionPanel extends SelectionPanel{
-		
+	public class UnitSelectionPanel extends SelectionPanel {
+
 		public UnitSelectionPanel() {
 			super("Unit");
 		}
 
 		@Override
 		public void search(String searchQ) {
-			if("".equals(searchQ)) {
+			if ("".equals(searchQ)) {
 				unitBox.clear();
-			}else {
+			} else {
 				reloadUnitBox(searchQ, null, true);
 			}
 		}

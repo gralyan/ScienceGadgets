@@ -176,11 +176,12 @@ class FactorButton extends AddTransformButton {
 	@Override
 	public void transform() {
 
-		for (Match match : matches) {
-			match.leftFactor.highlight();
-			match.rightFactor.highlight();
+		if(reloadAlgebraActivity) {
+			for (Match match : matches) {
+				match.leftFactor.highlight();
+				match.rightFactor.highlight();
+			}
 		}
-
 		EquationNode term = parent
 				.addAfter(right.getIndex(), TypeSGET.Term, "");
 		for (Match match : matches) {

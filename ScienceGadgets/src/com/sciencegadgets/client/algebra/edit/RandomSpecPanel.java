@@ -19,6 +19,7 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra.edit;
 
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -56,17 +57,13 @@ public abstract class RandomSpecPanel extends FlowPanel {
 	private Label response;
 	Button setRandonButton = new Button("Set Random");
 
-	private final VerticalPanel autoRandomPanel = new VerticalPanel();
+	private final FlowPanel autoRandomPanel = new FlowPanel();
 	private final FlowPanel providedRandomPanel = new FlowPanel();
 	private final ScrollPanel scrollPanel = new ScrollPanel();
 	private final ToggleButton autoOrProvidedToggle = new ToggleButton("Provide",
 			"Auto");
 
 	public RandomSpecPanel() {
-
-		this.getStyleElement().getStyle().setBackgroundColor("#ADD850");
-		this.setWidth("100%");
-		this.setHeight("100%");
 
 		makeAutoRandomPanel();
 		makeProvidedRandomPanel();
@@ -128,13 +125,17 @@ public abstract class RandomSpecPanel extends FlowPanel {
 		label2.getElement().getStyle().setMarginTop(5, Unit.PX);
 		autoRandomPanel.add(label2);
 
-		HorizontalPanel rangeSelection = new HorizontalPanel();
+		FlowPanel rangeSelection = new FlowPanel();
 		lowerBound = new DoubleBox();
 		lowerBound.setSize("50px", "30px");
+		lowerBound.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		rangeSelection.add(lowerBound);
-		rangeSelection.add(new Label("\u2264 x \u003C"));
+		Label x = new Label("\u2264 x \u003C");
+		x.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+		rangeSelection.add(x);
 		upparBound = new DoubleBox();
 		upparBound.setSize("50px", "30px");
+		upparBound.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		rangeSelection.add(upparBound);
 		autoRandomPanel.add(rangeSelection);
 
@@ -148,7 +149,8 @@ public abstract class RandomSpecPanel extends FlowPanel {
 		decPlace.setText("0");
 		autoRandomPanel.add(decPlace);
 
-		setRandonButton.setSize("100%", "100px");
+		setRandonButton.addStyleName(CSS.MEDIUM_BUTTON);
+		setRandonButton.setWidth("100%");
 		autoRandomPanel.add(setRandonButton);
 		
 		setRandonButton.addClickHandler(new ClickHandler() {

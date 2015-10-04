@@ -22,24 +22,20 @@ package com.sciencegadgets.client.algebra;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
-import com.sciencegadgets.client.ui.CommunistPanel;
-import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
-import com.sciencegadgets.shared.TypeSGET.Operator;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 import com.sciencegadgets.shared.dimensions.UnitHTML;
 
@@ -71,7 +67,7 @@ public class EquationWrapper extends Wrapper {
 		TypeSGET type = node.getType();
 		TypeSGET operationType = null;
 		// FitParentHTML typeLabel = new FitParentHTML(type.getIcon());
-		HTML typeLabel = new HTML(type.getIcon());
+		HTML typeLabel = new HTML(type.toString());
 		detailsList.add(typeLabel);
 
 		switch (type) {
@@ -124,20 +120,18 @@ public class EquationWrapper extends Wrapper {
 			}
 			break;
 		case Operation:
-			Operator op = node.getOperation();
-			if (TypeSGET.Operator.PLUS.equals(op)) {
-				operationType = TypeSGET.Sum;
-				typeLabel.setHTML(Operator.PLUS.getSign());
-			} else if (TypeSGET.Operator.MINUS.equals(op)) {
-				operationType = TypeSGET.Sum;
-				typeLabel.setHTML(Operator.MINUS.getSign());
-			} else if (TypeSGET.Operator.DOT.equals(op)
-					|| TypeSGET.Operator.CROSS.equals(op)
-					|| TypeSGET.Operator.SPACE.equals(op)) {
-				operationType = TypeSGET.Term;
-				typeLabel.setHTML(Operator.CROSS.getSign());
-			} else {
-				JSNICalls.error("Incorrest opperation");
+			operationType = node.getParentType();
+			String[] parts = { node.getPrevSibling().getType().toString(),
+					node.getSymbol(), node.getNextSibling().getType().toString() };
+
+			typeLabel.setHTML("");
+			Element typeEl = typeLabel.getElement();
+			for (String part : parts) {
+				Element partEl = new HTML(part).getElement();
+				Style partSt = partEl.getStyle();
+				partSt.setDisplay(Display.INLINE_BLOCK);
+				partSt.setVerticalAlign(VerticalAlign.MIDDLE);
+				typeEl.appendChild(partEl);
 			}
 		default:
 			break;

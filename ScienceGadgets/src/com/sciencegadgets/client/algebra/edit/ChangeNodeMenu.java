@@ -352,7 +352,7 @@ public class ChangeNodeMenu extends CommunistPanel {
 			case Number:
 				AlgebraActivity.NUMBER_SPEC_PROMPT(node,
 						!(isSameTypeNode && !TypeSGET.NOT_SET.equals(node
-								.getSymbol())), false);
+								.getSymbol())), false, false);
 				return;
 			case Variable:
 				AlgebraActivity.VARIABLE_SPEC_PROMPT(node,
