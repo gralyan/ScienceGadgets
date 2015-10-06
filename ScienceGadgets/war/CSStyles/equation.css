@@ -62,13 +62,13 @@
 .sg-eqPanel .sg-in-equation.sg-Operation{
 	padding: 0 1em;
 }
-/* .sg-eqPanel:not(.sg-editMode) .sg-in-equation.sg-Operation { equals sign (=) */
+/* .sg-eqPanel:not(.sg-editMode)  .sg-displayWrapper.sg-in-equation.sg-Operation { equals sign (=) */
 /* 	color: rgba(0,0,0,0); */
 /* 	text-shadow: none; */
 /* 	background-size: contain; */
 /* 	background-repeat: no-repeat; */
 /* 	background-position: center; */
-/* /* 	background-image: url('images/crystal_equals.png'); */ */
+/* 	background-image: url('images/crystal_equals.png'); */
 	
 /* 	opacity: 0.7; */
 /* } */
@@ -190,7 +190,7 @@
 	left: -0.05em;
 }
 
-.sg-selectedDropWrapper {
+.sg-selectedDropWrapper.sg-dropWrapperDragging {
 	-moz-box-shadow: 10px 10px 10px #000000;
 	-webkit-box-shadow: 10px 10px 10px #000000;
 	box-shadow: 10px 10px 10px #000000;
@@ -201,6 +201,10 @@
 	background-color: rgba(255,255,255,0.3);
 	
 	z-index: 201;
+}
+
+.sg-dropWrapperDragging{
+	background-color: rgba(255,255,255,0.2);
 }
 
 .sg-selectionDetails {
@@ -235,7 +239,9 @@
 
 /*---------------EquationHTML (display)---------------*/
 
-.sg-Number, .sg-Operation, .sg-Variable:not(.sg-notMath){
+:not(.sg-notMath) > .sg-Number:not(.sg-notMath), 
+:not(.sg-notMath) > .sg-Operation:not(.sg-notMath), 
+:not(.sg-notMath) > .sg-Variable:not(.sg-notMath){
 	font-family: math;
 }
 
@@ -296,6 +302,11 @@
 /* 	border-bottom: 1px solid white; */
 	z-index: 3;
 }
+
+.sg-algOut .sg-fraction-line{
+	border-bottom: 1px solid black;
+	
+	}
 
 /* .sg-parentWrapper > .sg-Fraction > .sg-fraction-line{ */
 /* 	border-bottom: 5px solid white; */

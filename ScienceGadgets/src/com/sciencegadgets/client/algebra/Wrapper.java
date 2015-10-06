@@ -124,7 +124,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		if ((TypeSGET.Sum.equals(node.getParentType()) || TypeSGET.Term.equals(node
 				.getParentType())) && !TypeSGET.Operation.equals(node.getType())) {
 
-			addDragController();
+			getDragController();
 
 			LinkedList<EquationNode> siblings = node.getParent().getChildren();
 			siblings.remove(node);
@@ -147,11 +147,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 		}
 	}
 
-	public WrapDragController getDragControl() {
-		return dragController;
-	}
-
-	public WrapDragController addDragController() {
+	public WrapDragController getDragController() {
 
 		if (dragController == null) {
 			dragController = new WrapDragController(parentPanel, false);

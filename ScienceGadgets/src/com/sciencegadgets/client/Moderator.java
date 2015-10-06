@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -153,11 +154,12 @@ public class Moderator implements EntryPoint {
 			algebraActivity
 					.reloadEquationPanel(null, null, updateHistory, null);
 		} catch (Exception e) {
+			switchToBrowser();
 			e.printStackTrace();
+			JSNICalls.error("error in switchToAlgebra");
 			JSNICalls.error(e.toString());
 			JSNICalls.error(e.getCause().toString());
 			JSNICalls.error(e.getMessage());
-			switchToBrowser();
 		}
 	}
 

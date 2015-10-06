@@ -62,7 +62,7 @@ public enum TypeSGET {
 	 * Children of the type are given an altered version of the style name. The pre
 	 */
 	public String asChild() {
-		return (NAMESPACE_PREFIX+CHILD_PREFIX + toString().toLowerCase().replace(NAMESPACE_PREFIX, ""));
+		return (NAMESPACE_PREFIX+CHILD_PREFIX + getCSSClassName().toLowerCase().replace(NAMESPACE_PREFIX, ""));
 	}
 
 	public String asChild(boolean isFirstChild) {
@@ -117,8 +117,7 @@ public enum TypeSGET {
 		return icon;
 	}
 	
-	@Override
-	public String toString() {
+	public String getCSSClassName() {
 		return cssClassName;
 	}
 

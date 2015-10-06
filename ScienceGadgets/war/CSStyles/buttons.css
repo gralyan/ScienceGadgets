@@ -1,6 +1,6 @@
 @CHARSET "UTF-8";
 
-button{
+button {
 	outline: none;
 }
 
@@ -140,7 +140,7 @@ button{
 }
 
 .sg-makeEqButton {
-/* 	border-top: solid black Thick; */
+	/* 	border-top: solid black Thick; */
 	background-color: #aaf;
 	color: black;
 	margin-top: 5px;
@@ -169,7 +169,7 @@ button{
 	white-space: nowrap;
 }
 
-.sg-equationSelection.sg-archived{
+.sg-equationSelection.sg-archived {
 	background-color: silver;
 }
 
@@ -186,18 +186,24 @@ button{
 .sg-insertEquationOption:ACTIVE {
 	background-color: gray;
 }
-.sg-variableSpecInsertButton{
+
+.sg-variableSpecInsertButton {
 	font-family: math;
 }
-.sg-optionsButton{
-		background-color: rgba(225, 225, 225, 0.4);
-		border-radius: 10px;
-		border: none;
-		text-shadow: 0 0 3px white;
-		color: inherit;
-		font-weight: bold;
-		height: calc(100% - 10px);
-		width: calc(100% - 10px);
-		margin: 5px;
-		
+
+.sg-optionsButton {
+	background-color: rgba(225, 225, 225, 0.4);
+	border: none;
+	text-shadow: 0 0 3px white;
+	color: inherit;
+	font-weight: bold;
+	height: calc(100% - 10px);
+	width: calc(100% - 10px);
+	margin: 5px;
+	object-fit: contain;
+	opacity: 0.7;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
 }
+

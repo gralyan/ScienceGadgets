@@ -131,7 +131,7 @@ public class ConversionWrapper extends Wrapper {
 			UnitCancelDropController dropController = new UnitCancelDropController(
 					targetWrapper, targetUnitMultiple, nodeUnitMultiple,
 					nodeUnitName);
-			WrapDragController dragC = addDragController();
+			WrapDragController dragC = getDragController();
 			dragC.registerDropController(dropController);
 		}
 	}

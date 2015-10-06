@@ -94,7 +94,7 @@ public class GenerateSpec extends Composite {
 
 		generateButton = new GenerateRandomEquationButton(this);
 //		generateButtonContainer.add(generateButton);
-		generateButton.setEnabled(false);
+		generateButton.setHasDifficulty(false);
 	}
 	
 	class SlideBarDifficulty extends SlideBarIncremental {
@@ -136,7 +136,7 @@ public class GenerateSpec extends Composite {
 							break;
 						}
 					}
-					generateButton.setEnabled(hasDifficulty);
+					generateButton.setHasDifficulty(hasDifficulty);
 				}
 			});
 		}

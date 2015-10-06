@@ -80,7 +80,6 @@ public static final String BORDER_RADIUS_SMALL = "sg-borderRadiusSmall";
 /*---------------Browsers---------------*/
 public static final String MAIN_TITLE = "sg-mainTitle";
 public static final String EQUATION_BROWSER = "sg-equationBrowser";
-public static final String VIDEO_PANEL = "sg-videoPanel";
 public static final String MODES = "sg-modes";
 public static final String ROW_HEADER = "sg-rowHeader";
 public static final String ROW_SUB_HEADER = "sg-rowSubHeader";
@@ -96,6 +95,12 @@ public static final String DIAGRAM_MEASURE = "sg-diagramMeasure";
 public static final String ACTIVITY_SELECTION_PANEL = "sg-activitySelectionPanel";
 public static final String ACTIVITY_DETAILS_PANEL = "sg-activityDetailsPanel";
 public static final String CONVERSION_SPECIFICATION = "sg-conversionSpec";
+/*---------------Intro---------------*/
+public static final String VIDEO_PANEL = "sg-videoPanel";
+public static final String VIDEO_SEGMENT = "sg-videoSegment";
+public static final String VIDEO_SEGMENT_LABEL = "sg-videoSegmentLabel";
+public static final String PLAY_EXAMPLE = "sg-playExample";
+public static final String INTRO_BUTTON = "sg-introButton";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "sg-conversionActivity";
 /*---------------SelectionPanel---------------*/
@@ -120,6 +125,7 @@ public static final String LINE_THROUGH = "sg-lineThrough";
 /*---------------wrappers---------------*/
 public static final String SELECTED_WRAPPER = "sg-selectedWrapper";
 public static final String SELECTED_DROP_WRAPPER = "sg-selectedDropWrapper";
+public static final String DROP_WRAPPER_DRAGGING = "sg-dropWrapperDragging";
 public static final String SELECTION_DETAILS = "sg-selectionDetails";
 public static final String SELECTION_DETAILS_Value = "sg-selectionDetailValue";
 public static final String CONVERSION_WRAPPER = "sg-conversionWrapper";

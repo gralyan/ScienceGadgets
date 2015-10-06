@@ -31,6 +31,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.ui.CSS;
 
 public class WrapDragController extends PickupDragController {
 
@@ -63,6 +64,10 @@ public class WrapDragController extends PickupDragController {
 		super.dragStart();
 
 		proxy.getElement().getStyle().setOpacity(0);
+		
+		for (DropController dropC : dropControllers) {
+			dropC.getDropTarget().addStyleName(CSS.DROP_WRAPPER_DRAGGING);
+		}
 	}
 
 	@Override
@@ -87,6 +92,10 @@ public class WrapDragController extends PickupDragController {
 		context.draggable.getElement().getStyle().clearOpacity();
 		
 		isDragging = false;
+
+		for (DropController dropC : dropControllers) {
+			dropC.getDropTarget().removeStyleName(CSS.DROP_WRAPPER_DRAGGING);
+		}
 	}
 
 	@Override
@@ -110,29 +119,29 @@ public class WrapDragController extends PickupDragController {
 		return context;
 	}
 
-//	@Override
-//	public void registerDropController(DropController dropC) {
-//		super.registerDropController(dropC);
-//		if (dropControllers == null) {
-//			dropControllers = new LinkedList<DropController>();
-//		}
-//		dropControllers.add(dropC);
-//	}
-//
-//	@Override
-//	public void unregisterDropControllers() {
-//		super.unregisterDropControllers();
-//		if (dropControllers != null) {
-//			dropControllers.clear();
-//		}
-//	}
-//
-//	@Override
-//	public void unregisterDropController(DropController dropC) {
-//		super.unregisterDropController(dropC);
-//		if (dropControllers != null) {
-//			dropControllers.remove(dropC);
-//		}
-//	}
+	@Override
+	public void registerDropController(DropController dropC) {
+		super.registerDropController(dropC);
+		if (dropControllers == null) {
+			dropControllers = new LinkedList<DropController>();
+		}
+		dropControllers.add(dropC);
+	}
+
+	@Override
+	public void unregisterDropControllers() {
+		super.unregisterDropControllers();
+		if (dropControllers != null) {
+			dropControllers.clear();
+		}
+	}
+
+	@Override
+	public void unregisterDropController(DropController dropC) {
+		super.unregisterDropController(dropC);
+		if (dropControllers != null) {
+			dropControllers.remove(dropC);
+		}
+	}
 
 }

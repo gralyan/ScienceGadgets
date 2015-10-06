@@ -19,8 +19,6 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra;
 
-import java.util.Map.Entry;
-
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,14 +27,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
-import com.sciencegadgets.client.algebra.SystemOfEquations.SystemEquationInfo;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.ToggleSlide;
 import com.sciencegadgets.shared.TypeSGET;
@@ -46,15 +40,13 @@ public class OptionsHandler implements ClickHandler {
 	public static OptionsPopup optionsPopup;
 	FlowPanel optionsPanel = new FlowPanel();
 	AlgebraActivity algebraActivity;
-	private Button optionsButton;
 
 	public OptionsHandler(AlgebraActivity algebraActivity) {
 		this.algebraActivity = algebraActivity;
-		optionsButton = algebraActivity.optionsButton;
 
 		optionsPanel.getElement().getStyle().setOverflowY(Overflow.AUTO);
 
-		optionsPopup = new OptionsPopup(optionsButton);
+		optionsPopup = new OptionsPopup();
 		optionsPopup.addStyleName(CSS.OPTIONS_POPUP);
 		optionsPopup.clear();
 
@@ -107,7 +99,7 @@ public class OptionsHandler implements ClickHandler {
 class OptionsPopup extends PopupPanel {
 	SlideAnimation slideAnimation;
 
-	OptionsPopup(final Button optionsButton) {
+	OptionsPopup() {
 		this.getElement().getStyle().setBackgroundColor("gray");
 		this.getElement().getStyle().setOverflowY(Overflow.AUTO);
 		slideAnimation = new SlideAnimation(this);

@@ -291,7 +291,7 @@ public class EquationHTML extends HTML {
 			nodeHtml.appendChild(unit);
 		}
 
-		container.addClassName(type.toString());
+		container.addClassName(type.getCSSClassName());
 		displayMap.put(nodeHtml, mNode);
 		return nodeHtml;
 	}
@@ -372,7 +372,7 @@ public class EquationHTML extends HTML {
 		int tallestFracChild = 0;
 		for (Element child : childrenHorizontal) {
 			// Find the tallest denominator to match centers
-			if (child.getClassName().contains(TypeSGET.Fraction.toString())) {
+			if (child.getClassName().contains(TypeSGET.Fraction.getCSSClassName())) {
 				if (child.getFirstChildElement().getClassName()
 						.contains("fenced")) {
 					child = child.getFirstChildElement();

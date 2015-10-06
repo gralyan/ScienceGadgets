@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -66,7 +67,7 @@ public class AlgebraActivity extends SimplePanel {
 	@UiField
 	FlowPanel upperEqArea;
 	@UiField
-	Button optionsButton;
+	Image optionsButton;
 	@UiField
 	SimplePanel upperMidEqArea;
 	@UiField
@@ -173,6 +174,7 @@ public class AlgebraActivity extends SimplePanel {
 		switch (activityType) {
 		case interactiveequation:
 		case editequation:
+			optionsButton.setUrl("CSStyles/images/crystal_equals.png");
 			optionsButton.setVisible(true);
 			optionsButton.addClickHandler(new OptionsHandler(this));
 			break;

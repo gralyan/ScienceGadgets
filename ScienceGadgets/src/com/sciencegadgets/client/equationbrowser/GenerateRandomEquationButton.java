@@ -33,11 +33,12 @@ import com.sciencegadgets.shared.TypeSGET;
 class GenerateRandomEquationButton extends SelectionButton {
 
 	GenerateSpec generateSpec;
+	Boolean hasDifficulty = false;
 
 	public GenerateRandomEquationButton(GenerateSpec generateSpec) {
 		this.generateSpec = generateSpec;
 		addStyleName(CSS.MAKE_EQ_BUTTON);
-		setHTML("Generate");
+		setHasDifficulty(false);
 	}
 
 	@Override
@@ -61,10 +62,29 @@ class GenerateRandomEquationButton extends SelectionButton {
 		// OS == OtherSide
 		sumsOS = 0, termsOS = 0, fracsOS = 0, expsOS = 0;
 
-		Difficulty difficultyAdd = generateSpec.slideAdd.getDifficulty();
-		Difficulty difficultyMult = generateSpec.slideMult.getDifficulty();
-		Difficulty difficultyFrac = generateSpec.slideFrac.getDifficulty();
-		Difficulty difficultyExp = generateSpec.slideExp.getDifficulty();
+		Difficulty difficultyAdd, difficultyMult, difficultyFrac, difficultyExp;
+		if (hasDifficulty) {
+			difficultyAdd = generateSpec.slideAdd.getDifficulty();
+			difficultyMult = generateSpec.slideMult.getDifficulty();
+			difficultyFrac = generateSpec.slideFrac.getDifficulty();
+			difficultyExp = generateSpec.slideExp.getDifficulty();
+		} else {
+			difficultyAdd = generateSpec.slideAdd.getDifficulty((int) (Math
+					.random() * 3));
+			difficultyMult = generateSpec.slideMult.getDifficulty((int) (Math
+					.random() * 3));
+			difficultyFrac = generateSpec.slideFrac.getDifficulty((int) (Math
+					.random() * 3));
+			difficultyExp = generateSpec.slideExp.getDifficulty((int) (Math
+					.random() * 3));
+		}
+
+		if (difficultyAdd == Difficulty.NONE
+				&& difficultyMult == Difficulty.NONE
+				&& difficultyFrac == Difficulty.NONE
+				&& difficultyExp == Difficulty.NONE) {
+			difficultyAdd = Difficulty.EASY;
+		}
 
 		switch (difficultyAdd) {
 		case NONE:
@@ -183,6 +203,17 @@ class GenerateRandomEquationButton extends SelectionButton {
 		// SolverUniVariable.SOLVE(eTree);
 		// Moderator.reloadEquationPanel(null, null);
 
+	}
+
+	public void setHasDifficulty(boolean hasDifficulty) {
+		this.hasDifficulty = hasDifficulty;
+		if (hasDifficulty) {
+			setHTML("Generate");
+			setTitle("Generate a random equation based on the difficulty specified");
+		} else {
+			setHTML("Completely Random");
+			setTitle("Generate a completely random equation");
+		}
 	}
 
 }

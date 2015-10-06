@@ -25,6 +25,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -252,9 +253,9 @@ public class EquationPanel extends AbsolutePanel {
 
 		LinkedList<EquationNode> childNodes = parentNode.getChildren();
 
-		if (parentNode.equals(equationTree.getRoot())) {
-			childNodes.remove(1);// "=" sign
-		}
+//		if (parentNode.equals(equationTree.getRoot())) {
+//			childNodes.remove(1);// "=" sign
+//		}
 
 		if (mergeRootNodes.contains(parentNode)) {
 			parentNode = rootNode;
@@ -272,7 +273,7 @@ public class EquationPanel extends AbsolutePanel {
 					.getElementById(parentId + OF_LAYER + parentId);
 		}
 		if (layerParentNode != null) {
-			String typeName = parentNode.getType().toString();
+			String typeName = parentNode.getType().getCSSClassName();
 			layerParentNode.addClassName(typeName);
 			layerParentNode.addClassName(CSS.PARENT_WRAPPER);
 		} else {

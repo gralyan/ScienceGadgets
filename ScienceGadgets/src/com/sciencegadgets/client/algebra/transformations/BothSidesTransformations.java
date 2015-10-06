@@ -28,6 +28,7 @@ import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
+import com.sciencegadgets.client.algebra.WrapDragController;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.BothSidesButton;
 import com.sciencegadgets.client.algebra.transformations.BothSidesTransformations.Math;
 import com.sciencegadgets.client.entities.users.Badge;
@@ -235,7 +236,15 @@ public class BothSidesTransformations extends
 					this, joinedButton);
 			break;
 		}
-		button.autoCancel = Moderator.meetsRequirement(badge);
+		Boolean hasShortcuts = Moderator.meetsRequirement(badge);
+		button.autoCancel = hasShortcuts;
+		
+		if(joinedButton == null && hasShortcuts) {
+			WrapDragController dragC = node.getWrapper().getDragController();
+			BothSidesDrop dropC = new BothSidesDrop(dragC, button, tree.getEquals().getWrapper());
+			dragC.registerDropController(dropC);
+		}
+		
 		return button;
 	}
 
@@ -298,7 +307,7 @@ public class BothSidesTransformations extends
 		public BothSidesButton getJoinedButton() {
 			return joinedButton;
 		}
-
+		
 		public boolean isSelected() {
 			return getStyleName().contains(CSS.BOTH_SIDES_BUTTON_SELECTED);
 		}

@@ -99,7 +99,7 @@ public class InterFractionTransformations extends
 
 			WrapDragController dragController = null;
 			if (drag.getWrapper() != null) {
-				dragController = drag.getWrapper().addDragController();
+				dragController = drag.getWrapper().getDragController();
 			}
 			for (Entry<EquationNode, DropType> dropTarget : dropTargets
 					.entrySet()) {

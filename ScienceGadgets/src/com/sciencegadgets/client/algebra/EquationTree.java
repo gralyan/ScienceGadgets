@@ -91,10 +91,12 @@ public class EquationTree {
 		this(newDummyElement(), inEditMode);
 		getLeftSide().replace(leftType, leftSymbol);
 		getRightSide().replace(rightType, righSymbol);
+		getEquals().replace(TypeSGET.Operation, TypeSGET.Operator.EQUALS.getSign());
 	}
 
 	public EquationTree(boolean inEditMode) {
 		this(newDummyElement(), inEditMode);
+		getEquals().replace(TypeSGET.Operation, TypeSGET.Operator.EQUALS.getSign());
 	}
 
 	private static Element newDummyElement() {

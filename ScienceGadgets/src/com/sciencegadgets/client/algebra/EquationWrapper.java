@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -129,6 +130,7 @@ public class EquationWrapper extends Wrapper {
 			for (String part : parts) {
 				Element partEl = new HTML(part).getElement();
 				Style partSt = partEl.getStyle();
+				partSt.setMargin(2, Unit.PX);
 				partSt.setDisplay(Display.INLINE_BLOCK);
 				partSt.setVerticalAlign(VerticalAlign.MIDDLE);
 				typeEl.appendChild(partEl);
@@ -147,10 +149,10 @@ public class EquationWrapper extends Wrapper {
 
 		Widget typeParent = typeLabel.getParent();
 		if (typeParent != null) {
-			typeParent.addStyleName(type.toString());
-			typeParent.addStyleName(CSS.PARENT_WRAPPER);
+//			typeParent.addStyleName(type.getCSSClassName());
+//			typeParent.addStyleName(CSS.PARENT_WRAPPER);
 			if (operationType != null) {
-				typeParent.addStyleName(operationType.toString());
+				typeParent.addStyleName(operationType.getCSSClassName());
 			}
 		}
 	}
