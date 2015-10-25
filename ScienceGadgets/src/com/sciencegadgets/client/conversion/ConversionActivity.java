@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -202,8 +203,11 @@ public class ConversionActivity extends AbsolutePanel {
 		EquationHTML eqHTML = mTree.reloadDisplay(false, false);
 
 		// Unit font
-		eqHTML.addStyleName(CSS.UNIT);
 		wrapperArea.addStyleName(CSS.UNIT);
+		NodeList<Element> elements = eqHTML.getElement().getElementsByTagName("*");
+		for(int i=0 ; i<elements.getLength() ; i++) {
+			elements.getItem(i).addClassName(CSS.UNIT);
+		}
 
 		// Recreate wrappers
 		placeWrappers();

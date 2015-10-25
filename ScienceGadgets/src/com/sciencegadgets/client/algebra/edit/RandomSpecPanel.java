@@ -66,28 +66,28 @@ public abstract class RandomSpecPanel extends FlowPanel {
 	public RandomSpecPanel() {
 
 		makeAutoRandomPanel();
-		makeProvidedRandomPanel();
-
-		autoOrProvidedToggle.addStyleName(CSS.TRANSFORMATION_BUTTON);
-		autoOrProvidedToggle.getElement().getStyle().setMargin(10, Unit.PX);
-		autoOrProvidedToggle.getElement().getStyle().setBackgroundColor("silver");;
-		autoOrProvidedToggle.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (autoOrProvidedToggle.getValue()) {
-					scrollPanel.remove(autoRandomPanel);
-					scrollPanel.add(providedRandomPanel);
-					onSetRandom();
-				} else {
-					scrollPanel.remove(providedRandomPanel);
-					scrollPanel.add(autoRandomPanel);
-				}
-			}
-		});
+//		makeProvidedRandomPanel();
+//
+//		autoOrProvidedToggle.addStyleName(CSS.TRANSFORMATION_BUTTON);
+//		autoOrProvidedToggle.getElement().getStyle().setMargin(10, Unit.PX);
+//		autoOrProvidedToggle.getElement().getStyle().setBackgroundColor("silver");;
+//		autoOrProvidedToggle.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				if (autoOrProvidedToggle.getValue()) {
+//					scrollPanel.remove(autoRandomPanel);
+//					scrollPanel.add(providedRandomPanel);
+//					onSetRandom();
+//				} else {
+//					scrollPanel.remove(providedRandomPanel);
+//					scrollPanel.add(autoRandomPanel);
+//				}
+//			}
+//		});
 
 		scrollPanel.add(autoRandomPanel);
 
-		this.add(autoOrProvidedToggle);
+//		this.add(autoOrProvidedToggle);
 		this.add(scrollPanel);
 
 	}

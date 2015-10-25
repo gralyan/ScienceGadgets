@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
@@ -36,6 +35,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sciencegadgets.client.URLParameters.Parameter;
@@ -49,12 +49,14 @@ import com.sciencegadgets.client.conversion.ConversionActivity;
 import com.sciencegadgets.client.entities.Problem;
 import com.sciencegadgets.client.entities.users.Badge;
 import com.sciencegadgets.client.entities.users.Student;
-import com.sciencegadgets.client.equationbrowser.EquationBrowser;
+import com.sciencegadgets.client.equationbrowser.VideoPanel;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.Resizable;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
 
 public class Moderator implements EntryPoint {
+	
+	public static final String VERSION = "0";
 
 	private int SGAWidth;
 	private static int SGAHeight;
@@ -66,7 +68,7 @@ public class Moderator implements EntryPoint {
 
 	private static ActivityType currentActivityType = null;
 	private static AlgebraActivity algebraActivity;
-	public static EquationBrowser equationBrowser;
+	public static FlowPanel equationBrowser;
 	private static ConversionActivity conversionActivity;
 	private static ProblemDetails problemActivity;
 
@@ -157,9 +159,11 @@ public class Moderator implements EntryPoint {
 			switchToBrowser();
 			e.printStackTrace();
 			JSNICalls.error("error in switchToAlgebra");
+			if(e != null) {
 			JSNICalls.error(e.toString());
 			JSNICalls.error(e.getCause().toString());
 			JSNICalls.error(e.getMessage());
+			}
 		}
 	}
 
@@ -232,7 +236,7 @@ public class Moderator implements EntryPoint {
 
 	public static void switchToBrowser() {
 		if (equationBrowser == null) {
-			equationBrowser = new EquationBrowser();
+			equationBrowser = new VideoPanel();
 		}
 		setActivity(ActivityType.browser, equationBrowser);
 

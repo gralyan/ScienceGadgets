@@ -98,8 +98,10 @@ public class Arrow extends FlowPanel {
 
 	void fire(int x, int y) {
 		updatePull(x, y);
+		fire();
+	}
+	void fire() {
 		isPulling = false;
-
 		shootAnimation.fire(false);
 	}
 

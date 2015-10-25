@@ -33,16 +33,19 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitEnum;
 
-public class NumberPrompt extends QuantityPrompt{
+public class NumberPrompt extends QuantityPrompt {
 
 	KeyPadNumerical numPad;
 
 	CommonConstants constantSeleced = null;
 
-	public NumberPrompt(EquationNode equationNode, boolean clearDisplays, boolean mustCheckUnits) {
+	public NumberPrompt(EquationNode equationNode, boolean clearDisplays,
+			boolean mustCheckUnits) {
 		super(equationNode, clearDisplays, mustCheckUnits);
-		spec = new NumberSpecification(clearDisplays, canHaveUnits(equationNode), true);
+		spec = new NumberSpecification(clearDisplays,
+				canHaveUnits(equationNode), true);
 		reload(equationNode, clearDisplays, mustCheckUnits);
 		specPanel.add(spec);
 
@@ -63,14 +66,14 @@ public class NumberPrompt extends QuantityPrompt{
 			}
 		});
 	}
-	
+
 	@Override
 	public void reload(EquationNode mathNode, boolean clearDisplays,
 			boolean mustCheckUnits) {
-		
+
 		super.reload(mathNode, clearDisplays, mustCheckUnits);
 	}
-	
+
 	@Override
 	protected String extractSymbol() {
 		SymbolDisplay symbolDisplay = spec.getSymbolDisplay();
@@ -100,21 +103,40 @@ public class NumberPrompt extends QuantityPrompt{
 
 		if (RandomSpecPanel.RANDOM_SYMBOL.equals(symbol)) {
 			node.getXMLNode().setAttribute(
-					MathAttribute.Randomness.getAttributeName(), ((NumberSpecification)spec).getRandomness());
+					MathAttribute.Randomness.getAttributeName(),
+					((NumberSpecification) spec).getRandomness());
 		} else {
 			node.getXMLNode().removeAttribute(
 					MathAttribute.Randomness.getAttributeName());
 		}
 
 		if (constantSeleced != null
-				&& constantSeleced.getValue().equals(spec.getSymbolDisplay().getText())
+				&& constantSeleced.getValue().equals(
+						spec.getSymbolDisplay().getText())
 				&& constantSeleced.getUnitMap().equals(spec.getUnitMap())) {
 			node.setConstant(constantSeleced);
 		}
 	}
-	
+
 	public void limitUnits(UnitAttribute unit) {
+		if (unit == null && isInTrig()) {
+			unit = new UnitAttribute(UnitEnum.Angle_2370.getQuantityKindName());
+		}
 		((NumberSpecification) spec).limitUnits(unit);
+	}
+
+	private boolean isInTrig() {
+		EquationNode parent = node.getParent();
+		TypeSGET parentType = parent.getType();
+		while (parent != null && parentType != null
+				&& !TypeSGET.Equation.equals(parentType)) {
+			if (TypeSGET.Trig.equals(parentType)) {
+				return true;
+			}
+			parent = parent.getParent();
+			parentType = parent.getType();
+		}
+		return false;
 	}
 
 }

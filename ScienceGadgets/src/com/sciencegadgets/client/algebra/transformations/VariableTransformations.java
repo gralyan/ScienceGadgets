@@ -295,6 +295,6 @@ class PlugInButton extends VariableTransformationButton {
 
 	@Override
 	public void transform() {
-		AlgebraActivity.NUMBER_SPEC_PROMPT(variableNode, true, true, true);
+		AlgebraActivity.NUMBER_SPEC_PROMPT(variableNode, true, true, variableNode.getUnitAttribute());
 	}
 }

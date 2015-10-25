@@ -33,6 +33,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -67,7 +68,7 @@ public class AlgebraActivity extends SimplePanel {
 	@UiField
 	FlowPanel upperEqArea;
 	@UiField
-	Image optionsButton;
+	FocusPanel optionsButton;
 	@UiField
 	SimplePanel upperMidEqArea;
 	@UiField
@@ -105,17 +106,7 @@ public class AlgebraActivity extends SimplePanel {
 
 		activateOptionsButton(activityType);
 
-		systemOfEquations = new SystemOfEquations(eTree);
-		String sysOfEq = URLParameters.getParameter(Parameter.system);
-		if (sysOfEq != null && !"".equals(sysOfEq)) {
-			systemOfEquations.adoptURLParam(sysOfEq);
-		}
-
-		String goal = URLParameters.getParameter(Parameter.goal);
-		if (goal != null && !"".equals(goal)) {
-			Element goalEl = new HTML(goal).getElement().getFirstChildElement();
-			goalTree = new EquationTree(goalEl, false);
-		}
+		setEquationTree(eTree);
 
 		switch (activityType) {
 		case interactiveequation:
@@ -174,7 +165,6 @@ public class AlgebraActivity extends SimplePanel {
 		switch (activityType) {
 		case interactiveequation:
 		case editequation:
-			optionsButton.setUrl("CSStyles/images/crystal_equals.png");
 			optionsButton.setVisible(true);
 			optionsButton.addClickHandler(new OptionsHandler(this));
 			break;
@@ -226,7 +216,19 @@ public class AlgebraActivity extends SimplePanel {
 	}
 
 	public void setEquationTree(EquationTree eTree) {
-		systemOfEquations.setWorkingTree(eTree);
+
+		systemOfEquations = new SystemOfEquations(eTree);
+
+		String sysOfEq = URLParameters.getParameter(Parameter.system);
+		if (sysOfEq != null && !"".equals(sysOfEq)) {
+			systemOfEquations.adoptURLParam(sysOfEq);
+		}
+
+		String goal = URLParameters.getParameter(Parameter.goal);
+		if (goal != null && !"".equals(goal)) {
+			Element goalEl = new HTML(goal).getElement().getFirstChildElement();
+			goalTree = new EquationTree(goalEl, false);
+		}
 	}
 
 	public EquationTree getGoalTree() {
@@ -272,23 +274,21 @@ public class AlgebraActivity extends SimplePanel {
 		EquationTree equationTree = getEquationTree();
 
 		AlgebraHistory currentAlgOut = systemOfEquations.getInfo(equationTree).history;
-		if (currentAlgOut == null) {
-			reCreateAlgHistory();
-		} else if (algOut != currentAlgOut) {
-			algOut = currentAlgOut;
-			setDefaultUpperMidWidget(currentAlgOut);
-		}
-
-		if (activityType == ActivityType.interactiveequation
-				&& changeComment != null) {
-			Skill skill = null;
-			if (skillsIncrease != null && !skillsIncrease.isEmpty()) {
-				skill = (Skill) skillsIncrease.keySet().toArray()[0];
+		if (ActivityType.interactiveequation == activityType) {
+			if (currentAlgOut == null) {
+				reCreateAlgHistory();
+			} else if (algOut != currentAlgOut) {
+				algOut = currentAlgOut;
+				setDefaultUpperMidWidget(currentAlgOut);
 			}
-			algOut.updateAlgebraHistory(changeComment, skill,
-					equationTree);
+			if (changeComment != null) {
+				Skill skill = null;
+				if (skillsIncrease != null && !skillsIncrease.isEmpty()) {
+					skill = (Skill) skillsIncrease.keySet().toArray()[0];
+				}
+				algOut.updateAlgebraHistory(changeComment, skill, equationTree);
+			}
 		}
-//		algOut.reset();
 
 		if (inProgramaticTransformMode) {
 			return;
@@ -337,24 +337,24 @@ public class AlgebraActivity extends SimplePanel {
 				newBadgeResponse.setText("New Badge! - " + newBadge.toString());
 			}
 
-			TypeSGET rightType = equationTree.getRightSide().getType();
-			TypeSGET leftType = equationTree.getLeftSide().getType();
-			// Check if evaluated
-			if ((TypeSGET.Variable.equals(leftType) && TypeSGET.Number
-					.equals(rightType))) {
-				SolvedPrompt solvedPrompt = new SolvedPrompt();
-				solvedPrompt.solved(this, equationTree.getRightSide()
-						.getSymbol());
-			} else if ((TypeSGET.Variable.equals(rightType) && TypeSGET.Number
-					.equals(leftType))) {
-				SolvedPrompt solvedPrompt = new SolvedPrompt();
-				solvedPrompt.solved(this, equationTree.getLeftSide()
-						.getSymbol());
-			} else if (goalTree != null && equationTree.isLike(goalTree)) {
-				// Check if equation matches goal
-				SolvedPrompt solvedPrompt = new SolvedPrompt();
-				solvedPrompt.solved(this);
-			}
+//			TypeSGET rightType = equationTree.getRightSide().getType();
+//			TypeSGET leftType = equationTree.getLeftSide().getType();
+//			// Check if evaluated
+//			if ((TypeSGET.Variable.equals(leftType) && TypeSGET.Number
+//					.equals(rightType))) {
+//				SolvedPrompt solvedPrompt = new SolvedPrompt();
+//				solvedPrompt.solved(this, equationTree.getRightSide()
+//						.getSymbol());
+//			} else if ((TypeSGET.Variable.equals(rightType) && TypeSGET.Number
+//					.equals(leftType))) {
+//				SolvedPrompt solvedPrompt = new SolvedPrompt();
+//				solvedPrompt.solved(this, equationTree.getLeftSide()
+//						.getSymbol());
+//			} else if (goalTree != null && equationTree.isLike(goalTree)) {
+//				// Check if equation matches goal
+//				SolvedPrompt solvedPrompt = new SolvedPrompt();
+//				solvedPrompt.solved(this);
+//			}
 
 			Moderator.newBadgeCollection.clear();
 		}
@@ -389,7 +389,7 @@ public class AlgebraActivity extends SimplePanel {
 	}
 
 	public static void NUMBER_SPEC_PROMPT(EquationNode equationNode,
-			boolean clearDisplays, boolean mustCheckUnits, boolean limitUnits) {
+			boolean clearDisplays, boolean mustCheckUnits, UnitAttribute unitLimitation) {
 
 		if (AlgebraActivity.numSpec == null) {
 			AlgebraActivity.numSpec = new NumberPrompt(equationNode,
@@ -398,11 +398,7 @@ public class AlgebraActivity extends SimplePanel {
 			AlgebraActivity.numSpec.reload(equationNode, clearDisplays,
 					mustCheckUnits);
 		}
-		UnitAttribute unit = null;
-		if (limitUnits && TypeSGET.Variable.equals(equationNode.getType())) {
-			unit = equationNode.getUnitAttribute();
-		}
-		AlgebraActivity.numSpec.limitUnits(unit);
+		AlgebraActivity.numSpec.limitUnits(unitLimitation);
 		AlgebraActivity.numSpec.appear();
 	}
 

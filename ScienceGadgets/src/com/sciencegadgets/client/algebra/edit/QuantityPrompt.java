@@ -21,6 +21,8 @@ package com.sciencegadgets.client.algebra.edit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -29,6 +31,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.AlgebraActivity;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.algebra.EquationWrapper;
@@ -113,6 +116,16 @@ public abstract class QuantityPrompt extends Prompt {
 				}
 			}
 		});
+		// blur = onFocusOut , when focus shifts, stop sending keys to search
+		addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				if (keyUp != null) {
+					keyUp.removeHandler();
+					keyUp = null;
+				}
+			}
+		});
 	}
 
 	protected boolean canHaveUnits(EquationNode mNode) {
@@ -128,7 +141,7 @@ public abstract class QuantityPrompt extends Prompt {
 			if (func.contains(TrigFunctions.ARC)) {
 				return false;
 			}
-			// TODO only allow units of PlaneAngle for trig arguments
+			// only allowed units for trig arguments are of PlaneAngle
 			break;
 		case Log:
 			return false;
@@ -147,33 +160,29 @@ public abstract class QuantityPrompt extends Prompt {
 			AlgebraActivity algebraActivity = ((EquationWrapper) node
 					.getWrapper()).getAlgebraActivity();
 
+			String oldSymbol = node.getSymbol();
 			String symbol = extractSymbol();
 
 			if (mustCheckUnits
 					&& !spec.getUnitMap().isConvertableTo(node.getUnitMap())
 					&& !"0".equals(symbol)) {
-				Window.alert("Units must match:\n" + spec.getUnitMap());
+				Window.alert("Units must match:\n" + spec.getUnitMap()+"\n"+node.getUnitMap());
 				return;
 			}
 
 			if (symbol == null) {
 				return;
 			}
+			node.highlight();
+
 			setNode(symbol);
 
-			// TODO allow selection of angle unit for trig arguments
-//			if (TypeSGET.Trig.equals(node.getParentType())) {
-//				node.getXMLNode().setAttribute(
-//						MathAttribute.Unit.getAttributeName(),
-//						UnitAttribute.ANGLE_ATTRIBUTE);
-//			} else {
 				node.getXMLNode().setAttribute(
 						MathAttribute.Unit.getAttributeName(),
 						spec.getDataUnit().toString());
-//			}
 
 			disappear();
-			algebraActivity.reloadEquationPanel(null, null, true, node.getId());
+			algebraActivity.reloadEquationPanel(oldSymbol+" = " +symbol, null, true, node.getId());
 		}
 	}
 

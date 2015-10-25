@@ -53,18 +53,19 @@ body {
 
 /*---------------Browsers---------------*/
 .sg-mainTitle {
-	height: 12%;
-	font-size: 8vmin;
+	height: 12vh;
+	font-size: 8vh;
 	text-decoration: none;
 /* 	text-shadow: 0 0 0.2em lime; */
 	color: white;
 	display: block;
 	text-align: center;
+	padding-top: 1vh;
 }
 
-#sg-equationBrowser {
-	margin: auto;
-	height: 100%;
+#sg-homeBrowser {
+	height: 100vh;
+	width: 100vw;
 }
 
 .sg-modes {
@@ -163,52 +164,106 @@ body {
 /*---------------Intro---------------*/
 
 .sg-videoPanel{
-	width: 60vw;
-	height: 80vw;
+	width: 90vw;
+	height: 85vh;
+	margin: 0 5vw;
 	background-color: gray;
-	padding-top: 3.3vw;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: relative;
 }
 
 .sg-videoSegment{
-	width: 60vw;
+	width: 86vw;
+	margin: 0 auto;
 	height: 20vw;
-	margin-bottom: 3.3vw;
-	color: white;
+	padding: 1em 0;
+	border-bottom: solid black 1px;	
 }
 .sg-videoSegmentLabel{
-	font-size: 150%;
+	color: white;
+	font-size: 120%;
 	text-align: center;
+	font-weight: bold;
+}
+.sg-introVideoArea{
+	margin: 0 0 0 2vw;
+	width: 20vw;
+	height: 20vw;
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
 }
 .sg-introButton{
-	width: 25vw;
+	display: inline-block;
+	vertical-align: top;
+	width: 30vw;
 	height: 20vw;
-	margin: 0 0 0 3.3vw;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
-	background-color: lightGray;
-	background-size: 100% 100%;
+	margin: 0 0 0 2vw;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
+	background-size: cover;
 	background-repeat: no-repeat;
-	opacity: 0.5;
+	background-position: center;
+	outline: none;
+}
+.sg-introButton:not(.sg-introVideoButton):HOVER{
+	-moz-box-shadow: white 0 0 15px 5px;
+	-webkit-box-shadow: white 0 0 15px 5px;
+	box-shadow: white 0 0 15px 5px;
+}
+.sg-introVideoButton.sg-introButton{
+	background-image: url('images/intro/playSign.png');
+/* 	margin: 0; */
+	background-color: darkGray;
 }
 
-.sg-introButton:HOVER{
-	opacity: 1;
+.sg-introVideoButton.sg-introButton:HOVER{
+	background-color: white;
 }
-.sg-playExample {
-	background-image: url('images/intro/archery_snapshot_hover.jpeg');
-/* 	background-image: url('images/archery_snapshot_dull.jpeg'); */
-	color: white;
-}
+.sg-introButton:ACTIVE{
+	-moz-box-shadow: black 0 0 10px 2px;
+	-webkit-box-shadow: black 0 0 10px 2px;
+	box-shadow: black 0 0 10px 2px;
+	}
 
-.sg-playExample:HOVER {
+.sg-segmentDetailsButton{
+	width: 100%;
+	height: 40px;
+	text-align: center;
+	padding-top: 20px; 
+	position: absolute;
+	bottom: 0px;
+	background-color: #444;
+		-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+ 	border-radius: 15px;
+}
+.sg-segmentDetailsButton:HOVER{
+	background-color: #222;
+}
+.sg-segmentDetails{
+	height: 70vh;
+	position: fixed;
+	top: 13vh;
+	right: 5vw;
+	height: 85vh;
+	width: 66vw;
+	visibility: hidden;
+	background: gray;
+	-moz-box-shadow: black 0 0 10px 0px;
+	-webkit-box-shadow: black 0 0 10px 0px;
+	box-shadow: black 0 0 10px 0px;
+		-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+ 	border-radius: 15px;
 }
 /*---------------ConversionActivity---------------*/
 #sg-conversionActivity {
 	width: 100%;
 	height: 100%;
 	text-align: center;
-	color: black;
 }
 
 /*---------------SelectionPanel---------------*/
@@ -247,9 +302,10 @@ body {
 }
 
 .sg-unitSelection {
-	margin-top: 5px;
+	margin: 5px 0 0 1px;
 	height: calc(80% - 5px);
-	width: 50%;
+	width: 49%;
+	overflow-x: hidden; 
 }
 
 /*---------------AlgOut---------------*/
@@ -267,7 +323,7 @@ body {
 
 .sg-algOutRow {
 	border-top: 1px solid gray;
-	background-color: rgba(255, 255, 255, 0.8);
+	background-color: lightGray;
 }
 
 .sg-algOutEqRow {
@@ -277,7 +333,7 @@ body {
 	border-right: 1px solid silver;
 	white-space: nowrap;
 	overflow-x: auto;
-	overflow-y:  
+	overflow-y:  hidden;
 }
 
 .sg-algOutEqLeft {
@@ -290,7 +346,10 @@ body {
 .sg-algOutEqEquals {
 	display: inline-block;
 	vertical-align: middle;
-	width: 10%;
+	font-weight: bold;
+	background-color: silver;
+	width: 8%;
+	margin: 0 1%;
 }
 
 .sg-algOutEqRight { /* 	float: left; */
@@ -312,6 +371,7 @@ body {
 	color: blue;
 	text-decoration: none;
 }
+
 
 /*---------------changes---------------*/
 .sg-highlight {
@@ -344,8 +404,6 @@ body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	/* 	background-color: #202020; */
-	/* 	box-shadow:0 0 10px black inset; */ /* 	color: #A0A0A0; */
 	font-weight: lighter;
 	position: relative;
 }
@@ -428,9 +486,6 @@ body {
 /*---------------cursors---------------*/
 .sg-eqPanel {
 	cursor: default;
-	/* 	-moz-box-shadow: 0 4px 3px 0 rgba(100,100,100,0.2) inset; */
-/* 	-webkit-box-shadow: 0 4px 3px 0 rgba(100,100,100,0.2) inset; */
-/* 	box-shadow: 0 4px 3px 0 rgba(100,100,100,0.2) inset; */
 }
 
 .sg-displayWrapper {

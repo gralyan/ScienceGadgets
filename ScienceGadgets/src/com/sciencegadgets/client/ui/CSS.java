@@ -79,7 +79,7 @@ public static final String FIT_PARENT_HTML = "sg-fitParentHTML";
 public static final String BORDER_RADIUS_SMALL = "sg-borderRadiusSmall";
 /*---------------Browsers---------------*/
 public static final String MAIN_TITLE = "sg-mainTitle";
-public static final String EQUATION_BROWSER = "sg-equationBrowser";
+public static final String HOME_BROWSER = "sg-homeBrowser";
 public static final String MODES = "sg-modes";
 public static final String ROW_HEADER = "sg-rowHeader";
 public static final String ROW_SUB_HEADER = "sg-rowSubHeader";
@@ -99,8 +99,11 @@ public static final String CONVERSION_SPECIFICATION = "sg-conversionSpec";
 public static final String VIDEO_PANEL = "sg-videoPanel";
 public static final String VIDEO_SEGMENT = "sg-videoSegment";
 public static final String VIDEO_SEGMENT_LABEL = "sg-videoSegmentLabel";
-public static final String PLAY_EXAMPLE = "sg-playExample";
 public static final String INTRO_BUTTON = "sg-introButton";
+public static final String INTRO_VIDEO_AREA = "sg-introVideoArea";
+public static final String INTRO_VIDEO_BUTTON = "sg-introVideoButton";
+public static final String SEGMENT_DETAILS_BUTTON = "sg-segmentDetailsButton";
+public static final String SEGMENT_DETAILS = "sg-segmentDetails";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "sg-conversionActivity";
 /*---------------SelectionPanel---------------*/
@@ -186,5 +189,6 @@ public static final String EQUATION_SELECTION = "sg-equationSelection";
 public static final String ARCHIVED = "sg-archived";
 public static final String VAR_SPEC_INS = "sg-variableSpecInsertButton";
 public static final String OPTIONS_BUTTON = "sg-optionsButton";
+public static final String SOURCE = "sg-sourceAnchor";
 
 }

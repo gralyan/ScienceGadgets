@@ -20,6 +20,8 @@
 package com.sciencegadgets.client.algebra;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.sciencegadgets.client.Moderator;
@@ -65,8 +67,11 @@ public class AlgebaWrapper extends EquationWrapper {
 			bothSidesTransformations = new BothSidesTransformations(node);
 		}
 	}
-
+	
 	public void select() {
+		if(!canSelect) {
+			return;
+		}
 		super.select();
 		
 		if(TypeSGET.Operation.equals(node.getType())) {
@@ -83,6 +88,9 @@ public class AlgebaWrapper extends EquationWrapper {
 	}
 
 	public void unselect() {
+		if(!canSelect) {
+			return;
+		}
 		super.unselect();
 
 		if(TypeSGET.Operation.equals(node.getType())) {

@@ -20,7 +20,7 @@ public class BothSidesDrop extends TransformationDropController{
 	public void onDrop(DragContext context) {
 		super.onDrop(context);
 		
-		button.execute();;
+		button.execute();
 		
 	}
 }

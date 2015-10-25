@@ -29,11 +29,12 @@ import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 
 	private static final long serialVersionUID = 6852786194775839979L;
-	private boolean evaluatesToZero = false; 
+	private boolean evaluatesToZero = false;
 
 	public UnitMap() {
 		super();
 	}
+
 	public UnitMap(boolean evaluatesToZero) {
 		super();
 		this.evaluatesToZero = evaluatesToZero;
@@ -52,7 +53,7 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 			}
 		}
 	}
-	
+
 	public boolean evaluatesToZero() {
 		return evaluatesToZero;
 	}
@@ -213,11 +214,11 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 	 * @param otherMap
 	 */
 	public boolean isConvertableTo(UnitMap otherMap) {
-		
-		if(evaluatesToZero() || otherMap.evaluatesToZero()) {
+
+		if (evaluatesToZero() || otherMap.evaluatesToZero()) {
 			return true;
 		}
-		
+
 		UnitMap qkMap = getBaseQKMap();
 		UnitMap qkMapOther = otherMap.getBaseQKMap();
 		if (qkMap.size() != qkMapOther.size()) {
@@ -276,4 +277,21 @@ public class UnitMap extends LinkedHashMap<UnitName, Integer> {
 		return baseQKMap;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof UnitMap) {
+			UnitMap other = (UnitMap) o;
+			if (other.size() != size()) {
+				return false;
+			}
+			for (Entry<UnitName, Integer> entry : entrySet()) {
+				if (!entry.getValue().equals(other.get(entry.getKey()))) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

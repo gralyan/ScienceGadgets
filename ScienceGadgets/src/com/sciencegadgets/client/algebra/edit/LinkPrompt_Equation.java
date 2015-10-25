@@ -77,37 +77,37 @@ public class LinkPrompt_Equation extends LinkPrompt {
 				Window.alert("You should consider adding a variable in the equation");
 			} else {
 
-				final Button solveGoalButton = new Button("Solve Goal",
-						new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent arg0) {
-								LinkPrompt_Equation.this.disappear();
-								Moderator.switchToAlgebra(
-										algebraActivity.getEquationTree(),
-										ActivityType.editsolvegoal, true);
-							}
-						});
-				solveGoalButton
-						.setTitle("Faster and more accurate but can't use with random numbers");
-				solveGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
-				solveGoalButton.addStyleName(CSS.BORDER_RADIUS_SMALL);
-				upperArea.add(solveGoalButton);
-
-				final Button createGoalButton = new Button("Edit Goal",
-						new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent arg0) {
-								LinkPrompt_Equation.this.disappear();
-								Moderator.switchToAlgebra(
-										algebraActivity.getEquationTree(),
-										ActivityType.editcreategoal, true);
-							}
-						});
-				createGoalButton
-						.setTitle("Can use with random numbers but prone to error!");
-				createGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
-				createGoalButton.addStyleName(CSS.BORDER_RADIUS_SMALL);
-				upperArea.add(createGoalButton);
+//				final Button solveGoalButton = new Button("Solve Goal",
+//						new ClickHandler() {
+//							@Override
+//							public void onClick(ClickEvent arg0) {
+//								LinkPrompt_Equation.this.disappear();
+//								Moderator.switchToAlgebra(
+//										algebraActivity.getEquationTree(),
+//										ActivityType.editsolvegoal, true);
+//							}
+//						});
+//				solveGoalButton
+//						.setTitle("Faster and more accurate but can't use with random numbers");
+//				solveGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
+//				solveGoalButton.addStyleName(CSS.BORDER_RADIUS_SMALL);
+//				upperArea.add(solveGoalButton);
+//
+//				final Button createGoalButton = new Button("Edit Goal",
+//						new ClickHandler() {
+//							@Override
+//							public void onClick(ClickEvent arg0) {
+//								LinkPrompt_Equation.this.disappear();
+//								Moderator.switchToAlgebra(
+//										algebraActivity.getEquationTree(),
+//										ActivityType.editcreategoal, true);
+//							}
+//						});
+//				createGoalButton
+//						.setTitle("Can use with random numbers but prone to error!");
+//				createGoalButton.addStyleName(CSS.CREATE_GOAL_BUTTON);
+//				createGoalButton.addStyleName(CSS.BORDER_RADIUS_SMALL);
+//				upperArea.add(createGoalButton);
 			}
 
 			Unit[] units = Unit.values();

@@ -3,9 +3,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 	.dimensionalAnalysisArea {
-		background-color: silver;
+		background-color: rgba(125,125,125,0.2);	
 	}
-	
 	.layoutRow {
 		display: inline-block;
 		vertical-align: top;
@@ -16,7 +15,7 @@
 	}
 	
 	.mid {
-		background-color: lavender;
+		background-color: rgba(200,200,200,0.4);	
 	}
 	</ui:style>
 

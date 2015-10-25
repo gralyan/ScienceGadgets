@@ -139,12 +139,11 @@
 
 /*---------------wrappers---------------*/
 
-.sg-displayWrapper:not(.sg-Operation), .sg-editMode .sg-parentWrapper, .sg-fenced {
+.sg-displayWrapper:not(.sg-Operation), .sg-editMode .sg-parentWrapper, .sg-fenced, .sg-in-log, .sg-in-trig  {
 	-moz-border-radius: 0.6em;
 	-webkit-border-radius: 0.6em;
  	border-radius: 0.6em;
  	padding: 5px;
-/* 	z-index: 2; */
 }
 
 .sg-editMode .sg-displayWrapper:not(.sg-Operation){
@@ -159,7 +158,7 @@
 }
  
 /* hover */
-.sg-eqPanel .sg-displayWrapper:not(.sg-selectedWrapper):hover {
+.sg-eqPanel .sg-displayWrapper:not(.sg-selectedWrapper):not(.sg-Operation):hover {
 	background-color: rgba(255,255,255,0.3);
 }
 
@@ -175,8 +174,22 @@
 }
 
 /* select op */
-.sg-selectedWrapper.sg-Operation{
-	background-color: rgba(255,255,255,0.3);
+.sg-eqPanel:not(.sg-editMode) .sg-selectedWrapper.sg-Operation{
+	color: rgba(0,0,0,0);
+	text-shadow: none;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.sg-eqPanel:not(.sg-editMode) .sg-selectedWrapper.sg-Operation.sg-in-term {/* multiply(x)*/
+	background-image: url('images/crystal_multiply.png');
+}
+.sg-eqPanel:not(.sg-editMode) .sg-selectedWrapper.sg-Operation.sg-in-sum.sg-plus { /*add(+)*/
+	background-image: url('images/crystal_add.png');
+}
+.sg-eqPanel:not(.sg-editMode) .sg-selectedWrapper.sg-Operation.sg-in-sum.sg-minus {/* subtract(-)*/
+	background-image: url('images/crystal_subtract.png');
 }
 
 .sg-dragdrop-dragging {
@@ -191,20 +204,23 @@
 }
 
 .sg-selectedDropWrapper.sg-dropWrapperDragging {
-	-moz-box-shadow: 10px 10px 10px #000000;
-	-webkit-box-shadow: 10px 10px 10px #000000;
-	box-shadow: 10px 10px 10px #000000;
+	-moz-box-shadow: 10px 10px 10px black, 0 0 10px 2px rgba(255,255,255,0.5);
+	-webkit-box-shadow: 10px 10px 10px black, 0 0 10px 2px rgba(255,255,255,0.5);
+	box-shadow: 10px 10px 10px black, 0 0 10px 2px rgba(255,255,255,0.5);
 	position: relative;
 	top: -10px;
 	left: -10px;
 	
-	background-color: rgba(255,255,255,0.3);
+	background-color: rgba(255,255,255,0.2);
 	
 	z-index: 201;
 }
 
 .sg-dropWrapperDragging{
 	background-color: rgba(255,255,255,0.2);
+	-moz-box-shadow: 0 0 10px 2px rgba(255,255,255,0.5);
+	-webkit-box-shadow: 0 0 10px 2px rgba(255,255,255,0.5);
+	box-shadow: 0 0 10px 2px rgba(255,255,255,0.5);
 }
 
 .sg-selectionDetails {
@@ -221,11 +237,13 @@
 	border: none;
 	max-width: 100%;
 	overflow-wrap: break-word; 
+	text-align: center;
+	padding: 5px 0;
 }
 
 .sg-conversionWrapper {
 	border: medium solid black;
-	background-color: rgba(255,255,255,0.7);
+	background-color: rgba(255,255,255,0.2);
 	cursor: move;
 	padding-left: 0.3em;
 	padding-right: 0.3em;
@@ -320,28 +338,10 @@
 
 .sg-in-log {
 	display: inline-block;
-	/* 	position: relative; */
-	border-right: solid 0.05em;
-	border-left: solid 0.05em;
-	padding-left: 0.15em;
-	padding-right: 0.15em;
-	margin: 0.1em;
-	-moz-border-radius: 1em;
-	-webkit-border-radius: 1em;
- 	border-radius: 1em;
 }
 
 .sg-in-trig {
 	display: inline-block;
-	/* 	position: relative; */
-	border-right: solid 0.05em;
-	border-left: solid 0.05em;
-	padding-left: 0.15em;
-	padding-right: 0.15em;
-	margin: 0.1em;
-	-moz-border-radius: 1em;
-	-webkit-border-radius: 1em;
- 	border-radius: 1em;
 }
 
 .sg-in-log-base {
@@ -351,15 +351,10 @@
 	/* 	position: relative; */
 }
 
-.sg-fenced {
+.sg-fenced, .sg-in-trig, .sg-in-log {
 	border-right: solid .08em;
 	border-left: solid .08em;
-/* 	padding-left: 0.15em; */
-/* 	padding-right: 0.15em; */
 	margin: 0.1em;
-/* 	-moz-border-radius: 1em; */
-/* 	-webkit-border-radius: 1em; */
-/*  	border-radius: 1em; */
 }
 
 .sg-functionName {
@@ -367,12 +362,15 @@
 	/* 	position: relative; */
 	vertical-align: middle;
 }
-.sg-displayWrapper>.sg-unit{
-	color:black;
+.sg-displayWrapper .sg-unit{
+	visibility: hidden;
+}
+.sg-displayWrapper.sg-selectedWrapper .sg-unit{
+	visibility: visible;
 }
 .sg-unit {
-	font-family: sans-serif;
-	font-weight: bold;
+	font-family: sans-serif !important;
+	font-weight: bold !important;
 }
 
 .sg-subscript {

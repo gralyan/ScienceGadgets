@@ -21,6 +21,7 @@ package com.sciencegadgets.client.algebra.transformations;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.entities.users.Badge;
@@ -29,6 +30,9 @@ import com.sciencegadgets.shared.MathAttribute;
 import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.TypeSGET.Operator;
+import com.sciencegadgets.shared.dimensions.CommonConstants;
+import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitEnum;
 
 public class TrigTransformations extends
 		TransformationList<TrigTransformButton> {
@@ -53,9 +57,23 @@ public class TrigTransformations extends
 		function = TrigFunctions.valueOf(trigNode
 				.getAttribute(MathAttribute.Function));
 
+		add(trigEvaluate_check());
 		add(trigDefinition_check());
 		add(trigReciprocal_check());
 		add(inverseTrig_check());
+	}
+
+	TrigEvaluateButton trigEvaluate_check() {
+		if (TypeSGET.Number.equals(argument.getType())) {
+			String unit = argument.getAttribute(MathAttribute.Unit);
+			if (unit.contains(UnitEnum.Angle_deg.getUnitName())) {
+				return new TrigEvaluateButton(this, true);
+			} else if ("".equals(unit)
+					|| unit.contains(UnitEnum.Angle_rad.getUnitName())) {
+				return new TrigEvaluateButton(this, false);
+			}
+		}
+		return null;
 	}
 
 	TrigReciprocalButton trigReciprocal_check() {
@@ -123,12 +141,12 @@ class TrigTransformButton extends TransformationButton {
 	@Override
 	protected void onTransformationEnd(String changeComment,
 			EquationNode nodeToSelect) {
-		if(reloadAlgebraActivity) {
+		if (reloadAlgebraActivity) {
 			trig.highlight();
 		}
 		super.onTransformationEnd(changeComment, nodeToSelect);
 	}
-	
+
 	@Override
 	TransformationButton getPreviewButton(EquationNode trig) {
 		previewContext = new TrigTransformations(trig);
@@ -271,5 +289,52 @@ class TrigUnravelButton extends TrigTransformButton {
 				+ replacement.getHTMLString(true, true);
 		toReplace.replace(replacement);
 		onTransformationEnd(changeComment, replacement);
+	}
+}
+
+/**
+ * Argument must be a number node
+ *
+ */
+class TrigEvaluateButton extends TrigTransformButton {
+	Boolean isDegrees;
+
+	public TrigEvaluateButton(TrigTransformations context, Boolean isDegrees) {
+		super(context);
+		this.isDegrees = isDegrees;
+	}
+
+	@Override
+	public Badge getAssociatedBadge() {
+		return Badge.TRIG_EVALUATE;
+	}
+
+	@Override
+	public boolean meetsAutoTransform() {
+		return true;
+	}
+
+	@Override
+	public void transform() {
+		String changeComment = trig.getHTMLString(true, true) + " = ";
+
+		try {
+			String argStr = argument.getAttribute(MathAttribute.Value);
+			Double argDouble = Double.parseDouble(argStr);
+			TrigFunctions func = TrigFunctions.valueOf(trig
+					.getAttribute(MathAttribute.Function));
+			Double eval = isDegrees ? func.operateDeg(argDouble) : func
+					.operateRad(argDouble);
+			EquationNode evaluated = trig.replace(TypeSGET.Number, eval + "");
+			onTransformationEnd(changeComment + eval, evaluated);
+		} catch (NumberFormatException e) {
+		}
+
+	}
+
+	@Override
+	TransformationButton getPreviewButton(EquationNode operation) {
+		super.getPreviewButton(operation);
+		return previewContext.trigEvaluate_check();
 	}
 }

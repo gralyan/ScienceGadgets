@@ -129,7 +129,7 @@ abstract class LogTransformButton extends TransformationButton {
 	protected LogarithmicTransformations previewContext;
 
 	LogTransformButton(LogarithmicTransformations context, String html) {
-		super(context);
+		super(html, context);
 		addStyleName(CSS.LOG);
 
 		this.log = context.log;

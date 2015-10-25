@@ -30,6 +30,7 @@ import com.sciencegadgets.shared.TrigFunctions;
 import com.sciencegadgets.shared.TypeSGET;
 import com.sciencegadgets.shared.dimensions.CommonConstants;
 import com.sciencegadgets.shared.dimensions.UnitAttribute;
+import com.sciencegadgets.shared.dimensions.UnitEnum;
 import com.sciencegadgets.shared.dimensions.UnitMap;
 import com.sciencegadgets.shared.dimensions.UnitName;
 
@@ -303,7 +304,10 @@ public class EquationValidator {
 				TrigFunctions function = TrigFunctions.valueOf(node
 						.getAttribute(MathAttribute.Function));
 				if (function.isArc()) {
-					return getQuantityKind(node.getChildAt(0));
+					UnitMap angleMap = new UnitMap();
+					angleMap.put(new UnitName(UnitEnum.Angle_2370.getQuantityKindName()), 1);
+					return angleMap;
+//					return getQuantityKind(node.getChildAt(0));
 				} else {
 					UnitMap trigArgumentMap = getQuantityKind(node
 							.getChildAt(0));

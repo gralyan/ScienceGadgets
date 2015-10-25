@@ -22,6 +22,7 @@ package com.sciencegadgets.client.algebra.transformations;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 
+import com.google.gwt.core.client.GWT;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.entities.users.Badge;
@@ -50,9 +51,9 @@ public class FractionTransformations extends
 		this.denominatorType = denominator.getType();
 
 		add(denominatorFlip_check());
-		
-		//TODO 
-//		add(simplifyFraction_check());
+
+		// TODO
+		// add(simplifyFraction_check());
 
 	}
 
@@ -73,12 +74,12 @@ public class FractionTransformations extends
 	}
 
 	public static boolean SIMPLIFY_FRACTION(EquationNode drag,
-			EquationNode target, boolean execute)
-			throws ArithmeticException, NumberFormatException {
-		Integer numValue = Integer.parseInt(new BigDecimal(drag
-				.getSymbol()).toPlainString());
-		Integer denValue = Integer.parseInt(new BigDecimal(target
-				.getSymbol()).toPlainString());
+			EquationNode target, boolean execute) throws ArithmeticException,
+			NumberFormatException {
+		Integer numValue = Integer.parseInt(new BigDecimal(drag.getSymbol())
+				.toPlainString());
+		Integer denValue = Integer.parseInt(new BigDecimal(target.getSymbol())
+				.toPlainString());
 
 		// Whole Division
 		if ((numValue > denValue && numValue % denValue == 0)
@@ -86,8 +87,8 @@ public class FractionTransformations extends
 			if (execute) {
 				int division = numValue > denValue ? numValue / denValue
 						: denValue / numValue;
-				
-				//TODO combine with InterBractionButton
+
+				// TODO combine with InterBractionButton
 				target.replace(TypeSGET.Number, division + "");
 				InterFractionButton.cleanSide(drag);
 			}
@@ -159,10 +160,12 @@ class SimplifyFractionButton extends FractionTransformButton {
 	public SimplifyFractionButton(FractionTransformations context) {
 		super("Simplify Fraction", context);
 	}
+
 	@Override
 	public Badge getAssociatedBadge() {
 		return Badge.SIMPLIFY_FRACTIONS;
 	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
@@ -172,7 +175,7 @@ class SimplifyFractionButton extends FractionTransformButton {
 	public void transform() {
 		FractionTransformations.SIMPLIFY_FRACTION(numerator, denominator, true);
 
-		if(reloadAlgebraActivity) {
+		if (reloadAlgebraActivity) {
 			numerator.highlight();
 			denominator.highlight();
 		}
@@ -191,10 +194,12 @@ class DenominatorFlipButton extends FractionTransformButton {
 	DenominatorFlipButton(FractionTransformations context) {
 		super("Flip Denominator", context);
 	}
+
 	@Override
 	public Badge getAssociatedBadge() {
 		return Badge.DIVIDING_FRACTIONS;
 	}
+
 	@Override
 	public boolean meetsAutoTransform() {
 		return true;
@@ -203,27 +208,28 @@ class DenominatorFlipButton extends FractionTransformButton {
 	@Override
 	public void transform() {
 
-		if(reloadAlgebraActivity) {
+		if (reloadAlgebraActivity) {
 			denominator.highlight();
 		}
-		
-		// The easy mode is only useful if the numerator or denominator are fractions
-		if (Moderator.meetsRequirement(Badge.DENIMINATOR_FLIP_MULTIPLY) && (TypeSGET.Fraction.equals(denominatorType) || TypeSGET.Fraction.equals(numeratorType))) {
-			
-			boolean removeOldDenominator = false;
+
+		// The easy mode is only useful if the numerator or denominator are
+		// fractions
+		if (Moderator.meetsRequirement(Badge.DENIMINATOR_FLIP_MULTIPLY)
+				&& (TypeSGET.Fraction.equals(denominatorType) || TypeSGET.Fraction
+						.equals(numeratorType))) {
+
 			EquationNode bottomNumerator = null, bottomDenominator = null;
-			if(TypeSGET.Fraction.equals(denominatorType)) {
+			if (TypeSGET.Fraction.equals(denominatorType)) {
 				bottomNumerator = denominator.getChildAt(0);
 				bottomDenominator = denominator.getChildAt(1);
-				removeOldDenominator = true;
-			}else {
+			} else {
 				bottomNumerator = denominator;
 			}
-			
+
 			EquationNode topNumerator = null, topDenominator = null;
 			if (TypeSGET.Fraction.equals(numeratorType)) {
 				topDenominator = numerator.getChildAt(1);
-				topDenominator.encase(TypeSGET.Term);
+				topDenominator = topDenominator.encase(TypeSGET.Term);
 				topDenominator.append(TypeSGET.Operation, Operator
 						.getMultiply().getSign());
 				topDenominator.append(bottomNumerator);
@@ -231,18 +237,17 @@ class DenominatorFlipButton extends FractionTransformButton {
 				numerator = numerator.encase(TypeSGET.Fraction);
 				numerator.append(bottomNumerator);
 			}
-			
-			if(bottomDenominator != null) {
-			topNumerator = numerator.getChildAt(0);
-			topNumerator.encase(TypeSGET.Term);
-			topNumerator.append(TypeSGET.Operation, Operator.getMultiply()
-					.getSign());
-			topNumerator.append(bottomDenominator);
-			}
-			
-			if(removeOldDenominator) {
+
+			if (bottomDenominator != null) {
+				topNumerator = numerator.getChildAt(0);
+				topNumerator = topNumerator.encase(TypeSGET.Term);
+				topNumerator.append(TypeSGET.Operation, Operator.getMultiply()
+						.getSign());
+				topNumerator.append(bottomDenominator);
 				denominator.remove();
 			}
+			fraction.replace(numerator);
+			
 		} else {
 
 			if (!TypeSGET.Fraction.equals(denominatorType)) {
@@ -265,9 +270,8 @@ class DenominatorFlipButton extends FractionTransformButton {
 					Operator.getMultiply().getSign());
 			grandParent.addBefore(parentFractionIndex, numerator);
 
+			fraction.remove();
 		}
-		
-		fraction.remove();
 
 		onTransformationEnd("Multiply by Resiprocal", denominator);
 	}

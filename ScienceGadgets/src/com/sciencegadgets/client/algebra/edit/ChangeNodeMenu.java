@@ -350,9 +350,10 @@ public class ChangeNodeMenu extends CommunistPanel {
 				trigFuncSpec.reload();
 				return;
 			case Number:
+				
 				AlgebraActivity.NUMBER_SPEC_PROMPT(node,
 						!(isSameTypeNode && !TypeSGET.NOT_SET.equals(node
-								.getSymbol())), false, false);
+								.getSymbol())), false, null);
 				return;
 			case Variable:
 				AlgebraActivity.VARIABLE_SPEC_PROMPT(node,

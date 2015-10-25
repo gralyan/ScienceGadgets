@@ -14,6 +14,9 @@ button {
 	background-color: lavender;
 	border: solid gray 1px;
 }
+.sg-smallestButton:ACTIVE {
+	background-color: gray;
+}
 
 .sg-mediumButton {
 	height: 70px;
@@ -25,6 +28,10 @@ button {
 	border: solid gray 1px;
 }
 
+.sg-mediumButton:ACTIVE {
+	background-color: gray;
+}
+	
 /* transformation buttons */
 .sg-transformationButton {
 	outline: none;
@@ -76,7 +83,8 @@ button {
 
 /* edit buttons */
 .sg-saveEquationButton {
-	width: 100%;
+	margin: 0 5%;
+	width: 90%;
 	height: 100%;
 	display: inline-block;
 	vertical-align: top;
@@ -192,18 +200,34 @@ button {
 }
 
 .sg-optionsButton {
-	background-color: rgba(225, 225, 225, 0.4);
-	border: none;
-	text-shadow: 0 0 3px white;
-	color: inherit;
-	font-weight: bold;
-	height: calc(100% - 10px);
-	width: calc(100% - 10px);
-	margin: 5px;
-	object-fit: contain;
+	background-image: url('images/crystal_equals.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 	opacity: 0.7;
+	/* 	background-color: rgba(225, 225, 225, 0.4); */
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
+	margin: 5px;
+	height: calc(100% - 10px);
+	width: calc(100% - 10px);
 }
 
+.sg-optionsButton:HOVER {
+	opacity: 1;
+}
+
+.sg-sourceAnchor {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	margin: 10px 5%;
+	padding: 5px;
+	background-color: white;
+	text-decoration: none;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	border-radius: 0.5em;
+	white-space: nowrap;
+}

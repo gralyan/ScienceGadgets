@@ -19,18 +19,23 @@
  *******************************************************************************/
 package com.sciencegadgets.client.algebra;
 
+import java.util.HashMap;
+
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.Moderator.ActivityType;
+import com.sciencegadgets.client.algebra.SystemOfEquations.SystemEquationInfo;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.ToggleSlide;
 import com.sciencegadgets.shared.TypeSGET;
@@ -77,7 +82,11 @@ public class OptionsHandler implements ClickHandler {
 		}
 
 		SystemOfEquations system = algebraActivity.getSystem();
-		for (EquationTree eTree : system.getNonWorkingTrees().keySet()) {
+		HashMap<EquationTree, SystemEquationInfo> equations = system.getNonWorkingTrees();
+		if(equations.isEmpty()) {
+			optionsPanel.add(new Label("No other equations available"));
+		}
+		for (EquationTree eTree : equations.keySet()) {
 			EquationButton eqButton = new EquationButton(algebraActivity, eTree);
 			if (system.getInfo(eTree).isArchived()) {
 				eqButton.addStyleName(CSS.ARCHIVED);
@@ -90,7 +99,12 @@ public class OptionsHandler implements ClickHandler {
 					algebraActivity);
 			optionsPanel.add(insEqButton);
 		}
-		// optionsPopup.showRelativeTo(optionsButton);
+		
+		// Please see the AGPL3 license
+		Anchor source = new Anchor("Source Code", "https://github.com/gralyan/ScienceGadgets", "_blank");
+		source.addStyleName(CSS.SOURCE);
+		optionsPanel.add(source);
+		
 		optionsPopup.show();
 	}
 
@@ -124,7 +138,7 @@ class SlideAnimation extends Animation {
 
 	void init() {
 		AbsolutePanel mainPanel = Moderator.scienceGadgetArea;
-		startWidth = 0; //optionsButton.getOffsetWidth();
+		startWidth =(int) (mainPanel.getOffsetWidth() * 0.15);
 		endWidth = (int) (mainPanel.getOffsetWidth() * 0.7);
 		pop.setPixelSize(startWidth, mainPanel.getOffsetHeight());
 	}

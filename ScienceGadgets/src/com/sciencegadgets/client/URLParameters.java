@@ -104,16 +104,18 @@ public class URLParameters {
 		return paramMap;
 	}
 
-	public static void addParameter(Parameter goal, String goalXML,
+	public static void addParameter(Parameter param, String value,
 			boolean issueEvent) {
 		HashMap<Parameter, String> map = getParameterMap();
-		map.put(goal, goalXML);
+		map.put(param, value);
 		setParameters(map, issueEvent);
 	}
 
 	public static void setParameters(HashMap<Parameter, String> parameterMap,
 			boolean issueEvent) {
-		parameterMap.put(Parameter.color, getParameter(Parameter.color));
+		if(parameterMap.get(Parameter.color) == null) {
+			parameterMap.put(Parameter.color, getParameter(Parameter.color));
+		}
 		String historyToken = makeTolken(parameterMap, false);
 		History.newItem(historyToken, issueEvent);
 	}

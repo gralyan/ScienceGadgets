@@ -31,9 +31,9 @@ import com.sciencegadgets.client.ui.CommunistPanel;
 import com.sciencegadgets.client.ui.FitParentHTML;
 import com.sciencegadgets.client.ui.SelectionButton;
 
-public class EquationBrowser extends FlowPanel {
+public class HomeBrowser extends FlowPanel {
 
-	CommunistPanel activitySelectionPanel = new CommunistPanel(false);
+//	CommunistPanel activitySelectionPanel = new CommunistPanel(false);
 	SimplePanel activityDetailsPanel = new SimplePanel();
 	
 	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Algebra Practice", ActivityType.interactiveequation);
@@ -46,23 +46,23 @@ public class EquationBrowser extends FlowPanel {
 
 	static ActivityButton selectedActivityButton = null;
 
-	public EquationBrowser() {
+	public HomeBrowser() {
 
 		// Set up browsers
-		this.getElement().setId(CSS.EQUATION_BROWSER);
+		this.getElement().setId(CSS.HOME_BROWSER);
 		
 //		Anchor title = new Anchor("ScienceGadgets", "/project/index.html");
 		Label title = new Label("ScienceGadgets");
 		title.addStyleName(CSS.MAIN_TITLE);
 		this.add(title);
 
-		activitySelectionPanel.getElement().setId(CSS.ACTIVITY_SELECTION_PANEL);
-		this.add(activitySelectionPanel);
+//		activitySelectionPanel.getElement().setId(CSS.ACTIVITY_SELECTION_PANEL);
+//		this.add(activitySelectionPanel);
 
 		activityDetailsPanel.getElement().setId(CSS.ACTIVITY_DETAILS_PANEL);
 		this.add(activityDetailsPanel);
 		
-		ArrayList<ActivityButton> activityButtons = new ArrayList<EquationBrowser.ActivityButton>();
+		ArrayList<ActivityButton> activityButtons = new ArrayList<HomeBrowser.ActivityButton>();
 
 		// Add buttons
 		
@@ -79,7 +79,7 @@ public class EquationBrowser extends FlowPanel {
 		activityButtons.add(new ActivityButton("Conversion",
 				conversionSpec));
 		
-		activitySelectionPanel.addAll(activityButtons);
+//		activitySelectionPanel.addAll(activityButtons);
 		
 		// Add initial detail
 		defaultButton.onSelect();

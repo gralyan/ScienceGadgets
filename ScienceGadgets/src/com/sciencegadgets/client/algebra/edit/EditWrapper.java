@@ -61,6 +61,9 @@ public class EditWrapper extends EquationWrapper {
 	}
 
 	public void select() {
+		if(!canSelect) {
+			return;
+		}
 		if(!TypeSGET.Operation.equals(node.getType())) {
 		super.select();
 
@@ -74,6 +77,9 @@ public class EditWrapper extends EquationWrapper {
 	}
 
 	public void unselect() {
+		if(!canSelect) {
+			return;
+		}
 
 		if (changeNodeMenu != null) {
 		changeNodeMenu.removeFromParent();

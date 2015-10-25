@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.sciencegadgets.client.JSNICalls;
 import com.sciencegadgets.client.algebra.EquationTree.EquationNode;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.shared.MathAttribute;
@@ -52,6 +53,10 @@ public class EquationWrapper extends Wrapper {
 
 		this.addStyleName(CSS.DISPLAY_WRAPPER);
 
+		if (TypeSGET.Equation.equals(node.getParentType())
+				&& node.getIndex() == 1) {
+			canSelect = false;
+		}
 	}
 
 	public EquationPanel getEqPanel() {
@@ -78,36 +83,30 @@ public class EquationWrapper extends Wrapper {
 				fullValue = node.getAttribute(MathAttribute.Randomness);
 			} else {
 				try {
-					new BigDecimal(node.getXMLNode().getInnerText());
-					break;
-				} catch (NumberFormatException e) {
-					try {
-						new BigDecimal(fullValue);
-						// FitParentHTML valueHTML = new
-						// FitParentHTML(fullValue);
-						final TextBox valueHTML = new TextBox();
-						valueHTML.setText(fullValue);
-						valueHTML.addClickHandler(new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent event) {
-								valueHTML.selectAll();
-							}
-						});
-						valueHTML.addStyleName(CSS.SELECTION_DETAILS_Value);
-						detailsList.add(valueHTML);
-					} catch (NumberFormatException ex) {
-					}
+					new BigDecimal(fullValue);
+					// FitParentHTML valueHTML = new
+					// FitParentHTML(fullValue);
+					final TextBox valueHTML = new TextBox();
+					valueHTML.setText(fullValue);
+					valueHTML.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							valueHTML.selectAll();
+						}
+					});
+					valueHTML.addStyleName(CSS.SELECTION_DETAILS_Value);
+					valueHTML.getElement().getStyle().setProperty("textShadow", "inherit");
+					detailsList.add(valueHTML);
+				} catch (NumberFormatException ex) {
 				}
 			}
 
-			// UNITS included in equation
-
-			// UnitAttribute unit = node.getUnitAttribute();
-			// if (!"".equals(unit.toString())) {
-			// FitParentHTML unitHTML = new FitParentHTML();
-			// unitHTML.getElement().appendChild(UnitHTML.create(unit, false));
-			// detailsList.add(unitHTML);
-			// }
+			UnitAttribute unit = node.getUnitAttribute();
+			if (!"".equals(unit.toString())) {
+				HTML unitHTML = new HTML();
+				unitHTML.getElement().appendChild(UnitHTML.create(unit, false));
+				detailsList.add(unitHTML);
+			}
 
 			break;
 		case Variable:
@@ -123,7 +122,8 @@ public class EquationWrapper extends Wrapper {
 		case Operation:
 			operationType = node.getParentType();
 			String[] parts = { node.getPrevSibling().getType().toString(),
-					node.getSymbol(), node.getNextSibling().getType().toString() };
+					node.getSymbol(),
+					node.getNextSibling().getType().toString() };
 
 			typeLabel.setHTML("");
 			Element typeEl = typeLabel.getElement();
@@ -149,8 +149,8 @@ public class EquationWrapper extends Wrapper {
 
 		Widget typeParent = typeLabel.getParent();
 		if (typeParent != null) {
-//			typeParent.addStyleName(type.getCSSClassName());
-//			typeParent.addStyleName(CSS.PARENT_WRAPPER);
+			// typeParent.addStyleName(type.getCSSClassName());
+			// typeParent.addStyleName(CSS.PARENT_WRAPPER);
 			if (operationType != null) {
 				typeParent.addStyleName(operationType.getCSSClassName());
 			}
@@ -159,6 +159,9 @@ public class EquationWrapper extends Wrapper {
 
 	@Override
 	public void select() {
+		if (!canSelect) {
+			return;
+		}
 
 		if (this.equals(eqPanel.selectedWrapper)) {
 			// If this was already selected, focus in on it
@@ -186,6 +189,9 @@ public class EquationWrapper extends Wrapper {
 
 	@Override
 	public void unselect() {
+		if (!canSelect) {
+			return;
+		}
 		super.unselect();
 
 		eqPanel.selectedWrapper = null;

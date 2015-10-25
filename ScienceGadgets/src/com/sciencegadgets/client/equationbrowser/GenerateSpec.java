@@ -109,7 +109,7 @@ public class GenerateSpec extends Composite {
 				public void onBarValueChanged(BarValueChangedEvent event) {
 					String backColor = "white";
 					String foregroundColor = "black";
-					difficulty = getDifficulty(event.getValue());
+					difficulty = GenerateSpec.getDifficulty(event.getValue());
 					switch (difficulty) {
 					case NONE:
 						break;
@@ -142,9 +142,10 @@ public class GenerateSpec extends Composite {
 		}
 
 		public Difficulty getDifficulty() {
-			return getDifficulty(getValue());
+			return GenerateSpec.getDifficulty(getValue());
 		}
-		public Difficulty getDifficulty(int value) {
+	}
+		public static Difficulty getDifficulty(int value) {
 			
 			switch (value) {
 			case 0:
@@ -159,7 +160,6 @@ public class GenerateSpec extends Composite {
 				return Difficulty.NONE;
 			}
 		}
-	}
 	public GenerateRandomEquationButton getButton() {
 		return generateButton;
 	}

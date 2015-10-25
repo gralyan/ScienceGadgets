@@ -63,22 +63,23 @@ class GenerateRandomEquationButton extends SelectionButton {
 		sumsOS = 0, termsOS = 0, fracsOS = 0, expsOS = 0;
 
 		Difficulty difficultyAdd, difficultyMult, difficultyFrac, difficultyExp;
-		if (hasDifficulty) {
+		if (hasDifficulty && generateSpec != null) {
 			difficultyAdd = generateSpec.slideAdd.getDifficulty();
 			difficultyMult = generateSpec.slideMult.getDifficulty();
 			difficultyFrac = generateSpec.slideFrac.getDifficulty();
 			difficultyExp = generateSpec.slideExp.getDifficulty();
 		} else {
-			difficultyAdd = generateSpec.slideAdd.getDifficulty((int) (Math
-					.random() * 3));
-			difficultyMult = generateSpec.slideMult.getDifficulty((int) (Math
-					.random() * 3));
-			difficultyFrac = generateSpec.slideFrac.getDifficulty((int) (Math
-					.random() * 3));
-			difficultyExp = generateSpec.slideExp.getDifficulty((int) (Math
-					.random() * 3));
+			difficultyAdd = GenerateSpec
+					.getDifficulty((int) (Math.random() * 3));
+			difficultyMult = GenerateSpec
+					.getDifficulty((int) (Math.random() * 3));
+			difficultyFrac = GenerateSpec
+					.getDifficulty((int) (Math.random() * 3));
+			difficultyExp = GenerateSpec
+					.getDifficulty((int) (Math.random() * 3));
 		}
 
+		// Must add something
 		if (difficultyAdd == Difficulty.NONE
 				&& difficultyMult == Difficulty.NONE
 				&& difficultyFrac == Difficulty.NONE

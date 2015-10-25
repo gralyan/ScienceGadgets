@@ -19,11 +19,13 @@
  *******************************************************************************/
 package com.sciencegadgets.client.equationbrowser;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.sciencegadgets.client.Moderator;
 import com.sciencegadgets.client.ui.CSS;
 import com.sciencegadgets.client.ui.SelectionButton;
 import com.sciencegadgets.client.ui.specification.NumberSpecification;
+import com.sciencegadgets.shared.dimensions.UnitMap;
 
 public class ConversionSpecification extends FlowPanel {
 	NumberSpecification conversionSpec = new NumberSpecification(true, true, false);
@@ -31,7 +33,10 @@ public class ConversionSpecification extends FlowPanel {
 		@Override
 		protected void onSelect() {
 			String toConvertValue = conversionSpec.getSymbolDisplay().getText();
-			if(!"".equals(toConvertValue)) {
+			UnitMap toConvertMap = conversionSpec.getUnitMap();
+			if("".equals(toConvertValue) || toConvertMap.isEmpty()) {
+				Window.alert("Nothing to convert");
+			}else {
 				Moderator.switchToConversion(toConvertValue, conversionSpec.getUnitMap().getUnitAttribute(), false);
 			}
 		}

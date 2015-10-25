@@ -81,7 +81,9 @@ public enum TrigFunctions {
 	 * objects. The first and second are related directly and the third is
 	 * related inversely. <b>Either the second or third entry will always be null</b><br/><br/>
 	 * <b>ex:</b> tan = sin/cos<br/>
-	 * for tan, this will return {sin, null, cos}
+	 * tan returns {sin, null, cos}<br/><br/>
+	 * <b>ex:</b> sin = tan*cos<br/>
+	 * sin returns {tan, cos, null}
 	 * 
 	 *
 	 */
@@ -117,5 +119,36 @@ public enum TrigFunctions {
 
 		}
 		return null;
+	}
+	
+	public Double operateDeg(Double deg) {
+		return operateRad(Math.toRadians(deg));
+	}
+	public Double operateRad(Double rad) {
+		
+		switch (this) {
+		case sin:
+			return Math.sin(rad);
+		case cos:
+			return Math.cos(rad);
+		case tan:
+			return Math.tan(rad);
+		
+		case sinh:
+			return Math.sinh(rad);
+		case cosh:
+			return Math.cosh(rad);
+		case tanh:
+			return Math.tanh(rad);
+			
+		case arcsin:
+			return Math.asin(rad);
+		case arccos:
+			return Math.acos(rad);
+		case arctan:
+			return Math.atan(rad);
+			default:
+				return null;
+		}
 	}
 }

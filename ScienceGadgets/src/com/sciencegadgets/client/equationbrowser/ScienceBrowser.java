@@ -50,9 +50,9 @@ public class ScienceBrowser extends FlowPanel {
 	private HashMap<TextBox, Element> inputBinding = new HashMap<TextBox, Element>();
 	private Button sumButton = new Button("Use");
 	public static HTML labelSumEq = new HTML("");
-	private EquationBrowser equationBrowser;
+	private HomeBrowser equationBrowser;
 
-	public ScienceBrowser(final EquationBrowser equationBrowser) {
+	public ScienceBrowser(final HomeBrowser equationBrowser) {
 		super();
 		this.equationBrowser = equationBrowser;
 		getElement().setId(CSS.SCI_BROWSER);

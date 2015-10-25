@@ -1199,9 +1199,7 @@ public class EquationTree {
 				}
 			case Number:
 			case Variable:
-				if (!this.getUnitAttribute().equals(another.getUnitAttribute())
-						&& !new UnitMap(this).isConvertableTo(new UnitMap(
-								another))) {
+				if (!this.getUnitAttribute().equals(another.getUnitAttribute())) {
 					return false;
 				}
 				if (getSymbol().equals(another.getSymbol())

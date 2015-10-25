@@ -22,7 +22,10 @@ package com.sciencegadgets.client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.OutlineStyle;
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasBlurHandlers;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -48,7 +51,7 @@ import com.sciencegadgets.client.Moderator;
  * Launch with {@link Prompt#appear()}<br/>
  * Remove with {@link Prompt#disappear()}<br/>
  */
-public class Prompt extends DialogBox implements Resizable, HasKeyUpHandlers {
+public class Prompt extends DialogBox implements Resizable, HasKeyUpHandlers, HasBlurHandlers {
 
 	private static final double HEIGHT_FRACTION = 0.7;
 	private static final double WIDTH_FRACTION = 0.8;
@@ -141,4 +144,10 @@ public class Prompt extends DialogBox implements Resizable, HasKeyUpHandlers {
 	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
 		return focusPanel.addKeyUpHandler(handler);
 	}
+
+	@Override
+	public HandlerRegistration addBlurHandler(BlurHandler handler) {
+		return focusPanel.addBlurHandler(handler);
+	}
+	
 }

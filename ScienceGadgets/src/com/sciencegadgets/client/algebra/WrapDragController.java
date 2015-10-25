@@ -65,8 +65,10 @@ public class WrapDragController extends PickupDragController {
 
 		proxy.getElement().getStyle().setOpacity(0);
 		
+		if(dropControllers != null) {
 		for (DropController dropC : dropControllers) {
 			dropC.getDropTarget().addStyleName(CSS.DROP_WRAPPER_DRAGGING);
+			}
 		}
 	}
 
@@ -93,8 +95,10 @@ public class WrapDragController extends PickupDragController {
 		
 		isDragging = false;
 
+		if(dropControllers != null) {
 		for (DropController dropC : dropControllers) {
 			dropC.getDropTarget().removeStyleName(CSS.DROP_WRAPPER_DRAGGING);
+		}
 		}
 	}
 

@@ -389,11 +389,6 @@ public class BothSidesTransformations extends
 
 			if (joinedButton.isSelected()) {
 				joinedButton.deselect();
-				changeComment = this.getHTML();
-
-				if(reloadAlgebraActivity) {
-					node.lineThrough();
-				}
 				execute();
 			} else {
 				this.select();
@@ -402,7 +397,15 @@ public class BothSidesTransformations extends
 			}
 		}
 
-		protected abstract void execute();
+		void execute() {
+			changeComment = this.getHTML();
+			
+			if(reloadAlgebraActivity) {
+				node.lineThrough();
+			}
+			execution();
+		}
+		protected abstract void execution();
 	}
 
 	// ////////////////////////////////////////////////////////
@@ -416,7 +419,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void execute() {
+		protected void execution() {
 
 			// Prepare Target side
 			targetSide = targetSide.encase(TypeSGET.Sum);
@@ -485,7 +488,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void execute() {
+		protected void execution() {
 
 			EquationNode operator = null;
 
@@ -564,7 +567,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void execute() {
+		protected void execution() {
 
 			boolean AutoIntoFraction = Moderator
 					.meetsRequirement(Badge.MULTIPLY_WITH_FRACTION);
@@ -644,7 +647,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void execute() {
+		protected void execution() {
 
 			// Prepare Target side
 			EquationNode target = null;
@@ -713,7 +716,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void execute() {
+		protected void execution() {
 
 			// Prepare Target side
 			EquationNode targetExp = targetSide.encase(TypeSGET.Exponential);
@@ -748,7 +751,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void execute() {
+		protected void execution() {
 
 			// Prepare Target side
 			EquationNode targetLog = targetSide.encase(TypeSGET.Log);
@@ -786,7 +789,7 @@ public class BothSidesTransformations extends
 		}
 
 		@Override
-		protected void execute() {
+		protected void execution() {
 
 			// Prepare Target side
 			EquationNode targetTrig = targetSide.encase(TypeSGET.Trig);

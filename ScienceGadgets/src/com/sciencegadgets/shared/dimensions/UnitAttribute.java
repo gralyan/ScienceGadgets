@@ -57,7 +57,14 @@ public class UnitAttribute {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return toString().equals(obj.toString());
+		if(obj instanceof UnitAttribute) {
+			UnitAttribute other = (UnitAttribute) obj;
+			if(toString().equals(other.toString())) {
+				return true;
+			}
+			return new UnitMap(this).equals(new UnitMap(other));
+		}
+		return false;
 	}
 
 	public UnitMultiple[] getUnitMultiples() {

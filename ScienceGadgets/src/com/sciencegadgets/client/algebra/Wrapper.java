@@ -49,6 +49,7 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	protected WrapDragController dragController = null;
 	public boolean moved = false;
 	private EquationLayer equationLayer;
+	protected Boolean canSelect = true;
 
 	public Wrapper(EquationNode node, final AbsolutePanel parentPanel,
 			Element element) {
@@ -97,12 +98,18 @@ public class Wrapper extends HTML implements HasClickHandlers,
 	}
 
 	public void select() {
+		if(!canSelect) {
+			return;
+		}
 //		Moderator.SOUNDS.WRAPPER_SELECT.play();
 		
 		this.addStyleName(CSS.SELECTED_WRAPPER);
 	}
 
 	public void unselect() {
+		if(!canSelect) {
+			return;
+		}
 		this.removeStyleName(CSS.SELECTED_WRAPPER);
 	}
 
