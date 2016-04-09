@@ -22,6 +22,7 @@ package com.sciencegadgets.client.equationbrowser;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,90 +34,103 @@ import com.sciencegadgets.client.ui.SelectionButton;
 
 public class HomeBrowser extends FlowPanel {
 
-//	CommunistPanel activitySelectionPanel = new CommunistPanel(false);
+	// CommunistPanel activitySelectionPanel = new CommunistPanel(false);
 	SimplePanel activityDetailsPanel = new SimplePanel();
-	
-	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Algebra Practice", ActivityType.interactiveequation);
+
+	AlgebraBrowser algebraBrowser = new AlgebraBrowser("Algebra Practice",
+			ActivityType.interactiveequation);
 	VideoPanel videoPanel = new VideoPanel();
 	RandomEquationPanel generatePanel = new RandomEquationPanel();
 	ConversionSpecification conversionSpec = new ConversionSpecification();
-//	public ChallengeBrowser challengeBrowser = new ChallengeBrowser();
+	// public ChallengeBrowser challengeBrowser = new ChallengeBrowser();
 	public MakeEquationBrowser makeEquationBrowser = new MakeEquationBrowser();
-//	ScienceBrowser scienceBrowser = new ScienceBrowser(this);
+	// ScienceBrowser scienceBrowser = new ScienceBrowser(this);
 
-	static ActivityButton selectedActivityButton = null;
+//	static ActivityButton selectedActivityButton = null;
 
 	public HomeBrowser() {
 
 		// Set up browsers
 		this.getElement().setId(CSS.HOME_BROWSER);
-		
-//		Anchor title = new Anchor("ScienceGadgets", "/project/index.html");
-		Label title = new Label("ScienceGadgets");
+
+		// Anchor title = new Anchor("ScienceGadgets", "/project/index.html");
+		HTMLPanel title = new HTMLPanel("h1", "ScienceGadgets");
 		title.addStyleName(CSS.MAIN_TITLE);
-		this.add(title);
+//		this.add(title);
 
-//		activitySelectionPanel.getElement().setId(CSS.ACTIVITY_SELECTION_PANEL);
-//		this.add(activitySelectionPanel);
+//		HTMLPanel headline = new HTMLPanel(
+//				"h2",
+//				"A set of <a href=\"https://github.com/gralyan/ScienceGadgets\">Open Source</a>"
+//						+ " educational tools dedicated to helping redesign the next generation of learning strategies");
+		Label headline = new Label("sdgh");
+		headline.addStyleName(CSS.MAIN_HEADLINE);
+		this.add(headline);
+		
+//		this.add(videoPanel);
 
-		activityDetailsPanel.getElement().setId(CSS.ACTIVITY_DETAILS_PANEL);
-		this.add(activityDetailsPanel);
-		
-		ArrayList<ActivityButton> activityButtons = new ArrayList<HomeBrowser.ActivityButton>();
+		// activitySelectionPanel.getElement().setId(CSS.ACTIVITY_SELECTION_PANEL);
+		// this.add(activitySelectionPanel);
 
-		// Add buttons
-		
-		ActivityButton defaultButton = new ActivityButton("Introduction",
-				videoPanel);
-		activityButtons.add(defaultButton);
-		
-		activityButtons.add(new ActivityButton("Make Equation",
-				makeEquationBrowser));
-		
-		activityButtons.add(new ActivityButton("Random Equation",
-				generatePanel));
-		
-		activityButtons.add(new ActivityButton("Conversion",
-				conversionSpec));
-		
-//		activitySelectionPanel.addAll(activityButtons);
-		
-		// Add initial detail
-		defaultButton.onSelect();
+//		activityDetailsPanel.getElement().setId(CSS.ACTIVITY_DETAILS_PANEL);
+//		this.add(activityDetailsPanel);
+
+//		ArrayList<ActivityButton> activityButtons = new ArrayList<HomeBrowser.ActivityButton>();
+//
+//		// Add buttons
+//
+//		ActivityButton defaultButton = new ActivityButton("Introduction",
+//				videoPanel);
+//		activityButtons.add(defaultButton);
+//
+//		activityButtons.add(new ActivityButton("Make Equation",
+//				makeEquationBrowser));
+//
+//		activityButtons
+//				.add(new ActivityButton("Random Equation", generatePanel));
+//
+//		activityButtons.add(new ActivityButton("Conversion", conversionSpec));
+//
+//		// activitySelectionPanel.addAll(activityButtons);
+//
+//		// Add initial detail
+//		defaultButton.onSelect();
 	}
 
-	class ActivityButton extends SelectionButton {
-		Widget activityDetails;
-
-		ActivityButton(String title, Widget activityDetails) {
-			super(title);
-//			this.add(new FitParentHTML(title));
-			this.activityDetails = activityDetails;
-			addStyleName(CSS.ACTIVITY_SELECTION_BUTTON);
-		}
-
-		@Override
-		protected void onSelect() {
-			Widget currentWidget = activityDetailsPanel.getWidget();
-			if (activityDetails != currentWidget) {
-				if (currentWidget != null) {
-					currentWidget.removeFromParent();
-				}
-				activityDetailsPanel.add(activityDetails);
-			}
-			if (this != selectedActivityButton) {
-				if(selectedActivityButton != null) {
-					selectedActivityButton.removeStyleName(CSS.ACTIVITY_SELECTION_BUTTON_SELECTED);
-					selectedActivityButton.addStyleName(CSS.TRANSFORMATION_BUTTON);
-					selectedActivityButton.addStyleName(CSS.ACTIVITY_SELECTION_BUTTON);
-				}
-				this.removeStyleName(CSS.ACTIVITY_SELECTION_BUTTON);
-				this.removeStyleName(CSS.TRANSFORMATION_BUTTON);
-				this.addStyleName(CSS.ACTIVITY_SELECTION_BUTTON_SELECTED);
-				selectedActivityButton = this;
-			}
-		}
-
-	}
+//	class ActivityButton extends SelectionButton {
+//		Widget activityDetails;
+//
+//		ActivityButton(String title, Widget activityDetails) {
+//			super(title);
+//			// this.add(new FitParentHTML(title));
+//			this.activityDetails = activityDetails;
+//			addStyleName(CSS.ACTIVITY_SELECTION_BUTTON);
+//		}
+//
+//		@Override
+//		protected void onSelect() {
+//			Widget currentWidget = activityDetailsPanel.getWidget();
+//			if (activityDetails != currentWidget) {
+//				if (currentWidget != null) {
+//					currentWidget.removeFromParent();
+//				}
+//				activityDetailsPanel.add(activityDetails);
+//			}
+//			if (this != selectedActivityButton) {
+//				if (selectedActivityButton != null) {
+//					selectedActivityButton
+//							.removeStyleName(CSS.ACTIVITY_SELECTION_BUTTON_SELECTED);
+//					selectedActivityButton
+//							.addStyleName(CSS.TRANSFORMATION_BUTTON);
+//					selectedActivityButton
+//							.addStyleName(CSS.ACTIVITY_SELECTION_BUTTON);
+//				}
+//				this.removeStyleName(CSS.ACTIVITY_SELECTION_BUTTON);
+//				this.removeStyleName(CSS.TRANSFORMATION_BUTTON);
+//				this.addStyleName(CSS.ACTIVITY_SELECTION_BUTTON_SELECTED);
+//				selectedActivityButton = this;
+//			}
+//		}
+//
+//	}
 
 }

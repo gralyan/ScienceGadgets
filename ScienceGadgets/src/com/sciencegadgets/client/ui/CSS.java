@@ -79,6 +79,7 @@ public static final String FIT_PARENT_HTML = "sg-fitParentHTML";
 public static final String BORDER_RADIUS_SMALL = "sg-borderRadiusSmall";
 /*---------------Browsers---------------*/
 public static final String MAIN_TITLE = "sg-mainTitle";
+public static final String MAIN_HEADLINE = "sg-mainHeadline";
 public static final String HOME_BROWSER = "sg-homeBrowser";
 public static final String MODES = "sg-modes";
 public static final String ROW_HEADER = "sg-rowHeader";

@@ -53,19 +53,28 @@ body {
 
 /*---------------Browsers---------------*/
 .sg-mainTitle {
-	height: 12vh;
+	height: 10vh;
 	font-size: 8vh;
 	text-decoration: none;
 /* 	text-shadow: 0 0 0.2em lime; */
-	color: white;
+	color: lightGray;
 	display: block;
 	text-align: center;
 	padding-top: 1vh;
+}
+.sg-mainHeadline{
+	height: 6vh;
+	color: silver;
+	text-decoration: none;
+	text-align: center;
 }
 
 #sg-homeBrowser {
 	height: 100vh;
 	width: 100vw;
+	font-family: serif;
+	color: white;
+	background-color: black;
 }
 
 .sg-modes {
@@ -165,40 +174,42 @@ body {
 
 .sg-videoPanel{
 	width: 90vw;
-	height: 85vh;
+	height: 80vh;
 	margin: 0 5vw;
-	background-color: gray;
+	background-color: dimGray;
 	overflow-y: auto;
 	overflow-x: hidden;
 	position: relative;
+	color: black;
 }
 
 .sg-videoSegment{
 	width: 86vw;
 	margin: 0 auto;
-	height: 20vw;
-	padding: 1em 0;
+	height: 16vw;
+	padding: 0.5em 0;
 	border-bottom: solid black 1px;	
 }
 .sg-videoSegmentLabel{
-	color: white;
-	font-size: 120%;
+	font-size: 140%;
 	text-align: center;
 	font-weight: bold;
+	padding-bottom: 0.2em;
 }
 .sg-introVideoArea{
 	margin: 0 0 0 2vw;
-	width: 20vw;
-	height: 20vw;
+	width: 34vw;
+	height: 16vw;
 	display: inline-block;
 	vertical-align: top;
 	position: relative;
+	overflow-y: auto;
 }
 .sg-introButton{
 	display: inline-block;
 	vertical-align: top;
-	width: 30vw;
-	height: 20vw;
+	width: 24vw;
+	height: 16vw;
 	margin: 0 0 0 2vw;
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
@@ -217,6 +228,7 @@ body {
 	background-image: url('images/intro/playSign.png');
 /* 	margin: 0; */
 	background-color: darkGray;
+	width: 22vw;
 }
 
 .sg-introVideoButton.sg-introButton:HOVER{
@@ -230,15 +242,16 @@ body {
 
 .sg-segmentDetailsButton{
 	width: 100%;
-	height: 40px;
+/* 	height: 40px; */
 	text-align: center;
-	padding-top: 20px; 
-	position: absolute;
-	bottom: 0px;
+/* 	padding-top: 20px;  */
+/* 	position: absolute; */
+/* 	bottom: 0px; */
 	background-color: #444;
-		-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
- 	border-radius: 15px;
+	-moz-border-radius: 0.4em;
+	-webkit-border-radius: 0.4em;
+ 	border-radius: 0.4em;
+ 	color: silver;
 }
 .sg-segmentDetailsButton:HOVER{
 	background-color: #222;
