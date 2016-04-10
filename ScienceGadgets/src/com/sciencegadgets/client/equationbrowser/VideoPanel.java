@@ -1,16 +1,21 @@
 package com.sciencegadgets.client.equationbrowser;
 
+import java.util.ArrayList;
+
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -24,19 +29,21 @@ import com.sciencegadgets.client.URLParameters;
 import com.sciencegadgets.client.URLParameters.Parameter;
 import com.sciencegadgets.client.algebra.EquationTree;
 import com.sciencegadgets.client.ui.CSS;
+import com.sciencegadgets.client.ui.Resizable;
 import com.sciencegadgets.shared.TypeSGET;
 
 public class VideoPanel extends FlowPanel {
 	// FitParentHTML playExampleLabel = new FitParentHTML("Play Example");
 	static final String cssUrl = "CSStyles/images/intro/";
 
-	FlowPanel browser = new FlowPanel();
-
 	RandomEquationPanel generatePanel = new RandomEquationPanel();
 	ConversionSpecification conversionSpec = new ConversionSpecification();
 	public MakeEquationBrowser makeEquationBrowser = new MakeEquationBrowser();
 
 	DetailsButton activeDetailsButton = null;
+
+	ArrayList<FlowPanel> segments = new ArrayList<FlowPanel>();
+	DetailsAnimation detailsAnimation = new DetailsAnimation();
 
 	public VideoPanel() {
 
@@ -47,49 +54,46 @@ public class VideoPanel extends FlowPanel {
 		this.add(title);
 
 		HTML headline = new HTML(
-				"A set of <a href=\"https://github.com/gralyan/ScienceGadgets\">Open Source</a>"
+				"A set of <a style='color:royalBlue;' href=\"https://github.com/gralyan/ScienceGadgets\">Open Source</a>"
 						+ " educational tools dedicated to helping redesign the next generation of learning strategies");
-		// Label headline = new Label("sdgh");
+
 		headline.addStyleName(CSS.MAIN_HEADLINE);
 		this.add(headline);
 
-		browser.addStyleName(CSS.VIDEO_PANEL + " " + CSS.BORDER_RADIUS_SMALL);
-		this.add(browser);
-
-		addSegment("Integration",
-				"Embed equations directly into a website, game, LMS...",
+		addSegment("Integrate",
+				"Embed equations directly into a website, game, LMS or anywhere else you can add basic HTML",
 				"archery_snapshot_icon.jpeg",
-				"archery_snapshot_icon_HOVER.jpeg",
+				"archery_snapshot_icon_HOVER.jpeg", null,
 				"https://www.youtube.com/embed/Gc0Aj3lYq68",
 				new ArcheryGameHadler(), null, null);
-		addSegment("Make", "Create an equation to share with others",
-				"blank_equation_icon.png",
-				"blank_equation_icon_HOVER.jpeg",
-				"https://www.youtube.com/embed/kdpSRts2oF8",
+		addSegment("Make",
+				"Create an equation to play with, show others, or add to your own site",
+				"blank_equation_icon.png", "blank_equation_icon_HOVER.jpeg",
+				"black", "https://www.youtube.com/embed/kdpSRts2oF8",
 				new MakeEquationHandler(), makeEquationBrowser, "Templates");
 		addSegment(
 				"Interact",
-				"Learn algebraic rules naturally while focusing class time on realistic applications",
+				"Get familiar with equations by experiencing the tranformations naturally",
 				"equation_snapshot_icon.png",
-				"equation_snapshot_icon_HOVER.png",
+				"equation_snapshot_icon_HOVER.png", "#A0C4FF",
 				"https://www.youtube.com/embed/ZcX0GenDDrc",
 				new InteractiveEquationHandler(), generatePanel, "Generate");
 		addSegment(
 				"Convert",
 				"Assistance with dimentions so you \"don't forget your units!\"",
 				"conversion_snapshot_icon.png",
-				"conversion_snapshot_icon_HOVER.jpeg",
+				"conversion_snapshot_icon_HOVER.jpeg", "#E19E2A",
 				"https://www.youtube.com/embed/b3APdESppdg",
 				new ConvertExampleHandler(), conversionSpec, "Convert");
+
 	}
 
-	void addSegment(String labelStr, String descriptionStr, String imgSrc,String imgHoverSrc,
-			final String videoURL, ClickHandler clickHandler,
-			Widget activityDetails, String detailButtonText) {
-		FlowPanel videoSegment = new FlowPanel();
-		videoSegment.addStyleName(CSS.VIDEO_SEGMENT);
-		FlowPanel videoArea = new FlowPanel();
-		videoArea.addStyleName(CSS.INTRO_VIDEO_AREA);
+	void addSegment(String labelStr, String descriptionStr, String imgSrc,
+			String imgHoverSrc, String backColor, final String videoURL,
+			ClickHandler clickHandler, Widget activityDetails,
+			String detailButtonText) {
+		SegmentComponent descriptionArea = new SegmentComponent();
+		descriptionArea.addStyleName(CSS.INTRO_SEGMENT_COMPONENT);
 
 		Label label = new Label(labelStr);
 		label.addStyleName(CSS.VIDEO_SEGMENT_LABEL);
@@ -99,6 +103,12 @@ public class VideoPanel extends FlowPanel {
 		TryActivityButton tryButton = new TryActivityButton(imgSrc, imgHoverSrc);
 		tryButton.addStyleName(CSS.INTRO_BUTTON);
 		tryButton.addClickHandler(clickHandler);
+		if (backColor == null) {
+			tryButton.getElement().getStyle()
+					.setProperty("backgroundSize", "cover");
+		} else {
+			tryButton.getElement().getStyle().setBackgroundColor(backColor);
+		}
 
 		// IFrameElement videoIFrame = Document.get()
 		// .createIFrameElement();
@@ -120,23 +130,65 @@ public class VideoPanel extends FlowPanel {
 			}
 		});
 
-		videoSegment.add(videoArea);
-		videoArea.add(label);
-		videoArea.add(description);
-		// videoSegment.add(videoIFramePanel);
-		videoSegment.add(tryButton);
-		videoSegment.add(videoButton);
-		browser.add(videoSegment);
+		SegmentComponent introButtons = new SegmentComponent();
+		introButtons.addStyleName(CSS.INTRO_SEGMENT_COMPONENT);
+		introButtons.add(tryButton);
+		introButtons.add(videoButton);
+
+		descriptionArea.add(label);
+		descriptionArea.add(description);
+
+		VideoSegment videoSegment = new VideoSegment(descriptionArea,
+				introButtons);
+		this.add(videoSegment);
 
 		if (activityDetails != null) {
-			FlowPanel detailsArea = new FlowPanel();
-			detailsArea.addStyleName(CSS.SEGMENT_DETAILS);
-			detailsArea.add(activityDetails);
-			browser.add(detailsArea);
+			// FlowPanel detailsArea = new FlowPanel();
+			// detailsArea.addStyleName(CSS.SEGMENT_DETAILS);
+			// detailsArea.add(activityDetails);
+			// this.add(detailsArea);
+
+			// activityDetails.addStyleName(CSS.FILL_PARENT);
+			activityDetails.getElement().getStyle().clearWidth();
+			activityDetails.getElement().getStyle().clearHeight();
+			activityDetails.addStyleName(CSS.SEGMENT_DETAILS);
+			this.add(activityDetails);
 			DetailsButton detailsButton = new DetailsButton(detailButtonText,
-					detailsArea);
-			videoArea.add(detailsButton);
+					activityDetails, videoSegment);
+			descriptionArea.add(detailsButton);
+
+			GWT.log("");
+			GWT.log(labelStr);
+			GWT.log("decs " + description.getAbsoluteTop() + " + "
+					+ description.getOffsetHeight());
+			GWT.log("butTop: " + detailsButton.getAbsoluteTop());
 		}
+	}
+
+	class SegmentComponent extends FlowPanel implements Resizable {
+		@Override
+		protected void onAttach() {
+			Moderator.resizables.add(this);
+			resize();
+			super.onAttach();
+		}
+
+		@Override
+		protected void onDetach() {
+			Moderator.resizables.remove(this);
+			super.onDetach();
+		}
+
+		@Override
+		public void resize() {
+			String minStyle = CSS.INTRO_SEGMENT_COMPONENT_BLOCK;
+			if (Window.getClientWidth() < 400) {
+				addStyleName(minStyle);
+			} else {
+				removeStyleName(minStyle);
+			}
+		}
+
 	}
 
 	class TryActivityButton extends FocusPanel {
@@ -149,10 +201,11 @@ public class VideoPanel extends FlowPanel {
 			addMouseOverHandler(new MouseOverHandler() {
 				@Override
 				public void onMouseOver(MouseOverEvent event) {
-					style.setBackgroundImage("url('" + cssUrl + imgHoverSrc + "')");
+					style.setBackgroundImage("url('" + cssUrl + imgHoverSrc
+							+ "')");
 				}
 			});
-			
+
 			addMouseOutHandler(new MouseOutHandler() {
 
 				@Override
@@ -163,13 +216,41 @@ public class VideoPanel extends FlowPanel {
 		}
 	}
 
+	class VideoSegment extends FlowPanel {
+		SegmentComponent descriptionArea;
+		SegmentComponent buttonsArea;
+
+		public VideoSegment(SegmentComponent descriptionArea,
+				SegmentComponent buttonsArea) {
+			this.descriptionArea = descriptionArea;
+			this.buttonsArea = buttonsArea;
+			add(descriptionArea);
+			add(buttonsArea);
+
+			segments.add(this);
+			addStyleName(CSS.VIDEO_SEGMENT);
+		}
+
+		void switchMode(boolean toDetails) {
+			buttonsArea.setVisible(!toDetails);
+			if (toDetails) {
+				descriptionArea.setWidth("98%");
+			} else {
+				descriptionArea.getElement().getStyle().clearWidth();
+			}
+		}
+	}
+
 	class DetailsButton extends Label {
 		Style detailsAreaStyle;
 		Style style;
 		String defaultText = "";
+		VideoSegment segmentParent;
 
-		DetailsButton(String title, FlowPanel detailsArea) {
+		DetailsButton(String title, Widget detailsArea,
+				VideoSegment segmentParent) {
 			super(title);
+			this.segmentParent = segmentParent;
 			defaultText = title;
 			this.detailsAreaStyle = detailsArea.getElement().getStyle();
 			this.style = getElement().getStyle();
@@ -196,19 +277,91 @@ public class VideoPanel extends FlowPanel {
 		}
 
 		void select() {
-			setText("Hide");
+			segmentParent.switchMode(true);
+			setText("Go Back");
 			style.setBackgroundColor("black");
-			detailsAreaStyle.setVisibility(Visibility.VISIBLE);
+			detailsAreaStyle.setPosition(Style.Position.RELATIVE);
+			detailsAreaStyle.setVisibility(Style.Visibility.VISIBLE);
 			activeDetailsButton = this;
+			setFocus(true);
 		}
 
 		void unselect() {
+			segmentParent.switchMode(false);
 			style.clearBackgroundColor();
-			;
 			setText(defaultText);
 			detailsAreaStyle.clearVisibility();
+			detailsAreaStyle.clearPosition();
+			setFocus(false);
 		}
 
+		void setFocus(boolean isFocus) {
+			detailsAnimation.init(segmentParent, isFocus,detailsAreaStyle);
+			 detailsAnimation.run(500);
+			// for (FlowPanel otherSegment : segments) {
+			// if (otherSegment != segmentParent) {
+			// otherSegment.setVisible(!isFocus);
+			// }
+			// }
+		}
+	}
+
+	class DetailsAnimation extends Animation {
+		VideoSegment segmentParent;
+		private boolean toDetails;
+		Style detailsAreaStyle;
+		private int height;
+		private static final String px = "px";
+
+		void init(VideoSegment segmentParent, boolean toDetails, Style detailsAreaStyle) {
+			this.segmentParent = segmentParent;
+			this.toDetails = toDetails;
+			this.detailsAreaStyle = detailsAreaStyle;
+		}
+
+		@Override
+		protected void onStart() {
+			super.onStart();
+			if (toDetails) {
+				height = segmentParent.getOffsetHeight();
+				for (FlowPanel otherSegment : segments) {
+					if (otherSegment != segmentParent) {
+						otherSegment.setHeight(height + px);
+						for (int i = 0; i < otherSegment.getWidgetCount(); i++) {
+							otherSegment.getWidget(i).setVisible(false);
+						}
+					}
+				}
+			}
+		}
+
+		@Override
+		protected void onUpdate(double progress) {
+			double prog = toDetails ? 1 - progress : progress;
+			double revProg = 1-prog;
+			for (FlowPanel otherSegment : segments) {
+				if (otherSegment != segmentParent) {
+					otherSegment.setHeight((height * prog) + px);
+				}
+			}
+			detailsAreaStyle.setProperty("height",revProg*60+"vh");
+			
+		}
+
+		@Override
+		protected void onComplete() {
+			super.onComplete();
+			if (!toDetails) {
+			for (FlowPanel otherSegment : segments) {
+				if (otherSegment != segmentParent) {
+					otherSegment.getElement().getStyle().clearHeight();
+					for (int i = 0; i < otherSegment.getWidgetCount(); i++) {
+							otherSegment.getWidget(i).setVisible(true);
+					}
+				}
+			}
+			}
+		}
 	}
 
 	class ArcheryGameHadler implements ClickHandler {
