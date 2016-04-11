@@ -117,7 +117,7 @@ public class GenerateSpec extends Composite {
 						backColor = "lightGray";
 						break;
 					case MEDIUM:
-						backColor = "gray";
+						backColor = "dimgray";
 						break;
 					case HARD:
 						backColor = "black";

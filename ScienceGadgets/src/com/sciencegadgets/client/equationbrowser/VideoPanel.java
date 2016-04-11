@@ -6,16 +6,20 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -39,6 +43,8 @@ public class VideoPanel extends FlowPanel {
 	RandomEquationPanel generatePanel = new RandomEquationPanel();
 	ConversionSpecification conversionSpec = new ConversionSpecification();
 	public MakeEquationBrowser makeEquationBrowser = new MakeEquationBrowser();
+	HTMLPanel contactUs = new HTMLPanel(
+			"<div style='padding:1em;'>The tools seen here are meant to be as open and easily integratable as possible. You can add an interactive equation anywhere you can add an HTML snippet. The hyperlink or embedable iframe markup can be created using the online equation editor for your convenience. For more information on how to integrate these tools beyond the videos, demos, and <a href=\"https://github.com/gralyan/ScienceGadgets\">Git Hub</a> page, feel free to contact me directly at <a href=\"mailto:John.Gralyan@gmail.com?Subject=Science%20Gadgets%20Inquiry\" target=\"_top\">John.Gralyan@gmail.com</a></div>");
 
 	DetailsButton activeDetailsButton = null;
 
@@ -60,40 +66,41 @@ public class VideoPanel extends FlowPanel {
 		headline.addStyleName(CSS.MAIN_HEADLINE);
 		this.add(headline);
 
-		addSegment("Integrate",
-				"Embed equations directly into a website, game, LMS or anywhere else you can add basic HTML",
-				"archery_snapshot_icon.jpeg",
-				"archery_snapshot_icon_HOVER.jpeg", null,
-				"https://www.youtube.com/embed/Gc0Aj3lYq68",
-				new ArcheryGameHadler(), null, null);
-		addSegment("Make",
-				"Create an equation to play with, show others, or add to your own site",
-				"blank_equation_icon.png", "blank_equation_icon_HOVER.jpeg",
-				"black", "https://www.youtube.com/embed/kdpSRts2oF8",
-				new MakeEquationHandler(), makeEquationBrowser, "Templates");
 		addSegment(
 				"Interact",
 				"Get familiar with equations by experiencing the tranformations naturally",
 				"equation_snapshot_icon.png",
 				"equation_snapshot_icon_HOVER.png", "#A0C4FF",
 				"https://www.youtube.com/embed/ZcX0GenDDrc",
-				new InteractiveEquationHandler(), generatePanel, "Generate");
+				new InteractiveEquationHandler(), generatePanel, "Generate","Try interacting with a randomly generated equation. You can choose the difficulty of the equation or make it completely random");
+		addSegment(
+				"Make",
+				"Create an equation to play with, show others, or add to your own site",
+				"blank_equation_icon.png", "blank_equation_icon_HOVER.jpeg",
+				"black", "https://www.youtube.com/embed/kdpSRts2oF8",
+				new MakeEquationHandler(), makeEquationBrowser, "Templates","Try making an equation. You can use one of these templates or start with a blank slate");
 		addSegment(
 				"Convert",
 				"Assistance with dimentions so you \"don't forget your units!\"",
 				"conversion_snapshot_icon.png",
 				"conversion_snapshot_icon_HOVER.jpeg", "#E19E2A",
 				"https://www.youtube.com/embed/b3APdESppdg",
-				new ConvertExampleHandler(), conversionSpec, "Convert");
+				new ConvertExampleHandler(), conversionSpec, "Convert", "Enter a quantity to convert. You can specify a value and units here");
+		addSegment(
+				"Integrate",
+				"Embed equations directly into a website, game, LMS or anywhere else you can add basic HTML",
+				"archery_snapshot_icon.jpeg",
+				"archery_snapshot_icon_HOVER.jpeg", null,
+				"https://www.youtube.com/embed/Gc0Aj3lYq68",
+				new ArcheryGameHadler(), contactUs, "Contact","");
 
 	}
 
 	void addSegment(String labelStr, String descriptionStr, String imgSrc,
 			String imgHoverSrc, String backColor, final String videoURL,
 			ClickHandler clickHandler, Widget activityDetails,
-			String detailButtonText) {
+			String detailButtonText, String detailDescriptionStr) {
 		SegmentComponent descriptionArea = new SegmentComponent();
-		descriptionArea.addStyleName(CSS.INTRO_SEGMENT_COMPONENT);
 
 		Label label = new Label(labelStr);
 		label.addStyleName(CSS.VIDEO_SEGMENT_LABEL);
@@ -131,7 +138,6 @@ public class VideoPanel extends FlowPanel {
 		});
 
 		SegmentComponent introButtons = new SegmentComponent();
-		introButtons.addStyleName(CSS.INTRO_SEGMENT_COMPONENT);
 		introButtons.add(tryButton);
 		introButtons.add(videoButton);
 
@@ -139,7 +145,7 @@ public class VideoPanel extends FlowPanel {
 		descriptionArea.add(description);
 
 		VideoSegment videoSegment = new VideoSegment(descriptionArea,
-				introButtons);
+				introButtons, detailDescriptionStr);
 		this.add(videoSegment);
 
 		if (activityDetails != null) {
@@ -157,15 +163,15 @@ public class VideoPanel extends FlowPanel {
 					activityDetails, videoSegment);
 			descriptionArea.add(detailsButton);
 
-			GWT.log("");
-			GWT.log(labelStr);
-			GWT.log("decs " + description.getAbsoluteTop() + " + "
-					+ description.getOffsetHeight());
-			GWT.log("butTop: " + detailsButton.getAbsoluteTop());
 		}
 	}
 
 	class SegmentComponent extends FlowPanel implements Resizable {
+		
+		public SegmentComponent() {
+			super();
+			addStyleName(CSS.INTRO_SEGMENT_COMPONENT);
+		}
 		@Override
 		protected void onAttach() {
 			Moderator.resizables.add(this);
@@ -182,7 +188,7 @@ public class VideoPanel extends FlowPanel {
 		@Override
 		public void resize() {
 			String minStyle = CSS.INTRO_SEGMENT_COMPONENT_BLOCK;
-			if (Window.getClientWidth() < 400) {
+			if (Window.getClientWidth() < 500) {
 				addStyleName(minStyle);
 			} else {
 				removeStyleName(minStyle);
@@ -219,31 +225,40 @@ public class VideoPanel extends FlowPanel {
 	class VideoSegment extends FlowPanel {
 		SegmentComponent descriptionArea;
 		SegmentComponent buttonsArea;
+		SegmentComponent detailsDescriptionArea;
 
 		public VideoSegment(SegmentComponent descriptionArea,
-				SegmentComponent buttonsArea) {
+				SegmentComponent buttonsArea, String detailDescriptionStr) {
 			this.descriptionArea = descriptionArea;
 			this.buttonsArea = buttonsArea;
 			add(descriptionArea);
 			add(buttonsArea);
+			
+			detailsDescriptionArea = new SegmentComponent();
+			detailsDescriptionArea.add(new Label(detailDescriptionStr));
+			detailsDescriptionArea.setVisible(false);
+			add(detailsDescriptionArea);
 
-			segments.add(this);
 			addStyleName(CSS.VIDEO_SEGMENT);
+			segments.add(this);
 		}
 
 		void switchMode(boolean toDetails) {
 			buttonsArea.setVisible(!toDetails);
+			detailsDescriptionArea.setVisible(toDetails);
+			String blockStyle = CSS.INTRO_SEGMENT_COMPONENT_BLOCK;
 			if (toDetails) {
-				descriptionArea.setWidth("98%");
+//				descriptionArea.setWidth("98%");
+//				descriptionArea.addStyleName(blockStyle);
 			} else {
-				descriptionArea.getElement().getStyle().clearWidth();
+//				descriptionArea.resize();
+//				descriptionArea.getElement().getStyle().clearWidth();
 			}
 		}
 	}
 
 	class DetailsButton extends Label {
 		Style detailsAreaStyle;
-		Style style;
 		String defaultText = "";
 		VideoSegment segmentParent;
 
@@ -253,7 +268,6 @@ public class VideoPanel extends FlowPanel {
 			this.segmentParent = segmentParent;
 			defaultText = title;
 			this.detailsAreaStyle = detailsArea.getElement().getStyle();
-			this.style = getElement().getStyle();
 			addStyleName(CSS.SEGMENT_DETAILS_BUTTON);
 
 			addClickHandler(new ClickHandler() {
@@ -279,7 +293,6 @@ public class VideoPanel extends FlowPanel {
 		void select() {
 			segmentParent.switchMode(true);
 			setText("Go Back");
-			style.setBackgroundColor("black");
 			detailsAreaStyle.setPosition(Style.Position.RELATIVE);
 			detailsAreaStyle.setVisibility(Style.Visibility.VISIBLE);
 			activeDetailsButton = this;
@@ -288,21 +301,13 @@ public class VideoPanel extends FlowPanel {
 
 		void unselect() {
 			segmentParent.switchMode(false);
-			style.clearBackgroundColor();
 			setText(defaultText);
-			detailsAreaStyle.clearVisibility();
-			detailsAreaStyle.clearPosition();
 			setFocus(false);
 		}
 
 		void setFocus(boolean isFocus) {
-			detailsAnimation.init(segmentParent, isFocus,detailsAreaStyle);
-			 detailsAnimation.run(500);
-			// for (FlowPanel otherSegment : segments) {
-			// if (otherSegment != segmentParent) {
-			// otherSegment.setVisible(!isFocus);
-			// }
-			// }
+			detailsAnimation.init(segmentParent, isFocus, detailsAreaStyle);
+			detailsAnimation.run(500);
 		}
 	}
 
@@ -311,9 +316,10 @@ public class VideoPanel extends FlowPanel {
 		private boolean toDetails;
 		Style detailsAreaStyle;
 		private int height;
-		private static final String px = "px";
+		ArrayList<Style> otherSegmentStyles = new ArrayList<Style>();
 
-		void init(VideoSegment segmentParent, boolean toDetails, Style detailsAreaStyle) {
+		void init(VideoSegment segmentParent, boolean toDetails,
+				Style detailsAreaStyle) {
 			this.segmentParent = segmentParent;
 			this.toDetails = toDetails;
 			this.detailsAreaStyle = detailsAreaStyle;
@@ -321,45 +327,45 @@ public class VideoPanel extends FlowPanel {
 
 		@Override
 		protected void onStart() {
-			super.onStart();
 			if (toDetails) {
+				otherSegmentStyles.clear();
 				height = segmentParent.getOffsetHeight();
 				for (FlowPanel otherSegment : segments) {
 					if (otherSegment != segmentParent) {
-						otherSegment.setHeight(height + px);
-						for (int i = 0; i < otherSegment.getWidgetCount(); i++) {
-							otherSegment.getWidget(i).setVisible(false);
-						}
+						Style otherSegmentStyle = otherSegment.getElement().getStyle();
+						otherSegmentStyles.add(otherSegmentStyle);
+						otherSegmentStyle.setHeight(height, Unit.PX);
+						otherSegmentStyle.setVisibility(Visibility.HIDDEN);
+						otherSegmentStyle.setMargin(0, Unit.PX);
 					}
 				}
 			}
+			super.onStart();
 		}
 
 		@Override
 		protected void onUpdate(double progress) {
 			double prog = toDetails ? 1 - progress : progress;
-			double revProg = 1-prog;
-			for (FlowPanel otherSegment : segments) {
-				if (otherSegment != segmentParent) {
-					otherSegment.setHeight((height * prog) + px);
-				}
+			double revProg = 1 - prog;
+			for (Style otherSegment : otherSegmentStyles) {
+					otherSegment.setHeight(height * prog, Unit.PX);
 			}
-			detailsAreaStyle.setProperty("height",revProg*60+"vh");
-			
+			detailsAreaStyle.setProperty("height", revProg * 60 + "vh");
+
 		}
 
 		@Override
 		protected void onComplete() {
 			super.onComplete();
 			if (!toDetails) {
-			for (FlowPanel otherSegment : segments) {
-				if (otherSegment != segmentParent) {
-					otherSegment.getElement().getStyle().clearHeight();
-					for (int i = 0; i < otherSegment.getWidgetCount(); i++) {
-							otherSegment.getWidget(i).setVisible(true);
-					}
+				for (Style otherSegment : otherSegmentStyles) {
+						otherSegment.clearHeight();
+						otherSegment.clearVisibility();
+						otherSegment.clearMargin();
 				}
-			}
+
+				detailsAreaStyle.clearVisibility();
+				detailsAreaStyle.clearPosition();
 			}
 		}
 	}

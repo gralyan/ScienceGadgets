@@ -20,10 +20,10 @@
 	
 	.cellSubject {
 		height: 100%;
-		width: 25%;
+		width: 20%;
+		padding-left: 5%;
 		display: inline-block;
 		vertical-align: top;
-		font-size: 70%;
 	}
 	
 	.cellSlider {
@@ -31,6 +31,11 @@
 		vertical-align: top;
 		width: 75%;
 		display: inline-block;
+	
+	    background: -webkit-linear-gradient(left, white , black); /* For Safari 5.1 to 6.0 */
+    	background: -o-linear-gradient(right, white , black); /* For Opera 11.1 to 12.0 */
+    	background: -moz-linear-gradient(right, white, black); /* For Firefox 3.6 to 15 */
+    	background: linear-gradient(to right, white , black); /* Standard syntax (must be last) */
 	}
 	
 	.rowWithSlider {
@@ -43,14 +48,6 @@
 		width: 100%;
 	}
 	.titleBar{
-    background: -webkit-linear-gradient(left, white , black); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, white , black); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, white, black); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to right, white , black); /* Standard syntax (must be last) */
-    
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
     }
 	</ui:style>
 	<g:FlowPanel>

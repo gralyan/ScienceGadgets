@@ -56,14 +56,12 @@ body {
 	font-size: 3em;
 	text-decoration: none;
 /* 	text-shadow: 0 0 0.2em lime; */
-	color: lightGray;
 	display: block;
 	text-align: center;
 	padding-top: 1vh;
 }
 
 .sg-mainHeadline{
-	color: silver;
 	text-decoration: none;
 	text-align: center;
 	width: 90%;
@@ -71,12 +69,12 @@ body {
 }
 
 #sg-homeBrowser {
-	height: 100vh;
-	width: 100vw;
+/* 	height: 100vh; */
+/* 	width: 100vw; */
 	font-family: serif;
-	color: white;
+	color: silver;
 	background-color: black;
-	overflow-y: auto;
+/* 	overflow-y: auto; */
 }
 
 .sg-modes {
@@ -118,7 +116,7 @@ body {
 .sg-randomEquationPanel {
 	height: 80%;
 	width: 100%;
-	background-color: white;
+/* 	background-color: white; */
 }
 
 #sg-algBrowser {
@@ -176,12 +174,11 @@ body {
 
 .sg-videoSegment{
 	width: 90vw;
-	margin: 3px auto;
+	margin: 0 auto 10px;
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
-	background-color: gray;
-	color: black;
+	background-color: #202530;
 }
 .sg-videoSegmentLabel{
 	font-size: 140%;
@@ -200,10 +197,17 @@ body {
 	position: relative;
 	overflow-y: auto;
 }
-sg-introSegmentComponent,.sg-introSegmentComponent_Block{
+.sg-introSegmentComponent.sg-introSegmentComponent_Block{
 	display: block;
 	width: 98%;
-	
+}
+
+.sg-introSegmentComponent_Block:first-of-type{
+	height: auto;
+	min-height: inherit;
+}
+.sg-introSegmentComponent+.sg-introSegmentComponent>.gwt-Label{
+	padding: 10px;
 }
 .sg-introButton{
 	display: inline-block;
@@ -245,17 +249,21 @@ sg-introSegmentComponent,.sg-introSegmentComponent_Block{
 	height: 1.5em;
 	text-align: center;
 	padding-top: 0.5em; 
-	position: absolute;
 	bottom: 5px;
-	background-color: #444;
+	position: absolute;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
  	border-radius: 10px;
- 	color: silver;
+	background-color: #444;
+}
+
+.sg-introSegmentComponent_Block>.sg-segmentDetailsButton{
+	margin: 1em 0 0 0;
+	position: relative;
 }
 .sg-segmentDetailsButton:HOVER{
-	background-color: silver;
-	color: dimGray;
+	background-color: #111;
+	color: white;
 }
 .sg-segmentDetails{
 	margin: 2vh auto 0;
@@ -264,7 +272,7 @@ sg-introSegmentComponent,.sg-introSegmentComponent_Block{
 	width: 90vw;
 	display: block;
 	visibility: hidden;
-	background: gray;
+	background: #222;
  	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
