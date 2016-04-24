@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="canvas.js"></script>
+<script src="interactable.js"></script>
+<script src="draggable.js"></script>
+<script src="lightBulb.js"></script>
+<script src="fan.js"></script>
+<script src="balloon.js"></script>
+<script src="f_ma.js"></script>
+<script src="net_forces.js"></script>
+<script src="force.js"></script>
+
+<style>
+	body{
+		background-color:gray;
+	}
+	canvas{
+		background-color:#9DCBCA;
+	}
+</style>
+</head>
+
+<body onload="f_ma('f_maCanvas');net_forces('netCanvas');">
+<canvas id="f_maCanvas" width="400" height="300">
+    HTML5 Canvas is not supported on your browser
+</canvas>
+<canvas id="netCanvas" width="400" height="300">
+    HTML5 Canvas is not supported on your browser
+</canvas>
+</body>
+
+</html>

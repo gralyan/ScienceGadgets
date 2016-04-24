@@ -1,0 +1,17 @@
+/*
+*	Example of a draggable square in an HTML5 canvas
+*	Coding excercise for Education Technology Software Developer position at the Concord Consortium
+*/
+var hi = 3;
+
+function initCanvas(canvasID){
+	
+	var canvas = new Canvas(canvasID);
+
+//	for (i = 0; i < 3; i++) {
+//	}
+	canvas.interactables[0] = new LightBulb(canvas, 130, 150, 40, 40);
+	canvas.interactables[1] = new Fan(canvas, 40, 50, 40, 40);
+	canvas.startAnimation();
+};
+
