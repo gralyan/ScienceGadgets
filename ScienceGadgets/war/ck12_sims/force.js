@@ -24,6 +24,10 @@ function Force(canvas, x, y, length, fan, color){
 Force.prototype = new Draggable;
 
 Force.prototype.draw = function(){
+	if(this.length === 0){
+		return;
+	}
+	
 	var ctx = this.canvas.ctx;
 	var time = this.canvas.animationTime;
 

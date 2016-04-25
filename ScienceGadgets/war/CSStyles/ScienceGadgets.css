@@ -55,10 +55,10 @@ body {
 .sg-mainTitle {
 	font-size: 3em;
 	text-decoration: none;
-/* 	text-shadow: 0 0 0.2em lime; */
 	display: block;
 	text-align: center;
 	padding-top: 1vh;
+	color: whiteSmoke
 }
 
 .sg-mainHeadline{
@@ -174,22 +174,22 @@ body {
 
 .sg-videoSegment{
 	width: 90vw;
-	margin: 0 auto 10px;
+	margin: 0 auto 15px;
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
-	background-color: #202530;
+	background-color: #292535;
 }
 .sg-videoSegmentLabel{
 	font-size: 140%;
 	text-align: center;
 	font-weight: bold;
 	padding-bottom: 0.2em;
+	color: whitesmoke;
 }
 .sg-introSegmentComponent{
-	padding: 5px 0;
-	margin: 0 1% 0 1%;
-	width: 48%;
+	margin: 2%;
+	width: 46%;
 	height: 16vw;
 	min-height: 8em;
 	display: inline-block;
@@ -198,15 +198,14 @@ body {
 	overflow-y: auto;
 }
 .sg-introSegmentComponent.sg-introSegmentComponent_Block{
-	display: block;
-	width: 98%;
+	width: 96%;
 }
 
-.sg-introSegmentComponent_Block:first-of-type{
+.sg-introDescriptionArea.sg-introSegmentComponent_Block{
 	height: auto;
 	min-height: inherit;
 }
-.sg-introSegmentComponent+.sg-introSegmentComponent>.gwt-Label{
+.introDetailDescriptionArea>.gwt-Label{
 	padding: 10px;
 }
 .sg-introButton{
@@ -221,6 +220,7 @@ body {
 	background-repeat: no-repeat;
 	background-position: center;
 	outline: none;
+	cursor: pointer;
 }
 .sg-introButton:not(.sg-introVideoButton):HOVER{
 /* 	-moz-box-shadow: white 0 0 15px 5px; */
@@ -231,8 +231,8 @@ body {
 	background-image: url('images/intro/playSign.png');
 /* 	margin: 0; */
 	background-color: darkGray;
-	width: 47%;
-	margin: 0 0 0 3%;
+	width: 46%;
+	margin: 0 0 0 4%;
 }
 
 .sg-introVideoButton.sg-introButton:HOVER{
@@ -249,12 +249,16 @@ body {
 	height: 1.5em;
 	text-align: center;
 	padding-top: 0.5em; 
-	bottom: 5px;
+	bottom: 0;
 	position: absolute;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
  	border-radius: 10px;
-	background-color: #444;
+ 	color: black;
+	background-color: #879;
+	background-image: url('images/intro/down_arrows.png');
+	background-size: 100% 100%;
+	cursor: pointer;
 }
 
 .sg-introSegmentComponent_Block>.sg-segmentDetailsButton{
@@ -262,8 +266,10 @@ body {
 	position: relative;
 }
 .sg-segmentDetailsButton:HOVER{
-	background-color: #111;
-	color: white;
+	background-color: #cbd;
+}
+.sg-segmentDetailsButton.sg-segmentDetailsButton_Open{
+	background-image: url('images/intro/up_arrows.png');
 }
 .sg-segmentDetails{
 	margin: 2vh auto 0;

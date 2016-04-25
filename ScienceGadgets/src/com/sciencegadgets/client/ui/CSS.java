@@ -103,8 +103,11 @@ public static final String VIDEO_SEGMENT_LABEL = "sg-videoSegmentLabel";
 public static final String INTRO_BUTTON = "sg-introButton";
 public static final String INTRO_SEGMENT_COMPONENT = "sg-introSegmentComponent";
 public static final String INTRO_SEGMENT_COMPONENT_BLOCK = "sg-introSegmentComponent_Block";
+public static final String INTRO_DETAIL_DESCRIPTION_AREA = "sg-introDetailDescriptionArea";
+public static final String INTRO_DESCRIPTION_AREA = "sg-introDescriptionArea";
 public static final String INTRO_VIDEO_BUTTON = "sg-introVideoButton";
 public static final String SEGMENT_DETAILS_BUTTON = "sg-segmentDetailsButton";
+public static final String SEGMENT_DETAILS_BUTTON_OPEN = "sg-segmentDetailsButton_Open";
 public static final String SEGMENT_DETAILS = "sg-segmentDetails";
 /*---------------ConversionActivity---------------*/
 public static final String CONVERSION_ACTIVITY = "sg-conversionActivity";

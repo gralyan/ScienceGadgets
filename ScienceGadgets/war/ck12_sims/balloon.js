@@ -40,8 +40,8 @@ Balloon.prototype.draw = function(){
 			}else{
 				var acceleration = iFan.speed/this.mass;
 				this.x += acceleration*(this.x/7);
-				angle = iFan.speed;
-				
+				angle += iFan.speed;
+					
 				ctx.save() // acceleration
 				
 				var aSize = acceleration*100;
@@ -73,7 +73,7 @@ Balloon.prototype.draw = function(){
 	ctx.save() // balloon
 	
 	if(this.tiedX && this.tiedY){
-		angle = -Math.atan((this.tiedX - (this.x+this.width/2)) / (this.tiedY - (this.y+this.height/2)) );
+		angle += -Math.atan((this.tiedX - (this.x+this.width/2)) / (this.tiedY - (this.y+this.height/2)) );
 	}
 	
 		ctx.translate(this.width/2, this.height/2+13);
@@ -133,8 +133,11 @@ Balloon.prototype.interactFan = function(event) {
 			var isWithin = topTresh > iTop && bottomThresh < iBottom;
 			this.isOn = isWithin ? true : this.isOn;
 			if(isWithin){
+				this.wobbleRate = Math.abs(iActive.speed*10);
 				return iActive;
 			}
 		}
 	}
+	this.wobbleRate = 1;
+	
 }

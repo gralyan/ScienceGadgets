@@ -229,14 +229,18 @@ public class VideoPanel extends FlowPanel {
 
 		public VideoSegment(SegmentComponent descriptionArea,
 				SegmentComponent buttonsArea, String detailDescriptionStr) {
-			this.descriptionArea = descriptionArea;
 			this.buttonsArea = buttonsArea;
-			add(descriptionArea);
-			add(buttonsArea);
+			this.descriptionArea = descriptionArea;
 			
 			detailsDescriptionArea = new SegmentComponent();
 			detailsDescriptionArea.add(new Label(detailDescriptionStr));
 			detailsDescriptionArea.setVisible(false);
+			
+			detailsDescriptionArea.addStyleName(CSS.INTRO_DETAIL_DESCRIPTION_AREA);
+			descriptionArea.addStyleName(CSS.INTRO_DESCRIPTION_AREA);
+
+			add(descriptionArea);
+			add(buttonsArea);
 			add(detailsDescriptionArea);
 
 			addStyleName(CSS.VIDEO_SEGMENT);
@@ -246,14 +250,6 @@ public class VideoPanel extends FlowPanel {
 		void switchMode(boolean toDetails) {
 			buttonsArea.setVisible(!toDetails);
 			detailsDescriptionArea.setVisible(toDetails);
-			String blockStyle = CSS.INTRO_SEGMENT_COMPONENT_BLOCK;
-			if (toDetails) {
-//				descriptionArea.setWidth("98%");
-//				descriptionArea.addStyleName(blockStyle);
-			} else {
-//				descriptionArea.resize();
-//				descriptionArea.getElement().getStyle().clearWidth();
-			}
 		}
 	}
 
@@ -292,7 +288,8 @@ public class VideoPanel extends FlowPanel {
 
 		void select() {
 			segmentParent.switchMode(true);
-			setText("Go Back");
+			addStyleName(CSS.SEGMENT_DETAILS_BUTTON_OPEN);
+//			setText("Go Back");
 			detailsAreaStyle.setPosition(Style.Position.RELATIVE);
 			detailsAreaStyle.setVisibility(Style.Visibility.VISIBLE);
 			activeDetailsButton = this;
@@ -301,7 +298,8 @@ public class VideoPanel extends FlowPanel {
 
 		void unselect() {
 			segmentParent.switchMode(false);
-			setText(defaultText);
+			removeStyleName(CSS.SEGMENT_DETAILS_BUTTON_OPEN);
+//			setText(defaultText);
 			setFocus(false);
 		}
 

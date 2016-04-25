@@ -16,19 +16,189 @@
 	body{
 		background-color:gray;
 	}
+	h1{
+		text-align: center;
+ 		font-size: 2em; 
+	}
+	h2{
+		text-align: center;
+ 		font-size: 1.5em; 
+	}
+	h3{
+ 		font-size: 1em; 
+		text-align: left;
+	}
+	#mainWrapper{
+		padding: 10vh 10vw;
+		margin: 5vh 5vw;
+		
+		border-radius: 20px;
+		-moz-border-radius: 20px;
+		-webkit-border-radius: 20px;
+		
+		background-color:white;
+	}
 	canvas{
 		background-color:#9DCBCA;
+		display: block;
+		margin: auto;
+	}
+	.diagram{
+		border: 2px silver solid;
+		margin: 10px auto;
+		display: block;
+	}
+	hr{
+		margin: 4em 0;
 	}
 </style>
 </head>
 
 <body onload="f_ma('f_maCanvas');net_forces('netCanvas');">
+
+
+
+
+<div id='mainWrapper'>
+
+<h1>A Case Study of Force Related CK-12 PLIX Tools
+<br/>by John Gralyan
+<br/>4/24/16</h1>
+<p>
+This document was created to fulfill the assignment of studying PLIX resources as part of the interview process for the position of Interactive Specialist at CK-12. Each section will describe elements that contribute to and hinder their effectiveness as an educational resource. Suggestions and alternative strategies are provided to foster continued development. The four PLIX of focus are selections from the Physics branch specifically related to forces. These were chosen because they were the most appropriate to use in the current section of a high school physics class I am currently teaching. Using these tools in a session with a student allowed for further insight into the practical implementation methods as well as their effectiveness through realistic student response. 
+</p>
+
+<h3>Student Background</h3>
+<p>
+This student in particular benefits form more visual and kinesthetic learning techniques as she suffers from audio processing issues and dysgraphia. Educational resources which provide observable feedback allow her to more easily comprehend the information taught. Tools such as the PLIX interactives are a natural choice for a student in this circumstance. She is taking a conceptual physics class to fulfill the physical education requirement. Attempts to connect the concepts to abstract equations and compute results have proven ineffective.
+</p>
+
+<h3>Study Limitations</h3>
+<p>
+The four PLIX were initially reviewed before class to check for appropriateness of content to the section of the course and to prepare for the single one hour session. Guidance with a teacher created a bias to the study as the student was not given the opportunity to independently explore the applications. The topics of each interactive were already covered in previous sessions however, the student demonstrated a need for further instruction. The student may not be the most representative of the general high school population considering her particular preconditions. She does represent a growing body of students experiencing difficulty with academic subjects though.
+</p>
+
+<hr/>
+<h2>Types of Forces: Determining the net force</h2>
+
+<h3>Procedure</h3>
+<p>
+We started class looking at this PLIX and reviewing the concept of vector addition in free body diagrams. The student recognized the arrows and accompanying quantities as a representation of forces on an object. When prompted, she was also able to discern the effect of the forces in conjunction on the object. Changing the net force arrow with a dragging mechanism was not immediately clear and required a demonstration. The student commented that the red dot is not a common indication of draggability. Once demonstrated however, she was able to resize the net force accordingly. The answered the first two correctly but missed the third because one arrow was inconsistent and the head was not big enough to notice the difference. I also did not realize this arrow was flipped until a challenge question marked an incorrect answer. We finished the section with the challenge questions and discussed concepts as we went along. These questions were at the perfect level for her.
+</p>
+
+<h3>Effectiveness</h3>
+<p>
+This interactive is a useful tool for demonstrating the vector addition of multiple forces on a rigid body. The diversity of cases allow students to see possible variations of magnitude in forces on a linear model including unequal subtraction, equal subtraction and addition. The quantification of each vector's magnitude juxtaposed with its visual representation clearly describe each scenario both qualitatively and quantitatively. This would make the bridge from intuitive phenomenon to abstract math very smooth since the connection can be seen on the same model. The simplicity of the interface allow students to focus on the single concept addressed, avoiding clutter which could overwhelm, deter and confuse students further. The ability to interactively respond with the net force is a great way to illicit student response which could be used to track progress and eventually create a path through the concept map dynamically based on their specific needs. The challenge questions were interesting and allowed for further reflection on the topic.
+</p>
+
+<h3>Ineffectiveness</h3>
+<p>
+Although all the qualitative permutations of a single axis combination of vectors are shown, the models are mostly static and limit exploration. The net force is the only interactive component of this particular PLIX and does not have any effect with visible feedback to learn from. Unless the net force response by a student is used in internal collection of data, it only adds a level of confusion since it must start at an arbitrary length. It is not immediately obvious how the net force is determined, requiring explicit instruction and giving the lesson an unnecessary level of complication. Some important visual elements are subtle enough to go unnoticed. This was the case with the arrow heads and draggable components which are vital to understanding the scenario. The forces are also difficult to relate to as arrows because they are an abstraction of actual forces in the real world.
+</p>
+
+<h3>Suggestions</h3>
+<p>
+It may be useful to make the base forces interactive and the net force responsive to these changes. This could give students the ability to explore various situations in a more dynamic way where they can drive their own learning. Making the net force respond to changes in the base forces as opposed to direct manipulation would maintain net force as a result, upholding the cause and effect relationship. Stacking the arrows to show the vector addition may be one method of showing this relationship more clearly. It may also be helpful to bridge the gap between abstract mathematical models and realistic situations by showing real forces acting on an object and its result.
+</p>
+<p>
+In order to demonstrate these above suggestions, I have created a mock-up with the preceding ideas in mind. I understand making a visual editor that allows students and teachers to create these PLIX is exponentially more complex. Not having access to the PLIX editor required more open ended programming however. I will show the student this version to see how it helps and hinders the understanding of the concepts.
+</p>
+
 <canvas id="f_maCanvas" width="400" height="300">
     HTML5 Canvas is not supported on your browser
 </canvas>
+
+<hr/>
+<h2>Newton's First and Second Laws - Constant Mass and Force</h2>
+
+<h3>Procedure</h3>
+<p>
+After reviewing the vector addition of forces in the previous PLIX, we looked at the constant mass and force model to refresh and strengthen our understanding of the relationship between these variables. We began by discussing the effect of changes in these variables on acceleration and proceeded to visualize these changes in the simulation. The student had a similar problem of finding the draggable components as last time, but she eventually found the red dot and began to play with it. When asked what changes she saw on the screen, the student responded by declaring the arrows get bigger. The follow up question asking her to explain what that meant was met with some confusion. The meaning of the arrows and their connection was not very clear to her even after explicitly describing the arrows as "the force arrow" and "the acceleration arrow". She asked why there were two sets in each section, to which I mentioned the second must be there to show the difference more clearly. All the challenge questions (except the one on units) were very appropriate for her level of understanding.
+</p>
+
+<h3>Effectiveness</h3>
+<p>
+Constricting one variable at a time in each section and allowing for changes in another effectively demonstrates the relationships in the equation. This technique of isolating single variables is particularly useful for complex concepts even with seemingly simple equations. This simulation provided a method to understand the relationships between force, mass and acceleration with multiple scenarios in similar methods, providing a simple yet insightful view of all the relationships. The challenge questions were very appropriate for the topic and allow for further reflection and understanding.
+</p>
+
+<h3>Ineffectiveness</h3>
+<p>
+The current method of displaying the difference when a variable is changed is unreliable and unnecessary. The redundancy does not necessarily help show the change but adds visual elements that detract from the main idea. This simulation was particularly confusing to the student because both force and acceleration were depicted by arrows. The student was unable to relate to the arrows and was therefore far from understanding their relationship through the visual. This extra layer of abstraction hindered the learning process by adding another step the student must bridge. Describing the arrows effective function though analogies was necessary, yet rendered the simulation obsolete.
+</p>
+
+<h3>Suggestions</h3>
+<p>
+Displaying similar visuals four times may be an unnecessary clutter of the simulation. Showing the deference when a change is made could be done with a simple underlay of the static components with a transparent or stroke only interactive overlay. This would reduce the visual elements by half, allowing for more focus on important sections. It may be worth changing the visual elements entirely however, since they are too abstract to relate to. Showing an example of a force and acceleration may prevent the need to constantly refer back to definitions when first learning these fundamental concepts. This could also add to the appeal of the simulation by creating a more realistic atmosphere that students may feel more comfortable in. One of the biggest measures of success in video games for example, is the realism of reactions in the environment. The following is an attempt to put these ideas to practice:
+</p>
+
 <canvas id="netCanvas" width="400" height="300">
     HTML5 Canvas is not supported on your browser
 </canvas>
+
+<hr/>
+<h2>Newton's First and Second Laws - Bowling Graphs</h2>
+
+<h3>Procedure</h3>
+<p>
+Unfortunately we did not have time to look at this resource in class after a thorough discussing the previous two. Independent investigation of this and the last interactive in this study were assigned for homework over the weekend. One thing that should be noted is that the share via email did not successfully send to her inbox (...@aol.com). It did however send to mine (...@gmail.com) which I forwarded to her. Aol may have filed this as spam. We will continue our course with a discussion on this assignment at the next session. The following are solely my personal opinions on the interactive.
+</p>
+
+<h3>Effectiveness</h3>
+<p>
+Graphs are an indispensable tool for understanding complex relationships between variables because they convey so much information in a straightforward representation. Graphs allow for a graphical representation more tangible than an equation while quantifying data more clearly than a simulation. The ability to superimpose two similar yet separate graphs is a great way to quickly discern their differences. In this case, the visual change in slope very clearly shows a drop in velocity which we could attribute to losing momentum upon impact with the pins. The abrupt change in speed seen at the same position on the distance axis of both graphs illustrates Newton's first law very clearly. The difference in initial slope and accompanying challenge questions also provide an elegant problem to analyze through reasoning with Newton's second law. This thought provoking analysis allows for growth in critical thinking skills as well as graph interpretation.
+</p>
+
+<h3>Ineffectiveness</h3>
+<p>
+As stated above, I believe graphs are an excellent tool. It seems that the interactivity in this resource is used more as a novelty than a method to increase its educational value. Other than initially showing students that it is useful to juxtapose similar graphs on the same axis for comparison, there is no reason to make them do it. I think it can safely be assumed that most students who can interpret graphs at this level are already familiar with that concept. One small problem I should point out is that the challenge question with two correct answers (4/5) does not explicitly state that there may be multiple answers which could lead to many incomplete answers.
+</p>
+
+<h3>Suggestions</h3>
+<p>
+I feel that it might be worth having one graph and adding interactivity within it. Students could be prompted to move the pins along the distance axis to the position in which the ball hits them. A more animated version could include the balls moving along alley's next to the distance axis. As the balls move, they may be followed by lines indicating the coordinates on the graph. Showing the graphical representation of the system alongside an animation would allow students to visualize the data more clearly.
+</p>
+<object class="diagram" data="images/bowling.svg" type="image/svg+xml">
+  <img class="diagram" src="images/bowling.png" />
+</object>
+
+<hr/>
+<h2>Friction: On and Incline</h2>
+
+<h3>Procedure</h3>
+<p>
+Examination of this resource was also assigned as homework and will be discussed in the next session. See Procedure of the previous section for more details.
+</p>
+
+<h3>Effectiveness</h3>
+<p>
+This tool seems to be the most effective of the ones looked at in this study. It is simple and concise, yet conveys a lot of information about the various forces on an object atop an incline plane with friction. The change in arrow sizes accompanying a shift in plane angle exhibits the relationship between this angle and the forces as well as among the forces. Students can freely experiment with this angle to see the responses made and make conjectures as to why these representative arrows move the way they do based on their understanding of free body diagrams. Having and interactive schematic aligned with a drawing of the scenario provides a clear way to connect the ideas to reality.
+</p>
+
+<h3>Ineffectiveness</h3>
+<p>
+As is, it is difficult to ascertain why the normal force, and by association the kinetic friction and net force, are affected by the incline angle. Although we see that these forces are related to one another, there is no visual cue that normal force is a created by the component of weight perpendicular to the plane. This key bit of information is required to understanding and calculating the other forces shown. One argument against the addition of weight components would be to avoid too many visual elements on the screen. This is an important concern as it is already rather full and may easily overwhelm a student unfamiliar with the subject. This interactive also assumes movement to the left by pointing friction on the right. This is true in this case since the description explicitly states the block is sliding down but, the graph may be misleading. Challenge 2/5 is also a bit odd and may need to be revised.
+</p>
+
+<h3>Suggestions</h3>
+<p>
+The components of weight parallel and perpendicular to the incline should be available. Moreover, the fundamental relationships such as that between the perpendicular component of weight and normal force and between normal force and friction should be made more clear. One strategy to do this without overpopulating the page could be to display only one portion at a time. There could be tabs or exclusive check boxes that show only certain forces at a time in order to narrow the users attention to these forces. This approach could also help with the overall cleanliness of the visual.
+</p>
+
+<object class="diagram" data="images/incline_weight.svg" type="image/svg+xml">
+  <img class="diagram" src="images/incline_weight.png" />
+</object>
+<object class="diagram" data="images/incline_normal.svg" type="image/svg+xml">
+  <img class="diagram" src="images/incline_normal.png" />
+</object>
+<object class="diagram" data="images/incline_friction.svg" type="image/svg+xml">
+  <img class="diagram" src="images/incline_friction.png" />
+</object>
+<object class="diagram" data="images/incline_all.svg" type="image/svg+xml">
+  <img class="diagram" src="images/incline_all.png" />
+</object>
+
+</div>
+
 </body>
 
 </html>

@@ -43,8 +43,8 @@ public class GenerateSpec extends Composite {
 	interface GenerateSpecUiBinder extends UiBinder<Widget, GenerateSpec> {
 	}
 
-	@UiField
-	FlowPanel generateButtonContainer;
+//	@UiField
+//	FlowPanel generateButtonContainer;
 	@UiField
 	FlowPanel slideContainerAdd;
 	@UiField
