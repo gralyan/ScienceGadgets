@@ -42,11 +42,19 @@
 		background-color:#9DCBCA;
 		display: block;
 		margin: auto;
+		
+		border-radius: 10px;
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
 	}
 	.diagram{
 		border: 2px silver solid;
 		margin: 10px auto;
 		display: block;
+		
+		border-radius: 10px;
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
 	}
 	hr{
 		margin: 4em 0;
@@ -104,7 +112,7 @@ It may be useful to make the base forces interactive and the net force responsiv
 In order to demonstrate these above suggestions, I have created a mock-up with the preceding ideas in mind. I understand making a visual editor that allows students and teachers to create these PLIX is exponentially more complex. Not having access to the PLIX editor required more open ended programming however. I will show the student this version to see how it helps and hinders the understanding of the concepts.
 </p>
 
-<canvas id="f_maCanvas" width="400" height="300">
+<canvas id="netCanvas" width="400" height="300">
     HTML5 Canvas is not supported on your browser
 </canvas>
 
@@ -131,10 +139,10 @@ The current method of displaying the difference when a variable is changed is un
 Displaying similar visuals four times may be an unnecessary clutter of the simulation. Showing the deference when a change is made could be done with a simple underlay of the static components with a transparent or stroke only interactive overlay. This would reduce the visual elements by half, allowing for more focus on important sections. It may be worth changing the visual elements entirely however, since they are too abstract to relate to. Showing an example of a force and acceleration may prevent the need to constantly refer back to definitions when first learning these fundamental concepts. This could also add to the appeal of the simulation by creating a more realistic atmosphere that students may feel more comfortable in. One of the biggest measures of success in video games for example, is the realism of reactions in the environment. The following is an attempt to put these ideas to practice:
 </p>
 
-<canvas id="netCanvas" width="400" height="300">
+
+<canvas id="f_maCanvas" width="400" height="300">
     HTML5 Canvas is not supported on your browser
 </canvas>
-
 <hr/>
 <h2>Newton's First and Second Laws - Bowling Graphs</h2>
 
