@@ -8,9 +8,11 @@
 <script src="lightBulb.js"></script>
 <script src="fan.js"></script>
 <script src="balloon.js"></script>
+<script src="graph.js"></script>
 <script src="f_ma.js"></script>
 <script src="net_forces.js"></script>
 <script src="force.js"></script>
+<script src="bowling.js"></script>
 
 <style>
 	body{
@@ -62,9 +64,12 @@
 </style>
 </head>
 
-<body onload="f_ma('f_maCanvas');net_forces('netCanvas');">
+<body onload="f_ma('f_maCanvas');net_forces('netCanvas');bowling('bowlingCanvas');">
 
 
+<canvas id="bowlingCanvas" width="400" height="300">
+    HTML5 Canvas is not supported on your browser
+</canvas>
 
 
 <div id='mainWrapper'>
