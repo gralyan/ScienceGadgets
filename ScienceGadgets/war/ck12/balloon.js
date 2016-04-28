@@ -16,10 +16,13 @@ function Balloon(canvas, x, y, width, height, mass){
 	
 	this.tiedX = null;
 	this.tiedY = null;
-
+	
 	Draggable.call(this, canvas, x, y, width, height+this.sideLength);
 }
 Balloon.prototype = new Draggable;
+
+Balloon.shape = new Path2D('m 19.433993,39.269058 c 0,0 -15.4339992,-14.648236 -15.4339992,-23.614832 0,-8.9665941 7.2767622,-15.870996 16.2531032,-15.870996 8.97634,0 16.253101,7.1056861 16.253101,15.870996 0,8.765312 -15.767983,23.608311 -15.767983,23.608311 l 2.123088,2.478102 -5.59065,-0.007 z');
+
 
 Balloon.prototype.draw = function(){
 	var ctx = this.canvas.ctx;
@@ -81,11 +84,10 @@ Balloon.prototype.draw = function(){
 		ctx.translate(this.width/-2, this.height/-2-13);
 
 	// balloon
-	var shape = new Path2D('m 19.433993,39.269058 c 0,0 -15.4339992,-14.648236 -15.4339992,-23.614832 0,-8.9665941 7.2767622,-15.870996 16.2531032,-15.870996 8.97634,0 16.253101,7.1056861 16.253101,15.870996 0,8.765312 -15.767983,23.608311 -15.767983,23.608311 l 2.123088,2.478102 -5.59065,-0.007 z');
 	ctx.fillStyle = this.isPointedAt ? '#d85' : '#d20';
 	ctx.strokeStyle = "#540";
-	ctx.fill(shape);
-	ctx.stroke(shape);
+	ctx.fill(Balloon.shape);
+	ctx.stroke(Balloon.shape);
 	
 	ctx.restore();// balloon
 	
@@ -97,7 +99,7 @@ Balloon.prototype.draw = function(){
 		ctx.stroke();
 	}else{
 		ctx.fillStyle = this.isPointedAt ? '#fc5' : '#f92';
-		roundRect(ctx,20-this.sideLength/2,43,this.sideLength,this.sideLength, 5, "yellow")	
+		roundRect(ctx,20-this.sideLength/2,43,this.sideLength,this.sideLength, 5, true)	
 		ctx.fillStyle = "black";
 		ctx.font = this.sideLength*0.9+"px sans-serif";
 		ctx.textAlign = "center";

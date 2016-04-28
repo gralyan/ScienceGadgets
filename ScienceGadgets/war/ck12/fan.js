@@ -7,10 +7,13 @@ function Fan(canvas, x, y, width, height, speed, distance, direction){
 	
 	this.color = 'steelBlue';
 	
+	
 	this.windLines = [this.makeWindLine(),this.makeWindLine(),this.makeWindLine(),this.makeWindLine(),this.makeWindLine()];
 }
 
 Fan.prototype = new Interactable;
+
+Fan.blade = new Path2D("m 1,1 c -1.025184,0.8397 -0.424074,6.7469 1.741385,8.817 2.111395,2.0184 8.287084,2.0928 8.664637,1.3095 0.758298,-1.5734 0.524129,-7.4199 -2.034526,-9.2935 -1.715306,-1.2559 -4.290961,1.1039 -6.351779,0.5809 -1.248153,-0.3166 -1.556499,-1.0044 -2.019717,-1.4139 z");
 
 Fan.prototype.makeWindLine = function(offset){
 		return {
@@ -66,7 +69,6 @@ Fan.prototype.draw = function(){
 	ctx.translate(this.width*1.5, this.height/2);
     ctx.fillStyle = this.color;
 
-	var blade = new Path2D("m 1,1 c -1.025184,0.8397 -0.424074,6.7469 1.741385,8.817 2.111395,2.0184 8.287084,2.0928 8.664637,1.3095 0.758298,-1.5734 0.524129,-7.4199 -2.034526,-9.2935 -1.715306,-1.2559 -4.290961,1.1039 -6.351779,0.5809 -1.248153,-0.3166 -1.556499,-1.0044 -2.019717,-1.4139 z");
 	var rotation = time / 100 % (2 * Math.PI);
 	var bladeAngleRelative = 2 * Math.PI / 5; //40 degrees between blades
 	var bladeAngleAbsolute, scale;
@@ -76,7 +78,7 @@ Fan.prototype.draw = function(){
 		ctx.rotate(bladeAngleAbsolute);
 		scale = ((Math.sin(bladeAngleAbsolute-1)+3)/2);
 		ctx.scale(scale,scale);
-		ctx.fill(blade);
+		ctx.fill(Fan.blade);
 		ctx.restore(); //each blade
 	}
 	ctx.restore(); //blades

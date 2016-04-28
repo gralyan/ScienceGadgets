@@ -11,15 +11,23 @@ function Canvas(canvasID) {
 	// ///////////////////////////////////
 	// Animation
 	// ///////////////////////////////////
+	this.startTime = 0;
 	this.animationTime = 0;
+	this.stamp = 0;
 
 	this.animationLoop = function(timestamp) {
-		thisCanvas.animationTime = timestamp;
+		thisCanvas.stamp = timestamp;
+		thisCanvas.animationTime = timestamp - thisCanvas.startTime;
 		thisCanvas.reDrawCanvas();
 		thisCanvas.animationId = requestAnimationFrame(thisCanvas.animationLoop);
 	};
 
 	this.startAnimation = function() {
+		thisCanvas.animationId = requestAnimationFrame(thisCanvas.animationLoop);
+	};
+	
+	this.restartAnimation = function() {
+		thisCanvas.startTime = thisCanvas.stamp;
 		thisCanvas.animationId = requestAnimationFrame(thisCanvas.animationLoop);
 	};
 

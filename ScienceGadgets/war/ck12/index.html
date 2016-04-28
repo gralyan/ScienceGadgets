@@ -5,13 +5,17 @@
 <script src="canvas.js"></script>
 <script src="interactable.js"></script>
 <script src="draggable.js"></script>
+
+<script src="restartButton.js"></script>
 <script src="lightBulb.js"></script>
 <script src="fan.js"></script>
 <script src="balloon.js"></script>
+<script src="force.js"></script>
 <script src="graph.js"></script>
+<script src="bowlingAlley.js"></script>
+
 <script src="f_ma.js"></script>
 <script src="net_forces.js"></script>
-<script src="force.js"></script>
 <script src="bowling.js"></script>
 
 <style>
@@ -65,11 +69,6 @@
 </head>
 
 <body onload="f_ma('f_maCanvas');net_forces('netCanvas');bowling('bowlingCanvas');">
-
-
-<canvas id="bowlingCanvas" width="400" height="300">
-    HTML5 Canvas is not supported on your browser
-</canvas>
 
 
 <div id='mainWrapper'>
@@ -170,9 +169,11 @@ As stated above, I believe graphs are an excellent tool. It seems that the inter
 <p>
 I feel that it might be worth having one graph and adding interactivity within it. Students could be prompted to move the pins along the distance axis to the position in which the ball hits them. A more animated version could include the balls moving along alley's next to the distance axis. As the balls move, they may be followed by lines indicating the coordinates on the graph. Showing the graphical representation of the system alongside an animation would allow students to visualize the data more clearly.
 </p>
-<object class="diagram" data="images/bowling.svg" type="image/svg+xml">
-  <img class="diagram" src="images/bowling.png" />
-</object>
+
+
+<canvas id="bowlingCanvas" width="400" height="300">
+    HTML5 Canvas is not supported on your browser
+</canvas>
 
 <hr/>
 <h2>Friction: On and Incline</h2>
