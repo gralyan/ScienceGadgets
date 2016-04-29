@@ -6,6 +6,7 @@
 <script src="interactable.js"></script>
 <script src="draggable.js"></script>
 
+<script src="Incline.js"></script>
 <script src="restartButton.js"></script>
 <script src="lightBulb.js"></script>
 <script src="fan.js"></script>
@@ -17,6 +18,7 @@
 <script src="f_ma.js"></script>
 <script src="net_forces.js"></script>
 <script src="bowling.js"></script>
+<script src="inclineForces.js"></script>
 
 <style>
 	body{
@@ -45,7 +47,7 @@
 		background-color:white;
 	}
 	canvas{
-		background-color:#9DCBCA;
+		background-color:#9CC;
 		display: block;
 		margin: auto;
 		
@@ -68,7 +70,7 @@
 </style>
 </head>
 
-<body onload="f_ma('f_maCanvas');net_forces('netCanvas');bowling('bowlingCanvas');">
+<body onload="f_ma('f_maCanvas');net_forces('netCanvas');bowling('bowlingCanvas');inclineForces('inclineCanvas');">
 
 
 <div id='mainWrapper'>
@@ -198,18 +200,23 @@ As is, it is difficult to ascertain why the normal force, and by association the
 The components of weight parallel and perpendicular to the incline should be available. Moreover, the fundamental relationships such as that between the perpendicular component of weight and normal force and between normal force and friction should be made more clear. One strategy to do this without overpopulating the page could be to display only one portion at a time. There could be tabs or exclusive check boxes that show only certain forces at a time in order to narrow the users attention to these forces. This approach could also help with the overall cleanliness of the visual.
 </p>
 
-<object class="diagram" data="images/incline_weight.svg" type="image/svg+xml">
-  <img class="diagram" src="images/incline_weight.png" />
-</object>
-<object class="diagram" data="images/incline_normal.svg" type="image/svg+xml">
-  <img class="diagram" src="images/incline_normal.png" />
-</object>
-<object class="diagram" data="images/incline_friction.svg" type="image/svg+xml">
-  <img class="diagram" src="images/incline_friction.png" />
-</object>
-<object class="diagram" data="images/incline_all.svg" type="image/svg+xml">
-  <img class="diagram" src="images/incline_all.png" />
-</object>
+
+<canvas id="inclineCanvas" width="400" height="300">
+    HTML5 Canvas is not supported on your browser
+</canvas>
+
+<!-- <object class="diagram" data="images/incline_weight.svg" type="image/svg+xml"> -->
+<!--   <img class="diagram" src="images/incline_weight.png" /> -->
+<!-- </object> -->
+<!-- <object class="diagram" data="images/incline_normal.svg" type="image/svg+xml"> -->
+<!--   <img class="diagram" src="images/incline_normal.png" /> -->
+<!-- </object> -->
+<!-- <object class="diagram" data="images/incline_friction.svg" type="image/svg+xml"> -->
+<!--   <img class="diagram" src="images/incline_friction.png" /> -->
+<!-- </object> -->
+<!-- <object class="diagram" data="images/incline_all.svg" type="image/svg+xml"> -->
+<!--   <img class="diagram" src="images/incline_all.png" /> -->
+<!-- </object> -->
 
 </div>
 

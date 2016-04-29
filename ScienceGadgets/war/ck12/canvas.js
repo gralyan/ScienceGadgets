@@ -42,7 +42,10 @@ function Canvas(canvasID) {
 	// ///////////////////////////////////
 	this.canvasElement.addEventListener('mousedown', function(event) {
 		for (var i = 0; i < thisCanvas.interactables.length; i++) {
+			if(thisCanvas.interactables[i].isMouseOverCheck(event)){
+				
 			thisCanvas.interactables[i].onMouseDown(event);
+			}
 		}
 	}, false);
 
